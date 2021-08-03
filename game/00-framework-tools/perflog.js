@@ -57,19 +57,18 @@ DOL.Perflog.logWidgetStart = function(widgetName) {
 		i: 0
 	});
 }
-DOL.Perflog.logWidgetEnd = function(widgetName) {
-	if (!DOL.Perflog.enabled) return;
-	const time = millitime();
-	const perflog = wpStack[wpStack.length - 1];
-	if (!perflog || perflog.name !== widgetName) {
-		Errors.report("Inconsistent widget performance stack", wpStack);
-		return;
-	}
-	const prevPerflog = wpStack[wpStack.length - 2];
-	perflog.t1 = time;
-	const dt = perflog.t1-perflog.t0;
+/**
+ * Record that widget `widgetName` executed in `totaltime` ms,
+ * including `internaltime` internal widget calls
+ * @param {string} widgetName
+ * @param {number} totaltime
+ * @param {number=0} internaltime
+ */
+DOL.Perflog.logWidgetTime = function(widgetName, totaltime, internaltime) {
+	if (typeof internaltime !== "number") internaltime = 0;
+	const prevPerflog = wpStack[wpStack.length - 1];
 	if (prevPerflog) {
-		prevPerflog.i += dt;
+		prevPerflog.i += totaltime;
 	}
 	var perfrec = wpRec[widgetName];
 	if (!perfrec) perfrec = wpRec[widgetName] = {
@@ -79,9 +78,19 @@ DOL.Perflog.logWidgetEnd = function(widgetName) {
 		own:0
 	};
 	perfrec.n++;
-	perfrec.total += dt;
-	perfrec.own += dt - perflog.i;
+	perfrec.total += totaltime;
+	perfrec.own += totaltime - internaltime;
+}
+DOL.Perflog.logWidgetEnd = function(widgetName) {
+	if (!DOL.Perflog.enabled) return;
+	const time = millitime();
+	const perflog = wpStack[wpStack.length - 1];
+	if (!perflog || perflog.name !== widgetName) {
+		Errors.report("Inconsistent widget performance stack", wpStack);
+		return;
+	}
 	wpStack.pop();
+	DOL.Perflog.logWidgetTime(widgetName, time-perflog.t0, perflog.i);
 	if (DOL.Perflog.self) {
 		const selfDt = millitime() - time
 		wpSelf.n++;
@@ -121,13 +130,15 @@ function niceround(x) {
  * @param {number} [options.limit=20] Max number of entries to report, 0 to no limit
  * @param {boolean} [options.global=true] Report widgets from all recorded history or from last passage only.
  * @param {boolean} [options.round=true] Round to 0.1 precision
+ * @param {string} [options.filter=null] A regular expression pattern that will be used to filter widgets
  */
 DOL.Perflog.report = function (options) {
 	options = Object.assign({
 		sort: 'own',
 		limit: 20,
 		global: true,
-		round: true
+		round: true,
+		filter: null
 	}, options);
 	const numfn = options.round ? niceround : (x)=>x;
 	var entries;
@@ -154,6 +165,10 @@ DOL.Perflog.report = function (options) {
 			totalp1: numfn(e.total/e.n),
 			ownp1: numfn(e.own/e.n),
 		}));
+	}
+	if (options.filter) {
+		var matcher = new RegExp(options.filter)
+		entries = entries.filter(x => typeof x.name === 'string' && matcher.test(x.name))
 	}
 	var comparator;
 	const sort = options.sort;
