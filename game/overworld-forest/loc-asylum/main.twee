@@ -260,7 +260,11 @@ You snuggle under the covers.
 	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
 <</if>>
 <<sleep>><<effects>>
-<<if $nightmares gte 1 and $controlled is 0>>
+<<wakingEffects $sleepHoursTotal>>
+<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+	You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+	<br><br>
+<<elseif $nightmares gte 1 and $controlled is 0>>
 	You dream you are being hunted by something dark and terrible.
 <<else>>
 	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
@@ -282,14 +286,25 @@ You snuggle under the covers.
 	<<set $schoolwake to 0>><<asylumeffects>>
 	<<if $rapewake is 1>>
 		<<set $rapewake to 0>>
-		<<generate1>><<generate2>><<person1>>A <<person>> shakes you awake. "Wakey wakey," <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<<generate1>><<generate2>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>> rubs your back. "Feeling better now?" <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<<else>>
+			A <<person>> shakes you awake. "Wakey wakey," <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<</if>>		
 		<br><br>
 		<<link [[Next|Asylum Cell Rape]]>><<set $molestationstart to 1>><</link>>
 		<br>
 	<<elseif $asylumstate is "firsttreatment" and $asylumfirsttreatment isnot 1>>
 		<<set $asylumfirsttreatment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>> rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your treatment," <<he>> says. "Come with me."
 		<br><br>
@@ -297,8 +312,14 @@ You snuggle under the covers.
 		<<asylumtreatments>>
 	<<elseif $asylumstate is "secondtreatment" and $asylumsecondtreatment isnot 1>>
 		<<set $asylumsecondtreatment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>>  rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your treatment," <<he>> says. "Come with me."
 		<br><br>
@@ -306,15 +327,27 @@ You snuggle under the covers.
 		<<asylumtreatments>>
 	<<elseif $asylumstate is "assessment" and $asylumassessment isnot 1>>
 		<<set $asylumassessment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>>  rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your assessment," <<he>> says. "Come with me."
 		<br><br>
 		<<endevent>>
 		<<asylumassessment>>
 	<<else>>
-		A loud buzzing wakes you.
+		<<if _wakingEffect is "dryheaving">>
+			A loud buzzing continues in the background.
+			<br><br>
+		<<else>>
+			A loud buzzing wakes you.
+			<br><br>
+		<</if>>
 		<br><br>
 		<<link [[Get out of bed|Asylum Cell]]>><</link>>
 		<br><br>
@@ -398,7 +431,7 @@ You are in the asylum, deep in the forest. The building is over a century old, a
 	<br><br>
 	<<endevent>>
 	<<npc Harper>><<person1>>
-	The Doctor is indeed waiting outside. The other patients line up near <<him>>. <<Hes>> holding a whistle. "Time for your daily exercise," <<he>> says. "When I blow, I want you to run in a circle around the grounds. Don't stop until you hear me blow again."
+	The doctor is indeed waiting outside. The other patients line up near <<him>>. <<Hes>> holding a whistle. "Time for your daily exercise," <<he>> says. "When I blow, I want you to run in a circle around the grounds. Don't stop until you hear me blow again."
 	<br><br>
 	<<He>> whistles, and you run. It's not too harsh a pace, but orderlies follow after and chastise those who fall behind.
 	<<gathletics>><<athletics 3>><<physique 3>><<pass 30>>
@@ -1058,7 +1091,7 @@ You chat with the other patients.
 		<<else>>We should complain! The doctors should help all of us, not just those attractive ones."
 		<</if>>
 	<<else>>
-		"That young Doctor smelled like cow manure the other afternoon," a <<person>> whispers. "Does <<nnpc_he "Harper">> live on a farm or something!?"
+		"That young doctor smelled like cow manure the other afternoon," a <<person>> whispers. "Does <<nnpc_he "Harper">> live on a farm or something!?"
 	<</if>>
 	<br><br>
 	<<endevent>>
@@ -1109,7 +1142,7 @@ You chat with the other patients.
 		<<He>> looks sharply around.
 	<<else>>
 		A <<person>> is smiling at you. As you sit near <<him>> you notice one of <<his>> hands is under <<his>> clothes, rhythmically
-		<<if $NPCList[0].penis isnot "none">>rubbing his dick.<<else>>rubbing her pussy.<</if>><br><br>
+		<<if $NPCList[0].penis isnot "none">>rubbing <<his>> dick.<<else>>rubbing <<his>> pussy.<</if>><br><br>
 
 		"Stay right there," <<he>> breathes.
 		<<if $beauty gte ($beautymax / 3) * 2 and $rng % 3>>"Looking at you is helping a lot."
@@ -1610,7 +1643,7 @@ You emerge from the wood far from town, but the road curves north through moor a
 :: Asylum Harper Shove
 
 <<set $outside to 0>><<set $location to "asylum">><<asylumeffects>><<effects>>
-You shove the Doctor away from you. <<He>> looks angry, but soon regains <<his>> composure. "You still have some issues with anger management," <<he>> says. "But that's not why you were here. I'd like to keep seeing you on Fridays, at the hospital. There's a vehicle waiting to take you back to town. Be well."
+You shove the doctor away from you. <<He>> looks angry, but soon regains <<his>> composure. "You still have some issues with anger management," <<he>> says. "But that's not why you were here. I'd like to keep seeing you on Fridays, at the hospital. There's a vehicle waiting to take you back to town. Be well."
 <br><br>
 <<if $suspicion gte 80>>
 	A group of orderlies lead you away from Harper's office, through the main area of the asylum.
@@ -1768,7 +1801,7 @@ You lean closer to the <<person>>. "There are a lot of quiet places here," you w
 <<set $outside to 1>><<set $location to "asylum">><<effects>>
 <<if $enemyarousal gte $enemyarousalmax>>
 	<<ejaculation>>
-	"The Doctor told me to be more accepting of advances," <<he>> says. "I've been missing out."
+	"The doctor told me to be more accepting of advances," <<he>> says. "I've been missing out."
 	<br><br>
 	<<He>> kisses your cheek and departs.
 	<br><br>
@@ -1780,7 +1813,7 @@ You lean closer to the <<person>>. "There are a lot of quiet places here," you w
 	<<clotheson>>
 	<<endcombat>>
 <<elseif $finish is 1>>
-	"The Doctor told me to be more accepting of advances," <<he>> says. "I've been missing out."
+	"The doctor told me to be more accepting of advances," <<he>> says. "I've been missing out."
 	<br><br>
 	<<He>> kisses your cheek and departs.
 	<br><br>
@@ -2411,7 +2444,7 @@ is an important part of your assessment so you need to be on your best behaviour
 :: Asylum Fake Treatment Finish
 <<set $outside to 0>><<set $location to "asylum">><<asylumeffects>><<effects>>
 
-"Excellent. Doctor Harper's very pleased with your progress. The Doctor asked me to tell you not to mention this treatment to anyone.
+"Excellent. Doctor Harper's very pleased with your progress. The doctor asked me to tell you not to mention this treatment to anyone.
 It's very important for your treatment. If you mention it to anyone - even to Doctor Harper <<nnpc_himself "Harper">> - <<nnpc_he "Harper">>
 will be very angry and it will set back your progress. This should be kept secret. Understood?"<br>
 

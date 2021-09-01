@@ -81,11 +81,7 @@
 <</widget>>
 
 <<widget "charles">><<silently>>
-<<if $player.gender_appearance is "m">>
-	<<set _text_output to "Charles">>
-<<else>>
-	<<set _text_output to "Charlene">>
-<</if>>
+	<<set _text_output to ($player.gender_appearance is "m" ? "Charles" : "Charlene")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "npcexposetext">><<silently>>
@@ -214,6 +210,7 @@
 
 <<widget "generatePronouns">>
 <<if $args[0]>>
+	<<set $args[0].pronouns to {}>>
 	<<switch $args[0].pronoun>>
 	<<case "m">>
 		<<set $args[0].pronouns.he = "he">>
@@ -261,6 +258,25 @@
 		<<set $args[0].pronouns.boy = "kid">>
 		<<set $args[0].pronouns.men = "men">>
 	<</switch>>
+<</if>>
+<</widget>>
+
+<<widget "updatePronouns">>
+<<for _i to 0; _i lt $NPCNameList.length; _i++>>
+	<<generatePronouns $NPCName[_i]>>
+<</for>>
+<</widget>>
+
+<<widget "clearPronouns">>
+<<if $args[0]>>
+	<<set $args[0].pronouns.he = 0>>
+	<<set $args[0].pronouns.his = 0>>
+	<<set $args[0].pronouns.hers = 0>>
+	<<set $args[0].pronouns.him = 0>>
+	<<set $args[0].pronouns.himself = 0>>
+	<<set $args[0].pronouns.man = 0>>
+	<<set $args[0].pronouns.boy = 0>>
+	<<set $args[0].pronouns.men = 0>>
 <</if>>
 <</widget>>
 
@@ -369,11 +385,7 @@
 	<<set _na to 0>>
 <</if>>
 <<if $NPCList[_na].monster is "monster">>
-	<<if $NPCList[_na].pronoun is "m">>
-		<<set _text_output to "He">>
-	<<else>>
-		<<set _text_output to "She">>
-	<</if>>
+	<<set _text_output to ($NPCList[_na].pronoun is "m" ? "He" : "She")>>
 <<else>>
 	<<set _text_output to "It">>
 <</if>>
@@ -388,11 +400,7 @@
 	<<set _na to 0>>
 <</if>>
 <<if $NPCList[_na].monster is "monster">>
-	<<if $NPCList[_na].pronoun is "m">>
-		<<set _text_output to "he">>
-	<<else>>
-		<<set _text_output to "she">>
-	<</if>>
+	<<set _text_output to ($NPCList[_na].pronoun is "m" ? "he" : "she")>>
 <<else>>
 	<<set _text_output to "it">>
 <</if>>
@@ -407,11 +415,7 @@
 	<<set _na to 0>>
 <</if>>
 <<if $NPCList[_na].monster is "monster">>
-	<<if $NPCList[_na].pronoun is "m">>
-		<<set _text_output to "His">>
-	<<else>>
-		<<set _text_output to "Her">>
-	<</if>>
+	<<set _text_output to ($NPCList[_na].pronoun is "m" ? "His" : "Her")>>
 <<else>>
 	<<set _text_output to "Its">>
 <</if>>
@@ -426,11 +430,7 @@
 	<<set _na to 0>>
 <</if>>
 <<if $NPCList[_na].monster is "monster">>
-	<<if $NPCList[_na].pronoun is "m">>
-		<<set _text_output to "his">>
-	<<else>>
-		<<set _text_output to "her">>
-	<</if>>
+	<<set _text_output to ($NPCList[_na].pronoun is "m" ? "his" : "her")>>
 <<else>>
 	<<set _text_output to "its">>
 <</if>>
@@ -445,11 +445,7 @@
 	<<set _na to 0>>
 <</if>>
 <<if $NPCList[_na].monster is "monster">>
-	<<if $NPCList[_na].pronoun is "m">>
-		<<set _text_output to "Him">>
-	<<else>>
-		<<set _text_output to "Her">>
-	<</if>>
+	<<set _text_output to ($NPCList[_na].pronoun is "m" ? "Him" : "Her")>>
 <<else>>
 	<<set _text_output to "It">>
 <</if>>
@@ -464,11 +460,7 @@
 	<<set _na to 0>>
 <</if>>
 <<if $NPCList[_na].monster is "monster">>
-	<<if $NPCList[_na].pronoun is "m">>
-		<<set _text_output to "him">>
-	<<else>>
-		<<set _text_output to "her">>
-	<</if>>
+	<<set _text_output to ($NPCList[_na].pronoun is "m" ? "him" : "her")>>
 <<else>>
 	<<set _text_output to "it">>
 <</if>>
@@ -483,11 +475,7 @@
 	<<set _na to 0>>
 <</if>>
 <<if $NPCList[_na].monster is "monster">>
-	<<if $NPCList[_na].pronoun is "m">>
-		<<set _text_output to "himself">>
-	<<else>>
-		<<set _text_output to "herself">>
-	<</if>>
+	<<set _text_output to ($NPCList[_na].pronoun is "m" ? "himself" : "herself")>>
 <<else>>
 	<<set _text_output to "itself">>
 <</if>>
@@ -600,9 +588,17 @@
 <<elseif $NPCList[0].intro is 1>>
 	<<set $NPCList[0].intro to 0>>
 	<<if $npcrow.includes(0)>>
-		<<set _text_output to $npc[$npcrow.indexOf(0)]>>
+		<<if $npc.includes("Black Wolf") or $npc.includes("Great Hawk")>>
+			<<set _text_output to "The " + $npc[$npcrow.indexOf(0)]>>
+		<<else>>
+			<<set _text_output to $npc[$npcrow.indexOf(0)]>>
+		<</if>>
 	<<else>>
-		<<person1>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<<if $enemytype is "beast">>
+			<<beasttype>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<<else>>
+			<<person1>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<</if>>
 	<</if>>
 <<elseif $NPCList[1].intro is 1>>
 	<<set $NPCList[1].intro to 0>>
@@ -992,7 +988,7 @@
 <<widget "underoutfit">>
 <<silently>>
 <<outfitChecks>>
-<<if _underOutfit is true>>
+<<if _underOutfit>>
 	<<set _text_output to $worn.under_upper.name>>
 <<elseif $worn.under_upper.name is "naked" and $worn.under_lower.name is "naked">>
 	<<breasts>>
@@ -1249,17 +1245,9 @@
 
 <<widget "personsimple">><<silently>>
 <<if $npcadult is 1>>
-	<<if $pronoun is "m">>
-		<<set _text_output to "man">>
-	<<else>>
-		<<set _text_output to "woman">>
-	<</if>>
+	<<set _text_output to ($pronoun is "m" ? "man" : "woman")>>
 <<else>>
-	<<if $pronoun is "m">>
-		<<set _text_output to "boy">>
-	<<else>>
-		<<set _text_output to "girl">>
-	<</if>>
+	<<set _text_output to ($pronoun is "m" ? "boy" : "girl")>>
 <</if>><</silently>><<print _text_output>><</widget>>
 
 <<widget "person">><<silently>>
@@ -1285,22 +1273,18 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "combatperson">><<silently>>
-<<if $enemytype is "beast">>
-	<<beasttype>>
-<<elseif $npc_named is 1>>
-	<<set _text_output to $description>>
+<<if $npc_named is 1>>
+	<<set _text_output to $NPCList[_j].fullDescription>>
+<<elseif $enemytype is "beast">>
+	<<set _text_output to "the " + $NPCList[_j].type>>
 <<elseif $npcadult is 1>>
 	<<if $pronoun is "m">>
-		<<set _text_output to $description+" man">>
+		<<set _text_output to "the " + $description+" man">>
 	<<elseif $pronoun is "f">>
-		<<set _text_output to $description+" woman">>
+		<<set _text_output to "the " + $description+" woman">>
 	<</if>>
 <<else>>
-	<<if $pronoun is "m">>
-		<<set _text_output to $description+" boy">>
-	<<elseif $pronoun is "f">>
-		<<set _text_output to $description+" girl">>
-	<</if>>
+	<<set _text_output to "the " + $NPCList[_j].fullDescription>>
 <</if>><</silently>><<print _text_output>><</widget>>
 
 <<widget "combatpersons">><<silently>>
@@ -1349,25 +1333,25 @@
 <<personselect 5>>
 <</widget>>
 
-<<widget "personpenis">>
-<<silently>>
+<<widget "personpenis">><<silently>>
 <<if $NPCList[0].penis isnot "none">>
 	<<set _text_output to "penis">>
 <<else>>
 	<<set _text_output to "clit">>
 <</if>>
-<</silently>>
-<<print _text_output>>
-<</widget>>
+<</silently>><<print _text_output>><</widget>>
 
-<<widget "spouse">>
-<<if $pronoun is "m" and $homochance lt random(1, 100) or $homochance gte random(1, 100) and $pronoun is "f">>
-	<<set _text_output to "wife">>
+<<widget "spouse">><<silently>>
+<<if random(1,100) lte $homochance>>
+	<<set _text_output to ($pronoun is "m" ? "husband" : "wife")>>
 <<else>>
-	<<set _text_output to "husband">>
+	<<set _text_output to ($pronoun is "m" ? "wife" : "husband")>>
 <</if>>
-<<print _text_output>>
-<</widget>>
+<</silently>><<print _text_output>><</widget>>
+
+<<widget "father">><<silently>>
+	<<set $_text_output to ($pronoun is "m" ? "father" : "mother")>>
+<</silently>><<print $_text_output>><</widget>>
 
 <<widget "girl">><<silently>>
 	<<set _text_output to ($player.gender_appearance is "m"? "boy" : "girl")>>
@@ -1803,6 +1787,125 @@
 
 <<widget "lllpurity">> |
 <span class="red">- - - Purity</span>
+<</widget>>
+
+<<widget "gspurity">> |
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1>>
+	<span class="teal">+ Sydney's Purity</span>
+<<else>>
+	<span class="teal">- Sydney's Corruption</span>
+<</if>>
+<<set _warnstate to 1>>
+<</widget>>
+
+<<widget "ggspurity">> |
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1>>
+	<span class="teal">+ + Sydney's Purity</span>
+<<else>>
+	<span class="teal">- - Sydney's Corruption</span>
+<</if>>
+<<set _warnstate to 2>>
+<</widget>>
+
+<<widget "gggspurity">> |
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1>>
+	<span class="teal">+ + + Sydney's Purity</span>
+<<else>>
+	<span class="teal">- - - Sydney's Corruption</span>
+<</if>>
+<<set _warnstate to 3>>
+<</widget>>
+
+<<widget "lspurity">> |
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1>>
+	<span class="purple">- Sydney's Purity</span>
+<<else>>
+	<span class="purple">+ Sydney's Corruption</span>
+<</if>>
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity lte 50 and _lustincrdisplay isnot 1>>
+	<<glust>>
+<</if>>
+<<set _warnstate to 1>>
+<</widget>>
+
+<<widget "llspurity">> |
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1>>
+	<span class="purple">- - Sydney's Purity</span>
+<<else>>
+	<span class="purple">+ + Sydney's Corruption</span>
+<</if>>
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity lte 50 and _lustincrdisplay isnot 1>>
+	<<glust>>
+<</if>>
+<<set _warnstate to 2>>
+<</widget>>
+
+<<widget "lllspurity">> |
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1>>
+	<span class="purple">- - - Sydney's Purity</span>
+<<else>>
+	<span class="purple">+ + + Sydney's Corruption</span>
+<</if>>
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity lte 50 and _lustincrdisplay isnot 1>>
+	<<glust>>
+<</if>>
+<<set _warnstate to 3>>
+<</widget>>
+
+<<widget "gslust">> |
+<span class="lewd">+ Lust</span><<set _lustincrdisplay to 1>>
+<</widget>>
+
+<<widget "ggslust">> |
+<span class="lewd">+ + Lust</span><<set _lustincrdisplay to 1>>
+<</widget>>
+
+<<widget "gggslust">> |
+<span class="lewd">+ + + Lust</span><<set _lustincrdisplay to 1>>
+<</widget>>
+
+<<widget "lslust">> |
+<span class="teal">- Lust</span><<set _lustincrdisplay to 1>>
+<</widget>>
+
+<<widget "llslust">> |
+<span class="teal">- - Lust</span><<set _lustincrdisplay to 1>>
+<</widget>>
+
+<<widget "lllslust">> |
+<span class="teal">- - - Lust</span><<set _lustincrdisplay to 1>>
+<</widget>>
+
+<<widget "sydneyWarning">>
+<<if $args[0]>>
+	<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 10) lt 0>>
+		| <span class="purple">This action might corrupt Sydney</span>
+	<</if>>
+<<else>>
+	<<switch _warnstate>>
+		<<case 1>>
+			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 2) lt 0>>
+				| <span class="purple">This action will corrupt Sydney</span>
+			<</if>>
+			<<if $purityEvent is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].corruption isnot 0 and ($NPCName[$NPCNameList.indexOf("Sydney")].corruption - 2) lt 0>>
+				| <span class="teal">This action will purify Sydney</span>
+			<</if>>
+		<<case 2>>
+			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 5) lt 0>>
+				| <span class="purple">This action will corrupt Sydney</span>
+			<</if>>
+			<<if $purityEvent is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].corruption isnot 0 and ($NPCName[$NPCNameList.indexOf("Sydney")].corruption - 5) lt 0>>
+				| <span class="teal">This action will purify Sydney</span>
+			<</if>>
+		<<case 3>>
+			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 10) lt 0>>
+				| <span class="purple">This action will corrupt Sydney</span>
+			<</if>>
+			<<if $purityEvent is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].corruption isnot 0 and ($NPCName[$NPCNameList.indexOf("Sydney")].corruption - 10) lt 0>>
+				| <span class="teal">This action will purify Sydney</span>
+			<</if>>
+	<</switch>>
+<</if>>
 <</widget>>
 
 <<widget "lscience">> |
@@ -2805,6 +2908,13 @@
 <span class="green">+ + + Physique</span>
 <</widget>>
 
+<!-- Exhibitionism -->
+
+<<widget "exhibitionist">> |
+	<<set _color to ["","teal","lblue","blue","purple","pink"][$args[0]]>>
+	<span @class="_color">Exhibitionism $args[0]</span>
+<</widget>>
+
 <<widget "exhibitionist1">> |
 <span class="teal">Exhibitionism 1</span>
 <</widget>>
@@ -2823,6 +2933,11 @@
 
 <<widget "exhibitionist5">> |
 <span class="pink">Exhibitionism 5</span>
+<</widget>>
+
+<<widget "combatexhibitionist">>
+	<<set _color to ["","teal","lblue","blue","purple","pink"][$args[0]]>>
+	<span @class="_color">Exhibitionism $args[0]</span>
 <</widget>>
 
 <<widget "combatexhibitionist1">>
@@ -2845,6 +2960,13 @@
 <span class="pink">Exhibitionism 5</span>
 <</widget>>
 
+<!-- Promiscuity -->
+
+<<widget "promiscuous">> |
+	<<set _color to ["","teal","lblue","blue","purple","pink"][$args[0]]>>
+	<span @class="_color">Promiscuity $args[0]</span>
+<</widget>>
+
 <<widget "promiscuous1">> |
 <span class="teal">Promiscuity 1</span>
 <</widget>>
@@ -2865,54 +2987,48 @@
 <span class="pink">Promiscuity 5</span>
 <</widget>>
 
+<<widget "combatpromiscuous">>
+<<if $consensual is 1 and !$promiscuityIgnore>>
+	<<set _color to ["","teal","lblue","blue","purple","pink"][$args[0]]>>
+	<span @class="_color"><<print ($enemytype is "man" ? "Promiscuity" : "Deviancy")>> $args[0]</span>
+<</if>>
+<</widget>>
+
 <<widget "combatpromiscuous1">>
-<<if $consensual is 1>>
-	<<if $enemytype is "man">>
-<span class="teal">Promiscuity 1</span>
-	<<else>>
-<span class="teal">Deviancy 1</span>
-	<</if>>
+<<if $consensual is 1 and !$promiscuityIgnore>>
+	<span class="teal"><<print ($enemytype is "man" ? "Promiscuity" : "Deviancy")>> 1</span>
 <</if>>
 <</widget>>
 
 <<widget "combatpromiscuous2">>
-<<if $consensual is 1>>
-	<<if $enemytype is "man">>
-<span class="lblue">Promiscuity 2</span>
-	<<else>>
-<span class="lblue">Deviancy 2</span>
-	<</if>>
+<<if $consensual is 1 and !$promiscuityIgnore>>
+	<span class="lblue"><<print ($enemytype is "man" ? "Promiscuity" : "Deviancy")>> 2</span>
 <</if>>
 <</widget>>
 
 <<widget "combatpromiscuous3">>
-<<if $consensual is 1>>
-	<<if $enemytype is "man">>
-<span class="blue">Promiscuity 3</span>
-	<<else>>
-<span class="blue">Deviancy 3</span>
-	<</if>>
+<<if $consensual is 1 and !$promiscuityIgnore>>
+	<span class="blue"><<print ($enemytype is "man" ? "Promiscuity" : "Deviancy")>> 3</span>
 <</if>>
 <</widget>>
 
 <<widget "combatpromiscuous4">>
-<<if $consensual is 1>>
-	<<if $enemytype is "man">>
-<span class="purple">Promiscuity 4</span>
-	<<else>>
-<span class="purple">Deviancy 4</span>
-	<</if>>
+<<if $consensual is 1 and !$promiscuityIgnore>>
+	<span class="purple"><<print ($enemytype is "man" ? "Promiscuity" : "Deviancy")>> 4</span>
 <</if>>
 <</widget>>
 
 <<widget "combatpromiscuous5">>
-<<if $consensual is 1>>
-	<<if $enemytype is "man">>
-<span class="pink">Promiscuity 5</span>
-	<<else>>
-<span class="pink">Deviancy 5</span>
-	<</if>>
+<<if $consensual is 1 and !$promiscuityIgnore>>
+	<span class="pink"><<print ($enemytype is "man" ? "Promiscuity" : "Deviancy")>> 5</span>
 <</if>>
+<</widget>>
+
+<!-- Deviancy -->
+
+<<widget "deviant">> |
+	<<set _color to ["","teal","lblue","blue","purple","pink"][$args[0]]>>
+	<span @class="_color">Deviancy $args[0]</span>
 <</widget>>
 
 <<widget "deviant1">> |
@@ -2933,6 +3049,13 @@
 
 <<widget "deviant5">> |
 <span class="pink">Deviancy 5</span>
+<</widget>>
+
+<<widget "combatdeviant">>
+	<<if $consensual is 1>>
+		<<set _color to ["","teal","lblue","blue","purple","pink"][$args[0]]>>
+		<span @class="_color">Deviancy $args[0]</span>
+	<</if>>
 <</widget>>
 
 <<widget "combatdeviant1">>
@@ -3110,36 +3233,68 @@ A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 
 <<widget "bottoms">><<silently>>
 <<outfitChecks>>
-<<if _middleOutfit>>
-	<<set _text_output to $worn.upper.name>>
-<<else>>
-	<<set _text_output to $worn.lower.name>>
-<</if>>
+<<set _text_output to (_middleOutfit ? $worn.upper.name : $worn.lower.name)>>
 <</silently>>_text_output<</widget>>
 
 <<widget "underbottoms">><<silently>>
 <<outfitChecks>>
-<<if _underOutfit>>
-	<<set _text_output to $worn.under_upper.name>>
-<<else>>
-	<<set _text_output to $worn.under_lower.name>>
-<</if>>
+<<set _text_output to (_underOutfit ? $worn.under_upper.name : $worn.under_lower.name)>>
 <</silently>>_text_output<</widget>>
 
 <<widget "allTops">>
-<<if $worn.over_upper.name isnot "naked">>$worn.over_upper.name<</if>><<if $worn.upper.name isnot "naked">><<if $worn.over_upper.name isnot "naked">> and <</if>>$worn.upper.name<</if>>
+	<<if $worn.over_upper.name isnot "naked">>
+		$worn.over_upper.name
+	<</if>>
+	<<if $worn.upper.name isnot "naked">>
+		<<if $worn.over_upper.name isnot "naked">>
+			and
+		<</if>>
+		$worn.upper.name
+	<</if>>
 <</widget>>
 
 <<widget "allBottoms">>
-<<if $worn.over_lower.name isnot "naked">>$worn.over_lower.name<</if>><<if $worn.lower.name isnot "naked">><<if $worn.over_lower.name isnot "naked">> and <</if>>$worn.lower.name<</if>>
+	<<if $worn.over_lower.name isnot "naked">>
+		$worn.over_lower.name
+	<</if>>
+	<<if $worn.lower.name isnot "naked">>
+		<<if $worn.over_lower.name isnot "naked">>
+			and
+		<</if>>
+		$worn.lower.name
+	<</if>>
 <</widget>>
 
 <<widget "allTopsUnderwear">>
-<<if $worn.over_upper.name isnot "naked">>$worn.over_upper.name<</if>><<if $worn.upper.name isnot "naked">><<if $worn.over_upper.name isnot "naked">> and <</if>>$worn.upper.name<</if>><<if $worn.under_upper.name isnot "naked">><<if $worn.over_upper.name isnot "naked" or $worn.upper.name isnot "naked">>and<</if>>$worn.under_upper.name<</if>>
+	<<set _tops to []>>
+	<<if $worn.over_upper.name isnot "naked">>
+		<<set _tops.push($worn.over_upper.name)>>
+	<</if>>
+	<<if $worn.upper.name isnot "naked">>
+		<<set _tops.push($worn.upper.name)>>
+	<</if>>
+	<<if $worn.under_upper.name isnot "naked">>
+		<<set _tops.push($worn.under_upper.name)>>
+	<</if>>
+	<<if _tops.length is 1>>_tops[0]<</if>>
+	<<if _tops.length is 2>>_tops[0] and _tops[1]<</if>>
+	<<if _tops.length is 3>>_tops[0], _tops[1] and _tops[2]<</if>>
 <</widget>>
 
 <<widget "allBottomsUnderwear">>
-<<if $worn.over_lower.name isnot "naked">>$worn.over_lower.name<</if>><<if $worn.lower.name isnot "naked">><<if $worn.over_lower.name isnot "naked" and $worn.under_lower.name isnot "naked">>, <<elseif $worn.over_lower.name isnot "naked">> and <</if>>$worn.lower.name<</if>><<if $worn.under_lower.name isnot "naked">><<if $worn.over_lower.name isnot "naked" or $worn.lower.name isnot "naked">> and <</if>>$worn.under_lower.name<</if>>
+	<<set _bottoms to []>>
+	<<if $worn.over_lower.name isnot "naked">>
+		<<set _bottoms.push($worn.over_lower.name)>>
+	<</if>>
+	<<if $worn.lower.name isnot "naked">>
+		<<set _bottoms.push($worn.lower.name)>>
+	<</if>>
+	<<if $worn.under_lower.name isnot "naked">>
+		<<set _bottoms.push($worn.under_lower.name)>>
+	<</if>>
+	<<if _bottoms.length is 1>>_bottoms[0]<</if>>
+	<<if _bottoms.length is 2>>_bottoms[0] and _bottoms[1]<</if>>
+	<<if _bottoms.length is 3>>_bottoms[0], _bottoms[1] and _bottoms[2]<</if>>
 <</widget>>
 
 <<widget "top">><<silently>>
@@ -4591,17 +4746,13 @@ School finishes on the first Monday of December.
 <</widget>>
 
 <<widget "wallet">><<silently>>
-<<if $pronoun is "m">>
-	<<set _text_output to "wallet">>
-<<else>>
-	<<set _text_output to "purse">>
-<</if>>
+	<<set _text_output to ($pronoun is "m" ? "wallet" : "purse")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "pullupall">>
 <<outfitChecks>>
-<<if _middleOutfit is true>>
-	<<if _underOutfit is true>>
+<<if _middleOutfit>>
+	<<if _underOutfit>>
 		You pull down your $worn.upper.name and $worn.under_upper.name, <span class="lewd">baring your <<breasts>>.</span>
 	<<elseif !$worn.under_upper.type.includes("naked")>>
 		You pull down your $worn.upper.name and pull up your $worn.under_upper.name, <span class="lewd">baring your <<breasts>>.</span>
@@ -4609,7 +4760,7 @@ School finishes on the first Monday of December.
 		You pull down your $worn.upper.name, <span class="lewd">baring your <<breasts>>.</span>
 	<</if>>
 <<elseif !$worn.upper.type.includes("naked")>>
-	<<if _underOutfit is true>>
+	<<if _underOutfit>>
 		You pull up your $worn.upper.name and pull down your $worn.under_upper.name, <span class="lewd">baring your <<breasts>>.</span>
 	<<elseif !$worn.under_upper.type.includes("naked")>>
 		You pull up your $worn.upper.name and $worn.under_upper.name, <span class="lewd">baring your <<breasts>>.</span>
@@ -4617,7 +4768,7 @@ School finishes on the first Monday of December.
 		You pull up your $worn.upper.name, <span class="lewd">baring your <<breasts>>.</span>
 	<</if>>
 <<else>>
-	<<if _underOutfit is true>>
+	<<if _underOutfit>>
 		You pull down your $worn.under_upper.name, <span class="lewd">baring your <<breasts>>.</span>
 	<<elseif !$worn.under_upper.type.includes("naked")>>
 		You pull up your $worn.under_upper.name, <span class="lewd">baring your <<breasts>>.</span>
@@ -4633,17 +4784,17 @@ School finishes on the first Monday of December.
 <<if $worn.lower.skirt is 1>>
 	<<if $worn.under_lower.skirt is 1>>
 		You lift the hem of your $worn.lower.name and $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
-	<<elseif _underOutfit is true>>
+	<<elseif _underOutfit>>
 		You lift the hem of your $worn.lower.name and pull aside your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<elseif !$worn.under_lower.type.includes("naked")>>
 		You lift the hem of your $worn.lower.name and pull down your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<else>>
 		You lift the hem of your $worn.lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<</if>>
-<<elseif _middleOutfit is true>>
+<<elseif _middleOutfit>>
 	<<if $worn.under_lower.skirt is 1>>
 		You pull aside your $worn.lower.name and lift the hem of your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
-	<<elseif _underOutfit is true>>
+	<<elseif _underOutfit>>
 		You pull aside your $worn.lower.name and $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<elseif !$worn.under_lower.type.includes("naked")>>
 		You pull aside your $worn.lower.name and pull down your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
@@ -4653,7 +4804,7 @@ School finishes on the first Monday of December.
 <<elseif !$worn.lower.type.includes("naked")>>
 	<<if $worn.under_lower.skirt is 1>>
 		You tug down your $worn.lower.name and lift the hem of your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
-	<<elseif _middleOutfit is true>>
+	<<elseif _middleOutfit>>
 		You tug down your $worn.lower.name and pull aside your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<elseif !$worn.under_lower.type.includes("naked")>>
 		You tug down your $worn.lower.name and $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
@@ -4663,7 +4814,7 @@ School finishes on the first Monday of December.
 <<else>>
 	<<if $worn.under_lower.skirt is 1>>
 		You lift the hem of your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
-	<<elseif _underOutfit is true>>
+	<<elseif _underOutfit>>
 		You pull aside your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<elseif !$worn.under_lower.type.includes("naked")>>
 		You tug down your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
@@ -4675,7 +4826,7 @@ School finishes on the first Monday of December.
 
 <<widget "pullup">>
 <<outfitChecks>>
-<<if _middleOutfit is true>>
+<<if _middleOutfit>>
 	pull down
 <<elseif !$worn.upper.type.includes("naked")>>
 	pull up
@@ -4697,7 +4848,7 @@ School finishes on the first Monday of December.
 
 <<widget "pullsup">>
 <<outfitChecks>>
-<<if _middleOutfit is true>>
+<<if _middleOutfit>>
 	pulls down
 <<elseif !$worn.upper.type.includes("naked")>>
 	pulls up
@@ -4719,7 +4870,7 @@ School finishes on the first Monday of December.
 
 <<widget "overpullup">>
 <<outfitChecks>>
-<<if _overOutfit is true>>
+<<if _overOutfit>>
 	pull down
 <<elseif !$worn.over_upper.type.includes("naked")>>
 	pull up
@@ -4741,7 +4892,7 @@ School finishes on the first Monday of December.
 
 <<widget "overpullsup">>
 <<outfitChecks>>
-<<if _overOutfit is true>>
+<<if _overOutfit>>
 	pulls down
 <<elseif !$worn.over_upper.type.includes("naked")>>
 	pulls up
@@ -4782,54 +4933,13 @@ School finishes on the first Monday of December.
 <<widget "nexttext">>
 <</widget>>
 
-<<widget "monk">>
-<<silently>>
-<<if $pronoun is "m">>
-	<<set _text_output to "monk">>
-<<else>>
-	<<set _text_output to "nun">>
-<</if>>
+<<widget "monk">><<silently>>
+	<<set _text_output to ($pronoun is "m" ? "monk" : "nun")>>
 <</silently>><<print _text_output>><</widget>>
 
-<<widget "monks">>
-
-<<if $pronoun is "m">>
-monks
-<<else>>
-nuns
-<</if>>
-
-<</widget>>
-
-<<widget "monkstop">>
-
-<<if $pronoun is "m">>
-monk.
-<<else>>
-nun.
-<</if>>
-
-<</widget>>
-
-<<widget "monkcomma">>
-
-<<if $pronoun is "m">>
-monk,
-<<else>>
-nun,
-<</if>>
-
-<</widget>>
-
-<<widget "monkapo">>
-
-<<if $pronoun is "m">>
-	<<set _text_output to "monk">>
-<<else>>
-	<<set _text_output to "nun">>
-<</if>>
-
-<</widget>>
+<<widget "monks">><<silently>>
+	<<set _text_output to ($pronoun is "m" ? "monks" : "nuns")>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "monks_and_nuns">><<silently>>
 <<if $malechance is 100>>
@@ -4842,106 +4952,92 @@ nun,
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "monkapo">><<silently>>
-<<if $pronoun is "m">>
-	<<set _text_output to "monk's">>
-<<else>>
-	<<set _text_output to "nun's">>
-<</if>>
+	<<set _text_output to ($pronoun is "m" ? "monk's" : "nun's")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "priest">><<silently>>
-<<if $pronoun is "m">>
-	<<set _text_output to "priest">>
-<<else>>
-	<<set _text_output to "priestess">>
-<</if>>
+	<<set _text_output to ($pronoun is "m" ? "priest" : "priestess")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "priests">><<silently>>
-<<if $pronoun is "m">>
-	<<set _text_output to "priests">>
-<<else>>
-	<<set _text_output to "priestesses">>
-<</if>>
+	<<set _text_output to ($pronoun is "m" ? "priests" : "priestesses")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "priestapo">><<silently>>
-<<if $pronoun is "m">>
-	<<set _text_output to "priest's">>
-<<else>>
-	<<set _text_output to "priestess'">>
-<</if>>
+	<<set _text_output to ($pronoun is "m" ? "priest's" : "priestess'")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "vaginalvirginitywarning">>
-
-<<if $player.virginity.vaginal is true>>
-<span class="red"> This action will deflower you</span>
-<</if>>
-
+	<<if $player.virginity.vaginal is true>>
+		<span class="red">This action will deflower you.</span>
+	<</if>>
 <</widget>>
 
 <<widget "penilevirginitywarning">>
-
-<<if $player.virginity.penile is true>>
-<span class="red"> This action will deflower you</span>
-<</if>>
-
+	<<if $player.virginity.penile is true>>
+		<span class="red">This action will deflower you.</span>
+	<</if>>
 <</widget>>
 
 <<widget "analvirginitywarning">>
-
-<<if $player.virginity.anal is true>>
-<span class="red"> This action will take your anal virginity</span>
-<</if>>
-
+	<<if $player.virginity.anal is true>>
+		<span class="red">This action will take your anal virginity.</span>
+	<</if>>
 <</widget>>
 
 <<widget "oralvirginitywarning">>
-
-<<if $player.virginity.oral is true>>
-<span class="red"> This action will take your oral virginity</span>
-<</if>>
-
+	<<if $player.virginity.oral is true>>
+		<span class="red">This action will take your oral virginity.</span>
+	<</if>>
 <</widget>>
 
 <<widget "handholdingvirginitywarning">>
-
-<<if $player.virginity.handholding is true>>
-<span class="red"> This action will take your handholding virginity</span>
-<</if>>
-
+	<<if $player.virginity.handholding is true>>
+		<span class="red">This action will take your handholding virginity.</span>
+	<</if>>
 <</widget>>
-
 
 <<widget "kissvirginitywarning">>
-
-<<if $player.virginity.kiss is true>>
-<span class="red"> This action will take your first kiss</span>
-<</if>>
-
+	<<if $player.virginity.kiss is true>>
+		<span class="red">This action will take your first kiss.</span>
+	<</if>>
 <</widget>>
 
-<<widget "wolfgirl">>
-
-<<if $player.gender_appearance is "m">>
- | <span class="blue">Wolfboy</span>
-<<else>>
- | <span class="blue">Wolfgirl</span>
+/* Does not currently support named NPCs having their virginity taken by something other than the player. 
+ * Argument 0 is the npc, argument 1 is their virginity.
+*/
+<<widget "NPCvirginitywarning">>
+<<if $NPCNameList.indexOf($args[0]) >= 0 and $NPCName[$NPCNameList.indexOf($args[0])].virginity[$args[1]] is true>>
+	<<if $combatControls.includes("ists")>>
+		<br>
+	<</if>>
+	<<switch $args[1]>>
+		<<case "vaginal" "penile">>
+			<span class="red"> This action will deflower <<him>>.</span>
+		<<case "anal">>
+			<span class="red"> This action will take <<his>> anal virginity.</span>
+		<<case "oral">>
+			<span class="red"> This action will take <<his>> oral virginity.</span>
+		<<case "kiss">>
+			<span class="red"> This action will take <<his>> first kiss.</span>
+		<<case "handholding">>
+			<span class="red"> This action will take <<his>> handholding virginity.</span>
+		<<default>>
+	<</switch>>
 <</if>>
+<</widget>>
 
+
+<<widget "wolfgirl">>
+ | <span class="blue"><<print ($player.gender_appearance is "m" ? "Wolfboy" : "Wolfgirl")>></span>
 <</widget>>
 
 <<widget "cat">>
-
  | <span class="blue">Cat</span>
-
 <</widget>>
 
 <<widget "cow">>
-
  | <span class="blue">Cow</span>
-
 <</widget>>
 
 <<widget "harpy">>
@@ -4953,44 +5049,38 @@ nun,
 <</widget>>
 
 <<widget "angel">>
-
  | <span class="gold">Angel</span>
-
 <</widget>>
 
 <<widget "fallenangel">>
-
  | <span class="black">Fallen Angel</span>
-
 <</widget>>
 
 <<widget "demon">>
-
  | <span class="red">Demon</span>
-
 <</widget>>
 
 <<widget "laughs">>
 <<set $rng to random(1, 100)>>
 <<if $npcadult isnot 1>>
 	<<if $rng gte 51>>
-	giggles
+		giggles
 	<<else>>
-	laughs
+		laughs
 	<</if>>
 <<elseif $pronoun is "f">>
 	<<if $rng gte 67>>
-	giggles
+		giggles
 	<<elseif $rng gte 33>>
-	chuckles
+		chuckles
 	<<else>>
-	laughs
+		laughs
 	<</if>>
 <<else>>
 	<<if $rng gte 51>>
-	chuckles
+		chuckles
 	<<else>>
-	laughs
+		laughs
 	<</if>>
 <</if>>
 
@@ -4998,9 +5088,9 @@ nun,
 
 <<widget "cursedtext">>
 <<if ($args[0] or $args[1]) is "collar">>
-<span class="blue">Perhaps the police can help.</span>
+	<span class="blue">Perhaps the police can help.</span>
 <<elseif ($args[0] or $args[1]) is "chastity belt">>
-<span class="blue">Perhaps the temple can help.</span>
+	<span class="blue">Perhaps the temple can help.</span>
 <</if>>
 <</widget>>
 
@@ -5108,20 +5198,15 @@ a teacher
 <</if>>
 <</silently>><<print _text_output>><</widget>>
 
-<<widget "slut">>
-<<if $player.gender_appearance is "m">>
-	<<set _text_output to "pervert">>
-<<else>>
-	<<set _text_output to "slut">>
-<</if>>
-<<print _text_output>>
-<</widget>>
+<<widget "slut">><<silently>>
+	<<set _text_output to ($player.gender_appearance is "m" ? "pervert" : "slut")>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "tending_text">>
 <<if $tending gte 800>>
 	<span class="green">You're great at this.</span>
 <<elseif $tending gte 600>>
-	<span class="teal">You're good at this</span>
+	<span class="teal">You're good at this.</span>
 <<elseif $tending gte 400>>
 	<span class="lblue">You're okay at this.</span>
 <<elseif $tending gte 200>>
@@ -5568,7 +5653,7 @@ a teacher
 <</widget>>
 
 <<widget "farm_he">>
-<<if $farm_work[$args[0]].monster is true>>
+<<if $farm_work[$args[0]].monster>>
 	<<if $farm_work[$args[0]].gender is "m">>
 		<<set _text_output to "he">>
 	<<else>>
@@ -5581,7 +5666,7 @@ a teacher
 <</widget>>
 
 <<widget "farm_He">>
-<<if $farm_work[$args[0]].monster is true>>
+<<if $farm_work[$args[0]].monster>>
 	<<if $farm_work[$args[0]].gender is "m">>
 		<<set _text_output to "He">>
 	<<else>>
@@ -5594,7 +5679,7 @@ a teacher
 <</widget>>
 
 <<widget "farm_him">>
-<<if $farm_work[$args[0]].monster is true>>
+<<if $farm_work[$args[0]].monster>>
 	<<if $farm_work[$args[0]].gender is "m">>
 		<<set _text_output to "him">>
 	<<else>>
@@ -5607,7 +5692,7 @@ a teacher
 <</widget>>
 
 <<widget "farm_his">>
-<<if $farm_work[$args[0]].monster is true>>
+<<if $farm_work[$args[0]].monster>>
 	<<if $farm_work[$args[0]].gender is "m">>
 		<<set _text_output to "his">>
 	<<else>>
@@ -5620,7 +5705,7 @@ a teacher
 <</widget>>
 
 <<widget "farm_His">>
-<<if $farm_work[$args[0]].monster is true>>
+<<if $farm_work[$args[0]].monster>>
 	<<if $farm_work[$args[0]].gender is "m">>
 		<<set _text_output to "His">>
 	<<else>>
@@ -5633,31 +5718,24 @@ a teacher
 <</widget>>
 
 <<widget "master">><<silently>>
-<<if $pronoun is "m">>
-	<<set _text_output to "master">>
-<<else>>
-	<<set _text_output to "mistress">>
-<</if>>
+	<<set _text_output to ($pronoun is "m" ? "master" : "mistress")>>
 <</silently>>_text_output<</widget>>
 
 <<widget "Master">><<silently>>
-<<if $pronoun is "m">>
-	<<set _text_output to "Master">>
-<<else>>
-	<<set _text_output to "Mistress">>
-<</if>>
+<<master>><<set _text_output to _text_output.toLocaleUpperFirst()>>
 <</silently>>_text_output<</widget>>
+
+<<widget "daughter">><<silently>>
+	<<set _text_output to ($pronoun is "m" ? "son" : "daughter")>>
+<</silently>>_text_output<</widget>>
+
 
 <!-- Proper usage example: <<nnpc_he "Robin">> would return "he" or "she" based on Robin's pronoun. -->
 <!-- Useful for needing to call a named NPC's pronoun in a scene that doesn't directly include them, or for more efficient usage in scenes with multiple named NPCs. -->
 
 <<widget "nnpc_he">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "he">>
-<<else>>
-	<<set _text_output to "she">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "he" : "she")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_He">><<silently>>
@@ -5666,11 +5744,7 @@ a teacher
 
 <<widget "nnpc_him">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "him">>
-<<else>>
-	<<set _text_output to "her">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "him" : "her")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_Him">><<silently>>
@@ -5679,11 +5753,7 @@ a teacher
 
 <<widget "nnpc_his">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "his">>
-<<else>>
-	<<set _text_output to "her">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "his" : "her")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_His">><<silently>>
@@ -5692,20 +5762,12 @@ a teacher
 
 <<widget "nnpc_hers">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "his">>
-<<else>>
-	<<set _text_output to "hers">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "his" : "hers")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_hes">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "he's">>
-<<else>>
-	<<set _text_output to "she's">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "he's" : "she's")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_Hes">><<silently>>
@@ -5714,65 +5776,54 @@ a teacher
 
 <<widget "nnpc_himself">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "himself">>
-<<else>>
-	<<set _text_output to "herself">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "himself" : "herself")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_wife">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "husband">>
-<<else>>
-	<<set _text_output to "wife">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "husband" : "wife")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_lass">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "lad">>
-<<else>>
-	<<set _text_output to "lass">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "lad" : "lass")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_gender">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "man">>
-<<else>>
-	<<set _text_output to "woman">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "man" : "woman")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_gendery">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "boy">>
-<<else>>
-	<<set _text_output to "girl">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "boy" : "girl")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_genitals">><<silently>>
-<<set _npcGenitals to $NPCName[$NPCNameList.indexOf($args[0])].gender>>
-<<if _npcGenitals is "m">>
-	<<set _text_output to "penis">>
-<<else>>
-	<<set _text_output to "vagina">>
-<</if>>
+<<set _npcGender to $NPCName[$NPCNameList.indexOf($args[0])].gender>>
+<<set _text_output to (_npcGender is "m" ? "penis" : "vagina")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "nnpc_girlfriend">><<silently>>
 <<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
-<<if _npcPronoun is "m">>
-	<<set _text_output to "boyfriend">>
-<<else>>
-	<<set _text_output to "girlfriend">>
-<</if>>
+<<set _text_output to (_npcPronoun is "m" ? "boyfriend" : "girlfriend")>>
+<</silently>><<print _text_output>><</widget>>
+
+<<widget "nnpc_brother">><<silently>>
+<<set _npcPronoun to $NPCName[$NPCNameList.indexOf($args[0])].pronoun>>
+<<set _text_output to (_npcPronoun is "m" ? "brother" : "sister")>>
+<</silently>><<print _text_output>><</widget>>
+
+<<widget "nnpc_Brother">><<silently>>
+<<nnpc_brother $args[0]>><<set _text_output to _text_output.toLocaleUpperFirst()>>
+<</silently>><<print _text_output>><</widget>>
+
+<<widget "nnpc_title">><<silently>>
+<<set _text_output to $NPCName[$NPCNameList.indexOf($args[0])].title>>
+<</silently>><<print _text_output>><</widget>>
+
+<<widget "nnpc_Title">><<silently>>
+<<nnpc_title $args[0]>><<set _text_output to _text_output.toLocaleUpperFirst()>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "daylight">>
@@ -5932,6 +5983,69 @@ and
 	<<else>>
 		<<set _text_output to "top">>
 	<</if>>
+<</if>>
+<<print _text_output>>
+<</widget>>
+
+
+<<widget "npcPenis">>
+<<if !$args[0]>>
+	<<set _npcGen to 0>>
+<<else>>
+	<<set _npcGen to $args[0]>>
+<</if>>
+<<if $NPCList[_npcGen].chastity.penis is "chastity cage">>
+	<<set _text_output to "caged penis">>
+<<elseif $NPCList[_npcGen].chastity.penis.includes("chastity")>>
+	<<set _text_output to $NPCList[_npcGen].chastity.penis>>
+<<else>>
+	<<set _text_output to $NPCList[_npcGen].penisdesc>>
+<</if>>
+<<print _text_output>>
+<</widget>>
+
+<<widget "npcVagina">>
+<<if !$args[0]>>
+	<<set _npcGen to 0>>
+<<else>>
+	<<set _npcGen to $args[0]>>
+<</if>>
+<<if $NPCList[_npcGen].chastity.vagina.includes("chastity")>>
+	<<set _text_output to $NPCList[_npcGen].chastity.vagina>>
+<<else>>
+	<<set _text_output to "pussy">>
+<</if>>
+<<print _text_output>>
+<</widget>>
+
+<<widget "npcAnus">>
+<<if !$args[0]>>
+	<<set _npcGen to 0>>
+<<else>>
+	<<set _npcGen to $args[0]>>
+<</if>>
+<<if $NPCList[_npcGen].chastity.anus.includes("shield")>>
+	<<set _text_output to $NPCList[_npcGen].chastity.anus>>
+<<else>>
+	<<set _text_output to "ass">>
+<</if>>
+<<print _text_output>>
+<</widget>>
+
+<<widget "npcHairColour">>
+<<if $args[0]>>
+	<<switch $NPCName[$NPCNameList.indexOf($args[0])].hairColour>>
+		<<case "strawberryblond">>
+			<<set _text_output to "strawberry blond">>
+		<<case "platinumblond">>
+			<<set _text_output to "platinum blond">>
+		<<case "lightbrown">>
+			<<set _text_output to "light brown">>
+		<<default>>
+			<<set _text_output to $NPCName[$NPCNameList.indexOf($args[0])].hairColour>>
+	<</switch>>
+<<else>>
+	<<set _text_output to "phantasmal ghost colour because someone forgot to define an NPC for the npcHairColour widget, please inform Vrelnir">>
 <</if>>
 <<print _text_output>>
 <</widget>>
