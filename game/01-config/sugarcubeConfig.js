@@ -23,7 +23,7 @@ window.StartConfig = {
 	"enableLinkNumberify": true,
 	"version": "0.3.3.4",
 }
-
+window.StartConfig.version += " herm";
 config.saves.autosave = "autosave";
 
 Config.saves.isAllowed = function () {
