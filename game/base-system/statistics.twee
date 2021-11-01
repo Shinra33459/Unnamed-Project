@@ -3,11 +3,11 @@
 <h3>Statistics</h3>
 __Virginities__
 <br>
-<<if $vaginaexist is 1>>
+<<if $player.vaginaExist>>
 	Vaginal virginity: <<print ($player.virginity.vaginal is true ? "Present" : "Taken by " + ($player.virginity.vaginal is false ? "unknown" : $player.virginity.vaginal))>>
 	<br>
 <</if>>
-<<if $penisexist is 1>>
+<<if $player.penisExist>>
 	Penile virginity: <<print ($player.virginity.penile is true ? "Present" : "Taken by " + ($player.virginity.penile is false ? "unknown" : $player.virginity.penile))>>
 	<br>
 <</if>>
@@ -59,7 +59,7 @@ Hours worked on the docks: $dockhours
 <br>
 Buns sold at the cafe: $bunstat
 <br>
-Most "cream" produced: $creamstat
+Most "cream" produced: <<print parseFloat($creamstat.toFixed(1))>> mL
 <br>
 Smugglers intercepted: $smuggler_stolen_stat
 <br>
@@ -147,19 +147,25 @@ Masturbated to orgasm: $masturbationorgasmstat
 <br>
 Minutes spent masturbating: $masturbationtimestat
 <br>
-Breast milk drank: $milk_drank_stat ml
+Breast milk drank: $milk_drank_stat mL
 <br>
-Breast milk produced: $milk_produced_stat ml
+Breast milk produced: $milk_produced_stat mL
 <br>
-<<if $penisexist is 1>>Semen produced: <<print Math.floor($semen_produced_stat)>> ml
-<br><</if>>
-<<if $vaginaexist is 1>>Lewd fluid produced: $lube_produced_stat ml
-<br><</if>>
-Fluid forcibly milked: $fluid_forced_stat ml
+Nectar drank: $nectar_drank_stat mL
+<br>
+<<if $player.penisExist>>
+	Semen produced: <<print Math.floor($semen_produced_stat)>> mL
+	<br>
+<</if>>
+<<if $player.vaginaExist>>
+	Lewd fluid produced: $lube_produced_stat mL
+	<br>
+<</if>>
+Fluid forcibly milked: $fluid_forced_stat mL
 <br>
 <<if $knot_stat isnot undefined>>
-Knotted: $knot_stat
-<br>
+	Knotted: $knot_stat
+	<br>
 <</if>>
 <br>
 
@@ -253,7 +259,7 @@ __Dates__
 <<if $pregnancyTesting>>
 	__Pregnancy__
 	<br>
-	<<if $vaginaexist>>
+	<<if $player.vaginaExist>>
 		Times given birth: <<print $sexStats.vagina.pregnancy.totalBirthEvents>>
 		<br>
 		Total number of children: <<print $pregnancyStats.playerChildren>>
@@ -265,7 +271,7 @@ __Dates__
 		After Morning pills taken: <<print $pregnancyStats.afterMorningPills>>
 		<br>
 	<</if>>
-	<<if $vaginaexist or $pregnancyStats.pregnancyTestsTaken gt 0>>
+	<<if $player.vaginaExist or $pregnancyStats.pregnancyTestsTaken gt 0>>
 		Pregnancy tests taken: <<print $pregnancyStats.pregnancyTestsTaken>>
 	<</if>>
 	<br>
@@ -306,6 +312,8 @@ Underwear stolen: $stat_panties_stolen
 Sentenced with community service: $stat_police.community
 <br>
 Sentenced with the pillory:	$stat_police.pillory
+<br>
+Days in prison: $stat_police.prison
 <br>
 
 <br><br>
@@ -425,7 +433,7 @@ __Save Game Details__
 		Milk volume: <<print Math.trunc($milk_volume)>>
 		<br>
 	<</if>>
-	<<if $penisexist is 1>>
+	<<if $player.penisExist>>
 		Semen amount: <<print Math.trunc($semen_amount)>>
 		<br>
 		Semen volume: <<print Math.trunc($semen_volume)>>
@@ -459,6 +467,10 @@ __Save Game Details__
 		Under Lower integrity: <<print Math.trunc($worn.under_lower.integrity)>>
 		<br>
 	<</if>>
+	<<if $worn.genitals.name isnot "naked">>
+		<<print setup.clothes.genitals[$worn.genitals.index].name_cap>> integrity: <<print Math.trunc($worn.genitals.integrity)>>
+		<br>
+	<</if>>
 	<br>
 
 	__Social__
@@ -466,6 +478,8 @@ __Save Game Details__
 	School status: <<print Math.trunc($cool)>>
 	<br>
 	Delinquency: <<print Math.trunc($delinquency)>>
+	<br>
+	Detention: <<print Math.trunc($detention)>>
 	<br>
 	Crime: <<print Math.trunc($crime)>>
 	<br>
@@ -500,27 +514,27 @@ __Save Game Details__
 
 	__Transformations__
 	<br>
-	Wolfiness: <<print Math.trunc($wolfbuild)>>
+	Wolfiness: <<print Math.trunc($wolfbuild)>> (30+ for full transformation)
 	<br>
 	Wolf manifestation: <<print Math.trunc($wolfgirl)>>
 	<br>
-	Cattiness: <<print Math.trunc($catbuild)>>
+	Cattiness: <<print Math.trunc($catbuild)>> (50+ for full transformation)
 	<br>
 	Cat manifestation: <<print Math.trunc($cat)>>
 	<br>
-	<<if $hallucinations gte 2 or $bestialitydisable is "t">>Harpyness<<else>>Birdieness<</if>>: <<print Math.trunc($birdbuild)>>
+	<<if $hallucinations gte 2 or $bestialitydisable is "t">>Harpyness<<else>>Birdieness<</if>>: <<print Math.trunc($birdbuild)>> (30+ for full transformation)
 	<br>
 	<<if $hallucinations gte 2 or $bestialitydisable is "t">>Harpy<<else>>Bird<</if>> manifestation: <<print Math.trunc($harpy)>>
 	<br>
-	Bovinity: <<print Math.trunc($cowbuild)>>
+	Bovinity: <<print Math.trunc($cowbuild)>> (30+ for full transformation)
 	<br>
 	Cow manifestation: <<print Math.trunc($cow)>>
 	<br>
-	Angelicness: <<print Math.trunc($angelbuild)>>
+	Angelicness: <<print Math.trunc($angelbuild)>> (50+ for full transformation)
 	<br>
 	Angel manifestation: <<print Math.trunc($angel)>>
 	<br>
-	Demonicness: <<print Math.trunc($demonbuild)>>
+	Demonicness: <<print Math.trunc($demonbuild)>> (30+ for full transformation)
 	<br>
 	Demonic manifestation: <<print Math.trunc($demon)>>
 	<br>

@@ -366,7 +366,7 @@ Mouth is closed in idle frames here. activeclosedmouth can be used in active, th
 
 	<<if $leftarm isnot "bound" and $leftarm isnot "grappled" and $leftarm isnot "behind">>
 		<img class="layer-sexbasefront anim-idle-2f" @src="_img.doggyactivebaseleftarm" @style="'filter: '+_filters.body">
-	<<elseif $worn.upper.set is $worn.lower.set and $worn.lower.skirt is 1>>
+	<<elseif $worn.upper.set is $worn.lower.set and setup.clothes.lower[$worn.lower.index].skirt is 1>>
 		<img class="layer-sexaboveclothes anim-idle-2f" @src="_img.doggyactiveleftarmbound" @style="'filter: '+_filters.body">
 	<<else>>
 		<img class="layer-sexbase anim-idle-2f" @src="_img.doggyactiveleftarmbound" @style="'filter: '+_filters.body">
@@ -448,7 +448,7 @@ Mouth is closed in idle frames here. activeclosedmouth can be used in active, th
 	<img class="layer-sexsclera" src="img/sex/doggy/active/doggyactivesclerabloodshot.png">
 <</if>>
 
-<<if $trauma gte ($traumamax * 0.9)>>
+<<if $trauma gte ($traumamax * 0.9) or $possessed>>
 	<img class="layer-sexeyes colour-eye" src="img/sex/doggy/active/doggyactiveeyesempty.png">
 <<else>>
 	<img class="layer-sexeyes colour-eye anim-idle-2f" src="img/sex/doggy/active/doggyactiveeyes.png">
@@ -458,7 +458,7 @@ Eyelids disabled during idle frames.
 <img class="layer-sexmouth colour-eye anim-idle-2f" @src="_img.doggyactiveeyelids" @style="'filter: '+_filters.body">
 -->
 
-<<if $penisexist is 1>>
+<<if $player.penisExist>>
 	<<if $worn.genitals.name is "chastity belt" or $worn.genitals.name is "gold chastity belt">>
 		<img class="layer-sexmouth" src="img/sex/doggy/active/body/doggyactivepenischastity.png">
 	<<elseif $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
@@ -890,7 +890,7 @@ Lashes held in place during idle frames, and 4-frame hair overlay that didn't an
 	<</if>>
 <</if>>
 
-<<if $penisexist is 1>>
+<<if $player.penisExist>>
 	<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
 		<<if $worn.genitals.type.includes("chastity")>>
 			<<if $worn.genitals.name is "chastity belt" or $worn.genitals.name is "gold chastity belt">>
@@ -1132,6 +1132,16 @@ and _stanceCheck isnot "top">>
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xrayanal.png">
 		</div>
 	<</if>>
+<<elseif $anusstate is "doublepenetrated">>
+	<<if $NPCList[$npcDAP[0]].penis is "anusdouble" and $NPCList[$npcDAP[1]].penis is "anusdouble">>
+		<div @class="_anusClass" @id="_anusID">
+			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xraydoubleanal.png">
+		</div>
+	<<else>>
+		<div @class="_anusClass" @id="_anusID">
+			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xrayanal.png">
+		</div>
+	<</if>>
 <<elseif $anusstate is "tentacle">>
 	<div @class="_anusClass" @id="_anusID">
 		<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xrayanaltentacle.png">
@@ -1230,6 +1240,20 @@ and _stanceCheck isnot "top">>
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/black/xrayanalcum.png">
 		</div>
 	<</if>>
+	<<if $anusstate is "doublepenetrated">>
+		<<if $NPCList[$npcDAP[0]].penis is "anusdouble" and $NPCList[$npcDAP[1]].penis is "anusdouble">>
+			<<set _tempspeed to _animspeed>>
+			<<set _animspeed to 'mid'>>
+			<div class="i256" @id="_anusID">
+				<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xraydoubleanalcum.png">
+			</div>
+			<<set _animspeed to _tempspeed>>
+		<<else>>
+			<div class="i256" @id="_anusID">
+				<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/black/xrayanalcum.png">
+			</div>
+		<</if>>
+	<</if>>
 <<else>>
 	<<if $condomVaginalImg and $vaginastate is "penetrated">>
 		<div class="i256" @id="_vagID">
@@ -1248,6 +1272,20 @@ and _stanceCheck isnot "top">>
 		<div class="i256" @id="_anusID">
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xrayanalcum.png">
 		</div>
+	<</if>>
+	<<if $anusstate is "doublepenetrated">>
+		<<if $NPCList[$npcDAP[0]].penis is "anusdouble" and $NPCList[$npcDAP[1]].penis is "anusdouble">>
+			<<set _tempspeed to _animspeed>>
+			<<set _animspeed to 'mid'>>
+			<div class="i256" @id="_anusID">
+				<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xraydoubleanalcum.png">
+			</div>
+			<<set _animspeed to _tempspeed>>
+		<<else>>
+			<div class="i256" @id="_anusID">
+				<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xrayanalcum.png">
+			</div>
+		<</if>>
 	<</if>>
 <</if>>
 
@@ -1288,7 +1326,7 @@ and _stanceCheck isnot "top">>
 
 <<set _pbColour = ($makeup.pbcolour != 0 ? $makeup.pbcolour : $naturalhaircolour).replace(/ /g, '-')>>
 
-<<if $vaginaexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1>>
+<<if $player.vaginaExist and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1>>
 	<div class="i64" id="closevagina">
 	<<set _vagina = _img.vagina>>
 	<<set _aroused = $vaginaWetness gte 75>>
@@ -1437,7 +1475,7 @@ and _stanceCheck isnot "top">>
 			<img @class="'pbhair-' + _pbColour + ' ' + _frames" @src="'img/sex/close/' + _position + '/vaginahirsute.png'">
 		<</if>>
 		<!-- Hermaphrodite penis -->
-		<<if $penisexist is 1>>
+		<<if $player.penisExist>>
 			<<if $player.ballsExist is false>>
 				<img @class="_penis_frames" @src="_img.futavaginanoballs" @style="'filter: ' + _filters.body">
 			<<else>>
@@ -1567,10 +1605,10 @@ and _stanceCheck isnot "top">>
 <</if>>
 </div>
 
-<<if $penisexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1>>
+<<if $player.penisExist and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1>>
 	<div class="i64" id="closepenis">
 
-	<<if $vaginaexist is 1>>
+	<<if $player.vaginaExist>>
 		<img @class="'anim-close-6f-'+_animspeed" @src="_img.futapenisbase" @style="'filter: '+_filters.body">
 	<<else>>
 		<img @class="'anim-close-6f-'+_animspeed" @src="_img.penisbase" @style="'filter: '+_filters.body">

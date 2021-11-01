@@ -9,9 +9,10 @@
 				<<if _pregnancy[_i] is null>>
 					<<switch $args[0]>>
 						<<case "slimes" "eels" "worms" "snakes" "spiders" "slugs" "maggots">>
-							<<set _creatureType to $args[0][0].toUpperCase() + $args[0].substring(1, $args[0].length - 1)>>
+							<<set _creatureType to toTitleCase($args[0])>>
+							<<set _creatureType to _creatureType.substring(0,_creatureType.length - 1)>>
 						<<default>>
-							<<set _creatureType to $args[0][0].toUpperCase() + $args[0].substring(1)>>
+							<<set _creatureType to toTitleCase($args[0])>>
 					<</switch>>
 					<<if $args[2]>>
 						<<set _egg to {
@@ -35,8 +36,11 @@
 								"speed": random(60,360)
 							}
 						}>>
-						<<if _creatureType is "Tentacle">>
+						<<if _creatureType is "Tentacle" or _creatureType is "Vine">>
 							<<set _egg.stats.speed to clone(_egg.stats.speed * 0.9)>>
+						<</if>>
+						<<if _creatureType is "Pale Tentacle" or _creatureType is "Pale Slime">>
+							<<set _egg.stats.speed to clone(_egg.stats.speed * 0.6)>>
 						<</if>>
 						<<if _creatureType is "Lurker">>
 							<<run _egg.stats.growth += 14>>
@@ -98,10 +102,6 @@
 	<</for>>
 	<<set _pregnancy.fertile to false>>
 	<<set _pregnancy.fertilised to true>>
-	<<if _pregnancy.motherStatus is 0 and _pregnancy.givenBirth gt 2>>
-		<<set _pregnancy.motherStatus to 1>>
-		<<set _pregnancy.maxCount to 2>>
-	<</if>>
 <</if>>
 <</widget>>
 
@@ -254,6 +254,10 @@
 				<<set _pregnancy[$args[0]] to null>>
 				<<set _pregnancy.count -= 1>>
 				<<set _pregnancy.givenBirth += 1>>
+				<<if _pregnancy.motherStatus is 0 and _pregnancy.givenBirth gte 3>>
+					<<set _pregnancy.motherStatus to 1>>
+					<<set _pregnancy.maxCount to 2>>
+				<</if>>
 			<<default>>
 				<<if $args[1] isnot null>>
 					<<set $container[$args[0]].creatures[$args[1]] to null>>
@@ -264,7 +268,7 @@
 <</widget>>
 
 <<widget "menstruationCycle">>
-<<if $sexStats.vagina.menstruation.running is true and $vaginaexist is 1>>
+<<if $sexStats.vagina.menstruation.running is true and $player.vaginaExist>>
 	<<set _menstruation to $sexStats.vagina.menstruation>>
 	<<set _pills to $sexStats.pills>>
 	<<if $sexStats.vagina.menstruation.currentState is "normal">>
@@ -367,7 +371,7 @@
 			<<set _pregnancy.ultrasoundDone-->>
 		<</if>>
 		<<switch _pregnancy.type>>
-			<<case "npc">><<set _multiplier to (1/(1/9*$humanPregnancyMonths))>>
+			<<case "human">><<set _multiplier to (1/(1/9*$humanPregnancyMonths))>>
 			<<case "wolf">><<set _multiplier to (1/(1/12*$wolfPregnancyWeeks))>>
 			<<default>><<set _multiplier to 1>>
 		<</switch>>
@@ -1028,6 +1032,7 @@
 	<<case "compound">>
 	<<case "temple">>
 	<<case "cave">>
+	<<case "prison">>
 	<<case "edencabin">>
 		<<if $sexStats.vagina.pregnancy.potentialFathers.includes("Eden")>>
 			/*Eden thinks it's his child?*/
@@ -1299,7 +1304,7 @@
 	<<if $args[0] is "pc">>
 		<<pregnancyBabyBase $args[0] $args[1] $args[2]>>
 		<<set $_pregnancy to $sexStats.vagina.pregnancy>>
-		<<if $vaginaexist isnot 1 or $_pregnancy[0] isnot null>>
+		<<if !$player.vaginaExist or $_pregnancy[0] isnot null>>
 			<<set _prevent to true>>
 		<</if>>
 		<<if _pills.pregnancy.type is "fertility">>
@@ -1442,7 +1447,7 @@
 	<<pregnancyBabyBase $args[0] $args[1] $args[2]>>
 	<<if $args[0] is "pc">>
 		<<set $_pregnancy to $sexStats.vagina.pregnancy>>
-		<<if $vaginaexist isnot 1 or $_pregnancy[0] isnot null>>
+		<<if !$player.vaginaExist or $_pregnancy[0] isnot null>>
 			<<set _prevent to true>>
 		<</if>>
 	<<else>>

@@ -67,8 +67,7 @@
 	<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gt 0>>
 		<<npcincr Robin trauma -1>>
 	<</if>>
-	<<set $robinschoolmorning to 0>>
-	<<set $robinschoolafternoon to 0>>
+	<<unset $robinlocationoverride>>
 	<<set $baileyvisit to 0>>
 	<<set $robinwalk to 0>>
 	<<if $weekday is 7 and $brothelshowdata.type isnot "none" and not $brothelshowdata.done and $brothelshowdata.intro>>
@@ -220,6 +219,7 @@
 	<<unset $greatHawkMonsterRoll>>
 	<<unset $estate_bluffed>>
 	<<unset $estate_chaos>>
+	<<prison_day>>
 	<<if $stall_rejected gte 1>>
 		<<set $stall_rejected -= 1>>
 		<<set $stall_rejected = Math.clamp($stall_rejected, 0, 100)>>
@@ -564,7 +564,7 @@
 
 	<<moonstate>>
 
-	<<if $schoolday is 1>>
+	<<if $schoolday is 1 and $location isnot "prison">>
 		<<if $scienceattended isnot 1>>
 			<<set $sciencemissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
@@ -675,7 +675,7 @@
 
 	<<physicalAdjustments>>
 
-	<<if $penisexist is 1>>
+	<<if $player.penisExist>>
 		<<set _amount to $penissize - 1>>
 		<<if $semen_volume lte 24>>
 			<<set _amount++>>
@@ -748,6 +748,13 @@
 		<<if $purity gte 1000>>
 			<<set $angelbuild += 2>>
 		<</if>>
+	<</if>>
+
+	<<if $angel gte 4>>
+		<<set $angelBanishMax to Math.floor($angelbuild / 10)>>
+		<<set $angelBanish to $angelBanishMax>>
+	<<else>>
+		<<set $angelBanish to 0>>
 	<</if>>
 
 	<<set $angelbuild -= 1>>
@@ -946,6 +953,7 @@
 	<<unset $eden_soap>>
 	<<unset $eden_search>>
 	<<unset $edenexposed>>
+	<<unset $edenspringjoin>>
 	<<unset $salveuse>>
 	<<set $edenmassage to 0>>
 	<<set $edenhuntcaught to 0>>
@@ -980,25 +988,20 @@
 		<<set $NPCName[$NPCNameList.indexOf("Kylar")].lust to Math.clamp($NPCName[$NPCNameList.indexOf("Kylar")].lust, 0, 100)>>
 		<<set $NPCName[$NPCNameList.indexOf("Kylar")].love to Math.clamp($NPCName[$NPCNameList.indexOf("Kylar")].love, 0, 100)>>
 		<<set $NPCName[$NPCNameList.indexOf("Kylar")].rage to Math.clamp($NPCName[$NPCNameList.indexOf("Kylar")].rage, 0, 100)>>
-		<<set $kylartimer += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
-		<<set $kylarhometimer += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
-		<<set $kylarspray to 0>>
-		<<set $kylarstreettimer += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
-		<<unset $kylar_bodywriting>>
-		<<unset $kylarsydneywriting>>
-		<<unset $kylar_invite>>
-		<<unset $kylar_undies_taken>>
-		<<if $kylar_riddle is 1>>
-			<<set $kylar_riddle to 2>>
+		<<set $kylar.timer.halls += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
+		<<set $kylar.timer.home += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
+		<<set $kylar.timer.street += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
+		<<if $kylar.riddle is 1>>
+			<<set $kylar.riddle to 2>>
 		<<else>>
-			<<unset $kylar_riddle>>
+			<<set $kylar.riddle to 0>>
 		<</if>>
-		<<set $kylarwalk to 0>>
-		<<if $kylarFountainIntro is 1 and random(1,100) gte 20>>
-			<<set $kylarFountain to 1>>
+		<<if $kylarSeen.includes("fountainIntro") and random(1,100) gte 20>>
+			<<set $kylar.fountain to 1>>
 		<<else>>
-			<<set $kylarFountain to 0>>
+			<<set $kylar.fountain to 0>>
 		<</if>>
+		<<set $kylarDaily to {}>>
 	<</if>>
 
 	<<if $NPCName[$NPCNameList.indexOf("Avery")].state isnot "dismissed">>
@@ -1025,7 +1028,7 @@
 	<</if>>
 
 	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1>>
-		<<sydneyStatusCheck>>
+		<<NPCStatusCheck "Sydney">>
 		<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1 and $NPCName[$NPCNameList.indexOf("Sydney")].virginity.temple is true>>
 			<<npcincr Sydney purity 1>>
 		<</if>>
@@ -1119,26 +1122,37 @@
 		<</if>>
 	<</if>>
 
-	<<if $skulduggery gte 100 and $skulduggeryday lt 100>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="pink">F+.</span>
-	<<elseif $skulduggery gte 200 and $skulduggeryday lt 200>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="purple">D.</span>
-	<<elseif $skulduggery gte 300 and $skulduggeryday lt 300>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="purple">D+.</span>
-	<<elseif $skulduggery gte 400 and $skulduggeryday lt 400>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="blue">C.</span>
-	<<elseif $skulduggery gte 500 and $skulduggeryday lt 500>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="blue">C+.</span>
-	<<elseif $skulduggery gte 600 and $skulduggeryday lt 600>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="lblue">B.</span>
-	<<elseif $skulduggery gte 700 and $skulduggeryday lt 700>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="lblue">B+.</span>
-	<<elseif $skulduggery gte 800 and $skulduggeryday lt 800>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="teal">A.</span>
+	<<if $wraith>>
+		<<if $wraithAnger>>
+			<<if $wraithAnger gt 0>>
+				<<set $wraithAnger -->>
+			<<else>>
+				<<set $wraith.offspring to "">>
+				<<unset $wraithAnger>>
+			<</if>>
+		<</if>>
+	<</if>>
+
+	<<if $skulduggery gte 1000 and $skulduggeryday lt 1000>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="green">S.</span>
 	<<elseif $skulduggery gte 900 and $skulduggeryday lt 900>>
 		<span class="gold">Your skulduggery has improved to</span> <span class="teal">A+.</span>
-	<<elseif $skulduggery gte 1000 and $skulduggeryday lt 1000>>
-		<span class="gold">Your skulduggery has improved to</span> <span class="Green">S.</span>
+	<<elseif $skulduggery gte 800 and $skulduggeryday lt 800>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="teal">A.</span>
+	<<elseif $skulduggery gte 700 and $skulduggeryday lt 700>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="lblue">B+.</span>
+	<<elseif $skulduggery gte 600 and $skulduggeryday lt 600>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="lblue">B.</span>
+	<<elseif $skulduggery gte 500 and $skulduggeryday lt 500>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="blue">C+.</span>
+	<<elseif $skulduggery gte 400 and $skulduggeryday lt 400>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="blue">C.</span>
+	<<elseif $skulduggery gte 300 and $skulduggeryday lt 300>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="purple">D+.</span>
+	<<elseif $skulduggery gte 200 and $skulduggeryday lt 200>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="purple">D.</span>
+	<<elseif $skulduggery gte 100 and $skulduggeryday lt 100>>
+		<span class="gold">Your skulduggery has improved to</span> <span class="pink">F+.</span>
 	<</if>>
 	<<set $skulduggeryday to $skulduggery>>
 
@@ -1213,8 +1227,7 @@
 		<<unset $smuggler_known>>
 	<</if>>
 
-	<<for _e to 0; _e lt $bodypart_number; _e++>>
-		<<activebodypart>>
+	<<for _active_bodypart range setup.bodyparts>>
 		<<if $skin[_active_bodypart].pen is "marker" and random(1, 2) is 2>>
 			<<bodywriting_clear _active_bodypart>>
 		<</if>>
@@ -1263,6 +1276,7 @@
 	<<if $pregnancyTesting>>
 		<<menstruationCycle>>
 	<</if>>
+	<<set $robinDebtAsk to 0>>
 <</if>>
 <</widget>>
 
@@ -1304,9 +1318,9 @@
 <</widget>>
 
 <<widget "hour">>
-<<if $statFreeze isnot true>>
+<<if $statFreeze isnot true or $schism>>
 	<<for $minute gte 60>>
-		<<set $minute -= 60>><<orgasmhour>>
+		<<set $minute -= 60>><<orgasmHourlyRecovery>>
 		<<if $innocencestate is 1 and $control lte 0>>
 			<<awareness 1>>
 		<</if>>
@@ -1424,7 +1438,7 @@
 <</widget>>
 
 <<widget "advancetohour">>
-<<set _min to $time - ($hour * 60)>>
+<<set _min to 60 - ($time - ($hour * 60))>>
 <<pass _min>>
 <</widget>>
 
@@ -1480,10 +1494,13 @@
 	<<set $NPCName[$NPCNameList.indexOf("Robin")].trauma to 100>><<set $robin_injured to 1>><<set $robineventnote to 1>><<set $robinmissing to 1>>
 <</if>>
 <<set $robinmoney += 300>>
+<<unset $robinBrothelWeekly>>
 
 <<if $edenfreedom gte 1 and $edenshopping is 2>>
 	<<set $edenshopping to 0>>
 <</if>>
+
+<<unset $edenPreyWeekly>>
 
 <<if $loft_kylar>>
 	<<set $loft_spray to 0>>
@@ -1567,11 +1584,14 @@
 <<if $monthday is _lastDay>>
 	<<set $moonstate to "evening">>
 	<<set $moonEvent to true>>
+	<<checkWraith true>>
 <<elseif $monthday is 1>>
 	<<set $moonstate to "morning">>
+	<<checkWraith true>>
 <<else>>
 	<<set $moonstate to 0>>
 	<<unset $moonEvent>>
+	<<clearWraith>>
 <</if>>
 
 <</widget>>

@@ -348,12 +348,41 @@ window.settingsAsphyxiation = function () {
 	});
 }
 
+window.settingsNudeGenderAppearance = function () {
+	let updateText = () => {
+		let val = V.NudeGenderDC;
+		let text = null;
+		switch (val) {
+			case 0:
+				text = "NPCs will <span class='blue' style='margin-left: unset; min-width: unset;'>ignore</span> your genitals when perceiving your gender."; break;
+			case 1:
+				text = "NPCs will <span class='purple' style='margin-left: unset; min-width: unset;'>consider</span> your genitals when perceiving your gender."; break;
+			case 2:
+				text = "NPCs will <span class='red' style='margin-left: unset; min-width: unset;'>judge</span> your gender based on your genitals."; break;
+
+			default:
+				text = "Error: bad value: " + val;
+				val = 0;
+		}
+		jQuery('#numberslider-value-nudegenderdc').text('').append(text).addClass('small-description')
+												 .css('text-align', 'left')
+												 .css('margin-left', '-14em');
+	};
+	jQuery(document).ready(() => {
+		updateText();
+		jQuery('#numberslider-input-nudegenderdc').on('input change', function (e) { updateText(); })
+												 .css('width', '75%')
+												 .css('min-height', 'unset')
+												 .css('height', '0.75em')
+												 .css('margin-left', '1em');
+	});
+}
+
 window.settingsNamedNpcBreastSize = function () {
 	const breastSizes = ["nipple","budding","tiny","small","pert","modest","full","large","ample","massive","huge","gigantic","enormous"];
 
 	let updateText = () => {
-		const npcId = T.npcId;
-		const npc = V.NPCName[npcId];
+		const npc = V.NPCName[T.npcId];
 		const val = npc.breastsize;
 
 		const text = breastSizes[val];
@@ -366,11 +395,34 @@ window.settingsNamedNpcBreastSize = function () {
 			npc.breastsdesc = text + "s";
 		}
 
-		jQuery('#numberslider-value-npcname-npcidbreastsize').text('').append(npc.breastsdesc);
+		jQuery('#numberslider-value-npcname-npcidbreastsize').text(npc.breastsdesc);
 	};
 
 	jQuery(document).ready(() => {
 		updateText();
 		jQuery('#numberslider-input-npcname-npcidbreastsize').on('input change', function (e) { updateText(); });
+	});
+}
+
+window.settingsNamedNpcGenderUpdate = function () {
+	let updateButtonsActive = () => {
+		jQuery('[id*=radiobutton-npcname-npcidpenissize]').prop("disabled", V.NPCName[T.npcId].gender == "f");
+	};
+
+	jQuery(document).ready(() => {
+		updateButtonsActive();
+		jQuery('[id*=radiobutton-npcname-npcidgender]').on('change', function (e) { updateButtonsActive(); });
+	});
+}
+
+window.settingsPCGenderUpdate = function () {
+	let updateButtonsActive = () => {
+		jQuery('[id*=radiobutton-penissize]').prop("disabled", V.player.gender == "f");
+		jQuery('[id*=radiobutton-playerballsexist]').prop("disabled", V.player.gender !== "h");
+	};
+
+	jQuery(document).ready(() => {
+		updateButtonsActive();
+		jQuery('.playergender [id*=radiobutton-playergender]').on('change', function (e) { updateButtonsActive(); });
 	});
 }

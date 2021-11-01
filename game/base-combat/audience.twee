@@ -732,6 +732,8 @@
 				<<elseif $rng gte 33>>
 					"Now however large your breasts grow, I'll have evidence of when they were small and cute."
 					<<insecurity "breasts_small" 1>><<ginsecurity "breasts_small">>
+				<<elseif $rng gte 20 and $NPCList[$npcDAP[0]].penis is "anusdouble" and $NPCList[$npcDAP[1]].penis is "anusdouble">>
+					"<<pHer>> nipples are so hard! This <<bitch>> loves double stuffing!"
 				<<else>>
 					"Don't be ashamed of your small breasts, they're adorable."
 					<<insecurity "breasts_small" 1>><<ginsecurity "breasts_small">>
@@ -779,6 +781,9 @@
 				<<insecurity "breasts_big" 1>><<ginsecurity "breasts_big">>
 			<<elseif $rng gte 33>>
 				"Those are some impressive mammaries."
+				<<insecurity "breasts_big" 1>><<ginsecurity "breasts_big">>
+			<<elseif $rng gte 20 and $NPCList[$npcDAP[0]].penis is "anusdouble" and $NPCList[$npcDAP[1]].penis is "anusdouble">>
+				"I love how <<pher>> milkers jiggle as their cocks ravage <<pher>> slut ass!"
 				<<insecurity "breasts_big" 1>><<ginsecurity "breasts_big">>
 			<<else>>
 				"Don't be ashamed, you should be proud of such large breasts."
@@ -884,6 +889,26 @@
 			"It might be too much for <<phim>>. I can't wait."
 		<<else>>
 			"You're actually gonna eat <<pher>> ass?"
+		<</if>>
+	<<elseif $anusstate isnot 0 and $anusstate.startsWith("double")>>
+		<<if $NPCList[$npcDAP[0]].penis is "anusdouble" and $NPCList[$npcDAP[1]].penis is "anusdouble">>
+			<<if $orgasmdown gte 1>>
+				"This is the money shot! Look at <<phim>> shake with two cocks in <<pher>> ass!"
+			<<else>>
+				<<set _myrng to random(1,2)>>
+				<<switch _myrng>>
+					<<case 1>>
+						"I got a nice close-up of <<pher>> ass getting double fucked. Super slut!"
+					<<case 2>>
+						"Yes that's it, take both those cocks you dirty slut! The camera loves you!"
+				<</switch>>
+			<</if>>
+		<<else>>
+			<<if $orgasmdown gte 1>>
+				"<<pShes>> already cumming, I wonder how <<pshe>> would take a proper double anal fucking."
+			<<else>>
+				"I want to catch the moment both cocks go in <<pher>> ass."
+			<</if>>
 		<</if>>
 	<<else>>
 		<<if $orgasmdown gte 1>>
@@ -1053,7 +1078,7 @@
 				<<else>>
 					"Are those spasms from cumming?"
 				<</if>>
-			<<elseif $penisexist is 1>>
+			<<elseif $player.penisExist>>
 				<<if $devstate gte 1 and $orgasmcount lt 24>>
 					<<if $rng gte 67>>
 						"I got a shot of <<pher>> cum flying through the air."
@@ -1080,7 +1105,7 @@
 			<</if>>
 		<<else>>
 			<<if $worn.genitals.type.includes("chastity")>>
-				<<if $rng gte 90 and $anusstate is "penetrated">>
+				<<if $rng gte 90 and ($anusstate is "penetrated" or $anusstate is "doublepenetrated")>>
 					"Should have gotten yourself an anal shield, going to cum in you regardless"
 				<<elseif $rng gte 67>>
 					"As if that will help you stay pure."
@@ -1090,7 +1115,7 @@
 					"Shame I can't see what's under that device."
 				<</if>>
 			<<elseif $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2>>
-				<<if $penisexist is 1>>
+				<<if $player.penisExist>>
 					<<if $penisuse is "cover">>
 						<<if $rng gte 67>>
 							"Move your hand, I want to see your penis."
@@ -1421,7 +1446,7 @@
 				<</if>>
 			<</if>>
 		<</if>>
-	<<elseif $anusstate is "imminent">>
+	<<elseif $anusstate is "imminent" or $anusstate is "doubleimminent">>
 		<<if $enemytype is "beast">>
 			<<if $orgasmdown gte 1>>
 				<<if $face is "covered">>
@@ -1451,7 +1476,7 @@
 				<</if>>
 			<</if>>
 		<</if>>
-	<<elseif $anusstate is "entrance">>
+	<<elseif $anusstate is "entrance" or $anusstate is "doubleentrance">>
 		<<if $enemytype is "beast">>
 			<<if $orgasmdown gte 1>>
 				<<if $face is "covered">>
@@ -1479,6 +1504,20 @@
 				<<else>>
 					"Fuck <<phim>>, make <<phim>> squirm."
 				<</if>>
+			<</if>>
+		<</if>>
+	<<elseif $anusstate is "doublepenetrated">>
+		<<if $orgasmdown gte 1>>
+			<<if $face is "covered">>
+				"You're cumming with two dicks in your ass, how much dignity do you think you're protecting?
+			<<else>>
+				"That's right, cum on those dicks. Show the world what a huge slut you are."
+			<</if>>
+		<<else>>
+			<<if $face is "covered">>
+				"Fuck <<phim>> harder! This <<bitch>> can take both of you!"
+			<<else>>
+				"Keep ruining this <<girl>>'s ass, I want more pictures."
 			<</if>>
 		<</if>>
 	<<elseif $mouthstate is "penetrated">>
@@ -1879,7 +1918,7 @@
 <</if>>
 
 <<set $rng to random(1, 100)>>
-<<if $rng gte 91 and $audiencecamera6 is 0>>
+<<if $rng gte 91 and $audiencecamera6>>
 	<span class="pink">A $audiencemember pulls out a phone and points the camera at you.</span>
 	<<if $audiencecamera1 is 0>>
 		<<set $audiencecamera1 to $audiencemember>>
@@ -2333,51 +2372,53 @@
 	<br>
 <</if>>
 
-<<if $audiencecamera1 isnot 0>>
-	<<set $audienceselector to 1>>
-	<<audiencecamera>>
-	<br>
-<</if>>
+<<if $location isnot "prison">>
+	<<if $audiencecamera1 isnot 0>>
+		<<set $audienceselector to 1>>
+		<<audiencecamera>>
+		<br>
+	<</if>>
 
-<<if $audiencecamera2 isnot 0>>
-	<<set $audienceselector to 2>>
-	<<audiencecamera>>
-	<br>
-<</if>>
+	<<if $audiencecamera2 isnot 0>>
+		<<set $audienceselector to 2>>
+		<<audiencecamera>>
+		<br>
+	<</if>>
 
-<<if $audiencecamera3 isnot 0>>
-	<<set $audienceselector to 3>>
-	<<audiencecamera>>
-	<br>
-<</if>>
+	<<if $audiencecamera3 isnot 0>>
+		<<set $audienceselector to 3>>
+		<<audiencecamera>>
+		<br>
+	<</if>>
 
-<<if $audiencecamera4 isnot 0>>
-	<<set $audienceselector to 4>>
-	<<audiencecamera>>
-	<br>
-<</if>>
+	<<if $audiencecamera4 isnot 0>>
+		<<set $audienceselector to 4>>
+		<<audiencecamera>>
+		<br>
+	<</if>>
 
-<<if $audiencecamera5 isnot 0>>
-	<<set $audienceselector to 5>>
-	<<audiencecamera>>
-	<br>
-<</if>>
+	<<if $audiencecamera5 isnot 0>>
+		<<set $audienceselector to 5>>
+		<<audiencecamera>>
+		<br>
+	<</if>>
 
-<<if $audiencecamera6 isnot 0>>
-	<<set $audienceselector to 6>>
-	<<audiencecamera>>
-	<br>
-<</if>>
+	<<if $audiencecamera6 isnot 0>>
+		<<set $audienceselector to 6>>
+		<<audiencecamera>>
+		<br>
+	<</if>>
 
-<<set $facepic to 0>>
-<<set $breastpic to 0>>
-<<set $bottompic to 0>>
-<<set $genitalpic to 0>>
-<<set $bodypic to 0>>
+	<<set $facepic to 0>>
+	<<set $breastpic to 0>>
+	<<set $bottompic to 0>>
+	<<set $genitalpic to 0>>
+	<<set $bodypic to 0>>
 
-<<if $audiencecamera1 isnot 0 and $face is "covered">>
-	<span class="teal">At least your face is hidden.</span>
-	<br>
+	<<if $audiencecamera1 isnot 0 and $face is "covered">>
+		<span class="teal">At least your face is hidden.</span>
+		<br>
+	<</if>>
 <</if>>
 
 <<audiencespeech>>

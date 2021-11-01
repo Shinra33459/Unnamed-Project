@@ -2026,7 +2026,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 			<</if>>
 		<</if>>
 		<<if $lactating is 1 and $breastfeedingdisable is "f" and $milk_amount gte 1>>
-			<span class="pink">You feel milk leak from your buds</span>
+			<span class="pink">You feel milk leak from your buds.</span>
 			<<breastfeed>>
 			<<milkvolume 1>>
 		<<else>>
@@ -2262,7 +2262,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 			<</if>>
 
 			<<struggle_attach mouth>><<set $mouthuse to "struggle">><<set $mouthstate to "struggle">>
-		<<elseif $rng gte 61 and $vaginause is 0 and $vaginaexist is 1>>
+		<<elseif $rng gte 61 and $vaginause is 0 and $player.vaginaExist>>
 			<<if $underwater is 1>>
 				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>> swims towards you, <span class="blue">landing on your pelvis.</span>
 			<<elseif $struggle.enemy[_i].motion is "flying">>
@@ -2271,7 +2271,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>> leaps towards you, <span class="blue">landing on your pelvis.</span>
 			<</if>>
 			<<struggle_attach vagina>><<set $vaginause to "struggle">><<set $vaginastate to "struggle">>
-		<<elseif $rng gte 41 and $penisuse is 0 and $penisexist is 1>>
+		<<elseif $rng gte 41 and $penisuse is 0 and $player.penisExist>>
 			<<if $underwater is 1>>
 				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>> swims towards you, <span class="blue">landing on your tummy.</span>
 			<<elseif $struggle.enemy[_i].motion is "flying">>
@@ -2412,6 +2412,15 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<set $drugged += 25>>
 <<elseif $args[0] is "anus" and ($struggle.anus.creature is "lurker" or $struggle.anus.creature is "slime")>>
 	<<set $drugged += 25>>
+<<elseif $args[0] is "mouth" and $struggle.mouth.creature is "pale slime">>
+	<<set $drugged += 50>>
+	<<set $hallucinogen += 40>>
+<<elseif $args[0] is "vagina" and $struggle.vagina.creature is "pale slime">>
+	<<set $drugged += 50>>
+	<<set $hallucinogen += 40>>
+<<elseif $args[0] is "anus" and $struggle.anus.creature is "pale slime">>
+	<<set $drugged += 50>>
+	<<set $hallucinogen += 40>>
 <</if>>
 <</widget>>
 
@@ -2420,11 +2429,11 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<widget "struggle_clothes">>
 
 <<if $args[0] is "vagina" or $args[0] is "penis">>
-	<<if $worn.over_lower.vagina_exposed is 0 or ($worn.over_lower.skirt is 1 and $worn.over_lower.skirt_down is 1)>>
+	<<if $worn.over_lower.vagina_exposed is 0 or (setup.clothes.over_lower[$worn.over_lower.index].skirt is 1 and $worn.over_lower.skirt_down is 1)>>
 		<<set _struggle_exposed to "over">>
-	<<elseif $worn.lower.vagina_exposed is 0 or ($worn.lower.skirt is 1 and $worn.lower.skirt_down is 1)>>
+	<<elseif $worn.lower.vagina_exposed is 0 or (setup.clothes.lower[$worn.lower.index].skirt is 1 and $worn.lower.skirt_down is 1)>>
 		<<set _struggle_exposed to "main">>
-	<<elseif $worn.under_lower.vagina_exposed is 0 or ($worn.under_lower.skirt is 1 and $worn.under_lower.skirt_down is 1)>>
+	<<elseif $worn.under_lower.vagina_exposed is 0 or (setup.clothes.under_lower[$worn.under_lower.index].skirt is 1 and $worn.under_lower.skirt_down is 1)>>
 		<<set _struggle_exposed to "under">>
 	<<elseif $worn.genitals.type.includes("chastity")>>
 		<<set _struggle_exposed to "genitals">>
@@ -2432,11 +2441,11 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 		<<set _struggle_exposed to "naked">>
 	<</if>>
 <<elseif $args[0] is "anus">>
-	<<if ($worn.over_lower.skirt is 1 and $worn.over_lower.skirt_down is 1) or $worn.over_lower.anus_exposed is 0>>
+	<<if (setup.clothes.over_lower[$worn.over_lower.index].skirt is 1 and $worn.over_lower.skirt_down is 1) or $worn.over_lower.anus_exposed is 0>>
 		<<set _struggle_exposed to "over">>
-	<<elseif $worn.lower.anus_exposed is 0 or ($worn.lower.skirt is 1 and $worn.lower.skirt_down is 1)>>
+	<<elseif $worn.lower.anus_exposed is 0 or (setup.clothes.lower[$worn.lower.index].skirt is 1 and $worn.lower.skirt_down is 1)>>
 		<<set _struggle_exposed to "main">>
-	<<elseif $worn.under_lower.anus_exposed is 0 or ($worn.under_lower.skirt is 1 and $worn.under_lower.skirt_down is 1)>>
+	<<elseif $worn.under_lower.anus_exposed is 0 or (setup.clothes.under_lower[$worn.under_lower.index].skirt is 1 and $worn.under_lower.skirt_down is 1)>>
 		<<set _struggle_exposed to "under">>
 	<<elseif $worn.genitals.anal_shield is 1>>
 		<<set _struggle_exposed to "genitals">>
@@ -2466,6 +2475,8 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<set $worn.over_upper.integrity -= 10>>
 	<<if $struggle[$args[0]].creature is "slime">>
 		<span class="purple">The fabric hisses as it dissolves in the slime.</span><<set $worn.over_upper.integrity -= 30>>
+	<<elseif $struggle[$args[0]].creature is "pale slime">>
+		<span class="purple">The fabric violently hisses as it dissolves in the pale slime.</span><<set $worn.over_upper.integrity -= 50>>
 	<</if>>
 	<<if $worn.over_upper.integrity lte 0>>
 		<<integritycheck no_text>><<exposure>>
@@ -2485,6 +2496,8 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<set $worn.upper.integrity -= 10>>
 	<<if $struggle[$args[0]].creature is "slime">>
 		<span class="purple">The fabric hisses as it dissolves in the slime.</span><<set $worn.upper.integrity -= 30>>
+	<<elseif $struggle[$args[0]].creature is "pale slime">>
+		<span class="purple">The fabric violently hisses as it dissolves in the pale slime.</span><<set $worn.upper.integrity -= 50>>
 	<</if>>
 	<<if $worn.upper.integrity lte 0>>
 		<<integritycheck no_text>><<exposure>>
@@ -2504,7 +2517,9 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<set $worn.under_upper.integrity -= 10>>
 	<<if $struggle[$args[0]].creature is "slime">>
 		<span class="purple">The fabric hisses as it dissolves in the slime.</span><<set $worn.under_upper.integrity -= 30>>
-	<</if>>
+	<<elseif $struggle[$args[0]].creature is "pale slime">>
+		<span class="purple">The fabric violently hisses as it dissolves in the pale slime.</span><<set $worn.under_upper.integrity -= 50>>
+	<</if>>	
 	<<if $worn.under_upper.integrity lte 0>>
 		<<integritycheck no_text>><<exposure>>
 		<<if $struggle[$args[0]].legs is "tentacles">>
@@ -2523,6 +2538,8 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<set $worn.over_lower.integrity -= 10>>
 	<<if $struggle[$args[0]].creature is "slime">>
 		<span class="purple">The fabric hisses as it dissolves in the slime.</span><<set $worn.over_lower.integrity -= 30>>
+	<<elseif $struggle[$args[0]].creature is "pale slime">>
+		<span class="purple">The fabric violently hisses as it dissolves in the pale slime.</span><<set $worn.over_lower.integrity -= 50>>
 	<</if>>
 	<<if $worn.over_lower.integrity lte 0>>
 		<<integritycheck no_text>><<exposure>>
@@ -2542,6 +2559,8 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<set $worn.lower.integrity -= 10>>
 	<<if $struggle[$args[0]].creature is "slime">>
 		<span class="purple">The fabric hisses as it dissolves in the slime.</span><<set $worn.lower.integrity -= 30>>
+	<<elseif $struggle[$args[0]].creature is "pale slime">>
+		<span class="purple">The fabric violently hisses as it dissolves in the pale slime.</span><<set $worn.lower.integrity -= 50>>
 	<</if>>
 	<<if $worn.lower.integrity lte 0>>
 		<<integritycheck no_text>><<exposure>>
@@ -2561,6 +2580,8 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<set $worn.under_lower.integrity -= 10>>
 	<<if $struggle[$args[0]].creature is "slime">>
 		<span class="purple">The fabric hisses as it dissolves in the slime.</span><<set $worn.under_lower.integrity -= 30>>
+	<<elseif $struggle[$args[0]].creature is "pale slime">>
+		<span class="purple">The fabric violently hisses as it dissolves in the pale slime.</span><<set $worn.under_lower.integrity -= 50>>
 	<</if>>
 	<<if $worn.under_lower.integrity lte 0>>
 		<<integritycheck no_text>><<exposure>>
@@ -2579,6 +2600,8 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<</if>>
 	<<if $struggle[$args[0]].creature is "slime">>
 		<span class="purple">The material hisses as it dissolves in the slime.</span><<set $worn.genitals.integrity -= 30>>
+	<<elseif $struggle[$args[0]].creature is "pale slime">>
+		<span class="purple">The material violently hisses as it dissolves in the pale slime.</span><<set $worn.genitals.integrity -= 50>>
 	<</if>>
 	<<if $worn.genitals.integrity lte 0>>
 		<<integritycheck no_text>><<exposure>>

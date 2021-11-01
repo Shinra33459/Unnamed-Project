@@ -16,6 +16,8 @@
 <<set $asylumkeycard to 0>>
 <<set $asylumdistracted to 0>>
 <<wash>>
+<<set $wardrobe_location to "asylum">>
+<<wardrobeSelection true>>
 <<if $asylumintro is 1>>
 	<<npc Harper>><<person1>>
 	<<bind>><<upperwear 35>>
@@ -247,7 +249,7 @@ You snuggle under the covers.
 <br>
 <<link [[Sleep for 2 hours|Asylum Sleep]]>><<set $sleephour to 2>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
 <br>
-<<link [[Sleep for 1 hours|Asylum Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 1>>)<<ltiredness>>
+<<link [[Sleep for 1 hour|Asylum Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
 <br>
 <<link [[Just sleep|Asylum Sleep]]>><<set $sleephour to -1>><<set $saveDetails.auto.count++>><</link>> (??:??)<<ltiredness>>
 <br><br>
@@ -265,7 +267,7 @@ You snuggle under the covers.
 	You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
 	<br><br>
 <<elseif $nightmares gte 1 and $controlled is 0>>
-	You dream you are being hunted by something dark and terrible.
+	You dream you are being hunted by something <<if $wraith and $wraith.state is "haunt" and $rng lte 25>>pale<<else>>dark<</if>> and terrible.
 <<else>>
 	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
 		Your sleep is plagued by dirty dreams.
@@ -1421,7 +1423,7 @@ You look out the window. The towers are unmanned and the patrols missing as all 
 You run through the front door unobstructed, and across the grounds. You climb the fence and escape into the forest.
 <br><br>
 <<endevent>>
-<<set $asylumescaped to 1>>
+<<asylumescape>>
 <<link [[Next|Forest]]>><<set $forest to 100>><</link>>
 <br>
 
@@ -2106,8 +2108,8 @@ is an important part of your assessment so you need to be on your best behaviour
 	The <<person>> pushes you back against the wall, while the <<person2>><<person>> clips the back of your straightjacket to the links on the wall
 	- once at the waist and once at the neck - locking you standing in place. The <<person>> unfastens something at the side of your straightjacket,
 	and the <<person1>><<person>> pulls at the front. A section comes away, leaving your arms bound but your
-	<<if $worn.under_upper.name isnot "naked">>
-		<<undertop>> exposed. The <<person>> grabs your $worn.under_upper.name and pulls it up fully exposing your <<breasts>>.
+	<<if !$worn.under_upper.type.includes("naked")>>
+		<<undertop>> exposed. The <<person>> grabs your $worn.under_upper.name and pulls it up, fully exposing your <<breasts>>.
 	<<else>>
 		<<breasts>> fully exposed.
 	<</if>>
@@ -2146,7 +2148,7 @@ is an important part of your assessment so you need to be on your best behaviour
 	<br><br>
 	<<generate3>><<generate4>><<generate5>>
 	<<if $o_long_and_beautiful gte 1 and $o_long_and_beautiful lte 7>><<set $o_long_and_beautiful += 1>> /*Modifies person 4 enough */
-		<<set $NPCList[3].description to "long-haired">><<set $NPCList[3].adult to 0>><<set $NPCList[3].gender = "f">>
+		<<set $NPCList[3].description to "long-haired">><<set $NPCList[3].adult to 0>><<set $NPCList[3].gender = "f">><<set $NPCList[3].pronoun = "f">>
 	<</if>>
 
 	A moment later a <<person4>><<person>> is led in and set up similarly beside you. Finally,

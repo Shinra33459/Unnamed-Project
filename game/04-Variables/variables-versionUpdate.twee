@@ -64,10 +64,15 @@
 	<<unset $temple_virginity>>
 <</if>>
 
-<<if $player.penisExist is undefined>>
+<<if $player.penisExist is undefined and $penisexist isnot undefined>>
 	<<set $player.penisExist to ($penisexist is 1 ? true : false)>>
 	<<set $player.vaginaExist to ($vaginaexist is 1 ? true : false)>>
 <</if>>
+/* uncomment when we are ready to remove $penisexist completely
+<<if $penisexist isnot undefined>>
+	<<unset $penisexist>>
+	<<unset $vaginaexist>>
+<</if>> */
 
 <<if $player.ballsExist is undefined>>
 	<<set $player.ballsExist to ($player.gender isnot "f")>>
@@ -167,6 +172,15 @@
 	<<set $angelbuild to 0>>
 <</if>>
 
+<<if $angelBanish is undefined>>
+	<<set $angelBanishMax to 0>>
+	<<set $angelBanish to 0>>
+	<<if $angel gte 4>>
+		<<set $angelBanishMax to Math.floor($angelbuild / 10)>>
+		<<set $angelBanish to $angelBanishMax>>
+	<</if>>
+<</if>>
+
 <<if $demon is undefined>>
 	<<set $demon to 0>>
 <</if>>
@@ -195,6 +209,16 @@
 <<if $underupperwet is undefined>>
 	<<set $underupperwet to 0>>
 	<<set $underupperwetstage to 0>>
+<</if>>
+
+<<if $overlowerwet is undefined>>
+	<<set $overlowerwet to 0>>
+	<<set $overlowerwetstage to 0>>
+<</if>>
+
+<<if $overupperwet is undefined>>
+	<<set $overupperwet to 0>>
+	<<set $overupperwetstage to 0>>
 <</if>>
 
 <<if $schoolevent is undefined>>
@@ -396,6 +420,10 @@
 	<<set $chokeorgasm to 0>>
 <</if>>
 
+<<if $NudeGenderDC is undefined or $NudeGenderDC gt 2>>
+	<<set $NudeGenderDC to 2>>
+<</if>>
+
 <<if $hallucinogen is undefined>>
 	<<set $hallucinogen to 0>>
 <</if>>
@@ -525,20 +553,12 @@
 	<<set $spraystat to 0>>
 <</if>>
 
-<<if $kylarstreettimer is undefined>>
-	<<set $kylarstreettimer to 0>>
-<</if>>
-
 <<if $silhouettedisable is undefined>>
 	<<set $silhouettedisable to "f">>
 <</if>>
 
 <<if $watersportsdisable is undefined>>
 	<<set $watersportsdisable to "f">>
-<</if>>
-
-<<if $kylarraped is undefined>>
-	<<set $kylarraped to 0>>
 <</if>>
 
 <<if $averyrage isnot undefined>>
@@ -1166,6 +1186,10 @@
 	<<bodywriting_init>>
 <</if>>
 
+<<if $newlyWritten is undefined and $combat is 1>>
+	<<set $newlyWritten to []>>
+<</if>>
+
 <!-- This doesn't seem to declare the pbhair
 <<if $objectVersion.pbhair lt 1 or $objectVersion.pbhair is undefined>>
 	<<set $objectVersion.pbhair>>
@@ -1269,11 +1293,15 @@
 	<<set $wear_hands to "none">>
 <</if>>
 
-<<if $objectVersion.updateClothes lt 27 or $objectVersion.updateClothes is undefined>>
+<<if $objectVersion.updateClothes lt 28 or $objectVersion.updateClothes is undefined>>
 	<<updateClothes>>
-	<<set $objectVersion.updateClothes to 27>>
+	<<set $objectVersion.updateClothes to 28>>
 	<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 	Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
+<</if>>
+<<if $objectVersion.wardrobes lt 1 or $objectVersion.wardrobes is undefined>>
+	<<wardrobesUpdate>>
+	<<set $objectVersion.wardrobes to 1>>
 <</if>>
 
 <<if $mathsprojectwon is 1>>
@@ -1398,10 +1426,10 @@
 	<<set $closinghour to 21>>
 <</if>>
 
-<<if $objectVersion.specialClothes lt 4 or $objectVersion.specialClothes is undefined>>
+<<if $objectVersion.specialClothes lt 5 or $objectVersion.specialClothes is undefined>>
 	<<specialClothesSetup>>
 	<<specialClothesUpdate>>
-	<<set $objectVersion.specialClothes to 4>>
+	<<set $objectVersion.specialClothes to 5>>
 <</if>>
 
 <<if $objectVersion.uncomfortable lt 2 or $objectVersion.uncomfortable is undefined>>
@@ -1997,8 +2025,8 @@
 <</if>>
 
 <<if $mannequinHasPenis is undefined>>
-	<<set $mannequinHasPenis = $player.penisexist ? 1 : 0>>
-	<<set $mannequinBreastsSize = $mannequinHasPenis ? 0 : 3>>
+	<<set $mannequinHasPenis to $player.penisExist>>
+	<<set $mannequinBreastsSize to $mannequinHasPenis ? 0 : 3>>
 <</if>>
 <<if $shopPage is undefined>>
 	<<set $shopPage = 0>>
@@ -2203,23 +2231,19 @@
 	<<set $templePromised to "">>
 <</if>>
 
-<<if $perChastityFix is undefined>>
-    <<set $perChastityFix to 1>>
-    <<set _keys to Object.keys($per_npc)>>
-    <<for _npc range _keys>>
-        <<if $per_npc[_npc].chastity is undefined>>
-            <<set $per_npc[_npc].chastity to {penis:"", vagina:"", anus:""}>>
-        <</if>>
-    <</for>>
-<</if>>
-
-<<if $perPronounFix is undefined or $perPronounFix is 1>>
-    <<set $perPronounFix to 2>>
+<<if $perNPCFix is undefined>>
+	<<set $perNPCFix to 1>><<unset $perPronounFix>><<unset $perChastityFix>>
     <<set _keys to Object.keys($per_npc)>>
     <<for _npc range _keys>>
         <<if $per_npc[_npc].pronouns is undefined or $per_npc[_npc].pronouns.he is 0>>
 			<<generatePronouns $per_npc[_npc]>>
         <</if>>
+        <<if $per_npc[_npc].chastity is undefined>>
+            <<set $per_npc[_npc].chastity to {penis:"", vagina:"", anus:""}>>
+        <</if>>
+		<<if $per_npc[_npc].role is undefined>>
+			<<set $per_npc[_npc].role to "normal">>
+		<</if>>
     <</for>>
 <</if>>
 
@@ -2369,4 +2393,188 @@
 	<<set $penisexist to ($player.gender isnot "f" ? 1 : 0)>>
 <</if>>
 
+<<if $NPCName[0].penis is 0>>
+	<<initnpcgender>>
+<</if>>
+
+<<if $kylar is undefined>>
+	<<set $kylar to {}>>
+	<<set $kylar.raped to 0>>
+	<<set $kylar.riddle to 0>>
+	<<set $kylar.timer to {halls:0,street:0,home:0,love:0}>>
+	<<set $kylarSeen to []>>
+	<<set $kylarDaily to {}>>
+<</if>>
+<<if $kylarsydneywriting is 1>>
+	<<set $kylarSeen.pushUnique("sydneyWriting")>>
+	<<unset $kylarsydneywriting>>
+<</if>>
+<<if $sydneySeen isnot undefined>>
+	<<if $sydneySeen.includes("kylarwriting")>>
+		<<set $kylarSeen.pushUnique("sydneyWriting")>>
+		<<run delete $sydneySeen.pushUnique("kylarwriting")>>
+	<</if>>
+<</if>>
+<<if $kylarraped isnot undefined>>
+	<<set $kylar.raped to $kylarraped>>
+	<<unset $kylarraped>>
+<</if>>
+<<if $kylartimer isnot undefined>>
+	<<set $kylar.timer.halls to $kylartimer>>
+	<<unset $kylartimer>>
+<</if>>
+<<if $kylarstreettimer isnot undefined>>
+	<<set $kylar.timer.street to $kylarstreettimer>>
+	<<unset $kylarstreettimer>>
+<</if>>
+<<if $kylarsaidlove isnot undefined>>
+	<<set $kylarSeen.pushUnique("saidLove")>>
+	<<unset $kylarsaidlove>>
+<</if>>
+<<if $kylarspray is 1>>
+	<<set $kylarDaily.spray to true>>
+	<<unset $kylarspray>>
+<</if>>
+<<if $kylar_bodywriting is 1>>
+	<<set $kylarDaily.bodywriting to true>>
+	<<unset $kylar_bodywriting>>
+<</if>>
+<<if $kylar_invite isnot undefined>>
+	<<if $kylar_invite is 1>>
+		<<set $kylarDaily.invite to "home">>
+	<<else>>
+		<<set $kylarDaily.invite to "school">>
+	<</if>>
+	<<unset $kylar_invite>>
+<</if>>
+<<if $kylar_undies_taken isnot undefined>>
+	<<set $kylarDaily.undies to true>>
+<</if>>
+<<if $kylarpantiescheck isnot undefined>>
+	<<set $kylarSeen.pushUnique("commando")>>
+	<<unset $kylarpantiescheck>>
+<</if>>
+<<if $kylarsleeprape isnot undefined>>
+	<<set $kylarDaily.sleepRape to true>>
+	<<unset $kylarsleeprape>>
+<</if>>
+<<if $kylarconfessiontimer isnot undefined>>
+	<<set $kylar.timer.love to $kylarconfessiontimer>>
+	<<unset $kylarconfessiontimer>>
+<</if>>
+<<if $kylarhome isnot undefined>>
+	<<set $kylar.home to $kylarhome>>
+	<<unset $kylarhome>>
+<</if>>
+<<if $kylarhometimer isnot undefined>>
+	<<set $kylar.timer.home to $kylarhometimer>>
+	<<unset $kylarhometimer>>
+<</if>>
+<<if $kylarhomeinterrupted isnot undefined>>
+	<<set $kylarSeen.includes("home")>>
+	<<unset $kylarhomeinterrupted>>
+<</if>>
+<<if $kylarwalk isnot undefined>>
+	<<set $kylarDaily.walk to true>>
+	<<unset $kylarwalk>>
+<</if>>
+<<if $kylarFountain isnot undefined>>
+	<<set $kylar.fountain to $kylarFountain>>
+	<<unset $kylarFountain>>
+<</if>>
+<<if $kylarFountainIntroWinter>>
+	<<set $kylarSeen.pushUnique("fountainWinter")>>
+	<<unset $kylarFountainIntroWinter>>
+<</if>>
+<<if $kylarFountainKiss isnot undefined>>
+	<<if $kylarFountainKiss is 1>>
+		<<set $kylarDaily.walkKiss to true>>
+	<</if>>
+	<<unset $kylarFountainKiss>>
+<</if>>
+<<if $kylarFountainIntro isnot undefined>>
+	<<if $kylarFountainIntro is 1>>
+		<<set $kylarSeen.pushUnique("fountainIntro")>>
+	<</if>>
+	<<unset $kylarFountainIntro>>
+<</if>>
+<<if $kylarFountainCoin isnot undefined>>
+	<<set $kylar.fountainCoin to $kylarFountainCoin>>
+	<<unset $kylarFountainCoin>>
+<</if>>
+<<if $kylarfamestage isnot undefined>>
+	<<set $kylar.fameStage to $kylarfamestage>>
+	<<unset $kylarfamestage>>
+<</if>>
+<<if $kylarchatintro isnot undefined>>
+	<<set $kylarSeen.pushUnique("chatIntro")>>
+	<<unset $kylarchatintro>>
+<</if>>
+<<if $kylarcanteen isnot undefined>>
+	<<set $kylarSeen.pushUnique("canteen")>>
+	<<unset $kylarcanteen>>
+<</if>>
+<<if $kylarriddle isnot undefined>>
+	<<set $kylar.riddle to $kylarriddle>>
+	<<unset $kylarriddle>>
+<</if>>
+<<if $kylar_play isnot undefined>>
+	<<set $kylar.play to $kylar_play>>
+	<<unset $kylar_play>>
+<</if>>
+<<if typeof($semen_produced_stat) is "string">>
+	<<set $semen_produced_stat to parseFloat($semen_produced_stat)>>
+<</if>>
+
+<<if !(Array.isArray($event))>>
+	<<unset $event>>
+<</if>>
+
+<<if $wraith and !$wraith.state>>
+	<<unset $wraith>>
+	<<checkWraith>>
+<</if>>
+
+<<if $multipleWardrobes is undefined>>
+	<<set $multipleWardrobes to "isolated">>
+<</if>>
+
+<<if $nectar_drank_stat is undefined>>
+	<<set $nectar_drank_stat to 0>>
+	<<set $tentacleMouth to 0>>
+	<<set $tentacleAnus to 0>>
+	<<set $tentacleAnusBaby to 0>>
+	<<set $tentacleVagina to 0>>
+	<<set $tentaclePenis to 0>>
+<</if>>
+
+<<if $fullDescription isnot undefined>>
+	<<unset $fullDescription>>
+<</if>>
+
+<<if $index is undefined and $enemyno gte 1>>
+	<<for _n to 0; _n lt $NPCList.length; _n++>>
+		<<if $NPCList[_n].desc is $description>>
+			<<set $index to _n>>
+			<<break>>
+		<</if>>
+	<</for>>
+<</if>>
+
+<<if !$NPC_names_m>>
+	<<init_names>>	
+<</if>>
+
+<<if $per_npc_update is undefined>>
+	<<set $per_npc_update to 1>>
+	<<updateNPCsFirst condom false>>
+	<<updateNPCsFirst name_known 0>>
+<</if>>
+<<if $per_npc_update is 1>>
+	<<set $per_npc_update to 2>>
+	<<updateNPCsFirst chastity `{}`>>
+	<<updateNPCsSecond chastity penis "">>
+	<<updateNPCsSecond chastity vagina "">>
+	<<updateNPCsSecond chastity anus "">>
+<</if>>
 <</widget>>

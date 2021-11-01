@@ -73,7 +73,7 @@ Amused by <<his>> response, you continue your walk.
 A bit of semen drips from your <<pussy>> onto the ground as you walk.
 <</if>>
 
-	<<if $rng gte 80 and $deviancy gte 15 and $vaginaexist is 1 and $swarmdisable is "f">>
+	<<if $rng gte 80 and $deviancy gte 15 and $player.vaginaExist and $swarmdisable is "f">>
 
 	After a few minutes you find a nice glade. The soft wind feels nice. You decide to lie down.
 	<br><br>
@@ -190,11 +190,11 @@ You had enough fun for now and decide to return. You finish your walk. You feel 
 	<br><br>
 	A really lewd and crazy idea pops in your head.
 	<br>
-	You have one 'pocket' at your disposal. A natural one. Your <<if $vaginaexist is 1>>vagina<<else>>asshole<</if>>!
+	You have one 'pocket' at your disposal. A natural one. Your <<print ($player.vaginaExist ? "vagina" : "asshole")>>!
 	<br>
 	Not wasting any time you pick up one gold bar. Your heart is beating loudly.
 	<<if $arousal gte ($arousalmax / 5) * 3>>
-		<<if $vaginaexist is 1>>
+		<<if $player.vaginaExist>>
 			<br><br>
 			You are really aroused and your <<pussy>> is completely wet. It barely takes any effort to insert the tip of the gold bar in your vagina.
 			<br>
@@ -212,7 +212,7 @@ You had enough fun for now and decide to return. You finish your walk. You feel 
 			Within moments the whole gold bar is inside of you.
 		<</if>>
 	<<elseif $arousal gte ($arousalmax / 10) * 3>>
-		<<if $vaginaexist is 1>>
+		<<if $player.vaginaExist>>
 			<br><br>
 			You are aroused and your <<pussy>> is a bit wet. It takes not much of an effort to insert the tip of the gold bar in your vagina.
 			<br>
@@ -230,7 +230,7 @@ You had enough fun for now and decide to return. You finish your walk. You feel 
 			Within moments the whole gold bar is inside of you.
 		<</if>>
 	<<elseif $arousal gte $arousalmax / 10>>
-		<<if $vaginaexist is 1>>
+		<<if $player.vaginaExist>>
 			<br><br>
 			Your <<pussy>> is not really wet. It takes a lot effort to insert the tip of the gold bar in your vagina.
 			<br>
@@ -277,15 +277,15 @@ You raise your empty hands as proof, but this just makes you even more aroused.
 <<arousal 1000>>
 
 <<if $arousal gte ($arousalmax / 5) * 3>>
-<br>
-The couple has a hard time not looking at your <<if $penisexist is 1>>fully erect penis<<else>>dripping wet pussy as your juices keep leaking out of you like honey.<</if>>.
-<br>
-After a long moment they look at your hand.
-<br>
+	<br>
+	The couple has a hard time not looking at your <<if $player.penisExist>>fully erect penis<<else>>dripping wet pussy as your juices keep leaking out of you like honey<</if>>.
+	<br>
+	After a long moment they look at your hand.
+	<br>
 <<else>>
-<br>
-The couple checks out your <<genitals>>. After a moment they look at your hand.
-<br>
+	<br>
+	The couple checks out your <<genitals>>. After a moment they look at your hand.
+	<br>
 <</if>>
 <br>
 "I don't see anything in <<pher>> hands, <<pshe>> is obviously just a pervert." says the man.
@@ -385,10 +385,11 @@ Others along the shore flee the area, hearing the gunshots as well, leaving you 
 
 <<if $NPCList[0].penis isnot "none">>
 	They expose their penises and play with them, just inches from your face. You struggle against the sand, but you can't budge. The <<person>> cums first. It shoots all over your forehead and dribbles around your eyes. The others follow suit, and soon you're covered from the neck up.
+	<<set $player.bodyliquid.face.semen += 5>>
 <<else>>
 	They expose their pussies and play with them, just inches from your face. You struggle against the sand, but you can't budge. The <<person>> cums first, and squirts all over your forehead. It dribbles around your eyes. The others follow suit, and you're soon covered in pussy juice from the neck up.
+	<<set $player.bodyliquid.face.goo += 5>>
 <</if>>
-<<set $player.bodyliquid.face.semen += 5>>
 <br><br>
 "Aren't we nice?" the <<person>> says. They stand and leave, but not before taking pictures. Others along the shore watch.
 <<gtrauma>><<trauma 6>><<famerape 30>><<status -30>><<llcool>>
@@ -976,6 +977,10 @@ You awaken naked on a stone slab with your arms tied down. All around you loom <
 	<<if $loveInterest>>
 		<<if ($loveInterest.primary is "Eden" or $loveInterest.secondary is "Eden") and (random(1, 2) is 2 or $eden_rescue isnot 1)>>
 			<<enable_rescue>>
+			<<set $phase2 to 1>>
+		<<elseif $wraith and $wraith.state isnot "" and $hallucinations gte 2>>
+			<<enable_rescue>>
+			<<set $phase2 to 2>>
 		<</if>>
 	<</if>>
 <</if>>
@@ -1007,28 +1012,54 @@ You awaken naked on a stone slab with your arms tied down. All around you loom <
 	<<pass 20>>
 	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
 <<elseif $rescue is 1 and $alarm is 1>>
-	You hear a gun fire close by, and a bullet lands at the group's feet. They back off and whisper amongst themselves for a moment, then disappear into the forest.
-	<br><br>
-	<<clotheson>>
-	<<unbind>>
-	<<endcombat>>
-	Eden emerges, slashes your bindings, and helps you collect yourself. "Damn bastards," <<nnpc_he "Eden">> mutters. "Are you okay?"
-	<br><br>
-
-	<<if $gwylan_eden_coop gte 1>>
-		Eden glances around for a moment. "We must be in too deep for that shopkeep," <<nnpc_he "Eden">> says.
+	<<if $phase2 is 2>>
+		<<set $wraith.seen ++>>
+		You hear your own scream echo back through the trees. The group backs off, looking to the source. They all go quiet. After a moment, you see a flash of <<wraithEyes>> from the darkness. <<rainWraith true>>
 		<br><br>
-	<</if>>
-
-	<<if $eden_rescue isnot 1>>
-		<<set $eden_rescue to 1>>
-		Eden pats you on the shoulder. "I was able to save you because I happened to be in the area," <<nnpc_he "Eden">> says. "<span class="gold">I might not always be around, but I should be able to save you anywhere in the forest.</span> Give me a holler if you're in trouble."
+		One of the <<person1>><<monks>> is hurled backwards by an unseen force, colliding with a tree. Splinters of bark fall after <<him>> as <<he>> comes crashing to the ground. The rest all clutch their heads in agony, attempting to block their ears. You don't hear anything.
 		<br><br>
-	<</if>>
+		Another <<monk>> attempts to run. You see a long translucent limb ensnare <<his>> legs, lifting <<him>> helplessly into the air. Phantom shapes dance through the air, slowly taking the form of a pale humanoid figure.
+		<br><br>
+		"<span class="wraith">The mercy of silence has left you.</span>"
+		<br><br>
+		A blaring shriek fills your ears as the figure opens its mouth. With the way you're bound, you have no way to block it out. <<stress 24>><<trauma 24>><<gggstress>><<gggtrauma>>
+		<br><br>
+		The <<monk>> is lifted high into the air and slammed into the ground. You think <<hes>> screaming, but it's too loud to hear. Dirt and rocks are kicked up by the impact. Two more <<monks>> are grabbed by translucent limbs. The remaining <<monks>> flee, and you take the opportunity to follow.
+		You struggle against the bonds holding you in place. You feel them become looser, and they soon snap. Not a moment too soon.
+		<br><br>
+		You run away as fast as you can, until the screams grow distant. After a few minutes, you hear it speak again.
+		<br><br>
+		"<span class="wraith">Finally... some quiet...</span>"
+		<br><br>
+		You quicken your pace.
+		<<clotheson>>
+		<<endcombat>>
+		<<pass 20>>
+		<<link [[Next|Forest]]>><<endRainWraith>><<set $eventskip to 1>><</link>>
+	<<else>>
+		You hear a gun fire close by, and a bullet lands at the group's feet. They back off and whisper amongst themselves for a moment, then disappear into the forest.
+		<br><br>
+		<<clotheson>>
+		<<unbind>>
+		<<endcombat>>
+		Eden emerges, slashes your bindings, and helps you collect yourself. "Damn bastards," <<nnpc_he "Eden">> mutters. "Are you okay?"
+		<br><br>
 
-	<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
-	<br>
-	<<link [[Say goodbye|Lake Shore]]>><<endevent>><</link>>
+		<<if $gwylan_eden_coop gte 1>>
+			Eden glances around for a moment. "We must be in too deep for that shopkeep," <<nnpc_he "Eden">> says.
+			<br><br>
+		<</if>>
+
+		<<if $eden_rescue isnot 1>>
+			<<set $eden_rescue to 1>>
+			Eden pats you on the shoulder. "I was able to save you because I happened to be in the area," <<nnpc_he "Eden">> says. "<span class="gold">I might not always be around, but I should be able to save you anywhere in the forest.</span> Give me a holler if you're in trouble."
+			<br><br>
+		<</if>>
+
+		<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
+		<br>
+		<<link [[Say goodbye|Lake Shore]]>><<endevent>><</link>>
+	<</if>>
 <<else>>
 	<<ejaculation>>
 	"The ritual is complete," the <<person1>><<person>> stammers. "We can return to the temple." They disappear into the forest. They don't untie you.

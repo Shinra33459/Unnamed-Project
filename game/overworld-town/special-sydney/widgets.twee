@@ -156,8 +156,8 @@
 		<br><br>
 		<<sydneyOptions>>
 	<<elseif $bookOverdue and !$sydneyDaily.overdueMessage>>
-		<<set $sydneyDaily.overdueMessage to true>>
 		Sydney looks up at you. "You've got a book overdue." <<bookCriminal>>
+		<<set $sydneyDaily.overdueMessage to true>>
 		<br><br>
 		<<sydneyOptions>>
 	<<elseif $bookStolenAbsent and $sydneyStolenKnown>>
@@ -174,7 +174,7 @@
 		Sydney squints through <<his>> broken glasses as you approach, but smiles when <<he>> realises it's you. <<sydneyGreeting>>
 		<br><br>
 		<<sydneyOptions>>
-	<<elseif $NPCName[$NPCNameList.indexOf("Sydney")].love gte 80 and $NPCName[$NPCNameList.indexOf("Sydney")].lust gte 10 and $sydneyromance isnot 1 and !$sydneyFriendZoned>>
+	<<elseif $NPCName[$NPCNameList.indexOf("Sydney")].love gte 100 and $NPCName[$NPCNameList.indexOf("Sydney")].lust gte 10 and $sydneyromance isnot 1 and !$sydneyFriendZoned>>
 		Sydney's eyes light up upon seeing you. <<He>> seems nervous about something, and looks away with a blush. <<set _sydneyRomanceConfront to true>> <<sydneyGreeting>>
 		<br><br>
 		<<sydneyOptions>>
@@ -208,7 +208,7 @@
 <</widget>>
 
 <<widget "sydneyOptions">>
-<<sydneySchedule>><<sydneyStatusCheck>>
+<<sydneySchedule>><<NPCStatusCheck "Sydney">>
 <<if $bus is "schoollibrary" or $location is "school">>
 	<<switch _sydney_location>>
 		<<case "library">>
@@ -566,7 +566,7 @@
 			<<set $sydney_templeWork to "quarters">>
 		<<case 21 22>>
 			 <<set $sydney_templeWork to "pray">>
-		<<case 23 24>>
+		<<case 23 0>>
 			<<set $sydney_templeWork to ($weekday is 7? "sleep" : "pray")>>
 		<<default>>
 			<<set $sydney_templeWork to "pray">>
@@ -627,7 +627,7 @@
 <<widget "bookCriminal">>
 <<if !$sydneyDaily.overdueMessage>>
 	<<bodywriting_exposure_check>>
-	<<sydneyStatusCheck>>
+	<<NPCStatusCheck "Sydney">>
 	<<if _bodywriting_exposed gte 1 and ($skin[_bodypart].writing is "Book Criminal >:(" or $skin[_bodypart].writing is "Book Criminal <3")>>
 		<<if $skin[_bodypart].pen is "tattoo">>
 			<<if $bookTattoo is undefined>>
@@ -664,54 +664,75 @@
 				<<He>> scribbles something on your forehead, and holds up a small pocket mirror. Your forehead now reads: <<bodywriting_npc_sydney_book forehead "marker">>
 				<<if $sydneyromance is 1>>
 					<<He>> finishes with a kiss on your forehead, pulling away with a loud "Mwah!"
-					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and $luncheaten is 1>>
+					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and !$kylarDaily.leightonPunch>>
 						<br><br>
-						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarsydneywriting to 1>>
+						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarSeen.pushUnique("sydneyWriting")>>
 					<</if>>
 				<</if>>
 			<<elseif $skin.forehead.pen is "pen" or $skin.forehead.pen is "lipstick" or $skin.forehead.pen is "mud">>
+				<<if $skin[_bodypart].special is "Kylar">>
+					<<set _kylar to 1>>
+				<</if>>
 				<<He>> wipes away your <<tattoo forehead>> on your forehead, and scribbles something of <<his>> own. <<bodywriting_clear forehead>> Your forehead now reads: <<bodywriting_npc_sydney_book forehead "marker">>
 				<<if $sydneyromance is 1>>
 					<<He>> finishes with a kiss on your forehead, pulling away with a loud "Mwah!"
-					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and $luncheaten is 1>>
+					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and !$kylarDaily.leightonPunch>>
 						<br><br>
-						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarsydneywriting to 1>>
+						<<if _kylar is 1>>
+							Kylar glowers from across the library. <<ggksuspicion>><<npcincr Kylar rage 3>><<set $kylarSeen.pushUnique("sydneyWriting")>>
+						<<else>>
+							Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarSeen.pushUnique("sydneyWriting")>>
+						<</if>>
 					<</if>>
 				<</if>>
 			<<elseif !$skin.left_cheek.pen>>
 				<<He>> scribbles something on your left cheek, and holds up a small pocket mirror. Your left cheek now reads: <<bodywriting_npc_sydney_book left_cheek "marker">>
 				<<if $sydneyromance is 1>>
 					<<He>> finishes with a kiss on your cheek, pulling away with a loud "Mwah!"
-					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and $luncheaten is 1>>
+					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and !$kylarDaily.leightonPunch>>
 						<br><br>
-						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarsydneywriting to 1>>
+						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarSeen.pushUnique("sydneyWriting")>>
 					<</if>>
 				<</if>>
 			<<elseif $skin.left_cheek.pen is "pen" or $skin.left_cheek.pen is "lipstick" or $skin.left_cheek.pen is "mud">>
+				<<if $skin[_bodypart].special is "Kylar">>
+					<<set _kylar to 1>>
+				<</if>>
 				<<He>> wipes away your <<tattoo left_cheek>> on your left cheek, and scribbles something of <<his>> own. <<bodywriting_clear left_cheek>> Your left cheek now reads: <<bodywriting_npc_sydney_book left_cheek "marker">>
 				<<if $sydneyromance is 1>>
 					<<He>> finishes with a kiss on your cheek, pulling away with a loud "Mwah!"
-					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and $luncheaten is 1>>
+					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and !$kylarDaily.leightonPunch>>
 						<br><br>
-						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarsydneywriting to 1>>
+						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarSeen.pushUnique("sydneyWriting")>>
 					<</if>>
 				<</if>>
 			<<elseif !$skin.right_cheek.pen>>
 				<<He>> scribbles something on your right cheek, and holds up a small pocket mirror. Your right cheek now reads: <<bodywriting_npc_sydney_book right_cheek "marker">>
 				<<if $sydneyromance is 1>>
 					<<He>> finishes with a kiss on your cheek, pulling away with a loud "Mwah!"
-					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and $luncheaten is 1>>
+					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and !$kylarDaily.leightonPunch>>
 						<br><br>
-						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarsydneywriting to 1>>
+						<<if _kylar is 1>>
+							Kylar glowers from across the library. <<ggksuspicion>><<npcincr Kylar rage 3>><<set $kylarSeen.pushUnique("sydneyWriting")>>
+						<<else>>
+							Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarSeen.pushUnique("sydneyWriting")>>
+						<</if>>
 					<</if>>
 				<</if>>
 			<<elseif $skin.right_cheek.pen is "pen" or $skin.right_cheek.pen is "lipstick" or $skin.right_cheek.pen is "mud">>
+				<<if $skin[_bodypart].special is "Kylar">>
+					<<set _kylar to 1>>
+				<</if>>
 				<<He>> wipes away your <<tattoo right_cheek>> on your right cheek, and scribbles something of <<his>> own. <<bodywriting_clear right_cheek>> Your right cheek now reads: <<bodywriting_npc_sydney_book right_cheek "marker">>
 				<<if $sydneyromance is 1>>
 					<<He>> finishes with a kiss on your cheek, pulling away with a loud "Mwah!"
-					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and $luncheaten is 1>>
+					<<if $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and !$kylarDaily.leightonPunch>>
 						<br><br>
-						Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarsydneywriting to 1>>
+						<<if _kylar is 1>>
+							Kylar glowers from across the library. <<ggksuspicion>><<npcincr Kylar rage 3>><<set $kylarSeen.pushUnique("sydneyWriting")>>
+						<<else>>
+							Kylar stares from across the library. <<gksuspicion>><<npcincr Kylar rage 1>><<set $kylarSeen.pushUnique("sydneyWriting")>>
+						<</if>>
 					<</if>>
 				<</if>>
 			<<else>>
@@ -729,7 +750,7 @@
 <</widget>>
 
 <<widget "sydneyBodywritingLocation">>
-<<sydneyStatusCheck>>
+<<NPCStatusCheck "Sydney">>
 <<set _targets to []>>
 <<set _targets.pushUnique("forehead")>>
 <<if !$worn.face.type.includes("mask")>>
@@ -946,13 +967,13 @@
 			<</if>>
 		<<else>>
 			<<He>> lowers <<himself>> down to your <<genitals>>.
-			<<if $penisexist is 1>>
+			<<if $player.penisExist>>
 				<<set $penisuse to 0>>
 			<</if>>
 			<<switch _sydneyStatus>>
 				<<case "pure" "neutral">>
 					<<He>> looks up at you, with a hint of fear in <<his>> eyes.
-					<<if $penisexist is 1>>
+					<<if $player.penisExist>>
 						<<He>> gently takes your penis in <<his>> hand, and licks the tip.
 						<<arousal 2500>>
 						<<if $arousal gte $arousalmax>>
@@ -976,7 +997,7 @@
 					<</if>>
 				<<case "pureLust" "neutralLust">>
 					<<He>> looks up at you, and takes a deep breath. "I can... I can do this..."
-					<<if $penisexist is 1>>
+					<<if $player.penisExist>>
 						<<He>> gently takes your penis in <<his>> hand, and licks the tip.
 						<<arousal 2500>>
 						<<if $arousal gte $arousalmax>>
@@ -1003,7 +1024,7 @@
 					<</if>>		
 				<<case "corrupt" "corruptLust">>
 					<<He>> looks up at you, flashing a wicked smile at you.
-					<<if $penisexist is 1>>
+					<<if $player.penisExist>>
 						<<He>> gently takes your penis in <<his>> hand, and takes it into <<his>> mouth without warning. <<set $penisuse to "othermouth">><<set $penisstate to "othermouth">><<takeNPCVirginity "Sydney" "oral">>
 						<<arousal 5000>>
 						<<if $arousal gte $arousalmax>>
@@ -1074,7 +1095,7 @@ You've pushed yourself too much. You hear someone yell your name as you black ou
 <</widget>>
 
 <<widget "sydneyTortureOptions">>
-<span class="lewd">The incense fumes and vibrations make you feel warm.</span> <<set $hallucinogens += 10>><<arousal 1000>><<set $sydneyArousal += 1>><<garousal>> | <span class="red">+ Sydney's Arousal</span>
+<span class="lewd">The incense fumes and vibrations make you feel warm.</span> <<set $hallucinogen += 10>><<arousal 1000>><<set $sydneyArousal += 1>><<garousal>> | <span class="red">+ Sydney's Arousal</span>
 <br>
 <<if $sydneyPain lte 0>>
 	<<set $sydneyPain to 0>>

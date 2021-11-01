@@ -92,7 +92,7 @@
 <</widget>>
 
 <<widget "updateHallucinations">>
-	<<if $trauma gte ($traumamax / 10) * 5 or $awareness gte 400 or $hallucinogen gt 0 or ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6)>>
+	<<if $trauma gte ($traumamax / 10) * 5 or $awareness gte 400 or $hallucinogen gt 0 or ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6)>>
 		<<set $hallucinations to 2>>
 	<<elseif $trauma gte ($traumamax / 10) * 3 or $awareness gte 300>>
 		<<set $hallucinations to 1>>
@@ -136,28 +136,35 @@
 <</widget>>
 
 <<widget "semenvolume">>
-	<<if $args[0] and $player.penisExist>>
-		<<set $semen_volume += ($args[0] * 3)>>
+	<<if isNaN($args[0])>>
+		<<run throw new Error("The semenvolume widget was passed a non-numeric argument (or none at all)!")>>
+	<<elseif $player.penisExist>>
+		<<set $_volume_increase to $args[0] * 3>>
 		<<if $cow gte 6>>
-			<<set $semen_volume += ($args[0] * 3)>>
+			<<set $_volume_increase *= 2>>
 		<</if>>
-		<<set $semen_volume = Math.clamp($semen_volume, 0, $semen_max)>>
+		<<set $semen_volume += $_volume_increase>>
+		<<set $semen_volume to Math.clamp($semen_volume, 0, $semen_max)>>
 	<</if>>
 <</widget>>
 
 <<widget "milkvolume">>
-	<<if $args[0]>>
+	<<if isNaN($args[0])>>
+		<<run throw new Error("The milkvolume widget was passed a non-numeric argument (or none at all)!")>>
+	<<else>>
 		<<if $args[0] gt 0>>
-			<<set $lactation_pressure += 1>>
 			<<if $cow gte 6>>
+				<<set $lactation_pressure += 2>>
+			<<else>>
 				<<set $lactation_pressure += 1>>
 			<</if>>
 		<</if>>
-		<<if $lactating is 1>>
-			<<set $milk_volume += ($args[0] * 2)>>
+		<<if $lactating is 1 and $args[0] isnot 0>>
+			<<set $_volume_increase to ($args[0] * 2)>>
 			<<if $cow gte 6>>
-				<<set $milk_volume += ($args[0] * 2)>>
+				<<set $_volume_increase *= 2>>
 			<</if>>
+			<<set $milk_volume += $_volume_increase>>
 			<<set $milk_volume = Math.clamp($milk_volume, 24, $milk_max)>>
 		<</if>>
 	<</if>>
@@ -213,6 +220,9 @@
 				<<run $trackedArousal.push(0)>>
 			<</if>>
 			<<set $trackedArousal[$trackedArousal.length - 1] += $args[0]>>
+			<<if $args[0] gt 0>>
+				<<set $timeSinceArousal to 0>>
+			<</if>>
 		<</if>>
 	<<else>>
 		<<if $arousalError is undefined>>
@@ -354,8 +364,7 @@
 <<widget "awareness">>
 	<<if $args[0] and $statFreeze isnot true>>
 		<<set $awareness += ($args[0])>>
-		<<for _e to 0; _e lt $clothing_number; _e++>>
-		<<activeclothes>>
+		<<for _active_clothes range Object.keys($worn)>>
 			<<if $worn[_active_clothes].type.includes("dark")>>
 				<<set $awareness += ($args[0])>>
 			<</if>>
@@ -366,8 +375,7 @@
 <<widget "purity">>
 	<<if $args[0] and $statFreeze isnot true>>
 		<<set $purity += ($args[0])>>
-		<<for _e to 0; _e lt $clothing_number; _e++>>
-		<<activeclothes>>
+		<<for _active_clothes range Object.keys($worn)>>
 			<<if $worn[_active_clothes].type.includes("holy")>>
 				<<set $purity += ($args[0])>>
 			<</if>>
@@ -463,7 +471,7 @@
 		"breasts_tiny": $gender isnot "m",
 		"breasts_small": true,
 		"breasts_big": true
-	}[_insecurity]>>
+	}[$args[0]]>>
 
 	<<if _acceptance lt 1000 and _insecurity_possible>>
 		<<set _insecurity += _stat_gain>>
@@ -491,7 +499,7 @@
 		args[1]: amount to increase by
 	*/
 	<<if $args[0] and $args[1] and $statFreeze isnot true>>
-		<<if ["penis_tiny", "penis_small", "penis_big", "breasts_tiny", "breasts_small", "breasts_big"].contains($args[0])>>
+		<<if ["penis_tiny", "penis_small", "penis_big", "breasts_tiny", "breasts_small", "breasts_big"].includes($args[0])>>
 			<<insecurity_gain $args[0] $args[1]>>
 		<<else>>
 			<span class="red">INVALID INSECURITY TYPE SPECIFIED: <<print "insecurity_"+$args[0]>></span>
@@ -506,7 +514,7 @@
 	*/
 	<<if $args[0] and $args[1] and $statFreeze isnot true>>
 		/* note: this does not check if a player is capable of gaining acceptance, so dont use this widget without checking.  */
-		<<if ["penis_tiny", "penis_small", "penis_big", "breasts_tiny", "breasts_small", "breasts_big"].contains($args[0])>>
+		<<if ["penis_tiny", "penis_small", "penis_big", "breasts_tiny", "breasts_small", "breasts_big"].includes($args[0])>>
 			<<set V["acceptance_"+$args[0]] += ($args[1] * 6)>>
 			<<set V["acceptance_"+$args[0]] = Math.clamp(V["acceptance_"+$args[0]], 0, 1000)>>
 		<<else>>

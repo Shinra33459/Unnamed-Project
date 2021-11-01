@@ -50,7 +50,6 @@
 	<</if>>
 <</if>>
 
-
 <<set $NPCList[_n].lefthand to 0>>
 <<set $NPCList[_n].righthand to 0>>
 <<set $NPCList[_n].mouth to 0>>
@@ -58,6 +57,11 @@
 <<set $NPCList[_n].location.head to 0>>
 <<set $NPCList[_n].location.genitals to 0>>
 <<set $NPCList[_n].bold to 0>>
+<<if $NPCList[_n].pronoun is "f">>
+	<<set $NPCList[_n].name to $NPC_names_f.random()>>
+<<else>>
+	<<set $NPCList[_n].name to $NPC_names_m.random()>>
+<</if>>
 
 <<set $NPCList[_n].chastity to {penis:"", vagina:"", anus:""}>>
 <<generatePronouns $NPCList[_n]>>
@@ -95,6 +99,18 @@
 
 <<npcattribute _n _gen _lvl>>
 
+<<if $event is undefined>>
+	<<set $event to []>>
+<</if>>
+<<set $event.push($passage)>>
+<<if $eventslot is undefined>>
+	<<set $eventslot to []>>
+<</if>>
+<<set $eventslot.push(_n)>>
+<<if $eventtime is undefined>>
+	<<set $eventtime to []>>
+<</if>>
+<<set $eventtime.push($time)>>
 <</widget>>
 
 <<widget "generate1">>
@@ -559,6 +575,36 @@
 <<generateNPC 6>>
 <</widget>>
 
+<<widget "generatePlant1">>
+<<set _npcPlant to 1>><<set _strapIgnore to 1>>
+<<generateNPC 1 t>>
+<</widget>>
+
+<<widget "generatePlant2">>
+<<set _npcPlant to 1>><<set _strapIgnore to 1>>
+<<generateNPC 2 t>>
+<</widget>>
+
+<<widget "generatePlant3">>
+<<set _npcPlant to 1>><<set _strapIgnore to 1>>
+<<generateNPC 3 t>>
+<</widget>>
+
+<<widget "generatePlant4">>
+<<set _npcPlant to 1>><<set _strapIgnore to 1>>
+<<generateNPC 4 t>>
+<</widget>>
+
+<<widget "generatePlant5">>
+<<set _npcPlant to 1>><<set _strapIgnore to 1>>
+<<generateNPC 5 t>>
+<</widget>>
+
+<<widget "generatePlant6">>
+<<set _npcPlant to 1>><<set _strapIgnore to 1>>
+<<generateNPC 6 t>>
+<</widget>>
+
 <<widget "npcattribute">>
 <!-- V2.4 Widget set NPC attributes. $arg[0] calls NPC number (0 - 5) to be generated. NG-->
 <!-- For transgender, $NPCList.pronoun sets appearance, including breasts. NPCList.gender sets genitals, including pp -->
@@ -723,6 +769,9 @@
 	<<set $NPCList[_n].fullDescription += "woman">>
 <</if>>
 
+<<set $NPCList[_n].role to "normal">>
+
+
 /*Sets up multiple orgasms, code needs work*/
 /*<<set $NPCList[_n].maxOrgasms to 1>>
 <<set $NPCList[_n].orgasms to 0>>
@@ -761,7 +810,7 @@
 <</if>>
 
 <<if $NPCList[_n].penis isnot "none">>
-	<<if $NPCList[_n].adult is 1>> <!-- set adult pp size -->
+	<<if $NPCList[_n].adult is 1 or $NPCList[_n].type is "plant">> <!-- set adult/plantperson pp size -->
 		<<switch _rngpp>>
 		<<case 0>>
 			<<set $NPCList[_n].penisdesc to "tiny penis">>
@@ -802,7 +851,7 @@
 <</if>>
 
 <!-- Sets females with strap-ons as adjustment-->
-<<if $NPCList[_n].gender is "f">>
+<<if $NPCList[_n].gender is "f" and !_strapIgnore>>
 	<<if random(0, 99) lt $straponchance>>
 		<<npcstrapon _n>>
 	<</if>>
@@ -815,11 +864,6 @@
 }>>
 
 
-<<if $NPCList[_n].pronoun is "f">>
-	<<set $NPCList[_n].name to either("Olivia","Amelia","Isla","Ava","Mia","Grace","Freya","Lily","Sophia","Ivy","Jessica","Ashley","Emily","Sarah","Samantha","Amanda","Brittany","Elizabeth","Taylor","Megan","Laura","Gemma","Emma","Rebecca","Claire","Victoria","Rachel","Amy","Jennifer","Nicola","Katie","Lisa","Julie","Melissa","Michelle","Kim","Angela","Heather","Stephanie","Nicole","Christina","Susan","Karen","Jacqueline","Deborah","Tracey","Jane","Helen","Diane","Sharon")>>
-<<else>>
-	<<set $NPCList[_n].name to either("Oliver","Noah","George","Arthur","Freddie","Leo","Theo","Oscar","Charlie","Harry","Michael","Christopher","Matthew","Joshua","Jacob","Nicholas","Andrew","Daniel","Tyler","Joseph","James","David","Robert","Jack","Richard","Paul","Mark","Thomas","Adam","Jason","Connor","Jake","John","Brian","William","Ben","Kevin","Eric","Jeffrey","Jamie","Louis","Ryan","Mark","Joe","Stephen","Ian","Austin","Kyle","Zach","Patrick")>>
-<</if>>
 
 <<set $NPCList[_n].trust to 0>>
 
@@ -837,6 +881,15 @@
 <<generate_npc_traits>>
 <<generate_npc_skills>>
 
+<<if _npcPlant is 1>>
+	<<set $NPCList[_n].type to "plant">>
+	<<set $NPCList[_n].fullDescription to $NPCList[_n].description + " plant">>
+	<<if $NPCList[_n].pronoun is "m">>
+		<<set $NPCList[_n].fullDescription += "boy">>
+	<<elseif $NPCList[_n].pronoun is "f">>
+		<<set $NPCList[_n].fullDescription += "girl">>
+	<</if>>
+<</if>>
 <</widget>>
 
 <<widget "npcstrapon">>
@@ -920,7 +973,7 @@
 
 <<widget "generate_npc_skills">>
 <<set $NPCList[_n].skills to {}>>
-<<set $NPCList[_n].skills.security to random(1, 600)>>
+<<set $NPCList[_n].skills.security to random(1, 1000)>>
 <<set $NPCList[_n].skills.athletics to random(1, 1000)>>
 <</widget>>
 

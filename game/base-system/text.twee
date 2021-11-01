@@ -104,29 +104,19 @@
 <<widget "lowerbodyparts">><<print either("hands", "feet", "thighs", "bottom")>><</widget>>
 
 <<widget "word">><<silently>>
+	/* usage example: <<word "upper">> */
 	<<set _text_output to "">>
-	<<if $args[0] and $worn[$args[0]].word isnot "n">>
-		<<set _text_output to $worn[$args[0]].word>>
+	<<if $args[0]>>
+		/* note: we rely on the .index of clothing items to never change. */
+		<<set $_result to setup.clothes[$args[0]][$worn[$args[0]].index].word>>
+		<<set _text_output to ($_result isnot "n" ? $_result : "")>>
 	<</if>>
 <</silently>>_text_output <</widget>>
 
-<<widget "overupperword">><<word "over_upper">><</widget>>
-<<widget "overlowerword">><<word "over_lower">><</widget>>
-<<widget "upperword">>
-<<if $worn.upper.name is "oversized sweater">>
-	<<set _text_output to "an">>
-	<<print _text_output>>
-<<else>>
-	<<word "upper">>
-<</if>>
-<</widget>>
-<<widget "lowerword">><<word "lower">><</widget>>
-<<widget "underupperword">><<word "under_upper">><</widget>>
-<<widget "underlowerword">><<word "under_lower">><</widget>>
 <<widget "genitalsword">><<word "genitals">><</widget>>
 
 <<widget "plural">><<silently>>
-	<<if $worn[$args[0]].plural is 1>>
+	<<if setup.clothes[$args[0]][$worn[$args[0]].index].plural is 1>>
 		<<set _text_output to "are">>
 	<<else>>
 		<<set _text_output to "is">>
@@ -142,7 +132,7 @@
 <<widget "genitalsplural">><<plural "genitals">><</widget>>
 
 <<widget "itis">><<silently>>
-	<<if $worn[$args[0]].plural is 1>>
+	<<if setup.clothes[$args[0]][$worn[$args[0]].index].plural is 1>>
 		<<set _text_output to "they are">>
 	<<else>>
 		<<set _text_output to "it is">>
@@ -157,7 +147,7 @@
 <<widget "underloweritis">><<itis "under_lower">><</widget>>
 
 <<widget "it">><<silently>>
-	<<if $worn[$args[0]].plural is 1>>
+	<<if setup.clothes[$args[0]][$worn[$args[0]].index].plural is 1>>
 		<<set _text_output to "them">>
 	<<else>>
 		<<set _text_output to "it">>
@@ -175,7 +165,7 @@
 <<widget "handsit">><<it "hands">><</widget>>
 
 <<widget "has">><<silently>>
-	<<if $worn[$args[0]].plural is 1>>
+	<<if setup.clothes[$args[0]][$worn[$args[0]].index].plural is 1>>
 		<<set _text_output to "have">>
 	<<else>>
 		<<set _text_output to "has">>
@@ -190,7 +180,7 @@
 <<widget "underlowerhas">><<has "under_lower">><</widget>>
 
 <<widget "that">><<silently>>
-	<<if $worn[$args[0]].plural is 1>>
+	<<if setup.clothes[$args[0]][$worn[$args[0]].index].plural is 1>>
 		<<set _text_output to "those">>
 	<<else>>
 		<<set _text_output to "that">>
@@ -242,8 +232,8 @@
 	<<case "n">>
 		<<set $args[0].pronouns.he = "one">>
 		<<set $args[0].pronouns.his = "the">>
-		<<set $args[0].pronouns.hers = "they">>
-		<<set $args[0].pronouns.his = "them">>
+		<<set $args[0].pronouns.hers = "its">>
+		<<set $args[0].pronouns.him = "them">>
 		<<set $args[0].pronouns.himself = "themselves">>
 		<<set $args[0].pronouns.man = "man">>
 		<<set $args[0].pronouns.boy = "k">>
@@ -262,9 +252,9 @@
 <</widget>>
 
 <<widget "updatePronouns">>
-<<for _i to 0; _i lt $NPCNameList.length; _i++>>
-	<<generatePronouns $NPCName[_i]>>
-<</for>>
+	<<for _i to 0; _i lt $NPCNameList.length; _i++>>
+		<<generatePronouns $NPCName[_i]>>
+	<</for>>
 <</widget>>
 
 <<widget "clearPronouns">>
@@ -281,11 +271,11 @@
 <</widget>>
 
 <<widget "a">><<silently>>
-<<if $enemyno gte 2 and $enemytype is "man">>
-<<set _text_output to "a">>
-<<else>>
-<<his>>
-<</if>>
+	<<if $enemyno gte 2 and $enemytype is "man">>
+		<<set _text_output to "a">>
+	<<else>>
+		<<his>>
+	<</if>>
 <</silently>>_text_output<</widget>>
 
 <<widget "theowner">><<silently>>
@@ -502,7 +492,7 @@
 <<elseif $pronoun is "f">>
 	<<set _text_output to "she's">>
 <<elseif $pronoun is "i">>
-	<<set _text_output to "its">>
+	<<set _text_output to "it's">>
 <<elseif $pronoun is "n">>
 	<<set _text_output to "one is">>
 <<elseif $pronoun is "t">>
@@ -596,8 +586,12 @@
 	<<else>>
 		<<if $enemytype is "beast">>
 			<<beasttype>><<set _person to _text_output>><<set _text_output to "The " + _person>>
-		<<else>>
+		<<elseif $NPCList[0].name_known is 1>>
+			<<set _text_output to $NPCList[0].name>>
+		<<elseif $NPCList[0].role is "normal">>
 			<<person1>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<<else>>
+			<<person1>><<person>><<set _person to _text_output>><<set _text_output to "The " + $NPCList[0].description + " " + "$NPCList[0].role">>
 		<</if>>
 	<</if>>
 <<elseif $NPCList[1].intro is 1>>
@@ -605,35 +599,55 @@
 	<<if $npcrow.includes(1)>>
 		<<set _text_output to $npc[$npcrow.indexOf(1)]>>
 	<<else>>
-		<<person2>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<<if $NPCList[1].name_known is 1>>
+			<<set _text_output to $NPCList[1].name>>
+		<<else>>
+			<<person2>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<</if>>
 	<</if>>
 <<elseif $NPCList[2].intro is 1>>
 	<<set $NPCList[2].intro to 0>>
 	<<if $npcrow.includes(2)>>
 		<<set _text_output to $npc[$npcrow.indexOf(2)]>>
 	<<else>>
-		<<person3>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<<if $NPCList[2].name_known is 1>>
+			<<set _text_output to $NPCList[2].name>>
+		<<else>>
+			<<person3>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<</if>>
 	<</if>>
 <<elseif $NPCList[3].intro is 1>>
 	<<set $NPCList[3].intro to 0>>
 	<<if $npcrow.includes(3)>>
 		<<set _text_output to $npc[$npcrow.indexOf(3)]>>
 	<<else>>
-		<<person4>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<<if $NPCList[3].name_known is 1>>
+			<<set _text_output to $NPCList[3].name>>
+		<<else>>
+			<<person4>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<</if>>
 	<</if>>
 <<elseif $NPCList[4].intro is 1>>
 	<<set $NPCList[4].intro to 0>>
 	<<if $npcrow.includes(4)>>
 		<<set _text_output to $npc[$npcrow.indexOf(4)]>>
 	<<else>>
-		<<person5>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<<if $NPCList[4].name_known is 1>>
+			<<set _text_output to $NPCList[4].name>>
+		<<else>>
+			<<person5>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<</if>>
 	<</if>>
 <<elseif $NPCList[5].intro is 1>>
 	<<set $NPCList[5].intro to 0>>
 	<<if $npcrow.includes(5)>>
 		<<set _text_output to $npc[$npcrow.indexOf(5)]>>
 	<<else>>
-		<<person6>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<<if $NPCList[5].name_known is 1>>
+			<<set _text_output to $NPCList[5].name>>
+		<<else>>
+			<<person6>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+		<</if>>
 	<</if>>
 <<else>>
 	<<if $pronoun is "m">>
@@ -850,7 +864,7 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "gendercheck">>
-	<<if !["m", "f"].contains($player.gender_appearance)>><<set _text_output to "<span class=\"red\">ERROR: Unexpected $$player.gender_appearance: [$player.gender_appearance]</span>">><</if>>
+	<<if !["m", "f"].includes($player.gender_appearance)>><<set _text_output to "<span class=\"red\">ERROR: Unexpected $$player.gender_appearance: [$player.gender_appearance]</span>">><</if>>
 <</widget>>
 
 <<widget "pshe">><<silently>>
@@ -927,14 +941,16 @@
 <<widget "nipples">><<nipple>>s<</widget>>
 
 /* 
+in dev alternative to current "breasts" widget
 <<widget "breasts">><<silently>>
 	<<if Number.isInteger($breastsize)>>
 		<<if $breastsize lte 0>>
 			<<set _text_output to "nipples">>
 		<<else>>
-			<<set _text_output to ["", "budding", "tiny", "small", "pert", "modest", "full", "large", "ample", "massive", "huge", "gigantic", "enormous"][$breastsize] + " breasts">>
+			<<set _text_output to ["", "budding", "tiny", "small", "pert", "modest", "full", "large", "ample", "massive", "huge", "gigantic", "enormous"][$breastsize]>>
+			<<set _text_output to _text_output + " breasts">>
 		<</if>>
-	<<else>>
+	<<elseif $debugdisable is "f">>
 		<<set _text_output to "ERROR - $$breastsize is not a number: $breastsize">>
 	<</if>>
 	<</silently>><<breastsensitivity>><<print _text_output>>
@@ -974,110 +990,74 @@
 	<</switch>>
 <</silently>><<breastsensitivity>><<print _text_output>><</widget>>
 
-<<widget "undertop">>
-<<silently>>
-<<if $worn.under_upper.name isnot "naked">>
-	<<set _text_output to $worn.under_upper.name>>
-<<else>>
-	<<breasts>>
-<</if>>
-<</silently>>
-<<print _text_output>>
-<</widget>>
+<<widget "undertop">><<silently>>
+	<<if $worn.under_upper.exposed lte 0>>
+		<<set _text_output to $worn.under_upper.name>>
+	<<else>>
+		<<breasts>>
+	<</if>>
+<</silently>><<print _text_output>><</widget>>
 
-<<widget "underoutfit">>
-<<silently>>
+<<widget "underoutfit">><<silently>>
 <<outfitChecks>>
+<<breasts>><<set _breasts_text to _text_output>>
+<<genitals>><<set _genitals_text to _text_output>>
 <<if _underOutfit>>
 	<<set _text_output to $worn.under_upper.name>>
 <<elseif $worn.under_upper.name is "naked" and $worn.under_lower.name is "naked">>
-	<<breasts>>
-	<<set _text_output_temp to _text_output>>
-	<<genitals>>
-	<<set _text_output_temp2 to _text_output>>
-	<<set _text_output to "_text_output_temp and _text_output_temp2">>
+	<<set _text_output to _breasts_text + " and " + _genitals_text>>
 <<elseif $worn.under_lower.name is "naked">>
-	<<genitals>>
-	<<set _text_output_temp to _text_output>>
-	<<set _text_output to "$worn.under_upper.name and _text_output_temp">>
+	<<set _text_output to $worn.under_upper.name + " and " + _breasts_text>>
 <<elseif $worn.under_upper.name is "naked">>
-	<<breasts>>
-	<<set _text_output_temp to _text_output>>
-	<<set _text_output to "_text_output_temp and $worn.under_lower.name">>
+	<<set _text_output to _breasts_text + " and " + $worn.under_lower.name>>
 <<else>>
-	<<set _text_output to "$worn.under_upper.name and $worn.under_lower.name">>
+	<<set _text_output to $worn.under_upper.name + " and " + $worn.under_lower.name>>
 <</if>>
-<</silently>>
-<<print _text_output>>
-<</widget>>
+<</silently>><<print _text_output>><</widget>>
+
+<<widget "genitalstate">><<silently>>
+	<<set _text_output to "">>
+	<<if $orgasmcount gte 23>>
+		<<if $orgasmdown gte 1>>
+			<<set _text_output to "tortured ">>
+		<<else>>
+			<<set _text_output to "spent ">>
+		<</if>>
+	<<elseif $orgasmcount gte 9>>
+		<<if $orgasmdown gte 1>>
+			<<set _text_output to "twitching ">>
+		<<else>>
+			<<set _text_output to "tired ">>
+		<</if>>
+	<<else>>
+		<<if $orgasmdown gte 1>>
+			<<set _text_output to "twitching ">>
+		<<else>>
+			<<if $arousal gte ($arousalmax / 5) * 4>>
+				<<set _text_output to "tingling ">>
+			<<elseif $arousal gte ($arousalmax / 5) * 3>>
+				<<set _text_output to "">>
+			<<elseif $arousal gte ($arousalmax / 5) * 2>>
+				<<set _text_output to "">>
+			<<elseif $arousal gte $arousalmax / 5>>
+				<<set _text_output to "">>
+			<<else>>
+				<<set _text_output to "">>
+			<</if>>
+			/* ^^^ placeholders for later if people want to fill them out */
+		<</if>>
+	<</if>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "bottom">><<silently>>
 	<<set _text_output to ["slender", "slim", "modest", "cushioned", "soft", "round", "plump", "large", "huge"][Math.clamp(0, 8, $bottomsize)]>>
-	<<set _text_output to _text_output += [" ass", " bum", " butt"].pluck()>>
+	<<set _text_output to _text_output + [" ass", " bum", " butt"].pluck()>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "pussy">><<silently>>
-<<if $devstate gte 1>>
-	<<if $orgasmcount gte 23>>
-		<<if $orgasmdown gte 1>>
-		<<set _text_output to "tortured pussy">>
-		<<else>>
-		<<set _text_output to "spent pussy">>
-		<</if>>
-	<<elseif $orgasmcount gte 9>>
-		<<if $orgasmdown gte 1>>
-		<<set _text_output to "twitching pussy">>
-		<<else>>
-		<<set _text_output to "tired pussy">>
-		<</if>>
-	<<else>>
-		<<if $orgasmdown gte 1>>
-		<<set _text_output to "twitching pussy">>
-		<<else>>
-			<<if $arousal gte ($arousalmax / 5) * 4>>
-			<<set _text_output to "tingling pussy">>
-			<<elseif $arousal gte ($arousalmax / 5) * 3>>
-			<<set _text_output to "pussy">>
-			<<elseif $arousal gte ($arousalmax / 5) * 2>>
-			<<set _text_output to "pussy">>
-			<<elseif $arousal gte $arousalmax / 5>>
-			<<set _text_output to "quim">>
-			<<else>>
-			<<set _text_output to "pussy">>
-			<</if>>
-		<</if>>
-	<</if>>
-<<else>>
-	<<if $orgasmcount gte 23>>
-		<<if $orgasmdown gte 1>>
-		<<set _text_output to "tortured pussy">>
-		<<else>>
-		<<set _text_output to "spent pussy">>
-		<</if>>
-	<<elseif $orgasmcount gte 9>>
-		<<if $orgasmdown gte 1>>
-		<<set _text_output to "twitching pussy">>
-		<<else>>
-		<<set _text_output to "tired pussy">>
-		<</if>>
-	<<else>>
-		<<if $orgasmdown gte 1>>
-		<<set _text_output to "twitching pussy">>
-		<<else>>
-			<<if $arousal gte ($arousalmax / 5) * 4>>
-			<<set _text_output to "tingling pussy">>
-			<<elseif $arousal gte ($arousalmax / 5) * 3>>
-			<<set _text_output to "pussy">>
-			<<elseif $arousal gte ($arousalmax / 5) * 2>>
-			<<set _text_output to "pussy">>
-			<<elseif $arousal gte $arousalmax / 5>>
-			<<set _text_output to "quim">>
-			<<else>>
-			<<set _text_output to "pussy">>
-			<</if>>
-		<</if>>
-	<</if>>
-<</if>>
+	<<genitalstate>><<set _genital_state_text to _text_output>>
+	<<set _text_output to ["pussy","pussy","pussy","quim"].pluck()>>
+	<<set _text_output to _genital_state_text + _text_output>>
 <</silently>><<genitalsensitivity>><<print _text_output>><</widget>>
 
 <!-- Too small and too big outputs are intended as error messages
@@ -1113,60 +1093,31 @@
 <</silently>><<genitalsensitivity>><<print _text_output>><</widget>>
 
 <<widget "penis">><<silently>>
-<<penissize>>
-<<set _penissize_text to _text_output>>
-<<if _penissize_text isnot "">>
-	<<set _penissize_text to _penissize_text + " ">>
-<</if>>
+	<<penissize>><<set _penissize_text to _text_output>>
+	<<if _penissize_text isnot "">>
+		<<set _penissize_text to _penissize_text + " ">>
+	<</if>>
+	<<genitalstate>><<set _genital_state_text to _text_output>>
 
-<<if $orgasmcount gte 23>>
-	<<if $orgasmdown gte 1>>
-		<<set _text_output to _penissize_text + "tortured penis">>
-	<<else>>
-	<<set _text_output to _penissize_text + "spent penis">>
-	<</if>>
-<<elseif $orgasmcount gte 9>>
-	<<if $orgasmdown gte 1>>
-	<<set _text_output to _penissize_text + "twitching penis">>
-	<<else>>
-	<<set _text_output to _penissize_text + "tired penis">>
-	<</if>>
-<<else>>
-	<<if $orgasmdown gte 1>>
-	<<set _text_output to _penissize_text + "twitching penis">>
-	<<else>>
-		<<if $arousal gte ($arousalmax / 5) * 4>>
-		<<set _text_output to _penissize_text + "tingling penis">>
-		<<elseif $arousal gte ($arousalmax / 5) * 3>>
-		<<set _text_output to _penissize_text + "penis">>
-		<<elseif $arousal gte ($arousalmax / 5) * 2>>
-		<<set _text_output to _penissize_text + "penis">>
-		<<elseif $arousal gte $arousalmax / 5>>
-		<<set _text_output to _penissize_text + "penis">>
-		<<else>>
-		<<set _text_output to _penissize_text + "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
+	<<set _text_output to _penissize_text + _genital_state_text + "penis">>
 <</silently>><<genitalsensitivity>><<print _text_output>><</widget>>
 
 <<widget "reveal">>
 <<if $args[0]>>
 	<<if $args[0] gte 900>>
-	<span class="red">lewd</span>
+		<span class="red">lewd</span>
 	<<elseif $args[0] gte 700>>
-	<span class="pink">risqué</span>
+		<span class="pink">risqué</span>
 	<<elseif $args[0] gte 500>>
-	<span class="purple">seductive</span>
+		<span class="purple">seductive</span>
 	<<elseif $args[0] gte 300>>
-	<span class="blue">comfy</span>
+		<span class="blue">comfy</span>
 	<<elseif $args[0] gte 200>>
-	<span class="lblue">tasteful</span>
+		<span class="lblue">tasteful</span>
 	<<elseif $args[0] gte 100>>
-	<span class="teal">smart</span>
+		<span class="teal">smart</span>
 	<<else>>
-	<span class="green">unassuming</span>
+		<span class="green">unassuming</span>
 	<</if>>
 <</if>>
 <</widget>>
@@ -1175,36 +1126,36 @@
 <<if $args[0]>>
 	<<if $args[1] is "cap">>
 		<<if $args[0] gte 900>>
-		<span class="green">Tough</span>
+			<span class="green">Tough</span>
 		<<elseif $args[0] gte 500>>
-		<span class="teal">Sturdy</span>
+			<span class="teal">Sturdy</span>
 		<<elseif $args[0] gte 200>>
-		<span class="lblue">Firm</span>
+			<span class="lblue">Firm</span>
 		<<elseif $args[0] gte 100>>
-		<span class="blue">Fine</span>
+			<span class="blue">Fine</span>
 		<<elseif $args[0] gte 50>>
-		<span class="purple">Delicate</span>
+			<span class="purple">Delicate</span>
 		<<elseif $args[0] gte 20>>
-		<span class="pink">Fragile</span>
+			<span class="pink">Fragile</span>
 		<<else>>
-		<span class="red">Flimsy</span>
+			<span class="red">Flimsy</span>
 		<</if>>
 
 	<<else>>
 		<<if $args[0] gte 900>>
-		<span class="green">tough</span>
+			<span class="green">tough</span>
 		<<elseif $args[0] gte 500>>
-		<span class="teal">sturdy</span>
+			<span class="teal">sturdy</span>
 		<<elseif $args[0] gte 200>>
-		<span class="lblue">firm</span>
+			<span class="lblue">firm</span>
 		<<elseif $args[0] gte 100>>
-		<span class="blue">fine</span>
+			<span class="blue">fine</span>
 		<<elseif $args[0] gte 50>>
-		<span class="purple">delicate</span>
+			<span class="purple">delicate</span>
 		<<elseif $args[0] gte 20>>
-		<span class="pink">fragile</span>
+			<span class="pink">fragile</span>
 		<<else>>
-		<span class="red">flimsy</span>
+			<span class="red">flimsy</span>
 		<</if>>
 	<</if>>
 <</if>>
@@ -1230,45 +1181,58 @@
 <</widget>>
 
 <<widget "strokes">>
-
-<<if $enemyanger gte ($enemyangermax / 5) * 4 and $enemyarousal gte ($enemyarousalmax / 5) * 4>>savagely toys with
-<<elseif $enemyanger gte ($enemyangermax / 5) * 4 and $enemyarousal gte ($enemyarousalmax / 5) * 2>>viciously toys with
-<<elseif $enemyanger gte ($enemyangermax / 5) * 4>>brutally rubs
-<<elseif $enemyanger gte ($enemyangermax / 5) * 2 and $enemyarousal gte ($enemyarousalmax / 5) * 4>>roughly rubs
-<<elseif $enemyanger gte ($enemyangermax / 5) * 2 and $enemyarousal gte ($enemyarousalmax / 5) * 2>>firmly strokes
-<<elseif $enemyarousal gte ($enemyarousalmax / 5) * 4>>passionately strokes
-<<elseif $enemyarousal gte ($enemyarousalmax / 5) * 2>>vigorously strokes
-<<else>>gently caresses
-<</if>>
-
+	<<if $enemyanger gte ($enemyangermax / 5) * 4>>
+		<<if $enemyarousal gte ($enemyarousalmax / 5) * 4>>
+			savagely toys with
+		<<elseif $enemyarousal gte ($enemyarousalmax / 5) * 2>>
+			viciously toys with
+		<<else>>
+			brutally rubs
+		<</if>>
+	<<elseif $enemyanger gte ($enemyangermax / 5) * 2>>
+		<<if $enemyarousal gte ($enemyarousalmax / 5) * 4>>
+			roughly rubs
+		<<elseif $enemyarousal gte ($enemyarousalmax / 5) * 2>>
+			firmly strokes
+		<<else>>
+			passionately strokes
+		<</if>>
+	<<else>>
+		<<if $enemyarousal gte ($enemyarousalmax / 5) * 2>>
+			vigorously strokes
+		<<else>>
+			gently caresses
+		<</if>>
+	<</if>>
 <</widget>>
 
 <<widget "personsimple">><<silently>>
-<<if $npcadult is 1>>
-	<<set _text_output to ($pronoun is "m" ? "man" : "woman")>>
-<<else>>
-	<<set _text_output to ($pronoun is "m" ? "boy" : "girl")>>
-<</if>><</silently>><<print _text_output>><</widget>>
+	<<set _text_output to (!$NPCList[$index].type or $NPCList[$index].type is "human" or $args[0] is "normal" ? "" : $NPCList[$index].type)>>
+	<<if $npcadult is 1>>
+		<<set _text_output += ($pronoun is "m" ? "man" : "woman")>>
+	<<else>>
+		<<set _text_output += ($pronoun is "m" ? "boy" : "girl")>>
+	<</if>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "person">><<silently>>
-<<if $npc_named is 1>>
-	<<set _text_output to $description>>
-<<elseif $npcadult is 1>>
-	<<if $pronoun is "m">>
-		<<set _text_output to $description+" man">>
-	<<elseif $pronoun is "f">>
-		<<set _text_output to $description+" woman">>
+	<<set _text_output to $description + " ">>
+	<<if ($NPCList[$index].type and $NPCList[$index].type isnot "human") and $args[0] isnot "normal">>
+		<<set _text_output += $NPCList[$index].type>>
 	<</if>>
-<<else>>
-	<<if $pronoun is "m">>
-		<<set _text_output to $description+" boy">>
+	<<if $npc_named is 1 or $description is "pale figure">>
+		<<set _text_output to $description>>
+	<<elseif $role isnot "normal">>
+		<<set _text_output to $description + " " + $role>>
+	<<elseif $pronoun is "m">>
+		<<set _text_output += ($npcadult is 1 ? "man" : "boy")>>
 	<<elseif $pronoun is "f">>
-		<<set _text_output to $description+" girl">>
+		<<set _text_output += ($npcadult is 1 ? "woman" : "girl")>>
 	<</if>>
-<</if>><</silently>><<print _text_output>><</widget>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "persons">><<silently>>
-	<<person>>
+	<<person $args[0]>>
 	<<set _text_output to _text_output + "'s">>
 <</silently>><<print _text_output>><</widget>>
 
@@ -1277,11 +1241,15 @@
 	<<set _text_output to $NPCList[_j].fullDescription>>
 <<elseif $enemytype is "beast">>
 	<<set _text_output to "the " + $NPCList[_j].type>>
+<<elseif $role isnot "normal">>
+	<<set _text_output to $description + " " + $role>>
 <<elseif $npcadult is 1>>
 	<<if $pronoun is "m">>
 		<<set _text_output to "the " + $description+" man">>
 	<<elseif $pronoun is "f">>
 		<<set _text_output to "the " + $description+" woman">>
+	<<else>>
+		<<set _text_output to "the " + $description>>
 	<</if>>
 <<else>>
 	<<set _text_output to "the " + $NPCList[_j].fullDescription>>
@@ -1300,6 +1268,7 @@
 <!-- This replaces calls person1 person2 etc. Used for NPC object calls -->
 <!-- Note calls are 0-5 corresponding to NPCs 1-6 -->
 <<set _n to $args[0]>>
+<<set $index to _n>>
 
 <<set $npcadult to $NPCList[_n].adult>>
 <<set $pronoun to $NPCList[_n].pronoun>>
@@ -1308,6 +1277,7 @@
 	<<set $npc_named to 1>>
 <<else>>
 	<<set $description to $NPCList[_n].description>>
+	<<set $role to $NPCList[_n].role>>
 	<<set $npc_named to 0>>
 <</if>>
 <</widget>>
@@ -1479,7 +1449,7 @@
 		<<elseif $pblevel gte 8 and $pbdisable is "f">>
 			<<set _text_output += "bushy ">>
 		<</if>>
-		<<set _text_output += ["pussy", "quim"].pluck()>>
+		<<set _text_output += ["pussy", "pussy", "pussy", "quim"].pluck()>>
 	<</if>>
 <</if>>
 <</silently>><<print _text_output>><</widget>>
@@ -1642,6 +1612,50 @@
 
 <<widget "glewdity">> |
 <span class="lewd">+ Lewdity</span>
+<</widget>>
+
+<<widget "gglewdity">> |
+<span class="lewd">+ + Lewdity</span>
+<</widget>>
+
+<<widget "ggglewdity">> |
+<span class="lewd">+ + + Lewdity</span>
+<</widget>>
+
+<<widget "llewdity">> |
+<span class="lewd">- Lewdity</span>
+<</widget>>
+
+<<widget "lllewdity">> |
+<span class="lewd">- - Lewdity</span>
+<</widget>>
+
+<<widget "llllewdity">> |
+<span class="lewd">- - - Lewdity</span>
+<</widget>>
+
+<<widget "gattention">><<if $prison_attention_day isnot true>> |
+<span class="lewd">+ Attention</span>
+<</if>><</widget>>
+
+<<widget "ggattention">><<if $prison_attention_day isnot true>> |
+<span class="lewd">+ + Attention</span>
+<</if>><</widget>>
+
+<<widget "gggattention">><<if $prison_attention_day isnot true>> |
+<span class="lewd">+ + + Attention</span>
+<</if>><</widget>>
+
+<<widget "lattention">> |
+<span class="lewd">- Attention</span>
+<</widget>>
+
+<<widget "llattention">> |
+<span class="lewd">- - Attention</span>
+<</widget>>
+
+<<widget "lllattention">> |
+<span class="lewd">- - - Attention</span>
 <</widget>>
 
 <<widget "lcontrol">> |
@@ -1838,7 +1852,7 @@
 <<if $NPCName[$NPCNameList.indexOf("Sydney")].purity lte 50 and _lustincrdisplay isnot 1>>
 	<<glust>>
 <</if>>
-<<set _warnstate to 1>>
+<<set _warnstate to -1>>
 <</widget>>
 
 <<widget "llspurity">> |
@@ -1850,7 +1864,7 @@
 <<if $NPCName[$NPCNameList.indexOf("Sydney")].purity lte 50 and _lustincrdisplay isnot 1>>
 	<<glust>>
 <</if>>
-<<set _warnstate to 2>>
+<<set _warnstate to -2>>
 <</widget>>
 
 <<widget "lllspurity">> |
@@ -1862,7 +1876,7 @@
 <<if $NPCName[$NPCNameList.indexOf("Sydney")].purity lte 50 and _lustincrdisplay isnot 1>>
 	<<glust>>
 <</if>>
-<<set _warnstate to 3>>
+<<set _warnstate to -3>>
 <</widget>>
 
 <<widget "gslust">> |
@@ -1897,25 +1911,28 @@
 <<else>>
 	<<switch _warnstate>>
 		<<case 1>>
-			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 2) lt 0>>
-				| <span class="purple">This action will corrupt Sydney</span>
-			<</if>>
 			<<if $purityEvent is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].corruption isnot 0 and ($NPCName[$NPCNameList.indexOf("Sydney")].corruption - 2) lt 0>>
 				| <span class="teal">This action will purify Sydney</span>
 			<</if>>
 		<<case 2>>
-			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 5) lt 0>>
-				| <span class="purple">This action will corrupt Sydney</span>
-			<</if>>
 			<<if $purityEvent is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].corruption isnot 0 and ($NPCName[$NPCNameList.indexOf("Sydney")].corruption - 5) lt 0>>
 				| <span class="teal">This action will purify Sydney</span>
 			<</if>>
 		<<case 3>>
-			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 10) lt 0>>
-				| <span class="purple">This action will corrupt Sydney</span>
-			<</if>>
 			<<if $purityEvent is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].corruption isnot 0 and ($NPCName[$NPCNameList.indexOf("Sydney")].corruption - 10) lt 0>>
 				| <span class="teal">This action will purify Sydney</span>
+			<</if>>
+		<<case -1>>
+			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 2) lt 0>>
+				| <span class="purple">This action will corrupt Sydney</span>
+			<</if>>
+		<<case -2>>
+			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 5) lt 0>>
+				| <span class="purple">This action will corrupt Sydney</span>
+			<</if>>
+		<<case -3>>
+			<<if $corruptionEvent is 1 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity - 10) lt 0>>
+				| <span class="purple">This action will corrupt Sydney</span>
 			<</if>>
 	<</switch>>
 <</if>>
@@ -2152,122 +2169,170 @@
 <</widget>>
 
 <<widget "glove">> |
-<span class="green">+ Love</span>
+<<if $args[0]>>
+	<span class="green">+ $args[0]'s Love</span>
+<<else>>
+	<span class="green">+ Love</span>
+<</if>>
 <</widget>>
 
 <<widget "gglove">> |
-<span class="green">+ + Love</span>
+<<if $args[0]>>
+	<span class="green">+ + $args[0]'s Love</span>
+<<else>>
+	<span class="green">+ + Love</span>
+<</if>>
 <</widget>>
 
 <<widget "ggglove">> |
-<span class="green">+ + + Love</span>
+<<if $args[0]>>
+	<span class="green">+ + + $args[0]'s Love</span>
+<<else>>
+	<span class="green">+ + + Love</span>
+<</if>>
 <</widget>>
 
 <<widget "llove">> |
-<span class="red">- Love</span>
+<<if $args[0]>>
+	<span class="red">- $args[0]'s Love</span>
+<<else>>
+	<span class="red">- Love</span>
+<</if>>
 <</widget>>
 
 <<widget "lllove">> |
-<span class="red">- - Love</span>
+<<if $args[0]>>
+	<span class="red">- - $args[0]'s Love</span>
+<<else>>
+	<span class="red">- - Love</span>
+<</if>>
 <</widget>>
 
 <<widget "llllove">> |
-<span class="red">- - - Love</span>
+<<if $args[0]>>
+	<span class="red">- - - $args[0]'s Love</span>
+<<else>>
+	<span class="red">- - - Love</span>
+<</if>>
 <</widget>>
 
 <<widget "glust">> |
-<span class="lewd">+ Lust</span>
+<<if $args[0]>>
+	<span class="lewd">+ $args[0]'s Lust</span>
+<<else>>
+	<span class="lewd">+ Lust</span>
+<</if>>
 <</widget>>
 
 <<widget "gglust">> |
-<span class="lewd">+ + Lust</span>
+<<if $args[0]>>
+	<span class="lewd">+ + $args[0]'s Lust</span>
+<<else>>
+	<span class="lewd">+ + Lust</span>
+<</if>>
 <</widget>>
 
 <<widget "ggglust">> |
-<span class="lewd">+ + + Lust</span>
+<<if $args[0]>>
+	<span class="lewd">+ + + $args[0]'s Lust</span>
+<<else>>
+	<span class="lewd">+ + + Lust</span>
+<</if>>
 <</widget>>
 
 <<widget "llust">> |
-<span class="teal">- Lust</span>
+<<if $args[0]>>
+	<span class="teal">- $args[0]'s Lust</span>
+<<else>>
+	<span class="teal">- Lust</span>
+<</if>>
 <</widget>>
 
 <<widget "lllust">> |
-<span class="teal">- - Lust</span>
+<<if $args[0]>>
+	<span class="teal">- - $args[0]'s Lust</span>
+<<else>>
+	<span class="teal">- - Lust</span>
+<</if>>
 <</widget>>
 
 <<widget "llllust">> |
-<span class="teal">- - - Lust</span>
+<<if $args[0]>>
+	<span class="teal">- - - $args[0]'s Lust</span>
+<<else>>
+	<span class="teal">- - - Lust</span>
+<</if>>
 <</widget>>
 
 <<widget "gdom">> |
-<<if $npc.includes("Robin") or $args[0] is "Robin">>
-<span class="purple">+ Robin's Confidence</span>
+<<if ($npc.includes("Robin") and $args[0] is undefined) or $args[0] is "Robin">>
+	<span class="purple">+ Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
-<span class="purple">+ $args[0]'s Dominance</span>
+	<span class="purple">+ $args[0]'s Dominance</span>
 <<elseif $npc.length isnot 0>>
-<span class="purple">+ $npc[0]'s Dominance</span>
+	<span class="purple">+ $npc[0]'s Dominance</span>
 <<else>>
-<span class="purple">+ NPC Dominance</span>
+	<span class="purple">+ NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "ggdom">> |
-<<if $npc.includes("Robin") or $args[0] is "Robin">>
-<span class="purple">+ + Robin's Confidence</span>
+<<if ($npc.includes("Robin") and $args[0] is undefined) or $args[0] is "Robin">>
+	<span class="purple">+ + Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
-<span class="purple">+ + $args[0]'s Dominance</span>
+	<span class="purple">+ + $args[0]'s Dominance</span>
 <<elseif $npc.length isnot 0>>
-<span class="purple">+ + $npc[0]'s Dominance</span>
+	<span class="purple">+ + $npc[0]'s Dominance</span>
 <<else>>
-<span class="purple">+ + NPC Dominance</span>
+	<span class="purple">+ + NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "gggdom">> |
-<<if $npc.includes("Robin") or $args[0] is "Robin">>
-<span class="purple">+ + + Robin's Confidence</span>
+<<if ($npc.includes("Robin") and $args[0] is undefined) or $args[0] is "Robin">>
+	<span class="purple">+ + + Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
-<span class="purple">+ + + $args[0]'s Dominance</span>
+	<span class="purple">+ + + $args[0]'s Dominance</span>
 <<elseif $npc.length isnot 0>>
-<span class="purple">+ + + $npc[0]'s Dominance</span>
+	<span class="purple">+ + + $npc[0]'s Dominance</span>
 <<else>>
-<span class="purple">+ + + NPC Dominance</span>
+	<span class="purple">+ + + NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "ldom">> |
-<<if $npc.includes("Robin") or $args[0] is "Robin">>
-<span class="lblue">- Robin's Confidence</span>
+<<if ($npc.includes("Robin") and $args[0] is undefined) or $args[0] is "Robin">>
+	<span class="lblue">- Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
-<span class="purple">- $args[0]'s Dominance</span>
+	<span class="purple">- $args[0]'s Dominance</span>
 <<elseif $npc.length isnot 0>>
-<span class="lblue">- $npc[0]'s Dominance</span>
+	<span class="lblue">- $npc[0]'s Dominance</span>
 <<else>>
-<span class="lblue">- NPC Dominance</span>
+	<span class="lblue">- NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "lldom">> |
-<<if $npc.includes("Robin") or $args[0] is "Robin">>
-<span class="lblue">- - Robin's Confidence</span>
+<<if ($npc.includes("Robin") and $args[0] is undefined) or $args[0] is "Robin">>
+	<span class="lblue">- - Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
-<span class="purple">- - $args[0]'s Dominance</span>
+	<span class="purple">- - $args[0]'s Dominance</span>
 <<elseif $npc.length isnot 0>>
-<span class="lblue">- - $npc[0]'s Dominance</span>
+	<span class="lblue">- - $npc[0]'s Dominance</span>
 <<else>>
-<span class="lblue">- - NPC Dominance</span>
+	<span class="lblue">- - NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "llldom">> |
-<<if $npc.includes("Robin") or $args[0] is "Robin">>
-<span class="lblue">- - - Robin's Confidence</span>
+<<if ($npc.includes("Robin") and $args[0] is undefined) or $args[0] is "Robin">>
+	<span class="lblue">- - - Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
-<span class="purple">- - - $args[0]'s Dominance</span>
+	<span class="purple">- - - $args[0]'s Dominance</span>
 <<elseif $npc.length isnot 0>>
-<span class="lblue">- - - $npc[0]'s Dominance</span>
+	<span class="lblue">- - - $npc[0]'s Dominance</span>
 <<else>>
-<span class="lblue">- - - NPC Dominance</span>
+	<span class="lblue">- - - NPC Dominance</span>
 <</if>>
 <</widget>>
 
@@ -2651,6 +2716,30 @@
 <span class="green">+ Knowledge</span>
 <</widget>>
 
+<<widget "gbodywriting">> | 
+<span class="purple">+ Bodywriting</span>
+<</widget>>
+
+<<widget "ggbodywriting">> | 
+<span class="purple">+ + Bodywriting</span>
+<</widget>>
+
+<<widget "gggbodywriting">> | 
+<span class="purple">+ + + Bodywriting</span>
+<</widget>>
+
+<<widget "ghallucinogens">> | 
+<span class="lewd">+ Hallucinogens</span>
+<</widget>>
+
+<<widget "gghallucinogens">> | 
+<span class="lewd">+ + Hallucinogens</span>
+<</widget>>
+
+<<widget "ggghallucinogens">> | 
+<span class="lewd">+ + + Hallucinogens</span>
+<</widget>>
+
 <<widget "flight_text">> |
 <<if $harpy gte 6 and $birdFly gte 1>>
 	<span class="gold">Strong wings</span>
@@ -2909,7 +2998,7 @@
 <span class="green">+ + + Willpower</span>
 <</widget>>
 
-<<widget "gphysique">>|
+<<widget "gphysique">> |
 <span class="green">+ Physique</span>
 <</widget>>
 
@@ -2919,6 +3008,18 @@
 
 <<widget "gggphysique">> |
 <span class="green">+ + + Physique</span>
+<</widget>>
+
+<<widget "lphysique">>|
+<span class="red">- Physique</span>
+<</widget>>
+
+<<widget "llphysique">> |
+<span class="red">- - Physique</span>
+<</widget>>
+
+<<widget "lllphysique">> |
+<span class="red">- - - Physique</span>
 <</widget>>
 
 <!-- Exhibitionism -->
@@ -3213,7 +3314,7 @@ A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 
 <<widget "groin">><<silently>>
 <<genitals>>
-<<if !$worn.lower.type.includes("naked") and $worn.lower.skirt isnot 1>>
+<<if !$worn.lower.type.includes("naked") and setup.clothes.lower[$worn.lower.index].skirt isnot 1>>
 <<set _text_output to _text_output + " through your " + $worn.lower.name>>
 <<elseif !$worn.under_lower.type.includes("naked")>>
 <<set _text_output to _text_output + " through your " + $worn.under_lower.name>>
@@ -3256,25 +3357,25 @@ A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 
 <<widget "allTops">>
 	<<if $worn.over_upper.name isnot "naked">>
-		$worn.over_upper.name
+		$worn.over_upper.name\
 	<</if>>
 	<<if $worn.upper.name isnot "naked">>
 		<<if $worn.over_upper.name isnot "naked">>
 			and
 		<</if>>
-		$worn.upper.name
+		$worn.upper.name\
 	<</if>>
 <</widget>>
 
 <<widget "allBottoms">>
 	<<if $worn.over_lower.name isnot "naked">>
-		$worn.over_lower.name
+		$worn.over_lower.name\
 	<</if>>
 	<<if $worn.lower.name isnot "naked">>
 		<<if $worn.over_lower.name isnot "naked">>
 			and
 		<</if>>
-		$worn.lower.name
+		$worn.lower.name\
 	<</if>>
 <</widget>>
 
@@ -3593,15 +3694,17 @@ You can't help but be conscious of your <<nudity>>.
 <</silently>>_text_output<</widget>>
 
 <<widget "schoolday">>
-<<if $schoolterm is 1 and $weekday is 1>>
-	You have school tomorrow.
-	<br>
-<<elseif $schoolterm is 1 and $weekday isnot 1 and $weekday isnot 7>>
-	It's a school day.
-	<br>
-<<elseif $schoolterm is 0 and $weekday is 1>>
-	There's no school tomorrow.
-	<br>
+<<if $location isnot "prison" and $location isnot "asylum">>
+	<<if $schoolterm is 1 and $weekday is 1>>
+		You have school tomorrow.
+		<br>
+	<<elseif $schoolterm is 1 and $weekday isnot 1 and $weekday isnot 7>>
+		It's a school day.
+		<br>
+	<<elseif $schoolterm is 0 and $weekday is 1>>
+		There's no school tomorrow.
+		<br>
+	<</if>>
 <</if>>
 <</widget>>
 
@@ -3886,191 +3989,56 @@ School finishes on the first Monday of December.
 <</widget>>
 
 <<widget "covered">>
-<<exposure>>
+	<<exposure>>
 
-<<if $leftarm is "bound" and $rightarm is "bound" and $exposed gte 1>>
-	<<if $exposed gte 2 and $exhibitionism lt 95 or $exposed gte 2 and $uncomfortable.nude is true>>
-	With your arms bound, there's little you can do to shield your <<lewdness>> from prying eyes.
+	<<if $exposed gt 0>>
 
-	<<elseif $exposed gte 2>>
-	With your arms bound, there's little you can do to shield your <<lewdness>> from prying eyes. You quiver with excitement.
+		/* calculating section */
+		<<silently>>
+			<<genitals>><<set _genitals_text to _text_output>>
+			<<breasts>><<set _breasts_text to _text_output>>
+		<</silently>>
 
-	<<elseif $exhibitionism lt 55>>
-	With your arms bound, there's little you can do to shield your <<lewdness>> from prying eyes.
+		<<set _parts to "">>
+		<<if $worn.upper.exposed gte 2>>
+			<<if $player.gender_appearance is "m" and $player.gender is "m" and $worn.lower.exposed lte 0>>
+				<<set _parts += "chest">>
+			<<else>>
+				<<set _parts += ($worn.under_upper.exposed gte 1 ? _breasts_text : $worn.under_upper.name)>>
+			<</if>>
+		<</if>>
+		<<if $worn.lower.exposed gte 2>>
+			<<if _parts isnot "">>
+				<<set _parts += " and ">>
+			<</if>>
+			<<set _parts += ($worn.under_lower.exposed gte 1 ? _genitals_text : $worn.under_lower.name)>>
+		<</if>>
 
-	<<elseif $uncomfortable.nude is true>>
-	With your arms bound, there's little you can do to shield your <<lewdness>> from prying eyes.
+		/* text output section */
 
-	<<else>>
-	With your arms bound, there's little you can do to shield your <<lewdness>> from prying eyes. You quiver with excitement.
-
+		<<if $leftarm is "bound" and $rightarm is "bound" and $exposed gte 1>>
+			With your arms bound, there's little you can do to shield your <<lewdness>> from prying eyes.
+			<<if !$uncomfortable.nude and $exposed gte 2 and $exhibitionism gte 95>>
+				You quiver with excitement.
+			<<elseif !$uncomfortable.nude and $exposed is 1 and $exhibitionism gte 55>>
+				You quiver with excitement.
+			<</if>>
+		<<elseif ($exposed gte 2 and ($exhibitionism lt 95 or $uncomfortable.nude))
+			or ($exposed is  1 and ($exhibitionism lt 55 or $uncomfortable.nude))>>
+			<<if _parts isnot "">>
+				You cover your <span class="lewd">exposed _parts</span> with your hands.
+			<<else>>
+				You cover the <span class="lewd">lewder</span> parts of your outfit with your hands.
+			<</if>>
+		<<else>>
+			<<if _parts isnot "">>
+				You quiver with excitement from your <span class="lewd">exposed _parts</span>.
+			<<else>>
+				The <span class="lewd">lewder</span> parts of your outfit make you quiver with excitement.
+			<</if>>
+		<</if>>
+		<<embarrassment>>
 	<</if>>
-	<<embarrassment>>
-<<elseif $exposed gte 2 and $exhibitionism lt 95 or $exposed gte 2 and $uncomfortable.nude is true>>
-	<<if $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2 and $worn.upper.exposed lte 1>>
-	You cover your <span class="lewd">exposed <<genitals>></span> with your hands.
-	<<elseif $worn.under_lower.exposed lte 0 and $worn.lower.exposed gte 2 and $worn.upper.exposed lte 1>>
-	You cover your <span class="lewd">exposed $worn.under_lower.name</span> with your hands.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed lte 1 and $player.gender_appearance is "m" and $player.gender is "m">>
-	You cover your chest with your hands.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed lte 1>>
-		<<if $worn.under_upper.exposed gte 1>>
-			You cover your <span class="lewd">exposed <<breasts>></span> with your hands.
-		<<else>>
-			You cover your <span class="lewd">$worn.under_upper.name</span> with your hands.
-		<</if>>
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed lte 0 and $player.gender_appearance is "m" and $player.gender is "m">>
-	You cover your <span class="lewd">exposed $worn.under_lower.name</span> with your hands.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed lte 0>>
-		<<if $worn.under_upper.exposed gte 1>>
-			You cover your <span class="lewd">exposed <<breasts>> and $worn.under_lower.name</span> with your hands.
-		<<else>>
-			You cover your <span class="lewd">exposed $worn.under_upper.name and $worn.under_lower.name</span> with your hands.
-		<</if>>
-
-	<<elseif $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2 and $player.gender_appearance is "m" and $player.gender is "m">>
-	You cover your <span class="lewd">exposed <<genitals>></span> with your hands.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
-		<<if $worn.under_upper.exposed gte 1>>
-			You cover your <span class="lewd">exposed <<breasts>> and <<genitals>></span> with your hands.
-		<<else>>
-			You cover your <span class="lewd">exposed $worn.under_upper.name and <<genitals>></span> with your hands.
-		<</if>>
-
-	<<else>>
-	You cover the <span class="lewd">lewder</span> parts of your outfit with your hands.
-
-	<</if>>
-	<<embarrassment>>
-<<elseif $exposed gte 2>>
-	<<if $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2 and $worn.upper.exposed lte 1>>
-	Your <span class="lewd">exposed <<genitals>></span> makes you quiver with excitement.
-	<<elseif $worn.under_lower.exposed lte 0 and $worn.lower.exposed gte 2 and $worn.upper.exposed lte 1>>
-	Your <span class="lewd">exposed $worn.under_lower.name</span> <<if $worn.under_lower.plural is 1>>make<<else>>makes<</if>> you quiver with excitement.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed lte 1 and $player.gender_appearance is "m" and $player.gender is "m">>
-	Your exposed chest makes you quiver with excitement.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed lte 1>>
-		<<if $worn.under_upper.exposed gte 1>>
-			Your <span class="lewd">exposed <<breasts>></span> <<if $breastsize is 0>>makes<<else>>make<</if>> you quiver with excitement.
-		<<else>>
-			Your <span class="lewd">exposed $worn.under_upper.name</span> <<if $breastsize is 0>>makes<<else>>make<</if>> you quiver with excitement.
-		<</if>>
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed lte 0 and $player.gender_appearance is "m" and $player.gender is "m">>
-	Your <span class="lewd">exposed $worn.under_lower.name</span> <<if $worn.under_lower.plural is 1>>make<<else>>makes<</if>> you quiver with excitement.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed lte 0>>
-		<<if $worn.under_upper.exposed gte 1>>
-			Your <span class="lewd">exposed <<breasts>> and $worn.under_lower.name</span> make you quiver with excitement.
-		<<else>>
-			Your <span class="lewd">exposed $worn.under_upper.name and $worn.under_lower.name</span> make you quiver with excitement.
-		<</if>>
-
-	<<elseif $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2 and $player.gender_appearance is "m" and $player.gender is "m">>
-	Your <span class="lewd">exposed <<genitals>></span> makes you quiver with excitement.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
-		<<if $worn.under_upper.exposed gte 1>>
-			Your <span class="lewd">exposed <<breasts>> and <<genitals>></span> make you quiver with excitement.
-		<<else>>
-			Your <span class="lewd">exposed $worn.under_upper.name and <<genitals>></span> make you quiver with excitement.
-		<</if>>
-
-	<<else>>
-	The <span class="lewd">lewder</span> parts of your outfit make you quiver with excitement.
-
-	<</if>>
-	<<embarrassment>>
-<<elseif $exposed gte 1 and $exhibitionism lt 55 or $exposed gte 1 and $uncomfortable.nude is true>>
-	<<if $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2 and $worn.upper.exposed lte 1>>
-	You cover your <span class="lewd">exposed <<genitals>></span> with your hands.
-	<<elseif $worn.under_lower.exposed lte 0 and $worn.lower.exposed gte 2 and $worn.upper.exposed lte 1>>
-	You cover your <span class="lewd">exposed $worn.under_lower.name</span> with your hands.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed lte 1 and $player.gender_appearance is "m" and $player.gender is "m">>
-	You cover your chest with your hands.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed lte 1>>
-		<<if $worn.under_upper.exposed gte 1>>
-			You cover your <span class="lewd">exposed <<breasts>></span> with your hands.
-		<<else>>
-			You cover your <span class="lewd">exposed $worn.under_upper.name</span> with your hands.
-		<</if>>
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed lte 0 and $player.gender_appearance is "m" and $player.gender is "m">>
-	You cover your <span class="lewd">exposed $worn.under_lower.name</span> with your hands.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed lte 0>>
-		<<if $worn.under_upper.exposed gte 1>>
-			You cover your <span class="lewd">exposed <<breasts>> and $worn.under_lower.name</span> with your hands.
-		<<else>>
-			You cover your <span class="lewd">exposed $worn.under_upper.name and $worn.under_lower.name</span> with your hands.
-		<</if>>
-
-	<<elseif $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2 and $player.gender_appearance is "m" and $player.gender is "m">>
-	You cover your <span class="lewd">exposed <<genitals>></span> with your hands.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
-		<<if $worn.under_upper.exposed gte 1>>
-			You cover your <span class="lewd">exposed <<breasts>> and <<genitals>></span> with your hands.
-		<<else>>
-			You cover your <span class="lewd">exposed $worn.under_upper.name and <<genitals>></span> with your hands.
-		<</if>>
-
-	<<else>>
-	You cover the <span class="lewd">lewder</span> parts of your outfit with your hands.
-
-	<</if>>
-	<<embarrassment>>
-<<elseif $exposed gte 1>>
-	<<if $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2 and $worn.upper.exposed lte 1>>
-	Your <span class="lewd">exposed <<genitals>></span> makes you quiver with excitement.
-	<<elseif $worn.under_lower.exposed lte 0 and $worn.lower.exposed gte 2 and $worn.upper.exposed lte 1>>
-	Your <span class="lewd">exposed $worn.under_lower.name</span> <<if $worn.under_lower.plural is 1>>make<<else>>makes<</if>> you quiver with excitement.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed lte 1 and $player.gender_appearance is "m" and $player.gender is "m">>
-	Your exposed chest makes you quiver with excitement.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed lte 1>>
-		<<if $worn.under_upper.exposed gte 1>>
-			Your <span class="lewd">exposed <<breasts>></span> <<if $breastsize is 0>>makes<<else>>make<</if>> you quiver with excitement.
-		<<else>>
-			Your <span class="lewd">exposed $worn.under_upper.name</span> <<if $breastsize is 0>>makes<<else>>make<</if>> you quiver with excitement.
-		<</if>>
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed lte 0 and $player.gender_appearance is "m" and $player.gender is "m">>
-	Your <span class="lewd">exposed $worn.under_lower.name</span> <<if $worn.under_lower.plural is 1>>make<<else>>makes<</if>> you quiver with excitement.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed lte 0>>
-		<<if $worn.under_upper.exposed gte 1>>
-			Your <span class="lewd">exposed <<breasts>> and $worn.under_lower.name</span> make you quiver with excitement.
-		<<else>>
-			Your <span class="lewd">exposed $worn.under_upper.name and $worn.under_lower.name</span> make you quiver with excitement.
-		<</if>>
-
-	<<elseif $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2 and $player.gender_appearance is "m" and $player.gender is "m">>
-	Your <span class="lewd">exposed <<genitals>></span> makes you quiver with excitement.
-
-	<<elseif $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
-		<<if $worn.under_upper.exposed gte 1>>
-			Your <span class="lewd">exposed <<breasts>> and <<genitals>></span> make you quiver with excitement.
-		<<else>>
-			Your <span class="lewd">exposed $worn.under_upper.name and <<genitals>></span> make you quiver with excitement.
-		<</if>>
-
-	<<else>>
-	The <span class="lewd">lewder</span> parts of your outfit make you quiver with excitement.
-
-	<</if>>
-	<<embarrassment>>
-<</if>>
 <</widget>>
 
 <<widget "passagestrip">>
@@ -4138,317 +4106,317 @@ School finishes on the first Monday of December.
 <</widget>>
 
 <<widget "strippedtext">>
-<<if $control gte (($controlmax / 5) * 4)>>
-	<<if $trauma gte (($traumamax / 5) * 4)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
+	<<if $control gte (($controlmax / 5) * 4)>>
+		<<if $trauma gte (($traumamax / 5) * 4)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 3)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 2)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 1)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<<else>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 3)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
+	<<elseif $control gte (($controlmax / 5) * 3)>>
+		<<if $trauma gte (($traumamax / 5) * 4)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 3)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 2)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 1)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<<else>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 2)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
+	<<elseif $control gte (($controlmax / 5) * 2)>>
+		<<if $trauma gte (($traumamax / 5) * 4)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 3)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 2)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 1)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<<else>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 1)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
+	<<elseif $control gte (($controlmax / 5) * 1)>>
+		<<if $trauma gte (($traumamax / 5) * 4)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 3)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 2)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 1)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<<else>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
-		<</if>>
-	<<else>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<else>>
 
-		<<else>>
-
-		<</if>>
-	<</if>>
-<<elseif $control gte (($controlmax / 5) * 3)>>
-	<<if $trauma gte (($traumamax / 5) * 4)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 3)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 2)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 1)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<else>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<</if>>
-<<elseif $control gte (($controlmax / 5) * 2)>>
-	<<if $trauma gte (($traumamax / 5) * 4)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 3)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 2)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 1)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<else>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<</if>>
-<<elseif $control gte (($controlmax / 5) * 1)>>
-	<<if $trauma gte (($traumamax / 5) * 4)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 3)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 2)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 1)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<else>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<</if>>
-<<else>>
-	<<if $trauma gte (($traumamax / 5) * 4)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 3)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 2)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
-		<</if>>
-	<<elseif $trauma gte (($traumamax / 5) * 1)>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
-
-		<<else>>
-
+			<</if>>
 		<</if>>
 	<<else>>
-		<<if $stress gte (($stressmax / 5) * 4)>>
+		<<if $trauma gte (($traumamax / 5) * 4)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
-		<<elseif $stress gte (($stressmax / 5) * 3)>>
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
 
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 3)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 2)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
+		<<elseif $trauma gte (($traumamax / 5) * 1)>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<<else>>
+			<<if $stress gte (($stressmax / 5) * 4)>>
 
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<elseif $stress gte (($stressmax / 5) * 3)>>
+
+			<<else>>
+
+			<</if>>
 		<</if>>
 	<</if>>
-<</if>>
 <</widget>>
 
 <<widget "prostate">><<silently>>
@@ -4758,6 +4726,51 @@ School finishes on the first Monday of December.
 	<</if>>
 <</widget>>
 
+<<widget "slithering">>
+	<<set $rng to random(1, 100)>>
+	<<if $rng gte 95>>
+		slithering
+	<<elseif $rng gte 90>>
+		writhing
+	<<elseif $rng gte 85>>
+		wriggling
+	<<elseif $rng gte 80>>
+		wiggling
+	<<elseif $rng gte 75>>
+		crawling
+	<<elseif $rng gte 70>>
+		sliding
+	<<elseif $rng gte 65>>
+		slinking
+	<<elseif $rng gte 60>>
+		gliding
+	<<elseif $rng gte 55>>
+		slipping
+	<<elseif $rng gte 50>>
+		squirming
+	<<elseif $rng gte 45>>
+		worming
+	<<elseif $rng gte 40>>
+		twisting
+	<<elseif $rng gte 35>>
+		twitching
+	<<elseif $rng gte 30>>
+		shivering
+	<<elseif $rng gte 25>>
+		trembling
+	<<elseif $rng gte 20>>
+		jerking
+	<<elseif $rng gte 15>>
+		crawling
+	<<elseif $rng gte 10>>
+		fluttering
+	<<elseif $rng gte 5>>
+		meandering
+	<<elseif $rng gte 0>>
+		slipping
+	<</if>>
+<</widget>>
+
 <<widget "wallet">><<silently>>
 	<<set _text_output to ($pronoun is "m" ? "wallet" : "purse")>>
 <</silently>><<print _text_output>><</widget>>
@@ -4794,8 +4807,8 @@ School finishes on the first Monday of December.
 
 <<widget "pulldownall">>
 <<outfitChecks>>
-<<if $worn.lower.skirt is 1>>
-	<<if $worn.under_lower.skirt is 1>>
+<<if setup.clothes.lower[$worn.lower.index].skirt is 1>>
+	<<if setup.clothes.under_lower[$worn.under_lower.index].skirt is 1>>
 		You lift the hem of your $worn.lower.name and $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<elseif _underOutfit>>
 		You lift the hem of your $worn.lower.name and pull aside your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
@@ -4805,7 +4818,7 @@ School finishes on the first Monday of December.
 		You lift the hem of your $worn.lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<</if>>
 <<elseif _middleOutfit>>
-	<<if $worn.under_lower.skirt is 1>>
+	<<if setup.clothes.under_lower[$worn.under_lower.index].skirt is 1>>
 		You pull aside your $worn.lower.name and lift the hem of your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<elseif _underOutfit>>
 		You pull aside your $worn.lower.name and $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
@@ -4815,7 +4828,7 @@ School finishes on the first Monday of December.
 		You pull aside your $worn.lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<</if>>
 <<elseif !$worn.lower.type.includes("naked")>>
-	<<if $worn.under_lower.skirt is 1>>
+	<<if setup.clothes.under_lower[$worn.under_lower.index].skirt is 1>>
 		You tug down your $worn.lower.name and lift the hem of your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<elseif _middleOutfit>>
 		You tug down your $worn.lower.name and pull aside your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
@@ -4825,7 +4838,7 @@ School finishes on the first Monday of December.
 		You tug down your $worn.lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<</if>>
 <<else>>
-	<<if $worn.under_lower.skirt is 1>>
+	<<if setup.clothes.under_lower[$worn.under_lower.index].skirt is 1>>
 		You lift the hem of your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
 	<<elseif _underOutfit>>
 		You pull aside your $worn.under_lower.name, <span class="lewd">baring your <<genitals>>.</span>
@@ -4850,7 +4863,7 @@ School finishes on the first Monday of December.
 
 <<widget "pulldown">>
 <<outfitChecks>>
-<<if $worn.lower.skirt is 1>>
+<<if setup.clothes.lower[$worn.lower.index].skirt is 1>>
 	lift up
 <<elseif _middleOutfit is false>>
 	pull down
@@ -4872,7 +4885,7 @@ School finishes on the first Monday of December.
 
 <<widget "pullsdown">>
 <<outfitChecks>>
-<<if $worn.lower.skirt is 1>>
+<<if setup.clothes.lower[$worn.lower.index].skirt is 1>>
 	lifts up
 <<elseif _middleOutfit is false>>
 	pulls down
@@ -4894,7 +4907,7 @@ School finishes on the first Monday of December.
 
 <<widget "overpulldown">>
 <<outfitChecks>>
-<<if $worn.over_lower.skirt is 1>>
+<<if setup.clothes.over_lower[$worn.over_lower.index].skirt is 1>>
 	lift up
 <<elseif _overOutfit is false>>
 	pull down
@@ -4916,7 +4929,7 @@ School finishes on the first Monday of December.
 
 <<widget "overpullsdown">>
 <<outfitChecks>>
-<<if $worn.over_lower.skirt is 1>>
+<<if setup.clothes.over_lower[$worn.over_lower.index].skirt is 1>>
 	lifts up
 <<elseif _overOutfit is false>>
 	pulls down
@@ -4933,8 +4946,35 @@ School finishes on the first Monday of December.
 <</if>>
 <</silently>><<print _text_output>><</widget>>
 
+<<widget "testicle">><<silently>>
+	<<if $args[0] is "clinical">>
+		<<set $_pool to ["testicle"]>>
+	<<else>>
+		<<set $_pool to ["ball", "nut", "testicle"]>>
+	<</if>>
+	<<set _text_output to $_pool.pluck()>>
+<</silently>><<print _text_output>><</widget>>
+
 <<widget "testicles">><<silently>>
-<<set _text_output to "testes">>
+	<<if $args[0] is "clinical">>
+		<<set $_pool to ["testes", "testicles"]>>
+	<<else>>
+		<<set $_pool to ["balls", "nuts", "testicles", "testes"]>>
+	<</if>>
+	<<set _text_output to $_pool.pluck()>>
+<</silently>><<print _text_output>><</widget>>
+
+<<widget "ballsize">><<silently>>
+	<<switch $ballssize>>
+		<<case -2>><<set _text_output to ["invisible"].pluck()>>
+		<<case -1>><<set _text_output to ["tiny", "mediocre", "pea-sized"].pluck()>>
+		<<case 0>> <<set _text_output to ["tiny", "mediocre"].pluck()>>
+		<<case 1>> <<set _text_output to ["small"].pluck()>>
+		<<case 2>> <<set _text_output to [""].pluck()>>
+		<<case 3>> <<set _text_output to ["large", "heavy", "thick", "dense"].pluck()>>
+		<<case 4>> <<set _text_output to ["huge", "heavy", "thick", "massive", "hefty"].pluck()>>
+		<<default>><<set _text_output to "Error: $ballssize is [" + $ballssize + "]">>
+	<</switch>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "swimmingdifficultytext0">>
@@ -5073,6 +5113,10 @@ School finishes on the first Monday of December.
  | <span class="red">Demon</span>
 <</widget>>
 
+<<widget "sharp_eyes">>
+ | <span class="gold">Sharp eyes</span>
+<</widget>>
+
 <<widget "laughs">>
 <<set $rng to random(1, 100)>>
 <<if $npcadult isnot 1>>
@@ -5175,12 +5219,19 @@ a teacher
 <<widget "beasttypes">> <<beasttype>>'s<</widget>>
 
 <<widget "beastsplural">><<silently>>
-<<if $NPCList[0].type is "wolf" and $monster isnot 1>>
+<<if typeof $args[0] is "number">>
+	<<set _na to $args[0]>>
+<<else>>
+	<<set _na to 0>>
+<</if>>
+<<if $NPCList[_na].type is "wolf" and $monster isnot 1>>
 	<<set _text_output to "wolves">>
-<<elseif $NPCList[0].type is "fox" and $monster isnot 1>>
+<<elseif $NPCList[_na].type is "fox" and $monster isnot 1>>
 	<<set _text_output to "foxes">>
-<<elseif $monster isnot 1 or $NPCList[0].type is "centaur">>
+<<elseif $monster isnot 1 or $NPCList[_na].type is "centaur">>
 	<<set _text_output to "<<beasttype>>s">>
+<<elseif $NPCList[_na].type is "harpy">>
+	<<set _text_output to "harpies">>
 <<else>>
 	<<for _i = 0; _i < $NPCList.length; _i++>>
 		<<if $NPCList[_i].pronoun is "m">>
@@ -5195,7 +5246,7 @@ a teacher
 	<<elseif $NPCList[2].pronoun is 0>>
 		<<set _text_output to "$NPCList[0].type and $NPCList[1].type">>
 	<<else>>
-		<<switch $NPCList[0].type>>
+		<<switch $NPCList[_na].type>>
 			<<case "lizardgirl" "lizardboy">><<set _text_output to "lizardgirls and lizardboys">>
 			<<case "wolfgirl" "wolfboy">><<set _text_output to "wolfgirls and wolfboys">>
 			<<case "doggirl" "dogboy">><<set _text_output to "doggirls and dogboys">>
@@ -5942,7 +5993,7 @@ $worn.genitals.name
 
 <<widget "dress">>
 <<if $worn.upper.set is $worn.lower.set>>
-	<<if $worn.lower.skirt is 1>>
+	<<if setup.clothes.lower[$worn.lower.index].skirt is 1>>
 		<<set _text_output to "dress">>
 	<<else>>
 		<<set _text_output to "clothes">>
@@ -5955,13 +6006,13 @@ $worn.genitals.name
 
 <<widget "skirt">>
 <<if $worn.upper.set is $worn.lower.set>>
-	<<if $worn.lower.skirt is 1>>
+	<<if setup.clothes.lower[$worn.lower.index].skirt is 1>>
 		<<set _text_output to "dress">>
 	<<else>>
 		<<set _text_output to "clothes">>
 	<</if>>
 <<else>>
-	<<if $worn.lower.skirt is 1>>
+	<<if setup.clothes.lower[$worn.lower.index].skirt is 1>>
 		<<set _text_output to "skirt">>
 	<<else>>
 		<<set _text_output to "bottoms">>
@@ -5974,7 +6025,7 @@ $worn.genitals.name
 <<if $worn.under_upper.set is $worn.under_lower.set>>
 	<<set _text_output to "underclothes">>
 <<else>>
-	<<if $worn.under_lower.skirt is 1>>
+	<<if setup.clothes.under_lower[$worn.under_lower.index].skirt is 1>>
 		<<set _text_output to "skirt">>
 	<<else>>
 		<<if $worn.under_lower.gender is "f">>
@@ -5995,7 +6046,7 @@ $worn.genitals.name
 <<if $worn.under_upper.set is $worn.under_lower.set>>
 	<<set _text_output to "underclothes">>
 <<else>>
-	<<if $worn.under_upper.gender is "f" and $worn.under_upper.state_base is "midriff">>
+	<<if $worn.under_upper.gender is "f" and setup.clothes.under_upper[$worn.under_upper.index].state_base is "midriff">>
 		<<set _text_output to "bra">>
 	<<else>>
 		<<set _text_output to "top">>
@@ -6019,6 +6070,24 @@ $worn.genitals.name
 	<<set _text_output to $NPCList[_npcGen].penisdesc>>
 <</if>>
 <<print _text_output>>
+<</widget>>
+
+<<widget "npcPenisSimple">>
+	<<if !$args[0]>>
+		<<set _npcGen to 0>>
+	<<else>>
+		<<set _npcGen to $args[0]>>
+	<</if>>
+	<<if $NPCList[_npcGen].chastity.penis is "chastity cage">>
+		<<set _text_output to "caged penis">>
+	<<elseif $NPCList[_npcGen].chastity.penis.includes("chastity")>>
+		<<set _text_output to $NPCList[_npcGen].chastity.penis>>
+	<<elseif $NPCList[_npcGen].penisdesc.includes("strap-on")>>
+		<<set _text_output to "strap-on cock">>
+	<<else>>
+		<<set _text_output to either("penis","cock","shaft")>>
+	<</if>>
+	<<print _text_output>>
 <</widget>>
 
 <<widget "npcVagina">>
@@ -6210,3 +6279,33 @@ $worn.genitals.name
 	<span class="purple"><<He>> casts aside the fabric.</span>
 <</if>>
 <</widget>>
+
+<<widget "plant_details">><<silently>>
+<<if ($location is "moor" and $args[0] isnot "forest") or $args[0] is "moor">>
+	<<switch $season>>
+		<<case "spring">>
+			<<set _text_output to "yellow willow leaves">>
+		<<case "summer">>
+			<<set _text_output to "small purple flowers">>
+		<<case "autumn">>
+			<<set _text_output to "large amber flowers">>
+		<<case "winter">>
+			<<set _text_output to "straw-coloured reeds">>
+	<</switch>>
+<<else>>
+	<<switch $season>>
+		<<case "spring">>
+			<<set _text_output to "pink blossoms">>
+		<<case "summer">>
+			<<set _text_output to "leaves and flowers">>
+		<<case "autumn">>
+			<<set _text_output to "orange and red leaves">>
+		<<case "winter">>
+			<<set _text_output to "small red berries">>
+	<</switch>>
+<</if>>
+<</silently>><<print _text_output>><</widget>>
+
+<<widget "Plant_details">><<silently>>
+<<plant_details $args[0]>><<set _text_output to _text_output.toLocaleUpperFirst()>>
+<</silently>><<print _text_output>><</widget>>

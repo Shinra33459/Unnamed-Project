@@ -552,7 +552,8 @@ window.settingsObjects = function (type) {
 				lurkerdisable: {boolLetter: true, bool: true},
 				horsedisable: {boolLetter: true, bool: true},
 				footdisable: {boolLetter: true, bool: true},
-				asphyxiaLvl: { min: 0, max: 3, decimals: 0 },
+				asphyxiaLvl: { min: 0, max: 4, decimals: 0 },
+				NudeGenderDC: { min: 0, max: 2, decimals: 0 },
 				breastsizemin: { min: 0, max: 4, decimals: 0 },
 				breastsizemax: { min: 0, max: 13, decimals: 0 },
 				bottomsizemax: { min: 0, max: 9, decimals: 0 },
@@ -591,6 +592,8 @@ window.settingsObjects = function (type) {
 				reducedLineHeight: { bool: true },
 				neverNudeMenus: { bool: true },
 				skipStatisticsConfirmation: { bool: true},
+				multipleWardrobes: { strings: [false, "isolated"] }, //, "all"
+				outfitEditorPerPage: { min: 5, max: 20, decimals: 0 }, //, "all"
 				map: {
 					movement: { bool: true },
 					top: { bool: true },
@@ -704,7 +707,9 @@ window.updateMoment = function () {
 	// this is a bad thing to do probably btw, because while history and delta appear to look very similar,
 	// they're not always the same thing, SugarCube actually decodes delta into history (see: https://github.com/tmedwards/sugarcube-2/blob/36a8e1600160817c44866205bc4d2b7730b2e70c/src/state.js#L527)
 	// but for my purpose it works (i think?)
-	delete Object.assign(moment, {delta: moment.history}).history;
+	//delete Object.assign(moment, {delta: moment.history}).history;
+	// delta-encode the state
+	delete Object.assign(moment, {delta: State.deltaEncode(moment.history)}).history;
 	// replace saved moment in session with the new one
 	let gameName = SugarCube.Story.domId;
 	sessionStorage[gameName + ".state"] = JSON.stringify(moment);

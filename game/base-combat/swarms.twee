@@ -1,7 +1,7 @@
 :: Widgets Swarm [widget]
 <<widget "swarminit">>
 
-	/* Example call	<<swarminit "fish" "containers" "shaking" "shatter" "steady" 4 6>> */
+	/* Example call	<<swarminit "fish" "container" "shaking" "shatter" "steady" 4 6>> */
 	/* <<swarminit type name move spill steady amountactive amountstored>> */
 
 	/*
@@ -14,6 +14,7 @@
 		"snakes":{"milk":1},
 		"spiders":{"milk":0},
 		"slimes":{"milk":1},
+		"pale slimes":{"milk":1},
 		"maggots":{"milk":0},
 		"worms":{"milk":0}
 	}>>
@@ -168,7 +169,7 @@
 							<<neutral 4>>
 							<<set _swarmamounts.butt[0] += 1>><<set _swarmamounts.active[4] -= 1>>
 							<<if $worn.under_lower.type.includes("naked") and !($worn.genitals.type.includes("hidden") and $worn.genitals.anal_shield is 1)>>
-								<<if (!$worn.over_lower.type.includes("naked") and $worn.over_lower.skirt is 0) or (!$worn.lower.type.includes("naked") and $worn.lower.skirt is 0)>>
+								<<if (!$worn.over_lower.type.includes("naked") and setup.clothes.over_lower[$worn.over_lower.index].skirt is 0) or (!$worn.lower.type.includes("naked") and setup.clothes.lower[$worn.lower.index].skirt is 0)>>
 									<<set _swarmnote.buttlowerintroclothed += 1>>
 								<<else>>
 									<<set _swarmnote.buttintro += 1>>
@@ -179,7 +180,7 @@
 								<<set _swarmnote.buttunderintroclothed += 1>>
 							<</if>>
 					<<else>>
-						<<if (!$worn.over_lower.type.includes("naked") and $worn.over_lower.skirt is 0) or (!$worn.lower.type.includes("naked") and $worn.lower.skirt is 0)>>
+						<<if (!$worn.over_lower.type.includes("naked") and setup.clothes.over_lower[$worn.over_lower.index].skirt is 0) or (!$worn.lower.type.includes("naked") and setup.clothes.lower[$worn.lower.index].skirt is 0)>>
 							<<set _swarmnote.buttlowerclothed += 1>>
 							<<if !$worn.over_lower.type.includes("naked")>>
 								<<set $worn.over_lower.integrity -= 2>>
@@ -223,7 +224,7 @@
 						<<set _swarmamounts.genital[0] += 1>><<set _swarmamounts.active[4] -= 1>>
 						<<neutral 4>>
 						<<if $worn.under_lower.type.includes("naked") and !$worn.genitals.type.includes("hidden")>>
-							<<if (!$worn.over_lower.type.includes("naked") and $worn.over_lower.skirt is 0) or (!$worn.lower.type.includes("naked") and $worn.lower.skirt is 0)>>
+							<<if (!$worn.over_lower.type.includes("naked") and setup.clothes.over_lower[$worn.over_lower.index].skirt is 0) or (!$worn.lower.type.includes("naked") and setup.clothes.lower[$worn.lower.index].skirt is 0)>>
 								<<set _swarmnote.genitallowerintroclothed += 1>>
 							<<else>>
 								<<set _swarmnote.genitalintro += 1>>
@@ -234,7 +235,7 @@
 							<<set _swarmnote.genitalunderintroclothed += 1>>
 						<</if>>
 					<<else>>
-						<<if (!$worn.over_lower.type.includes("naked") and $worn.over_lower.skirt is 0) or (!$worn.lower.type.includes("naked") and $worn.lower.skirt is 0)>>
+						<<if (!$worn.over_lower.type.includes("naked") and setup.clothes.over_lower[$worn.over_lower.index].skirt is 0) or (!$worn.lower.type.includes("naked") and setup.clothes.lower[$worn.lower.index].skirt is 0)>>
 							<<set _swarmnote.genitallowerclothed+= 1>>
 							<<if !$worn.over_lower.type.includes("naked")>>
 								<<set $worn.over_lower.integrity -= 2>>
@@ -297,12 +298,14 @@
 
 /* --------- Text Notifications ---------*/
 
-<<if _swarmamounts.active[2] gte 1>>
-	There <<if _swarmamounts.active[1] + _swarmamounts.active[2]>>are<<else>>is<</if>> <<number _swarmamounts.active[1] + _swarmamounts.active[2]>> $swarm.name and <span class="blue"><<if _swarmamounts.active[1] + _swarmamounts.active[2] is 1>>it's<<else>><<number _swarmamounts.active[2]>> of them<</if>> <<if _swarmamounts.active[2] gte 2>>are<<else>>is<</if>> $swarm.move.</span>
+<<if _swarmnote.activate gte 1>>
+	<<set _swarmnote.activate to 0>>
+	The <<swarmName>> $swarm.spill, surrounding you with more $swarm.type.
 <</if>>
 
-<<if _swarmnote.activate gte 1>><<set _swarmnote.activate to 0>>
-	The $swarm.name $swarm.spill, surrounding you with more $swarm.type.
+<<if _swarmamounts.active[2] gte 1>>
+	<<set $_remainingSwarms to _swarmamounts.active[1] + _swarmamounts.active[2]>>
+	There <<if $_remainingSwarms gt 1>>are<<else>>is<</if>> <<number $_remainingSwarms>> <<swarmName $_remainingSwarms>> and <span class="blue"><<if _swarmamounts.active[1] + _swarmamounts.active[2] is 1>>it<<else>><<number _swarmamounts.active[2]>> of them<</if>> <<if _swarmamounts.active[2] gte 2>>are<<else>>is<</if>> $swarm.move.</span>
 <</if>>
 
 <<if _swarmactive lte 0>>
@@ -355,7 +358,8 @@
 	trying to get to the skin beneath.
 <</if>>
 
-<<if _swarmnote.chestintro gte 1>><<set _swarmnote.chestintro to 0>>
+<<if _swarmnote.chestintro gte 1>>
+	<<set _swarmnote.chestintro to 0>>
 	<<if _swarmamounts.chest gte 1>>
 		<span class="purple">More $swarm["type"] gather around your <<breasts>>.</span>
 	<<else>>
@@ -363,7 +367,8 @@
 	<</if>>
 <</if>>
 
-<<if _swarmnote.chestintroclothed gte 1>><<set _swarmnote.chestintroclothed to 0>>
+<<if _swarmnote.chestintroclothed gte 1>>
+	<<set _swarmnote.chestintroclothed to 0>>
 	<span class="purple">Some of them wriggle their way into your
 	<<if !$worn.over_upper.type.includes("naked")>>
 		$worn.upper.name<<if !$worn.upper.type.includes("naked")>> and<<else>>,<</if>>
@@ -389,15 +394,18 @@
 
 /* -------- Butts --------*/
 
-<<if _swarmnote.buttcovered gte 1>><<set _swarmnote.buttcovered to 0>>
+<<if _swarmnote.buttcovered gte 1>>
+	<<set _swarmnote.buttcovered to 0>>
 	You manage to keep them away from your butt.
 <</if>>
 
-<<if _swarmnote.buttmolest gte 1>><<set _swarmnote.buttmolest to 0>>
+<<if _swarmnote.buttmolest gte 1>>
+	<<set _swarmnote.buttmolest to 0>>
 	They writhe over your <<print either("butt", "thighs", "legs")>>.
 <</if>>
 
-<<if _swarmnote.buttlowerclothed gte 1>><<set _swarmnote.buttlowerclothed to 0>>
+<<if _swarmnote.buttlowerclothed gte 1>>
+	<<set _swarmnote.buttlowerclothed to 0>>
 	<<if $worn.over_lower.name is "naked" and $worn.lower.name is "naked">>
 		Some tear apart the ruined scraps of your clothing.
 	<<else>>
@@ -412,11 +420,13 @@
 	<</if>>
 <</if>>
 
-<<if _swarmnote.buttunderclothed gte 1>><<set _swarmnote.buttunderclothed to 0>>
+<<if _swarmnote.buttunderclothed gte 1>>
+	<<set _swarmnote.buttunderclothed to 0>>
 	Some of them assail your $worn.under_lower.name, tearing the fabric.
 <</if>>
 
-<<if _swarmnote.buttlowerintroclothed gte 1>><<set _swarmnote.buttlowerintroclothed to 0>>
+<<if _swarmnote.buttlowerintroclothed gte 1>>
+	<<set _swarmnote.buttlowerintroclothed to 0>>
 	<span class="purple">Some of them wriggle their way into your
 	<<if !$worn.over_lower.type.includes("naked")>>
 		$worn.over_lower.name<<if !$worn.lower.type.includes("naked")>> and<<else>>,<</if>>
@@ -427,28 +437,32 @@
 	you feel them moving toward your anus.</span>
 <</if>>
 
-<<if _swarmnote.buttunderintroclothed gte 1>><<set _swarmnote.buttunderintroclothed to 0>>
+<<if _swarmnote.buttunderintroclothed gte 1>>
+	<<set _swarmnote.buttunderintroclothed to 0>>
 	<span class="purple">Some of them wriggle their way into your $worn.under_lower.name, you feel them moving toward your anus.</span>
 <</if>>
 
-<<if _swarmnote.buttchasity gte 1>><<set _swarmnote.buttchasity to 0>>
+<<if _swarmnote.buttchasity gte 1>>
+	<<set _swarmnote.buttchasity to 0>>
 	<span class="purple">Some of them wriggle their way into your $worn.genitals.name, you feel them moving toward your <<genitals>>.</span> <span class="pink">With your $worn.genitals.name anal shield in the way, you won't be able to get them out!</span>
 	<<if $parasitedisable is "f">>
 		<<set $analchastityparasite to $swarm["type"]>>
 	<</if>>
 <</if>>
 
-<<if _swarmnote.buttintro gte 1>><<set _swarmnote.buttintro to 0>>
+<<if _swarmnote.buttintro gte 1>>
+	<<set _swarmnote.buttintro to 0>>
 	<span class="purple">They swarm around your butt, you feel them move toward your anus.</span>
 <</if>>
 
-<<if _swarmnote.buttinsideintro gte 1>><<set _swarmnote.buttinsideintro to 0>>
+<<if _swarmnote.buttinsideintro gte 1>>
+	<<set _swarmnote.buttinsideintro to 0>>
 	<span class="pink">They start squirming their way into your <<bottom>>.</span>
 <</if>>
 
 <<if _swarmamounts.butt[1] gte 1>>
 	<<neutral 10>><<impregnate $swarm["type"] _swarmamounts.butt[1]>>
-	They writhe inside your lower intestine<<if $penisexist is 1>>, blindly teasing your prostate<</if>><<if _impreg is true>>, and <span class="red">attempt to move further inside you</span><</if>>.
+	They writhe inside your lower intestine<<if $player.penisExist>>, blindly teasing your prostate<</if>><<if _impreg is true>>, and <span class="red">attempt to move further inside you</span><</if>>.
 	<<set _impreg to false>>
 	<<arousal `_swarmamounts.butt[1] * 20`>>
 <</if>>
@@ -462,7 +476,7 @@
 
 <<if _swarmnote.genitalmolest gte 1>>
 	<<set _swarmnote.genitalmolest to 0>>
-		You feel them writhing over your <<if !$worn.lower.type.includes("naked") and $worn.lower.skirt isnot 1>><<genitals>> through your
+		You feel them writhing over your <<if !$worn.lower.type.includes("naked") and setup.clothes.lower[$worn.lower.index].skirt isnot 1>><<genitals>> through your
 		<<if !$worn.over_lower.type.includes("naked")>>
 			$worn.over_lower.name<<if !$worn.lower.type.includes("naked")>> and<<else>>.<</if>>
 		<</if>>
@@ -511,9 +525,9 @@
 	<<set _swarmnote.genitalchasity to 0>>
 	<span class="purple">Some of them wriggle their way into your $worn.genitals.name, you feel them moving toward your <<genitals>>.</span> <span class="pink">With your $worn.genitals.name in the way, you won't be able to get them out!</span>
 	<<if $parasitedisable is "f">>
-		<<if $vaginaexist is 1>>
+		<<if $player.vaginaExist>>
 			<<set $vaginalchastityparasite to $swarm["type"]>>
-		<<elseif $penisexist is 1>>
+		<<elseif $player.penisExist>>
 			<<set $penilechastityparasite to $swarm["type"]>>
 		<</if>>
 	<</if>>
@@ -526,19 +540,19 @@
 
 <<if _swarmnote.genitalinsideintro gte 1>>
 	<<set _swarmnote.genitalinsideintro to 0>>
-	<<if $vaginaexist is 1>>
+	<<if $player.vaginaExist>>
 		<span class="pink">They start squirming their way into your pussy!</span>
-	<<elseif $penisexist is 1>>
+	<<elseif $player.penisExist>>
 		<span class="pink">They start enveloping your penis!</span>
 	<</if>>
 <</if>>
 
 <<if _swarmamounts.genital[1] gte 1>>
-	<<if $vaginaexist is 1>>
+	<<if $player.vaginaExist>>
 		They writhe and squirm inside your vagina, probing and teasing without mercy.
 		<<arousal `_swarmamounts.genital[1] * 20 * $genitalsensitivity`>>
 		<<neutral 10>>
-	<<elseif $penisexist is 1>>
+	<<elseif $player.penisExist>>
 		They writhe and squirm over your penis, rubbing and teasing the entire length.
 		<<arousal `_swarmamounts.genital[1] * 20 * $genitalsensitivity`>>
 		<<neutral 10>>
@@ -573,4 +587,16 @@
 	<</if>>
 <</if>>
 </div>
+<</widget>>
+
+<<widget "swarmName">>
+	<<if $args[0] is undefined or $args[0] gt 1>>
+		<<if $swarm.name.endsWith(" mass")>>
+			<<print ($swarm.name + "es")>>
+		<<else>>
+			<<print ($swarm.name + "s")>>
+		<</if>>
+	<<else>>
+		$swarm.name
+	<</if>>
 <</widget>>

@@ -24,7 +24,7 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 	<<npc Leighton>><<person1>>
 	"You look like one of my students," says an amused voice from your right. It's Leighton. 
 	<<if pregnancyBellyVisible()>>
-		"I was wondering how you got that baby bump," <<he>> continues, "I was never sure if it was from someone close to you or from you working at a place like this."
+		"I was wondering how you got that baby bump," <<he>> continues, "Should have known it was from you working at a place like this."
 	<</if>>
 	<<He>> sits alone on a sofa, with <<his>> arms outstretched and resting on the back.
 	<br><br>
@@ -53,7 +53,7 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 
 <<if $brotheljob is 1>>
 
-<<link [[Work as a dancer|Brothel Dance]]>><<danceinit>><<set $dancing to 1>><<set $venuemod to 3>><<stress -4>><<tiredness 4>><<set $dancelocation to "brothel">><</link>><<lstress>><<gtiredness>>
+<<link [[Work as a dancer|Brothel Dance]]>><<set $dancestart to 1>><<stress -4>><<tiredness 4>><</link>><<lstress>><<gtiredness>>
 <br>
 	<<if $brothelshowdata.intro>>
 		<<link [[Go behind the stage|Brothel Stage]]>><</link>>
@@ -229,7 +229,7 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 "We take a 40% cut of anything you earn, and don't you dare think you can cheat us either. You'll have access to a dressing room, naturally. I think I've covered everything. So, interested?"
 <br><br>
 
-<<link [[Yes|Brothel Intro2]]>><<set $phase to 1>><<set $brotheljob to 1>><</link>>
+<<link [[Yes|Brothel Intro2]]>><<set $phase to 1>><<set $brotheljob to 1>><<set $wardrobes.brothel.unlocked to true>><</link>>
 <br>
 <<link [[No|Brothel Intro2]]>><<set $phase to 2>><</link>>
 <br>
@@ -264,7 +264,7 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 	<<He>> blinks, then laughs. "Don't be coy. You've seen what's going on downstairs, darling. I'm sure you can work out the rest on your own."
 	<br><br>
 
-<<link [[I'm interested|Brothel Intro2]]>><<set $phase to 1>><<set $brotheljob to 1>><</link>>
+<<link [[I'm interested|Brothel Intro2]]>><<set $phase to 1>><<set $brotheljob to 1>><<set $wardrobes.brothel.unlocked to true>><</link>>
 <br>
 <<link [[I'm not interested|Brothel Intro2]]>><<set $phase to 2>><</link>>
 <br>
@@ -273,6 +273,15 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 
 :: Brothel Dance
 <<set $outside to 0>><<set $location to "brothel">><<effects>>
+
+<<if $dancestart is 1>>
+	<<unset $dancestart>>
+	<<danceinit>>
+	<<robinbrothelappear>>
+	<<set $dancing to 1>>
+	<<set $venuemod to 3>>
+	<<set $dancelocation to "brothel">>
+<</if>>
 
 <<danceeffects>>
 <<danceaudience>>
@@ -308,6 +317,12 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 	<<elseif $promiscuity gte 35>>
 		<<link [[Private room|Leighton Private]]>><<clotheson>><<endevent>><<unset $corruptionDancing>><</link>><<promiscuous3>>
 		<br>
+	<</if>>
+<<elseif $danceevent is "robin">>
+	<<if $corruptionDancing is 2>>
+		The slime wants you to have fun with more than an individual.
+	<<else>>
+		<<link [[Private room|Robin Brothel]]>><<clotheson>><<endevent>><<unset $corruptionDancing>><</link>>
 	<</if>>
 
 <<elseif $danceevent is 0>>
@@ -347,7 +362,7 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 	Briar sprawls on the sofa, holding a glass of wine. <<He>> looks up as you enter. "Have you reconsidered my offer?"
 	<br><br>
 
-	<<link [[Yes|Briar's Office]]>><<endevent>><<set $brotheljob to 1>><<set $phase to 1>><</link>>
+	<<link [[Yes|Briar's Office]]>><<endevent>><<set $brotheljob to 1>><<set $phase to 1>><<set $wardrobes.brothel.unlocked to true>><</link>>
 	<br>
 	<<if $id is 0>>
 		<<link [[Inquire about ID card|Briar's Office ID]]>><</link>>
@@ -1100,7 +1115,7 @@ The <<person>> recoils from the hole. You hear <<him>> shout at someone, then si
 <<He>> sits down. "Or you could play an uptight school <<girl>> lost in a bad part of town. Gangbang ensues. £1000 for that one. You'll need a school <<girl>> outfit, of course. I suspect you already have one." <<He>> smirks. "Would that be too close to home?"
 <br><br>
 
-<<if $brothel_machine_repair gte 4 and $promiscuity gte 75 and ($vaginaexist is 1 or $analdisable is "f")>>
+<<if $brothel_machine_repair gte 4 and $promiscuity gte 75 and ($player.vaginaExist or $analdisable is "f")>>
 	"There's the repaired sex machine as well," <<he>> says. "It'll have to be a private show. No loose tongues allowed. The audience will appreciate the novelty, but <span class="lewd">they'll want to see penetration.</span> £1500 if you go through with it."
 	<br><br>
 <</if>>
@@ -1135,7 +1150,7 @@ You aren't promiscuous or deviant enough to take up any of the offers.
 	<<link [[Roleplay gangbang|Briar's Office Show 2]]>><<acceptbrothelshow "gangbang">><</link>><<promiscuous5>>
 	<br>
 <</if>>
-<<if $brothel_machine_repair gte 4 and $promiscuity gte 75 and ($vaginaexist is 1 or $analdisable is "f")>>
+<<if $brothel_machine_repair gte 4 and $promiscuity gte 75 and ($player.vaginaExist or $analdisable is "f")>>
 	<<link [[Sex machine|Briar's Office Show 2]]>><<acceptbrothelshow "machine">><</link>><<promiscuous5>>
 	<br>
 <</if>>

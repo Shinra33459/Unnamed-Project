@@ -64,7 +64,11 @@ if ($skinColor.tanningEnabled is true){
 	<<set _modeloptions.lipstick_colour to $makeup.lipstick>>
 <</if>>
 
-<<set _modeloptions.eyes_colour = ($makeup.eyelenses != 0 ? $makeup.eyelenses : $eyecolour)>>
+<<if $possessed>>
+	<<set _modeloptions.eyes_colour = ($wraith and $wraith.state is "haunt" and !$schism ? "red possessed" : "blue possessed")>>
+<<else>>
+	<<set _modeloptions.eyes_colour = ($makeup.eyelenses != 0 ? $makeup.eyelenses : $eyecolour)>>
+<</if>>
 <<set _modeloptions.hair_colour = $haircolour>>
 <<set _modeloptions.brows_colour = ($makeup.browscolour != 0 ? $makeup.browscolour : $naturalhaircolour)>>
 <<set _modeloptions.pbhair_colour = ($makeup.pbcolour != 0 ? $makeup.pbcolour : $naturalhaircolour)>>
@@ -94,6 +98,15 @@ if ($skinColor.tanningEnabled is true){
 <<set _modeloptions.breasts to "default">>
 <<if $sexStats>>
 	<<set _modeloptions.belly to $sexStats.vagina.pregnancy.bellySize>>
+<</if>>
+
+<<if $wraithSkin>>
+    <<set _modeloptions.mannequin to true>>
+    <<set _modeloptions.skin_type to 'custom'>>
+    <<set _modeloptions.filters.body to {blend:'#ffffff',blendMode:'multiply',desaturate:true}>>
+    <<set _modeloptions.filters.breasts to _modeloptions.filters.body>>
+    <<set _modeloptions.filters.penis to _modeloptions.filters.body>>
+    <<set _modeloptions.show_tanlines to false>>
 <</if>>
 
 <!--
@@ -233,13 +246,17 @@ if ($skinColor.tanningEnabled is true){
 <<set _modeloptions.freckles = $player.freckles == true and $makeup.concealer != 1>>
 
 <!-- Eyes -->
-<<set _modeloptions.trauma to $trauma gte ($traumamax * 0.9)>>
+<<if $possessed>>
+	<<set _modeloptions.trauma to $possessed>>
+<<else>>
+	<<set _modeloptions.trauma to $trauma gte ($traumamax * 0.9)>>
+<</if>>
 <<set _modeloptions.blink to $blinkingdisable is "f">>
 <<set _modeloptions.eyes_bloodshot to $pain gte 100 and $willpowerpain is 0>>
-<<set _modeloptions.eyes_half to $halfcloseddisable isnot "t" and ($arousal gte ($arousalmax / 5) * 4 or $orgasmdown gte 1) and $trauma lt ($traumamax * 0.9) and $pain lt 60 and $eyelidTEST is true>>
+<<set _modeloptions.eyes_half to $halfcloseddisable isnot "t" and ($arousal gte ($arousalmax / 5) * 4 or $orgasmdown gte 1) and $trauma lt ($traumamax * 0.9) and $pain lt 60 and $eyelidTEST is true or $possessed>>
 
 <!-- Brows -->
-<<if $trauma gte $traumamax>>
+<<if $trauma gte $traumamax or $possessed>>
 	<<set _modeloptions.brows = "top">>
 <<elseif $pain gte 60>>
 	<<set _modeloptions.brows = "low">>
@@ -254,7 +271,7 @@ if ($skinColor.tanningEnabled is true){
 <!-- Mouth -->
 <<if $trauma gte $traumamax>>
 	<<set _modeloptions.mouth = "neutral">>
-<<elseif $pain gte 60 or $orgasmdown gte 1>>
+<<elseif $pain gte 60 or $orgasmdown gte 1 or ($possessed and !$schism)>>
 	<<set _modeloptions.mouth = "cry">>
 <<elseif $exposed is 2 and $uncomfortable.nude is true and $dontHide is false or $pain gte 20>>
 	<<set _modeloptions.mouth = "frown">>
@@ -334,13 +351,13 @@ $worn.under_upper.type.includes("naked") and $worn.under_lower.type.includes("na
 	<<set _modeloptions.pbhair_strip = $pbstrip>>
 	<<set _modeloptions.pbhair_balls = $pblevelballs>>
 <</if>>
-<<if $penisexist is 1>>
+<<if $player.penisExist>>
 	<<set _modeloptions.penis_size to Math.clamp($penissize, -2, 4)>>
 	<<set _modeloptions.penis to ($player.virginity.penile === true ? "virgin" : "default") >>
 	<<set _modeloptions.balls to $player.ballsExist>>
 	<<set _modeloptions.penis_parasite to $parasite.penis.name>>
 <</if>>
-<<if $vaginaexist is 1>>
+<<if $player.vaginaExist>>
 	<<set _modeloptions.clit_parasite to $parasite.clit.name>>
 <</if>>
 
@@ -421,7 +438,7 @@ Set model options & filters for player clothes
 	<<set _modeloptions.hair_fringe_length to "short">>
 <</if>>
 
-<<set _modeloptions.upper_tucked to $upperTucked and !$worn.upper.notuck and $worn.upper.outfitPrimary is undefined>>
+<<set _modeloptions.upper_tucked to $upperTucked and !setup.clothes.upper[$worn.upper.index].notuck and $worn.upper.outfitPrimary is undefined>>
 
 <<twinescript>>
 	let slots = [
@@ -450,7 +467,7 @@ Set model options & filters for player clothes
 			default: _modeloptions['worn_'+slot+'_alpha'] = 1.0; break;
 		}
 		_modeloptions['worn_'+slot] = worn.index;
-		_modeloptions['worn_'+slot+'_integrity'] = integrityKeyword(worn);
+		_modeloptions['worn_'+slot+'_integrity'] = integrityKeyword(worn,slot);
 		_modeloptions['worn_'+slot+'_colour'] = worn.colour;
 		if (worn.colour === 'custom') {
 			/* TODO @aimozg We recalculate custom colour RGB here; in future versions, we should store custom colours in canvasfilter-friendly way */

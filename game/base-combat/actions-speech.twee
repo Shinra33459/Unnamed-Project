@@ -22,10 +22,10 @@
 			<<set _askActions["to stop" + _diffText] to "finish">>
 		<</if>>
 		<<if $enemytype is "man" and !$npcSub>>
-			<<if $vaginaexist is 1 and $vaginalchastity is 0 and $novaginal is 0>>
+			<<if $player.vaginaExist and $vaginalchastity is 0 and $novaginal is 0>>
 				<<set _askActions["to not put anything in your pussy" + _diffText] to "novaginal">>
 			<</if>>
-			<<if $penisexist is 1 and $penilechastity is 0 and $nopenile is 0>>
+			<<if $player.penisExist and $penilechastity is 0 and $nopenile is 0>>
 				<<set _askActions["to not put your penis in anything" + _diffText] to "nopenile">>
 			<</if>>
 			<<if $analchastity is 0 and $noanal is 0>>
@@ -57,7 +57,7 @@
 		<<set _askActions["to choke you"] to "askchoke">>
 	<</if>>
 	/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
-	<<if $enemytype is "man" and $condomAsk is undefined and $pregnancyTesting>>
+	<<if $enemytype is "man" and $condomAsk is undefined and $pregnancyTesting and !$abomination>>
 		<<if $npcCondoms isnot undefined>>
 			<<set _askActions["to use condoms"] to "condoms">>
 		<</if>>
@@ -68,7 +68,7 @@
 	<<if Object.keys(_askActions).length gt 0>>
 		<<set _mouthaction["Ask "+_pron+""] to "ask">>
 		<<set _defaultsCombatAction to "askActions">>
-		<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+		<<set _actionsSet = DefaultActions.get($defaultsCombatType, $defaultsType, _defaultsCombatAction)>>
 		<<set _pass to false>>
 		<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
 			<<if Object.values(_askActions).includes(_actionsSet[_set])>>
@@ -86,10 +86,18 @@
 		<</switch>>
 	<</if>>
 	<<if $awarelevel gte 2 and $enemytype is "man">>
-		<<if $consensual is 1>>
-			<<set _mouthaction["Tease their"] to "mock">>
+		<<if $enemyno gte 1>>
+			<<if $consensual is 1>>
+				<<set _mouthaction["Tease their "] to "mock">>
+			<<else>>
+				<<set _mouthaction["Mock their "] to "mock">>
+			<</if>>
 		<<else>>
-			<<set _mouthaction["Mock their"] to "mock">>
+			<<if $consensual is 1>>
+				<<set _mouthaction["Tease " + $NPCList[0].pronouns.his] to "mock">>
+			<<else>>
+				<<set _mouthaction["Mock " + $NPCList[0].pronouns.his] to "mock">>
+			<</if>>
 		<</if>>
 	<</if>>
 <</if>>

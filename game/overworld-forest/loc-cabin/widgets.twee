@@ -8,22 +8,36 @@
 		Eden slumbers between the sheets.
 	<</if>>
 	<br>
-	<<bedicon>><<link [[Sleep|Eden Cabin Bed]]>><<endevent>><</link>>
+	<<if $nextPassageCheck is "Eden Cabin Bed">>
+		<span class="nextLink"><<bedicon>><<link [[Eden.|Eden Cabin Bed]]>><<endevent>><</link>></span>
+	<<else>>
+		<<bedicon>><<link [[Sleep|Eden Cabin Bed]]>><<endevent>><</link>>
+	<</if>>
 	<br>
 	<<pregnancyTest "Eden Cabin">>
 	Your clothes are kept in the corner.
 	<br>
 	<<wardrobeicon>><<link [[Wardrobe|Eden Wardrobe]]>><<endevent>><</link>>
 	<br>
-	<<mirroricon>><<link [[Mirror|Eden Mirror]]>><<endevent>><</link>>
+	<<if $nextPassageCheck is "Eden Mirror">>
+		<span class="nextLink"><<mirroricon>><<link [[Mirror|Eden Mirror]]>><<endevent>><</link>></span>
+	<<else>>
+		<<mirroricon>><<link [[Mirror|Eden Mirror]]>><<endevent>><</link>>
+	<</if>>
 	<br><br>
-	<<link [[Go back|Eden Cabin]]>><<endevent>><</link>>
+	<<if $nextPassageCheck is "Eden Cabin">>
+		<span class="nextLink"><<link [[Go back|Eden Cabin]]>><<endevent>><</link>></span>
+	<<else>>
+		<<link [[Go back|Eden Cabin]]>><<endevent>><</link>>
+	<</if>>
 	<br><br>
 <</widget>>
 
 <<widget "cabinothers">>
 
-	<<if ($exposed gte 1 and !$edenexposed and $hour is 7) or ($exposed gte 1 and !$edenexposed and $hour is 8)>>
+	<<if $nextPassageCheck is "Eden Clearing">>
+		<span class="nextLink"><<link [[Go outside|Eden Clearing]]>><</link>></span>
+	<<elseif ($exposed gte 1 and !$edenexposed and $hour is 7) or ($exposed gte 1 and !$edenexposed and $hour is 8)>>
 		<<link [[Go outside|Eden Exposed]]>><<endevent>><</link>>
 	<<elseif $exposed gte 1 and !$edenexposed and $hour gte 17>>
 		<<link [[Go outside|Eden Exposed]]>><<endevent>><</link>>
@@ -78,7 +92,7 @@
 		<br>
 	<</if>>
 	<<if $eden_sew isnot 1>>
-		<<link [[Fix Eden's clothes (0:30)|Eden Fix]]>><<pass 30>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $eden_sew to 1>><<endevent>><</link>><<glove>><<gdom "Eden">>
+		<<link [[Fix Eden's clothes (0:30)|Eden Fix]]>><<pass 30>><<npcincr Eden love 1>><<set $eden_sew to 1>><<endevent>><</link>><<glove>>
 		<br>
 	<</if>>
 	<<if $edencushions is 1>>
@@ -112,13 +126,13 @@
 	<<if $eden_supplies isnot 1>>
 		Eden's supplies are kept in a cabinet.
 		<br>
-		<<link [[Take stock of Eden's supplies (0:30)|Eden Stock]]>><<pass 30>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $eden_supplies to 1>><</link>><<glove>><<gdom "Eden">>
+		<<link [[Take stock of Eden's supplies (0:30)|Eden Stock]]>><<pass 30>><<npcincr Eden love 1>><<set $eden_supplies to 1>><</link>><<glove>>
 		<br>
 	<</if>>
 	<<if $eden_sweep isnot 1>>
 		A broom and dustpan lie in the corner.
 		<br>
-		<<link [[Sweep the floor (0:30)|Eden Sweep]]>><<pass 30>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $eden_sweep to 1>><</link>><<glove>><<gdom "Eden">>
+		<<link [[Sweep the floor (0:30)|Eden Sweep]]>><<pass 30>><<npcincr Eden love 1>><<set $eden_sweep to 1>><</link>><<glove>>
 		<br>
 	<</if>>
 	<<if $eden_salve isnot 1 or $eden_soap isnot 1>>
@@ -126,11 +140,11 @@
 		<br>
 	<</if>>
 	<<if $eden_salve isnot 1>>
-		<<link [[Make salves (0:30)|Eden Salve]]>><<pass 30>><<if !$salve>><<set $salve to 1>><<else>><<set $salve += 1>><</if>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $eden_salve to 1>><</link>><<glove>><<gdom "Eden">>
+		<<link [[Make salves (0:30)|Eden Salve]]>><<pass 30>><<if !$salve>><<set $salve to 1>><<else>><<set $salve += 1>><</if>><<npcincr Eden love 1>><<set $eden_salve to 1>><</link>><<glove>>
 		<br>
 	<</if>>
 	<<if $eden_soap isnot 1>>
-		<<link [[Make soap (0:30)|Eden Soap]]>><<pass 30>><<if !$soap>><<set $soap to 1>><<else>><<set $soap += 1>><</if>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $eden_soap to 1>><</link>><<glove>><<gdom "Eden">>
+		<<link [[Make soap (0:30)|Eden Soap]]>><<pass 30>><<if !$soap>><<set $soap to 1>><<else>><<set $soap += 1>><</if>><<npcincr Eden love 1>><<set $eden_soap to 1>><</link>><<glove>>
 		<br>
 	<</if>>
 	<br>
@@ -206,7 +220,16 @@
 	<<elseif $edenfurniture is 3 and $edenloveseat lt 7>>
 		<<link [[Work on the loveseat (3:00)|Eden Loveseat Work]]>><<pass 2 hours>><<pass 1 hour>><</link>>
 		<br>
-	<</if>>	<<if $edenwalk isnot 1>>
+	<</if>>	
+	<<if $hour is 17 and $edenjoin is 1>>
+		<<link [[Ask to join Eden in the bath|Eden Bath Join]]>><<npcincr Eden love 1>><<pass 30>><</link>><<glove>>
+		<br>
+	<</if>>
+	<<if $worn.neck.collared isnot 1 and $NPCName[$NPCNameList.indexOf("Eden")].dom gte 100>>
+		<<link [[Ask Eden for a collar|Eden Collar]]>><<npcincr Eden love 5>><<npcincr Eden lust 5>><<npcincr Eden dom 5>><</link>><<gglove>><<gglust>><<ggdom>>
+		<br>
+	<</if>>
+	<<if $edenwalk isnot 1>>
 		<<link [[Ask Eden to accompany you to the lake|Eden Lake]]>><</link>>
 		<br>
 	<</if>>
@@ -350,7 +373,11 @@
 		<span class="green">The spring is clean and clear.</span>
 		<br>
 
-		<<link [[Relax in the spring (0:30)|Clearing Spring]]>><<unset $edenpush>><<endevent>><<pass 30>><<stress -6>><</link>><<lstress>>
+		<<if !$edenspringintro and (($hour gte 9 and $hour lte 10) or ($hour is 15) or ($hour is 16))>> 
+			<<link [[Relax in the spring (0:30)|Eden Spring Intro]]>><</link>><<lstress>>
+		<<else>>
+			<<link [[Relax in the spring (0:30)|Clearing Spring]]>><<unset $edenpush>><<endevent>><<pass 30>><<stress -6>><</link>><<lstress>>
+		<</if>>
 		<br>
 		<<if $edenwash is undefined>>
 			<<link [[Wash Eden's clothes in the spring (0:30)|Wash Spring]]>><<pass 30>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $edenwash to 1>><</link>>
@@ -419,11 +446,19 @@
 		<<link [[Work on the loveseat (3:00)|Eden Loveseat Work]]>><<pass 2 hours>><<pass 1 hour>><</link>>
 		<br>
 	<</if>>
+
+	<<if $worn.neck.collared isnot 1 and $NPCName[$NPCNameList.indexOf("Eden")].dom gte 100>>
+		<<link [[Ask Eden for a collar|Eden Collar]]>><<npcincr Eden love 5>><<npcincr Eden lust 5>><<npcincr Eden dom 5>><</link>><<gglove>><<gglust>><<ggdom>>
+		<br>
+	<</if>>
+	<<if $edenspringintro is 1 and $edenspringjoin isnot 1 and $edenspring is 4>>
+		<<link [[Ask Eden to join you in the spring|Eden Spring]]>><<set $edenspringjoin to 1>><<stress -6>><<npcincr Eden love 1>><</link>><<lstress>><<glove>>
+		<br>
+	<</if>>
 	<<if $edenwalk isnot 1>>
 		<<link [[Ask Eden to accompany you to the lake|Eden Lake]]>><</link>>
 		<br>
 	<</if>>
-
 	<<if $eden_search is undefined or $eden_search lt ($NPCName[$NPCNameList.indexOf("Eden")].love / 40)>>
 		<<link [[Ask Eden to help search the forest (0:30)|Eden Search]]>><<if $eden_search is undefined>><<set $eden_search to 1>><<else>><<set $eden_search += 1>><</if>><</link>>
 		<br>
@@ -463,4 +498,53 @@
 	<</if>>
 	<<link [[Go back|Eden Clearing]]>><<endevent>><</link>>
 	<br><br>
+<</widget>>
+
+<<widget "edenpreystart">>
+	<<if $edenPreyWeekly or random(1, 3) gte 2>>
+	/* do nothing */
+	<<else>>
+		/* Checks to see if the player has one of the main virginities intact, and if Eden can take it */
+		<<if ($player.penisExist and $player.virginity.penile is true and ($NPCList[0].vagina isnot "none" or $analdisable is "f")) or ($player.vaginaExist and $player.virginity.vaginal is true and $NPCList[0].penis isnot "none")>>
+			<<set _virginityPresent to true>>
+		<</if>>
+
+		/* Lowers amount of love and lust required if player is not a virgin or hasnt seen the event before */
+		<<if $edenPrey gte 1 and _virginityPresent>>
+			<<set _edenPreyPhase to 3>>
+		<<elseif $edenPrey gte 1>>
+			<<set _edenPreyPhase to 2>>
+		<<elseif _virginityPresent>>
+			<<set _edenPreyPhase to 1>>
+		<<else>>
+			<<set _edenPreyPhase to 0>>
+		<</if>>
+
+		<<switch _edenPreyPhase>>
+			<<case 0>>
+				/* no virginity, first time */
+				<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 85 and $NPCName[$NPCNameList.indexOf("Eden")].lust gte 50>>
+					<<set _edenPreyEvent to true>>
+				<</if>>
+			<<case 1>>
+				/* virginity intact, first time */
+				<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 75 and $NPCName[$NPCNameList.indexOf("Eden")].lust gte 40>>
+					<<set _edenPreyEvent to true>>
+				<</if>>
+			<<case 2>>
+				/* non-virgin, repeat event */
+				<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 125 and $NPCName[$NPCNameList.indexOf("Eden")].lust gte 70>>
+					<<set _edenPreyEvent to true>>
+				<</if>>
+			<<case 3>>
+				/* virgin, repeat event */
+				<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 100 and $NPCName[$NPCNameList.indexOf("Eden")].lust gte 60>>
+					<<set _edenPreyEvent to true>>
+				<</if>>
+		<</switch>>
+		
+		<<if _edenPreyEvent>>
+			<<set $edenPreyWeekly to true>>
+		<</if>>
+	<</if>>
 <</widget>>
