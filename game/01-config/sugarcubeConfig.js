@@ -21,7 +21,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.4.4",
+	"version": "0.3.4.5",
 }
 window.StartConfig.version += " herm";
 config.saves.autosave = "autosave";
