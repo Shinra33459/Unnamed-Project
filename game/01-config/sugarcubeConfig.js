@@ -6,9 +6,10 @@ State.prng.init()
 
 window.versionUpdateCheck = true;
 window.saveUpdateCheck = true;
+window.onLoadUpdateCheck = false;
 
 Config.saves.onLoad = function (save) {
-	window.versionUpdateCheck = true;
+	window.onLoadUpdateCheck = true;
 }
 
 Config.saves.onSave = function (save) {
@@ -21,9 +22,14 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.4.5",
+	"version": "0.3.4.6",
 }
 window.StartConfig.version += " herm";
+
+/* convert version string to numeric value */
+let tmpver = StartConfig.version.replace(/[^0-9.]+/g, "").split(".");
+window.StartConfig.version_numeric = tmpver[0]*1000000 + tmpver[1]*10000 + tmpver[2]*100 + tmpver[3]*1;
+
 config.saves.autosave = "autosave";
 
 Config.saves.isAllowed = function () {
