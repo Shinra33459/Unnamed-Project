@@ -1,6 +1,14 @@
 :: StoryInit
+/* This passage runs EVERY time the page is opened or refreshed, not just when a new game is started */
+/* This passage ALWAYS runs BEFORE story variables are loaded, meaning EVERY variable is undefined. Checking if they are undefined WILL NOT WORK. */
+/* You should ONLY use this passage to define setup variables, NOT $variables. */
 
 <<variablesStatic>>
+
+:: gameStartOnly [widget]
+/* The following is only run when the widget is called, which is only on new game start. Add to this if you want something to be run when you start a new game. */
+<<widget "gameStartOnly">>
+
 <<if StartConfig.enableImages is true>>
 	<<set $images to 1>>
 <<else>>
@@ -23,7 +31,8 @@
 		"special_clothes": 5,
 		"chastity": 3,
 		"skinColor": 1,
-		"prenancyObjectRepair": 2
+		"prenancyObjectRepair": 2,
+		"museumAntiques": 8
 	}>>
 <</if>>
 
@@ -94,7 +103,6 @@
 <<set $id to 0>>
 <<set $forest to 0>>
 <<set $forestmod to 1>>
-<<set $tipcount to 0>>
 <<set $tipmod to 1>>
 /*<<set $worn.genitals.anal_shield to 0>>*/
 <<set $blackmoney to 0>>
@@ -185,6 +193,7 @@
 <<set $blackjack_won to 0>>
 <<set $blackjack_streak to 0>>
 <<set $blackjack_streak_high to 0>>
+<<set $cardcover = { style: 0, colour: 'red' }>>
 <<set $hoodDown to 0>>
 <<set $prof to {}>>
 <<set $prof.spray to 0>>
@@ -377,6 +386,8 @@
 <<set $masturbationtimestat to 0>>
 <<set $milk_drank_stat to 0>>
 <<set $nectar_drank_stat to 0>>
+<<set $nectar_addiction to 0>>
+<<set $nectar_timer to 0>>
 <<set $gloryholestat to 0>>
 <<set $parasite_known to []>>
 <<set $chokeorgasm to 0>>
@@ -438,6 +449,7 @@
 <<set $enemywounded to 0>>
 <<set $enemyejaculated to 0>>
 <<set $enemyno to 0>>
+<<set $enemynomax to 0>>
 <<set $semenpuddle to 0>>
 <<set $eventskip to 0>>
 <<set $menu to 0>>
@@ -493,6 +505,7 @@
 <<set $danceevent to 0>>
 <<set $dancephysique to 0>>
 <<set $hypnosis to 0>>
+<<set $hypnotised to 0>>
 <<set $pills to 0>>
 <<set $medicated to 0>>
 <<set $trance to 0>>
@@ -521,6 +534,7 @@
 <<set $famescrap to 0>>
 <<set $famepimp to 0>>
 <<set $famesocial to 0>>
+<<set $famemodel to 0>>
 <<set $famepark to 0>>
 <<set $famepregnancy to 0>>
 <<set $park_run_seen_by to []>>
@@ -600,7 +614,6 @@
 
 <<set $leftleg to 0>>
 <<set $rightleg to 0>>
-<<set $breastuse to 0>>
 <<set $leftnipple to 0>>
 <<set $rightnipple to 0>>
 <<set $leftarmstate to 0>>
@@ -731,6 +744,10 @@
 <<set $long_hair_meet_day to 99999>>
 <<set $misbehaviour_day to 99999>>
 
+/*steal related*/
+<<set $stealtarget to "">>
+<<set $stealdifficulty to 1>>
+
 <<set $showCaptionText to true>>
 <<set $confirmSave to false>>
 <<set $confirmLoad to false>>
@@ -818,62 +835,12 @@
 }>>
 
 <<if $NPCVirginityTypes is undefined>>
-	<<set $NPCVirginityTypes to {anal:false, oral:false, penile:false, vaginal:false, handholding:false, temple: false, kiss:false}>>
-	<<set _allVirginitiesPresent to {anal:true, oral:true, penile:true, vaginal:true, handholding:true, temple: false, kiss:true}>>
-	<<for _i to 0; _i lt $NPCNameList.length; _i++>>
-		<<set $NPCName[_i].purity to 0>>
-		<<set $NPCName[_i].corruption to 0>>
-		<<set $NPCName[_i].virginity to clone(_allVirginitiesPresent)>>
-		<<set $NPCName[_i].chastity to {penis:"", vagina:"", anus:""}>>
-		<<switch $NPCNameList[_i]>>
-			<<case "Sydney">>
-				/* Has all virginities + temple virginity. */
-				<<set $NPCName[_i].virginity to {anal:true, oral:true, penile:true, vaginal:true, temple:true, handholding:true, kiss:true}>>
-			<<case "Robin" "Kylar">>
-				/* Has all virginities. */
-				<<set $NPCName[_i].virginity to clone(_allVirginitiesPresent)>>
-			<<case "Jordan">>
-				/* Has anal, oral, penile/vaginal, and kiss virginities. Missing handholding. */
-				<<set $NPCName[_i].virginity.handholding to false>>
-			<<case "Black Wolf" "Great Hawk">>
-				/* Has anal, oral, kiss, and handholding virginities. Missing penile/vaginal. */
-				<<set $NPCName[_i].virginity.penile to false>>
-				<<set $NPCName[_i].virginity.vaginal to false>>		
-			<<case "Gwylan">>
-				/* Missing all virginities. */
-				<<set $NPCName[_i].virginity.oral to false>>
-				<<set $NPCName[_i].virginity.handholding to false>>
-				<<set $NPCName[_i].virginity.penile to false>>
-				<<set $NPCName[_i].virginity.vaginal to false>>
-				<<set $NPCName[_i].virginity.anal to false>>
-				<<set $NPCName[_i].virginity.kiss to false>>
-			<<case "Charlie">>
-				/* Has oral, anal, and vaginal/penile virginities. Missing kiss and handholding. */
-				<<set $NPCName[_i].virginity.kiss to false>>
-				<<set $NPCName[_i].virginity.handholding to false>>
-			<<case "Eden">>
-				/* Has anal, oral and handholding virginity. Missing penile/vaginal and kiss. */
-				<<set $NPCName[_i].virginity.penile to false>>
-				<<set $NPCName[_i].virginity.vaginal to false>>
-				<<set $NPCName[_i].virginity.kiss to false>>
-			<<case "Sam" "Mason">>
-				/* Has anal and oral virginity. Missing penile/vaginal, kiss, and handholding. */
-				<<set $NPCName[_i].virginity.penile to false>>
-				<<set $NPCName[_i].virginity.vaginal to false>>
-				<<set $NPCName[_i].virginity.kiss to false>>
-				<<set $NPCName[_i].virginity.handholding to false>>
-			<<case "Alex" "Darryl" "Sirris" "Briar" "Wren">>
-				/* Missing all virginities. */
-				<<set $NPCName[_i].virginity to clone($NPCVirginityTypes)>>
-			<<default>>
-				/* Defaults to only having anal virginity. */
-				<<set $NPCName[_i].virginity.oral to false>>
-				<<set $NPCName[_i].virginity.penile to false>>
-				<<set $NPCName[_i].virginity.vaginal to false>>
-				<<set $NPCName[_i].virginity.kiss to false>>
-				<<set $NPCName[_i].virginity.handholding to false>>
-		<</switch>>
-	<</for>>
+	<<initNPCVirginities>>
 <</if>>
 
 <<set $templePromised to "">>
+
+<<if $sleepStat is undefined>>
+	<<set $sleepStat to 0>>
+<</if>>
+<</widget>>
