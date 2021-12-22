@@ -1167,27 +1167,6 @@
 	}>>
 <</if>>
 
-<!--PBHair extension START-->
-<<if $pblevel lt 1 or $pblevel is undefined>>
-	<<set $pblevel to 1>>
-<</if>>
-
-<<if $pbgrowth lt 1 or $pbgrowth is undefined>>
-	<<set $pbgrowth to 1>>
-<</if>>
-
-<<if $pblevelballs lt 1 or $pblevelballs is undefined>>
-	<<set $pblevelballs to 1>>
-<</if>>
-
-<<if $pbgrowthballs lt 1 or $pbgrowthballs is undefined>>
-	<<set $pbgrowthballs to 1>>
-<</if>>
-
-<<if $pbstrip lt 0 or $pbstrip is undefined>>
-	<<set $pbstrip to 0>>
-<</if>>
-
 <<if $bodypart_number is undefined>>
 	<<bodywriting_init>>
 <</if>>
@@ -2659,11 +2638,14 @@
 	<!-- Jimmy: Reset NPC slots if necessary by checking .type === 0 
 			Old versions prior to 3.4.* did not have empty slots properly set to baseNPC. -->
 	<<for $_i = 0; $_i < $NPCList.length; $_i++>>
-		<<if $NPCList[$_i].type is 0>>
-			<<set $NPCList[$_i] to clone(setup.baseNPC)>>
+		<<if $combat isnot 1>>
+			<<if $NPCList[$_i].type is 0>>
+				<<set $NPCList[$_i] to clone(setup.baseNPC)>>
+			<</if>>
+		<<elseif $NPCList[$_i].active is "active">>
+			<<set $NPCList[$_i].type to (typeof $NPCList[$_i].type isnot "string" ? "human" : $NPCList[$_i].type)>>
 		<</if>>
 	<</for>>
-	<<unset $_i>>
 
 	<<if $player.virginity.vaginal is "Harper" or $player.virginity.penile is "Harper">>
 		<<earnFeat "Harper the Hypnotist">>
@@ -2672,15 +2654,62 @@
 		<<earnFeat "Morgan the Lost">>
 	<</if>>
 
-	<!-- DefaultActions JS routine for error correction. -->
+	<!-- Jimmy: DefaultActions JS routine for error correction. -->
 	<<run
-		/* Test 1 - If regrab[0] is an object, there was a failure. */
-		let temp = DefaultActions.get('rape', 'Everyone', 'regrab')[0];
-		if (typeof temp === 'object') {
-			/* Reset everything as a final step, the error is consumed. */
-			V.actionDefaults = temp;
-			V.actionDefaults = DefaultActions.check(DefaultActions.setup())
+		/* Perform check for broken default action structures. */
+		if ($actionDefaults != undefined) {
+			/* Test 1 - If regrab[0] is an object, there was a failure. */
+			let temp = DefaultActions.get('rape', 'Everyone', 'regrab')[0];
+			if (typeof temp === 'object') {
+				/* Reset everything as a final step, the error is consumed. */
+				V.actionDefaults = temp;
+				V.actionDefaults = DefaultActions.check(DefaultActions.setup())
+			}
 		}
 	>>
+	
+	<!-- Jimmy: Run updater for EventSystem.
+				Only runs if behind on schema, and if $event exists. -->
+	<<run EventSystem.Update()>>
+
+	<!-- Jimmy: Updater for NNPCs that lack pronouns structures. 
+				Based off of $perNPCFix located in VVU -->
+	<<if $pronounsNPCFix isnot 1>>
+		<<for $_npc range $NPCName>>
+			<<if $_npc.pronouns is undefined>>
+				<<generatePronouns $_npc>>
+			<</if>>
+		<</for>>
+		<<set $pronounsNPCFix = 1>>
+	<</if>>
+
+	<!-- persistent npc fix v3 -->
+	<<if $perNPCFix isnot 3>>
+		<<set $perNPCFix to 3>>
+		<<set $_per_keys to Object.keys($per_npc)>>
+		<<for $_per_ctrl range $_per_keys>>
+			<<if !$per_npc[$_per_ctrl]>>
+				<!-- remove null and undefined -->
+				<<run delete $per_npc[$_per_ctrl]>>
+			<<elseif !$per_npc[$_per_ctrl].type>>
+				<!-- type fix -->
+				<<set $per_npc[$_per_ctrl].type to "human">>
+			<</if>>
+		<</for>>
+
+		<!-- prison npcs -->
+		<<for $_npc range ["anxious_guard", "methodical_guard", "relaxed_guard", "veteran_guard", "scarred_inmate"]>>
+			<<if $per_npc[$_npc]>>
+				<<if $per_npc[$_npc].name_known>>
+					<<set $per_npc[$_npc].fullDescription to $per_npc[$_npc].name>>
+				<<else>>
+					<<set $per_npc[$_npc].fullDescription to $_npc.replace('_', ' ')>>
+				<</if>>
+			<</if>>
+		<</for>>
+	<</if>>
+
+	/* v0.3.5.4: pubic hair was accidentally disabled on new saves bc it wasn't initialized properly. */
+	<<pbhairinit>>
 
 <</widget>>

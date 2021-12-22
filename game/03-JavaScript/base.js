@@ -92,9 +92,9 @@ Macro.add('time', {
 	}
 });
 
-window.ensureIsArray = function (x) {
+window.ensureIsArray = function(x, check = false) {
+	if (check) x = ensure(x, []);
 	if (Array.isArray(x)) return x;
-
 	return [x];
 }
 
@@ -346,7 +346,7 @@ window.outfitChecks = function(){
  window.checkForExposedClothing = function(){
 	return ["over_upper", "upper", "under_upper", "over_lower", "lower", "under_lower"].some( clothingLayer => {
 		let wetstage = V[clothingLayer.replace("_","") + "wetstage"];
-		return (V.worn[clothingLayer].state !== setup.clothes[clothingLayer][V.worn[clothingLayer].index].state_base || wetstage >= 3);
+		return (V.worn[clothingLayer].state !== setup.clothes[clothingLayer][clothesIndex(clothingLayer, V.worn[clothingLayer])].state_base || wetstage >= 3);
 	})
 }
 

@@ -504,11 +504,18 @@
 			<<else>>
 				<<set _drunkMod = 10>>
 			<</if>>
+			<<if $possessed is true and _violence gte 0>>
+				<<set $control += _violence>>
+				<<set $wraith.will -= _violence>>
+				<<set _possessMod to 3>>
+			<<else>>
+				<<set _possessMod to 1>>
+			<</if>>
 			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
 			<<combattrauma _violence * _traumaMod>>
-			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))>>
+			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>
 			<<set _arousal to (_violence * _arousalMod * (0 + ($masochism / 18)))>>
-			<<arousal _arousal>>
+			<<arousal _arousal/_possessMod>>
 			<<set $arousalmasochism += (_violence * (0 + ($masochism / 7)))>>
 			<<if $orgasmdown gte 1>>
 				<<if $masochism gte 800>>
@@ -1892,7 +1899,9 @@
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_day.gif'">
 		<<case tower>>
-		<img id="location" @src="'img/misc/' + _weather_display + '/moor_day.gif'">
+		<img id="location" @src="'img/misc/' + _weather_display + '/tower_day.gif'">
+		<<case castle>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/tower_day.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_day.gif'">
 		<<case alley>>
@@ -1909,6 +1918,8 @@
 		<img id="location" @src="'img/misc/' + _weather_display + '/spa_day.gif'">
 		<<case prison>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/prison_day.gif'">
+		<<case promenade>>
+			<img id="location" @src="'img/misc/' + _weather_display + '/promenade_beach_day.gif'">
 		<</switch>>
 	<<elseif $daystate is "night">>
 		<<if $location is "tentworld">>
@@ -2035,7 +2046,17 @@
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_night.gif'">
 		<<case tower>>
-		<img id="location" @src="'img/misc/' + _weather_display + '/moor_night.gif'">
+			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/tower_blood.gif'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/tower_night.gif'">
+			<</if>>
+		<<case castle>>
+			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/tower_blood.gif'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/tower_night.gif'">
+			<</if>>
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_night.gif'">
 		<<case alley>>
@@ -2068,6 +2089,8 @@
 			<<else>>
 				<img id="location" @src="'img/misc/' + _weather_display + '/prison_night.gif'">
 			<</if>>
+		<<case promenade>>
+			<img id="location" @src="'img/misc/' + _weather_display + '/promenade_beach_night.gif'">
 		<</switch>>
 	<<elseif $daystate is "dawn">>
 		<<if $location is "tentworld">>
@@ -2180,7 +2203,9 @@
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dawn.gif'">
 		<<case tower>>
-		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dawn.gif'">
+		<img id="location" @src="'img/misc/' + _weather_display + '/tower_dawn.gif'">
+		<<case castle>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/tower_dawn.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_dawn.gif'">
 		<<case alley>>
@@ -2197,6 +2222,8 @@
 		<img id="location" @src="'img/misc/' + _weather_display + '/spa_dawn.gif'">
 		<<case prison>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/prison_dawn.gif'">
+		<<case promenade>>
+			<img id="location" @src="'img/misc/' + _weather_display + '/promenade_beach_dawn.gif'">
 		<</switch>>
 	<<elseif $daystate is "dusk">>
 		<<if $location is "tentworld">>
@@ -2309,7 +2336,9 @@
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dusk.gif'">
 		<<case tower>>
-		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dusk.gif'">
+		<img id="location" @src="'img/misc/' + _weather_display + '/tower_dusk.gif'">
+		<<case castle>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/tower_dusk.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_dusk.gif'">
 		<<case alley>>
@@ -2326,6 +2355,8 @@
 		<img id="location" @src="'img/misc/' + _weather_display + '/spa_dusk.gif'">
 		<<case prison>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/prison_dusk.gif'">
+		<<case promenade>>
+			<img id="location" @src="'img/misc/' + _weather_display + '/promenade_beach_dusk.gif'">
 		<</switch>>
 	<</if>>
 
@@ -3509,6 +3540,9 @@ __Map__<br>
 		<br>
 	<</if>>
 <</if>>
+<<if $christmas is 1 and !$christmas_wraith>>
+	<<rngWraith 1>>
+<</if>>
 <</widget>>
 
 
@@ -4092,36 +4126,36 @@ __Map__<br>
 <</widget>>
 
 <<widget "breastfed">>
-<<set $milk_drank_stat += random(1, 5)>>
-<<if random(1, 100) gte 70>><<transform cat 1>><</if>>
-<<if $milkdranktrait is 1>><<physique 1>><</if>>
-<<purity -1>>
-<<set $hunger -= 200>><<set $thirst -= 200>>
+	<<set $milk_drank_stat += random(1, 5)>>
+	<<if random(1, 100) gte 70>><<transform cat 1>><</if>>
+	<<if $milkdranktrait is 1>><<physique 1>><</if>>
+	<<purity -1>>
+	<<set $hunger -= 200>><<set $thirst -= 200>>
 <</widget>>
 
 <<widget "nectarfed">>
-<<set _nectarGain to 0>>
-<<set _nectarGain += (Math.ceil($args[0] / 10) + random(0,2))>>
-<<set $nectar_drank_stat += _nectarGain>>
-<<set $nectar_addiction += _nectarGain>>
-<<if $args[0] gte 11>>
-	<<purity -1>>
-<</if>>
-<<set $hunger -= ($args[0] * 5)>><<set $thirst -= ($args[0] * 5)>>
-<<drugs $args[0]>><<set $arousal += $args[0]>>
-<<if $ejaculating is 1>>
-	<<set $drunk += ($args[0] * 3)>>
-	<<set $player.bodyliquid.mouth.goo += 1>>
-<</if>>
-<<if $backgroundTraits.includes("plantlover")>>
-	<<if $nectar_timer lte 14>>
-		<span class="green">You feel an overwhelming sense of relief.</span> <<stress -12>><<llstress>><<pain -4>><<lpain>>
-	<<else>>
-		<<set _nectarStress to (-1 * _nectarGain)>>
-		<<physique 1 "invig">><<stress _nectarStress>><<lstress>>
+	<<set _nectarGain to 0>>
+	<<set _nectarGain += (Math.ceil($args[0] / 10) + random(0,2))>>
+	<<set $nectar_drank_stat += _nectarGain>>
+	<<set $nectar_addiction += _nectarGain>>
+	<<if $args[0] gte 11>>
+		<<purity -1>>
 	<</if>>
-	<<set $nectar_timer to 21>>
-<</if>>
+	<<set $hunger -= ($args[0] * 5)>><<set $thirst -= ($args[0] * 5)>>
+	<<drugs $args[0]>><<set $arousal += $args[0]>>
+	<<if $ejaculating is 1>>
+		<<set $drunk += ($args[0] * 3)>>
+		<<set $player.bodyliquid.mouth.goo += 1>>
+	<</if>>
+	<<if $backgroundTraits.includes("plantlover")>>
+		<<if $nectar_timer lte 14>>
+			<span class="green">You feel an overwhelming sense of relief.</span> <<stress -12>><<llstress>><<pain -4>><<lpain>>
+		<<else>>
+			<<set _nectarStress to (-1 * _nectarGain)>>
+			<<physique 1 "invig">><<stress _nectarStress>><<lstress>>
+		<</if>>
+		<<set $nectar_timer to 21>>
+	<</if>>
 <</widget>>
 
 <<widget "setup_pillory">>
