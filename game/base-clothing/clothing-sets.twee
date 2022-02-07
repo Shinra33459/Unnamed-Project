@@ -1,7 +1,7 @@
 :: Widgets Outfits [widget]
 <<widget "listoutfits">>
 
-<label><<radiobutton "$delete_outfit" "none" checked>> Wear</label> | <label><<radiobutton "$delete_outfit" 1>> Delete</label> | <label><<radiobutton "$delete_outfit" 2>> Overwrite</label> | <label class="no-numberify"><<link Edit>><<overlayReplace "outfitEditor">><</link>></label>
+<label><<radiobutton "$delete_outfit" "none" checked>> Wear</label> | <label><<radiobutton "$delete_outfit" 1>> Delete</label> | <label><<radiobutton "$delete_outfit" 2>> Overwrite</label> | <label class="no-numberify"><<link "Edit">><<overlayReplace "outfitEditor">><</link>></label>
 <br>
 
 <<for _i to 0; _i lt $outfit.length; _i++>>
@@ -52,7 +52,7 @@
 <<if $alwaysSleepNaked isnot true>>
 	<<for _i to 0; _i lt $outfit.length; _i++>>
 		<<if $outfit[_i].type.includes("sleep")>>
-			<<bedicon>><<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|"'+_passage+'"]]>><<set $wear_outfit to ' + _i + '>><</link>>'>>
+			<<bedicon>><<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|"'+_passage+'"]]>><<set $wear_outfit to ' + _i + '>><<saveTempHairStyle>><</link>>'>>
 			<br>
 		<</if>>
 	<</for>>
@@ -95,6 +95,19 @@
 <<if $delete_outfit is 1 and $wear_outfit isnot "none">>
 <<set $outfit.deleteAt($wear_outfit)>>
 <<set $wear_outfit to "none">>
+<</if>>
+<</widget>>
+
+<<widget "saveTempHairStyle">>
+	<<set $tempSavedHairStyles to {hairtype:$hairtype, fringetype:$fringetype, hairposition:$hairposition}>>
+<</widget>>
+
+<<widget "loadTempHairStyle">>
+<<if $tempSavedHairStyles>>
+	<<set $hairtype to $tempSavedHairStyles['hairtype']>>
+	<<set $fringetype to $tempSavedHairStyles['fringetype']>>
+	<<set $hairposition to $tempSavedHairStyles['hairposition']>>
+	<<unset $tempSavedHairStyles>>
 <</if>>
 <</widget>>
 
@@ -332,6 +345,12 @@
 			<</if>>
 		<</if>>
 	<</for>>
+	<<if $outfit[$wear_outfit].hairStyle>>
+		/*Update Hairstyle*/
+		<<set $hairtype to $savedHairStyles[$outfit[$wear_outfit].hairStyle].hairtype>>
+		<<set $fringetype to $savedHairStyles[$outfit[$wear_outfit].hairStyle].fringetype>>
+		<<set $hairposition to $savedHairStyles[$outfit[$wear_outfit].hairStyle].hairposition>>
+	<</if>>
 <</if>>
 
 <<if $wear_outfit isnot "none">>
@@ -595,7 +614,7 @@ Colour Saved in Outfit:
 
 <<widget "outfitEditorPageControls">>
 <<if _outfitEditorPages.page gt 1>>
-	<<link Previous>>
+	<<link "Previous">>
 		<<set _outfitEditorPages.page-->>
 		<<replace "#outfitEditor">><<outfitEditorList>><</replace>>
 	<</link>> |
@@ -604,7 +623,7 @@ Colour Saved in Outfit:
 <</if>>
 Page <<print _outfitEditorPages.page>>/<<print _outfitEditorPages.maxPages>> |
 <<if _outfitEditorPages.page lt _outfitEditorPages.maxPages and _outfitEditorPages.maxPages gt 1>>
-	<<link Next>>
+	<<link "Next">>
 		<<set _outfitEditorPages.page++>>
 		<<replace "#outfitEditor">><<outfitEditorList>><</replace>>
 	<</link>>
@@ -660,7 +679,7 @@ Page <<print _outfitEditorPages.page>>/<<print _outfitEditorPages.maxPages>> |
 	</div>
 	<div>
 		Items:
-		<<link View>>
+		<<link "View">>
 			<<set _subId to "#outfitItemSub-" + $args[0]>>
 			<<if _subState[$args[0]] is "itemEdit">>
 				<<set _subState[$args[0]] to "">>
@@ -674,12 +693,12 @@ Page <<print _outfitEditorPages.page>>/<<print _outfitEditorPages.maxPages>> |
 	<div>
 		Colours: <<print $outfit[$args[0]].colors ? "Enabled" : "Disabled">> |
 		<<if $outfit[$args[0]].colors>>
-			<<link Disable>>
+			<<link "Disable">>
 				<<set $outfit[$args[0]].colors to false>>
 				<<set _id to "#outfitItem-" + $args[0]>>
 				<<replace `_id`>><<outfitEditorItem $args[0]>><</replace>>
 			<</link>> |
-			<<link Edit>>
+			<<link "Edit">>
 				<<set _subId to "#outfitItemSub-" + $args[0]>>
 				<<if _subState[$args[0]] is "colourView">>
 					<<set _subState[$args[0]] to "">>
@@ -690,7 +709,7 @@ Page <<print _outfitEditorPages.page>>/<<print _outfitEditorPages.maxPages>> |
 				<</if>>
 			<</link>>
 		<<else>>
-			<<link Enable>>
+			<<link "Enable">>
 				<<set $outfit[$args[0]].colors to {}>>
 				<<set _outfitIndex to $args[0]>>
 				<<for _label, _value range setup.clothes>>
@@ -711,6 +730,21 @@ Page <<print _outfitEditorPages.page>>/<<print _outfitEditorPages.maxPages>> |
 			<</link>>
 		<</if>>
 	</div>
+	<<if $savedHairStyles>>
+		<div>
+			<<set _savedHairStylesKeys to Object.keys($savedHairStyles)>>
+			Hair Style:
+			<<set $_hairStyle to "$outfit["+$args[0]+"].hairStyle">>
+			<<listbox $_hairStyle autoselect>>
+				<<option "Not set" undefined>>
+				<<optionsfrom _savedHairStylesKeys>>
+			<</listbox>>
+		</div>
+	<<else>>
+		<div>
+			Hair Style: No sets saved (Check mirror)
+		</div>
+	<</if>>
 	<div @id="'outfitItemSub-' + $args[0]"></div>
 <</capture>>
 <</widget>>
@@ -733,7 +767,7 @@ Page <<print _outfitEditorPages.page>>/<<print _outfitEditorPages.maxPages>> |
 				<!--Runs too many times for some reason, needs to be improved-->
 				<<run $(() => { $('.outfitEditorItemClothes select').on('input change', e => {
 					let outfitIndex = e.target.name.replace(/\D/g,'');
-					if(V.outfit[outfitIndex].colors === false) return;
+					if(!V.outfit[outfitIndex].colors) return;
 
 					let target = e.target.name.match(/[a-zA-Z]+/g);
 					let slot = target[2] + (target[3] !== undefined ? '_' + target[3] : '');

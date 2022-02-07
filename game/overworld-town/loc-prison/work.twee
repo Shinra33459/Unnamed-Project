@@ -130,30 +130,13 @@ You take the teeth into your possession.
 
 <<skulduggerycheck>>
 <<if $skulduggerysuccess is 1>>
-
 	<span class="green">No one notices.</span><<prison_teeth_text 2>><<prison_teeth 2>>
 	<br><br>
-
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
-
 <<else>>
-
 	<span class="red"><<generate_relaxed_guard 0>><<relaxed_guard 0 cap>><<person1>> slams the dice onto the table,</span> marches over, and relieves you of your find. "Eyes like a hawk," <<he>> says before returning to <<his>> stool.<<lsuspicion>><<prison_guards -1>>
 	<br><br>
-
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
-
 <</if>>
+<<skulduggeryuse>>
 
 <<prison_laundry_options>>
 
@@ -196,30 +179,13 @@ You wait until the <<person>> bends over to lift a box, then slip your hand into
 
 <<skulduggerycheck>>
 <<if $skulduggerysuccess is 1>>
-
 	<span class="green">You liberate the teeth, leaving <<him>> none the wiser.</span><<prison_teeth_text 2>><<prison_teeth 2>>
 	<br><br>
-
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
-
 <<else>>
-
 	<span class="red"><<He>> catches your hand,</span> and gives your face a light slap. "Nice try."<<gpain>><<pain 2>>
 	<br><br>
-
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
-
 <</if>>
+<<skulduggeryuse>>
 
 <<prison_laundry_options>>
 
@@ -276,7 +242,7 @@ You chat with the other inmates. <<generate_relaxed_guard 0>><<generate2>><<pers
         <br>
         <<link [[Shove|Prison Laundry Work Shove]]>><<prison_inmates 1>><<prison_guards -1>><</link>><<gsuspicion>><<grespect>>
         <br>
-        <<link [[Squeeze back|Prison Laundry Work Squeeze]]>><<prison_inmates 1>><<gattention>><</link>><<promiscuous1>><<prison_attention 1>><<grespect>>
+        <<link [[Squeeze back|Prison Laundry Work Squeeze]]>><<prison_inmates 1>><<gattention prison>><</link>><<promiscuous1>><<prison_attention 1>><<grespect>>
         <br>
     <<case 2>>
         They enjoy your jokes.<<grespect>><<prison_inmates 1>>
@@ -291,7 +257,7 @@ You chat with the other inmates. <<generate_relaxed_guard 0>><<generate2>><<pers
         <<link [[Make something up|Prison Laundry Work Brag]]>><</link>><<englishdifficulty 1 1000>>
         <br>
         <<if $famescrap gte 400>>
-            <<link [[Tell a story of your daring|Prison Laundry Work Daring]]>><</link>> | <span class="green">Combat fame</span>
+            <<link [[Tell a story of your daring|Prison Laundry Work Daring]]>><</link>><<if $statdisable is "f">> | <span class="green">Combat fame</span><</if>>
             <br>
         <</if>>
         <<link [[Ignore|Prison Laundry Work Chat Ignore]]>><</link>>
@@ -431,7 +397,7 @@ No one seems to have noticed <<his>> violating you in the middle of the room.
 <<arousal 3000>>
 <<if $arousal gte 10000>>
     <<orgasm>>
-    You lean forward, out of breath, as the <<person>> withdraws <<his>> hand. <<person1>><<relaxed_guard 0 cap>> looks over with a frown.<<gsuspicion>><<gattention>><<prison_attention 1>><<prison_guards -1>>
+    You lean forward, out of breath, as the <<person>> withdraws <<his>> hand. <<person1>><<relaxed_guard 0 cap>> looks over with a frown.<<gsuspicion>><<gattention prison>><<prison_attention 1>><<prison_guards -1>>
 <<else>>
     <<person1>><<relaxed_guard 0 cap>> stirs, and the <<person2>><<person>> withdraws <<his>> hand.
 <</if>>
@@ -708,7 +674,7 @@ Your turn.
         <<case 2>>
             "Get on your knees."
             <br><br>
-            You spend the next hour with <<relaxed_guard 0 apo>> feet resting on your back. <<He>> seems pretty happy. So do the inmates.<<lrespect>><<prison_inmates -1>><<gattention>><<prison_attention 1>><<gstress>><<garousal>><<stress 6>><<arousal 600>>
+            You spend the next hour with <<relaxed_guard 0 apo>> feet resting on your back. <<He>> seems pretty happy. So do the inmates.<<lrespect>><<prison_inmates -1>><<gattention prison>><<prison_attention 1>><<gstress>><<garousal>><<stress 6>><<arousal 600>>
             <br><br>
             <<pass 1>><<advancetohour>>
             <<prison_laundry_options>>
@@ -732,21 +698,9 @@ Your turn.
 	<<neutral 1>>
 
 	<<maninit>>
-    <<if $pronoun is "m">>
-        <<if $NPCList[0].penis isnot "none">>
-            <<He>> unzips <<his>> fly, revealing <<his>> <<print $NPCList[0].penisdesc>>.
-            <br><br>
-        <<else>>
-            <<He>> unzips <<his>> fly, revealing <<his>> pussy.
-        <</if>>
-    <<else>>
-        <<if $NPCList[0].penis isnot "none">>
-            <<He>> lifts <<his>> skirt, revealing <<his>> <<print $NPCList[0].penisdesc>>.
-            <br><br>
-        <<else>>
-            <<He>> lifts <<his>> skirt, revealing <<his>> pussy.
-        <</if>>
-    <</if>>
+	<<He>> <<npcUndressText $NPCList[0] "lower" "self">>,
+    <<npcRevealText $NPCList[0] "lower">>.
+	<br><br>
     <<npcoral>>
 	<<set $enemytrust -= 100>>
 <</if>>
@@ -824,7 +778,7 @@ Your turn.
 <<effects>>
 <<generate_methodical_guard 0>><<person1>>
 <<if $prison.methodical gte 1 and $NPCList[0].name_known isnot 1>>
-    <<methodical_guard 0 cap>> aknowledges your arrival with a sniff. <<He>> doesn't have time for more. <span class="red">A loud crack</span> echoes through the room as the cupboard bursts open. A dark shape hurls across the room.
+    <<methodical_guard 0 cap>> acknowledges your arrival with a sniff. <<He>> doesn't have time for more. <span class="red">A loud crack</span> echoes through the room as the cupboard bursts open. A dark shape hurls across the room.
     <br><br>
     "Shut the door!" <<methodical_guard 0>> shouts. "Shut it!"
     <br><br>
@@ -1002,12 +956,7 @@ You slip the <<person2>><<person>> an extra tooth. "Thank you kindly," <<he>> sa
 	<span class="green"><<methodical_guard 0 cap>> is too busy fussing to notice.</span>
 	<br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<prison_medical_options>>
 
@@ -1016,12 +965,7 @@ You slip the <<person2>><<person>> an extra tooth. "Thank you kindly," <<he>> sa
 	<span class="red"><<methodical_guard 0 cap>> snatches the teeth from the <<person2>><<persons>> hand.</span> "You can go without," <<person1>><<he>> says, before piercing you with <<his>> gaze.<<gsuspicion>><<prison_guards -1>>
 	<br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<prison_medical_options>>
 
@@ -1042,12 +986,7 @@ You slip the <<person2>><<person>> an extra tooth, and a couple for yourself. "T
 	<span class="green"><<methodical_guard 0 cap>> is too busy fussing to notice.</span>
 	<br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<prison_medical_options>>
 
@@ -1056,12 +995,8 @@ You slip the <<person2>><<person>> an extra tooth, and a couple for yourself. "T
 	<span class="red"><<methodical_guard 0 cap>> snatches the teeth from the <<person2>><<persons>> hand.</span> "You can go without," <<person1>><<he>> says, before piercing you with <<his>> gaze. <<gsuspicion>><<prison_guards -1>>
 	<br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
+
     <<He>> tugs off <<his>> gloves. "I can't overlook this. Come with me."
     <br><br>
 
@@ -1311,7 +1246,7 @@ You reach for the $hawk_loot.
 <<elseif $enemyarousal gte $enemyarousalmax>>
 	<span id="next"><<link [[Next|Prison Spire Work Fight Finish]]>><</link>></span><<nexttext>>
 <<else>>
-	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|Prison Spire Work Fight]]>><</link>></span><<nexttext>>
 <</if>>
 
 :: Prison Spire Work Fight Finish
@@ -1332,7 +1267,7 @@ You reach for the $hawk_loot.
 
     <<endevent>>
     <<generate_anxious_guard 0>>
-    <<anxious_guard 0 cap>> awaits you. "Don't worry," <<he>> grins. "I'll delete the footage."<<gstress>><<stress 6>><<gattention>><<prison_attention 1>><<glove>><<lsuspicion>><<prison_rep anxious 1>><<prison_guards 1>>
+    <<anxious_guard 0 cap>> awaits you. "Don't worry," <<he>> grins. "I'll delete the footage."<<gstress>><<stress 6>><<gattention prison>><<prison_attention 1>><<glove>><<lsuspicion>><<prison_rep anxious 1>><<prison_guards 1>>
     <br><br>
     <<unset $hawk_loot>>
     <<prison_spire_options>>
@@ -1410,12 +1345,7 @@ You walk slowly, hoping not to attract notice, crouching to pick up the glitteri
     <br><br>
     
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<prison_spire_options>>
 
@@ -1430,12 +1360,7 @@ You walk slowly, hoping not to attract notice, crouching to pick up the glitteri
     <</if>>
     <br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<link [[Drop the teeth|Prison Spire Work Drop]]>><<prison_guards -1>><</link>><<gsuspicion>>
     <br>

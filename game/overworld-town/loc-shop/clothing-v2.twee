@@ -3,10 +3,9 @@
 <<widget "exitclothingshop">>
 	<div class="button-back-to-shop div-link">
 		<<if $clothes_choice and $shopDefaults.alwaysBackToShopButton is false>>
-			<<link "Back">>
-				<<unset $clothes_choice>><<updateclotheslist>><</link>>
+			<<link "Back">><<unset $clothes_choice>><<updateclotheslist>><</link>>
 		<<else>>
-			<<link "Back to shop">><<unset $clothes_choice>><<updateclothingshop>><</link>>
+			<<link "Back to shop">><<unset $clothes_choice>><<updateclothingshop>><<set _shopNameFilter to "">><</link>>
 		<</if>>
 	</div>
 <</widget>>
@@ -41,7 +40,6 @@
 		<</link>>
 		<br><br>
 	<</if>>
-
 	<!-- Details about the selected item -->
 	<div class="clothing-details">
 		<<shopDetailsv2>>
@@ -51,14 +49,45 @@
 	<<set _iconName to clothingSlotToIconName($clothingShopSlot, _outfits)>>
 	<<shopCategoryTabs _iconName>>
 
+	<!-- Search bar -->
+	<<if !_shopNameFilter>>
+		<<set _shopNameFilter to "">>
+	<</if>>
+	<span class="searchButtons">
+		Search: <<textbox "_shopNameFilterTextbox" _shopNameFilter>>
+		<<button Clear>>
+			<<set _shopNameFilter to "">>
+			<<shopCategoryReplace `clothingSlotToIconName($clothingShopSlot, _outfits)`>>
+		<</button>>
+	</span>
+		<<run $(() => {
+		var shopTimer = null;
+		$('#textbox--shopnamefiltertextbox').on('input change', e => {
+			T.shopNameFilter = shopSearchReplacer(e.target.value);
+			clearTimeout(shopTimer);
+			shopTimer = setTimeout(updateShop, 300);
+		});
+		var updateShop = () => {
+			new Wikifier (null, "<<shopCategoryReplace `clothingSlotToIconName($clothingShopSlot, _outfits)`>>");
+			$('#textbox--shopnamefiltertextbox').focus();
+		}
+	})>>
+
 	<!-- List of clothes -->
 	<<set _items = setup.clothes[$clothingShopSlot].filter(x => x.shop.includes(_shopLocation) and x.outfitSecondary is undefined
-		and ((_outfits and x.outfitPrimary isnot undefined and Object.keys(x.outfitPrimary).some(secSlot => secSlot.includes("lower")))
+		and ($clothingShopSlot === 'all'
+			or
+			(_outfits and x.outfitPrimary isnot undefined and Object.keys(x.outfitPrimary).some(secSlot => secSlot.includes("lower")))
 			or
 			(!_outfits and (x.outfitPrimary is undefined or Object.keys(x.outfitPrimary).every(secSlot => !secSlot.includes("lower")))))
+		and (_shopNameFilter is '' or x.name.includes(_shopNameFilter.toLowerCase()))
 	)>>
 	<<set _items = applyClothingShopFilters(_items)>>
 	<<set _maxPage = Math.ceil(_items.length / $shopItemsPerPage)>>
+	<!-- Makes sure $shopPage is never showing a blank page -->
+	<<if $shopPage gte _maxPage>>
+		<<set $shopPage to 0>>
+	<</if>>
 
 	<div id="shop-list-pages" class="shop-list-pages">
 		<!-- Generate current page immediately -->
@@ -238,7 +267,8 @@
 	<div @class="'clothing-shop-page page-' + _page + _hidden">
 		<<for _itemTemp range _itemsOnPage>>
 			<<set _item = clone(_itemTemp)>>
-			<<set _itemData = setup.clothes[$clothingShopSlot][clothesIndex($clothingShopSlot,_item)]>>
+			<<set $_realSlot to ($clothingShopSlot is "all" ? _item.realSlot : $clothingShopSlot)>>
+			<<set _itemData = setup.clothes[$_realSlot][clothesIndex($_realSlot,_item)]>>
 			<<set _locked = $specialClothes[_item.name.replace(/ /g,"")] is "locked">>
 			<<set _unlocked = $specialClothes[_item.name.replace(/ /g,"")] is "unlocked">>
 			<div class="clothing-item div-link">
@@ -267,7 +297,7 @@
 								<</if>>
 							<</if>>
 						<</if>>
-						<<clothingicon _item $clothingShopSlot>>
+						<<clothingicon _item $_realSlot>>
 						<!-- Gender icon -->
 						<<if _item.gender isnot "n">>
 							<span class="clothing-gender">
@@ -305,7 +335,7 @@
 						<<if _locked>>
 							<span class="lblue">_itemData.name_cap</span><span class="black">&nbsp;| Locked</span>
 						<<else>>
-							<<set _csslot = $clothingShopSlot>>
+							<<set _csslot = $_realSlot>>
 							<<capture _item _itemData _shopLocation _csslot _outfits>>
 								<<link _itemData.name_cap>>
 									<<set $clothes_choice = clothesIndex(_csslot,_item)>>
@@ -414,7 +444,9 @@
 
 	<<elseif $clothes_choice>>
 		<<set _temp_choice to clone(setup.clothes[$clothingShopSlot][$clothes_choice])>>
-
+		<<set _realSlot to ($clothingShopSlot is "all" ? _item.realSlot : $clothingShopSlot)>>
+		<<set _realIndex to _temp_choice.index>>
+		
 		<!-- Unlocked text -->
 		<<if $specialClothes[_temp_choice.name.replace(/ /g,"")] is "unlocked">>
 			<<specialClothesHint>>
@@ -473,11 +505,11 @@
 			<!-- Check if current clothing can be unequiped -->
 			<<unset _cursedPrevent>>
 			<<set _preventSlots to []>>
-			<<if $worn[$clothingShopSlot].cursed is 1>>
+			<<if $worn[_realSlot].cursed is 1>>
 				<<set _cursedPrevent to true>>
-				<<run _preventSlots.push($clothingShopSlot)>>
+				<<run _preventSlots.push(_realSlot)>>
 			<</if>>
-			<<set _wardrobeSlots to [$clothingShopSlot]>>
+			<<set _wardrobeSlots to [_realSlot]>>
 			<<if _temp_choice.outfitPrimary isnot undefined>>
 				<<for _slot, _name range _temp_choice.outfitPrimary>>
 					<<run _wardrobeSlots.push(_slot)>>
@@ -508,11 +540,11 @@
 				<br>
 			<<elseif $daystate is "night">>
 				<<if $clothingShop.stolenClothes lte 20>>
-					<<if $worn[$clothingShopSlot].cursed is 1>>
+					<<if $worn[_realSlot].cursed is 1>>
 						<<printcursed>>
 					<<else>>
 						<<link "Steal and wear">>
-							<<shopbuyv2 $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup `getClothingCost(_temp_choice,$clothingShopSlot) / 100`>>
+							<<shopbuyv2 _realSlot "steal" "wear" _realIndex>><<crimeup `getClothingCost(_temp_choice,$clothingShopSlot) / 100`>>
 							<<set $clothingShop.stolenClothes++>>
 							<<set $clothingShop.totalStolenClothes++>>
 							<<if $shopDefaults.disableReturn is false>>
@@ -532,7 +564,7 @@
 						<br>
 					<</if>>
 					<<link "Steal and take home">>
-						<<shopbuyv2 $clothingShopSlot "steal" "send" $clothes_choice>><<crimeup `getClothingCost(_temp_choice,$clothingShopSlot) / 100`>>
+						<<shopbuyv2 _realSlot "steal" "send" _realIndex>><<crimeup `getClothingCost(_temp_choice,$clothingShopSlot) / 100`>>
 						<<set $clothingShop.stolenClothes++>>
 						<<set $clothingShop.totalStolenClothes++>>
 						<<if $shopDefaults.disableReturn is false>>
@@ -560,8 +592,8 @@
 								Buy and wear
 							<<else>>
 								<<link "Buy and wear">>
-									<<clothingReset $clothingShopSlot>>
-									<<shopbuyv2 $clothingShopSlot "buy" "wear" $clothes_choice>>
+									<<clothingReset _realSlot>>
+									<<shopbuyv2 _realSlot "buy" "wear" _realIndex>>
 									<<set $money -= getClothingCost(_temp_choice,$clothingShopSlot)>>
 									<<if $shopDefaults.disableReturn is "false">>
 										<<unset $clothes_choice>>
@@ -598,7 +630,7 @@
 				<div class="try-buttons">
 					<div class="try-button div-link">
 						<<link "Try On">>
-							<<shopbuyv2 $clothingShopSlot "try" null $clothes_choice>>
+							<<shopbuyv2 _realSlot "try" null _realIndex>>
 							<<updateclotheslist>>
 							<<exposedcheck>>
 							<<updatesidebarimg>>
@@ -612,7 +644,7 @@
 					<<if $tryOn.tryingOn[$clothingShopSlot] isnot null>>
 						<div class="try-button div-link">
 							<<link "Return">>
-								<<shopbuyv2 $clothingShopSlot "return" null $clothes_choice>>
+								<<shopbuyv2 _realSlot "return" null _realIndex>>
 								<<updateclotheslist>>
 								<<exposedcheck>>
 								<<updatesidebarimg>>
@@ -640,8 +672,8 @@
 		<div @class="'buy-button-inner buy-multiple div-link ' + _canAfford">
 			<<link `'Buy and send home × ' + $buyMultiple`>>
 				<<if $money >= _clothingCost * $buyMultiple and _spaceLeft >= $buyMultiple>>
-					<<clothingReset $clothingShopSlot>>
-					<<shopbuyv2 $clothingShopSlot "buy" "send" $clothes_choice $buyMultiple>>
+					<<clothingReset _realSlot>>
+					<<shopbuyv2 _realSlot "buy" "send" _realIndex $buyMultiple>>
 					<<set $money -= _clothingCost * $buyMultiple>>
 					<<if $shopDefaults.disableReturn is false>>
 						<<unset $clothes_choice>>
@@ -870,8 +902,8 @@
 
 <<widget "mannequin">>
 	<<if $images is 1>>
-		<<set _slot = $args[0] or $clothingShopSlot>>
-		<<set _index = $args[1] or $clothes_choice>>
+		<<set _slot = $args[0] or _realSlot>>
+		<<set _index = $args[1] or _realIndex>>
 		<<set _item = setup.clothes[_slot][_index]>>
 
 		<<if _item.colour_options.length > 0>>
@@ -1411,7 +1443,7 @@
 	<<if $args[0]>>
 		<<set _newWarmth = $args[0]>>
 	<<elseif $clothes_choice>>
-		<<set _newWarmth = getWarmthWithOtherClothing($clothingShopSlot, $clothes_choice)>>
+		<<set _newWarmth = getWarmthWithOtherClothing(_realSlot, _realIndex)>>
 	<</if>>
 	<<set _warmthData = getWarmthScaleData(_newWarmth)>>
 

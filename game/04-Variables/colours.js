@@ -561,7 +561,19 @@ setup.colours.eyes = [{
 	canvasfilter: {
 		blend: "#95b521"
 	}
-}, {
+},{
+	variable: "lime green",
+	name: "lime green",
+	name_cap: "Lime Green",
+	csstext: "green",
+	natural: true,
+	lens: true,
+	canvasfilter: {
+		blend: "#3ae137",
+		brightness: +0.2
+	}
+},
+ {
 	variable: "light green",
 	name: "light green",
 	name_cap: "Light Green",
@@ -602,7 +614,19 @@ setup.colours.eyes = [{
 	canvasfilter: {
 		blend: "#a9a9a9"
 	}
-}, {
+},{
+	variable: "light grey",
+	name: "light grey",
+	name_cap: "Light Grey",
+	csstext: "grey",
+	natural: true,
+	lens: true,
+	canvasfilter: {
+		blend: "#d1d1d1",
+		brightness: +0.2
+	}
+},
+ {
 	variable: "red possessed",
 	name: "red possessed",
 	name_cap: "Red Possessed",
@@ -1047,20 +1071,23 @@ setup.colours.mascara = [
  * Maps to easily access colour record by its variable code, ex. setup.colours.hair_map[$haircolour]
  */
 
-function buildColourMap(name) {
-	let array = setup.colours[name];
+function buildColourMap(name, mode) {
+	let array = (mode == "custom_eyecolours" ? V.custom_eyecolours : setup.colours[name]);
 	let map = setup.colours[name+"_map"];
 	let defaultFilter = setup.colours[name+"_default"];
 	for (let item of array) {
 		if (defaultFilter) Renderer.mergeLayerData(item.canvasfilter, defaultFilter);
 		let key = item.variable;
 		if (key in map) {
-			console.error("Duplicate "+name+" '"+key+"'");
+			if (mode != "custom_eyecolours")
+				console.error("Duplicate "+name+" '"+key+"'");
 		}
 		map[key] = item;
 	}
 	return map;
 }
+
+window.buildColourMap = buildColourMap
 
 buildColourMap("hair");
 buildColourMap("eyes");

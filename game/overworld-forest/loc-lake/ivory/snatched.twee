@@ -43,7 +43,7 @@ You steady yourself against the wall, and push yourself to the window.
 	<br><br>
 	<<endWraith>>
 	<<clearWraith>>
-	<<link [[Separate|Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><<unset $possessed>><</link>><<ltiredness>>
+	<<link [[Separate|Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
 	<br>
 <<else>>
 	<<set $nextPassage to "Wraith Snatched Home Leave">>
@@ -253,18 +253,18 @@ Eventually, your gaze turns to <<if $wraith.exit is "home" and ($robinbed is 1 o
 	<<case "home">>
 		<<set $nextPassage to "Bedroom">>
 		<<set $nextPassageCheck to "Bedroom">>
-		<span class="nextLink"><<link[[Step away|Bedroom]]>><</link>></span>
+		<span class="nextLink"><<link [[Step away|Bedroom]]>><</link>></span>
 		<br>
 		<<link [[Try to stay still|Containers]]>><</link>>
 	<<case "lake">>
 		<<set $nextPassage to "Lake Waterfall">>
 		<<set $nextPassageCheck to "Lake Waterfall">>
-		<span class="nextLink"><<link[[The lake.|Lake Waterfall]]>><</link>></span>
+		<span class="nextLink"><<link [[The lake.|Lake Waterfall]]>><</link>></span>
 		<br>
 		<<link [[Try to stay still|Containers]]>><</link>>
 	<<case "alex_farm">>
 		<<set $nextPassage to "Bedroom">>
-		<span class="nextLink"><<link[[Step away|Bedroom]]>><</link>></span>
+		<span class="nextLink"><<link [[Step away|Bedroom]]>><</link>></span>
 		<br>
 		<<link [[Try to stay still|Containers]]>><</link>>
 <</switch>>
@@ -298,7 +298,7 @@ Your head quickly tilts to the side, making sickening cracks. Your hands open an
 <br>
 
 :: Wraith Resisted
-<<effects>><<unset $possessed>>
+<<effects>>
 <<if $hour gte 6 and $moonstate is "morning">>
 	Your body begins to grow heavy as the first rays of sunlight crest over the horizon. You try to move your arm. <span class="green">It twitches.</span>
 	<br><br>
@@ -344,7 +344,7 @@ Your head quickly tilts to the side, making sickening cracks. Your hands open an
 <<clearWraith>>
 
 :: Wraith Resisted Lake
-<<effects>><<unset $possessed>>
+<<effects>>
 <<if $hour gte 6 and $moonstate is "morning">>
 	Your body begins to grow heavy as the first rays of sunlight reach the depths. You try to move your arm. <span class="green">It twitches.</span>
 	<br><br>
@@ -664,6 +664,13 @@ You find yourself sinking through the ice, submerging without causing a break.
 		<</if>>
 	<</if>>
 	<<set _wraithWill to Math.floor(1 + $wraith.will)>>
+	<<if $wraith.possessCount is undefined>>
+		<<if $location is "forest" or $location is "lake">>
+			<<set _wraithWill /= 3>>
+		<<else>>
+			<<set _wraithWill /= 2>>
+		<</if>>
+	<</if>>
 	<<if $wraithWillMessage and !$combat>>
 		<<if $phase2 is 1>>
 			<<set $phase2 to 0>>
@@ -680,17 +687,17 @@ You find yourself sinking through the ice, submerging without causing a break.
 			<<set $willpowerSuccess to 0>>
 			<<willpowerdifficulty 1 _wraithWill true>>
 			<<if $willpowerSuccess>>
-				<<set $control += Math.floor($willpower / 8)>>
+				<<set $control += Math.floor(currentSkillValue('willpower') / 8)>>
 				<<controlcaption>>
 				<br>
 				<span class="green">You fight for control. It becomes slower.</span>
-				<<pass 4>><<pain 4>><<stress 12>><<trauma 12>><<set $submissive -= 2>><<gpain>><<ggtrauma>><<ggstress>><<gcontrol>><<set $wraith.will -= Math.floor($willpower / 8)>>
+				<<pass 4>><<pain 4>><<stress 12>><<trauma 12>><<set $submissive -= 2>><<gpain>><<ggtrauma>><<ggstress>><<gcontrol>><<set $wraith.will -= Math.floor(currentSkillValue('willpower') / 8)>>
 				<br><br>
 			<<else>>
 				<<controlcaption>>
 				<br>
 				<span class="red">Your body does not obey.</span>
-				<<stress 6>><<trauma 6>><<willpower 1>><<set $submissive -= 1>><<gtrauma>><<gstress>><<gwillpower>><<set $wraith.will -= Math.floor($willpower / 10)>>
+				<<stress 6>><<trauma 6>><<willpower 1>><<set $submissive -= 1>><<gtrauma>><<gstress>><<gwillpower>><<set $wraith.will -= Math.floor(currentSkillValue('willpower') / 10)>>
 				<br><br>
 			<</if>>
 		<</if>>

@@ -343,26 +343,16 @@
 	<<set $farm_work.pig to {}>>
 	<<set $farm_work.horse to {}>>
 	<<set $farm_work.cattle to {}>>
-	<!-- Modified for monster people -->
-	<<if ($monsterchance gte random(1, 100)) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
-		<<set $farm_work.horse.monster_roll to true>>
-	<<else>>
-		<<set $farm_work.horse.monster_roll to false>>
-	<</if>>
-	<<if ($monsterchance gte random(1, 100)) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
-		<<set $farm_work.pig.monster_roll to true>>
-	<<else>>
-		<<set $farm_work.pig.monster_roll to false>>
-	<</if>>
-	<<if ($monsterchance gte random(1, 100)) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
-		<<set $farm_work.dog.monster_roll to true>>
-	<<else>>
-		<<set $farm_work.dog.monster_roll to false>>
-	<</if>>
-	<<if ($monsterchance gte random(1, 100)) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
-		<<set $farm_work.cattle.monster_roll to true>>
-	<<else>>
-		<<set $farm_work.cattle.monster_roll to false>>
+		<!-- Modified for monster people -->
+	<<set $farm_work.horse.monster_roll to false>>
+	<<set $farm_work.pig.monster_roll to false>>
+	<<set $farm_work.dog.monster_roll to false>>
+	<<set $farm_work.cattle.monster_roll to false>>
+	<<if $hallucinations gte 1 or $monsterhallucinations is "f">>
+		<<set $farm_work.horse.monster_roll to $monsterchance gte random(1, 100)>>
+		<<set $farm_work.pig.monster_roll to $monsterchance gte random(1, 100)>>
+		<<set $farm_work.dog.monster_roll to $monsterchance gte random(1, 100)>>
+		<<set $farm_work.cattle.monster_roll to $monsterchance gte random(1, 100)>>
 	<</if>>
 	<<unset $farm_kennel>>
 	<<farm_gen_all>>
@@ -1213,7 +1203,8 @@
 	<br><br>
 
 <<elseif $farm_work.cattle_need gte 1>>
-	<<link [[Milk them with the machine (0:20)|Farm Cattle Milk Machine]]>><<pass 20>><<farm_count 20>><<tending 2>>
+	<<beastNEWinit 1 cow>><<person1>>
+	<<link [[Milk them with the machine (0:20)|Farm Cattle Milk Machine]]>><<pass 20>><<endevent>><<farm_count 20>><<tending 2>>
 		<<if $farm_work.cattle_need gte 6>>
 			<<set $farm_work.cattle_milked += 6>>
 			<<set $cattle_milked += 6>>
@@ -1225,7 +1216,7 @@
 	<br>
 <!-- Modified for monster people -->
 
-	A <<farm_text cattle>> gives you a strained moo.
+	A <<beasttype>> gives you a strained moo.
 	<br>
 	<<link [[Milk by hand (Up to 0:30, depending on skill)|Farm Cattle Milk Hand]]>><<farm_yield 1>><<set $cattle_milked += 1>><<set $farm_work.cattle_milked += 1>><<tending 1>><<farm_cattle 1>><</link>><<deviant1>><<gfarm>><<gtending>><<grespect>>
 	<br>
@@ -1377,7 +1368,7 @@
 
 			They nod as you pass.
 			<br><br>
-			<<link [[Encourage (0:15)|Farm Builders Encourage]]>><<pass 15>><</link>> | <span class="green">Low chance of speeding construction.</span>
+			<<link [[Encourage (0:15)|Farm Builders Encourage]]>><<pass 15>><</link>><<if $statdisable is "f">> | <span class="green">Low chance of speeding construction.</span><</if>>
 			<br>
 			<<link [[Just nod back|Farm Work]]>><<endevent>><</link>>
 			<br>
@@ -1400,7 +1391,7 @@
 			The builders are hauling materials across the yard.
 			<br><br>
 
-			<<link [[Help out (1:00)|Farm Builders Help]]>><<pass 60>><</link>><<physiquedifficulty 1 16000>> | <span class="green">Might speed construction if successful.</span>
+			<<link [[Help out (1:00)|Farm Builders Help]]>><<pass 60>><</link>><<physiquedifficulty 1 16000>><<if $statdisable is "f">> | <span class="green">Might speed construction if successful.</span><</if>>
 			<br>
 			<<link [[Ignore|Farm Work]]>><<endevent>><</link>>
 			<br>
@@ -1933,7 +1924,7 @@
 			"Hey <<girl>>," says a voice. You look up, and see a <<person>> leering at you across the fence. "What's a cute<<if pregnancyBellyVisible()>> pregnant<</if>> <<girl>> like you doing working the fields?"
 			<br><br>
 
-			<<if $skulduggery gte random(500, 700)>>
+			<<if currentSkillValue('skulduggery') gte random(500, 700)>>
 				<span class="green">You shiver.</span> Something's wrong. This isn't your usual pervert. You glance around, and spot them. A <<person2>><<person>> and <<person3>><<person>> creep through the crops, trying to sneak up on you.
 				<br><br>
 				<<if $hour lt 21 or $hour gt 4>>
@@ -1980,8 +1971,30 @@
 <</widget>>
 
 <<widget "farm_tending_alex_events">>
-<<set $rng to random(1, 4)>>
-<<if $rng is 4>>
+<<if $season is "summer" and $weather is "clear">>
+	<<set $rng to random(1, 5)>>
+<<else>>
+	<<set $rng to random(1, 4)>>
+<</if>>
+
+<<if $rng is 5>>
+	<<npc Alex>><<person1>>
+
+	Alex fans <<his>> face and wipes <<his>> forehead. <<He>> squints up at the sky and huffs. "It's too hot."
+	<br><br>
+
+	<<He>> starts to undo <<his>> shirt buttons, one by one, seemingly oblivious to your gaze.
+	<br><br>
+
+	<<if $promiscuity gte 15>>
+		<<link [["Touch " + $NPCList[0].pronouns.him|Farm Tending Alex Summer]]>><<set $phase to 2>><<if $farm_stage lt 7 or ($farm_stage gte 7 and $alex_countdown isnot undefined)>><<npcincr Alex love -1>><</if>><<npcincr Alex dom -1>><<npcincr Alex lust 3>><</link>><<promiscuous2>><<if $farm_stage lt 7 or ($farm_stage gte 7 and $alex_countdown isnot undefined)>><<llove>><</if>><<ldom>><<gglust>>
+		<br>
+	<</if>>
+	<<link [[Peek|Farm Tending Alex Summer]]>><<set $phase to 1>><<arousal 300>><<npcincr Alex lust 1>><</link>><<garousal>><<glust>>
+	<br>
+	<<link [[Ignore|Farm Tending Alex Summer]]>><<set $phase to 0>><</link>>
+	<br>
+<<elseif $rng is 4>>
 	<<npc Alex>><<person1>>
 	You hear Alex shout in surprise. You rush over, and find <<him>> lying on <<his>> back.
 	<br><br>
@@ -2343,10 +2356,11 @@
 			<<set $wardrobe_location to "alexFarm">>
 			<<wardrobeSelection true>>
 		<</if>>
+		<<loadTempHairStyle>>
 	<</link>>
 	<br>
 <<else>>
-	<<link [[Climb out of bed|Farm Bedroom]]>><<storeon "Farm Bed">><<set $wardrobe_location to "alexFarm">><<wardrobeSelection>><</link>>
+	<<link [[Climb out of bed|Farm Bedroom]]>><<storeon "Farm Bed">><<set $wardrobe_location to "alexFarm">><<loadTempHairStyle>><<wardrobeSelection>><<loadTempHairStyle>><</link>>
 <</if>>
 <br><br>
 <</widget>>
@@ -2539,7 +2553,7 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 	You owe <<him>> <<printmoney _owed>> in wages.
 	<br>
 	<<if $money gte _owed>>
-		<<link [[Pay|Farm Tower Pay]]>><<set $money -= _owed>><<set $NPCList[0].trust += 1>><<farm_guard_paid>><</link>><<gtrust>> | <span class="green">+ Security skill</span> | <span class="red"> + Wage</span>
+		<<link [[Pay|Farm Tower Pay]]>><<set $money -= _owed>><<set $NPCList[0].trust += 1>><<farm_guard_paid>><</link>><<gtrust>><<if $statdisable is "f">> | <span class="green">+ Security skill</span> | <span class="red"> + Wage</span><</if>>
 		<br>
 	<</if>>
 <</if>>
@@ -2623,7 +2637,7 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 	<<elseif $farm.beasts.horses lt 0 and $horsedisable is "f" and ($monster is 1 or $bestialitydisable is "f")>><!-- Modified for Beast People -->
 		The <<beasttype>> pulls to a stop, and refuses to take a step further.
 		<<if $monster is 1>>
-			"I'm frustrated," <<bhe>> says. "It's your job to fix it.""
+			"I'm frustrated," <<bhe>> says. "It's your job to fix it."
 		<<else>>
 			It neighs in frustration.
 		<</if>>
@@ -2728,7 +2742,7 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 <<if _farm_damage is 0 and $farm_stage gte 12>>
 	<<earnFeat "Heroic Victory">>
 <</if>>
-<<damage_farm _farm_damage>>
+<<damage_farm "loop" _farm_damage >>
 <<set $farm_attack_timer to random(17, 24)>>
 <<set $farm_attacked to 1>>
 <</widget>>
@@ -2737,15 +2751,18 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 <<if $fields_damaged is undefined>>
 	<<set $fields_damaged to 0>>
 <</if>>
-<<if $args[0] gt 0>>
-	<<set _field_number to $args[0]>>
-	<<for _i to 0; _i lt _field_number; _i ++>>
+<<if $args[0] is "target">>
+	<<clear_plot farm $args[1]>>
+	<<set $fields_damaged++>>
+<<elseif $args[0] is "loop">>
+	<<set _field_number to $args[1]>>
+	<<for _i to 0; _i lt _field_number; _i++>>
 		<<if $plots.farm[_i]>>
 			<<if $plots.farm[_i].stage gte 1>>
 				<<clear_plot farm _i>>
-				<<set $fields_damaged += 1>>
+				<<set $fields_damaged++>>
 			<<else>>
-				<<set _field_number ++>>
+				<<set _field_number++>>
 			<</if>>
 		<<else>>
 			<<set $farm_destroyed to true>>
@@ -2759,21 +2776,17 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 <<if $fields_damaged is 0>>
 	<<if $farm_destroyed is true>>
 		The farm was attacked while you were gone, <span class="blue">but there were no fields to burn.</span>
-		<br><br>
 	<<else>>
 		The farm was attacked while you were gone, <span class="green">but the defenders fought valiantly, and not a single field was lost.</span>
-		<br><br>
 	<</if>>
 <<elseif $field_damaged is 1>>
 	The farm was attacked while you were gone, <span class="purple">and a field torched</span> before the defenders drove them off.<<gtrauma>><<trauma 6>>
-	<br><br>
 <<elseif $fields_damaged is 9>>
 	The farm was attacked while you were gone, the defenders defeated, <span class="red">and all the fields torched.</span><<gggtrauma>><<trauma 24>>
-	<br><br>
 <<else>>
 	The farm was attacked while you were gone, <span class="pink">and <<number $fields_damaged>> fields torched</span> before the defenders drove them off.<<ggtrauma>><<trauma 12>>
-	<br><br>
 <</if>>
+<br><br>
 <<unset $fields_damaged>>
 <<unset $farm_destroyed>>
 <<unset $farm_attacked>>
@@ -2836,7 +2849,7 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 		<<case "tower 2">>
 			Searchlights are being affixed atop the watchtower.
 		<<case "kennel 1">>
-			A guard dog training facility is being contructed.
+			A guard dog training facility is being constructed.
 		<<case "barn 1" "barn 2">>
 			The barn is being expanded.
 		<<case "woodland 1" "woodland 2" "woodland 3">>
@@ -2851,7 +2864,7 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 		<<if $farm.build_timer is 1>>
 			It'll be finished tomorrow.
 		<<else>>
-			It'll be finished in $farm.build_timer days.
+			It'll be finished in <<number $farm.build_timer>> days.
 		<</if>>
 		<br><br>
 	<</if>>

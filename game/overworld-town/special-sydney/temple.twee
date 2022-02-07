@@ -502,7 +502,7 @@ The two of you walk back to the main area of the temple. It takes some time, but
 <<elseif $danger gte (9900 - $allure) and $eventskip isnot 1>>
 	<<if $rng gte 81>>
 		<<set $sydneyPresent to true>>
-		<<set _npcChastity to 1>><<generate2>><<person2>> A <<monk>> carrying a donation plate walks by. <<He>> smiles at you.
+		<<generateTemple 2>><<person2>> A <<monk>> carrying a donation plate walks by. <<He>> smiles at you.
 		<br><br>
 
 		<<link [[Look away|Temple Plate Look]]>><<npcincr Sydney love -1>><</link>><<llove>>
@@ -583,7 +583,7 @@ The two of you walk back to the main area of the temple. It takes some time, but
 		<<endevent>><<npc "Sydney">><<person1>>
 		<<sydneyOptions>>
 	<<else>>
-		<<set _npcChastity to 1>><<generate2>><<person2>>A <<person>> dressed as a <<monk>> sits close beside you. Very close. <<He>> rests a hand on your thigh. "Don't cause a fuss," <<he>> whispers. "Or I'll say you attacked me. Who will they believe?"
+		<<generateTemple 2>><<person2>>A <<person>> dressed as a <<monk>> sits close beside you. Very close. <<He>> rests a hand on your thigh. "Don't cause a fuss," <<he>> whispers. "Or I'll say you attacked me. Who will they believe?"
 		<br><br>
 		<<if $sydneyromance is 1>>
 			<<if _sydneyStatus.includes("corrupt")>>
@@ -867,7 +867,7 @@ You soon lose track of where you're going, but Sydney knows the way. The halls a
 The two of you reach a locked door. "I think this is the one." Sydney peers through the keyhole. "No good, no lights inside. We need to figure out how to get in." The door is old and in poor shape. The lock is more sturdy than the door itself.
 <br><br>
 <<set $lock to 600>>
-	<<if $skulduggery gte $lock>>
+	<<if currentSkillValue('skulduggery') gte $lock>>
 		<span class="green">The lock looks easy to pick.</span>
 		<br><br>
 		<<link [[Pick lock (0:05)|Sydney Temple Corrupt Pick]]>><<set $phase to 1>><<pass 5>><<crimeup 1>><</link>><<crime>>
@@ -900,7 +900,7 @@ As <<he>> does, you see many cabinets and hangers filled with various chastity d
 <br><br>
 <<if $phase is 2>>
 	<<endevent>>
-	<<generate1>><<person1>>
+	<<generateCultist 1>><<person1>>
 	"<span class="red">You're not supposed to be here.</span>" Your blood runs cold. Two figures in black robes enter the room. "You two have caused severe damage, and are trespassing. You must be purified." <<He>> turns to the other <<monk>>. "Punishment is in order. Handle this one." <<He>> approaches you while the other one makes a grab for Sydney.
 	<br><br>
 	<<link [[Next|Sydney Temple Corrupt Fight]]>><<set $fightstart to 1>><</link>>
@@ -1135,7 +1135,7 @@ You find yourself in a small hexagonal room, the edges ringed with steps leading
 	<<set $sydneyDaily.sex += 1>><<set $sydney.sexTotal += 1>>
 	<<neutral 1>>
 
-	<<maninit>><<npcexpose>>
+	<<maninit>>
 	<<set $enemytrust += 100>>
 	<<set $enemyarousalmax to 600>>
 	<<switch $loveDrunk>>
@@ -1143,10 +1143,12 @@ You find yourself in a small hexagonal room, the edges ringed with steps leading
 			You feel as though some unseen force is pushing you and Sydney together. <<set $hallucinogen += 60>>
 		<<case 2>>
 			You don't remember when it happened, <span class="lewd">but all of your clothes have vanished. Your mind feels fuzzy.</span> <<set $hallucinogen += 60>>
-			<<undress "prayerroom">>
+			<<undress "prayerroom">><<npcexpose>>
 		<<case 3>>
 			<span class="lewd">The room spirals out into nothingness, and only your lust remains.</span> <<set $hallucinogen += 60>>
+			<<npcexpose>>
 		<<default>>
+			<<npcexpose>>
 	<</switch>>
 	<<if $loveDrunk>>
 		<<npc_attempt_sex>>
@@ -1570,12 +1572,8 @@ You creep up to the door.
 <<skulduggerycheck>>
 <<if $skulduggerysuccess is 1>>
 	<span class="green">You hardly make a sound.</span>
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
+	
 	You press your ear to the door and do your best to listen in. You hear Jordan's voice.
 	<br><br>
 	"Where did you two first meet?"
@@ -1674,17 +1672,17 @@ You creep up to the door.
 			"Noted."
 		<</if>>
 	<</if>>
-	You hear something drop on the other side of the door, which startles you. You prepare to rush back to your seat, until you hear Jordan speak again.
-	<br><br>
-	"Have you had any sexual contact with <<phim>>?" There's a very long pause.
-	<br>
-	"Y...y...yes. Not... not anything that would have broken my vow, though."
-	<br>
-	"Thank you for being honest. I trust your word. Your section of this evaluation is complete."
-	<br><br>
-	<<link [[Next|Sydney Temple Pure 4]]>><<pass 15>><<set $phase to 3>><</link>>
-	<br>
 <</if>>
+You hear something drop on the other side of the door, which startles you. You prepare to rush back to your seat, until you hear Jordan speak again.
+<br><br>
+"Have you had any sexual contact with <<phim>>?" There's a very long pause.
+<br>
+"Y...y...yes. Not... not anything that would have broken my vow, though."
+<br>
+"Thank you for being honest. I trust your word. Your section of this evaluation is complete."
+<br><br>
+<<link [[Next|Sydney Temple Pure 4]]>><<pass 15>><<set $phase to 3>><</link>>
+<br>
 
 :: Sydney Temple Pure 4
 <<effects>>
@@ -2016,9 +2014,9 @@ You see the candle above Sydney melt at a faster rate. A drop of wax hits <<pers
 
 :: Sydney Temple Pure Ritual 2
 <<effects>>
-As the wax continues to pour down, it quickly slides off of you and onto the altar. One of the <<person2>><<monks>> begins to collect it in an empty jar. "Release." The restraints retract, freeing you. The monks help you both up, putting you in a sitting position on the edge of the altar.
+As the wax continues to pour down, it quickly slides off of you and onto the altar. One of the <<person2>><<monks>> begins to collect it in an empty jar. "Release." The restraints retract, freeing you. The <<monks>> help you both up, putting you in a sitting position on the edge of the altar.
 <br><br>
-"The ritual is done," Jordan says, "but there's just one final step. We must prepare you for your new chastity exams." A <<monk>> approaches you with a jar of grey powder. <<He>> opens it, begins to rub it on your <<genitals>>. You turn away, and see Sydney getting the same treatment from another monk. After a moment, they scrape the powder away into the jar of melted wax. It begins to sparkle.
+"The ritual is done," Jordan says, "but there's just one final step. We must prepare you for your new chastity exams." A <<monk>> approaches you with a jar of grey powder. <<He>> opens it, begins to rub it on your <<genitals>>. You turn away, and see Sydney getting the same treatment from another <<monk>>. After a moment, they scrape the powder away into the jar of melted wax. It begins to sparkle.
 <br><br>
 "This powder will be used in your exams from now on," Jordan explains as another <<monk>> hands <<him>> a small box. <<He>> opens it, revealing two silver rings. <<He>> gingerly places one on your ring finger, and the other on Sydney's.
 <br><br>
@@ -2369,7 +2367,7 @@ The whip strikes down onto your back first without warning, stinging tremendousl
 <br><br>
 The <<person2>><<priest>> moves over to Sydney and, without hesitation, lashes the whip onto <<person1>><<his>> back. <<He>> squeals into <<his>> gag and then receives another strike. The whip strikes Sydney's back a third time, leaving <<him>> in tears. <<stress 12>><<ggstress>>
 <br><br>
-<<link [[Reassure Sydney|Sydney Temple Punish Intro 4]]>><<set $phase to 1>><<npcincr Sydney love 1>><<set $sydneyPain -= 1>><</link>><<glove>> | <span class="green">- Sydney's Pain</span>
+<<link [[Reassure Sydney|Sydney Temple Punish Intro 4]]>><<set $phase to 1>><<npcincr Sydney love 1>><<set $sydneyPain -= 1>><</link>><<glove>><<lspain>>
 <br>
 <<link [[Close your eyes|Sydney Temple Punish Intro 4]]>><<set $phase to 2>><<stress -3>><<pain -10>><</link>><<lstress>><<lpain>>
 <br>

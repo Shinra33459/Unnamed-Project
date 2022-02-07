@@ -52,8 +52,11 @@
 <<set $analpregdisable to "f">>
 <<set $asphyxiaLvl to 3>>
 <<set $NudeGenderDC to 1>>
+<<set $npcVirginityChance to 50>>
+<<set $npcVirginityChanceAdult to 10>>
 <<set $footdisable to "f">>
 <<set $tipdisable to "f">>
+<<set $statdisable to "f">>
 <<set $bodywritingImages to true>>
 <<if $debug is 1>>
 	<<set $debugdisable to "f">>
@@ -95,6 +98,7 @@
 <<set $condomautochance to 50>>
 <<set $multipleWardrobes to "isolated">>
 <<set $targetYourself to false>>
+<<set $tending_yield_factor to 5>>
 
 <<set $notifyUpdate = true>>
 
@@ -334,47 +338,61 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 <<quickStartOptions>>
 <i>Gender ratios and kinks can be fine-tuned in the Game Settings Tab.</i>
 <br><br>
+
+<span class="gold">Randomise:</span>
+<<link "All">><<presets "randomize" `randomizeSettings()`>><</link>> |
+<<if $passage is "Start">>
+	<<link "Character Appearance">><<presets "randomize" `randomizeSettings('characterAppearance')`>><</link>>
+	<mouse class="tooltip linkBlue">(?)<span>Randomises the settings related to player character appearance, including hair, eyes, skin colour, gender and bodypart sizes. This is only avaliable before starting the game. Can lead to normally inaccessable values to the player leading to no controls being selected, these are still valid.</span></mouse> |
+	<<link "Character Traits">><<presets "randomize" `randomizeSettings('characterTrait')`>><</link>>
+	<mouse class="tooltip linkBlue">(?)<span>Randomises the settings related to player character traits, including background, awareness and general sensitivity. This is only avaliable before starting the game.</span></mouse> |
+<</if>>
+<<link "Gameplay">><<presets "randomize" `randomizeSettings('gameplay')`>><</link>>
+<mouse class="tooltip linkBlue">(?)<span>Randomises the settings related to general gameplay, including allure mod, clothing prices and Bailey's rent modifier.</span></mouse> |
+<<link "Encounters">><<presets "randomize" `randomizeSettings('encounter')`>><</link>>
+<mouse class="tooltip linkBlue">(?)<span>Randomises the settings related to generic NPCs.</span></mouse>
+<br><br>
 /*
 <span class="gold">Complete Contributor Preset:</span> <<listbox "_completePreset" autoselect>><<optionsfrom _quickStartOptions.complete>><</listbox>> |
-<<link Set>><<presets _completePreset>><</link>>
+<<link "Set">><<presets _completePreset>><</link>>
 <br><br>
 */
 
 /*
 <span class="gold">Player Preset:</span> <<listbox "_playerPreset" autoselect>><<optionsfrom _quickStartOptions.player>><</listbox>> |
-<<link Set>><<presets _playerPreset>><</link>>
+<<link "Set">><<presets _playerPreset>><</link>>
 <br><br>
 */
 
 <span class="gold">Generic NPC Preset:</span> <<listbox "_genericNpcPreset" autoselect>><<optionsfrom _quickStartOptions.genericNpc>><</listbox>> |
-<<link Set>><<presets _genericNpcPreset>><</link>>
+<<link "Set">><<presets _genericNpcPreset>><</link>>
 <br><br>
 <span class="gold">Named NPC Preset:</span> <<listbox "_namedNpcPreset" autoselect>><<optionsfrom _quickStartOptions.namedNpc>><</listbox>> |
-<<link Set>><<presets _namedNpcPreset>><</link>>
+<<link "Set">><<presets _namedNpcPreset>><</link>>
 <br><br>
 
 <span class="gold">Beasts Preset:</span> <<listbox "_beastPreset" autoselect>><<optionsfrom _quickStartOptions.beasts>><</listbox>> |
-<<link Set>><<presets _beastPreset>><</link>>
+<<link "Set">><<presets _beastPreset>><</link>>
 <br><br>
 <span class="gold">Beasts as monsters Preset:</span> <<listbox "_monstersPreset" autoselect>><<optionsfrom _quickStartOptions.monsters>><</listbox>> |
-<<link Set>><<presets _monstersPreset>><</link>>
+<<link "Set">><<presets _monstersPreset>><</link>>
 <br><br>
 
 <span class="gold">Kinks Preset:</span> <<listbox "_kinkPreset" autoselect>><<optionsfrom _quickStartOptions.kink>><</listbox>> |
-<<link Set>><<presets _kinkPreset>><</link>>
+<<link "Set">><<presets _kinkPreset>><</link>>
 <br><br>
 <<if $passage is "Start">>
 	<span class="gold">Difficulty Preset:</span> <<listbox "_gamePreset" autoselect>><<optionsfrom _quickStartOptions.game>><</listbox>> |
-	<<link Set>><<presets _gamePreset>><</link>>
+	<<link "Set">><<presets _gamePreset>><</link>>
 	<br><br>
 <</if>>
 <<if StartConfig.enableImages is true>>
 	<span class="gold">Images Preset:</span> <<listbox "_imagesPreset" autoselect>><<optionsfrom _quickStartOptions.images>><</listbox>> |
-	<<link Set>><<presets _imagesPreset>><</link>>
+	<<link "Set">><<presets _imagesPreset>><</link>>
 	<br><br>
 <</if>>
 <span class="gold">Settings Preset:</span> <<listbox "_settingsPreset" autoselect>><<optionsfrom _quickStartOptions.settings>><</listbox>> |
-<<link Set>><<presets _settingsPreset>><</link>>
+<<link "Set">><<presets _settingsPreset>><</link>>
 <br><br>
 <</widget>>
 
@@ -481,9 +499,11 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<label><span class="tangerine">Amber</span> <<radiobutton "$eyeselect" "amber" autocheck>></label> |
 	<label><span class="brown">Hazel</span> <<radiobutton "$eyeselect" "hazel" autocheck>></label> |
 	<label><span class="green">Green</span> <<radiobutton "$eyeselect" "green" autocheck>></label> |
+	<label><span class="lime-green">Lime Green</span> <<radiobutton "$eyeselect" "lime green" autocheck>></label> |
 	<label><span class="red">Red</span> <<radiobutton "$eyeselect" "red" autocheck>></label> |
 	<label><span class="pink">Pink</span> <<radiobutton "$eyeselect" "pink" autocheck>></label> |
 	<label><span class="grey">Grey</span> <<radiobutton "$eyeselect" "grey" autocheck>></label> |
+	<label><span class="light-grey">Light Grey</span> <<radiobutton "$eyeselect" "light grey" autocheck>></label> |
 	<label><span>Random</span> <<radiobutton "$eyeselect" "random" autocheck>></label>
 	<br><br>
 
@@ -656,7 +676,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 
 	<span class="gold">Multiple Wardrobes</span> <mouse class="tooltip linkBlue">(?)<span class="red">This is an experimental feature, and will be changed or removed in the future. While you may change this during gameplay, it's not recommended as disabling will remove access to clothing and enabling it may leave you stuck with your only option wearing a towel.</span></mouse>
 	<br>
-	
+
 	<br>
 	<label><<radiobutton "$multipleWardrobes" false autocheck>> Single shared wardrobe only</label>
 	<br>
@@ -676,7 +696,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<<button "Beast Settings and Toggles">>
 		<<displaySubsection "beastSettings">>
 	<</button>>
-	<<button "Price Settings">>
+	<<button "Cost and Gain Settings">>
 		<<displaySubsection "priceSettings">>
 	<</button>>
 	/*ToDo: Pregnancy, remove check to properly enable*/
@@ -764,6 +784,18 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 			<<numberslider "$homochance" $homochance 0 100 1>>
 			<br><br>
 
+			<span class="gold">Likelihood of students being virgins</span>
+			<mouse class="tooltip linkBlue">(?)<span>Does not affect named NPCs. Each virginity is generated separately, meaning that many combinations are possible.</span></mouse>
+			<br>
+			<<numberslider "$npcVirginityChance" $npcVirginityChance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Likelihood of adults being virgins</span>
+			<mouse class="tooltip linkBlue">(?)<span>Does not affect named NPCs. Each virginity is generated separately, meaning that many combinations are possible.</span></mouse>
+			<br>
+			<<numberslider "$npcVirginityChanceAdult" $npcVirginityChanceAdult 0 100 1>>
+			<br><br>
+
 			<span class="gold">Average size of women's breasts</span> <mouse class="tooltip linkBlue">(?)<span>A bigger number means bigger breasts in the world. At 12 everyone will have enormous breasts. At -12 everyone will have flat chests. Defaults to 0, which will result in a broad range of sizes.</span></mouse>
 			<br>
 			<<numberslider "$breast_mod" $breast_mod -12 12 1>>
@@ -783,7 +815,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 			<br>
 			<<numberslider "$blackchance" $blackchance 0 100 1>>
 			<br><br>
-			
+
 			<<if $pregnancyTesting>>
 				/*ToDo: Pregnancy, remove check to properly enable*/
 				<span class="gold">Likelihood of NPCs having condoms on them</span>
@@ -910,6 +942,11 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 				<span class="red">Setting this below 100% will prevent feats being earned in that save.</span>
 				<<numberslider "$rentmod" $rentmod 0.1 3 0.1>>
 			</div>
+			<div class="numberslider-group">
+				<span class="gold">Crops Yield</span>
+				<div class="small-description">Modifies the amount of harvested crops. 500% is default. 100% is (legacy) hard mode.</div>
+				<<numberslider "$tending_yield_factor" $tending_yield_factor 1 10 1>>
+			</div>
 
 			<!-- Make it show % instead of fractions and add some colour -->
 			<<run $(() => { $('.clothes-price-container input').on('input change', e => {
@@ -949,10 +986,10 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 				<div class="small-description">Chance of conceiving when only being inseminated once at the right time, <span id="maxRequired"><<print 100 - $baseVaginalPregnancyChance>></span> times to guarantee. Some events may leave you with more than one helping of cum.</div>
 				<<numberslider "$baseVaginalPregnancyChance" $baseVaginalPregnancyChance 0 96 4>>
 			</div>
-			<<run $(() => { $('.basevaginalpregnancychance-container input').on('input change', e => { 
+			<<run $(() => { $('.basevaginalpregnancychance-container input').on('input change', e => {
 				let valSpan = $(e.currentTarget).siblings().first();
 				let value = valSpan.text();
-				
+
 				valSpan.text((i, value) => "1 in " + (100 - value));
 				$('#maxRequired').text(100 - $baseVaginalPregnancyChance);
 			}).trigger('change') })>>
@@ -961,10 +998,10 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 				<div class="small-description">Chance of an npc conceiving when only being inseminated once at the right time, <span id="npcMaxRequired"><<print 20 - $baseNpcPregnancyChance>></span> times to guarantee.</div>
 				<<numberslider "$baseNpcPregnancyChance" $baseNpcPregnancyChance 0 16 4>>
 			</div>
-			<<run $(() => { $('.basenpcpregnancychance-container input').on('input change', e => { 
+			<<run $(() => { $('.basenpcpregnancychance-container input').on('input change', e => {
 				let valSpan = $(e.currentTarget).siblings().first();
 				let value = valSpan.text();
-				
+
 				valSpan.text((i, value) => "1 in " + (20 - value));
 				$('#npcMaxRequired').text(20 - $baseNpcPregnancyChance);
 			}).trigger('change') })>>
@@ -1045,7 +1082,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<<checkbox "$footdisable" "t" "f" autocheck>> Enable feet
 	<mouse class="tooltip linkBlue">(?)<span>Does not remove the player's feet.</span></mouse>
 	</div></label>
-	
+
 	<div class="settingsToggle" style="display: inline-flex;">
 	&nbsp;Asphyxiation
 	<<numberslider "$asphyxiaLvl" $asphyxiaLvl 0 4 1>>
@@ -1057,7 +1094,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<<numberslider "$bodywritingLvl" $bodywritingLvl 0 3 1>>
 	<<run settingsBodywriting()>>
 	</div>
-		
+
 	<div class="settingsToggle">
 	&nbsp;Nude&nbsp;Gender&nbsp;Appearance
 	<<numberslider "$NudeGenderDC" $NudeGenderDC 0 2 1>>
@@ -1156,7 +1193,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 			<</if>>
 			<label>Initial Tan: <<numberslider "$range" 0 0 100 1>></label>
 			<br>
-			<<link Test>>
+			<<link "Test">>
 				<<if $range isnot undefined and $naturalSkinColor isnot undefined>>
 					<<replace #skinColorDiv>><<SkinColorImgTest $range $naturalSkinColor>><</replace>>
 				<</if>>
@@ -1235,6 +1272,12 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<label>Show exact percentage <<radiobutton "$checkstyle" "percentage" autocheck>></label> |
 	<label>Show only general description <<radiobutton "$checkstyle" "words" autocheck>></label> |
 	<label>Show only skill name <<radiobutton "$checkstyle" "skillname" autocheck>></label> |
+	<br>
+
+	<label><div class="settingsToggleBig">
+	<<checkbox "$statdisable" "f" "t" autocheck>> Enable blind stats
+	<mouse class = "tooltip blue">(?)<span>You'll receive no indication when your stats change, or what skills are required to succeed in certain events. Survive on your intuition.<span class="red">Not recommended for beginners. This is an experimental feature and may be changed or removed in the future.</span></span></mouse>
+	</div></label>
 	<br><br>
 
 	<span class="gold">In game hints and tips</span>
@@ -1274,7 +1317,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<input type="button" value="Set Zoom" onclick="zoom(undefined, true)"/>
 	<br><br>
 
-	
+
 	<span class="gold">History depth</span><br>
 	<div class="description">Enables going back in history up to N-1 passages. Changes take effect on settings exit.<br>
 	<span class="red"><b>WARNING:</b> Will cause slowdowns. Additionally, values above 5 can exceed your localStorage quota and cause <br>
@@ -1282,7 +1325,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	</div>
 	<<numberslider "$maxStates" $maxStates 1 20 1>>
 	<br><br>
-	
+
 
 	<span class="gold">Cheats menu</span>
 	<label><div class="settingsToggleBig">
@@ -1361,9 +1404,9 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<<set _hairColorNPCData to ["red","black","brown","lightbrown","blond","platinumblond","strawberryblond","ginger", "mousy"]>>
 	<<set _hairColorNPCText to ["red","black","brown","lightbrown","gold","platinum","strawberry","tangerine", "mousy"]>>
 
-	<<set _eyeColorNPC to ["Purple","Dark Blue","Light Blue","Amber","Hazel","Green","Red","Pink","Grey"]>>
-	<<set _eyeColorNPCData to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"]>>
-	<<set _eyeColorNPCText to ["purple","blue","lblue","tangerine","brown","green","red","pink","grey"]>>
+	<<set _eyeColorNPC to ["Purple","Dark Blue","Light Blue","Amber","Hazel","Green","Lime Green","Red","Pink","Grey","Light Grey"]>>
+	<<set _eyeColorNPCData to ["purple","dark blue","light blue","amber","hazel","green", "lime green","red","pink","grey", "light grey"]>>
+	<<set _eyeColorNPCText to ["purple","blue","lblue","tangerine","brown","green","lime-green","red","pink","grey", "light-grey"]>>
 <</if>>
 
 <<if _npcList is undefined>>
@@ -1386,12 +1429,12 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 
 			T.keys = {};
 			T.keyNames = [];
-			T.allowed_npcs = ["steed", "guard", "inmate", "panty_thief", "tower_creature", "wraith", "pinch"];
+			const allowed_npcs = ["steed", "guard", "inmate", "panty_thief", "school_nurse", "tower_creature", "wraith", "pinch"];
 			Object.keys(V.per_npc).forEach(k => {
-				for (let j of T.allowed_npcs){
+				for (const j of allowed_npcs){
 					if (k.includes(j)){
 						T.keyNames.push(k);
-						T.keys[k.toUpperFirst().replaceAll('_', ' ')] = k;
+						T.keys[k.toUpperFirst().replace(/_/g, ' ')] = k;
 						break
 					}
 				}
@@ -1460,7 +1503,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<<listbox "_npcId" autoselect>>
 		<<optionsfrom _npcList>>
 	<</listbox>>
-	| <<link Previous>>
+	| <<link "Previous">>
 		<<if _npcId is 0>>
 			<<set _npcId to $NPCNameList.length - 1>>
 		<<else>>
@@ -1468,7 +1511,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 		<</if>>
 		<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
 	<</link>> |
-	<<link Next>>
+	<<link "Next">>
 		<<set _npcId++>>
 		<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
 	<</link>>
@@ -1564,28 +1607,28 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 			<</if>>
 	<</switch>>
 	<<set _index to _keyNames.indexOf(_pNPCId)>>
-	| <<link Previous>>
+	| <<link "Previous">>
 		<<set _index to (_index is 0 ? _keyNames.length - 1 : --_index)>>
 		<<set _pNPCId to _keyNames[_index]>>
 		<<replace #perNPCSettingsMenu>><<perNPCSettingsMenu>><</replace>>
 	<</link>> |
-	<<link Next>>
+	<<link "Next">>
 		<<set _index++>>
 		<<set _pNPCId to _keyNames[_index]>>
 		<<replace #perNPCSettingsMenu>><<perNPCSettingsMenu>><</replace>>
 	<</link>>
 	<br><br>
 	<<if $per_npc[_pNPCId].name_known>>
-		<span class="gold">$per_npc[_pNPCId].name the <<print _pNPCId.replaceAll('_', ' ')>></span>
+		<span class="gold">$per_npc[_pNPCId].name the <<print _pNPCId.replace(/_/g, ' ')>></span>
 	<<elseif $per_npc[_pNPCId].name is "Ivory Wraith">>
 		<span class="wraith">The Ivory Wraith</span>
 	<<elseif _pNPCId is "tower_creature">>
 		<span class="gold">The Night Monster</span>
 	<<else>>
-		<span class="gold"><<print _pNPCId.toUpperFirst().replaceAll('_', ' ')>></span>
+		<span class="gold"><<print _pNPCId.toUpperFirst().replace(/_/g, ' ')>></span>
 	<</if>>
 	<<if $per_npc[_pNPCId].name_known and $debug is 1>>
-		| <<link Rename>>
+		| <<link "Rename">>
 			<<if $per_npc[_pNPCId].pronoun is "f">>
 				<<set $per_npc[_pNPCId].name to $NPC_names_f.random()>>
 			<<else>>
@@ -1624,7 +1667,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 <</widget>>
 
 
-:: Settings
+:: Settings [exitCheckBypass]
 <<settings>>
 
 :: Attitudes

@@ -5,20 +5,17 @@
 			<<set _looks to ($enemyno is 1? "looks" : "look")>>
 			<<set _doesntlook to ($enemyno is 1? "doesn't look" : "don't look")>>
 			<<set _is to ($enemyno is 1? "is" : "are")>>
-			<<if $enemyno is 1>>
-				<<if $enemynomax is 1>>
-					<<set _n to 0>>
-				<<else>>
-					<<for $_i to 0; $_i lt $enemynomax; $_i++>>
-						<<if $NPCList[$_i].active is "active" and $NPCList[$_i].stance isnot "defeated">>
-							<<set _n to $_i>>
-							<<break>>
-						<</if>>
-					<</for>>
-				<</if>>
+			<<set $_n to 0>>
+			<<if $enemyno is 1 and $enemynomax gt 1>>
+				<<for $_i to 0; $_i lt $enemynomax; $_i++>>
+					<<if $NPCList[$_i].active is "active" and $NPCList[$_i].stance isnot "defeated">>
+						<<set $_n to $_i>>
+						<<break>>
+					<</if>>
+				<</for>>
 			<</if>>
-			<<if ["m", "f", "i", "n", "t"].includes($NPCList[_n].pronoun)>>
-				<<set $pronoun to $NPCList[_n].pronoun>>
+			<<if ["m", "f", "i", "n", "t"].includes($NPCList[$_n].pronoun)>>
+				<<set $pronoun to $NPCList[$_n].pronoun>>
 			<<elseif $debugdisable is "f">>
 				<span class="red">ERROR: Unexpected $$NPCList[0].pronoun: [$NPCList[0].pronoun]</span>
 			<</if>>
@@ -218,10 +215,12 @@
 	<</if>>
 
 	<<if $possessed is true>>
-		Your body is not your own. <<if $rng gte 96>><span class="fading">It never was.</span><</if>>
-		<br>
+		<<if $orgasmdown lte 0>>
+			Your body is not your own. <<if $rng gte 96>><span class="fading">It never was.</span><</if>>
+			<br>
+		<</if>>
 		<<disable>>
-		<<if $dissociation lte 1 and $orgasmdown lte 0 and $panicviolence lte 0 and $panicparalysis lte 0 and $trance lte 0>>
+		<<if $combatControls is "disabled" and $dissociation lte 1 and $orgasmdown lte 0 and $panicviolence lte 0 and $panicparalysis lte 0 and $trance lte 0>>
 			<<actionspossessed>>
 		<</if>>
 		/* Updates the control caption at the top of the screen to include any control gained through the rest of the passage */

@@ -91,12 +91,14 @@ window.combatListColor = function (name, value, type) {
 			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull": case "rightUndressOther": case "leftUndressOther":
 			case "stopchoke": case "clench": case "shacklewhack": case "leftfold": case "rightfold":
 			case "leftstruggleweak": case "rightstruggleweak":
+			case "leftresistW": case "rightresistW": case "leftstillW": case "rightstillW":
 			/*feetaction*/
-			case "run": case "hide": case "confront":
+			case "run": case "hide": case "confront": case "feetresistW":
 			/*mouthaction*/
 			case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
 			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss": case "noupper":
 			case "up": case "stifleorgasm": case "stifle":
+			case "mouthresistW": case "handcloseW":
 			/*penisaction*/
 			case "othermouthescape": case "escape": case "otheranusescape": case "fencingescape" :
 			/*vaginaaction*/
@@ -122,13 +124,13 @@ window.combatListColor = function (name, value, type) {
 			case "leftcurl": case "rightcurl":
 			/*mouthaction*/
 			case "grasp": case "plead": case "forgive": case "down":
-			case "letout": case "letoutorgasm": case "noises":
+			case "letout": case "letoutorgasm": case "noises": case "pay":
 			/*penisaction*/
 			case "thighbay": case "bay": case "otheranusbay":
 			/*vaginaaction*/
 			case "penisthighs":
 			/*anusaction*/
-			case "bottombay": case "penischeeks": case "penispussy": case "penispussydap": case "penisanus":
+			case "bottombay": case "penischeeks": case "penispussy": case "penispussydap": case "penisanus": case "bottomhandbay":
 				color = "meek";
 				break;
 
@@ -144,7 +146,7 @@ window.combatListColor = function (name, value, type) {
 			/*penisaction*/
 			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
 			case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
-			case "vaginaEdging": case "otheranusEdging":
+			case "vaginaEdging": case "otheranusEdging": case "handtease": case "handAnusRub": case "handcooperate":
 			/*fencing*/
 			case "otherpenisrub": case "penistopenis": case "penistopenisfuck": case "fencingcooperate":
 			/*vaginaaction*/
@@ -155,6 +157,15 @@ window.combatListColor = function (name, value, type) {
 			/*doubleanusaction*/
 			case "anustopenisdouble": case "anuspenisdoublefuck": case "penisdoubletease": case "penisDoubleEdging": case "doublecooperate": case "penisanusdouble":
 				color = "sub";
+				break;
+			
+			/*leftaction or rightaction*/
+			case "leftacceptW": case "rightacceptW": case "leftstruggleW": case "rightstruggleW":
+			/*feetaction*/
+			case "feetacceptW":
+			/*mouthaction*/
+			case "mouthacceptW": case "handbiteW":
+				color = "wraith";
 				break;
 
 			default:
@@ -527,16 +538,16 @@ window.pregnancyBellyVisible = function(){
 
 
 window.toTitleCase = function(str) {
-    return str.replace(/\w\S*/g, function(txt){
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
+	return str.replace(/\w\S*/g, function(txt){
+		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+	});
 }
 
 window.getRobinLocation = function(){
 	if (V.NPCName[V.NPCNameList.indexOf("Robin")].init !== 1){
 		return;
 
-	} else if (V.robinlocationoverride && V.robinlocationoverride.during.contains(V.hour)){
+	} else if (V.robinlocationoverride && V.robinlocationoverride.during.includes(V.hour)){
 		return T.robin_location = V.robinlocationoverride.location;
 
 	} else if (V.robinmissing === 1){
@@ -895,7 +906,7 @@ window.clothesReturnLocation = function(item, type){
 
 //the 'modder' variable is specifically for modders name, should be kept as a short string
 window.clothesIndex = function(slot, itemToIndex) {
-	if(!slot || !itemToIndex || !itemToIndex.name) {
+	if(!slot || !itemToIndex || !itemToIndex.name || !itemToIndex.variable) {
 		console.log(`clothesIndex - slot or valid object not provided`);
 		return 0;
 	}
@@ -960,7 +971,7 @@ Config.navigation.override = function (dest) {
 			return 'Moor Plant Sex';
 
 		case 'Moor Plant Sex No Tentacles Finish':
-			return 'Moor Plant Sex Finish'
+			return 'Moor Plant Sex Finish';
 
 		case 'Underground Plant Molestation No Tentacles':
 			return 'Underground Plant Molestation';
@@ -968,26 +979,208 @@ Config.navigation.override = function (dest) {
 		case 'Underground Plant Molestation No Tentacles Finish':
 			return 'Underground Plant Molestation Finish';
 
+		case 'Evens Swimming Endure':
+			return 'Events Swimming Swim Endure';
+
 		default:
-			return dest;
+			return false;
 	}
 }
 
 window.currentSkillValue = function(skill){
-    let result = V[skill];
-    if(!result) {
-        console.log(`currentSkillValue - skill '${skill}' unknown`);
-        return 0;
-    };
-    if(['skulduggery','physique','danceskill','swimmingskill','athletics','willpower','tending','english'].includes(skill) && V.moorLuck > 0){
-        result = Math.floor(result * (1 + (V.moorLuck / 100)));
-    }
-    switch(skill){
-        case 'tending':
-            if(V.backgroundTraits.includes("plantlover")){
-                result = Math.floor(result * (1 + (V.trauma / (V.traumamax * 2))));
-            }
-        break;
-    }
-    return result;
+	let result = V[skill];
+	if(!result && result !== 0) {
+		console.log(`currentSkillValue - skill '${skill}' unknown`);
+		return 0;
+	};
+	if(['skulduggery','physique','danceskill','swimmingskill','athletics','willpower','tending','english'].includes(skill) && V.moorLuck > 0){
+		result = Math.floor(result * (1 + (V.moorLuck / 100)));
+	}
+	if(['physique','danceskill','swimmingskill','athletics'].includes(skill) && V.sexStats.vagina.pregnancy.bellySize >= 10){
+		switch(V.pregnancyStats.mother){
+			case 0: T.pregnancyModifier = 30;
+			break;
+			case 1: T.pregnancyModifier = 40;
+			break;
+			case 2: T.pregnancyModifier = 50;
+			break;
+			case 3: T.pregnancyModifier = 65;
+			break;
+			case 4: T.pregnancyModifier = 100;
+			break;
+		}
+		result = Math.floor(result * (1 - (V.sexStats.vagina.pregnancy.bellySize / T.pregnancyModifier)));
+	}
+	switch(skill){
+		case 'skulduggery':
+			if(V.worn.hands.type.includes("sticky_fingers")){
+				result = Math.floor(result * 1.05);
+			}
+			if(V.harpy >= 2 || V.cat >= 2){
+				result = Math.floor(result * 1.05);
+			}
+		break;
+		case 'physique':
+			if(["forest", "moor", "farm"].includes(V.location)){
+				if(V.worn.feet.type.includes("heels")){
+					result = Math.floor(result * (1 - (V.worn.feet.reveal / 5000)));
+				}
+				if(V.worn.feet.type.includes("rugged")){
+					result = Math.floor(result * (1 + (V.feetskill / 10000)));
+				}
+			}
+		break;
+		case 'danceskill':
+			if(V.worn.under_upper.type.includesAny("dance", "naked") && V.worn.under_lower.type.includesAny("dance", "naked") && V.worn.upper.type.includesAny("dance", "naked") && V.worn.lower.type.includesAny("dance", "naked")){
+				result = Math.floor(result * 1.05);
+			}
+			if(V.worn.feet.type.includes("shackle")){
+				result = Math.floor(result * 0.5);
+			}
+		break;
+		case 'swimmingskill':
+			let heels = 0;
+			if(V.worn.under_upper.type.includesAny("swim", "naked") && V.worn.under_lower.type.includesAny("swim", "naked") && V.worn.upper.type.includesAny("swim", "naked") && V.worn.lower.type.includesAny("swim", "naked")){
+				result = Math.floor(result * 1.05);
+			}
+			if(V.worn.feet.type.includes("swim")){
+				result = Math.floor(result * (1 + (V.feetskill / 10000)));
+			} else if(!V.worn.feet.type.includes("naked")){
+				if(V.worn.feet.type.includes("heels")){
+					heels = 0.1;
+				} else {
+					heels = 0;
+				}
+				result = Math.floor(result * (0.9 + (V.feetskill / 10000) - heels));
+			}
+			if(V.worn.feet.type.includes("shackle")){
+				result = Math.floor(result * 0.5);
+			}
+		break;
+		case 'athletics':
+			if(["forest", "moor", "farm"].includes(V.location)){
+				if(V.worn.feet.type.includes("heels")){
+					result = Math.floor(result * (1 - (V.worn.feet.reveal / 5000)));
+				}
+				if(V.worn.feet.type.includes("rugged")){
+					result = Math.floor(result * (1 + (V.feetskill / 10000)));
+				}
+			}
+			if(V.worn.feet.type.includes("shackle")){
+				result = 0;
+			}			
+		break;
+		case 'willpower':
+			if(V.parasite.left_ear.name == "slime" && V.parasite.right_ear.name == "slime"){
+				result = Math.floor(result * 0.9);
+			}
+		break;
+		case 'tending':
+			if(V.backgroundTraits.includes("plantlover")){
+				result = Math.floor(result * (1 + (V.trauma / (V.traumamax * 2))));
+			}
+		break;
+	}
+	return result;
+}
+
+window.getTimeString = function(minutes = 0){
+	if (minutes < 0){
+		// come on don't try negative numbers, that's silly
+		return "0:00";
+	}
+	if (minutes < 10){
+		return "0:0" + minutes;
+	} else if (minutes < 60){
+		return "0:" + minutes;
+	} else {
+		const hours = Math.trunc(minutes / 60);
+		minutes = ("" + minutes % 60).padStart(2, '0');
+		return hours + ":" + minutes;
+	}
+}
+
+window.npcAssignClothesToSet = function(upper, lower){
+	return {"upper":T.npcClothesItems.upper[upper], "lower":T.npcClothesItems.lower[lower]}
+}
+
+window.npcMakeNaked = function (npc, slot){
+	if (slot === "upper") {
+		npc.chest = 0;
+	} else if (slot === "lower") {
+		if (npc.penis !== "none") npc.penis = 0;
+		if (npc.vagina !== "none") npc.vagina = 0;
+	}
+}
+
+window.npcEquipSet = function(npc, set) {
+	npc.clothes = {set: set.name};
+	Object.entries(set.clothes).forEach((item) => {
+		if (item[1].name === "naked"){
+			npcMakeNaked(npc, item[0]);
+		}
+		let itemData = setup.clothes[item[0]].find(c => c.name === item[1].name);
+		if(!itemData){
+			npc.clothes[item[0]] = {
+				name: item[1].name,
+				integrity: item[1].integrity_max,
+			};
+		} else {
+			npc.clothes[item[0]] = {
+				name: itemData.name,
+				integrity: itemData.integrity_max,
+			};
+		}
+	});
+}
+
+window.npcSpecifiedClothes = function (npc, name){
+	let clothingItem = setup.npcClothesSets.filter((set) => set.name === name);
+	if(clothingItem.length > 0){
+		npcEquipSet(npc, clothingItem[0]);
+	} else {
+		console.log(`npcSpecifiedClothes - unable to find a clothing item with the name '${name}' for '${npc.fullDescription}'`)
+	}
+}
+
+/*npc.crossdressing: 0 - doesnt at all, 1 - sometimes, 2 - always*/
+window.npcClothes = function (npc, type){
+	let crossdressing = npc.crossdressing || 0;
+	let gender = ['n'];
+	/* if you dont want those always crossdressing to wear neutral clothes
+	let gender = [];
+	if(crossdressing !== 2) gender.push('n');
+	*/
+
+	if(crossdressing < 2) gender.push(npc.pronoun);
+	if(crossdressing > 0) gender.push(npc.pronoun === "m" ? "f" : "m");
+	let clothingOptions = setup.npcClothesSets.filter((set) => (set.type === type || !type) && gender.includes(set.gender));
+
+	if(npc.outfits){
+		let namedNpcClothing = clothingOptions.filter((set) => npc.outfits.includes(set.name));
+		if(namedNpcClothing.length > 0){
+			clothingOptions = namedNpcClothing;
+		}
+	}
+	if(clothingOptions.length > 0){
+		let clothesSet = clothingOptions.pluck();
+		npcEquipSet(npc, clothesSet);
+		//Allows you to record the clothing set selected
+		return clothesSet.name;
+	} else {
+		console.log(`npcClothes - unable to find a clothing set with the options for '${npc.fullDescription}' with type '${type}'`)
+	}	
+}
+
+window.getWeekDay = function(day){
+	// NOTE: This function takes an argument from 1 to 7. Avoid off-by-1 errors! It is NOT 0-6.
+	if (day && day >= 1 && day <= 7){
+		return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][day-1];
+	} else {
+		throw new Error("INVALID DAY, day index: ["+day+"]");
+	}
+}
+
+window.waterproofCheck = function(clothing){
+	return clothing.type.includes("swim") || clothing.type.includes("stealthy");
 }

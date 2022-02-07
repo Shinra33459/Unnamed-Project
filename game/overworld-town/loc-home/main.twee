@@ -57,26 +57,37 @@ You are in your bedroom.
 	<<homeStudyOptions>>
 	<br>
 	<<christmas_options>>
-	<<if $debug is 1>>
-		/*indev radio testing*/
-		A radio is on:
+		<<if $debug is 1>>
+		<span class="green">Debugging starts here</span>
 		<br>
-		<<radio_placehere>>
-		<span class="green">More debugging:</span>
-		<br>
-		<<link [[Add test news|Bedroom]]>><<radio_addnews "meteor_fall" "2">><</link>> radio_addnews "meteor_fall" "2"
-		<br>
-		<<link [[Add test news|Bedroom]]>><<radio_addnews "godzilla_awaken" "3">><</link>> radio_addnews "godzilla_awaken" "3"
-		<br>
-		<<link [[Hard reset news|Bedroom]]>><<radio_hardreset>><</link>> radio_hardreset
-		<br>
-		<<link [[Midnight importance reduction|Bedroom]]>><<radio_midnight>><</link>> radio_midnight
-		<br>
+		<<if $debugradio or $debugradio is undefined>>
+			/*indev radio testing*/
+			A radio is on:
+			<br>
+		
+			<<radio_placehere>>
+		
+			<span class="green">More debugging:</span>
+			<br>
+			<<link [[Add test news|Bedroom]]>><<radio_addnews "meteor_fall" "2">><</link>> radio_addnews "meteor_fall" "2"
+			<br>
+			<<link [[Add test news|Bedroom]]>><<radio_addnews "godzilla_awaken" "3">><</link>> radio_addnews "godzilla_awaken" "3"
+			<br>
+			<<link [[Hard reset news|Bedroom]]>><<radio_hardreset>><</link>> radio_hardreset
+			<br>
+			<<link [[Midnight importance reduction|Bedroom]]>><<radio_midnight>><</link>> radio_midnight
+			<br>
+			<<link [[Turn off radio|$passage]]>><<set $debugradio to false>><</link>>
+			<br><br>
+		<<else>>
+			<<link [[Turn on radio|$passage]]>><<set $debugradio to true>><</link>>
+			<br>
+		<</if>>
 		<<link [[Skip to 23:58|Bedroom]]>><<set $time to 1438>><</link>>
 		<br>
 		<<link [[Test new features for DoL (0:15)|Bedroom]]>><<pass 15>><</link>>
 		<br>
-		<span class="green">Debugging end here</span>
+		<span class="green">Debugging ends here</span>
 		<br><br>
 	<</if>>
 	Your bed takes up most of the room.
@@ -111,10 +122,10 @@ You are in your bedroom.
 	<br>
 	Your clothes are kept in the corner.
 	<br>
-	<<wardrobeicon>>[[Wardrobe]]
+	<<wardrobeicon>><<link [[Wardrobe|Wardrobe]]>><</link>>
 	<br>
 	<<if $nextPassageCheck is "Mirror">>
-		<span class="nextLink"><<mirroricon>>[[Mirror]]</span>
+		<span class="nextLink"><<mirroricon>><<link [[Mirror|Mirror]]>><</link>></span>
 		<br>
 	<<elseif $christmas is 1 and !$christmas_wraith and _wraithEvent>>
 		<br>
@@ -129,7 +140,7 @@ You are in your bedroom.
 		<<bloodmirroricon>><<link [[Mirror|Eerie Mirror]]>><<set $mirrortentacles to 1>><<set $phase to 0>><</link>>
 		<br>
 	<<else>>
-		<<homemirroricon>>[[Mirror]]
+		<<homemirroricon>><<link [[Mirror|Mirror]]>><</link>>
 		<br>
 	<</if>>
 
@@ -401,7 +412,7 @@ You are in the bathroom.
 	<</if>>
 	Your ears are ringing.
 	<br><br>
-	<<storeon "bed" "wardrobe">><<set $possessed to true>><<set $wraith.exit to "home">><<set $controlSaved to $control>><<set $control to 0>>
+	<<storeon "bed" "wardrobe">><<wraithPossess "home">>
 	<span class="nextLink"><<link [[Walk.|Bedroom]]>><</link>></span>
 	<br>
 <<elseif $baileyrapewake is 1>>
@@ -546,7 +557,9 @@ You are in the bathroom.
 			<br><br>
 			<<set $motherwake to 1>>
 		<<else>>
-			<<wakingEffects $sleepHoursTotal>>
+			<<if !_wakingEffect>>
+				<<wakingEffects $sleepHoursTotal>>
+			<</if>>
 			<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
 				You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
 				<br><br>
@@ -995,7 +1008,7 @@ You've pushed yourself too much.
 <<elseif $dangerhome gte 1>><<link [[Wake up|Molestation]]>><<set $phase to 0>><<set $molestationstart to 1>><</link>>
 <</if>>
 
-<<if $safehome gte 1>>[[Sleep|Bailey Rescue]]
+<<if $safehome gte 1>><<link [[Sleep|Bailey Rescue]]>><</link>>
 <</if>>
 
 <<pass 1 hour>>
@@ -1053,7 +1066,7 @@ You've pushed yourself too much.
 <br><br>
 <<clotheson>>
 <<endcombat>>
-[[Next|Bedroom]]
+<<link [[Next|Bedroom]]>><</link>>
 
 :: Bed
 
@@ -1102,7 +1115,7 @@ You've pushed yourself too much.
 	<<link [[Just sleep|Sleep]]>><<set $sleephour to -1>><<set $saveDetails.auto.count++>><</link>> (??:??)<<ltiredness>>
 	<br><br>
 
-	<<link [[Climb out of bed|Bedroom]]>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><<endevent>><</link>>
+	<<link [[Climb out of bed|Bedroom]]>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><<loadTempHairStyle>><<endevent>><</link>>
 	<br><br>
 <<else>>
 	<<unset _skip>>
@@ -1149,7 +1162,7 @@ You are in the main hall of the orphanage.
 			<br>
 		<</if>>
 	<<else>>
-		[[Next|Bedroom]]
+		<<link [[Next|Bedroom]]>><</link>>
 	<</if>>
 <<elseif $baileyReunionScene is "dungeon">>
 	<<npc Bailey>><<person1>>
@@ -1422,7 +1435,7 @@ You hide inside a cupboard before being spotted. You dare not touch the creaky d
 	<<set $skulduggerydifficulty to 400>>
 	<<link [[Deceive|Orphanage Hide Skul]]>><</link>><<skulduggerydifficulty>>
 	<br>
-	<<link [[Throw broom|Orphanage Hide Throw]]>><</link>> <span class="blue">(Medium)</span>
+	<<link [[Throw broom|Orphanage Hide Throw]]>><</link>><<difficulty 50>>
 	<br>
 <<else>>
 	The <<person>> walks by without a glance. Heart thumping, you make it back to the safety of your room.
@@ -1485,12 +1498,7 @@ Heart thumping, you make it back to your room and close the door.
 <<if $skulduggerysuccess is 1>>
 	<span class="green"><<He>> lets go of the handle.</span> "Oh," <<he>> says. "Okay. I'll wait in my room." <<He>> leaves you in the dark. You wait until you hear <<his>> door close. Your heart thumps as you make it back to the safety of your own.
 	<br><br>
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 	<<link [[Next|Bedroom]]>><<endevent>><</link>>
 	<br>
 <<else>>
@@ -1509,12 +1517,7 @@ Heart thumping, you make it back to your room and close the door.
 	Face red and heart thumping, you dart past <<him>>, down the corridor and into your room.
 	<br><br>
 	<<if $orphanageexposed is undefined>><<set $orphanageexposed to 1>><<else>><<set $orphanageexposed += 1>><</if>>
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 	<<if $orphanageexposed gte 10 and random(1, 100) gte 51>>
 		You're still breathing heavily when quiet footsteps approach, followed by a soft knocking.
 		<br><br>
@@ -1634,7 +1637,7 @@ Bailey marches down the corridor and into your room, investigating the sounds of
 <<npc Bailey>><<person1>>"I don't know what this town's coming to," Bailey says as <<he>> closes the window. <<He>> turns to you. "Don't disturb me again unless it's important." <<He>> slams the door shut as <<he>> leaves.
 <<endevent>>
 <br><br>
-[[Next|Bedroom]]
+<<link [[Next|Bedroom]]>><</link>>
 
 :: Molestation Escape
 
@@ -1646,7 +1649,7 @@ After thirty minutes pass without event, you quietly head back to your bedroom. 
 <br><br>
 <<clotheson>>
 <<endcombat>>
-[[Next|Bedroom]]
+<<link [[Next|Bedroom]]>><</link>>
 
 :: Bask
 
@@ -1657,7 +1660,7 @@ It might feel even better if you were undressed...
 <br><br>
 <<link [[Strip|Nude Bask]]>><<set $stress -= 40>><</link>><<exhibitionist1>><<lstress>>
 <br>
-[[Stop|Garden]]
+<<link [[Stop|Garden]]>><</link>>
 
 :: Nude Bask
 
@@ -1696,7 +1699,7 @@ The warmth feels wonderful on your bare skin.
 <<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
 	<<pregnancyWatersBrokenPassout "home">>
 <<else>>
-	[[Everything fades to black...->Passout home]]
+	<<link [[Everything fades to black...->Passout home]]>><</link>>
 <</if>>
 <</widget>>
 
@@ -1733,7 +1736,7 @@ The warmth feels wonderful on your bare skin.
 <<if $timer lte 0>>
 	<span id="next"><<link [[Next|Bath Slime Finish]]>><</link>></span><<nexttext>>
 <<else>>
-	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|$passage]]>><</link>></span><<nexttext>>
 <</if>>
 
 :: Bath Slime Finish
@@ -2024,7 +2027,7 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 <<else>>
 	<<set $kylarDaily.sleepRape to true>>
 	Kylar's eyes snap open the moment you cry out. <<nnpc_He "Kylar">> lunges out of the bed, tackling the <<person>> to the floor. <<nnpc_He "Kylar">> pulls out a knife from
-	<<if $skulduggery gte 200>>
+	<<if currentSkillValue('skulduggery') gte 200>>
 		a hidden pocket on the inside of <<nnpc_his "Kylar">> <<if $NPCName[$NPCNameList.indexOf("Kylar")].pronoun is "m">>pant leg<<else>>skirt<</if>>
 	<<else>>
 		out of nowhere

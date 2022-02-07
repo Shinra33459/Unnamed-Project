@@ -9,17 +9,17 @@ You pass a <<person>> holding a <<beasttype>> on a lead. The <<beasttype>> stops
 <br><br>
 
 <<if $leftarm isnot "bound" and $rightarm isnot "bound">>
-	<<link [[Ask for paw|Street Dog Paw]]>><</link>><<tendingdifficulty 1 300>> <<if $player.virginity.handholding is true>> | <span class="red">Success will be your first hand held.</span><</if>>
+	<<link [[Ask for paw|Street Dog Paw]]>><</link>><<tendingdifficulty 1 300>> <<if $player.virginity.handholding is true and $statdisable is "f">> | <span class="red">Success will be your first hand held.</span><</if>>
 	<br>
 	<<link [[Pet|Street Dog Pet]]>><<stress -6>><</link>><<lstress>>
 	<br>
 <</if>>
 <<if $wolfgirl gte 6>>
-	<<link [[Growl|Street Dog Growl]]>><<stress -6>><<transform wolf 1>><</link>> | <span class="gold">Wolf</span>
+	<<link [[Growl|Street Dog Growl]]>><<stress -6>><<transform wolf 1>><</link>><<wolfgirl>>
 	<br>
 <</if>>
 <<if $cat gte 6>>
-	<<link [[Hiss|Street Dog Hiss]]>><<def 1>><<transform cat 1>><</link>>
+	<<link [[Hiss|Street Dog Hiss]]>><<def 1>><<transform cat 1>><</link>><<cat>>
 	<br>
 <</if>>
 <<link [[Ignore|Street Dog Ignore]]>><</link>>
@@ -378,7 +378,7 @@ Unable to see in the dark, you trip over something and tumble to the ground. A <
 <<set $pain += 5>><<set $molestationstart to 1>>
 <br><br>
 
-[[Next|StreetEx2]]
+<<link [[Next|StreetEx2]]>><</link>>
 <br><br>
 
 <</widget>>
@@ -423,7 +423,7 @@ This close to their goal, the attackers are distracted and vulnerable.
 <br>
 <<link [[Sneak away|StreetEx4]]>><<set $phase to 2>><</link>>
 <br>
-<<link [[Attempt rescue|StreetEx4]]>><<set $phase to 3>><<famegood 3>><</link>> | <span class = "red">Risky</span>
+<<link [[Attempt rescue|StreetEx4]]>><<set $phase to 3>><<famegood 3>><</link>><<if $statdisable is "f">> | <span class = "red">Risky</span><</if>>
 <br>
 
 <</widget>>
@@ -481,7 +481,7 @@ You hear voices up ahead, and take cover down a stairwell leading to a basement.
 	<<link [[Wait (0:10)|Street Ex Wait]]>><<pass 10>><</link>>
 	<br>
 	<<if $promiscuity gte 75>>
-		<<link [[Solicit|Street Ex Solicit]]>><</link>><<promiscuous5>> | <span class="red">Dangerous</span>
+		<<link [[Solicit|Street Ex Solicit]]>><</link>><<promiscuous5>><<if $statdisable is "f">> | <span class="red">Dangerous</span><</if>>
 		<br>
 	<</if>>
 
@@ -773,7 +773,7 @@ A <<generates1>><<person1>><<person>> leans out of a passing car and hurls a lar
 		<br><br>
 		<<set $money += 100*_i>>
 	<</switch>>
-<<elseif ($danceskill + $rng) gte 500>><<generate2>><<person2>>
+<<elseif (currentSkillValue('danceskill') + $rng) gte 500>><<generate2>><<person2>>
 	With a dancer's grace and agility <span class = "green">you dodge and it harmlessly passes you by.</span>
 	<br><br>
 	<<if ($rng % 3) is 0>>The <<person>> behind you is not so lucky. <<He>> is completely soaked and some of <<his>> clothes turn translucent, exposing <<him>>. There is a loud cheer from the car.
@@ -891,6 +891,36 @@ You take cover in a bus shelter, just as a bus rounds the corner. It slows down 
 <br>
 <<link [[Run|Street Ex Day2 Run]]>><</link>><<athleticsdifficulty 1 1000>>
 <br>
+<</widget>>
+
+<<widget "streetedenrage">>
+	<<npc Eden>><<person1>><<set $edendays to 0>>
+	Lost in your head, you bump into a large figure. It's Eden. <<He>> looks mad.
+	<br><br>
+
+	<<if $edenCagedEscape>>
+		"Told you I'd find you again, didn't I?" <<he>> snarls, grabbing your arm. "Looks like you still haven't learnt your place. Come on."
+	<<else>>
+		<<He>> grips onto your arm and pulls you close. "Where the fuck have you been?" <<he>> snarls.
+		<<if $allure gte (3000 * $alluremod)>>
+			"I've been worried sick and you've been prancing around town like a slut!"
+		<<else>>
+			"I've been worried sick, and you're just prancing around town!"
+		<</if>>
+		<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 70>>
+			<<set $NPCName[$NPCNameList.indexOf("Eden")].love to 70>>
+			<<llllove>>
+		<</if>>
+		<br><br>
+
+		Before you can speak, Eden begins to drag you away. "I don't want to hear your excuses, either." <<He>> looks uncomfortable, eyes shifting as <<he>> walks. The corner of <<his>> lip curls in disgust. "And you made me come out here to get you. Things aren't going to be pretty when we get home."
+	<</if>>
+	<br><br>
+
+	<<link [[Resist|Street Eden Rage]]>><<set $phase to 0>><<def 1>><<npcincr Eden dom -1>><</link>><<physiquedifficulty 2000 18000>><<ldom>>
+	<br>
+	<<link [[Submit (0:30)|Street Eden Rage]]>><<set $phase to 1>><<pass 30>><<sub 1>><<npcincr Eden dom 1>><</link>><<gdom>>
+	<br>
 <</widget>>
 
 <<widget "streetedenangry">>
@@ -1045,7 +1075,7 @@ You take cover in a bus shelter, just as a bus rounds the corner. It slows down 
 		<<endevent>>
 		<<destinationeventend>>
 	<<else>>
-		<<generate1>><<generate2>><<generates3>><<person1>>
+		<<generatePolice 1>><<generatePolice 2>><<generates3>><<person1>>
 		<<set $streetpolice to 1>>
 		<<if $policemolestation gte 5 and $rng1 gte 50>>
 			A police car screeches to a halt beside you. A <<person>> and <<person2>><<person>> step out.
@@ -1875,10 +1905,10 @@ You round a corner and walk right into a <<generate1>><<person1>><<person>>, cau
 <<widget "streetexshow">>
 <<generate1>><<generate2>><<generate3>><<person1>>
 <<if $fameexhibitionism gte 1000>>
-	You notice some <<group>> coming towards you. One of them, a <<person>>, points at you, and says something to the other two. Your first instinct is to run, but they’re already too close. They surround you, making sure not to attract any attention.
+	You notice some <<group>> coming towards you. One of them, a <<person>>, points at you, and says something to the other two. Your first instinct is to run, but they're already too close. They surround you, making sure not to attract any attention.
 	<br><br>
 	
-	“Hey <<girl>>,” the <<person>> says. “You’re that slut that likes showing off, right?” <<He>> puts a hand in <<his>> pocket. You feel tense, but relax a little once <<he>> takes out a few bank notes. “How about a little private show?”
+	“Hey <<girl>>,” the <<person>> says. “You're that slut that likes showing off, right?” <<He>> puts a hand in <<his>> pocket. You feel tense, but relax a little once <<he>> takes out a few bank notes. “How about a little private show?”
 	<br><br>
 	
 	<<if $exhibitionism gte 75>>
@@ -1974,7 +2004,7 @@ You smell freshly baked pastries, and hear a knock on a nearby door. You recogni
 <<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
 	<<pregnancyWatersBrokenPassout "street">>
 <<else>>
-	[[Everything fades to black...->Passout street]]
+	<<link [[Everything fades to black...->Passout street]]>><</link>>
 <</if>>
 <</widget>>
 
@@ -2622,7 +2652,9 @@ You find a quiet place and open the <<wallet>>.
 				<<eventsstreetnight>>
 			<</if>>
 		<<elseif $dangerevent lte 90>>
-			<<if ($edenfreedom is 1 and $edendays gte 2) or ($edenfreedom gte 2 and $edendays gte 8)>>
+			<<if $syndromeeden is 1 and (($edenfreedom isnot 2 or $edenCagedEscape) and $edendays gte 7) or ($edenfreedom gte 2 and $edendays gte 21)>>
+				<<streetedenrage>>
+			<<elseif !$edenCagedEscape and ($edenfreedom is 1 and $edendays gte 2) or ($edenfreedom gte 2 and $edendays gte 8)>>
 				<<if $edenfreedom gte 2 and $NPCName[$NPCNameList.indexOf("Eden")].love gte 60>>
 					<<streetedenworried>>
 				<<else>>
@@ -2782,7 +2814,9 @@ You find a quiet place and open the <<wallet>>.
 				<<eventsstreetday>>
 			<</if>>
 		<<elseif $dangerevent lte 90>>
-			<<if ($edenfreedom is 1 and $edendays gte 2) or ($edenfreedom gte 2 and $edendays gte 8)>>
+			<<if $syndromeeden is 1 and (($edenfreedom isnot 2 or $edenCagedEscape) and $edendays gte 7) or ($edenfreedom gte 2 and $edendays gte 21)>>
+				<<streetedenrage>>
+			<<elseif ($edenfreedom is 1 and $edendays gte 2) or ($edenfreedom gte 2 and $edendays gte 8)>>
 				<<if $edenfreedom gte 2 and $NPCName[$NPCNameList.indexOf("Eden")].love gte 60>>
 					<<streetedenworried>>
 				<<else>>

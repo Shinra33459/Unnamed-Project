@@ -189,6 +189,10 @@
 			<<set _leftaction["Displace your "+$worn.under_lower.name] to "under">>
 		<</if>>
 	<</if>>
+
+	<<if $worn.face.state is setup.clothes.face[clothesIndex('face', $worn.face)].state_base and !$worn.face.type.includes("naked") and $worn.face.type.includes("mask")>>
+			<<set _leftaction["Displace your "+$worn.face.name] to "mask">>
+	<</if>>
 <</if>>
 <</widget>>
 
@@ -257,7 +261,8 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <<widget "leftpenwhacknew">>
 <<if $lefttarget isnot "self">>
-	<<if (typeof($NPCList[$lefttarget].lefthand) is "string" and $NPCList[$lefttarget].lefthand.includes("pen")) or (typeof($NPCList[$lefttarget].righthand) is "string" and $NPCList[$lefttarget].righthand.includes("pen"))>>
+	<<set $_target to $NPCList[$lefttarget]>>
+	<<if $_target.lefthand and ($_target.lefthand is "pen" or $_target.lefthand.startsWith("pen_")) or $_target.righthand and ($_target.righthand is "pen" or $_target.righthand.startsWith("pen_"))>>
 		<<set _leftaction["Whack the writing tool away"] to "penwhack">>
 	<</if>>
 <</if>>
@@ -400,11 +405,21 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <<widget "leftUndressOther">>
 <<if $lefttarget isnot "self">>
 	<<set $_target to $NPCList[$lefttarget]>>
-	<<if $_target.penis is "clothed" or $_target.vagina is "clothed">>
-		<<if ($consensual is 1 and ($enemytype is "man" ? $promiscuity : $deviancy) lte 14 and !$promiscuityIgnore) or $consensual isnot 1>>
-		<!-- Do Nothing -->
+	<<if $_target.penis is "clothed" or $_target.vagina is "clothed" or $_target.chest is "clothed">>
+		<<if ($consensual is 1 and ($enemytype is "man" ? $promiscuity : $deviancy) lte 14 and !$promiscuityIgnore)>>
+			<!-- Do Nothing -->
 		<<else>>
-			<<set _leftaction[($consensual is 1 ? "Undress " : "Attempt to undress ") + $_target.pronouns.him] to "leftUndressOther">>
+			<<set _leftaction["Undress:"] to "leftUndressOther">>
+			<<set _undressLeftTargets to {"Nothing":"rest"}>>
+			<<set $_doText to ($consensual isnot 1 ? "try to " : "")>>
+			<<if $_target.penis is "clothed" or $_target.vagina is "clothed">>
+				<<silently>><<npcUndressText $NPCList[$lefttarget] "lower">><</silently>>
+				<<set _undressLeftTargets[($_doText + _actionText + " " + $_target.pronouns.his + " " + $_target.clothes.lower.name).toUpperFirst()] to "lower">>
+			<</if>>
+			<<if $_target.chest is "clothed">>
+				<<silently>><<npcUndressText $NPCList[$lefttarget] "upper">><</silently>>
+				<<set _undressLeftTargets[($_doText + _actionText + " " + $_target.pronouns.his + " " + $_target.clothes.upper.name).toUpperFirst()] to "upper">>
+			<</if>>
 		<</if>>
 	<</if>>
 <</if>>
@@ -596,6 +611,10 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 			<<set _rightaction["Displace your "+$worn.under_lower.name] to "under">>
 		<</if>>
 	<</if>>
+
+	<<if $worn.face.state is setup.clothes.face[clothesIndex('face', $worn.face)].state_base and !$worn.face.type.includes("naked") and $worn.face.type.includes("mask")>>
+			<<set _rightaction["Displace your "+$worn.face.name] to "mask">>
+	<</if>>
 <</if>>
 <</widget>>
 
@@ -667,7 +686,8 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <<widget "rightpenwhacknew">>
 <<if $righttarget isnot "self">>
-	<<if (typeof($NPCList[$righttarget].lefthand) is "string" and $NPCList[$righttarget].lefthand.includes("pen")) or (typeof($NPCList[$righttarget].righthand) is "string" and $NPCList[$righttarget].righthand.includes("pen"))>>
+	<<set $_target to $NPCList[$righttarget]>>
+	<<if $_target.lefthand and ($_target.lefthand is "pen" or $_target.lefthand.startsWith("pen_")) or $_target.righthand and ($_target.righthand is "pen" or $_target.righthand.startsWith("pen_"))>>
 		<<set _rightaction["Whack the writing tool away"] to "penwhack">>
 	<</if>>
 <</if>>
@@ -809,11 +829,21 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <<widget "rightUndressOther">>
 <<if $righttarget isnot "self">>
 	<<set $_target to $NPCList[$righttarget]>>
-	<<if $_target.penis is "clothed" or $_target.vagina is "clothed">>
-		<<if ($consensual is 1 and ($enemytype is "man" ? $promiscuity : $deviancy) lte 14 and !$promiscuityIgnore) or $consensual isnot 1>>
-		<!-- Do Nothing -->
+	<<if $_target.penis is "clothed" or $_target.vagina is "clothed" or $_target.chest is "clothed">>
+		<<if ($consensual is 1 and ($enemytype is "man" ? $promiscuity : $deviancy) lte 14 and !$promiscuityIgnore)>>
+			<!-- Do Nothing -->
 		<<else>>
-			<<set _rightaction[($consensual is 1 ? "Undress " : "Attempt to undress ") + $_target.pronouns.him] to "rightUndressOther">>
+			<<set _rightaction["Undress:"] to "rightUndressOther">>
+			<<set _undressRightTargets to {"Nothing":"rest"}>>
+			<<set $_doText to ($consensual isnot 1 ? "try to " : "")>>
+			<<if $_target.penis is "clothed" or $_target.vagina is "clothed">>
+				<<silently>><<npcUndressText $NPCList[$righttarget] "lower">><</silently>>
+				<<set _undressRightTargets[($_doText + _actionText + " " + $_target.pronouns.his + " " + $_target.clothes.lower.name).toUpperFirst()] to "lower">>
+			<</if>>
+			<<if $_target.chest is "clothed">>
+				<<silently>><<npcUndressText $NPCList[$righttarget] "upper">><</silently>>
+				<<set _undressRightTargets[($_doText + _actionText + " " + $_target.pronouns.his + " " + $_target.clothes.upper.name).toUpperFirst()] to "upper">>
+			<</if>>
 		<</if>>
 	<</if>>
 <</if>>
@@ -1114,6 +1144,35 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<</if>>
 <</if>>
 
+<<if $leftaction is "mask" and $rightaction is "mask">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+	<<facestrip>>
+	<<if $worn.face.name is "naked">>
+		You clutch the tattered remains of your mask.
+	<<else>>
+		You pull down your $worn.under_lower.name, <span class="lewd">revealing your face.</span>
+	<</if>>
+
+<<elseif $leftaction is "mask">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $worn.under_lower.anus_exposed to 1>><<set $worn.under_lower.vagina_exposed to 1>><<set $worn.under_lower.exposed to 2>>
+	<<facestrip>>
+	<<if $worn.face.name is "naked">>
+		You clutch the tattered remains of your mask.
+	<<else>>
+		You pull down your $worn.under_lower.name, <span class="lewd">revealing your face.</span>
+	<</if>>
+
+<<elseif $rightaction is "mask">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $worn.under_lower.anus_exposed to 1>><<set $worn.under_lower.vagina_exposed to 1>><<set $worn.under_lower.exposed to 2>>
+	<<facestrip>>
+	<<if $worn.face.name is "naked">>
+		You clutch the tattered remains of your mask.
+	<<else>>
+		You pull down your $worn.under_lower.name, <span class="lewd">revealing your face.</span>
+	<</if>>
+<</if>>
+
 <</widget>>
 
 <<widget "effectsspray">>
@@ -1339,7 +1398,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <<if $leftaction is "penwhack">>
 	<<set $leftaction to 0>>
 	<<set $_target to $NPCList[$lefttarget]>>
-	<<if typeof($_target.lefthand) is "string" and $_target.lefthand.includes("pen")>>
+	<<if $_target.lefthand and ($_target.lefthand is "pen" or $_target.lefthand.startsWith("pen_"))>>
 		You whack the <<print $_target.lefttool>> from the <<personselect $lefttarget>><<persons>> hand.
 		<<if $_target.fullDescription is "Sydney" or ($_target.fullDescription is "Kylar" and $NPCName[$NPCNameList.indexOf("Kylar")].rage lte 35) or $_target.type is "plant">>
 			<<He>> pouts at you.
@@ -1349,7 +1408,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 			<<brat 5 $lefttarget>>
 		<</if>>
 		<<brat 5 $lefttarget>><<set $_target.lefthand to 0>><<set $_target.lefttool to 0>>
-	<<elseif typeof($_target.righthand) is "string" and $_target.righthand.includes("pen")>>
+	<<elseif $_target.righthand and ($_target.righthand is "pen" or $_target.righthand.startsWith("pen_"))>>
 		You whack the <<print $_target.righttool>> from the <<personselect $lefttarget>><<persons>> hand.
 		<<if $_target.fullDescription is "Sydney" or ($_target.fullDescription is "Kylar" and $NPCName[$NPCNameList.indexOf("Kylar")].rage lte 35) or $_target.type is "plant">>
 			<<He>> pouts at you.
@@ -1365,7 +1424,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <<if $rightaction is "penwhack">>
 	<<set $rightaction to 0>>
 	<<set $_target to $NPCList[$righttarget]>>
-	<<if typeof($_target.lefthand) is "string" and $_target.lefthand.includes("pen")>>
+	<<if $_target.lefthand and ($_target.lefthand is "pen" or $_target.lefthand.startsWith("pen_"))>>
 		You whack the <<print $_target.lefttool>> from the <<personselect $righttarget>><<persons>> hand.
 		<<if $_target.fullDescription is "Sydney" or ($_target.fullDescription is "Kylar" and $NPCName[$NPCNameList.indexOf("Kylar")].rage lte 35) or $_target.type is "plant">>
 			<<He>> pouts at you.
@@ -1375,7 +1434,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 			<<brat 5 $righttarget>>
 		<</if>>
 		<<brat 5 $righttarget>><<set $_target.lefthand to 0>><<set $_target.lefttool to 0>>
-	<<elseif typeof($_target.righthand) is "string" and $_target.righthand.includes("pen")>>
+	<<elseif typeof($_target.righthand) is "string" and ($_target.righthand is "pen" or $_target.righthand.startsWith("pen_"))>>
 		You whack the <<print $_target.righttool>> from the <<personselect $righttarget>><<persons>> hand.
 		<<if $_target.fullDescription is "Sydney" or ($_target.fullDescription is "Kylar" and $NPCName[$NPCNameList.indexOf("Kylar")].rage lte 35) or $_target.type is "plant">>
 			<<He>> pouts at you.
@@ -1465,7 +1524,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 			<</if>>
 			<<willpower 1>>
 		<<else>>
-			<<if (1000 - ($rng * 10) - (($physique / $physiquemax * 100) * _freestrength) + ($enemyanger * 0.5)) lte
+			<<if (1000 - ($rng * 10) - ((currentSkillValue('physique') / $physiquemax * 100) * _freestrength) + ($enemyanger * 0.5)) lte
 					(200 + $enemytrust)>>
 				<span class="green">
 					<<if $mouthuse is "facesit">>
@@ -1628,8 +1687,13 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<</if>>
 
 	<<if !$_bothHandsUsed>>
-		<<hand_section_two "left">>
-		<<hand_section_two "right">>
+		<<if random(0,1) is 1>>
+			<<hand_section_two "left">>
+			<<hand_section_two "right">>
+		<<else>>
+			<<hand_section_two "right">>
+			<<hand_section_two "left">>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -1657,16 +1721,17 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 		<<case "penis">> <<combat-hand-on-penis $_hand>>
 		<<case "anusentrance">> <<combat-hand-on-anusentrance $_hand>>
 		<<case "anus">> <<combat-hand-on-anus $_hand>>
+		<<case "bottom">> <<combat-hand-on-bottom $_hand>>
 		<<case "throat">> <<combat-hand-on-throat $_hand>>
 		<<case "mouth">> <<combat-hand-on-mouth $_hand>>
-		<<case "genitals">> <<combat-hand-on-chastity $_hand>>
-		<<case "underclothes">> <<combat-hand-on-underclothes $_hand>>
 		<<case "hair">> <<combat-hand-on-hair $_hand>>
-		<<case "lowerclothes">> <<combat-hand-on-lowerclothes $_hand>>
-		<<case "overlowerclothes">> <<combat-hand-on-overlowerclothes $_hand>>
-		<<case "overupperclothes">> <<combat-hand-on-overupperclothes $_hand>>
-		<<case "upperclothes">> <<combat-hand-on-upperclothes $_hand>>
-		<<case "underupperclothes">> <<combat-hand-on-underupperclothes $_hand>>
+		<<case "genitals">> <<combat-hand-on-chastity $_hand>>
+		<<case "underlowerclothes">> <<combat-hand-on-clothes "under_lower" $_hand>>
+		<<case "underupperclothes">> <<combat-hand-on-clothes "under_upper" $_hand>>
+		<<case "lowerclothes">> <<combat-hand-on-clothes "lower" $_hand>>
+		<<case "upperclothes">> <<combat-hand-on-clothes "upper" $_hand>>
+		<<case "overlowerclothes">> <<combat-hand-on-clothes "over_lower" $_hand>>
+		<<case "overupperclothes">> <<combat-hand-on-clothes "over_upper" $_hand>>
 		<<case "head_nipples">> <<combat-hand-on-head_nipples $_hand>>
 		<<case "head_breasts">> <<combat-hand-on-head_breasts $_hand>>
 		<<case "mask">> <<combat-hand-on-mask $_hand "hand">>

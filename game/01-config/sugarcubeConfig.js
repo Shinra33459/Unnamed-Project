@@ -5,7 +5,6 @@ Config.history.maxStates = 1;
 State.prng.init()
 
 window.versionUpdateCheck = true;
-window.saveUpdateCheck = true;
 window.onLoadUpdateCheck = false;
 
 Config.saves.onLoad = function (save) {
@@ -14,6 +13,7 @@ Config.saves.onLoad = function (save) {
 
 Config.saves.onSave = function (save) {
 	new Wikifier(null, '<<updateFeats>>');
+	prepareSaveDetails();
 }
 
 /*LinkNumberify and images will enable or disable the feature completely*/
@@ -22,7 +22,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.6.2",
+	"version": "0.3.7.4",
 }
 window.StartConfig.version += " herm";
 

@@ -43,21 +43,21 @@ Tulips grow in great patches near the riverbank.
 <<else>>
 	<<run getRobinLocation()>>
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
-	<<if ($halloween_kylar is 1 or $NPCName[$NPCNameList.indexOf("Kylar")].love gte 60) and $halloween_kylar_proposed isnot 1 and $daystate is "night" and $NPCName[$NPCNameList.indexOf("Kylar")].init is 1 and $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($halloween is 1 and $monthday is 31 and $hour gte 21 or $month is "november" and $monthday is 1 and $hour lte 6)>>
+	<<if ($halloween_kylar is 1 or $NPCName[$NPCNameList.indexOf("Kylar")].love gte 60) and $halloween_kylar_proposed isnot 1 and $daystate is "night" and $NPCName[$NPCNameList.indexOf("Kylar")].init is 1 and $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($halloween is 1 and $monthday is 31 and $hour gte 21 or $month is "november" and $monthday is 1 and $hour lte 6) and !$possessed>>
 		<<halloweenkylar>>
 	<<elseif ($danger gte (9900 - $allure) or $eventforced) and $eventskip is 0>>
 		<<eventsstreet>>
-	<<elseif $robinReunionScene isnot undefined and _robin_location is "park" and $exposed lte 0>>
+	<<elseif $robinReunionScene isnot undefined and _robin_location is "park" and $exposed lte 0 and !$possessed>>
 		<<npc Robin>><<person1>>
 		<<if $robinReunionScene is "dungeon">>
 			<<unset $robinReunionScene>><<set $robinPostMortem to true>>
 			You see Robin stood behind <<his>> hot chocolate stand. <<His>> mouth goes agape as <<he>> sees you, and <<he>> sprints towards you.
 			<br><br>
 
-			"I don’t believe it!" <<he>> squeals as <<he>> buries <<himself>> in your chest. "I-I thought you were gone forever! We need to talk about this at home. When you’re ready."
+			"I don't believe it!" <<he>> squeals as <<he>> buries <<himself>> in your chest. "I-I thought you were gone forever! We need to talk about this at home. When you're ready."
 			<br><br>
 
-			You’re led back to their stand. A small picture of the two of you sits on top. Robin puts it away.
+			You're led back to their stand. A small picture of the two of you sits on top. Robin puts it away.
 			<br>
 			<<He>> fixes you a cup of hot chocolate and sends you on your way.
 			<br>
@@ -74,22 +74,22 @@ Tulips grow in great patches near the riverbank.
 				<<He>> stares at you in disbelief.
 				<br><br>
 				
-				"Hi," <<he>> says quietly as you draw close. "I thought the doctors took you away. I would’ve tried to get you something had I known you were c-coming back," Robin’s voice quivers.
+				"Hi," <<he>> says quietly as you draw close. "I thought the doctors took you away. I would've tried to get you something had I known you were c-coming back," Robin's voice quivers.
 			<<else>>
 				<<He>> excitedly beckons you over when <<he>> sees you.
 				<br><br>
 				
-				"Hey, you’re out!" <<he>> says as you draw close. "I thought you were staying at the doctor’s for a while. I would’ve prepared something had I known you were coming back," Robin explains.
+				"Hey, you're out!" <<he>> says as you draw close. "I thought you were staying at the doctor's for a while. I would've prepared something had I known you were coming back," Robin explains.
 			<</if>>
 			<br><br>
 
-			You shake your head, telling <<him>> that they weren’t going to help you, so you "checked" out early. Robin seems confused, but <<he>> nods regardless. <<He>> gives you a hug.
+			You shake your head, telling <<him>> that they weren't going to help you, so you "checked" out early. Robin seems confused, but <<he>> nods regardless. <<He>> gives you a hug.
 			<br>
 
 			<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
-				"Well, I’m glad you’re free," <<he>> mumbles, holding you tight.
+				"Well, I'm glad you're free," <<he>> mumbles, holding you tight.
 			<<else>>
-				"Well, I’m happy to see you again! I hope you're feeling better."
+				"Well, I'm happy to see you again! I hope you're feeling better."
 			<</if>>
 			<br>
 			The two of you make small talk for a bit. Eventually, Robin says <<he>> needs to get back to <<his>> stand.
@@ -110,7 +110,7 @@ Tulips grow in great patches near the riverbank.
 			<<link [[Next|Park]]>><<set $eventskip to 1>><<endevent>><</link>>
 			<br>
 		<</if>>
-	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].init is 0 and $season is "winter" and ($weekday is 7 or $weekday is 1) and between($hour, 9, 16) and $exposed lte 0>>
+	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].init is 0 and $season is "winter" and ($weekday is 7 or $weekday is 1) and between($hour, 9, 16) and $exposed lte 0 and !$possessed>>
 		<<set $robindebt to 0>><<set $robindebtlimit to 5>>
 		<<npc Robin>><<person1>>You see someone familiar working at a stand in the park. <<He>> notices you at the same time. "Hey!" It's Robin. <<Hes>> another resident at the orphanage. <<Hes>> always looked up to you, despite being about the same age. <<He>> motions you over, while cleaning a mug. <<He>> puts it down and hugs you when you approach.
 		<br><br>
@@ -174,23 +174,22 @@ Tulips grow in great patches near the riverbank.
 		<br>
 		<<femaleicon>><<link [[Women's toilets|Women's Toilets]]>><</link>>
 		<br>
-		<<if $worn.feet.type.includes("heels") and ($exposed is 0 or $daystate is "night")>>
+		<<if $leftleg is "bound" or $rightleg is "bound">>
+			<<set $_boundType to ($leftleg is "bound" ? ($rightleg is "bound" ? "both legs" : "your left leg") : "your right leg")>>
+			You cannot go for a run with $_boundType bound.
+		<<elseif $worn.feet.type.includes("heels") and ($exposed is 0 or $daystate is "night")>>
 			<<link [[Exercise in heels (0:30)|Park Exercise Heels]]>><<pass 30>><<tiredness 3>><<stress -1>><<athletics 2>><<slimeEventEnd>><</link>><<ggtiredness>><<gathletics>><<lstress>>
 		<<else>>
 			<<if $daystate is "night">>
 				<<if $exposed gte 2 and $exhibitionism gte 35>>
 					<<runicon>><<link [[Go for a run (0:30)|Park Run Exposed]]>><<pass 30>><<set $phase to 0>><<tiredness 3>><<stress -3>><<athletics 3>><<slimeEventEnd>><</link>><<exhibitionist3>><<gtiredness>><<gathletics>><<lstress>>
-					<br>
 				<<elseif $exposed is 1>>
 					<<runicon>><<link [[Go for a run (0:30)|Park Run Exposed]]>><<pass 30>><<set $phase to 1>><<tiredness 3>><<stress -3>><<athletics 3>><<slimeEventEnd>><</link>><<exhibitionist1>><<gtiredness>><<gathletics>><<lstress>>
-					<br>
 				<<elseif $exposed is 0>>
 					<<runicon>><<link [[Go for a run (0:30)|Park Run]]>><<pass 30>><<tiredness 3>><<stress -3>><<athletics 3>><<slimeEventEnd>><</link>><<gtiredness>><<gathletics>><<lstress>>
-					<br>
 				<</if>>
 			<<elseif $exposed is 0>>
 				<<runicon>><<link [[Go for a run (0:30)|Park Run]]>><<pass 30>><<tiredness 3>><<stress -3>><<athletics 3>><<slimeEventEnd>><</link>><<gtiredness>><<gathletics>><<lstress>>
-				<br>
 			<</if>>
 		<</if>>
 		<br>

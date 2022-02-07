@@ -70,6 +70,16 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 
 <<elseif $temple_event is 1 and $daystate isnot "night" and $exposed lte 0>><<set $temple_event to 0>>
 	<<eventstemple>>
+<<elseif $dance_job_intro and $jordan_ritual_dance is undefined and ($grace gte 80 and $temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest")>>
+	<<npc Jordan>><<person1>>
+	"My child," says a voice from the side. It's Jordan, looking more haggard than usual. A rogue strand of hair falls between <<his>> eyes. "I must ask a favour. <span class="gold">Do you know Charlie?</span> Forgive me my inquiry, but you have something of a reputation as a dancer.
+	<br><br>
+
+	"One of our flock recently found work at a manor on Danube Street. They've since disappeared. This manor is known to hire entertainers. Should your work take you there, keep an eye out for anything unusual, but be careful. I'm not asking you to put yourself at risk. If you find anything, please just report back to me. Thank you."
+	<br><br>
+
+	<<link [[Next|Temple]]>><<set $jordan_ritual_dance to 1>><<endevent>><</link>>
+	<br>
 <<else>>
 	<<if $arousal gte $arousalmax>>
 		<<orgasmLocation "temple">>
@@ -78,23 +88,23 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 		<<link [[Search for lichen (0:30)|Temple Lichen]]>><<pass 30>><<set $sciencelichentemple to 1>><</link>>
 		<br>
 	<</if>>
-	<<if $daystate isnot "night" and $daystate isnot "dusk" and $exposed is 0>>
+	<<if $daystate isnot "night" and $daystate isnot "dusk" and $exposed is 0 and $jordan_missing isnot 1>>
 		<<link [[Approach the figure|Temple Jordan]]>><</link>>
 		<br>
 	<</if>>
 
 	<<if $weekday is 1 and $hour gte 11 and $hour lte 12 and $massattended isnot 1 and $exposed lte 0 and $NPCName[$NPCNameList.indexOf("Jordan")].init is 1>>
 		<<if $angel gte 6>>
-			<<link [[Attend mass (1:00)|Temple Mass Angel]]>><<purity 10>><<pass 60>><<trauma -18>><<stress -18>><<alcohol 10>><<set $massattended to 1>><</link>> | <span class="green">+ Purity</span><<lltrauma>><<llstress>>
+			<<link [[Attend mass (1:00)|Temple Mass Angel]]>><<purity 10>><<pass 60>><<trauma -18>><<stress -18>><<alcohol 10>><<set $massattended to 1>><</link>><<gpurity>><<lltrauma>><<llstress>>
 			<br>
 		<<elseif $fallenangel gte 2>>
-			<<link [[Attend mass (1:00)|Temple Mass Fallen Angel]]>><<purity 70>><<pass 60>><<trauma 6>><<stress 6>><<pain 6>><<alcohol 10>><<set $massattended to 1>><</link>> | <span class="green">+ + + Purity</span><<trauma>><<gstress>><<gpain>>
+			<<link [[Attend mass (1:00)|Temple Mass Fallen Angel]]>><<purity 70>><<pass 60>><<trauma 6>><<stress 6>><<pain 6>><<alcohol 10>><<set $massattended to 1>><</link>><<gggpurity>><<trauma>><<gstress>><<gpain>>
 			<br>
 		<<elseif $demon gte 6>>
-			<<link [[Attend mass (1:00)|Temple Mass Demon]]>><<purity 10>><<pass 60>><<trauma 6>><<stress 6>><<pain 6>><<alcohol 10>><<set $massattended to 1>><</link>> | <span class="green">+ Purity</span><<trauma>><<gstress>><<gpain>>
+			<<link [[Attend mass (1:00)|Temple Mass Demon]]>><<purity 10>><<pass 60>><<trauma 6>><<stress 6>><<pain 6>><<alcohol 10>><<set $massattended to 1>><</link>><<gggpurity>><<trauma>><<gstress>><<gpain>>
 			<br>
 		<<else>>
-			<<link [[Attend mass (1:00)|Temple Mass]]>><<purity 10>><<pass 60>><<alcohol 10>><<set $massattended to 1>><</link>> | <span class="green">+ Purity</span>
+			<<link [[Attend mass (1:00)|Temple Mass]]>><<purity 10>><<pass 60>><<alcohol 10>><<set $massattended to 1>><</link>><<gpurity>>
 			<br>
 		<</if>>
 	<<elseif $exposed lte 0>>
@@ -245,7 +255,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 	<<passouttemple>>
 <<elseif $danger gte (9900 - $allure) and $eventskip isnot 1>>
 	<<if $rng gte 81>>
-		<<set _npcChastity to 1>><<generate1>><<person1>> A <<monk>> carrying a donation plate walks by. <<He>> smiles at you.
+		<<generateTemple 1>><<person1>> A <<monk>> carrying a donation plate walks by. <<He>> smiles at you.
 		<br><br>
 
 		<<link [[Look away|Temple Plate Look]]>><</link>>
@@ -285,7 +295,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 		<<prayoptions>>
 
 	<<elseif $rng gte 41>>
-		<<set _npcChastity to 1>><<generatey1>><<person1>>A young <<monk>> walks by, swinging a sweet-smelling thurible in <<his>> hands.
+		<<generateyTemple 1>><<person1>>A young <<monk>> walks by, swinging a sweet-smelling thurible in <<his>> hands.
 		<br><br>
 
 		<<if $worn.upper.type.includes("naked") and $worn.under_upper.type.includes("naked")>>
@@ -312,7 +322,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 	<<prayoptions>>
 
 	<<else>>
-		<<set _npcChastity to 1>><<generate1>><<person1>>A <<person>> dressed as a <<monk>> sits close beside you. Very close. <<He>> rests a hand on your thigh. "Don't cause a fuss," <<he>> whispers. "Or I'll say you attacked me. Who will they believe?"
+		<<generateTemple 1>><<person1>>A <<person>> dressed as a <<monk>> sits close beside you. Very close. <<He>> rests a hand on your thigh. "Don't cause a fuss," <<he>> whispers. "Or I'll say you attacked me. Who will they believe?"
 		<br><br>
 		<<if $angel gte 6>>
 		<<link [[Guilt|Temple Guilt]]>><</link>><<angel>>
@@ -450,15 +460,11 @@ You place your hand on the collection plate, as if placing something. Instead, y
 <<skulduggerycheck>>
 <<if $skulduggerysuccess is 1>>
 
-<span class="green"><<if $sydneyPresent>>Both Sydney and the <<monk>> fail to notice.<<else>>The <<monk>> doesn't notice.<</if>></span> "Thank you," <<he>> says. <<He>> gives you a small <<if $pronoun is "m">>bow<<else>>curtsy<</if>>.
-<br><br>
-
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-	<<skulduggeryskilluse>>
-	<<else>>
-	<span class="blue">That was too easy. You didn't learn anything.</span> You got <<moneyGain 5 true true>>.
+	<span class="green"><<if $sydneyPresent>>Both Sydney and the <<monk>> fail to notice.<<else>>The <<monk>> doesn't notice.<</if>></span> "Thank you," <<he>> says. <<He>> gives you a small <<if $pronoun is "m">>bow<<else>>curtsy<</if>>.
 	<br><br>
-	<</if>>
+
+	<<skulduggeryuse>>
+	You got <<moneyGain 5 true true>>.
 
 	<<endevent>>
 	<<if $sydneyPresent>>
@@ -472,26 +478,21 @@ You place your hand on the collection plate, as if placing something. Instead, y
 
 <<else>>
 
-The <<monk>> grabs your wrist and tuts. "For shame." <<if $sydneyPresent>>Sydney gives you a horrified glare. <<npcincr Sydney love -5>><<lllove>><</if>>
-<br><br>
+	The <<monk>> grabs your wrist and tuts. "For shame." <<if $sydneyPresent>>Sydney gives you a horrified glare. <<npcincr Sydney love -5>><<lllove>><</if>>
+	<br><br>
 
 	<<if $submissive gte 1150>>
-	"I'm sorry," you say, eyes downcast. "I know it's wrong, but I need it."
+		"I'm sorry," you say, eyes downcast. "I know it's wrong, but I need it."
 	<<elseif $submissive lte 850>>
-	You snatch your hand away. "I need it more than you," you say.
+		You snatch your hand away. "I need it more than you," you say.
 	<<else>>
-	"I'm sorry," you say. "But I really need it."
+		"I'm sorry," you say. "But I really need it."
 	<</if>>
-<br><br>
-<<He>> mutters something disparaging about youth as <<he>> walks away.
-<br><br>
-
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-	<<skulduggeryskilluse>>
-	<<else>>
-	<span class="blue">That was too easy. You didn't learn anything.</span>
 	<br><br>
-	<</if>>
+	<<He>> mutters something disparaging about youth as <<he>> walks away.
+	<br><br>
+
+	<<skulduggeryuse>>
 
 	<<endevent>>
 	<<if $sydneyPresent>>
@@ -718,7 +719,20 @@ You look away from the <<monk>>, and <<he>> continues down the aisle.
 	<<link [[Say you were harassed by members of the church (0:05)|Temple Harass Inform]]>><<pass 5>><</link>>
 	<br>
 <</if>>
+<<if $jordan_ritual_dance is 2>>
+	<<link [[Inform Jordan of what you found beneath the Danube manor|Temple Ritual Inform]]>><<set $jordan_ritual_dance to 3>><</link>>
+	<br>
+<</if>>
 <<link [[Leave|Temple]]>><<endevent>><</link>>
+
+:: Temple Ritual Inform
+<<effects>>
+
+Jordan listens in silent, without moving an inch. "Thank you," <<he>> says, looking through you. "You've saved more than one person today." <<He>> produces a leather whip from beneath <<his>> vestments, and tightens it. "Forgive me, but I must leave at once." <<He>> strides away, and disappears down a staircase leading underground.
+<br><br>
+
+<<link [[Next|Temple]]>><<set $jordan_missing to 1>><<endevent>><</link>>
+<br>
 
 :: Temple Harass Inform
 <<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
@@ -1742,8 +1756,8 @@ We have some other rules. No stealing. No violence. No sex, <span class="pink">e
 
 :: Temple Arcade Intro
 <<effects>>
-
-<<set _npcChastity to 1>><<generate1>><<person1>><<generate2>><<generate3>> A <<monk>> emerges from a door marked with a red cross. <<Hes>> flanked by two others. One of them assures Jordan that you'll be treated gently.
+<<generateCultist 1>><<person1>><<generateCultist 2>><<generateCultist 3>>
+A <<monk>> emerges from a door marked with a red cross. <<Hes>> flanked by two others. One of them assures Jordan that you'll be treated gently.
 <br><br>
 Head bowed, Jordan leaves the room as a <<monk>> pulls a gag from <<his>> habit. "To make amends you must perform a service. Stay still."
 <br><br>

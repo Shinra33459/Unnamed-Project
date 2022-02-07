@@ -65,7 +65,7 @@ You are in the compound on Elk Street. Three red brick buildings stand surrounde
 				<br>
 			<</if>>
 		<<else>>
-			A hand rests on your shoulder. <<generate1>><<person1>>"Alright <<girl>>, playtime's over," <<he>> waves <<his>> baton in front of your face. "I found <<phim>> outside," <<he>> says into <<his>> radio. "Alright, I'll keep <<phim>> here until then."
+			A hand rests on your shoulder. <<generateSecurity 1>><<person1>>"Alright <<girl>>, playtime's over," <<he>> waves <<his>> baton in front of your face. "I found <<phim>> outside," <<he>> says into <<his>> radio. "Alright, I'll keep <<phim>> here until then."
 			<br><br>
 
 			<<if $compoundbluff is 1>>
@@ -125,7 +125,7 @@ The door opens easily and you enter the building. The inside is full of a sweet-
 <<set $outside to 1>><<set $location to "compound">><<effects>><<set $lock to 300>>
 The door is locked tight.
 <br><br>
-<<if $skulduggery gte $lock>>
+<<if currentSkillValue('skulduggery') gte $lock>>
 	<span class="green">The lock looks easy to pick.</span>
 	<br><br>
 	<<link [[Break in (0:05)|Elk Compound Interior]]>><<pass 5>><<crimeup 1>><</link>><<crime>><<gsecurity>>
@@ -291,7 +291,7 @@ The <<person>> slams the door. An alarm blares a moment later.
 	<<link [[Next|Elk Compound]]>><<set $eventskip to 1>><</link>>
 	<br>
 <<elseif $alarm is 1 and $rescue is 1>>
-	<<generate2>><<generate3>><<person2>>A <<person>> and <<person3>><<person>> arrive to investigate the noise.
+	<<generateSecurity 2>><<generateSecurity 3>><<person2>>A <<person>> and <<person3>><<person>> arrive to investigate the noise.
 	<<if $NPCList[0].stance is "top">>
 		They see the <<beasttype 0>> humping you and laugh. "Good <<beasttype 0>>," the <<person2>><<person>> says.
 		<br><br>
@@ -400,12 +400,7 @@ The <<person3>><<person>> films you.
 	"I'm delivering something," you say. "Go ask your boss."
 <</if>>
 <br><br>
-<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-	<<skulduggeryskilluse>>
-<<else>>
-	<span class="blue">That was too easy. You didn't learn anything.</span>
-	<br><br>
-<</if>>
+<<skulduggeryuse>>
 <<skulduggerycheck>>
 <<if $skulduggerysuccess is 1>>
 	<<set $compoundbluff to 1>>
@@ -463,7 +458,7 @@ The <<person3>><<person>> films you.
 <<else>>
 	door to the central building opens.
 <</if>>
-A <<generate3>><<person3>><<person>> in a lab coat exits.
+A <<generate3>><<npcClothesType $NPCList[2] "compoundLab">><<person3>><<person>> in a lab coat exits.
 <br><br>
 "I'll take the <<girl>> from here," <<he>> says. "They want to speak to <<phim>> downstairs."
 <br><br>
@@ -509,7 +504,7 @@ As soon as the <<person>> touches your arm a jolt surges through you. You lose c
 <<set $compoundsmoke to 0>>
 <<set $compoundcentre to 0>>
 <<set $compoundbluff to 0>>
-You wake up, naked <<if $worn.genitals.type.includes("chastity")>>save for your $worn.genitals.name<</if>> and strapped to a metal board. Pipes and wires protrude from concrete walls. <<generate1>><<person1>>A <<person>> works at a console in the corner. <<He>> glances at you. "Aha," <<he>> says. "You're awake." <<He>> pushes <<himself>> towards you on <<his>> chair and produces a bundle of wires from <<his>> lab coat.
+You wake up, naked <<if $worn.genitals.type.includes("chastity")>>save for your $worn.genitals.name<</if>> and strapped to a metal board. Pipes and wires protrude from concrete walls. <<generate1>><<npcClothesType $NPCList[0] "compoundLab">><<person1>>A <<person>> works at a console in the corner. <<He>> glances at you. "Aha," <<he>> says. "You're awake." <<He>> pushes <<himself>> towards you on <<his>> chair and produces a bundle of wires from <<his>> lab coat.
 <br><br>
 The wires have pads on one end. <<He>> starts sticking them to your body. <<He>> goes about <<his>> work with a clinical professionalism that makes you feel less humiliated by your <<lewdness>> than you'd expect. That is until <<he>> places one on each of your <<nipples>>.
 <br><br>
@@ -888,7 +883,7 @@ The inside is dominated by a large lift. You see no way to operate it, but a lap
 
 	<span class="red">INTRUDER REFUSING TO COOPERATE.</span> A jolt runs through the metal arms, shocking you.<<gpain>><<pain 4>>
 	<br><br>
-	<<generate1>><<generate2>>
+	<<generateSecurity 1>><<generateSecurity 2>>
 	A <<person1>><<person>> and <<person2>><<person>> rush in, batons ready. They relax when they see you.
 	<br><br>
 
@@ -941,9 +936,9 @@ The inside is dominated by a large lift. You see no way to operate it, but a lap
 <<machine_actions>>
 
 <<if $machine.number lte 0 or $finish is 1>>
-	<<link [[Next|Elk Compound Machine Rape End]]>><</link>>
+	<span id="next"><<link [[Next|Elk Compound Machine Rape End]]>><</link>></span><<nexttext>>
 <<else>>
-	<<link [[Next|Elk Compound Machine Rape]]>><</link>>
+	<span id="next"><<link [[Next|Elk Compound Machine Rape]]>><</link>></span><<nexttext>>
 <</if>>
 <br>
 
@@ -971,7 +966,7 @@ The inside is dominated by a large lift. You see no way to operate it, but a lap
 :: Elk Compound Interior Struggle
 <<effects>>
 
-<<generate1>><<generate2>>
+<<generateSecurity 1>><<generateSecurity 2>>
 You pull against the metal grip, but it's too tight. The doors open. A <<person1>><<person>> and <<person2>><<person>> rush in, batons ready. They relax when they see you.
 <br><br>
 
@@ -1127,7 +1122,7 @@ You remain silent as the <<person2>><<person>> talks into <<his>> radio.
 :: Elk Compound Approach
 <<set $outside to 1>><<set $location to "compound">>
 
-You walk up to the gate. It's guarded by two security guards. <<generate1>><<generate2>><<person1>>One of them, a <<person>>, puts an arm out as you approach. "No closer, <<girl>>. This is private property." <<His>> companion sizes you up.
+You walk up to the gate. It's guarded by two security guards. <<generateSecurity 1>><<generateSecurity 2>><<person1>>One of them, a <<person>>, puts an arm out as you approach. "No closer, <<girl>>. This is private property." <<His>> companion sizes you up.
 <br><br>
 
 <<if $phials_held gte 1>>
@@ -1175,7 +1170,7 @@ The carriage slows as it arrives on a new platform, surrounded by stone brickwor
 <br><br>
 
 
-<<generate1>><<generate2>>
+<<generateSecurity 1>><<generateSecurity 2>>
 You walk towards the carriage entrance. The blue door shudders open, and you take cover. A <<person1>><<person>> and <<person2>><<person>> jog through, wearing white uniforms and holding large guns. They haven't noticed you.
 <br><br>
 

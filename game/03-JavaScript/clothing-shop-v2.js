@@ -284,3 +284,18 @@ window.getWarmthWithOtherClothing = function(slot, clothingId) {
 
 	return newWarmth;
 }
+
+window.allClothesSetup = function(){
+	let clothes = []
+	Object.keys(setup.clothes).forEach(slot => {
+		if(['all','over_head','over_upper','over_lower'].includes(slot)) return;
+		let items = clone(setup.clothes[slot]);
+		items.forEach(item => item.realSlot = slot);
+		clothes = clothes.concat(items);
+	})
+	setup.clothes.all = clothes;
+}
+
+window.shopSearchReplacer = function(name){
+	return name.replace(/[^a-zA-Z0-9' -]+/g,"");
+}

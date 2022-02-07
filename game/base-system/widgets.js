@@ -33,6 +33,36 @@ function addfemininityofclothingarticle(slot, clothing_article, no_overwear_chec
 }
 DefineMacro("addfemininityofclothingarticle", addfemininityofclothingarticle);
 
+const hairStyleCap = {
+	hairtype:{
+		"flat ponytail":300,
+		"messy":200,
+		"pigtails":300,
+		"ponytail":300,
+		"short":100,
+	},
+	fringetype:{
+		"default":100,
+		"thin flaps":300,
+		"wide flaps":300,
+		"hime":300,
+		"loose":300,
+		"messy":200,
+		"overgrown":200,
+		"ringlets":300,
+		"split":300,
+		"straight":300,
+		"swept left":200,
+		"back":100,
+		"parted":100,
+		"flat":100,
+		"quiff":100,
+		"straight curl":200,
+		"ringlet curl":300,
+		"curtain":200,
+	}
+}	
+
 /** Calculate the player's gender appearance */
 function genderappearancecheck() {
 	/* Calculate bulge size */
@@ -74,7 +104,17 @@ function genderappearancecheck() {
 	addfemininityofclothingarticle('feet',V.worn.feet);
 	/* Hair length */
 	if ((V.worn.over_head.hood !== 1 && V.worn.head.hood !== 1) || V.hoodDown == 1) {
-		addfemininityfromfactor(Math.trunc((V.hairlength - 200) / 2), "Hair length");
+		let lengthCap;
+		/* Set Hair Style cap */
+		if(hairStyleCap.hairtype[V.hairtype] && hairStyleCap.fringetype[V.fringetype]){
+			lengthCap = Math.max(hairStyleCap.hairtype[V.hairtype],hairStyleCap.fringetype[V.fringetype]);
+		}
+		let femininityfactor = Math.trunc((V.hairlength - 200) / 2);
+		if(lengthCap && femininityfactor >= lengthCap){
+			addfemininityfromfactor(lengthCap, "Hair length (capped due to hair style)");
+		} else {
+			addfemininityfromfactor(femininityfactor, "Hair length");
+		}
 	}
 	/* Makeup */
 	addfemininityfromfactor(V.makeup.lipstick == 0 ? 0 : 50, "Lipstick");
@@ -224,12 +264,7 @@ function genderappearancecheck() {
 	} else if (T.apparent_femininity < 0) {
 		T.gender_appearance = "m";
 	} else if (V.player.gender == "h") { // if herm pc and perfect 0 apparent_femininity
-		if (["m", "f"].includes(V.player.gender_body)) // use natural features as a tie breaker if not androgynous
-			T.gender_appearance = V.player.gender_body;
-		else if (["m", "f"].includes(V.player.gender_posture)) // use gender posture as a tie breaker if not acting naturally
-			T.gender_appearance = V.player.gender_posture;
-		else
-			T.gender_appearance = "f"; // you've done it. you've broken me. default to "f".
+		T.gender_appearance = genderAppearanceHermTiebreak();
 	} else {
 		T.gender_appearance = V.player.gender;
 	}
@@ -238,14 +273,24 @@ function genderappearancecheck() {
 	} else if (T.apparent_femininity_noow < 0) {
 		T.gender_appearance_noow = "m";
 	} else if (V.player.gender == "h") {
-		if (["m", "f"].includes(V.player.gender_body))
-			T.gender_appearance_noow = V.player.gender_body;
-		else if (["m", "f"].includes(V.player.gender_posture))
-			T.gender_appearance_noow = V.player.gender_posture;
-		else
-			T.gender_appearance_noow = "f";
+		T.gender_appearance_noow = genderAppearanceHermTiebreak();
 	} else {
 		T.gender_appearance_noow = V.player.gender;
+	}
+}
+
+function genderAppearanceHermTiebreak() {
+	// Reminder: this is only if the player has an *exactly* 0 femininity score. This should be nearly impossible to reach, but we still need to handle it.
+
+	// The general principle here is that these factors are things that indicate which gender is the player's preference for this character.
+	// We rely on as many manually-chosen details as possible to break the tie in a way that favors the player's preference.
+
+	if (["m", "f"].includes(V.player.gender_body)) { 
+		return V.player.gender_body; // break the tie with natural features, if player has masculine or feminine features.
+	} else if (["m", "f"].includes(V.player.gender_posture)) { 
+		return V.player.gender_posture; // break the tie with gender posture, if gender posture is "m" or "f"
+	} else {
+		return "f"; // you've done it. you've broken me. default to "f".
 	}
 }
 
@@ -327,3 +372,72 @@ function updatehistorycontrols(){
 	}
 }
 DefineMacro("updatehistorycontrols", updatehistorycontrols);
+
+
+/** Jimmy: A potential improvement is to not wikify the hints that are appended to the ends of the links,
+ *         I chose to keep this format for now to keep <<promiscuous>>, <<exhibitionist>> and <<deviant>> centralised.
+ * 		   If someone wants to change those widgets, this won't need updating. */
+Macro.add('reqSkill', {
+	tags: ['reqE', 'reqElse'],
+	reqs: [0, 1, 15, 35, 55, 75, 95],
+	handler() {
+		/* The function below (some) will immediately end and not iterate further if TRUE is returned, it will continue to iterate if FALSE is returned. */
+		this.payload.some(section => {
+			if (section.args.length === 0) {
+				/* If <<reqSkill>> has no arguments, report an error.
+				   However, if <<reqElse>> had none, print out the section as normal, no need to add skill hints to the links. */
+				if (section.name === 'reqSkill') {
+					Errors.inlineReport(`Missing arguments for <<${section.name}>>`, `${this.source}`).appendTo(this.output);
+				} else {
+					new Wikifier(this.output, section.contents);
+				}
+				return true;
+			}
+			/* Output variable to store what will be appended to EVERY link in the section. */
+			let output = "";
+			const cancel = section.args.some(arg => {
+				/* Splits up the arguments so that everything but the last character goes into type, and the last character goes into tier. 
+				   If arg is "deviancy5", type would be "deviancy" and tier would be 5. */
+				const type = arg.slice(0, -1);
+				const tier = Number.parseInt(arg.slice(-1));
+				/* Check if parseInt returned an actual number, and not NaN. */
+				if (!Number.isInteger(tier)) {
+					Errors.inlineReport(`Invalid argument (${arg}) for <<${section.name}>> | Tier`, `${this.source}`).appendTo(this.output);
+					return true;
+				}
+				switch (type) {
+					case 'promiscuity':
+					case 'p':
+						if (V.promiscuity < this.self.reqs[tier]) return true;
+						output += `<<promiscuous${tier}>>`;
+						return false;
+					case 'exhibitionism':
+					case 'e':
+						if (V.exhibitionism < this.self.reqs[tier]) return true;
+						output += `<<exhibitionist${tier}>>`;
+						return false;
+					case 'deviancy':
+					case 'd':
+						if (V.deviancy < this.self.reqs[tier]) return true;
+						output += `<<deviant${tier}>>`;
+						return false;
+					default:
+						Errors.inlineReport(`Invalid argument (${arg}) for <<${section.name}>> | Type`, `${this.source}`).appendTo(this.output);
+						return true;
+				}
+			});
+			/* If cancel signals true, exit but continue next payloads. */
+			if (cancel) return false;
+			/* Final render, and insertion of elements. 
+			   Renders the section defined within the block that was successful.*/
+			new Wikifier(this.output, section.contents);
+			/* Renders the HTML elements that are inserted after every link. */
+			const wikiOutput = new Wikifier(null, output);
+			/* Scan through macro outfit for valid links to append hints to. */
+			jQuery(this.output).children().filter('a.link-internal, a.link-external')
+				.after(wikiOutput.output);
+			/* Successful render, no need to process anymore segments. */
+			return true;
+		});
+	}
+});

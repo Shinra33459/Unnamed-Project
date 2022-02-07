@@ -339,6 +339,7 @@
 		<</if>>
 		<<set _leftaction["Grab the"] to "leftgrabtentacle">>
 	<</if>>
+	<<leftclothesnew>>
 <<case "grappled">>
 	<<if $angel gte 4 and $angelBanish gte 1 and !$banishDisable>>
 		<<for _i to 0; _i lt $tentacles.max; _i++>>
@@ -639,6 +640,7 @@
 		<</if>>
 		<<set _rightaction["Grab the"] to "rightgrabtentacle">>
 	<</if>>
+	<<rightclothesnew>>
 <<case "grappled">>
 	<<if $angel gte 4 and $angelBanish gte 1 and !$banishDisable>>
 		<<for _i to 0; _i lt $tentacles.max; _i++>>
@@ -925,14 +927,22 @@
 			<<if $tentacles[_i].head is "mouthentrance">>
 				<<set _mouthOptions to "entrance">>
 				<<set _tentacleMouthOption to $tentacles[_i].id>>
-				<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].fullDesc threatens your mouth.</span>
+				<<if $worn.face.type.includes("covered") or $worn.face.type.includes("gag")>>
+					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].fullDesc threatens your <<print $worn.face.name>>.</span>
+				<<else>>
+					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].fullDesc threatens your mouth.</span>
+				<</if>>
 				<<break>>
 			<</if>>
 		<<case "tentacleimminent">>
 			<<if $tentacles[_i].head is "mouthimminent">>
 				<<set _mouthOptions to "imminent">>
 				<<set _tentacleMouthOption to $tentacles[_i].id>>
-				<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].fullDesc presses against your mouth.</span>
+				<<if $worn.face.type.includes("covered") or $worn.face.type.includes("gag")>>
+					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].fullDesc presses against your <<print $worn.face.name>>.</span>
+				<<else>>
+					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].fullDesc presses against your mouth.</span>
+				<</if>>
 				<<break>>
 			<</if>>
 		<<case "tentacle">>
@@ -1016,13 +1026,17 @@
 <<switch _mouthOptions>>
 	<<case "entrance">>
 		<<set _mouthaction["Rest"] to "rest">>
-		<<set _mouthaction["Lick it"] to "mouthlick"+_tentacleMouthOption>>
+		<<if !$worn.face.type.includes("covered") and !$worn.face.type.includes("gag")>>
+			<<set _mouthaction["Lick it"] to "mouthlick"+_tentacleMouthOption>>
+		<</if>>
 		<<if $head isnot "grappled">>
 			<<set _mouthaction["Pull away"] to "mouthpullaway"+_tentacleMouthOption>>
 		<</if>>
 	<<case "imminent">>
 		<<set _mouthaction["Rest"] to "rest">>
-		<<set _mouthaction["Kiss it"] to "mouthkiss"+_tentacleMouthOption>>
+		<<if !$worn.face.type.includes("covered") and !$worn.face.type.includes("gag")>>
+			<<set _mouthaction["Kiss it"] to "mouthkiss"+_tentacleMouthOption>>
+		<</if>>
 		<<if $head isnot "grappled">>
 			<<set _mouthaction["Pull away"] to "mouthpullaway"+_tentacleMouthOption>>
 		<</if>>
@@ -1506,7 +1520,7 @@
 <</if>>
 <div id="listContainer">
 	<div id="leftaction" @class="$combatControls + 'Control'">
-		<<if $lefttarget is "vore">>
+		<<if $lefttarget is "vore" or $tentacles.active is 0>>
 			<<leftActionInitVore>>
 		<<else>>
 			<<leftActionInitTentacle>>
@@ -1514,7 +1528,7 @@
 	</div>
 
 	<div id="rightaction" @class="$combatControls + 'Control'">
-		<<if $righttarget is "vore">>
+		<<if $righttarget is "vore" or $tentacles.active is 0>>
 			<<rightActionInitVore>>
 		<<else>>
 			<<rightActionInitTentacle>>

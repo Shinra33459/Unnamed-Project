@@ -1062,6 +1062,7 @@
 
 <<widget "undressSleep">>
 <<set _undress_temp to $args[0]>>
+<<saveTempHairStyle>>
 <<for $_label, $_value range $worn>>
 	<<if $_value.type.includes("eerie")>>
 		<<set _makeTempClothing to 1>>
@@ -1523,7 +1524,7 @@
 	<</if>>
 	/*Prevent equip when the ear slime doesn't allow it*/
 	<<if _wearId gte 0 and _slimePrevent.includes(_slot) and $corruption_slime gte 80>>
-		<<if $willpower lt 800 and _item.reveal lt 500 and !_item.type.includesAny("school", "event")>>
+		<<if currentSkillValue('willpower') lt 800 and _item.reveal lt 500 and !_item.type.includesAny("school", "event")>>
 			<span class="red">You were unable to equip your _item.name as the slime in your ear did not permit it.</span>
 			<br>
 			<<continue>>
@@ -1629,6 +1630,15 @@
 
 <</widget>>
 
+<<widget "outfitChecksExposed">>
+	<<set _underNakedExposed to ($worn.under_lower.exposed isnot 0 and $worn.under_upper.exposed isnot 0)>>
+	<<set _middleNakedExposed to ($worn.lower.exposed isnot 0 and $worn.upper.exposed isnot 0)>>
+	<<set _overNakedExposed to ($worn.over_lower.exposed isnot 0 and $worn.over_upper.exposed isnot 0)>>
+	<<set _toplessExposed to ($worn.over_upper.exposed isnot 0 and $worn.upper.exposed isnot 0 and $worn.under_upper.exposed isnot 0)>>
+	<<set _bottomlessExposed to ($worn.over_lower.exposed isnot 0 and $worn.lower.exposed isnot 0 and $worn.under_lower.exposed isnot 0)>>
+	<<set _fullyNakedExposed to (_toplessExposed and _bottomlessExposed)>>
+<</widget>>
+
 <<widget "otherOutfitChecks">>
 <<set _otherOutfits to {
 	over_head:false,
@@ -1685,4 +1695,27 @@
 		<<set $worn[$args[0]].anus_exposed to setup.clothes[$args[0]][clothesIndex($args[0],$worn[$args[0]])].anus_exposed_base>>
 	<</if>>
 <</if>>
+<</widget>>
+
+<<widget "damageClothing">>
+	<<if $args[0] is "face" and $args[1]>>
+		<<set $worn.face.integrity -= $args[1]>>
+		<<if $worn.face.integrity lt 0>>
+			<<set $_mask to $worn.face.name>>
+			<<faceruined>><<set $worn.face.type.push("broken")>>
+			<span class="red">Your $_mask is torn to shreds!</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "damageFaceCover">>
+	<<if $args[1] and $args[1] is "struggle" and $worn.face.cursed isnot 1>>
+		<<set $worn.face.integrity -= $args[0]>>
+	<<elseif $args[0] and $worn.face.cursed isnot 1>>
+		<<set $worn.face.integrity -= $args[0]>>
+		<<if $worn.face.integrity lte 0>>
+			<span class="red">Your $worn.face.name is torn to shreds!</span>
+			<<faceruined>><<set $worn.face.type.push("broken")>>
+		<</if>>
+	<</if>>
 <</widget>>

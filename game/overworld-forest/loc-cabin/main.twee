@@ -33,6 +33,15 @@ You are in Eden's cabin.
 	<<else>>
 		<<link [[Everything fades to black...|Eden Cabin Passout]]>><</link>>
 	<</if>>
+<<elseif $edenCagedEscape and $hour gte 0 and $hour lte 6 and !$possessed>>
+	You step through the door of the cabin, holding your breath in anticipation. Eden immediately stirs from <<his>> bed, throwing off the covers in a fit of rage. "So now you've come crawling back, have you? About fucking time."
+	<br><br>
+
+	<<He>> grabs you before you can get a word out. It's then that you see the cage in the corner.
+	<br><br>
+
+	<<link [[Next|Eden Caged Intro]]>><<set $phase to 2>><</link>>
+	<br>
 <<elseif ($edenfreedom is 2 and $edendays gte 8 and $hour gte 0 and $hour lte 6) or ($edenfreedom is 1 and $edendays gte 2 and $hour gte 0 and $hour lte 6) and !$possessed>>
 	<<set $edendays to 0>>
 	<<npcincr Eden love -2>>
@@ -42,8 +51,8 @@ You are in Eden's cabin.
 		"Don't think I forgot about our game. You weren't supposed to escape me," <<he>> grumbles. "You shouldn't have been gone so long, either. Where the hell have you been?"
 	<<else>>
 		"Where have you been?" <<he>> asks grabbing you by the shoulders. "I was so worried about you."
-		<br><br>
 	<</if>>
+	<br><br>
 
 	<<link [[Apologise|Eden Return Apologize]]>><<npcincr Eden love 1>><<set $phase to 0>><</link>>
 	<br>
@@ -527,7 +536,7 @@ You are in Eden's cabin.
 <<link [[Just sleep|Cabin Sleep]]>><<set $sleephour to -1>><<set $saveDetails.auto.count++>><</link>> (??:??)<<ltiredness>>
 <br><br>
 
-<<link [[Climb out of bed|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Climb out of bed|Eden Cabin]]>><<endevent>><<loadTempHairStyle>><</link>>
 <br><br>
 
 :: Cabin Sleep
@@ -546,7 +555,7 @@ You are in Eden's cabin.
 	<br><br>
 	You slowly open your eyes, and sluggishly stand from the bed. You make sure not to wake Eden. Your ears are ringing.
 	<br><br>
-	<<set $possessed to true>><<set $wraith.exit to "cabin">><<set $controlSaved to $control>><<set $control to 0>>
+	<<wraithPossess "cabin">>
 	<span class="nextLink"><<link [[Walk.|Eden Cabin]]>><<rainWraith>><</link>></span>
 	<br>
 <<else>>
@@ -882,7 +891,16 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 	<<set $foresthunt to 0>>
 <</if>>
 
-<<if ($edenfreedom is 2 and $edendays gte 8 and $hour gte 6) or ($edenfreedom is 1 and $edendays gte 2 and $hour gte 6)>>
+<<if $edenCagedEscape and $hour gte 7>>
+	Eden looks up as you approach the cabin. <<He>> does a double take when <<he>> sees you. "There you are!" <<he>> shouts, quickly making <<his>> way over to you. "You're in so much trouble, you disobedient whore."
+	<br><br>
+
+	Eden marches you inside before you can protest. A cage sits ominously in the corner.
+	<br><br>
+
+	<<link [[Next|Eden Caged Intro]]>><<set $phase to 2>><</link>>
+	<br>
+<<elseif ($edenfreedom is 2 and $edendays gte 8 and $hour gte 6) or ($edenfreedom is 1 and $edendays gte 2 and $hour gte 6)>>
 	<<set $edendays to 0>>
 	<<npcincr Eden love -1>>
 	Eden looks up as you approach the cabin. <<He>> stops what <<he>>'s doing and rushes over to you.
@@ -1660,19 +1678,7 @@ You climb to your knees.
 "Let me make it up to you," you say.
 <</if>>
 
-<<if $pronoun is "f">>
-
-You lift up <<his>> skirt.
-<<promiscuity1>>
-<br><br>
-
-<<else>>
-
-You open <<his>> fly.
-<<promiscuity1>>
-<br><br>
-
-<</if>>
+You <<npcUndressText $NPCName[$NPCNameList.indexOf("Eden")] "lower">>.
 
 <<if $seductionrating gte $seductionrequired>>
 
@@ -2145,12 +2151,7 @@ You've gained <<moneyGain 50>>.
 You've gained <<moneyGain 200>>.
 <br><br>
 
-		<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-		<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-		<</if>>
+		<<skulduggeryuse>>
 
 		<<if $bus is "edenclearing">>
 		<<link [[Next|Eden Clearing]]>><<endevent>><</link>>
@@ -2165,12 +2166,7 @@ You've gained <<moneyGain 200>>.
 	"I'm not gonna fall for that," Eden says. "You can pay out of your own pocket."
 	<br><br>
 
-		<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-		<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-		<</if>>
+		<<skulduggeryuse>>
 
 		<<if $bus is "edenclearing">>
 		<<link [[Next|Eden Clearing]]>><<endevent>><</link>>
@@ -2184,7 +2180,7 @@ You've gained <<moneyGain 200>>.
 
 <</if>>
 
-:: Cabin Settings
+:: Cabin Settings [exitCheckBypass]
 <<set $settingsExitPassage to "Eden Cabin">>
 <<settings>>
 

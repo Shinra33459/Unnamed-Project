@@ -1049,13 +1049,30 @@ __Body Writing__<br>
 <br><br>
 __Hair__
 <br>
-<a onclick="V.hairtype='default';V.fringetype='default';SugarCube.State.display(SugarCube.State.active.title, null)">Natural</a> (changes both sides and fringe)
-<br><br>
-Your sides are in the "$hairtype" style, and positioned <<if $hairposition is "front">>in front of<<else>>behind<</if>> your body.
-
-<br>
-<<set _hairTypeByName to {"Braid left": "braid left", "Braid right": "braid right", "Flat ponytail": "flat ponytail", "Loose": "loose", "Messy": "messy", "Pigtails": "pigtails", "Ponytail": "ponytail", "Short": "short", "Side tail left": "side tail left", "Side tail right": "side tail right", "Straight": "straight", "Swept left": "swept left", "Twin braids": "twin braids", "Twintails": "twintails", "Curl": "curl", "Defined curl": "defined curl", "Neat": "neat"}>>
+<<if !$savedHairStyles>>
+	<<set $savedHairStyles to {
+		Default: {hairtype:$hairtype, fringetype:$fringetype, hairposition:$hairposition}
+	}>>
+<</if>>
+<<set _hairTypeByName to {"Braid left": "braid left", "Braid right": "braid right", "Flat ponytail": "flat ponytail", "Loose": "loose", "Messy": "messy", "Pigtails": "pigtails", "Ponytail": "ponytail", "Short": "short", "Side tail left": "side tail left", "Side tail right": "side tail right", "Straight": "straight", "Swept left": "swept left", "Twin braids": "twin braids", "Twintails": "twintails", "Curl": "curl", "Defined curl": "defined curl", "Neat": "neat", "Curly pigtails": "curly pigtails", "Sailor buns": "sailor buns"}>>
 <<set _fringeTypeByName to {"Thin flaps": "thin flaps", "Wide flaps": "wide flaps", "Hime": "hime", "Loose": "loose", "Messy": "messy", "Overgrown": "overgrown", "Ringlets": "ringlets", "Split": "split", "Straight": "straight", "Swept left": "swept left", "Back": "back", "Parted": "parted", "Flat": "flat", "Quiff": "quiff", "Straight curl": "straight curl", "Ringlet curl": "ringlet curl", "Curtain": "curtain"}>>
+
+<div class="no-numberify">
+	<<link [[Natural|$passage]]>>
+		<<set $hairtype to "default">>
+		<<set $fringetype to "default">>
+	<</link>> |
+	<<link [[Randomize|$passage]]>>
+		<<set _hairType to Object.values(_hairTypeByName)>>
+		<<set $hairtype to _hairType[random(0,_hairType.length - 1)]>>
+		<<set _fringeType to Object.values(_fringeTypeByName)>>
+		<<set $fringetype to _fringeType[random(0,_fringeType.length - 1)]>>
+		<<set $hairposition to ["front","back"][random(0,1)]>>
+	<</link>> | (changes both sides and fringe)
+</div>
+<br>
+Your sides are in the "$hairtype" style, and positioned <<if $hairposition is "front">>in front of<<else>>behind<</if>> your body.
+<br>
 
 <<linkradiogroup "$hairtype" _hairTypeByName>>
 
@@ -1067,16 +1084,51 @@ Your sides are in the "$hairtype" style, and positioned <<if $hairposition is "f
 }`>>
 <br><br>
 Your fringe is in the "$fringetype" style.
-
+<br>
 /*<<if $fringetype is "default">>
  *	Changing your fringe from natural will set your sides to messy.
  *<</if>>
 */
-<br>
-
 <<linkradiogroup "$fringetype" _fringeTypeByName>>
-
 <br><br>
+
+<div class="no-numberify">
+	<<set _savedHairStylesKeys to Object.keys($savedHairStyles)>>
+	<<if _savedHairStylesKeys.length gt 0>>
+		<<listbox '_selectedSavedHairStyle'>>
+			<<optionsfrom _savedHairStylesKeys>>
+		<</listbox>> |
+		<<link [[Set to current|$passage]]>>
+			<<set $hairtype to $savedHairStyles[_selectedSavedHairStyle].hairtype>>
+			<<set $fringetype to $savedHairStyles[_selectedSavedHairStyle].fringetype>>
+			<<set $hairposition to $savedHairStyles[_selectedSavedHairStyle].hairposition>>
+		<</link>> |
+		<<link [[Update with current|$passage]]>>
+			<<set $savedHairStyles[_selectedSavedHairStyle].hairtype to $hairtype>>
+			<<set $savedHairStyles[_selectedSavedHairStyle].fringetype to $fringetype>>
+			<<set $savedHairStyles[_selectedSavedHairStyle].hairposition to $hairposition>>
+		<</link>> |
+		<<link [[Delete|$passage]]>>
+			<<if _selectedSavedHairStyle isnot "Default">>
+				<<run $outfit.forEach((o) => {
+					if(o.hairStyle === T.selectedSavedHairStyle){
+						o.hairStyle = undefined;
+					}
+				})>>
+				<<run delete $savedHairStyles[_selectedSavedHairStyle]>>
+			<</if>>
+		<</link>> |
+		<br><br>
+	<</if>>
+	<label>Name: <<textbox "_hairStyleName" "">></label>
+	<mouse class="tooltip linkBlue">(?)<span>Duplicate names will overwrite existing entries. 30 character max, only letters, numbers, dashes and underscores may be used</span></mouse>
+	<br>
+	<<link [["Save Current Hairstyle"|$passage]]>>
+		<<set _hairStyleName to _hairStyleName.replace(/[^a-zA-Z0-9_-]+/g,"").substring(0,30)>>
+		<<set $savedHairStyles[_hairStyleName] to {hairtype:$hairtype, fringetype:$fringetype, hairposition:$hairposition}>>
+	<</link>>
+</div>
+
 <</widget>>
 
 <<widget "mirrorMakeupPart">>
@@ -1202,10 +1254,10 @@ __Makeup__
 
 <<if !$simpleMirror>>
 	/* CONTACT LENSES */
-	<<if $makeup.owned.eyelenses.length == 0>>
+	<<if $makeup.owned.eyelenses.length == 0 and $makeup.owned.custom_eyelenses.length == 0>>
 		You don't own any contact lenses.<br>
 	<<else>>
-		Wear contact lenses:<br>
+		Wear contact lenses:<br> /* NON CUSTOMIZED ONES */
 		<<if $makeup.eyelenses != 0>>
 			<span class="no-numberify">
 			<<link "None">>
@@ -1222,6 +1274,34 @@ __Makeup__
 			<<run Engine.show()>>
 			<</link>></span>
 			<span @class="'eye-'+_colour.replace(/ /g, '-')"><span class="colour-sample bgcolour-eyes colour-eye"></span></span>
+			<<print " | ">>
+			<</capture>>
+		<</for>>
+		<br>
+				Custom contact lenses:<br> /* CUSTOMIZED ONES */
+		<<if $makeup.eyelenses != 0>>
+			<span class="no-numberify">
+			<<link "None">>
+			<<set $makeup.eyelenses = 0>>
+			<<run Engine.show()>>
+			<</link>></span>
+			<<print " | ">>
+		<</if>>
+		<<for _i = 0; _i < $makeup.owned.custom_eyelenses.length; _i++>>
+			<<run _colour = $makeup.owned.custom_eyelenses[_i]>>
+			<<for _e = 0; _e < $custom_eyecolours.length; _e++>>
+				<<if $custom_eyecolours[_e].variable == $makeup.owned.custom_eyelenses[_i]>>
+					<<set _background_colour to clone(V.custom_eyecolours[_e].canvasfilter.blend)>>
+				<</if>>
+			<</for>>
+			<<capture _colour _background_colour>>
+			<span class="capitalize no-numberify">
+			<<set _colour_name_with_space = window.colorNameTranslate(_colour, "spaced name")>>
+			<<link _colour_name_with_space>>
+			<<set $makeup.eyelenses = _colour>>
+			<<run Engine.show()>>
+			<</link>></span>
+			<span class="eye-custom"><span @style="'background:'+_background_colour" class="colour-sample"></span></span>
 			<<print " | ">>
 			<</capture>>
 		<</for>>
@@ -1318,6 +1398,8 @@ Preset: <<print $args[0]>>
 				<<set $makeup[_makeupNames[$_i]] to 0>>
 			<<elseif $makeup.owned[_makeupNames[$_i]].includes(_presetChosen[_makeupNames[$_i]])>>
 				<<set $makeup[_makeupNames[$_i]] to _presetChosen[_makeupNames[$_i]]>>
+			<<elseif $makeup.owned.custom_eyelenses.includes(_presetChosen[_makeupNames[$_i]])>>
+				<<set $makeup[_makeupNames[$_i]] to _presetChosen[_makeupNames[$_i]]>>
 			<</if>>
 		<<elseif _presetChosen[_makeupNames[$_i]] is 0 and _makeupNames[$_i] is "hairdye">>
 			/*Do Nothing*/
@@ -1347,7 +1429,7 @@ Preset: <<print $args[0]>>
 		<span class="green">Remove.</span>
 	<<else>>
 		<<if $args[0] is "eyelenses">>
-			<<if $makeup.owned.eyelenses.includes($args[1])>>
+			<<if $makeup.owned.eyelenses.includes($args[1]) or $makeup.owned.custom_eyelenses.includes($args[1])>>
 				<span class="green"><<print $args[1]>> (Owned).</span>
 			<<else>>
 				<span class="red"><<print $args[1]>> (Not Owned).</span>

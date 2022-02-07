@@ -18,6 +18,7 @@
 	<<set $NPCList[_n].lactation to 0>>
 	<<set $NPCList[_n].name to "Ivory Wraith">>
 	<<set $NPCList[_n].pronoun to "i">>
+	<<npcClothesType $NPCList[_n] "Wraith">>
 	<<generatePronouns $NPCList[_n]>>
 	<<set $NPCList[_n].traits to ["brooding", "watchful", "willful", "beautiful"]>>
 	<<saveNPC _n "wraith">>
@@ -35,9 +36,9 @@
 <!-- Recursive. With no argument, picks one at random. If option is disabled, runs as another argument. Can not infinite loop. -->
 <<widget "initWraith">>
 <<if $args[0]>>
-	<<set $wraith.gen to $args[0]>>
+	<<set $wraith.gen to $args.random()>>
 	<<set $pronoun to "i">>
-	<<switch $args[0]>>
+	<<switch $wraith.gen>>
 		<<case "man">>
 			<<set $molestationstart to 1>>
 			<<set $wraith.type to "man">>
@@ -75,7 +76,7 @@
 		<<case "slime">>
 			<<if $slimedisable is "f">>
 				<<set $struggle_start to 1>>
-				<<set $wraith.type to "slime">>	
+				<<set $wraith.type to "slime">>
 				<<struggle_init>>
 				<<set $struggle.creature to "pale slime">>
 				<<if $wraith.state is "haunt">>
@@ -257,7 +258,14 @@
 	<<if $wraith.nightmare is 2>>
 		<<set $wraith.nightmare to 0>>
 	<</if>>
-	<<unset $possessed>>
+	<<if $possessed>>
+		<<if $wraith.possessCount is undefined>>
+			<<set $wraith.possessCount to 1>>
+		<<else>>
+			<<set $wraith.possessCount++>>
+		<</if>>
+		<<unset $possessed>>
+	<</if>>
 	<<unset $nextPassage>>
 	<<unset $nextPassageIntended>>
 	<<unset $nextPassageCheck>>
@@ -357,7 +365,14 @@
 	<<unset $wraithCount>>
 	<<unset $wraithMax>>
 	<<unset $wraithHealth>>
-	<<unset $possessed>>
+	<<if $possessed>>
+		<<if $wraith.possessCount is undefined>>
+			<<set $wraith.possessCount to 1>>
+		<<else>>
+			<<set $wraith.possessCount++>>
+		<</if>>
+		<<unset $possessed>>
+	<</if>>
 	<<set $wraith.revealed to false>>
 	<<if $real_weather>>
 		<<set $weather to $real_weather>>
@@ -377,7 +392,7 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "speechWraith">><<silently>>
-<<if $possessed>>
+<<if $possessed and $args[0] isnot "lines">>
 	<<set _speakPool to ["speak","grunt","giggle","whisper","sneer","laugh","yell","spit","speak in an eerily calm tone"]>>
 	<<if $wolfgirl gte 4>>
 		<<run _speakPool.pushUnique(
@@ -460,7 +475,7 @@
 		<<if $templePromised is "Sydney">>
 			<<run _linePool.pushUnique("Calamity rings.")>>
 		<</if>>
-		<<if _sydneyStatus.includes("Pure")>>
+		<<if _sydneyStatus.includes("pure")>>
 			<<run _linePool.pushUnique(
 				"You'll understand once you fly.",
 				"Baptisms with water of the womb.",
@@ -485,7 +500,7 @@
 	<<if $npc.includes("Robin")>>
 		<<run _linePool.pushUnique(
 			"The wing-clipped are better smothered.",
-			"How far would go you? How far can you run?",
+			"How far would you go? How far can you run?",
 			"You've accepted your cage, songbird. Lie in it."
 		)>>
 		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 1>>
@@ -538,10 +553,10 @@
 			"One of thirteen. Indistinguishable.",
 			"Water down your mind, until you destroy all you love."
 		)>>
-	<</if>>
-	<<if $farm.aggro gte 60>>
-			<<run _linePool.pushUnique("The locusts will have a new feast.")>>
+		<<if $farm.aggro gte 60>>
+				<<run _linePool.pushUnique("The locusts will have a new feast.")>>
 		<</if>>
+	<</if>>
 	<<if $npc.includes("Black Wolf")>>
 		<<run _linePool.pushUnique(
 			"Wait your turn.",
@@ -570,42 +585,42 @@
 		<<set _npc0 to clone($npc[0])>>
 		<<run _linePool.pushUnique(
 			"_npc0 _npc0 _npc0 _npc0 _npc0 _npc0 _npc0 _npc0.",
-			"<<nnpc_Title _npc0>> <<nnpc_title _npc0>> <<nnpc_title _npc0>> <<nnpc_title _npc0>> <<nnpc_title _npc0>> <<nnpc_title _npc0>> <<nnpc_title _npc0>> <<nnpc_title _npc0>>."
+			"Hie away, <<nnpc_title _npc0>> mine, hie away."
 		)>>
 	<</if>>
 	<<if $npc[1]>>
 		<<set _npc1 to clone($npc[1])>>
 		<<run _linePool.pushUnique(
 			"_npc1 _npc1 _npc1 _npc1 _npc1 _npc1 _npc1 _npc1.",
-			"<<nnpc_Title _npc1>> <<nnpc_title _npc1>> <<nnpc_title _npc1>> <<nnpc_title _npc1>> <<nnpc_title _npc1>> <<nnpc_title _npc1>> <<nnpc_title _npc1>> <<nnpc_title _npc1>>."
+			"Hie away, <<nnpc_title _npc1>> mine, hie away."
 		)>>
 	<</if>>
 	<<if $npc[2]>>
 		<<set _npc2 to clone($npc[2])>>
 		<<run _linePool.pushUnique(
 			"_npc2 _npc2 _npc2 _npc2 _npc2 _npc2 _npc2 _npc2.",
-			"<<nnpc_Title _npc2>> <<nnpc_title _npc2>> <<nnpc_title _npc2>> <<nnpc_title _npc2>> <<nnpc_title _npc2>> <<nnpc_title _npc2>> <<nnpc_title _npc2>> <<nnpc_title _npc2>>."
+			"Hie away, <<nnpc_title _npc2>> mine, hie away."
 		)>>
 	<</if>>
 	<<if $npc[3]>>
 		<<set _npc3 to clone($npc[3])>>
 		<<run _linePool.pushUnique(
 			"_npc3 _npc3 _npc3 _npc3 _npc3 _npc3 _npc3 _npc3.",
-			"<<nnpc_Title _npc3>> <<nnpc_title _npc3>> <<nnpc_title _npc3>> <<nnpc_title _npc3>> <<nnpc_title _npc3>> <<nnpc_title _npc3>> <<nnpc_title _npc3>> <<nnpc_title _npc3>>."
+			"Hie away, <<nnpc_title _npc3>> mine, hie away."
 		)>>
 	<</if>>
 	<<if $npc[4]>>
 		<<set _npc4 to clone($npc[4])>>
 		<<run _linePool.pushUnique(
 			"_npc4 _npc4 _npc4 _npc4 _npc4 _npc4 _npc4 _npc4.",
-			"<<nnpc_Title _npc4>> <<nnpc_title _npc4>> <<nnpc_title _npc4>> <<nnpc_title _npc4>> <<nnpc_title _npc4>> <<nnpc_title _npc4>> <<nnpc_title _npc4>> <<nnpc_title _npc4>>."
+			"Hie away, <<nnpc_title _npc4>> mine, hie away."
 		)>>
 	<</if>>
 	<<if $npc[5]>>
 		<<set _npc5 to clone($npc[5])>>
 		<<run _linePool.pushUnique(
 			"_npc5 _npc5 _npc5 _npc5 _npc5 _npc5 _npc5 _npc5.",
-			"<<nnpc_Title _npc5>> <<nnpc_title _npc5>> <<nnpc_title _npc5>> <<nnpc_title _npc5>> <<nnpc_title _npc5>> <<nnpc_title _npc5>> <<nnpc_title _npc5>> <<nnpc_title _npc5>>."
+			"Hie away, <<nnpc_title _npc5>> mine, hie away."
 		)>>
 	<</if>>
 
@@ -617,9 +632,9 @@
 	<<else>>
 		<<set _speechWraith to "You _speak. \"_line1\"">>
 	<</if>>
-<<elseif $wraith.state is "">>
+<<elseif $wraith.state is "" and $args[0] isnot "lines">>
 	<<set _speechWraith to ["The <<person>> holds <<his>> necklace tightly.", "The <<person>> whispers incoherently.","The <<person>> giggles quietly.","The <<person>> speaks in a language you don't understand.","The <<person>> opens <<his>> mouth, and your ears begin ringing.","The <<person>> says something, but you immediately forget what it was.","The <<person>> doesn't speak."].pluck()>>
-<<elseif $wraith.mimic isnot "" and $wraith.revealed is false>>
+<<elseif $wraith.mimic isnot "" and $wraith.revealed is false and $args[0] isnot "lines">>
 	<<switch $wraith.mimic>>
 		<<case "Sydney">>
 			<<set _speechWraith to either(
@@ -652,7 +667,7 @@
 			)>>
 		<<default>>
 	<</switch>>
-<<elseif $wraith.state isnot "haunt" and $rng lte 8>>
+<<elseif $wraith.state isnot "haunt" and $rng lte 8 and $args[0] isnot "lines">>
 	<<set _speechWraith to "<<He>> holds <<his>> necklace close.">>
 <<else>>
 	<<set _speaks to ["snarls","growls","cackles","purrs","hisses","emanates","speaks","grunts","giggles","whispers","speaks in an eerily calm tone"].pluck()>>
@@ -709,7 +724,7 @@
 		<<run _linePool.pushUnique(
 			"Just once, can't they stay?",
 			"I'm sorry that you put your trust in me."
-		)>>	
+		)>>
 	<</if>>
 	<<if $templePromised is "Sydney">>
 		<<run _linePool.pushUnique(
@@ -812,7 +827,7 @@
 		<<chastityBreakWraith>>
 		<<effectstentacles>><<speechWraith>><<tentacles>>
 		<<statetentacles>>
-		
+
 		<br><br>
 		<<actionstentacles>>
 	<<case "slimetentacles">>
@@ -820,7 +835,7 @@
 		<<swarmeffects>><<effectstentacles>><<speechWraith>>
 		<<swarm>><<tentacles>>
 		<<statetentacles>>
-		
+
 		<br><br>
 		<<actionsOmni>>
 	<<case "slime">>
@@ -831,36 +846,56 @@
 		<<rescueWraith>>
 		<<stateabomination>>
 		<br><br>
-		<<actionsabomination>>	
+		<<actionsabomination>>
 <</switch>>
 <</widget>>
 
 <<widget "chastityBreakWraith">>
-<<if $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.genitals.type.includes("chastity")>>
-	Several tentacles worm their way around your legs.
-	They slither into your $worn.genitals.name, seemingly being puppeteered by the pale figure. It closes its fist, and the tentacles pull with an impossible force,
-	<<if $worn.genitals.name.includes("gold")>>
-		causing you immense pain as they struggle against the shining metal. You hear sizzling, and it seems to be harming the tentacles. <<gpain>><<pain 6>>
-		<br><br>
-		With one final pull, the metal fractures and splinters, sending shards of gold clattering to the ground as your $worn.genitals.name yields and shatters in a bright flash of light. Both the figure and the tentacles seem to be considerably weaker after the effort.
-		<<if $abomination is 1>>
-			<<set $enemyhealth -= 300>><<set $enemyarousal += 300>>
+<<if $possessed>>
+	<<if $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.genitals.type.includes("chastity")>>
+		Several tentacles worm their way around your legs.
+		They slither into your $worn.genitals.name, and your own hand seems to guide them. It closes your fist, and the tentacles pull with an impossible force,
+		<<if $worn.genitals.name.includes("gold")>>
+			causing you immense pain as they struggle against the shining metal. You hear sizzling, and it seems to be harming the tentacles. <<gpain>><<pain 6>>
+			<br><br>
+			With one final pull, the metal fractures and splinters, sending shards of gold clattering to the ground as your $worn.genitals.name yields and shatters in a bright flash of light. Both the figure and the tentacles seem to be considerably weaker after the effort.
+			<<if !$wraith.will>>
+				<<set $wraith.will to random(1300,1700)>>
+			<</if>>
+			<<set $wraith.will -= 100>>
+		<<else>>
+			ripping your $worn.genitals.name to shreds.
 		<</if>>
-		<<set _tentDefeated to 0>>
-		<<for _i to 0; _i lt $tentacles.active; _i++>>
-			<<if _tentDefeated gte 4>>
-				<<break>>
-			<</if>>
-			<<if $tentacles[_i].tentaclehealth gt 0>>
-				<<set $tentacles[_i].tentaclehealth -= 20>>
-				<<set _tentDefeated ++>>
-			<</if>>
-		<</for>>
-	<<else>>
-		ripping your $worn.genitals.name to shreds.
+		<<set $worn.genitals.type.push("broken")>>
+		<<genitalsruined>>
 	<</if>>
-	<<set $worn.genitals.type.push("broken")>>
-	<<genitalsruined>>
+<<else>>
+	<<if $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.genitals.type.includes("chastity")>>
+		Several tentacles worm their way around your legs.
+		They slither into your $worn.genitals.name, seemingly being puppeteered by the pale figure. It closes its fist, and the tentacles pull with an impossible force,
+		<<if $worn.genitals.name.includes("gold")>>
+			causing you immense pain as they struggle against the shining metal. You hear sizzling, and it seems to be harming the tentacles. <<gpain>><<pain 6>>
+			<br><br>
+			With one final pull, the metal fractures and splinters, sending shards of gold clattering to the ground as your $worn.genitals.name yields and shatters in a bright flash of light. Both the figure and the tentacles seem to be considerably weaker after the effort.
+			<<if $abomination is 1>>
+				<<set $enemyhealth -= 300>><<set $enemyarousal += 300>>
+			<</if>>
+			<<set _tentDefeated to 0>>
+			<<for _i to 0; _i lt $tentacles.active; _i++>>
+				<<if _tentDefeated gte 4>>
+					<<break>>
+				<</if>>
+				<<if $tentacles[_i].tentaclehealth gt 0>>
+					<<set $tentacles[_i].tentaclehealth -= 20>>
+					<<set _tentDefeated ++>>
+				<</if>>
+			<</for>>
+		<<else>>
+			ripping your $worn.genitals.name to shreds.
+		<</if>>
+		<<set $worn.genitals.type.push("broken")>>
+		<<genitalsruined>>
+	<</if>>
 <</if>>
 <</widget>>
 
@@ -912,7 +947,7 @@
 		<<case "tentacles" "slimetentacles">>
 			<<He>> pulls back <<his>> hand, and <<his>> eyes flash <<wraithEyes>>. The tentacles retreat from you, back to <<his>> side.<<if $wraith.gen is "slimetentacles">> The slimes quickly follow.<</if>>
 		<<case "arms">>
-			<<set $enemyno to 1>>	
+			<<set $enemyno to 1>>
 			<<He>> glows a bright white, and begins laughing.<<set $NPCList[0].intro to 0>> <<He>> begins to make strange gestures with <<his>> extra arms.
 			<<set _ejacRepeatFix to true>>
 		<<default>>
@@ -925,19 +960,30 @@
 <</widget>>
 
 <<widget "kissWraith">>
-	<<if $wraith.type is "tentacles" or $wraith.gen is "abomination">>
-		<<He>> approaches you, pushing some tentacles aside.<<if $tentacleMouth>> <<He>> <span class="lblue">yanks the $tentacleMouth <<if $mouthstate is "tentacle" or $mouthstate is "tentacledeep">>out of<<else>>away from<</if>> your mouth.</span><</if>>
-	<</if>>
-	<<He>> kisses you, and your ears immediately begin to ring. Your fingers and toes go cold, and your face becomes fiery hot. Until it, too, grows cold. You feel as though some part of you was drained away.
-	<<takeKissVirginity "Ivory Wraith" "rape">>
-	<<arousal 2000>><<gggarousal>>
-	<<trauma 36>><<gggtrauma>><<purity -50>><<lllpurity>><<physique_loss 16>><<llphysique>><<pain -15>><<llpain>>
-	<<if $arousal gte $arousalmax>>
-		<br><br>
-		<<orgasm>>
-		Your climax is torturous and painful as you writhe against <<him>>. <<His>> assault only grows more intense. You feel weak.
-		<<trauma 36>><<gggtrauma>><<purity -25>><<llpurity>><<physique_loss 8>><<lphysique>><<awareness -20>><<lllawareness>>
-	<</if>>
+    <<if $args[0] is "stress" and $stress gte $stressmax>>
+        <<set $_wraithStress to true>>
+    <</if>>
+    <<if $wraith.type is "tentacles" or $wraith.gen is "abomination">>
+        <<He>> approaches you, pushing some tentacles aside.
+        <<if $tentacleMouth>>
+            <<set $_outof to (["tentacle", "tentacledeep"].includes($mouthstate) ? "out of" : "away from")>>
+            <<He>> <span class="lblue">yanks the $tentacleMouth $_outof your mouth.</span>
+        <</if>>
+    <</if>>
+    <<He>> kisses you, and your ears immediately begin to ring. Your fingers and toes go cold, and your face becomes fiery hot.
+	Until it, too, grows cold. You feel as though some part of you was drained away.
+    <<takeKissVirginity "Ivory Wraith" "rape">>
+    <<arousal 2000>><<gggarousal>>
+    <<trauma 36>><<gggtrauma>><<purity -50>><<lllpurity>><<physique_loss 16>><<llphysique>><<pain -15>><<llpain>>
+    <<if $arousal gte $arousalmax>>
+        <br><br>
+        <<orgasm>>
+        Your climax is torturous and painful as you writhe against <<him>>. <<His>> assault only grows more intense. You feel weak.
+        <<trauma 36>><<gggtrauma>><<purity -25>><<llpurity>><<physique_loss 8>><<lphysique>><<awareness -20>><<lllawareness>>
+        <<if $_wraithStress>>
+            <<set $stress to $stressmax>>
+        <</if>>
+    <</if>>
 <</widget>>
 
 <<widget "wHunt">>
@@ -998,7 +1044,7 @@
 		<<else>>
 			You begin to see strange shapes in the air around you. A chill runs up your spine. <span class="red">Something is still hunting you.</span>
 			<<set $edenforesthunt to 0>>
-			<<set $blackwolfhunt to 0>>	
+			<<set $blackwolfhunt to 0>>
 		<</if>>
 		<<set $foresthunt to $wraith.hunt>>
 		<br><br>
@@ -1098,11 +1144,11 @@
 					<<else>>
 					<span class="red">You are being hunted. You feel a pressure building around you.</span> <<stress 6>><<gstress>><<trauma 6>><<gtrauma>>
 					<br><br>
-					<</if>>	
+					<</if>>
 				<</if>>
 			<</if>>
 		<</if>>
-	<<elseif $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 5>>
+	<<elseif $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 5 and !$possessed>>
 		<<wTimerProgress>>
 	<</if>>
 <</if>>
@@ -1156,6 +1202,9 @@
 		<br>
 	<<case "moor">>
 		<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<br>
+	<<case "farm_assault">>
+		<<link [[Next|Farm Assault]]>><<endevent>><</link>>
 		<br>
 	<<default>>
 		<span class="red">Something went wrong. There's nowhere to place you due to a failure of the Wraith's code. Please inform PurityGuy.</span>
@@ -1282,7 +1331,7 @@
 				<br><br>
 				The rumbling becomes heavier. A drainage grate much closer to you erupts in water. You look down, and realise you're standing right on top of a grate.
 				<br><br>
-				<<if ($danceskill + $rng) gte 800>>
+				<<if (currentSkillValue('danceskill') + $rng) gte 800>>
 					Thanks to your agility, you <span class="green"> reflexively pivot and throw yourself out of the way</span> as another column of water shoots up.
 				<<else>>
 					You try to throw yourself out of the way, but <span class="red">you're too slow.</span> You're soaked by a column of water from below.
@@ -1434,8 +1483,8 @@ A beautiful pale figure floats just above the ground, wearing translucent white 
 			Its necklace shimmers blue, despite the red moonlight.
 			<br><br>
 			"<span class="wraith">Don't resist. I will make us beautiful.</span>"
-		<</if>>		
-	<</if>>	
+		<</if>>
+	<</if>>
 <<elseif $location is "lake_ruin" or $bus is "lakedepths" or $bus is "lakeshallows">>
 	<<if $bus is "lakeshallows" or $bus is "lakedepths">>
 		<<set $location to "lake_ruin">>
@@ -1474,7 +1523,7 @@ A beautiful pale figure floats just above the ground, wearing translucent white 
 			It places a hand over its ivory necklace, as if to guard it from you.
 			<br><br>
 			"<span class="wraith">Trespasser. Do you come to steal from the dead?</span>"
-		<</if>>	
+		<</if>>
 	<</if>>
 <<else>>
 	You suddenly feel like you're walking through waist-high water. Your arms<<if $exposed lte 0>> and clothes<</if>> grow heavy, and your feet don't seem to hit the ground anymore.
@@ -1518,4 +1567,29 @@ A beautiful pale figure floats just above the ground, wearing translucent white 
 	<<set $hallucinogen += ($args[0] * 3)>>
 	<<set $arousal += ($args[0] * 3)>>
 <</if>>
+<</widget>>
+
+<<widget "wraithPossess">>
+	<<set $possessed to true>>
+	<<set $controlSaved to $control>><<set $control to 0>>
+
+	<<if $args[0]>>
+		<<set $wraith.exit to $args[0]>>
+	<</if>>
+<</widget>>
+
+<<widget "wraithExorcise">>
+	<<unset $possessed>>
+
+	<<if $args[0]>>
+		<<if $wraith.possessCount is undefined>>
+			<<set $wraith.possessCount to 1>>
+		<<else>>
+			<<set $wraith.possessCount++>>
+		<</if>>
+	<</if>>
+
+	<<if $args[1]>>
+		<<set $control to $controlSaved>><<unset $control>>
+	<</if>>
 <</widget>>

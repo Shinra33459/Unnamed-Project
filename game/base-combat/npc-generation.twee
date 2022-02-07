@@ -9,8 +9,7 @@
 
 <<set _n to $args[0]-1>>
 <!-- Checks if endevent was properly used after the last event -->
-<<checkEventNPC _n>>
-<<set _status to $args[1]>> /* "t" for teen or "a" for adult */
+<<checkEve<<set _stat<<<set _status to $args[1]>> /* "t" for teen, "a" for adult, or "r" for random */
 <<set _pronoun to $args[2]>>
 <<set _gender to $args[3]>>
 <<set _lvl to $args[4]>>
@@ -48,7 +47,7 @@
 
 <!-- TODO: remove either .teen or .adult; all adults are not teens, and all teens are not adults. -->
 <!-- Having two separate variables means having twice as much code to accomplish the same thing, and STILL possibly introducing bugs if you do it wrong. -->
-<<if _status is "t">>
+<<if _status is "t" or (_status is "r" and random(0,1))>>
 	<<set $NPCList[_n].teen to 1>>
 	<<set $NPCList[_n].adult to 0>>
 <<else>>
@@ -98,6 +97,11 @@
 		<<else>>
 			<<set $NPCList[_slot].role to _role>>
 		<</if>>
+		<<if _role.includes("guard")>>
+			<<npcClothesType $NPCList[_slot] "security">>
+		<<elseif _role.includes("inmate")>>
+			<<npcClothesType $NPCList[_slot] "prison">>
+		<</if>>
 	<</if>>
 
 	<<set $NPCList[_slot].fullDescription to $NPCList[_slot].description + " ">>
@@ -107,6 +111,16 @@
 		<<set $NPCList[_slot].fullDescription += ($NPCList[_slot].teen is 1 ? "boy" : "man")>>
 	<<elseif $NPCList[_slot].pronoun is "f">>
 		<<set $NPCList[_slot].fullDescription += ($NPCList[_slot].teen is 1 ? "girl" : "woman")>>
+	<</if>>
+<</widget>>
+
+<<widget "undressNPC">>
+	<<set $_npc to $NPCList[$args[0]-1]>>
+	<<if $_npc.penis is "clothed">>
+		<<set $_npc.penis to 0>>
+	<</if>>
+	<<if $_npc.vagina is "clothed">>
+		<<set $_npc.vagina to 0>>
 	<</if>>
 <</widget>>
 
@@ -327,26 +341,32 @@
 <</widget>>
 
 <<widget "generates1">>
+<<set _npcClothesPreset to "school">>
 <<generatey1>>
 <</widget>>
 
 <<widget "generates2">>
+<<set _npcClothesPreset to "school">>
 <<generatey2>>
 <</widget>>
 
 <<widget "generates3">>
+<<set _npcClothesPreset to "school">>
 <<generatey3>>
 <</widget>>
 
 <<widget "generates4">>
+<<set _npcClothesPreset to "school">>
 <<generatey4>>
 <</widget>>
 
 <<widget "generates5">>
+<<set _npcClothesPreset to "school">>
 <<generatey5>>
 <</widget>>
 
 <<widget "generates6">>
+<<set _npcClothesPreset to "school">>
 <<generatey6>>
 <</widget>>
 
@@ -542,36 +562,6 @@
 <<generateNPC 6 t f>>
 <</widget>>
 
-<<widget "generateChastity1">>
-<<set _npcChastity to 1>>
-<<generateNPC 1>>
-<</widget>>
-
-<<widget "generateChastity2">>
-<<set _npcChastity to 1>>
-<<generateNPC 2>>
-<</widget>>
-
-<<widget "generateChastity3">>
-<<set _npcChastity to 1>>
-<<generateNPC 3>>
-<</widget>>
-
-<<widget "generateChastity4">>
-<<set _npcChastity to 1>>
-<<generateNPC 4>>
-<</widget>>
-
-<<widget "generateChastity5">>
-<<set _npcChastity to 1>>
-<<generateNPC 5>>
-<</widget>>
-
-<<widget "generateChastity6">>
-<<set _npcChastity to 1>>
-<<generateNPC 6>>
-<</widget>>
-
 <<widget "generatePlant1">>
 <<set _npcPlant to 1>><<set _strapIgnore to 1>>
 <<generateNPC 1 t>>
@@ -602,14 +592,51 @@
 <<generateNPC 6 t>>
 <</widget>>
 
-<<widget "generateChastity">>
+<<widget "generateTemple">>
 	<<set _npcChastity to 1>>
+	<<set _npcClothesPreset to "temple">>
+	<<generateNPC $args[0]>>
+<</widget>>
+
+<<widget "generateyTemple">>
+	<<set _npcChastity to 1>>
+	<<set _npcClothesPreset to "temple">>
+	<<generateNPC $args[0] t>>
+<</widget>>
+
+<<widget "generateCultist">>
+	<<set _npcClothesPreset to "templeBlack">>
+	<<generateNPC $args[0]>>
+<</widget>>
+
+<<widget "generatePolice">>
+	<<set _npcClothesPreset to "police">>
+	<<generateNPC $args[0]>>
+<</widget>>
+
+<<widget "generateSecurity">>
+	<<set _npcClothesPreset to "security">>
+	<<generateNPC $args[0]>>
+<</widget>>
+
+<<widget "generateSailor">>
+	<<set _npcClothesPreset to "sailor">>
+	<<generateNPC $args[0]>>
+<</widget>>
+
+<<widget "generateDoctor">>
+	<<set _npcClothesPreset to "hospital">>
 	<<generateNPC $args[0]>>
 <</widget>>
 
 <<widget "generatePlant">>
 	<<set _npcPlant to 1>><<set _strapIgnore to 1>>
 	<<generateNPC $args[0] "t">>
+<</widget>>
+
+<<widget "generateDemon">>
+	<<generateNPC $args[0] a f h 20>>
+	<<undressNPC $args[0]>>
 <</widget>>
 
 <<widget "npcattribute">>
@@ -627,11 +654,10 @@
 <<set _lvl to $args[2]>>
 
 <!-- This sets genitals. -->
-<!-- v2.6 adding herm demon as gender "h", must be directly called NG -->
 <<set $NPCList[_n].vagina to "none">>
 <<set $NPCList[_n].penis to "none">>
 
-<<if _gender is "m" or _gender is "f" or _gender is "h">>
+<<if ["m", "f", "h"].includes(_gender)>>
 	<<set $NPCList[_n].gender to _gender>>
 	<<if _gender is "m">>
 		<<set $NPCList[_n].penis to "clothed">>
@@ -642,38 +668,32 @@
 		<<set $NPCList[_n].penis to "clothed">>
 	<</if>>
 <<else>>
-	<<set $rng to random(0,99)>>
+	<<set $rng to random(1,100)>>
 	<<if $NPCList[_n].pronoun is "m">>
-		<<if $rng lte $mregularchance>>
+		<<if $rng lte (100-$cbchance) and $rng gte $mregularchance>>
 			<<set $NPCList[_n].penis to "clothed">>
-			<<set $NPCList[_n].gender to "m">>
-		<<elseif $rng gte (100 - $cbchance)>>
+			<<set $NPCList[_n].vagina to "clothed">>
+			<<set $NPCList[_n].gender to "h">>
+		<<elseif $rng gte (100-$cbchance)>>
 			<<set $NPCList[_n].vagina to "clothed">>
 			<<set $NPCList[_n].gender to "f">>
 		<<else>>
 			<<set $NPCList[_n].penis to "clothed">>
-			<<set $NPCList[_n].vagina to "clothed">>
-			<<set $NPCList[_n].gender to "h">>
+			<<set $NPCList[_n].gender to "m">>
 		<</if>>
 	<<elseif $NPCList[_n].pronoun is "f">>
-		<<if $rng lte $fregularchance>>
+		<<if $rng lte (100-$dgchance) and $rng gte $fregularchance>>
 			<<set $NPCList[_n].vagina to "clothed">>
-			<<set $NPCList[_n].gender to "f">>
-		<<elseif $rng gte (100 - $dgchance)>>
+			<<set $NPCList[_n].penis to "clothed">>
+			<<set $NPCList[_n].gender to "h">>
+		<<elseif $rng gte (100-$dgchance)>>
 			<<set $NPCList[_n].penis to "clothed">>
 			<<set $NPCList[_n].gender to "m">>
 		<<else>>
-			<<set $NPCList[_n].penis to "clothed">>
 			<<set $NPCList[_n].vagina to "clothed">>
-			<<set $NPCList[_n].gender to "h">>
+			<<set $NPCList[_n].gender to "f">>
 		<</if>>
 	<</if>>
-<</if>>
-
-/* _lvl 20 is herm demon. demons don't wear clothes. */
-<<if _lvl is 20>>
-	<<set $NPCList[_n].vagina to 0>>
-	<<set $NPCList[_n].penis to 0>>
 <</if>>
 
 <<set $NPCList[_n].chastity to {penis:"", vagina:"", anus:""}>>
@@ -695,7 +715,15 @@
 	<</if>>
 <</if>>
 
-<<set $NPCList[_n].chest to 0>>
+<<generateNPCClothes $NPCList[_n]>>
+
+<<if $NPCList[_n].penis isnot "none">>
+	<<set $NPCList[_n].penis to ($NPCList[_n].clothes.lower.name is "naked" ? 0 : "clothed")>>
+<</if>>
+<<if $NPCList[_n].vagina isnot "none">>
+	<<set $NPCList[_n].vagina to ($NPCList[_n].clothes.lower.name is "naked" ? 0 : "clothed")>>
+<</if>>
+<<set $NPCList[_n].chest to ($NPCList[_n].clothes.upper.name is "naked" ? 0 : "clothed")>>
 
 <<set $npcskinselector to ($whitechance + $blackchance)>>
 <<if $npcskinselector is 0>>
@@ -927,9 +955,13 @@
 		<<set $NPCList[_n].fullDescription += "girl">>
 	<</if>>
 	<<unset _npcPlant>>
+	<<npcClothesType $NPCList[_n] "naked">>
 <<else>>
 	<<set $NPCList[_n].type to "human">>
 <</if>>
+
+<<generateNPCvirginity $NPCList[_n]>>
+
 <</widget>>
 
 <<widget "npcstrapon">>
@@ -943,8 +975,8 @@
 <</switch>>
 
 <<set $NPCList[_xx].penis to "clothed">>
-<<set $NPCList[_xx].vagina to "clothed">>
-<<set $NPCList[_xx].gender to "h">>
+<<set $NPCList[_xx].vagina to "none">>
+<<set $NPCList[_xx].gender to "m">>
 
 <<switch random(1, 4)>>
 <<case 1 2 3>>
@@ -980,6 +1012,290 @@
 <</if>>
 <<if random(1, 10) is 10>>
 	<<set $NPCList[_n].traits.push("watchful")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("needs glasses")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("scrappy")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("skulduggerous")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("promiscuous")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("exhibitionist")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("deviant")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("willful")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("strong")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("beautiful")>>
+<</if>>
+*/
+<</widget>>
+
+<<widget "generate_npc_skills">>
+<<set $NPCList[_n].skills to {}>>
+<<set $NPCList[_n].skills.security to random(1, 1000)>>
+<<set $NPCList[_n].skills.athletics to random(1, 1000)>>
+<</widget>>
+
+<!-- Argument 0 is NPC object, Argument 1 is clothes name or type. -->
+<<widget "npcClothesType">>
+<<if $args[0]>>
+	<<run npcClothes($args[0], $args[1])>>
+<</if>>
+<</widget>>
+
+<<widget "npcClothesName">>
+<<if $args[0] and $args[1]>>
+	<<run npcSpecifiedClothes($args[0], $args[1])>>
+<</if>>
+<</widget>>
+
+<<widget "generateNPCClothes">>
+<<if $args[0]>>
+	<<set $_npc to $args[0]>>
+	<<if _npcClothesPreset>>
+		<!-- For clothing set in generation widgets -->
+		<<if _npcClothesPreset is "school" and ($location is "pool" or $location is "beach" and $season isnot "winter")>>
+			<<set _npcClothesPreset to "schoolSwim">>
+		<</if>>
+		<<set _npcClothingOptions to [_npcClothesPreset]>>
+		<<unset _npcClothesPreset>>
+	<<elseif $_npc.monster is 1>>
+		<<set _npcClothingOptions to ["naked"]>>
+	<<elseif $location is "prison">>
+		<<set _npcClothingOptions to ["prison"]>>
+	<<else>>
+		<!-- Determine possible NPC clothes types -->
+		<<set _npcClothingOptions to ["default"]>>
+		<<set $_schoolType to ($_npc.teen is 1 ? "school" : "teacher")>>
+		<<switch $location>>
+			<<case "brothel" "hospital" "temple" "spa">>
+				<<set _npcClothingOptions.push($location, $location, "town", "town", "formal")>>
+			<<case "moor" "farm" "alex_farm">>
+				<<set _npcClothingOptions.push("town", "wilds", "wilds", "wilds", "riding")>>
+			<<case "forest" "lake">>
+				<<set _npcClothingOptions.push("town", "wilds", "wilds", "forest")>>
+			<<case "beach">>
+				<<if $season isnot "winter">>
+					<<set _npcClothingOptions.push("town", "beach", "beach", "beach", "beach", "warm", "warm")>>
+					<<if $_npc.teen is 1>>
+						<<set _npcClothingOptions.push("schoolSwim", "schoolSwim")>>
+					<</if>>
+				<<else>>
+					<<set _npcClothingOptions.push("town", "cold", "cold", "cold", "cold")>>
+				<</if>>
+			<<case "sea">>
+				<<set _npcClothingOptions.push("town", "sailor", "sailor")>>
+			<<case "docks">>
+				<<set _npcClothingOptions.push("town", "docker", "docker")>>
+			<<case "school">>
+				<<set _npcClothingOptions to [$_schoolType]>>
+			<<case "pool">>
+				<<set _npcClothingOptions to ["schoolSwim"]>>
+			<<case "dance_studio">>
+				<<set _npcClothingOptions to ["dance_studio"]>>
+			<<default>>
+				<<set _npcClothingOptions.push("town", "town", "town")>>
+				<<if $outside is 1>>
+					<<switch $weather>>
+						<<case "clear">>
+							<<if $season isnot "winter">>
+								<<set _npcClothingOptions.push("warm", "warm")>>
+							<</if>>
+						<<case "rain">>
+							<<set _npcClothingOptions.push("cold", "wilds", "rain", "rain", "rain")>>
+						<<case "snow">>
+							<<set _npcClothingOptions.push("cold", "cold", "cold", "cold")>>
+					<</switch>>
+					<<if $season is "winter">>
+						<<set _npcClothingOptions.push("cold", "cold", "cold", "cold")>>
+					<</if>>
+				<</if>>
+				<<if $season is "summer">>
+					<<set _npcClothingOptions.push("warm", "warm", "warm", "warm")>>
+				<<elseif $hour gte 19 or $hour lte 6>>
+					<<set _npcClothingOptions.push("cold", "cold", "formal", "formal", "formalRare")>>
+				<</if>>
+				<<if $season isnot "winter">>
+					<<if $hour gt 9 and $hour lt 16>>
+						<<set _npcClothingOptions.push("warm", "warm")>>
+					<</if>>
+				<</if>>
+		<</switch>>
+		<!-- For named NPCs. Remove "naked" outfit from outfits array. Find all outfit names in setup.
+		Copy their types into an array. Compare this array with available options.
+		Delete any possible options that the named NPC does not have a type of. -->
+		<<if $_npc.outfits>>
+			<<set $_npcOutfits to clone($_npc.outfits)>>
+			<<set $_npcOutfits to $_npcOutfits.filter(x => !x.includes("naked"))>>
+			<<set _npcOutfitsTypes to []>>
+			<<for $_key, $_outfit range $_npcOutfits>>
+				<<set _npcOutfitsTypes.push(setup.npcClothesSets.find(set => set.name === $_outfit).type)>>
+			<</for>>
+			<<for $_key, $_outfitType range _npcClothingOptions>>
+				<<if !_npcOutfitsTypes.includes($_outfitType)>>
+					<<run _npcClothingOptions.delete($_outfitType)>>
+				<</if>>
+			<</for>>
+		<</if>>
+		<<if _npcClothingOptions.length gt 1>>
+			<<run _npcClothingOptions.delete("default")>>
+		<</if>>
+	<</if>>
+	<<set _npcClothes to _npcClothingOptions.random()>>
+	<<run npcClothes($_npc, _npcClothes)>>
+<</if>>
+<</widget>>
+
+
+<<widget "generateNPCvirginity">>
+
+	<<set $_npc to $args[0]>>
+
+	<<set $_npc.virginity to {
+		"anal": true,
+		"oral": true,
+		"penile": true,
+		"vaginal": true,
+		"handholding": false,
+		"temple": false,
+		"kiss": false
+	}>>
+
+	<<set $_virginChance to ($_npc.adult is 1 ? $npcVirginityChanceAdult : $npcVirginityChance)>>
+
+	<<set $_npc.virginity.penile to  (random(1,100) lte $_virginChance)>>
+	<<set $_npc.virginity.vaginal to (random(1,100) lte $_virginChance)>>
+
+	<!-- Can't lose virginity if you don't have the part. -->
+	<!-- Also, futureproofing for strapons; this runs before strapons are assigned, so they should not generate with both penile virginity AND a strapon. -->
+	<<if $_npc.penis is "none">>
+		<<set $_npc.virginity.penile to  false>>
+	<</if>>
+	<<if $_npc.vagina is "none">>
+		<<set $_npc.virginity.vaginal to false>>
+	<</if>>
+
+	<!-- this is quadratic, but basically it approaches 100% faster than regular virgin chance. -->
+	<<set $_uncommonVirginChance to $_virginChance * (2 - ($_virginChance/100))>>
+
+	<<if $analdisable is "f">>
+		<<set $_npc.virginity.anal to (random(1,100) lte $_uncommonVirginChance)>>
+	<</if>>
+
+	<<set $_npc.virginity.oral to (random(1,100) lte $_uncommonVirginChance)>>
+st[_n].traits.push("watchful")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("needs glasses")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("scrappy")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("skulduggerous")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("promiscuous")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("exhibitionist")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("deviant")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("willful")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("strong")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("beautiful")>>
+<</if>>
+*/
+<</widget>>
+
+<<widget "generate_npc_skills">>
+<<set $NPCList[_n].skills to {}>>
+<<set $NPCList[_n].skills.security to random(1, 1000)>>
+<<set $NPCList[_n].skills.athletics to random(1, 1000)>>
+$NPCList[_n].traits.push("skulduggerous")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("promiscuous")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("exhibitionist")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("deviant")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("willful")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("strong")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("beautiful")>>
+<</if>>
+*/
+<</widget>>
+
+<<widget "generate_npc_skills">>
+<<set $NPCList[_n].skills to {}>>
+<<set $NPCList[_n].skills.security to random(1, 1000)>>
+<<set $NPCList[_n].skills.athletics to random(1, 1000)>>
+ts.push("watchful")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("needs glasses")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("scrappy")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("skulduggerous")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("promiscuous")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("exhibitionist")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("deviant")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("willful")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("strong")>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<set $NPCList[_n].traits.push("beautiful")>>
+<</if>>
+*/
+<</widget>>
+
+<<widget "generate_npc_skills">>
+<<set $NPCList[_n].skills to {}>>
+<<set $NPCList[_n].skills.security to random(1, 1000)>>
+<<set $NPCList[_n].skills.athletics to random(1, 1000)>>
+its.push("watchful")>>
 <</if>>
 <<if random(1, 10) is 10>>
 	<<set $NPCList[_n].traits.push("needs glasses")>>
