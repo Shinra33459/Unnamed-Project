@@ -24,7 +24,8 @@ window.StartConfig = {
 	"enableLinkNumberify": true,
 	"version": "0.3.7.4",
 }
-window.StartConfig.version += " herm";
+window.StartConfig.version += ".h"; //stands for Herm, don't change
+window.StartConfig.version += "3"; //how many times I've released a build of this mod for this version 
 
 /* convert version string to numeric value */
 let tmpver = StartConfig.version.replace(/[^0-9.]+/g, "").split(".");
