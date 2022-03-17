@@ -10,13 +10,22 @@
 <<else>>
 	<<set _stanceCheck to $NPCList[_xx].stance>>
 <</if>>
-<<if ndef _custom_eyelenses_style>>
-<<set _custom_eyelenses_style = "">>
-	<<for _i = 0; _i < V.custom_eyecolours.length; _i++>>
-		<<if V.custom_eyecolours[_i].variable == V.makeup.eyelenses>>
-			<<run _custom_eyelenses_style = "filter: " + window.colorNameTranslate(V.makeup.eyelenses, "hue")>>
+
+<<if ndef _custom_eyelenses_right_style>>
+	<<set _custom_eyelenses_right_style = "">>
+	<<for _i = 0; _i < $custom_eyecolours.length; _i++>>
+		<<if $custom_eyecolours[_i].variable == $makeup.eyelenses.right>>
+			<<run _custom_eyelenses_right_style = "filter: " + window.colorNameTranslate($makeup.eyelenses.right, "hue")>>
 		<</if>>
 	<</for>>
+<</if>>
+
+<<if $makeup.eyelenses.right == 0>>
+	<<set _colourEyeRight to "eye-" + $rightEyeColour>>
+	<<script>>T.colourEyeRight = T.colourEyeRight.replace(/\s/g, '-')<</script>>
+<<else>>
+	<<set _colourEyeRight to "eye-" + $makeup.eyelenses.right>>
+	<<script>>T.colourEyeRight = T.colourEyeRight.replace(/\s/g, '-')<</script>>
 <</if>>
 
 <<leg_position>>
@@ -252,25 +261,31 @@ Previous "Always Open" mouth. activemouth can be used in all active frames still
 <</if>>
 
 <<if $trauma gte ($traumamax * 0.9) or $possessed>>
-	<img @style="_custom_eyelenses_style" class="layer-sexeyes colour-eye" src="img/sex/missionary/active/activeeyesempty.png">
+	<img @style="_custom_eyelenses_right_style" @class="'layer-sexeyes ' + _colourEyeRight " src="img/sex/missionary/active/activeeyesempty.png">
 <<else>>
-	<img @style="_custom_eyelenses_style" class="layer-sexeyes colour-eye anim-idle-2f" src="img/sex/missionary/active/activeeyes.png">
+	<img @style="_custom_eyelenses_right_style" @class="'layer-sexeyes ' + _colourEyeRight + ' anim-idle-2f'" src="img/sex/missionary/active/activeeyes.png">
 <</if>>
 
 <!--
 This image is the eyelids, commented out so the player's eyes stay open in idle frames.
 <img class="layer-sexmouth anim-idle-2f" @src="_img.activeeyelids" @style="'filter: '+_filters.body">
 -->
-<<if $player.penisExist>>
-	<<if $worn.genitals.name is "chastity belt">>
+<<if $player.penisExist or playerHasStrapon()>>
+	<<if $worn.genitals.name is "chastity belt" and !playerHasStrapon()>>
 		<img class="layer-sexmouth" src="img/sex/missionary/active/body/activepenischastity.png">
-	<<elseif $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
-		<<if $worn.genitals.name is "chastity cage">>
+	<<elseif $worn.lower.exposed gte 2 and ($worn.under_lower.exposed gte 1 or playerHasStrapon())>>
+		<<if $worn.genitals.name is "chastity cage" and !playerHasStrapon()>>
 			<img class="layer-sexlashes" src="img/sex/missionary/active/body/activechastitycagedown.png">
 			<<if $anususe is "penis">>
 				<img class="layer-sexmouth" @src="_img.activechastitycagedownpenis" @style="'filter: '+_filters.body">
 			<<else>>
 				<img class="layer-sexmouth" @src="_img.activechastitycagedownpenis" @style="'filter: '+_filters.body">
+			<</if>>
+		<<elseif playerHasStrapon()>>
+			<<if $anususe is "penis">>
+				<img class="layer-sexlashes" @src="_img.activestrapon" @style="'filter: '+_filters.body">
+			<<else>>
+				<img class="layer-sexbasefront" @src="_img.activestrapon" @style="'filter: '+_filters.body">
 			<</if>>
 		<<elseif $player.virginity.penile is true>>
 			<<if $anususe is "penis">>
@@ -477,13 +492,13 @@ Same as above, but with eyelashes.
 	<</if>>
 <</if>>
 <<if $prop.includes("breast_pump")>>
-	<<if $breastsize gte 8>>
+	<<if $player.breastsize gte 8>>
 		<img class="layer-sexlashes anim-idle-2f" src="img/sex/machine/milk/missionary/breasts_huge.png">
 		<img class="layer-sexlashes anim-idle-2f" src="img/sex/machine/milk/missionary/breasts_huge_milk.png">
-	<<elseif $breastsize gte 5>>
+	<<elseif $player.breastsize gte 5>>
 		<img class="layer-sexlashes anim-idle-2f" src="img/sex/machine/milk/missionary/breasts_large.png">
 		<img class="layer-sexlashes anim-idle-2f" src="img/sex/machine/milk/missionary/breasts_large_milk.png">
-	<<elseif $breastsize gte 3>>
+	<<elseif $player.breastsize gte 3>>
 		<img class="layer-sexlashes anim-idle-2f" src="img/sex/machine/milk/missionary/breasts_small.png">
 		<img class="layer-sexlashes anim-idle-2f" src="img/sex/machine/milk/missionary/breasts_small_milk.png">
 	<<else>>
@@ -637,9 +652,9 @@ Same as above, but with eyelashes.
 <</if>>
 
 <<if $trauma gte $traumamax>>
-	<img @style="_custom_eyelenses_style" @class="'layer-sexeyes colour-eye anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/activeeyesempty.png">
+	<img @style="_custom_eyelenses_right_style" @class="'layer-sexeyes ' + _colourEyeRight + ' anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/activeeyesempty.png">
 <<else>>
-	<img @style="_custom_eyelenses_style" @class="'layer-sexeyes colour-eye anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/activeeyes.png">
+	<img @style="_custom_eyelenses_right_style" @class="'layer-sexeyes ' + _colourEyeRight + ' anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/activeeyes.png">
 <</if>>
 
 <img @class="'layer-sexmouth anim-doggy-4f-'+_animspeed" @src="_img.activeeyelids" @style="'filter: '+_filters.body">
@@ -765,18 +780,19 @@ Same as above, but with eyelashes.
 	<<if $silhouettedisable is "f" and $NPCList[_na].type isnot "horse" and $NPCList[_na].type isnot "centaur">>
 		<img @class="'layer-sextears anim-doggy-4f-'+_animspeed" src="img/sex/missionary/shadow/activepenile.png">
 	<</if>>
-	<<if $orgasmdown gte 1 and $orgasmcount lte 24 and $femaleclimax isnot 1 and $condomPlayerPenisImg isnot true>>
+	<<if $orgasmdown gte 1 and $orgasmcount lte 24 and $femaleclimax isnot 1 and $condomPlayerPenisImg isnot true and !playerHasStrapon()>>
 		<img @class="'layer-frontforeground anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/body/activepenilecum.png">
 	<<else>>
 		<img @class="'layer-frontforeground anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/body/activepenile.png">
 	<</if>>
 <</if>>
 
-<<if $player.penisExist>>
-	<<if $worn.genitals.type.includes("chastity")>>
+<<if $player.penisExist or playerHasStrapon()>>
+	<<if $worn.genitals.type.includes("chastity") and !playerHasStrapon()>> /* PLAYER STRAP-ON IMPORTANT IMAGE */
 		<img @class="'layer-sexhair anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/body/activepenischastity.png">
 	<<elseif $penisstate is "penetrated" or $penisstate is "otheranus">>
 		<<if $enemytype isnot "beast" or $monster is 1>>
+			/* I was doing something important here. COlours maybe? */
 			<<if $player.virginity.penile is true>>
 				<img @class="'layer-frontforeground anim-doggy-4f-'+_animspeed" @src="_img.activepenisvirgindown" @style="'filter: '+_filters.body">
 			<<else>>

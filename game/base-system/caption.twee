@@ -1,6 +1,9 @@
 :: StoryCaption
 <div @class="(Errors.log.length==0?'hidden':'') + ' error-reporter-btn'" onclick="Errors.Reporter.toggle()"></div>
 <<if $intro is 0>>
+	<<if $debug is 1>>
+		<div id="debugOverlay" class="debugOverlay unstowable"></div>
+	<</if>>
 	<<effectstime>>
 	<<weatherdisplay>>
 	<<if $gamemode is "soft">>
@@ -26,7 +29,7 @@
 			}
 			.mob-btn-group>div:hover{background-color: rgb(51, 51, 51);}
 		</style>
-		<div class="mob-btn-group" style="position: fixed;top: 100px;right: 0;display: flex; align-items: center;flex-direction: column;">
+		<div class="mob-btn-group unstowable" style="position: fixed;top: 100px;right: 0;display: flex; align-items: center;flex-direction: column;cursor:pointer;">
 			<div class="mob-btn-h" onclick="mobBtnShow()" style="display:none;"></div>
 			<div class="mob-btn" onclick="mobBtnHide()"></div>
 			<div class="mob-btn" onclick="mobclick(1)">1</div>
@@ -407,6 +410,7 @@
 	<<set $allure -= ($famegood / 2)>>
 	<<set $allure -= ($famebusiness / 2)>>
 	<<set $allure -= ($famesocial / 2)>>
+	<<set $allure -= ($famemodel / 2)>>
 	<<if $dev is 1>>
 		<<set $allure -= ($famepimp / 2)>>
 	<</if>>
@@ -568,7 +572,7 @@
 				<<if $worn.lower.one_piece isnot 1>>
 				and <<lowerword>> <<lowerintegrity>> <<clothescolour 'lower'>> $worn.lower.name
 				<</if>>
-				<<if $breastsize lt 3>>
+				<<if $player.breastsize lt 3>>
 					with <<underlowerword>> <<underlowerintegrity>> <<clothescolour 'under_lower'>> $worn.under_lower.name beneath.
 				<<else>>
 					<span class="purple">with just <<underlowerword>> <<underlowerintegrity>> <<clothescolour 'under_lower'>> $worn.under_lower.name beneath.</span>
@@ -890,9 +894,9 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 <<if $player.gender is "m">>
 	<<set _clothesType to "male">>
 <<elseif $player.gender is "h">>
-	<<if $player.gender_body is "m" or ($player.gender_body is "a" and $breastsize lte 3)>>
+	<<if $player.gender_body is "m" or ($player.gender_body is "a" and $player.breastsize lte 3)>>
 		<<set _clothesType to "male">>
-	<<else>> <!-- if $player.gender_body is "f" or ($player.gender_body is "a" and $breastsize gt 3)) --> 
+	<<else>> <!-- if $player.gender_body is "f" or ($player.gender_body is "a" and $player.breastsize gt 3)) --> 
 		<<set _clothesType to "female">>
 	<</if>>
 <<else>> <!-- if $player.gender is "f" -->
@@ -903,9 +907,9 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 	<<set _clothesType to (_clothesType is "male" ? "female" : "male")>>
 <</if>>
 
-<div id="img" @class="'hair-'+ $hairselect + ' eye-' + $eyeselect.replace(/ /g,'-') + ($imgLighten isnot '' ? ' '+ $imgLighten :'') + ' noAnimations'">
+<div id="img" @class="'hair-'+ $hairselect + ($imgLighten isnot '' ? ' '+ $imgLighten :'') + ' noAnimations'">
 	/*Prep for image checks*/
-	<<switch $breastsize>>
+	<<switch $player.breastsize>>
 	<<case 12>>
 		<<set _breastSize to 6>>
 	<<case 8 9 10 11>>
@@ -920,7 +924,7 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 		<<set _breastSize to 1>>
 	<</switch>>
 	<<if $player.gender is "m" or $player.gender is "h">>
-		<<set _penisSize to $penissize>>
+		<<set _penisSize to $player.penissize>>
 	<<else>>
 		<<unset _penisSize>>
 	<</if>>
@@ -948,7 +952,8 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 			_modeloptions.hair_sides_length = _hairlengthstage;
 			_modeloptions.hair_fringe_length = _hairlengthstage;
 
-			_modeloptions.eyes_colour = $eyeselect;
+			_modeloptions.left_eye = $eyeselect;
+			_modeloptions.right_eye = $eyeselect;
 			_modeloptions.mouth = "neutral";
 			_modeloptions.freckles = $player.freckles is true;
 
@@ -979,7 +984,7 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 					_modeloptions.worn_feet = 1; /* schoolshoes */
 				}
 				if (_showUnderwear) {
-					if ($breastsize > 3) {
+					if ($player.breastsize > 3) {
 						_modeloptions.worn_under_upper = 12; /* plainbra */
 						_modeloptions.worn_under_upper_colour = "pale white";
 					}
@@ -1093,7 +1098,7 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 			</div>
 		<</if>>
 		<<if _showUnderwear is true>>
-			<<if $breastsize gt 3>>
+			<<if $player.breastsize gt 3>>
 				<div class="clothes-div layer-under_upper">
 					<img class="anim-idle-2f clothes-pale-white" src="img/clothes/under_upper/plainbra/full.png">
 					<img class="anim-idle-2f clothes-pale-white" @src="'img/clothes/under_upper/plainbra/'+_breastSize+'.png'">

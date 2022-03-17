@@ -9,3 +9,11 @@ Template.add('stroke', function() {
 		: either("stroke", "touch");
 	return `${adjective} ${verb}`;
 });
+
+/* ?alongside */
+Template.add('alongside', () =>
+	either("alongside","alongside","in time with","heedless of","in rhythm with","pounding away against","thrusting against"));
+
+/* ?orgasmMoans */
+Template.add('orgasmMoans', () =>
+either("moans","groans","gasps","sighs","screams","sobs","laughs"));

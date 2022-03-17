@@ -61,7 +61,7 @@
 		<br><br>
 	<</if>>
 	<<link [[Take a look at the contact lenses display|Pharmacy Lenses]]>><</link>>
-	<<if V.left_before_nurse_returned < 3 and V.lenses_ordered.length > 0>>
+	<<if $left_before_nurse_returned < 3 and $lenses_ordered.length > 0>>
 		<br><<link [[Ask if your custom contact lenses arrived|Pharmacy Ask If Lenses Delivered]]>><</link>>
 	<</if>>
 	<br><br>
@@ -70,23 +70,26 @@
 
 :: Pharmacy Lenses
 An assortment of colourful contact lenses is displayed behind the glass. You can purchase lenses to change the colour of your eyes.
-<<if $makeup.owned.eyelenses.length + V.makeup.owned.custom_eyelenses.length gt 0>>
+<<if $makeup.owned.eyelenses.length + $makeup.owned.custom_eyelenses.length gt 0>>
 	<br>
 	You already own lenses of the following colours:
 	<span style="display: inline-block;">
 	<<for _i, _colour range $makeup.owned.eyelenses>>
-		<span @class="'eye-' + _colour.replace(/ /g, '-')"><span class="colour-eye" style="color:#6E4E11;">_colour</span></span>
+		<span @class="'eye-' + _colour.replace(/ /g, '-')"><span class="left-iris" style="color:#6E4E11;">_colour</span></span>
 		<<if _i < $makeup.owned.eyelenses.length - 1 or $makeup.owned.custom_eyelenses.length > 0>>, <</if>>
 	<</for>>
-	<<for _i = 0; _i < $makeup.owned.custom_eyelenses.length; _i++>>
-		<<set _colour to window.colorNameTranslate(V.makeup.owned.custom_eyelenses[_i], "spaced name")>>
+	<<set _unique_temp_custom_eyelenses to 0>>
+	<<script>>if (V.makeup.owned.custom_eyelenses.length > 0)T.unique_temp_custom_eyelenses = [...new Set(V.makeup.owned.custom_eyelenses)];<</script>>
+	<<for _i = 0; _i < _unique_temp_custom_eyelenses.length; _i++>>
+		<<set _colour to window.colorNameTranslate(_unique_temp_custom_eyelenses[_i], "spaced name")>>
 		<<for _e = 0; _e < $custom_eyecolours.length; _e++>>
 			<<if $custom_eyecolours[_e].name == _colour>>
-				<<set _background_colour to clone(V.custom_eyecolours[_e].canvasfilter.blend)>>
+				<<set _background_colour to clone($custom_eyecolours[_e].canvasfilter.blend)>>
 				<span class="eye-custom"><span @style="'color:'+_background_colour">_colour</span></span>
+				<<break>>
 			<</if>>
 		<</for>>
-		<<if _i < $makeup.owned.custom_eyelenses.length - 1>>, <</if>>
+		<<if _i < _unique_temp_custom_eyelenses.length - 1>>, <</if>>
 	<</for>>.
 	</span>
 <</if>>
@@ -107,34 +110,38 @@ An assortment of colourful contact lenses is displayed behind the glass. You can
 
 	<<if $money gte 20000>>
 		<<link [[Buy and send home|Pharmacy Lenses]]>><<set $money -= 20000>><<set $makeup.owned.eyelenses.push(_lensChoice)>><</link>><br>
-		<<link [[Buy and wear|Pharmacy]]>><<set $money -= 20000>><<set $makeup.owned.eyelenses.push(_lensChoice)>><<set $makeup.eyelenses = _lensChoice>><</link>><br>
+		<<link [[Buy and wear|Pharmacy]]>><<set $money -= 20000>><<set $makeup.owned.eyelenses.push(_lensChoice)>><<set $makeup.eyelenses = {"left":_lensChoice, "right":_lensChoice}>><</link>><br>
 	<<else>>
 		<span class="purple">You can't afford the purchase.</span><br>
 	<</if>>
 <</if>>
-<<if V.left_before_nurse_returned == 2>>
-	"Who do we have here," says the nurse nervously laughing, "Get out, you wasted enough of my time already. Try again tomorrow if you're done with your little game"
-	<<set V.left_before_nurse_returned to 3>>
-<<elseif V.left_before_nurse_returned > 2>>
-<<else>>
-	<<link [[Ask for custom-coloured contact ones|Pharmacy Ask Custom Lenses]]>><</link>><br>
-<</if>>
+<<link [[Ask for custom-coloured contact ones|Pharmacy Ask Custom Lenses]]>><</link>><br>
 <<link [[Go back|Pharmacy]]>><</link>>
 
 :: Pharmacy Ask Custom Lenses
-<<if V.custom_lenses_already_ordered is 1>>
-	"I hope the ones you ordered last time please you," the nurse asks, "You know the prices, <<printmoney 45000>> for the product, plus <<printmoney 5000>> for the delivery"
+<<if $left_before_nurse_returned > 2>>
+	"Who do we have here," says the nurse a rictus on <<his>> face, "Get out, you wasted enough of my time already. Try again tomorrow if you're done with your little game"
+	<br><br><<link [[Leave|Pharmacy Lenses]]>><</link>>
 <<else>>
-	"Not pleased with the ones available?", the nurse says
-	"I could place an order for ones with a colour of your choosing, but this will double the cost. Count about <<printmoney 45000>> for the product, plus <<printmoney 5000>> for the delivery which takes about a day."
+	<<if $custom_lenses_already_ordered is 1>>
+		"I hope the ones you ordered last time please you," the nurse asks, "You know the prices, <<printmoney 45000>> for the product, plus <<printmoney 5000>> for the delivery. <<printmoney 95000>> total if you pick two different colours for each eye"
+	<<else>>
+		"Not pleased with the ones available?", the nurse asks
+		"I could place an order for ones with a colour of your choosing, but this will double the cost. Count about <<printmoney 45000>> for the product, plus <<printmoney 5000>> for the delivery which takes about a day. If you wish to choose two different colours for each eye, it will be <<printmoney 95000>> total"
+	<</if>>
+	<br><br>
+	<<if $money gte 50000>>
+		<<link [[Choose your custom colour|Pharmacy Select Custom Lenses]]>><<set $pharmacy_order_colours to 1>><</link>><br>
+	<<else>>
+		<span class="purple">You can't afford the purchase.</span><br>
+	<</if>>
+	<<if $money gte 95000>>
+		<<link [[Choose a different colour for each eye|Pharmacy Select Custom Lenses]]>><<set $pharmacy_order_colours to 2>><</link>><br>
+	<<elseif $money gte 50000>>
+		<span style="color:#566a9b; cursor:pointer">Choose a different colour for each eye</span> <span class="purple">You can't afford to purchase.</span><br>
+	<</if>>
+	<<link [[Go back|Pharmacy Lenses]]>><</link>>
 <</if>>
-<br><br>
-<<if $money gte 45000>>
-	<<link [[Choose your custom colour|Pharmacy Select Custom Lenses]]>><</link>><br>
-<<else>>
-	<span class="purple">You can't afford the purchase.</span><br>
-<</if>>
-<<link [[Go back|Pharmacy Lenses]]>><</link>>
 
 :: Pharmacy Select Custom Lenses
 "Here," <<he>> says, handing you a tablet. "You can use the colour palette to help you. Pick any colour you like and I'll place the order for you."
@@ -143,7 +150,14 @@ An assortment of colourful contact lenses is displayed behind the glass. You can
 <<set _color_lenses_temp>> <!-- used inside colorWheelContactLenses() --> 
 <<run colorWheelContactLenses()>>
 <br><br>
-<<link [[Order it|Pharmacy Order Custom Lenses]]>><<set $money -= 50000>><<set V.custom_lenses_already_ordered to 1>><<run V.lenses_ordered.push([window.colorNamer(T.color_lenses_temp[0].hexString), V.monthday.toString() + V.month + V.year.toString(), [T.color_lenses_temp[0].hexString, T.color_lenses_temp[0].hsl["l"] / 500]])>><</link>>
+<<link [[Order it|Pharmacy Order Custom Lenses]]>>
+	<<set $money -= 50000>><<set $custom_lenses_already_ordered to 1>>
+	<<run $lenses_ordered.push([window.colorNamer(_color_lenses_temp[0].hexString), $monthday.toString() + $month + $year.toString(), [_color_lenses_temp[0].hexString, _color_lenses_temp[0].hsl["l"] / 500]])>>
+	<<if $pharmacy_order_colours == 2>>
+		<<set $money -= 45000>>
+		<<run $lenses_ordered.push([window.colorNamer(_color_lenses_temp[1].hexString), $monthday.toString() + $month + $year.toString(), [_color_lenses_temp[1].hexString, _color_lenses_temp[1].hsl["l"] / 500]])>>
+	<</if>>
+<</link>>
 <br>
 <<link [[Go back|Pharmacy]]>><</link>>
 
@@ -153,37 +167,37 @@ An assortment of colourful contact lenses is displayed behind the glass. You can
 <<link [[Next|Pharmacy]]>><</link>>
 
 :: Pharmacy Ask If Lenses Delivered
-<<if V.left_before_nurse_returned == 1>>
+<<if $left_before_nurse_returned == 1>>
 	"Hello how can I he-", <<he>> frowns, "Don't you think I forgot last time. It's not cool, you can't just send me looking for your package and just leave. Don't do that again please."
 	<br>You apologize, and <<he>> then goes check if your package arrived.
-<<elseif V.left_before_nurse_returned == 2>>
+<<elseif $left_before_nurse_returned == 2>>
 	"Who do we have here," says the nurse a rictus on <<his>> face, "Get out, you wasted enough of my time already. Try again tomorrow if you're done with your little game"
-	<<set V.left_before_nurse_returned to 3>>
+	<<set $left_before_nurse_returned to 3>>
 <<else>>
 	"How can I h-", <<he>> stops. "Oh, you're the one who ordered the contact lenses, hold on a second sweetheart I'll check if we received them already". You watch as <<he>> disappears in a back room.
 <</if>>
 <br><br>
-<<if V.left_before_nurse_returned < 2>><<link [[Wait (0:15)|Pharmacy Ask If Lenses Delivered 2]]>><<set V.left_before_nurse_returned to 0>><<pass 15>><</link>><br><</if>>
-<<link [[Leave|Pharmacy]]>><<set V.left_before_nurse_returned to V.left_before_nurse_returned + 1>><</link>>
+<<if $left_before_nurse_returned < 2>><<link [[Wait (0:15)|Pharmacy Ask If Lenses Delivered 2]]>><<set $left_before_nurse_returned to 0>><<pass 15>><</link>><br><</if>>
+<<link [[Leave|Pharmacy]]>><<set $left_before_nurse_returned to $left_before_nurse_returned + 1>><</link>>
 
 :: Pharmacy Ask If Lenses Delivered 2
 <<set _received to 0>>
 <<set _tmp_length to clone($lenses_ordered.length)>>
 <<for _i = 0; _i < $lenses_ordered.length; _i++>>
-	<<if V.monthday.toString() + V.month + V.year.toString() != $lenses_ordered[_i][1]>>
+	<<if $monthday.toString() + $month + $year.toString() != $lenses_ordered[_i][1]>>
 		<<set _received += 1>>
-		<<set _spaced_colour_name = window.colorNameTranslate(V.lenses_ordered[_i][0], "spaced name")>>
-		<<run V.makeup.owned.custom_eyelenses.push(clone(V.lenses_ordered[_i][0]))>>
+		<<set _spaced_colour_name = window.colorNameTranslate($lenses_ordered[_i][0], "spaced name")>>
+		<<run $makeup.owned.custom_eyelenses.push(clone($lenses_ordered[_i][0]))>>
 		<<run $custom_eyecolours.push({
-			variable: V.lenses_ordered[_i][0],
-			name: T.spaced_colour_name,
-			name_cap: T.spaced_colour_name.toUpperFirst(),
-			csstext: V.lenses_ordered[_i][0],
+			variable: $lenses_ordered[_i][0],
+			name: _spaced_colour_name,
+			name_cap: _spaced_colour_name.toUpperFirst(),
+			csstext: $lenses_ordered[_i][0],
 			natural: false,
 			lens: true,
 			canvasfilter: {
-				blend: V.lenses_ordered[_i][2][0],
-				brightness: +V.lenses_ordered[_i][2][1]
+				blend: $lenses_ordered[_i][2][0],
+				brightness: +$lenses_ordered[_i][2][1]
 			}
 		})>>
 		<<run $lenses_ordered.deleteAt(_i)>>
@@ -213,7 +227,7 @@ The nurse looks at the item you're holding,
 		"That'll be £150.<<if !$pharmTriedSeduction>> So is it too big, or do you just want it to be tiny?<</if>>"
 		<br><br>
 		<<if $money gte 15000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set V.sexStats.pills["pills"]["penis reduction"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set $sexStats.pills["pills"]["penis reduction"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -225,7 +239,7 @@ The nurse looks at the item you're holding,
 		"That'll be £150.<<if !$pharmTriedSeduction>> So you think yours is too small?<</if>>"
 		<br><br>
 		<<if $money gte 15000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set V.sexStats.pills["pills"]["penis growth"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set $sexStats.pills["pills"]["penis growth"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -237,7 +251,7 @@ The nurse looks at the item you're holding,
 		"£200.00 please.<<if !$pharmTriedSeduction>> I wonder how big you are.<</if>>"
 		<br><br>
 		<<if $money gte 20000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 20000>><<set V.sexStats.pills["pills"]["penis blocker"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 20000>><<set $sexStats.pills["pills"]["penis blocker"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -249,7 +263,7 @@ The nurse looks at the item you're holding,
 		"£150.00 please. The effects will vary."
 		<br><br>
 		<<if $money gte 15000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set V.sexStats.pills["pills"]["breast reduction"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set $sexStats.pills["pills"]["breast reduction"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -257,7 +271,7 @@ The nurse looks at the item you're holding,
 		"£150.00 please. The effects will vary."
 		<br><br>
 		<<if $money gte 15000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set V.sexStats.pills["pills"]["breast growth"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set $sexStats.pills["pills"]["breast growth"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -265,7 +279,7 @@ The nurse looks at the item you're holding,
 		"£200.00 please."
 		<br><br>
 		<<if $money gte 20000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 20000>><<set V.sexStats.pills["pills"]["breast blocker"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 20000>><<set $sexStats.pills["pills"]["breast blocker"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -273,7 +287,7 @@ The nurse looks at the item you're holding,
 		"£150.00 please. The effects will vary."
 		<br><br>
 		<<if $money gte 15000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set V.sexStats.pills["pills"]["bottom reduction"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set $sexStats.pills["pills"]["bottom reduction"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -281,7 +295,7 @@ The nurse looks at the item you're holding,
 		"£150.00 please. The effects will vary."
 		<br><br>
 		<<if $money gte 15000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set V.sexStats.pills["pills"]["bottom growth"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<set $sexStats.pills["pills"]["bottom growth"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -289,7 +303,7 @@ The nurse looks at the item you're holding,
 		"£200.00 please."
 		<br><br>
 		<<if $money gte 20000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 20000>><<set V.sexStats.pills["pills"]["bottom blocker"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 20000>><<set $sexStats.pills["pills"]["bottom blocker"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -328,7 +342,7 @@ The nurse looks at the item you're holding,
 		Take one per day, try to normalise the time."
 		<br><br>
 		<<if $money gte 50000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 50000>><<set V.sexStats.pills["pills"]["fertility booster"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 50000>><<set $sexStats.pills["pills"]["fertility booster"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -340,7 +354,7 @@ The nurse looks at the item you're holding,
 		Take one per day, try to normalise the time. You still need to be careful, the only sure way to be safe is still to be abstinent."
 		<br><br>
 		<<if $money gte 25000>>
-			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 25000>><<set V.sexStats.pills["pills"]["contraceptive"].owned += 14>><<boughtOnce>><</link>>
+			<<link [[Hand over the money|Pharmacy]]>><<set $money -= 25000>><<set $sexStats.pills["pills"]["contraceptive"].owned += 14>><<boughtOnce>><</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
 		<</if>>
@@ -413,7 +427,7 @@ The nurse looks at the item you're holding,
 		You hand over the money in awkward silence, take your box of pills, and leave.
 		<br><br>
 
-		<<set $money -= $price * 100>><<set V.sexStats.pills["pills"]["penis " + $choice].owned += 14>><<boughtOnce>>
+		<<set $money -= $price * 100>><<set $sexStats.pills["pills"]["penis " + $choice].owned += 14>><<boughtOnce>>
 		<<link [[Next|Hospital Foyer]]>><<endevent>><</link>>
 
 <</switch>>
@@ -452,7 +466,7 @@ The nurse looks at the item you're holding,
 		<br>
 		"How disappointing," <<he>> adds quietly.
 		<<set $finish = 1>><<set $phase = "chastity">>
-	<<elseif $penissize lte 0>>
+	<<elseif $player.penissize lte 0>>
 		<<He>> froze the moment your <<penis>> flopped out.
 		<br>
 		"What the fuck? You kidding me? This is what you wanted me to see?" <<he>> starts to chuckle.
@@ -464,7 +478,7 @@ The nurse looks at the item you're holding,
 		<br>
 		<<He>> gets up, fixes <<his>> clothing and returns to the till and <<his>> book.
 		<<set $finish = 1>><<set $phase = "tiny">>
-	<<elseif $penissize is 1>>
+	<<elseif $player.penissize is 1>>
 		<<if $rng gte 70>>
 			You hear a snicker as your <<penis>> flops out, but <<he>> doesn't say anything and keeps going.
 		<<else>>
@@ -480,15 +494,15 @@ The nurse looks at the item you're holding,
 			<<He>> gets up, fixes <<his>> clothing and returns to the till and <<his>> book.
 			<<set $finish = 1>><<set $phase = "small">>
 		<</if>>
-	<<elseif $penissize is 3>>
+	<<elseif $player.penissize is 3>>
 		You hear a gasp of surprise coming from down below as your <<penis>> flops out.
 		<br>
 		You look at <<his>> face and see <<his>> eyes light up.
-	<<elseif $penissize gte 4>>
+	<<elseif $player.penissize gte 4>>
 		"Shit," you hear a quiet whisper from down below as your <<penis>> flops out.
 		<br>
 		You look down and see <<him>> staring at your cock, mouth agape.
-		<<if $insecurity_penis_big gte 1 and $penissize gte 4 and $acceptance_penis_big lte 999>>
+		<<if $insecurity_penis_big gte 1 and $player.penissize gte 4 and $acceptance_penis_big lte 999>>
 			<<acceptance "penis_big" 10>><<gacceptance>>
 		<</if>>
 	<</if>>
@@ -521,7 +535,7 @@ The nurse looks at the item you're holding,
 
 	<<He>> takes a breath, fixes <<his>> clothing, and walks back to the till.
 	<br>
-	<<if $choice isnot "reduction" or $penissize lt 3>>
+	<<if $choice isnot "reduction" or $player.penissize lt 3>>
 		<<set _price to $price / 2>>
 		"I think you've earned a discount, sweetie. You can have these pills for £<<print _price>>."
 		<br>
@@ -532,7 +546,7 @@ The nurse looks at the item you're holding,
 		<<if $money gte (_price * 100)>>
 			<<link [["Buy penis " + $choice + " pills for £" + _price|Pharmacy]]>>
 				<<set $eventskip to 1>>
-				<<set $money -= _price * 100>><<set V.sexStats.pills["pills"]["penis " + $choice].owned += 14>><<boughtOnce>>
+				<<set $money -= _price * 100>><<set $sexStats.pills["pills"]["penis " + $choice].owned += 14>><<boughtOnce>>
 			<</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
@@ -547,7 +561,7 @@ The nurse looks at the item you're holding,
 		<<if $money gte 10000>>
 			<<link [[Buy blocker pills for £100|Pharmacy]]>>
 				<<set $eventskip to 1>>
-				<<set $money -= 10000>><<set V.sexStats.pills["pills"]["penis blocker"].owned += 14>><<boughtOnce>>
+				<<set $money -= 10000>><<set $sexStats.pills["pills"]["penis blocker"].owned += 14>><<boughtOnce>>
 			<</link>>
 		<<else>>
 			<span class="purple">You cannot afford them.</span>
@@ -569,7 +583,7 @@ The nurse looks at the item you're holding,
 	<<link [[Steal the pills before the nurse picks themselves up|Hospital Foyer]]>>
 		<<set $eventskip to 1>>
 		<<set $pharmClosed = true>>
-		<<crimeup $price>><<set V.sexStats.pills["pills"]["penis " + $choice].owned += 14>><<boughtOnce>>
+		<<crimeup $price>><<set $sexStats.pills["pills"]["penis " + $choice].owned += 14>><<boughtOnce>>
 	<</link>><<crime>>
 	<br>
 	<<link [[Just leave|Hospital Foyer]]>><<set $eventskip to 1>><<set $pharmClosed = true>><</link>>
@@ -597,7 +611,7 @@ The nurse looks at the item you're holding,
 			<<if $money gte $price * 100>>
 				<<link [["Pay £" + $price + " for penis " + $choice + " pills"|Pharmacy]]>>
 					<<set $eventskip to 1>>
-					<<set $money -= $price * 100>><<set V.sexStats.pills["pills"]["penis " + $choice].owned += 14>><<boughtOnce>>
+					<<set $money -= $price * 100>><<set $sexStats.pills["pills"]["penis " + $choice].owned += 14>><<boughtOnce>>
 				<</link>><br>
 			<<else>>
 				<span class="purple">You cannot afford them.</span>
@@ -624,7 +638,7 @@ You ask the nurse for after morning pills.
 "£500 please. For legal reasons, we're unable to sell these in bulk. You'll have to take it while I'm supervising you, just in case issues occur."
 <br><br>
 <<if $money gte 50000>>
-	<<link [[Hand over the money and take the pill|Pharmacy Morning After pill 2]]>><<set $money -= 50000>><<set $pregnancyStats.afterMorningPills++>><</link>>
+	<<link [[Hand over the money and take the pill|Pharmacy Morning After pill 2]]>><<set $money -= 50000>><<set $pregnancyStats.aftermorningpills++>><</link>>
 <<else>>
 	<span class="purple">You cannot afford them.</span>
 <</if>>

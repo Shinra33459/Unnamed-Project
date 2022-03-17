@@ -67,30 +67,31 @@ You are
 	<<case 12>>You are of average height.
 	<<case 16>>You are large compared to others.
 <</switch>>
-<<if $makeup.eyelenses>>
-	You have $eyecolour eyes beneath <<print setup.colours.eyes_map[$makeup.eyelenses].name>> lenses.
-<<else>>
-	You have $eyecolour eyes.
-<</if>>
+
+<!-- Eye details -->
+<<print window.buildEyeDetails()>>
+<br><br>
+<!-- -->
+
 You have a <<skincolourtext>> 
-<<if $breastsize gte 1>>
-	<<if $breastsize is $player.perceived_breastsize>>
+<<if $player.breastsize gte 1>>
+	<<if $player.breastsize is $player.perceived_breastsize>>
 		You have <<breasts>>.
 	<<else>>
 		You have <<breasts>>, but your clothing
 		<<if $player.perceived_breastsize is 0>>
 			hides them, making them look flat.
-		<<elseif $player.perceived_breastsize lt $breastsize>>
+		<<elseif $player.perceived_breastsize lt $player.breastsize>>
 			hides them, making them look <<breastsizedesc $player.perceived_breastsize>>.
-		<<else>> /*if $player.perceived_breastsize gt $breastsize*/
+		<<else>> /*if $player.perceived_breastsize gt $player.breastsize*/
 			pads them, making them look <<breastsizedesc $player.perceived_breastsize>>.
 		<</if>>
 	<</if>>
-<<elseif $breastsize is 0 and $player.perceived_breastsize gte 1>>
+<<elseif $player.breastsize is 0 and $player.perceived_breastsize gte 1>>
     Your chest is flat, but your clothing pads it, making it look <<breastsizedesc $player.perceived_breastsize>>.
 <</if>>
 You have a <<bottom>>.
-<<if $player.penisExist>>You have a <<penis>>.<</if>>
+<<if $player.penisExist>>You have a<<if $player.penissize is 4>>n<</if>> <<penis>>.<</if>>
 
 <!--Hair Details-->
 <<set _hairTextConfig = { currentValue : $hairlength, states : [
@@ -217,13 +218,13 @@ You have a <<bottom>>.
 <!--Penis Wetness-->
 <<if $player.penisExist>>
 	<<set _penisWetnessTextConfig = { currentValue : $penisWetness, preText: 'Your penis is ', states: [
-		{ requiredValue: 0,		color: 'green',	description: 'dry.',				postText: ($penissize >= 2) ? " Insertions may be difficult." : ''},
+		{ requiredValue: 0,		color: 'green',	description: 'dry.',				postText: ($player.penissize >= 2) ? " Insertions may be difficult." : ''},
 		{ requiredValue: 15,	color: 'teal',	description: 'a little slick.',	postText: ''},
 		{ requiredValue: 30,	color: 'lblue',	description: 'slick.',			postText: ''},
 		{ requiredValue: 45,	color: 'blue',	description: 'moist.',			postText: ''},
 		{ requiredValue: 60,	color: 'purple',description: 'wet.', 			postText: ''},
 		{ requiredValue: 75,	color: 'pink',	description: 'dripping.',		postText: ''},
-		{ requiredValue: 90,	color: 'red',	description: 'well-lubricated.',	postText: ($penissize >= 4) ? " It shouldn\'t have much trouble sliding into places, even at your size." : ''}
+		{ requiredValue: 90,	color: 'red',	description: 'well-lubricated.',	postText: ($player.penissize >= 4) ? " It shouldn\'t have much trouble sliding into places, even at your size." : ''}
 	]}>>
 	<<characteristic-text _penisWetnessTextConfig>>
 	<br>
@@ -464,7 +465,11 @@ You have a <<bottom>>.
 			<<if $worn.under_upper.type.includesAny("dance", "naked") and $worn.under_lower.type.includesAny("dance", "naked")
 			and $worn.upper.type.includesAny("dance", "naked")and $worn.lower.type.includesAny("dance", "naked")>>
 				<<set _dancingConfig.modifier to Math.floor(_dancingConfig.modifier * 1.05)>>
-				<<set _dancingConfig.modTypes.good.pushUnique("dancing attire")>>
+				<<if $worn.under_upper.type is "dance" or $worn.under_lower.type is "dance" or $worn.upper.type is "dance" or $worn.lower.type is "dance">>
+					<<set _dancingConfig.modTypes.good.pushUnique("dancing attire")>>
+				<<else>>
+					<<set _dancingConfig.modTypes.good.pushUnique("naked")>>
+				<</if>>
 			<</if>>
 			<<if $worn.under_upper.type.includesAny("swim", "naked") and $worn.under_lower.type.includesAny("swim", "naked")
 			and $worn.upper.type.includesAny("swim", "naked") and $worn.lower.type.includesAny("swim", "naked")>>
@@ -575,6 +580,9 @@ You have a <<bottom>>.
 		<<set _feetConfig = 		{ name : "Feet", 		displayType : "grade",	currentValue : $feetskill, 		modifier: 100, modTypes: { good: [], bad: [] },		states : _basicSkillGrades}>>
 		<<if $player.penisExist>>
 			<<set _penileConfig = 	{ name : "Penile", 		displayType : "grade",	currentValue : $penileskill, 	modifier: 100, modTypes: { good: [], bad: [] },	states : _basicSkillGrades}>>
+        <</if>>
+		<<if playerHasStrapon()>>
+            <<set _penileConfig =     { name : "Strap-on use",	displayType : "grade",	currentValue : $penileskill,	modifier: 100, modTypes: { good: [], bad: [] },    states : _basicSkillGrades}>>
 		<</if>>
 		<<if $player.vaginaExist>>
 			<<set _vaginalConfig = 	{ name : "Vaginal", 	displayType : "grade",	currentValue : $vaginalskill, 	modifier: 100, modTypes: { good: [], bad: [] },	states : _basicSkillGrades}>>
@@ -624,7 +632,7 @@ You have a <<bottom>>.
 					<<connector-box 74 50 15>>
 					<<characteristic-box _handsConfig>>
 				</div>
-				<<if $player.penisExist>>
+				<<if $player.penisExist or playerHasStrapon()>>
 					<div class="sex-diagram-box">
 						<<connector-box 36 65 2>>
 						<<characteristic-box _penileConfig>>
@@ -657,6 +665,9 @@ You have a <<bottom>>.
 				<<characteristic-box _vaginalConfig>>
 			<</if>>
 			<<if $player.penisExist>>
+				<<characteristic-box _penileConfig>>
+			<</if>>
+			<<if playerHasStrapon()>>
 				<<characteristic-box _penileConfig>>
 			<</if>>
 			<<characteristic-box _analConfig>>
@@ -738,13 +749,13 @@ You have a <<bottom>>.
 <br><br>
 
 __Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, inflicting more stress and damaging control. Acceptance renders you immune to the effect.</i><br><br>
-<<if $insecurity_penis_tiny gte 1 and $penissize lte 0 and $acceptance_penis_tiny lte 999>>
+<<if $insecurity_penis_tiny gte 1 and $player.penissize lte 0 and $acceptance_penis_tiny lte 999>>
 	<span class="red">Insecurity: Tiny Penis</span>
 	<div class="meter">
 		<<set _percent=Math.floor(($insecurity_penis_tiny/1000)*100)>>
 		<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 	</div>
-	<<if $acceptance_penis_tiny gte 1 and $acceptance_penis_tiny lte 999 and $penissize lte 0>>
+	<<if $acceptance_penis_tiny gte 1 and $acceptance_penis_tiny lte 999 and $player.penissize lte 0>>
 		<span class="green">Acceptance: Tiny Penis</span>
 		<div class="meter">
 			<<set _percent=Math.floor(($acceptance_penis_tiny/1000)*100)>>
@@ -752,13 +763,13 @@ __Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, i
 		</div>
 	<</if>>
 <</if>>
-<<if $insecurity_penis_small gte 1 and $penissize is 1 and $acceptance_penis_small lte 999>>
+<<if $insecurity_penis_small gte 1 and $player.penissize is 1 and $acceptance_penis_small lte 999>>
 	<span class="red">Insecurity: Small Penis</span>
 	<div class="meter">
 		<<set _percent=Math.floor(($insecurity_penis_small/1000)*100)>>
 		<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 	</div>
-	<<if $acceptance_penis_small gte 1 and $acceptance_penis_small lte 999 and $penissize is 1>>
+	<<if $acceptance_penis_small gte 1 and $acceptance_penis_small lte 999 and $player.penissize is 1>>
 		<span class="green">Acceptance: Small Penis</span>
 		<div class="meter">
 			<<set _percent=Math.floor(($acceptance_penis_small/1000)*100)>>
@@ -767,13 +778,13 @@ __Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, i
 	<</if>>
 <</if>>
 <<if $player.gender is "m">>
-	<<if $insecurity_penis_big gte 1 and $penissize gte 4 and $acceptance_penis_big lte 999>>
+	<<if $insecurity_penis_big gte 1 and $player.penissize gte 4 and $acceptance_penis_big lte 999>>
 		<span class="red">Insecurity: Enormous Penis</span>
 		<div class="meter">
 			<<set _percent=Math.floor(($insecurity_penis_big/1000)*100)>>
 			<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 		</div>
-		<<if $acceptance_penis_big gte 1 and $acceptance_penis_big lte 999 and $penissize gte 4>>
+		<<if $acceptance_penis_big gte 1 and $acceptance_penis_big lte 999 and $player.penissize gte 4>>
 			<span class="green">Acceptance: Big Penis</span>
 			<div class="meter">
 				<<set _percent=Math.floor(($acceptance_penis_big/1000)*100)>>
@@ -782,13 +793,13 @@ __Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, i
 		<</if>>
 	<</if>>
 <<else>>
-	<<if $insecurity_penis_big gte 1 and $penissize gte 2 and $acceptance_penis_big lte 999>>
+	<<if $insecurity_penis_big gte 1 and $player.penissize gte 2 and $acceptance_penis_big lte 999>>
 		<span class="red">Insecurity: Enormous Penis</span>
 		<div class="meter">
 			<<set _percent=Math.floor(($insecurity_penis_big/1000)*100)>>
 			<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 		</div>
-		<<if $acceptance_penis_big gte 1 and $acceptance_penis_big lte 999 and $penissize gte 2>>
+		<<if $acceptance_penis_big gte 1 and $acceptance_penis_big lte 999 and $player.penissize gte 2>>
 			<span class="green">Acceptance: Big Penis</span>
 			<div class="meter">
 				<<set _percent=Math.floor(($acceptance_penis_big/1000)*100)>>
@@ -797,13 +808,13 @@ __Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, i
 		<</if>>
 	<</if>>
 <</if>>
-<<if $insecurity_breasts_tiny gte 1 and $breastsize lte 0 and $player.gender is "f" and $acceptance_breasts_tiny lte 999>>
+<<if $insecurity_breasts_tiny gte 1 and $player.breastsize lte 0 and $player.gender is "f" and $acceptance_breasts_tiny lte 999>>
 	<span class="red">Insecurity: Flat Chest</span>
 	<div class="meter">
 		<<set _percent=Math.floor(($insecurity_breasts_tiny/1000)*100)>>
 		<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 	</div>
-	<<if $acceptance_breasts_tiny gte 1 and $acceptance_breasts_tiny lte 999 and $breastsize lte 0 and $player.gender is "f">>
+	<<if $acceptance_breasts_tiny gte 1 and $acceptance_breasts_tiny lte 999 and $player.breastsize lte 0 and $player.gender is "f">>
 		<span class="green">Acceptance: Tiny Breasts</span>
 		<div class="meter">
 			<<set _percent=Math.floor(($acceptance_breasts_tiny/1000)*100)>>
@@ -811,13 +822,13 @@ __Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, i
 		</div>
 	<</if>>
 <</if>>
-<<if $insecurity_breasts_small gte 1 and $breastsize gte 1 and $breastsize lte 5 and $acceptance_breasts_small lte 999>>
+<<if $insecurity_breasts_small gte 1 and $player.breastsize gte 1 and $player.breastsize lte 5 and $acceptance_breasts_small lte 999>>
 	<span class="red">Insecurity: Small Breasts</span>
 	<div class="meter">
 		<<set _percent=Math.floor(($insecurity_breasts_small/1000)*100)>>
 		<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 	</div>
-	<<if $acceptance_breasts_small gte 1 and $acceptance_breasts_small lte 999 and $breastsize gte 1 and $breastsize lte 5>>
+	<<if $acceptance_breasts_small gte 1 and $acceptance_breasts_small lte 999 and $player.breastsize gte 1 and $player.breastsize lte 5>>
 		<span class="green">Acceptance: Small Breasts</span>
 		<div class="meter">
 			<<set _percent=Math.floor(($acceptance_breasts_small/1000)*100)>>
@@ -826,13 +837,13 @@ __Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, i
 	<</if>>
 <</if>>
 <<if $player.gender is "f">>
-	<<if $insecurity_breasts_big gte 1 and $breastsize gte 8 and $acceptance_breasts_big lte 999>>
+	<<if $insecurity_breasts_big gte 1 and $player.breastsize gte 8 and $acceptance_breasts_big lte 999>>
 	<span class="red">Insecurity: Huge Breasts</span>
 		<div class="meter">
 			<<set _percent=Math.floor(($insecurity_breasts_big/1000)*100)>>
 			<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 		</div>
-		<<if $acceptance_breasts_big gte 1 and $acceptance_breasts_big lte 999 and $breastsize gte 8>>
+		<<if $acceptance_breasts_big gte 1 and $acceptance_breasts_big lte 999 and $player.breastsize gte 8>>
 			<span class="green">Acceptance: Big Breasts</span>
 			<div class="meter">
 				<<set _percent=Math.floor(($acceptance_breasts_big/1000)*100)>>
@@ -841,13 +852,13 @@ __Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, i
 		<</if>>
 	<</if>>
 <<else>>
-	<<if $insecurity_breasts_big gte 1 and $breastsize gte 6 and $acceptance_breasts_big lte 999>>
+	<<if $insecurity_breasts_big gte 1 and $player.breastsize gte 6 and $acceptance_breasts_big lte 999>>
 		<span class="red">Insecurity: Huge Breasts</span>
 		<div class="meter">
 			<<set _percent=Math.floor(($insecurity_breasts_big/1000)*100)>>
 			<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 		</div>
-		<<if $acceptance_breasts_big gte 1 and $acceptance_breasts_big lte 999 and $breastsize gte 6>>
+		<<if $acceptance_breasts_big gte 1 and $acceptance_breasts_big lte 999 and $player.breastsize gte 6>>
 			<span class="green">Acceptance: Big Breasts</span>
 			<div class="meter">
 				<<set _percent=Math.floor(($acceptance_breasts_big/1000)*100)>>

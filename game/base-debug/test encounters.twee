@@ -1232,7 +1232,7 @@ A terminal is attached to the tube. You look at the prompts.
 :: NPC Clothing Fight
 <<if $sexstart is 1>>
 	<<generateNPC 1 $npcOptions.type $npcOptions.pronoun $npcOptions.gender>><<person1>>
-	<<run npcEquipSet($NPCList[0], setup.npcClothesSets.find(n => n.name === V.npcOptions.clothes))>>
+	<<run npcEquipSet($NPCList[0], setup.npcClothesSets.find(n => n.name === $npcOptions.clothes))>>
 	<<unset $npcOptions>>
 
 	<<set $sexstart to 0>>
@@ -1247,7 +1247,7 @@ A terminal is attached to the tube. You look at the prompts.
 	"Beginning sexual encounter," the <<person>> says in a flat tone, before <<his>> face morphs into a lavicious smile. <<catcall>>
 <<elseif $fightstart is 1>>
 	<<generateNPC 1 $npcOptions.type $npcOptions.pronoun $npcOptions.gender>><<person1>>
-	<<run npcEquipSet($NPCList[0], setup.npcClothesSets.find(n => n.name === V.npcOptions.clothes))>>
+	<<run npcEquipSet($NPCList[0], setup.npcClothesSets.find(n => n.name === $npcOptions.clothes))>>
 	<<unset $npcOptions>>
 
 	<<set $fightstart to 0>>
@@ -1317,14 +1317,183 @@ Distorting $$time ($time) by $timeDistortion.<br>
 $$time = $time<br>
 $$hour = $hour<br>
 $$minute = $minute<br>
-$$hour * 60 + $$minute = <<= $hour * 60 + $minute>>
+$$hour * 60 + $$minute = <<print $hour * 60 + $minute>>
 <br><br>
 <<link [[Fast-Forward (0:05)|TimeTest]]>><<set $timeDistortion to 5>><</link>><br>
 <<link [[Fast-Backward -(0:05)|TimeTest]]>><<set $timeDistortion to -5>><</link>><br>
 <br>
 <<link [[Correct chrono variation|TimeTest]]>><<set $timeDistortion to ($hour * 60 + $minute) - $time>><</link>><br>
 <br>
-<<link [[Go back|$prevPassage]]>><<run delete V.timeDistortion>><</link>>
+<<link [[Go back|$prevPassage]]>><<run delete $timeDistortion>><</link>>
+
+:: NNPC Strapon Generator Widgets [widget]
+
+<<widget "straponGeneratorOptions">>
+
+	<i>Size:</i>
+	<<listbox "_straponSize" autoselect>>
+		<<option "regular" 2>>
+		<<option "large" 3>>
+		<<option "massive" 4>>
+	<</listbox>>
+
+	<i>Colour:</i>
+	<<set _colourOptions to ["black","red","pink","purple","fleshy","blue","green"]>>
+
+	<<listbox "_straponColour" autoselect>>
+		<<optionsfrom _colourOptions>>
+	<</listbox>>
+
+	<i>Shape:</i>
+	<<set _shapeOptions to ["dildo","penis","beaded dildo","horse cock","knotted cock","tentacle","dolphin cock","studded cock","fist dildo"]>>
+
+	<<listbox "_straponShape" autoselect>>
+		<<optionsfrom _shapeOptions>>
+	<</listbox>>
+
+	<i>Additional Modifier:</i>
+	<<set _modifierOptions to ["","floppy","transparent","sparkly"]>>
+	<<listbox "_straponModifier" autoselect>>
+		<<optionsfrom _modifierOptions>>
+	<</listbox>>
+	<br><br>
+
+<</widget>>
+
+
+:: NNPC Strapon Generator
+The lights flash on. You find yourself in a strange chamber, completely smooth and featureless.
+There is a sign on the wall that says <span class="orange">DEBUG</span> in bright orange letters.
+A large, opaque tube reaches to the ceiling, The words <span class="blue">CUSTOM CONSTRUCT</span> are labelled on the front.
+<br>
+
+<<set _nnpcOptions to $NPCName.filter(npc => npc.penis === "none")>>
+<<set _nnpcOptions to _nnpcOptions.map(npc => npc.nam)>>
+
+A terminal is attached to the tube.
+
+<<if _nnpcOptions.length gte 1>>
+	Its screen is a monochrome green. You look at the prompts. The first one surprises you. It's a list of the names of people you recognise, how peculiar...
+	<br><br>
+	<i>Please select the construct's model.</i>
+	<br>
+
+
+	<<listbox "_npcNameSelect" autoselect>>
+		<<optionsfrom _nnpcOptions>>
+	<</listbox>>
+	<br><br>
+
+	<i>Please design the construct's strap-on.</i>
+	<br>
+	<<set _straponSize to 3>>
+	<span id="straponOptions">
+	<<straponGeneratorOptions>>
+	</span>
+
+	<<button "<i>Randomize</i>">>
+		<<set _straponSize to [2,3,4].random()>> 
+		<<set _straponColour to ["black","red","pink","purple","fleshy","blue","green"].random()>> 
+		<<set _straponShape to ["dildo","penis","beaded dildo","horse cock","knotted cock","tentacle","dolphin cock","studded cock","fist dildo"].random()>> 
+		<<set _straponModifier to ["","","floppy","transparent","sparkly"].random()>>
+		<<replace "#straponOptions">><<straponGeneratorOptions>><</replace>>
+	<</button>><br><br>
+
+	Having selected the desired options, your finger hovers over the "Create" button. You really have no idea what this strange device is about to do...
+	<br><br>
+
+	<<link [[Create Construct|NNPC Strapon Generator Sex]]>>
+		<<npc _npcNameSelect>><<npcexpose>><<person1>>
+		<<generateNewStrapon _straponSize _straponColour _straponShape _straponModifier>>
+		<<npcstrapon 0>>
+		<<setNPCStrapon $NPCList[0] _newStrapon>>
+		<<set $sexstart to 1>>
+	<</link>>
+	<br><br>
+
+<<else>>
+	Its screen is a solid red colour, and it displays a message.
+	<br><br>
+	<span class="red"><i>Subject has no compatible candidates for construct in memory.</i></span>
+	<br>
+	<span class="red"><i>No actions available at this time.</i></span>
+	<br><br>
+
+<</if>>
+
+<<link [[Back home|Bedroom]]>><</link>>
+
+
+:: NNPC Strapon Generator Sex
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+
+	<<maninit>>
+	With a hiss of steam, the tube retracts to the ceiling.
+	A figure walks out, looking identical to <<print $NPCList[0].fullDescription>>,
+	<<if $NPCList[0].fullDescription is "Whitney">>
+		although fully nude and holding a <<print $NPCList[0].strapon.description>> in <<his>> hand. 
+		<br><br>
+		<<setNPCStrapon $NPCList[0] $NPCName[$NPCNameList.indexOf("Whitney")].strapons[0]>>
+		"This thing is cute and all, but I've already got one", <<he>> says,
+		throwing it away and pulling <<his>> favorite <<print $NPCList[0].strapon.description>> out of nowhere.
+	<<else>>
+		although fully nude and wearing a <<print $NPCList[0].strapon.description>>.
+	<</if>>
+	<br><br>
+
+	"Beginning sex encounter," the <<personsimple>> says in a flat tone, before <<his>> face morphs into a lavicious smile. <<catcall>>
+<</if>>
+
+<<effects>>
+<<effectsman>><<man>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $finish is 1>>
+	<span id="next"><<link [[FINISH|NNPC Strapon Generator Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[HEALTH|NNPC Strapon Generator Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[ORGASM|NNPC Strapon Generator Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $pain gte 100 and $willpowerpain is 0>>
+	<span id="next"><<link [[PAIN|NNPC Strapon Generator Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|NNPC Strapon Generator Sex]]>><</link>></span><<nexttext>>
+<</if>>
+<br>
+<<link [[Emergency exit|NNPC Strapon Generator Sex Finish]]>><<set $finish to 1>><</link>>
+<br><br><br><br>
+
+:: NNPC Strapon Generator Sex Finish
+<<if $finish is 1>>
+	"Test concluded," the <<personsimple>> says in a flat tone, abruptly stepping back. "Restoring state to default."
+<<elseif $enemyhealth lte 0>>
+	"Test concluded," the <<personsimple>> says in a flat tone, stepping away from you as if <<he>> weren't hurt at all. "Restoring state to default."
+<<elseif $pain gte 100 and $willpowerpain is 0>>
+	"Test concluded," the <<personsimple>> says in a flat tone, stepping away from you. "Restoring state to default."
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	"Test concluded," the <<personsimple>> says in a flat tone, stepping away from you. "Restoring state to default."
+<</if>>
+<br><br>
+
+<<He>> walks back to the terminal and flicks a switch. <<He>> steps past it, and the tube descends from the ceiling over <<him>> again.
+Once the tube touches the floor, the lights switch off.
+<br><br>
+
+<<tearful>> you wonder what to do next.
+<br><br>
+
+<<endcombat>><<clotheson>>
+
+<<link [[Create another construct|NNPC Strapon Generator]]>><</link>><br>
+<<link [[Back home|Bedroom]]>><</link>>
 
 :: Cow Test Sex
 <<if $sexstart is 1>>
@@ -1375,3 +1544,115 @@ $$hour * 60 + $$minute = <<= $hour * 60 + $minute>>
 <br>
 <<link [[Go home|Bedroom]]>><</link>>
 <br>
+
+:: Named NPC Stalk Select
+<<set $location to "town">><<set $bus to "domus">><<set $outside to 1>><<effects>>
+
+<<if $phase is 1>>
+	<<if $enemyno gte 2>>
+		<<person1>>You hear footsteps behind you, from more than one person. <span class="blue">You feel followed.</span>
+		<br><br>
+
+		<<link [[Next|Street Stalk Group]]>><<set $molestationstart to 1>><</link>>
+		<br>
+	<<else>>
+		<<person1>>You hear footsteps behind you. <span class="blue">You feel followed.</span>
+		<br><br>
+
+		<<link [[Next|Street Stalk]]>><<set $molestationstart to 1>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	<<if $stalkTestNPC>>
+		<<npc $stalkTestNPC>>
+		<<set $NPCList[0].skills to {athletics: random(1, 1000), security: random(1, 1000)}>>
+		<<unset $stalkTestNPC>>
+	<</if>>
+
+	<<if $enemyno gte 1>>
+		<<person1>>
+		<span class="red">You are being hunted by <<print $npc[$npcrow.indexOf(0)]>>.</span>
+		<br><br>
+
+		<<His>> athletics skill is <span class="gold"><<print $NPCList[0].skills.athletics>></span>.
+		<br>
+		<<His>> security skill is <span class="gold"><<print $NPCList[0].skills.security>></span>.
+		<br><br>
+	<</if>>
+
+	<<if $enemyno is 2>>
+		<span class="teal"><<He>> will be accompanied by a <<person2>><<person>>.</span>
+		<<person1>>
+		<br><br>
+	<<elseif $enemyno gte 3>>
+		<<He>> will be accompanied by
+		<<switch $enemyno>>
+			<<case 6>><span class="pink">five</span>
+			<<case 5>><span class="purple">four</span>
+			<<case 4>><span class="blue">three</span>
+			<<case 3>><span class="lblue">two</span>
+		<</switch>>
+		others.
+		<br><br>
+	<</if>>
+
+	<<switch $enemyno>>
+		<<case 6>>
+			<span class="blue">You can't add any more NPCs.</span>
+			<br><br>
+			<<link [[Start test|Named NPC Stalk Select]]>><<set $phase to 1>><</link>>
+			<br>
+		<<case 5>>
+			<<link [[Add another unnamed NPC|Named NPC Stalk Select]]>><<generate6>><</link>>
+			<br>
+			<<link [[Start test|Named NPC Stalk Select]]>><<set $phase to 1>><</link>>
+			<br>
+		<<case 4>>
+			<<link [[Add another unnamed NPC|Named NPC Stalk Select]]>><<generate5>><</link>>
+			<br>
+			<<link [[Start test|Named NPC Stalk Select]]>><<set $phase to 1>><</link>>
+			<br>
+		<<case 3>>
+			<<link [[Add another unnamed NPC|Named NPC Stalk Select]]>><<generate4>><</link>>
+			<br>
+			<<link [[Start test|Named NPC Stalk Select]]>><<set $phase to 1>><</link>>
+			<br>
+		<<case 2>>
+			<<link [[Add another unnamed NPC|Named NPC Stalk Select]]>><<generate3>><</link>>
+			<br>
+			<<link [[Start test|Named NPC Stalk Select]]>><<set $phase to 1>><</link>>
+			<br>
+		<<case 1>>
+			<<link [[Add an unnamed NPC|Named NPC Stalk Select]]>><<generate2>><</link>>
+			<br>
+			<<link [[Start test|Named NPC Stalk Select]]>><<set $phase to 1>><</link>>
+			<br>
+		<<default>>
+			Choose a named NPC.
+			<br><br>
+
+			<<link [[Avery|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Avery">><</link>>
+			<br>
+			<<link [[Bailey|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Bailey">><</link>>
+			<br>
+			<<link [[Briar|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Briar">><</link>>
+			<br>
+			<<link [[Eden|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Eden">><</link>>
+			<br>
+			<<link [[Harper|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Harper">><</link>>
+			<br>
+			<<link [[Kylar|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Kylar">><</link>>
+			<br>
+			<<link [[Leighton|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Leighton">><</link>>
+			<br>
+			<<link [[Morgan|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Morgan">><</link>>
+			<br>
+			<<link [[Whitney|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Whitney">><</link>>
+			<br>
+			<<link [[Someone else|Named NPC Stalk Select]]>><<set $stalkTestNPC to either("Alex","Charlie","Darryl","Doren","Gwylan","Jordan","Landry","Mason","Niki","Quinn","Remy","River","Robin","Sam","Sirris","Sydney","Wren")>><</link>>
+			<br>
+	<</switch>>
+	<br>
+	<<link [[Restart|Named NPC Stalk Select]]>><<endevent>><<set $phase to 0>><</link>>
+	<br>
+<</if>>

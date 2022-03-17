@@ -460,7 +460,6 @@
 	<</if>>
 	<<unset $alex_breakfast>>
 	<<unset $alex_tea>>
-	<<unset $alex_admin_oral>>
 	<<unset $alex_to_bed>>
 	<<if $alex_countdown gte 1>>
 		<<set $alex_countdown -= 1>>
@@ -612,6 +611,11 @@
 	<<case "january" "may" "september">>
 		<<if $weekday is 1 or $weekday is 2>>
 			<<set $schoolterm to 1>>
+			/* reset inspections event cycle; inspections per term to "track students' growth" */
+			<<if $schoolevent gt 2>>
+				<<set $schoolevent to 0>>
+				<<set $schooleventtimer to 10>>
+			<</if>>
 		<</if>>
 	<<case "april" "july" "december">>
 		<<if $weekday is 7 or $weekday is 1 or $weekday is 2>>
@@ -693,7 +697,7 @@
 	<<physicalAdjustments>>
 
 	<<if $player.penisExist>>
-		<<set _amount to $penissize - 1>>
+		<<set _amount to $player.penissize - 1>>
 		<<if $semen_volume lte 24>>
 			<<set _amount++>>
 		<</if>>
@@ -715,13 +719,13 @@
 
 	<<set $lactation_pressure -= 1>>
 	<<if $lactating is 1>>
-		<<if $lactation_pressure lt 30 or $breastsize lte 0>>
+		<<if $lactation_pressure lt 30 or $player.breastsize lte 0>>
 			<<set $lactating to 0>>
 			<<set $effectsmessage to 1>>
 			<<set $lactationmessage to 1>>
 		<</if>>
 	<<else>>
-		<<if $lactation_pressure gte 30 and $breastfeedingdisable is "f" and $breastsize gte 1>>
+		<<if $lactation_pressure gte 30 and $breastfeedingdisable is "f" and $player.breastsize gte 1>>
 			<<set $lactating to 1>>
 			<<set $effectsmessage to 1>>
 			<<set $lactationmessage to 1>>
@@ -1011,6 +1015,15 @@
 		<<npcincr Robin lust 1>>
 	<</if>>
 
+	<<if $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
+		<<set $robinDaily to {}>>
+		<<set $robinDaily.cdevent to 0>>
+	<</if>>
+
+	<<if $NPCName[$NPCNameList.indexOf("Alex")].init is 1>>
+		<<set $alexDaily to {}>>
+	<</if>>
+
 	<<if $farm_stage gte 7 && $NPCName[$NPCNameList.indexOf("Alex")].dom gte 40>>
 		<<npcincr Alex lust 1>>
 	<</if>>
@@ -1061,8 +1074,19 @@
 	<</if>>
 
 	<<if $sydneyScience isnot 1 and $days gte random(7, 12)>>
-		/*<<set $sydneyLate to 1>><<set $sydneyScience to 1>>*/
+		/*<<set $sydneyLate to 1>><<set $sydneyScience to 1>>*/ <!-- Uncomment this when Sydney can show up in Science Class -->
 	<</if>>
+	
+	<<if $adultshopprogress lt 22 and $weekday is 6>>
+		<<set $adultshopprogress += 1>>
+	<<elseif $adultshopgrandopening is true>>
+		<<unlockAdultShop>>	
+	<<elseif $adultshopprogress gte 22 and $adultshopunlocked isnot true>>
+		<<set $adultshopgrandopening to true>>
+	<<elseif $adultshopdegree lt 15>>
+		<<set $adultshopdegree += 0.1>>
+	<</if>>
+	<<unset $adultshophelped>>
 
 	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1>>
 		<<NPCStatusCheck "Sydney">>
@@ -1297,6 +1321,25 @@
 	<<else>>
 		<<set $clothingShop.banExtension to false>>
 	<</if>>
+	<<if $adultShop isnot undefined>>
+		<<if $adultShop.ban gt 0>>
+			<<set $adultShop.ban-->>
+		<<else>>
+			<<set $adultShop.banExtension to false>>
+		<</if>>
+	<<else>>
+		<<if $adultShop is undefined>>
+			<<set $adultShop to {
+				ban: 0,
+				banExtension: false,
+				spotted: false,
+				stolenClothes: 0,
+				totalStolenClothes: 0,
+				banCount: 0,
+				rng: random(0,1000)
+			}>>
+		<</if>>
+	<</if>>
 	<<unset $slimeFarmNaked>>
 	<<if $farm>>
 		<<if $farm.milking.catchChance gt random(10,1000)/10>>
@@ -1321,6 +1364,17 @@
 	<<if $wolfcavepatrol is 1>>
 		<<set $wolfcavepatrolchance to random(1,3)>>
 	<</if>>
+
+	<<if $randomNNPCStraponsToClear>>
+		<!-- Clear any strapons that were randomly generated for the NNPCs -->
+		<<run $NPCName.forEach(npc => {
+			if (npc.strapons && npc.strapons.length >= 1){
+				/* This removes all strapons that have the temp tag, and ignores any that lack this variable */
+				npc.strapons = npc.strapons.filter(strapon => !strapon.temp);
+				console.log("Removed temp strap-ons");
+			}
+		})>>
+	<</if>>
 <</if>>
 <</widget>>
 
@@ -1332,6 +1386,7 @@
 	<<clearNPC bartend>>
 <</if>>
 <<set $clothingShop.spotted to false>>
+<<set $adultShop.spotted to false>>
 <<dailySellProduce>>
 <<if $lake_ice_broken gte 1>>
 	<<set $lake_ice_broken -= 1>>
@@ -1562,6 +1617,7 @@
 <<unset $oceanbreezetheft>>
 <<unset $stripclubtheft>>
 <<unset $clothingshoptheft>>
+<<unset $adultshoptheft>>
 <<unset $hairdresserstheft>>
 <<unset $tailortheft>>
 <<unset $petshoptheft>>
@@ -1607,6 +1663,8 @@
 	<</if>>
 	<<set $photo.shoot to 0>>
 <</if>>
+
+<<unset $adultShopWhitney>>
 
 <</widget>>
 

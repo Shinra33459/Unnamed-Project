@@ -85,14 +85,54 @@ window.resetSaveMenu = function () {
 	new Wikifier(null, '<<resetSaveMenu>>');
 }
 
+window.ironmanAutoSave = function() {
+	$(function(){
+		let saveSlot = 8;
+
+		updateSavesCount();
+		SugarCube.Save.slots.save(saveSlot, null, { "saveId": V.saveId, "saveName": V.saveName, "ironman":V.ironmanmode})
+		let sD = window.getStateDelta(saveSlot)
+		setSaveDetail(saveSlot, { "saveId": V.saveId, "saveName": V.saveName, "ironman":V.ironmanmode, "ironman_signature":(V.ironmanmode ? md5(JSON.stringify(sD.state.delta[0])) : false)})
+	})
+}
+
+window.getStateDelta = function (saveSlot) {
+	let saveDetails = getSaveDetails()
+	if (saveDetails == undefined)
+		saveDetails = returnSaveDetails()
+	else if(saveDetails.autosave == undefined || saveDetails.slots == undefined)
+		saveDetails = returnSaveDetails()
+	return saveDetails.slots[saveSlot];
+}
+
 window.loadSave = function (saveSlot, confirm) {
+	var saveDetails = JSON.parse(localStorage.getItem("dolSaveDetails"));
+	let sD = window.getStateDelta(saveSlot)
 	if (V.confirmLoad === true && confirm === undefined) {
 		new Wikifier(null, '<<loadConfirm ' + saveSlot + '>>');
 	} else {
 		if (saveSlot === "auto") {
 			Save.autosave.load();
 		} else {
+			if (saveDetails.slots[saveSlot].metadata.ironman){ // (if ironman mode enabled) following checks md5 signature of the save to see if the variables have been modified
+				console.log(md5(JSON.stringify(sD.state.delta[0])), saveDetails.slots[saveSlot].metadata.ironman_signature)
+				if (md5(JSON.stringify(sD.state.delta[0])) != saveDetails.slots[saveSlot].metadata.ironman_signature) {
+					new Wikifier(null, '<<loadIronmanCheater ' + saveSlot + '>>');
+					return
+				}
+			}
 			Save.slots.load(saveSlot);
+			if (V.ironmanmode == true){ // (ironman) remove all saves(except auto-save) with the same saveId than loaded save
+				for (let slotno of [0,1,2,3,4,5,6,7]){ // 0 to 7, ignoring index 8 because it's the one of the auto-save which shouldn't get removed
+					let tmp = window.getStateDelta(slotno)
+					if (tmp){
+						if (tmp.metadata.saveId == sD.metadata.saveId){
+							Save.slots.delete(slotno);
+							deleteSaveDetails(slotno)
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -105,10 +145,13 @@ window.save = function (saveSlot, confirm, saveId, saveName) {
 	} else {
 		if (saveSlot != undefined) {
 			updateSavesCount();
-			Save.slots.save(saveSlot, null, { "saveId": saveId, "saveName": saveName });
-			setSaveDetail(saveSlot, { "saveId": saveId, "saveName": saveName })
+			Save.slots.save(saveSlot, null, { "saveId": saveId, "saveName": saveName, "ironman":V.ironmanmode});
+			let sD = window.getStateDelta(saveSlot)
+			setSaveDetail(saveSlot, { "saveId": saveId, "saveName": saveName, "ironman":V.ironmanmode, "ironman_signature":(V.ironmanmode ? md5(JSON.stringify(sD.state.delta[0])) : false)})
 			V.currentOverlay = null;
 			overlayShowHide("customOverlay");
+			if (V.ironmanmode == true)
+				$(function(){SugarCube.Engine.restart()})
 		}
 	}
 }
@@ -484,9 +527,6 @@ window.settingsObjects = function (type) {
 		case "starting":
 			result = {
 				bodysize: { min: 0, max: 3, decimals: 0, randomize: "characterAppearance" },
-				penissize: { min: 0, max: 3, decimals: 0, randomize: "characterAppearance" },
-				breastsize: { min: 0, max: 4, decimals: 0, randomize: "characterAppearance"  },
-				bottomsize: { min: 0, max: 3, decimals: 0, randomize: "characterAppearance" },
 				breastsensitivity: { min: 0, max: 5, decimals: 0, randomize: "characterTrait" },
 				genitalsensitivity: { min: 0, max: 5, decimals: 0, randomize: "characterTrait" },
 				eyeselect: { strings: ["purple", "dark blue", "light blue", "amber", "hazel", "green", "lime green", "red", "pink", "grey", "light grey", "random"], randomize: "characterAppearance" },
@@ -495,11 +535,16 @@ window.settingsObjects = function (type) {
 				awareselect: { strings: ["innocent", "knowledgeable"], randomize: "characterTrait" },
 				background: { strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful", "greenthumb", "plantlover"], randomize: "characterTrait" },
 				gamemode: { strings: ["normal", "soft", "hard"] },
+				ironmanmode: {bool: false, bool:true},
+				maxStates: {min: 1, max:20, decimals: 0},
 				player: {
 					gender: { strings: ["m", "f", "h"], randomize: "characterAppearance" },
 					gender_body: { strings: ["m", "f", "a"], randomize: "characterAppearance" },
 					ballsExist: { bool: true, randomize: "characterAppearance" },
 					freckles: { bool: true, strings: ["random"], randomize: "characterAppearance" },
+					breastsize: { min: 0, max: 4, decimals: 0, randomize: "characterAppearance"  },
+					penissize: { min: 0, max: 3, decimals: 0, randomize: "characterAppearance" },
+					bottomsize: { min: 0, max: 3, decimals: 0, randomize: "characterAppearance" }
 				},
 				skinColor: {
 					natural: { strings: ["light", "medium", "dark", "gyaru", "ylight", "ymedium", "ydark", "ygyaru"], randomize: "characterAppearance" },
@@ -526,6 +571,7 @@ window.settingsObjects = function (type) {
 				clothesPriceUnderwear: { min: 1, max: 2, decimals: 1, randomize: "gameplay" },
 				clothesPriceSchool: { min: 1, max: 2, decimals: 1, randomize: "gameplay" },
 				clothesPriceLewd: { min: 0.1, max: 2, decimals: 1, randomize: "gameplay" },
+				tending_yield_factor: { min: 1, max: 10, decimals: 1, randomize: "gameplay" },
 				rentmod: { min: 0.1, max: 3, decimals: 1, randomize: "gameplay" },
 				beastmalechance: { min: 0, max: 100, decimals: 0, randomize: "encounter" },
 				monsterchance: { min: 0, max: 100, decimals: 0, randomize: "encounter" },
@@ -549,6 +595,7 @@ window.settingsObjects = function (type) {
 				breastfeedingdisable: { boolLetter: true, bool: true },
 				analpregdisable: { boolLetter: true, bool: true },
 				watersportsdisable: { boolLetter: true, bool: true },
+				facesitdisable: { boolLetter: true, bool: true },
 				spiderdisable: { boolLetter: true, bool: true },
 				bodywritingdisable: { boolLetter: true, bool: true },
 				parasitedisable: { boolLetter: true, bool: true},
@@ -559,6 +606,8 @@ window.settingsObjects = function (type) {
 				horsedisable: {boolLetter: true, bool: true},
 				plantdisable: {boolLetter: true, bool: true},
 				footdisable: {boolLetter: true, bool: true},
+				toydildodisable: {boolLetter: true, bool: true},
+				toywhipdisable: {boolLetter: true, bool: true},
 				asphyxiaLvl: { min: 0, max: 4, decimals: 0 },
 				NudeGenderDC: { min: 0, max: 2, decimals: 0 },
 				breastsizemin: { min: 0, max: 4, decimals: 0 },

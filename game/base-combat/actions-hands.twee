@@ -52,19 +52,20 @@
 <<if $lefttarget isnot "self">>
 	<<set $_target to $NPCList[$lefttarget]>>
 	<<if $_target.penis is 0>>
+		<<set $_penis to (npcHasStrapon($lefttarget) ? "strap-on" : "penis")>>
 		<<if $consensual is 1 and ($enemytype is "man" ? $promiscuity : $deviancy) lte 34 and !$promiscuityIgnore>>
 		<!-- Do Nothing -->
 		<<else>>
 			<<if $_target.chastity.penis.includes("chastity")>>
-				<<set _leftaction["Tease " + $_target.pronouns.his + " penis through " + $_target.pronouns.his + " " + $_target.chastity.penis] to "leftgrab">>
+				<<set _leftaction["Tease " + $_target.pronouns.his + " " + $_penis + " through " + $_target.pronouns.his + " " + $_target.chastity.penis] to "leftgrab">>
 			<<else>>
-				<<set _leftaction["Grab " + $_target.pronouns.his + " penis"] to "leftgrab">>
+				<<set _leftaction["Grab " + $_target.pronouns.his + " " + $_penis] to "leftgrab">>
 			<</if>>
 		<</if>>
 		<<if $_target.chastity.penis.includes("chastity")>>
-			<<set _leftaction["Stroke " + $_target.pronouns.his + " penis through " + $_target.pronouns.his + " " + $_target.chastity.penis] to "leftstroke">>
+			<<set _leftaction["Stroke " + $_target.pronouns.his + " " + $_penis + " through " + $_target.pronouns.his + " " + $_target.chastity.penis] to "leftstroke">>
 		<<else>>
-			<<set _leftaction["Stroke "+ $_target.pronouns.his + " penis"] to "leftstroke">>
+			<<set _leftaction["Stroke "+ $_target.pronouns.his + " " + $_penis] to "leftstroke">>
 		<</if>>
 	<</if>>
 <</if>>
@@ -114,6 +115,7 @@
 <</widget>>
 
 <!-- Deprecated, not in use. See "leftclothesnew"-->
+/*
 <<widget "leftclothes">>
 
 <<if $worn.upper.state is setup.clothes.upper[clothesIndex('upper', $worn.upper)].state_base and $worn.upper.state_top is setup.clothes.upper[clothesIndex('upper', $worn.upper)].state_top_base and !$worn.upper.type.includes("naked")>>
@@ -157,6 +159,7 @@
 <</if>>
 
 <</widget>>
+*/
 
 <<widget "leftclothesnew">>
 <<if $lefttarget is "self" or $targetYourself is false or _targetnumber is 1>>
@@ -184,9 +187,9 @@
 		<<set _leftaction["Displace your "+$worn.lower.name] to "lower">>
 	<</if>>
 
-	<<if $worn.under_lower.state is setup.clothes.under_lower[clothesIndex('under_lower', $worn.under_lower)].state_base and !$worn.under_lower.type.includes("naked")>>
+	<<if $worn.under_lower.state is setup.clothes.under_lower[clothesIndex('under_lower', $worn.under_lower)].state_base and !$worn.under_lower.type.includes("naked") and !($penisstate isnot 0 and playerHasStrapon())>>
 		<<if $worn.lower.state isnot setup.clothes.lower[clothesIndex('lower', $worn.lower)].state_base or setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 or $worn.lower.type.includes("naked")>>
-			<<set _leftaction["Displace your "+$worn.under_lower.name] to "under">>
+			<<set _leftaction["Displace your "+$worn.under_lower.name] to "under_lower">>
 		<</if>>
 	<</if>>
 
@@ -276,6 +279,18 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</if>>
 <</widget>>
 
+<<widget "leftdildowhack">>
+<<if $lefttarget isnot "self">>
+	<<if $NPCList[$lefttarget].lefthand is "dildo" or $NPCList[$lefttarget].righthand is "dildo">>
+		<<if getSexToysofType("all").includes($NPCList[$lefttarget].lefttool)>>
+			<<set _leftaction["Whack the "+ $NPCList[$lefttarget].lefttool +" away"] to "dildowhack">>
+		<<elseif getSexToysofType("all").includes($NPCList[$lefttarget].righttool)>>
+			<<set _leftaction["Whack the "+ $NPCList[$lefttarget].righttool +" away"] to "dildowhack">>
+		<</if>>
+	<</if>>
+<</if>>
+<</widget>>
+
 <<widget "leftFixAndCoverActions">>
 <<if $worn.lower.vagina_exposed is 1 and $worn.under_lower.vagina_exposed is 1>>
 	<<if $NPCList[0].state is "stalk" and $NPCList[0].legs isnot "run">>
@@ -294,17 +309,23 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</if>>
 
 <<if $worn.lower.vagina_exposed is 1 and $worn.under_lower.vagina_exposed is 1>>
+	<<set _penis to playerHasStrapon() ? 'strap-on' : 'penis'>>
+	<<set _straponDisplaced to (!playerHasStrapon() && $worn.under_lower.type.includes("strap-on"))>>
 	<<if $NPCList[0].state is "stalk" and $NPCList[0].legs isnot "run">>
 		<<if $penisuse is "cover">>
-			<<set _leftaction["Keep covering your penis"] to "leftcoverpenismeek">>
+			<<set _leftaction["Keep covering your " + _penis] to "leftcoverpenismeek">>
 		<<elseif $penisuse is 0>>
-			<<set _leftaction["Cover your penis"] to "leftcoverpenismeek">>
+			<<if !_straponDisplaced>>
+				<<set _leftaction["Cover your " + _penis] to "leftcoverpenismeek">>
+			<</if>>
 		<</if>>
 	<<elseif $lefttarget is "self" or $targetYourself is false or _targetnumber is 1 or $NPCList[0].state is "stalk">>
 		<<if $penisuse is "cover">>
-			<<set _leftaction["Keep covering your penis"] to "leftcoverpenis">>
+			<<set _leftaction["Keep covering your " + _penis] to "leftcoverpenis">>
 		<<elseif $penisuse is 0>>
-			<<set _leftaction["Cover your penis"] to "leftcoverpenis">>
+			<<if !_straponDisplaced>>
+				<<set _leftaction["Cover your " + _penis] to "leftcoverpenis">>
+			<</if>>
 		<</if>>
 	<</if>>
 <</if>>
@@ -473,19 +494,20 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <<if $righttarget isnot "self">>
 	<<set $_target to $NPCList[$righttarget]>>
 	<<if $_target.penis is 0>>
+		<<set $_penis to (npcHasStrapon($righttarget) ? "strap-on" : "penis")>>
 		<<if $consensual is 1 and ($enemytype is "man" ? $promiscuity : $deviancy) lte 34 and !$promiscuityIgnore>>
 		<!-- Do Nothing -->
 		<<else>>
 			<<if $_target.chastity.penis.includes("chastity")>>
-				<<set _rightaction["Tease " + $_target.pronouns.his + " penis through " + $_target.pronouns.his + " " + $_target.chastity.penis] to "rightgrab">>
+				<<set _rightaction["Tease " + $_target.pronouns.his + " " + $_penis + " through " + $_target.pronouns.his + " " + $_target.chastity.penis] to "rightgrab">>
 			<<else>>
-				<<set _rightaction["Grab " + $_target.pronouns.his + " penis"] to "rightgrab">>
+				<<set _rightaction["Grab " + $_target.pronouns.his + " " + $_penis] to "rightgrab">>
 			<</if>>
 		<</if>>
 		<<if $_target.chastity.penis.includes("chastity")>>
-			<<set _rightaction["Stroke " + $_target.pronouns.his + " penis through " + $_target.pronouns.his + " " + $_target.chastity.penis] to "rightstroke">>
+			<<set _rightaction["Stroke " + $_target.pronouns.his + " " + $_penis + " through " + $_target.pronouns.his + " " + $_target.chastity.penis] to "rightstroke">>
 		<<else>>
-			<<set _rightaction["Stroke " + $_target.pronouns.his + " penis"] to "rightstroke">>
+			<<set _rightaction["Stroke " + $_target.pronouns.his + " " + $_penis] to "rightstroke">>
 		<</if>>
 	<</if>>
 <</if>>
@@ -536,6 +558,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</widget>>
 
 <!-- Deprecated, not in use. See "rightclothesnew"-->
+/*
 <<widget "rightclothes">>
 
 <<if $worn.upper.state is setup.clothes.upper[clothesIndex('upper', $worn.upper)].state_base and $worn.upper.state_top is setup.clothes.upper[clothesIndex('upper', $worn.upper)].state_top_base and !$worn.upper.type.includes("naked")>>
@@ -579,6 +602,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</if>>
 
 <</widget>>
+*/
 
 <<widget "rightclothesnew">>
 <<if $righttarget is "self" or $targetYourself is false or _targetnumber is 1>>
@@ -606,9 +630,9 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 		<<set _rightaction["Displace your "+$worn.lower.name] to "lower">>
 	<</if>>
 
-	<<if $worn.under_lower.state is setup.clothes.under_lower[clothesIndex('under_lower', $worn.under_lower)].state_base and !$worn.under_lower.type.includes("naked")>>
+	<<if $worn.under_lower.state is setup.clothes.under_lower[clothesIndex('under_lower', $worn.under_lower)].state_base and !$worn.under_lower.type.includes("naked") and !($penisstate isnot 0 and playerHasStrapon())>>
 		<<if $worn.lower.state isnot setup.clothes.lower[clothesIndex('lower', $worn.lower)].state_base or setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 or $worn.lower.type.includes("naked")>>
-			<<set _rightaction["Displace your "+$worn.under_lower.name] to "under">>
+			<<set _rightaction["Displace your "+$worn.under_lower.name] to "under_lower">>
 		<</if>>
 	<</if>>
 
@@ -701,6 +725,18 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</if>>
 <</widget>>
 
+<<widget "rightdildowhack">>
+<<if $righttarget isnot "self">>
+	<<if $NPCList[$righttarget].lefthand is "dildo" or $NPCList[$righttarget].righthand is "dildo">>
+		<<if getSexToysofType("all").includes($NPCList[$righttarget].lefttool)>>
+			<<set _rightaction["Whack the "+ $NPCList[$righttarget].lefttool +" away"] to "dildowhack">>
+		<<elseif getSexToysofType("all").includes($NPCList[$righttarget].righttool)>>
+			<<set _rightaction["Whack the "+ $NPCList[$righttarget].righttool +" away"] to "dildowhack">>
+		<</if>>
+	<</if>>
+<</if>>
+<</widget>>
+
 <<widget "rightFixAndCoverActions">>
 
 <<if $worn.lower.vagina_exposed is 1 and $worn.under_lower.vagina_exposed is 1>>
@@ -720,17 +756,23 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</if>>
 
 <<if $worn.lower.vagina_exposed is 1 and $worn.under_lower.vagina_exposed is 1>>
+	<<set _penis to playerHasStrapon() ? 'strap-on' : 'penis'>>
+	<<set _straponDisplaced to (!playerHasStrapon() && $worn.under_lower.type.includes("strap-on"))>>
 	<<if $NPCList[0].state is "stalk" and $NPCList[0].legs isnot "run">>
 		<<if $penisuse is "cover">>
-			<<set _rightaction["Keep covering your penis"] to "rightcoverpenismeek">>
+			<<set _rightaction["Keep covering your _penis"] to "rightcoverpenismeek">>
 		<<elseif $penisuse is 0>>
-			<<set _rightaction["Cover your penis"] to "rightcoverpenismeek">>
+			<<if !_straponDisplaced>>
+				<<set _rightaction["Cover your _penis"] to "rightcoverpenismeek">>
+			<</if>>
 		<</if>>
 	<<elseif $righttarget is "self" or $targetYourself is false or _targetnumber is 1 or $NPCList[0].state is "stalk">>
 		<<if $penisuse is "cover">>
-			<<set _rightaction["Keep covering your penis"] to "rightcoverpenis">>
+			<<set _rightaction["Keep covering your _penis"] to "rightcoverpenis">>
 		<<elseif $penisuse is 0>>
-			<<set _rightaction["Cover your penis"] to "rightcoverpenis">>
+			<<if !_straponDisplaced>>
+				<<set _rightaction["Cover your _penis"] to "rightcoverpenis">>
+			<</if>>
 		<</if>>
 	<</if>>
 <</if>>
@@ -854,8 +896,8 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <<widget "handsstrugglefreebodypart">>
 	<<if $consensual isnot 1>>
-		<<set _hand to $args[0]>>
-		<<set _style to $args[1]>>
+		<<set _hand to _args[0]>>
+		<<set _style to _args[1]>>
 		<<if _hand is "right">>
 			<<set _default to $rightactiondefault>>
 			<<set _actionVariable to "$rightaction">>
@@ -877,18 +919,320 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<</if>>
 <</widget>>
 
+<<widget "combathandhold">>
+	<<set $_heldhand to _args[0]>>
+	<<if $enemytype isnot "beast" and $consensual is 1>>
+		<<if $_heldhand is "righthand" and $righttarget isnot "self">>
+			<<if $NPCList[$righttarget].lefthand is 0 or $NPCList[$righttarget].lefthand is "idle">>
+				<<set _rightaction["Hold " + $NPCList[$righttarget].pronouns.his + " hand"] to "righthandholdnew">>
+			<</if>>
+		<<elseif $_heldhand is "lefthand" and $lefttarget isnot "self">>
+			<<if $NPCList[$lefttarget].righthand is 0 or $NPCList[$lefttarget].righthand is "idle">>
+				<<set _leftaction["Hold " + $NPCList[$lefttarget].pronouns.his + " hand"] to "lefthandholdnew">>
+			<</if>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "removeButtplug">>
+	<<if _args[0]>>
+		<<if _args[0] is "left">>
+			<<if $lefttarget is "self" or $targetYourself is false or _targetnumber is 1>>
+				<<if $worn.lower.anus_exposed gte 1 and $worn.under_lower.anus_exposed gte 1 and !["othermouthImminent","othermouth","imminent","doubleimminent","penetrated","doublepenetrated"].includes($anusstate) and playerHasButtPlug()>>
+					<<set _leftaction["Remove your "+$worn.butt_plug.name] to "removebuttplug">>
+				<</if>>
+			<</if>>
+		<</if>>
+		<<if _args[0] is "right">>
+			<<if $righttarget is "self" or $targetYourself is false or _targetnumber is 1>>
+				<<if $worn.lower.anus_exposed gte 1 and $worn.under_lower.anus_exposed gte 1 and !["othermouthImminent","othermouth","imminent","doubleimminent","penetrated","doublepenetrated"].includes($anusstate) and playerHasButtPlug()>>
+					<<set _rightaction["Remove your "+$worn.butt_plug.name] to "removebuttplug">>
+				<</if>>
+			<</if>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "combatMasturbate">>
+	<<if _args[0] isnot undefined>>
+		<<if $worn.lower.state isnot setup.clothes.lower[clothesIndex('lower', $worn.lower)].state_base or setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 or $worn.lower.type.includes("naked")>>
+			<<if _args[0] is "left">>
+				<<if $promiscuity gt 14 and ($lefttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+					<<if $player.vaginaExist>>
+						<<set _leftaction["Play with your pussy"] to "leftmasturbatepussy">>
+					<</if>>
+					<<if $player.penisExist>>
+						<<set _leftaction["Stroke your penis"] to "leftmasturbatepenis">>
+					<</if>>
+				<</if>>
+			<</if>>
+			<<if _args[0] is "right">>
+				<<if $promiscuity gt 14 and ($righttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+					<<if $player.vaginaExist>>
+						<<set _rightaction["Play with your pussy"] to "rightmasturbatepussy">>
+					<</if>>
+					<<if $player.penisExist>>
+						<<set _rightaction["Stroke your penis"] to "rightmasturbatepenis">>
+					<</if>>
+				<</if>>
+			<</if>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "applyLube">>
+	<<if _args[0] is "left" and ($lefttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+
+		<<set _items to window.listUniqueCarriedSextoys()>>
+
+		<<for _i = 0; _i < _items.length; _i++>>
+			<<if _items[_i].type.includes("lube")>>
+				<<set _hasLube to true>>
+				<<break>>
+			<</if>>
+		<</for>>
+
+		<<if _hasLube is true>>
+			<<if $worn.over_lower.vagina_exposed isnot 0 and $worn.lower.vagina_exposed isnot 0 and $worn.under_lower.vagina_exposed isnot 0 and $worn.genitals.vagina_exposed isnot 0>>
+				<<if !["mouthEntrance","mouthImminent","mouthPenetration","pussyPenetration","anusPenetration"].includes($penisstate) and $player.penisExist>>
+					<<set $_penis to (!playerHasStrapon() ? "penis" : "strap-on")>>
+					<<set _leftaction["Lubricate your " + $_penis] to "lubepenis">>
+				<</if>>
+				<<if !["othermouthimminent","othermouth","imminent","penetrated","doubleimminent","doublepenetrated"].includes($vaginastate) and $player.vaginaExist>>
+					<<set _leftaction["Lubricate your pussy"] to "lubepussy">>
+				<</if>>
+			<</if>>
+			<<if $worn.over_lower.anus_exposed isnot 0 and $worn.lower.anus_exposed isnot 0 and $worn.under_lower.anus_exposed isnot 0 and $worn.genitals.anus_exposed isnot 0>>
+				<<if !["othermouthimminent","othermouth","imminent","penetrated","doubleimminent","doublepenetrated"].includes($anusstate)>>
+					<<set _leftaction["Lubricate your anus"] to "lubeanus">>
+				<</if>>
+			<</if>>
+		<</if>>
+	<</if>>
+
+	<<if _args[0] is "right" and ($righttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+
+		<<set _items to window.listUniqueCarriedSextoys()>>
+		<<for _i; _i < _items.length; _i++>>
+			<<if _items[_i].type.includes("lube")>>
+				<<set _hasLube to true>>
+				<<break>>
+			<</if>>
+		<</for>>
+		<<if _hasLube is true>>
+			<<if $worn.over_lower.vagina_exposed isnot 0 and $worn.lower.vagina_exposed isnot 0 and $worn.under_lower.vagina_exposed isnot 0 and $worn.genitals.vagina_exposed isnot 0>>
+				<<if !["mouthEntrance","mouthImminent","mouthPenetration","pussyPenetration","anusPenetration"].includes($penisstate) and $player.penisExist>>
+					<<set _rightaction["Lubricate your penis"] to "lubepenis">>
+				<</if>>
+				<<if !["othermouthimminent","othermouth","imminent","penetrated","doubleimminent","doublepenetrated"].includes($vaginastate) and $player.vaginaExist>>
+					<<set _rightaction["Lubricate your pussy"] to "lubepussy">>
+				<</if>>
+			<</if>>
+			<<if $worn.over_lower.anus_exposed isnot 0 and $worn.lower.anus_exposed isnot 0 and $worn.under_lower.anus_exposed isnot 0 and $worn.genitals.anus_exposed isnot 0>>
+				<<if !["othermouthimminent","othermouth","imminent","penetrated","doubleimminent","doublepenetrated"].includes($anusstate)>>
+					<<set _rightaction["Lubricate your anus"] to "lubeanus">>
+				<</if>>
+			<</if>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "heldSexToy">>
+	<<if _args[0] isnot undefined>>
+		<<if _args[0] is "left">>
+			/* rest */
+			<<set _leftaction["Rest"] to "heldSexToy">>
+			
+			/* Drop sex toy */
+			<<set _leftaction["Drop your "+$currentSexToyLeft.name] to "dildoDrop">>
+			
+			/* NPC fuck */
+			<<if $lefttarget isnot undefined and $lefttarget isnot "self">>
+				<<if $NPCList[$lefttarget].vagina isnot "none" and $NPCList[$lefttarget].vagina is 0 and $currentSexToyLeft.type.includes("dildo")>>
+					<<set _leftaction["Move your "+$currentSexToyLeft.name+" to "+$NPCList[$lefttarget].pronouns.his+" pussy"] to "dildoOtherPussyTease">>
+				<</if>>
+
+				<<if $NPCList[$lefttarget].penis isnot "none" and $NPCList[$lefttarget].penis is 0 and !npcHasStrapon($lefttarget) and $currentSexToyLeft.type.includes("stroker")>>
+					<<set _leftaction["Move your " + $currentSexToyLeft.name + " to " + $NPCList[$lefttarget].pronouns.his + " penis"] to "strokerOtherPenisTease">>
+				<</if>>
+
+				<<if $analdisable is "f" and $NPCList[$lefttarget].vagina isnot "none" and $NPCList[$lefttarget].vagina is 0 and $currentSexToyLeft.type.includes("dildo")>>
+					<<set _leftaction["Move your "+$currentSexToyLeft.name+" to "+$NPCList[$lefttarget].pronouns.his+" anus"] to "dildoOtherAnusTease">>
+				<</if>>
+				
+				<<if $analdisable is "f" and $NPCList[$lefttarget].penis isnot "none" and $NPCList[$lefttarget].penis is 0 and $currentSexToyLeft.type.includes("dildo")>>
+					<<set _leftaction["Move your "+$currentSexToyLeft.name+" to "+$NPCList[$lefttarget].pronouns.his+" anus"] to "dildoOtherAnusTease">>
+				<</if>>
+			<</if>>
+
+			/* Masturbate */
+			<<if $worn.lower.state isnot setup.clothes.lower[clothesIndex('lower', $worn.lower)].state_base or setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 or $worn.lower.type.includes("naked")>>
+				<<if $promiscuity gt 34 and ($lefttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+					<<if $player.vaginaExist and $currentSexToyLeft.type.includes("dildo")>>
+						<<set _leftaction["Move your "+$currentSexToyLeft.name+" to your pussy"] to "dildoSelfPussyEntrance">>
+					<</if>>
+					<<if $analdisable is "f" and $currentSexToyLeft.type.includes("dildo")>>
+						<<set _leftaction["Move your "+$currentSexToyLeft.name+" to your anus"] to "dildoSelfAnusEntrance">>
+					<</if>>
+					<<if $player.penisExist and $currentSexToyLeft.type.includes("stroker")>>
+						<<set _leftaction["Move your "+$currentSexToyLeft.name+" to your penis"] to "strokerSelfPenisEntrance">>
+					<</if>>
+				<</if>>
+			<</if>>
+		<</if>>
+		
+		<<if _args[0] is "right">>
+			/* rest */
+			<<set _rightaction["Rest"] to "heldSexToy">>
+
+			/* Drop sex toy */
+			<<set _rightaction["Drop your "+$currentSexToyRight.name] to "dildoDrop">>
+
+			/* NPC fuck */
+			<<if $righttarget isnot undefined and $righttarget isnot "self">>
+				<<if $NPCList[$righttarget].vagina isnot "none" and $NPCList[$righttarget].vagina is 0 and $currentSexToyRight.type.includes("dildo")>>
+					<<set _rightaction["Move your "+$currentSexToyRight.name+" to "+$NPCList[$righttarget].pronouns.his+" pussy"] to "dildoOtherPussyTease">>
+				<</if>>
+				<<if $NPCList[$righttarget].penis isnot "none" and $NPCList[$righttarget].penis is 0 and !npcHasStrapon($righttarget) and $currentSexToyRight.type.includes("stroker")>>
+					<<set _rightaction["Move your " + $currentSexToyRight.name + " to " + $NPCList[$righttarget].pronouns.his + " penis"] to "strokerOtherPenisTease">>
+				<</if>>
+				<<if $analdisable is "f" and $NPCList[$righttarget].vagina isnot "none" and $NPCList[$righttarget].vagina is 0 and $currentSexToyRight.type.includes("dildo")>>
+					<<set _rightaction["Move your "+$currentSexToyRight.name+" to "+$NPCList[$righttarget].pronouns.his+" anus"] to "dildoOtherAnusTease">>
+				<</if>>
+				<<if $analdisable is "f" and $NPCList[$righttarget].penis isnot "none" and $NPCList[$righttarget].penis is 0 and $currentSexToyRight.type.includes("dildo")>>
+					<<set _rightaction["Move your "+$currentSexToyRight.name+" to "+$NPCList[$righttarget].pronouns.his+" anus"] to "dildoOtherAnusTease">>
+				<</if>>
+			<</if>>
+
+				/* Masturbate */
+			<<if $worn.lower.state isnot setup.clothes.lower[clothesIndex('lower', $worn.lower)].state_base or setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 or $worn.lower.type.includes("naked")>>
+				<<if $promiscuity gt 34 and ($righttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+					<<if $player.vaginaExist and $currentSexToyRight.type.includes("dildo")>>
+						<<set _rightaction["Move your "+$currentSexToyRight.name+" to your pussy"] to "dildoSelfPussyEntrance">>
+					<</if>>
+					<<if $analdisable is "f" and $currentSexToyRight.type.includes("dildo")>>
+						<<set _rightaction["Move your "+$currentSexToyRight.name+" to your anus"] to "dildoSelfAnusEntrance">>
+					<</if>>
+					<<if $player.penisExist and $currentSexToyRight.type.includes("stroker")>>
+						<<set _rightaction["Move your "+$currentSexToyRight.name+" to your penis"] to "strokerSelfPenisEntrance">>
+					<</if>>
+				<</if>>
+			<</if>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "dildoSelfPussyEntrance">>
+	<<if $args[0] isnot undefined>>
+		<<if $args[0] is "left">>
+			<<set $_genitals_exposed to $worn.over_lower.vagina_exposed gte 1 and ($worn.lower.vagina_exposed gte 1 or $worn.lower.skirt gte 1) and $worn.under_lower.vagina_exposed gte 1 and $worn.genitals.vagina_exposed gte 1>>
+			<<if $promiscuity gt 34 and ($lefttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+				<<if $_genitals_exposed and $vaginause is 0>>
+					<<set _leftaction["Push your " + $currentSexToyLeft.name + " in"] to "dildoSelfPussy">>
+				<</if>>
+				<<if $_genitals_exposed and $anususe is 0>>
+					<<set _leftaction["Move your "+$currentSexToyLeft.name+" to your anus"] to "dildoSelfAnusEntrance">>
+				<</if>>
+			<</if>>
+
+			<<set _leftaction["Tease your pussy"] to "dildoSelfPussyEntrance">>
+			<<set _leftaction["Drop your " + $currentSexToyLeft.name] to "dildoDrop">>
+		<</if>>
+		<<if $args[0] is "right">>
+			<<set $_genitals_exposed to $worn.over_lower.vagina_exposed gte 1 and ($worn.lower.vagina_exposed gte 1 or $worn.lower.skirt gte 1) and $worn.under_lower.vagina_exposed gte 1 and $worn.genitals.vagina_exposed gte 1>>
+			<<if $promiscuity gt 34 and ($righttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+				<<if $_genitals_exposed and $vaginause is 0>>
+					<<set _rightaction["Push your " + $currentSexToyRight.name + " in"] to "dildoSelfPussy">>
+				<</if>>
+				<<if $_genitals_exposed and $anususe is 0>>
+					<<set _rightaction["Move your "+$currentSexToyRight.name+" to your anus"] to "dildoSelfAnusEntrance">>
+				<</if>>
+			<</if>>
+
+			<<set _rightaction["Tease your pussy"] to "dildoSelfPussyEntrance">>
+			<<set _rightaction["Drop your " + $currentSexToyRight.name] to "dildoDrop">>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "dildoSelfAnusEntrance">>
+	<<if $args[0] isnot undefined>>
+		<<if $args[0] is "left">>
+			<<set $_genitals_exposed to $worn.over_lower.vagina_exposed gte 1 and ($worn.lower.vagina_exposed gte 1 or $worn.lower.skirt gte 1) and $worn.under_lower.vagina_exposed gte 1 and $worn.genitals.vagina_exposed gte 1>>
+			<<set $_anus_exposed to $worn.over_lower.anus_exposed gte 1 and ($worn.lower.anus_exposed gte 1 or $worn.lower.skirt gte 1) and $worn.under_lower.anus_exposed gte 1 and $worn.genitals.anus_exposed gte 1>>
+			<<if $promiscuity gt 34 and ($lefttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+				<<if $_anus_exposed and $anususe is 0>>
+					<<set _leftaction["Push your " + $currentSexToyLeft.name + " in"] to "dildoSelfAnus">>
+				<</if>>
+				<<if $_genitals_exposed and $vaginause is 0>>
+					<<set _leftaction["Move your "+$currentSexToyLeft.name+" to your pussy"] to "dildoSelfPussyEntrance">>
+				<</if>>
+			<</if>>
+
+			<<set _leftaction["Tease your anus"] to "dildoSelfAnusEntrance">>
+			<<set _leftaction["Drop your " + $currentSexToyLeft.name] to "dildoDrop">>
+		<</if>>
+		<<if $args[0] is "right">>
+			<<set $_genitals_exposed to $worn.over_lower.vagina_exposed gte 1 and ($worn.lower.vagina_exposed gte 1 or $worn.lower.skirt gte 1) and $worn.under_lower.vagina_exposed gte 1 and $worn.genitals.vagina_exposed gte 1>>
+			<<set $_anus_exposed to $worn.over_lower.anus_exposed gte 1 and ($worn.lower.anus_exposed gte 1 or $worn.lower.skirt gte 1) and $worn.under_lower.anus_exposed gte 1 and $worn.genitals.anus_exposed gte 1>>
+			<<if $promiscuity gt 34 and ($righttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+				<<if $_anus_exposed and $anususe is 0>>
+					<<set _rightaction["Push your " + $currentSexToyRight.name + " in"] to "dildoSelfAnus">>
+				<</if>>
+				<<if $_genitals_exposed and $vaginause is 0>>
+					<<set _rightaction["Move your "+$currentSexToyRight.name+" to your pussy"] to "dildoSelfPussyEntrance">>
+				<</if>>
+			<</if>>
+
+			<<set _rightaction["Tease your anus"] to "dildoSelfAnusEntrance">>
+			<<set _rightaction["Drop your " + $currentSexToyRight.name] to "dildoDrop">>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "strokerSelfPenisEntrance">>
+	<<if $args[0] isnot undefined>>
+		<<if $args[0] is "left">>
+			<<set $_genitals_exposed to $worn.over_lower.vagina_exposed gte 1 and ($worn.lower.vagina_exposed gte 1 or $worn.lower.skirt gte 1) and $worn.under_lower.vagina_exposed gte 1 and $worn.genitals.vagina_exposed gte 1>>
+			<<if $promiscuity gt 34 and ($lefttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+				<<if $_genitals_exposed and $penisuse is 0>>
+					<<set _leftaction["Penetrate your " + $currentSexToyLeft.name] to "strokerSelfPenis">>
+				<</if>>
+			<</if>>
+
+			<<set _leftaction["Tease your penis"] to "strokerSelfPenisEntrance">>
+			<<set _leftaction["Drop your " + $currentSexToyLeft.name] to "dildoDrop">>
+		<</if>>
+
+		<<if $args[0] is "right">>
+			<<set $_genitals_exposed to $worn.over_lower.vagina_exposed gte 1 and ($worn.lower.vagina_exposed gte 1 or $worn.lower.skirt gte 1) and $worn.under_lower.vagina_exposed gte 1 and $worn.genitals.vagina_exposed gte 1>>
+			<<if $promiscuity gt 34 and ($righttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+				<<if $_genitals_exposed and $penisuse is 0>>
+					<<set _rightaction["Push your " + $currentSexToyRight.name + " in"] to "strokerSelfPenis">>
+				<</if>>
+			<</if>>
+
+			<<set _rightaction["Tease your penis"] to "strokerSelfPenisEntrance">>
+			<<set _rightaction["Drop your " + $currentSexToyRight.name] to "dildoDrop">>
+		<</if>>
+	<</if>>
+<</widget>>
+
 :: Widgets Effects Hands [widget]
 <<widget "effectshandsclothes">>
 
-<<if $leftaction is "over_upper" and $rightaction is "over_upper">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+/* Unified each clothing action for both hands.  To add conditionals for both hands, use: if $leftaction is $rightaction as a block inside */
+
+<<if $leftaction is "over_upper" or $rightaction is "over_upper">>
+	<<if $leftaction is "over_upper">><<set $leftaction to 0>><<set $leftactiondefault to "rest">><</if>>
+	<<if $rightaction is "over_upper">><<set $rightaction to 0>><<set $rightactiondefault to "rest">><</if>>
 	<<if $worn.over_upper.name is "naked">>
 		You clutch the tattered remains of your clothing.
 	<<elseif $worn.over_upper.open is 1>>
 		<<set $worn.over_upper.exposed to 2>><<set $worn.over_upper.state_top to "midriff">>
 		<<if $worn.upper.exposed lt 2>>
 			You pull down your $worn.over_upper.name.
-		<<elseif $breastsize gte 3>>
+		<<elseif $player.breastsize gte 3>>
 			You pull down your $worn.over_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
 		<<else>>
 			You pull down your $worn.over_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
@@ -897,55 +1241,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 		<<set $worn.over_upper.exposed to 2>><<set $worn.over_upper.state to "chest">>
 		<<if $worn.upper.exposed lt 2>>
 			You pull up your $worn.over_upper.name.
-		<<elseif $breastsize gte 3>>
-			You pull up your $worn.over_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull up your $worn.over_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<</if>>
-
-<<elseif $leftaction is "over_upper">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
-	<<if $worn.over_upper.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<elseif $worn.over_upper.open is 1>>
-		<<set $worn.over_upper.exposed to 2>><<set $worn.over_upper.state_top to "midriff">>
-		<<if $worn.upper.exposed lt 2>>
-			You pull down your $worn.over_upper.name.
-		<<elseif $breastsize gte 3>>
-			You pull down your $worn.over_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull down your $worn.over_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<<else>>
-		<<set $worn.over_upper.exposed to 2>><<set $worn.over_upper.state to "chest">>
-		<<if $worn.upper.exposed lt 2>>
-			You pull up your $worn.over_upper.name.
-		<<elseif $breastsize gte 3>>
-			You pull up your $worn.over_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull up your $worn.over_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<</if>>
-
-<<elseif $rightaction is "over_upper">>
-	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
-	<<if $worn.over_upper.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<elseif $worn.over_upper.open is 1>>
-		<<set $worn.over_upper.exposed to 2>><<set $worn.over_upper.state_top to "midriff">>
-		<<if $worn.upper.exposed lt 2>>
-			You pull down your $worn.over_upper.name.
-		<<elseif $breastsize gte 3>>
-			You pull down your $worn.over_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull down your $worn.over_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<<else>>
-		<<set $worn.over_upper.exposed to 2>><<set $worn.over_upper.state to "chest">>
-		<<if $worn.upper.exposed lt 2>>
-			You pull up your $worn.over_upper.name.
-		<<elseif $breastsize gte 3>>
+		<<elseif $player.breastsize gte 3>>
 			You pull up your $worn.over_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
 		<<else>>
 			You pull up your $worn.over_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
@@ -953,60 +1249,21 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<</if>>
 <</if>>
 
-<<if $leftaction is "upper" and $rightaction is "upper">>
-<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+<<if $leftaction is "upper" or $rightaction is "upper">>
+	<<if $leftaction is "upper">><<set $leftaction to 0>><<set $leftactiondefault to "rest">><</if>>
+	<<if $rightaction is "upper">><<set $rightaction to 0>><<set $rightactiondefault to "rest">><</if>>
 	<<if $worn.upper.name is "naked">>
 		You clutch the tattered remains of your clothing.
 	<<elseif $worn.upper.open is 1>>
 		<<set $worn.upper.exposed to 2>><<set $worn.upper.state_top to "midriff">>
-		<<if $breastsize gte 3>>
+		<<if $player.breastsize gte 3>>
 			You pull down your $worn.upper.name <span class="lewd">and your <<breasts>> flop out.</span>
 		<<else>>
 			You pull down your $worn.upper.name, <span class="lewd">exposing your <<breasts>>.</span>
 		<</if>>
 	<<else>>
 		<<set $worn.upper.exposed to 2>><<set $worn.upper.state to "chest">>
-		<<if $breastsize gte 3>>
-			You pull up your $worn.upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull up your $worn.upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<</if>>
-
-<<elseif $leftaction is "upper">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
-	<<if $worn.upper.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<elseif $worn.upper.open is 1>>
-		<<set $worn.upper.exposed to 2>><<set $worn.upper.state_top to "midriff">>
-		<<if $breastsize gte 3>>
-			You pull down your $worn.upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull down your $worn.upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<<else>>
-		<<set $worn.upper.exposed to 2>><<set $worn.upper.state to "chest">>
-		<<if $breastsize gte 3>>
-			You pull up your $worn.upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull up your $worn.upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<</if>>
-
-<<elseif $rightaction is "upper">>
-	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
-	<<if $worn.upper.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<elseif $worn.upper.open is 1>>
-		<<set $worn.upper.exposed to 2>><<set $worn.upper.state_top to "midriff">>
-		<<if $breastsize gte 3>>
-			You pull down your $worn.upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull down your $worn.upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<<else>>
-		<<set $worn.upper.exposed to 2>><<set $worn.upper.state to "chest">>
-		<<if $breastsize gte 3>>
+		<<if $player.breastsize gte 3>>
 			You pull up your $worn.upper.name <span class="lewd">and your <<breasts>> flop out.</span>
 		<<else>>
 			You pull up your $worn.upper.name, <span class="lewd">exposing your <<breasts>>.</span>
@@ -1014,60 +1271,21 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<</if>>
 <</if>>
 
-<<if $leftaction is "under_upper" and $rightaction is "under_upper">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+<<if $leftaction is "under_upper" or $rightaction is "under_upper">>
+	<<if $leftaction is "under_upper">><<set $leftaction to 0>><<set $leftactiondefault to "rest">><</if>>
+	<<if $rightaction is "under_upper">><<set $rightaction to 0>><<set $rightactiondefault to "rest">><</if>>
 	<<if $worn.under_upper.name is "naked">>
 		You clutch the tattered remains of your clothing.
 	<<elseif $worn.under_upper.open is 1>>
 		<<set $worn.under_upper.exposed to 2>><<set $worn.under_upper.state_top to "midriff">>
-		<<if $breastsize gte 3>>
+		<<if $player.breastsize gte 3>>
 			You pull down your $worn.under_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
 		<<else>>
 			You pull down your $worn.under_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
 		<</if>>
 	<<else>>
 		<<set $worn.under_upper.exposed to 2>><<set $worn.under_upper.state to "chest">>
-		<<if $breastsize gte 3>>
-			You pull up your $worn.under_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull up your $worn.under_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<</if>>
-
-<<elseif $leftaction is "under_upper">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
-	<<if $worn.under_upper.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<elseif $worn.under_upper.open is 1>>
-		<<set $worn.under_upper.exposed to 2>><<set $worn.under_upper.state_top to "midriff">>
-		<<if $breastsize gte 3>>
-			You pull down your $worn.under_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull down your $worn.under_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<<else>>
-		<<set $worn.under_upper.exposed to 2>><<set $worn.under_upper.state to "chest">>
-		<<if $breastsize gte 3>>
-			You pull up your $worn.under_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull up your $worn.under_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<</if>>
-
-<<elseif $rightaction is "under_upper">>
-	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
-	<<if $worn.under_upper.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<elseif $worn.under_upper.open is 1>>
-		<<set $worn.under_upper.exposed to 2>><<set $worn.under_upper.state_top to "midriff">>
-		<<if $breastsize gte 3>>
-			You pull down your $worn.under_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
-		<<else>>
-			You pull down your $worn.under_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
-		<</if>>
-	<<else>>
-		<<set $worn.under_upper.exposed to 2>><<set $worn.under_upper.state to "chest">>
-		<<if $breastsize gte 3>>
+		<<if $player.breastsize gte 3>>
 			You pull up your $worn.under_upper.name <span class="lewd">and your <<breasts>> flop out.</span>
 		<<else>>
 			You pull up your $worn.under_upper.name, <span class="lewd">exposing your <<breasts>>.</span>
@@ -1075,9 +1293,11 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<</if>>
 <</if>>
 
-<<if $leftaction is "lower" and $rightaction is "lower">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
-	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+/* Todo: over_lower here, but I don't know what the conditions should be.  Please remove this comment when it's been fixed. */
+
+<<if $leftaction is "lower" or $rightaction is "lower">>
+	<<if $leftaction is "lower">><<set $leftaction to 0>><<set $leftactiondefault to "rest">><</if>>
+	<<if $rightaction is "lower">><<set $rightaction to 0>><<set $rightactiondefault to "rest">><</if>>
 	<<set $worn.lower.vagina_exposed to 1>><<set $worn.lower.anus_exposed to 1>><<set $worn.lower.exposed to 2>>
 	<<if $worn.lower.name is "naked">>
 		You clutch the tattered remains of your clothing.
@@ -1088,88 +1308,37 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 		<<set $worn.lower.state to "thighs">>
 		You pull down your $worn.lower.name, <span class="lewd">exposing your <<undies>>.</span>
 	<</if>>
+<</if>>
 
-<<elseif $leftaction is "lower">>
-<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $worn.lower.anus_exposed to 1>><<set $worn.lower.vagina_exposed to 1>><<set $worn.lower.exposed to 2>>
-	<<if $worn.lower.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<elseif setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
-		<<set $worn.lower.skirt_down to 0>>
-		You lift up your $worn.lower.name, <span class="lewd">exposing your <<undies>>.</span>
-	<<else>>
-		<<set $worn.lower.state to "thighs">>
-		You pull down your $worn.lower.name, <span class="lewd">exposing your <<undies>>.</span>
+<<if $leftaction is "under_lower" or $rightaction is "under_lower">>
+	<<if $leftaction is "under_lower">><<set $leftaction to 0>><<set $leftactiondefault to "rest">><</if>>
+	<<if $rightaction is "under_lower">><<set $rightaction to 0>><<set $rightactiondefault to "rest">><</if>>
+	
+	<<set $worn.under_lower.anus_exposed to 1>><<set $worn.under_lower.vagina_exposed to 1>><<set $worn.under_lower.exposed to 2>>
+	<<set $worn.under_lower.state to "thighs">>
+	/* Strapon code is here, if needed to move to the genital-clothing section */
+	<<if playerHasStrapon()>>
+		<<if $playerPenisSizeBackup isnot undefined>>
+			<<set $player.penissize to $playerPenisSizeBackup>>
+		<</if>>
 	<</if>>
-
-<<elseif $rightaction is "lower">>
-<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $worn.lower.anus_exposed to 1>><<set $worn.lower.vagina_exposed to 1>><<set $worn.lower.exposed to 2>>
-	<<if $worn.lower.name is "naked">>
+	<<if $worn.under_lower.name is "naked">>
 		You clutch the tattered remains of your clothing.
-	<<elseif setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
-		<<set $worn.lower.skirt_down to 0>>
-		You lift up your $worn.lower.name, <span class="lewd">exposing your <<undies>>.</span>
+	<<elseif $worn.lower.exposed gte 2>>
+		You pull down your $worn.under_lower.name, <span class="lewd">exposing your <<genitals>>.</span>
 	<<else>>
-		<<set $worn.lower.state to "thighs">>
-		You pull down your $worn.lower.name, <span class="lewd">exposing your <<undies>>.</span>
+		You pull down your $worn.under_lower.name under your $worn.lower.name.
 	<</if>>
 <</if>>
 
-<<if $leftaction is "under" and $rightaction is "under">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
-	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
-	<<set $worn.under_lower.anus_exposed to 1>><<set $worn.under_lower.vagina_exposed to 1>>
-	<<set $worn.under_lower.state to "thighs">><<set $worn.under_lower.exposed to 2>>
-	<<if $worn.under_lower.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<else>>
-		You pull down your $worn.under_lower.name, <span class="lewd">exposing your <<genitals>>.</span>
-	<</if>>
-
-<<elseif $leftaction is "under">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $worn.under_lower.anus_exposed to 1>><<set $worn.under_lower.vagina_exposed to 1>><<set $worn.under_lower.exposed to 2>>
-	<<set $worn.under_lower.state to "thighs">>
-	<<if $worn.under_lower.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<else>>
-		You pull down your $worn.under_lower.name, <span class="lewd">exposing your <<genitals>>.</span>
-	<</if>>
-
-<<elseif $rightaction is "under">>
-	<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $worn.under_lower.anus_exposed to 1>><<set $worn.under_lower.vagina_exposed to 1>><<set $worn.under_lower.exposed to 2>>
-	<<set $worn.under_lower.state to "thighs">>
-	<<if $worn.under_lower.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<else>>
-		You pull down your $worn.under_lower.name, <span class="lewd">exposing your <<genitals>>.</span>
-	<</if>>
-<</if>>
-
-<<if $leftaction is "mask" and $rightaction is "mask">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
-	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+<<if $leftaction is "mask" or $rightaction is "mask">>
+	<<if $leftaction is "mask">><<set $leftaction to 0>><<set $leftactiondefault to "rest">><</if>>
+	<<if $rightaction is "mask">><<set $rightaction to 0>><<set $rightactiondefault to "rest">><</if>>
 	<<facestrip>>
 	<<if $worn.face.name is "naked">>
 		You clutch the tattered remains of your mask.
 	<<else>>
-		You pull down your $worn.under_lower.name, <span class="lewd">revealing your face.</span>
-	<</if>>
-
-<<elseif $leftaction is "mask">>
-	<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $worn.under_lower.anus_exposed to 1>><<set $worn.under_lower.vagina_exposed to 1>><<set $worn.under_lower.exposed to 2>>
-	<<facestrip>>
-	<<if $worn.face.name is "naked">>
-		You clutch the tattered remains of your mask.
-	<<else>>
-		You pull down your $worn.under_lower.name, <span class="lewd">revealing your face.</span>
-	<</if>>
-
-<<elseif $rightaction is "mask">>
-	<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $worn.under_lower.anus_exposed to 1>><<set $worn.under_lower.vagina_exposed to 1>><<set $worn.under_lower.exposed to 2>>
-	<<facestrip>>
-	<<if $worn.face.name is "naked">>
-		You clutch the tattered remains of your mask.
-	<<else>>
-		You pull down your $worn.under_lower.name, <span class="lewd">revealing your face.</span>
+		You pull down your $worn.face.name, <span class="lewd">revealing your face.</span>
 	<</if>>
 <</if>>
 
@@ -1476,6 +1645,71 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</if>>
 <</widget>>
 
+<<widget "effectsdildowhack">>
+<<if $leftaction is "dildowhack">>
+	<<set $leftaction to 0>>
+	<<set $_target to $NPCList[$lefttarget]>>
+	<<if typeof($_target.lefthand) is "string" and $_target.lefthand.includes("dildo")>>
+		You whack the <<print $_target.lefttool>> from the <<personselect $lefttarget>><<persons>> hand.
+		<<if $_target.fullDescription is "Sydney" or ($_target.fullDescription is "Robin" and $NPCName[$NPCNameList.indexOf("Robin")].rage lte 35) or $_target.type is "plant">>
+			<<He>> pouts at you.
+			<<brat 2 $lefttarget>>
+		<<elseif $consensual is 1>>
+			Disappointment flashes across <<his>> face.
+			<<brat 2 $lefttarget>>
+		<<else>>
+			Anger flashes across <<his>> face.
+			<<brat 5 $lefttarget>>
+		<</if>>
+		<<brat 5 $lefttarget>><<set $_target.lefthand to 0>><<set $_target.lefttool to 0>>
+	<<elseif typeof($_target.righthand) is "string" and $_target.righthand.includes("dildo")>>
+		You whack the <<print $_target.righttool>> from the <<personselect $lefttarget>><<persons>> hand.
+		<<if $_target.fullDescription is "Sydney" or ($_target.fullDescription is "Robin" and $NPCName[$NPCNameList.indexOf("Robin")].rage lte 35) or $_target.type is "plant">>
+			<<He>> pouts at you.
+			<<brat 2 $lefttarget>>
+		<<elseif $consensual is 1>>
+			Disappointment flashes across <<his>> face.
+		<<else>>
+			Anger flashes across <<his>> face.
+			<<brat 5 $lefttarget>>
+		<</if>>
+		<<brat 5 $lefttarget>><<set $_target.righthand to 0>><<set $_target.righttool to 0>>
+	<</if>>
+<</if>>
+
+<<if $rightaction is "dildowhack">>
+	<<set $rightaction to 0>>
+	<<set $_target to $NPCList[$righttarget]>>
+	<<if typeof($_target.lefthand) is "string" and $_target.lefthand.includes("dildo")>>
+		You whack the <<print $_target.lefttool>> from the <<personselect $righttarget>><<persons>> hand.
+		<<if $_target.fullDescription is "Sydney" or ($_target.fullDescription is "Robin" and $NPCName[$NPCNameList.indexOf("Robin")].rage lte 35) or $_target.type is "plant">>
+			<<He>> pouts at you.
+			<<brat 2 $righttarget>>
+		<<elseif $consensual is 1>>
+			Disappointment flashes across <<his>> face.
+			<<brat 2 $righttarget>>
+		<<else>>
+			Anger flashes across <<his>> face.
+			<<brat 5 $righttarget>>
+		<</if>>
+		<<brat 5 $righttarget>><<set $_target.lefthand to 0>><<set $_target.lefttool to 0>>
+	<<elseif typeof($_target.righthand) is "string" and $_target.righthand.includes("dildo")>>
+		You whack the <<print $_target.righttool>> from the <<personselect $righttarget>><<persons>> hand.
+		<<if $_target.fullDescription is "Sydney" or ($_target.fullDescription is "Robin" and $NPCName[$NPCNameList.indexOf("Robin")].rage lte 35) or $_target.type is "plant">>
+			<<He>> pouts at you.
+			<<brat 2 $righttarget>>
+		<<elseif $consensual is 1>>
+			Disappointment flashes across <<his>> face.
+			<<brat 2 $righttarget>>
+		<<else>>
+			Anger flashes across <<his>> face.
+			<<brat 5 $righttarget>>
+		<</if>>
+		<<brat 5 $righttarget>><<set $_target.righthand to 0>><<set $_target.righttool to 0>>
+	<</if>>
+<</if>>
+<</widget>>
+
 <<widget "effectshandsfreeface">>
 	<<if $leftaction is "freeface" or $rightaction is "freeface">>
 		<<if $leftaction is "freeface" and $rightaction is "freeface">>
@@ -1699,7 +1933,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <<widget "hand_section_two">>
 	<<set $rng to random(1, 100)>>
-	<<set $_hand to $args[0]>>
+	<<set $_hand to _args[0]>>
 	<<set $_npcHand to $NPCList[_n][$_hand + "hand"]>>
 	
 	<!-- Note for future coders: this is an EXCEPTION, because there are a LOT of pen_x states, and this is the best way to handle it. --> 
@@ -1712,6 +1946,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<<switch $_npcHand>>
 		<<case "none" "idle">>
 		<<case "spank">> <<combat-spank $_hand>>
+		<<case "handhold">> <<combat-hand-on-hand $_hand>>
 		<<case "arms">> <<combat-hand-on-arms $_hand>>
 		<<case "leftarm">> <<combat-hand-on-one-arm $_hand "left">>
 		<<case "rightarm">> <<combat-hand-on-one-arm $_hand "right">>
@@ -1742,8 +1977,219 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 		<<case "socks">> <<combat-hand-on-socks $_hand>>
 		<<case "shackle_imminent">> <<combat-hand-on-shackle $_hand>>
 		<<case "shackle_entrance">> <<combat-hand-on-shackle-imminent $_hand>>
+		<<case "dildo_reveal">> <<combat-reveal-sextoy $_hand>>
+		<<case "dildo">> <<combat-hand-on-sextoy $_hand>>
+		<<case "stroker">> <<combat-stroker-on-penisentrance $_hand>>
+		<<case "vaginadildo">> <<combat-dildo-on-vagina $_hand>>
+		<<case "anusdildo">> <<combat-dildo-on-anus $_hand>>
+		<<case "penisdildo">> <<combat-dildo-on-penis $_hand>>
+		<<case "penisstroker">> <<combat-stroker-on-penis $_hand>>
+		<<case "buttplug">> <<combat-hand-on-buttplug $_hand>>
 		<<case 0>> <<combat-set-hand-start $_hand>>
-		<<default>> <<run console.error("NPC hand action unaccounted for! Hand: " + $hand + " Value: " + $_npcHand)>> <<run throw new Error("NPC hand action unaccounted for! Hand: " + $hand + " Value: " + $_npcHand)>>
+		<<default>> <<run console.error("NPC hand action unaccounted for! Hand: " + $_hand + " Value: " + $_npcHand)>> <<run throw new Error("NPC hand action unaccounted for! Hand: " + $_hand + " Value: " + $_npcHand)>>
 	<</switch>>
 
+<</widget>>
+
+<<widget "effectsremovebuttplug">>
+	<<if ($worn.genitals.anal_shield is undefined or $worn.genitals.anal_shield is 0)>>
+		<<if $leftaction is "removebuttplug" and playerHasButtPlug()>>
+			<<set $leftaction to 0>>
+			You remove your $worn.butt_plug.name, exposing your anus.
+			<<set $worn.butt_plug.state to "removed">>
+
+		<<elseif $rightaction is "removebuttplug" and playerHasButtPlug()>>
+			<<set $rightaction to 0>>
+			You remove your $worn.butt_plug.name, exposing your anus.
+			<<set $worn.butt_plug.state to "removed">>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "effectsPickupSexToy">>
+	/* Start with a sex toy: Before combat do this: <<set $leftarm to "heldSexToy">><<set $currentSexToyLeft to clone(setup.sextoys[0])>> */
+	/* That will effectively mimic this widget so that a player starts combat holding a dildo(setup.sextoys[0]) */
+	<<if $leftaction is "pickupSexToy" and $rightaction is "pickupSexToy" and $selectedItemRight.name is $selectedItemLeft.name>>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to "heldSexToy">>
+			<<set $currentSexToyRight to $selectedItemRight>><<set $dildoreveal to 1>>
+			You retrieve your $currentSexToyRight.name and hold it with your right hand.
+	<<else>>
+		<<if $leftaction is "pickupSexToy" and $selectedItemLeft>>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to "heldSexToy">>
+			<<set $currentSexToyLeft to $selectedItemLeft>><<set $dildoreveal to 1>>
+			You retrieve your $selectedItemLeft.name with your left hand.
+		<</if>>
+		<<if $rightaction is "pickupSexToy" and $selectedItemRight>>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to "heldSexToy">>
+			<<set $currentSexToyRight to $selectedItemRight>><<set $dildoreveal to 1>>
+			You retrieve your $currentSexToyRight.name with your right hand.
+		<</if>>
+	<</if>>
+	
+<</widget>>
+
+<<widget "effectsDropSexToy">>
+	<<if $leftaction is "dildoDrop" and $rightaction is "dildoDrop">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			You drop your sex toys.
+			<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
+	<<else>>
+		<<if $leftaction is "dildoDrop">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
+			You drop your $currentSexToyLeft.name in your left hand.
+			<<unset $currentSexToyLeft>>
+		<</if>>
+		<<if $rightaction is "dildoDrop">>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			You drop your $currentSexToyRight.name in your right hand.
+			<<unset $currentSexToyRight>>
+		<</if>>
+	<</if>>
+
+	<<if $leftaction is "dildoDropLeft" and $rightaction is "dildoDropRight">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			You drop your sex toys.
+			<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if ["leftDildo","leftDildoTease"].includes($NPCList[$_i].vagina)>>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if ["leftDildo","leftDildoTease"].includes($NPCList[$_i].penis)>>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+				<<if ["rightDildo","rightDildoTease"].includes($NPCList[$_i].vagina)>>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if ["rightDildo","rightDildoTease"].includes($NPCList[$_i].penis)>>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+	<<else>>
+		<<if $leftaction is "dildoDropLeft">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
+			You drop your $currentSexToyLeft.name in your left hand.
+			<<unset $currentSexToyLeft>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if $NPCList[$_i].vagina is "leftDildo">>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if $NPCList[$_i].penis is "leftDildo">>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+		<</if>>
+		<<if $rightaction is "dildoDropRight">>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			You drop your $currentSexToyRight.name in your right hand.
+			<<unset $currentSexToyRight>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if $NPCList[$_i].vagina is "rightDildo">>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if $NPCList[$_i].penis is "rightDildo">>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+		<</if>>
+	<</if>>
+
+	<<if $leftaction is "dildoDropAnusLeft" and $rightaction is "dildoDropAnusRight">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			You drop your sex toys.
+			<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if ["leftDildoAnus","leftDildoAnusTease"].includes($NPCList[$_i].vagina)>>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if ["leftDildoAnus","leftDildoAnusTease"].includes($NPCList[$_i].penis)>>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+				<<if ["rightDildoAnus","rightDildoAnusTease"].includes($NPCList[$_i].vagina)>>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if ["rightDildoAnus","rightDildoAnusTease"].includes($NPCList[$_i].penis)>>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+	<<else>>
+		<<if ["dildoDropAnusLeft","dildoDropAnusTeaseLeft"].includes($leftaction)>>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
+			You drop your $currentSexToyLeft.name in your left hand.aaaaa
+			<<unset $currentSexToyLeft>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if ["leftDildoAnus","leftDildoAnusTease"].includes($NPCList[$_i].vagina)>>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if ["leftDildoAnus","leftDildoAnusTease"].includes($NPCList[$_i].penis)>>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+		<</if>>
+		<<if ["dildoDropAnusRight","dildoDropAnusTeaseRight"].includes($rightaction)>>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			You drop your $currentSexToyRight.name in your right hand.aaaaa
+			<<unset $currentSexToyRight>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if ["rightDildoAnus","rightDildoAnusTease"].includes($NPCList[$_i].vagina)>>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if ["rightDildoAnus","rightDildoAnusTease"].includes($NPCList[$_i].penis)>>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+		<</if>>
+	<</if>>
+
+	<<if $leftaction is "strokerDropLeft" and $rightaction is "strokerDropRight">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			You drop your sex toys.
+			<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if ["leftStroker","leftStrokerTease"].includes($NPCList[$_i].vagina)>>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if ["leftStroker","leftStrokerTease"].includes($NPCList[$_i].penis)>>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+				<<if ["rightStroker","rightStrokerTease"].includes($NPCList[$_i].vagina)>>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if ["rightStroker","rightStrokerTease"].includes($NPCList[$_i].penis)>>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+	<<else>>
+		<<if $leftaction is "strokerDropLeft">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
+			You drop the $currentSexToyLeft.name in your left hand.
+			<<unset $currentSexToyLeft>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if $NPCList[$_i].vagina is "leftStroker">>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if $NPCList[$_i].penis is "leftStroker">>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+			<<if $penisuse is "strokerSelfPenis">>
+				<<set $penisuse to 0>><<set $penisstate to 0>>
+			<</if>>
+		<</if>>
+		<<if $rightaction is "strokerDropRight">>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			You drop the $currentSexToyRight.name in your right hand.
+			<<unset $currentSexToyRight>>
+			<<for $_i = 0; $_i lt $enemyno; $_i++>>
+				<<if $NPCList[$_i].vagina is "rightStroker">>
+					<<set $NPCList[$_i].vagina to 0>>
+				<</if>>
+				<<if $NPCList[$_i].penis is "rightStroker">>
+					<<set $NPCList[$_i].penis to 0>>
+				<</if>>
+			<</for>>
+			<<if $penisuse is "strokerSelfPenis">>
+				<<set $penisuse to 0>><<set $penisstate to 0>>
+			<</if>>
+		<</if>>
+	<</if>>
 <</widget>>

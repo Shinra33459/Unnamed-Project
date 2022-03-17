@@ -81,13 +81,16 @@
 	<<set $mouthactiondefault to 0>>
 	<<set $mouthaction to 0>>
 	<<set $mouth to 0>>
+	<<set $mouthstate to 0>>
 	<<set $penisuse to 0>>
 	<<set $vaginaactiondefault to 0>>
 	<<set $vaginaaction to 0>>
 	<<set $vaginause to 0>>
+	<<set $vaginastate to ($player.vaginaExist ? 0 : "none")>>
 	<<set $anusactiondefault to 0>>
 	<<set $anusaction to 0>>
 	<<set $anususe to 0>>
+	<<set $anusstate to 0>>
 	<<if $leftarm isnot "bound">>
 		<<set $leftarm to 0>>
 	<</if>>
@@ -113,6 +116,8 @@
 	<<unset $penisHeight>>
 	<<unset $canSelfSuckPenis>>
 	<<unset $canSelfSuckVagina>>
+	<<unset $currentToyLeft>>
+	<<unset $currentToyRight>>
 <</widget>>
 
 <<widget "masturbationstart">>
@@ -148,13 +153,21 @@
 	<<set $masturbationorgasmsemen to 0>>
 
 	<<set $fingersInVagina to 0>>
-	<<set $vaginaFingerLimit to 3>>
 	<<if $player.virginity.vaginal is true and $sexStats.vagina.pregnancy.totalBirthEvents is 0>>
-		<<set $vaginaFingerLimit -= 1>>
+		<!-- if virgin, limit is 2 -->
+		<<set $vaginaFingerLimit to 2>>
+	<<else>>
+		<<if $vaginalskill gte 600 or $demon gte 3>> <!-- Demons are stretchy. -->
+			<<set $vaginaFingerLimit to 5>>
+		<<elseif $vaginalskill gte 200 or $demon gte 1>>
+			<<set $vaginaFingerLimit to 4>>
+		<<else>>
+			<<set $vaginaFingerLimit to 3>>
+		<</if>>
 	<</if>>
 	
 	/* note: we're setting $ballssize here because the variable exists but isn't used anywhere else YET. when a true implementation is attempted, remove this. */
-	<<set $ballssize to $penissize>>
+	<<set $ballssize to $player.penissize>>
 	<<silently>>
 		<<ballsize>><<set $ballsText to _text_output + " ">>
 		<<testicles>><<set $ballsText += _text_output>>
@@ -214,13 +227,13 @@
 		<<set $canSelfSuckPenis to false>>
 	<<else>>
 		<<set $_danceSkillLimit to Math.clamp(Math.ceil((800 - $danceskill)/200), 0, 4)>>
-		<<set $_catFlexLimit to (6 - $cat)>>
+		<<set $_catFlexLimit to Math.clamp((6 - $cat), 0, 4)>>
 		<<if $player.penisExist>>
 			/* <<set setup.penisHeightLevels to ["base", "waist", "midriff", "chest"]>> */
 			/* the above comment is a reminder of how high the player's penis can reach. however, it's not useful in the code at the moment. */
 
 			/* lower number means harder to reach; the player has to get their head lower down to reach it. */
-			<<set $penisHeight to [0,0,0,1,1,2,3][$penissize + 2]>>
+			<<set $penisHeight to [0,0,0,1,1,2,3][$player.penissize + 2]>>
 			<<set $canSelfSuckPenis to ($penisHeight gte $_danceSkillLimit) or ($penisHeight gte $_catFlexLimit)>>
 			<<set $selfsuckLimit to $penisHeight - ($_danceSkillLimit lt $_catFlexLimit ? $_danceSkillLimit : $_catFlexLimit)>>
 			<<set $selfsuckDepth to 0>>
@@ -232,9 +245,9 @@
 <</widget>>
 
 <<widget "addVaginalWetness">>
-	<<if $args[0] and $args[0] gt 0 and $player.vaginaExist>>
+	<<if _args[0] and _args[0] gt 0 and $player.vaginaExist>>
 		<!-- Scale the wetness change based on arousal -->
-		<<set $_change to $args[0] * Math.pow(($arousal+6000)/10000, 2)>>
+		<<set $_change to _args[0] * Math.pow(($arousal+6000)/10000, 2)>>
 
 		<!-- Make it harder to build up wetness the closer you are to max wetness. -->
 		<<set $_wetnessPercent to Math.clamp($vaginaArousalWetness / 100, 0, 1)>>

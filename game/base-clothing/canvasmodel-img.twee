@@ -9,9 +9,16 @@ Render full player image.
 	<<modelprepare-player-body>>
 	<<modelprepare-player-clothes>>
 	<<if $sidebarAnimations isnot false>>
-		<<animatemodel $args[0]>>
+		<<animatemodel _args[0]>>
 	<<else>>
-		<<rendermodel $args[0]>>
+		<<rendermodel _args[0]>>
+	<</if>>
+	<<if playerHasStrapon()>>
+		<<set _modeloptions.crotch_visible to false>>
+		<<set _modeloptions.crotch_exposed to false>>
+		<<if $worn.lower.exposed lte 1 and $lowerwetstage lte 0>>
+			<<set _modeloptions.worn_under_lower to 0>>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -65,9 +72,11 @@ if ($skinColor.tanningEnabled is true){
 <</if>>
 
 <<if $possessed>>
-	<<set _modeloptions.eyes_colour = ($wraith and $wraith.state is "haunt" and !$schism ? "red possessed" : "blue possessed")>>
+	<<set _modeloptions.left_eye = ($wraith and $wraith.state is "haunt" and !$schism ? "red possessed" : "blue possessed")>>
+	<<set _modeloptions.right_eye = ($wraith and $wraith.state is "haunt" and !$schism ? "red possessed" : "blue possessed")>>
 <<else>>
-	<<set _modeloptions.eyes_colour = ($makeup.eyelenses != 0) ? $makeup.eyelenses : $eyecolour>>
+	<<set _modeloptions.left_eye = ($makeup.eyelenses.left != 0) ? $makeup.eyelenses.left : $leftEyeColour>>
+	<<set _modeloptions.right_eye = ($makeup.eyelenses.right != 0) ? $makeup.eyelenses.right : $rightEyeColour>>
 <</if>>
 <<set _modeloptions.hair_colour = $haircolour>>
 <<set _modeloptions.brows_colour = ($makeup.browscolour != 0 ? $makeup.browscolour : $naturalhaircolour)>>
@@ -354,7 +363,7 @@ $worn.under_upper.type.includes("naked") and $worn.under_lower.type.includes("na
 	<<set _modeloptions.pbhair_balls = $pblevelballs>>
 <</if>>
 <<if $player.penisExist>>
-	<<set _modeloptions.penis_size to Math.clamp($penissize, -2, 4)>>
+	<<set _modeloptions.penis_size to Math.clamp($player.penissize, -2, 4)>>
 	<<set _modeloptions.penis to ($player.virginity.penile === true ? "virgin" : "default") >>
 	<<set _modeloptions.balls to $player.ballsExist>>
 	<<set _modeloptions.penis_parasite to $parasite.penis.name>>
@@ -525,6 +534,10 @@ Set model options & filters for player clothes
 			<<set _modeloptions.worn_under_lower to 1>>
 		<</if>>
 	<</if>>
+	<<if playerHasStrapon()>>
+        <<set _modeloptions.worn_under_lower to $worn.under_lower.index>>
+        <<set _modeloptions.worn_under_lower_colour to ($worn.under_lower.colourCustom ? $worn.under_lower.colourCustom : $worn.under_lower.colour)>>
+    <</if>>
 
 	<<if $sidebarRenderer is 'both'>>
 		<<rendermodel 'canvasimg-both'>>

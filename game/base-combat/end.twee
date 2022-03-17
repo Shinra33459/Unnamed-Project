@@ -127,6 +127,13 @@
 	<<set $vaginause to 0>>
 	<<set $penisuse to 0>>
 <</switch>>
+<<if playerHasStrapon()>>
+	<<set $penisstate to 0>>
+	<<set $penisuse to 0>>
+	<<if $playerPenisSizeBackup isnot undefined>>
+		<<set $player.penissize to $playerPenisSizeBackup>>
+	<</if>>
+<</if>>
 
 <<set $anusstate to 0>>
 <<set $mouthstate to 0>>
@@ -304,7 +311,7 @@
 <<set $front to 0>>
 <<set $chest to 0>>
 
-<<set $claws to 1>>
+<!-- <<set $claws to 1>> -->
 <<set $water to 0>>
 
 <<set $vorestrength to 0>>
@@ -347,6 +354,12 @@
 <<set $speechhermaroused to 0>>
 <<set $speechhermshock to 0>>
 <<set $speechhermdisappointed to 0>>
+
+<<set $speechsextoyangry to 0>>
+<<set $speechsextoyshocked to 0>>
+<<set $speechsextoyaroused to 0>>
+<<set $speechsextoydisappointed to 0>>
+<<set $speechsextoy to 0>>
 
 <<set $prop to []>>
 
@@ -428,13 +441,18 @@
 <<if $penileskillup gte 1>>
 	<<set $penileskillup to 0>>
 	<<if $penileskill lt 1000>>
-		<span class="gold">You feel more confident in your ability to pleasure others with your penis.</span>
+		<span class="gold">You feel more confident in your ability to pleasure others with <<= $player.penisExist ? "your penis" : "a strap-on">>.</span>
 		<br>
 	<</if>>
 <</if>>
 <<set $enemyArousalLossReduction to 1>>
 
-
+<<unset $phalluscolorA>>
+<<unset $phalluscolorB>>
+<<unset $currentSexToyLeft>>
+<<unset $currentSexToyRight>>
+<<unset $selectedItemLeft>>
+<<unset $selectedItemRight>>
 
 <<manend>>
 <<turnend>>
@@ -448,6 +466,9 @@
 
 <<for _i = 0; _i < $NPCList.length; _i++>>
 	<<set $NPCList[_i] to clone(setup.baseNPC)>>
+	<<if $NPCList[_i].strapon isnot undefined>>
+		<<run delete $NPCList[_i].strapon>>
+	<</if>>
 <</for>>
 
 <<set $pronoun to 0>>
@@ -475,11 +496,11 @@
 -->
 <<widget "clearsinglenpc">>
 
-<<if typeof $args[0] isnot "number">>
+<<if typeof _args[0] isnot "number">>
 	<span class="red">Widget "clearsinglenpc" used incorrectly! Please report this!</span>
 <</if>>
 
-<<set _i to $args[0]>>
+<<set _i to _args[0]>>
 <<set $NPCList[_i] to clone(setup.baseNPC)>>
 <<if $enemyno gt 0>>
 	<<set $enemyno -= 1>>
@@ -493,6 +514,9 @@
 		<<run EventSystem.Clear()>>
 	<</if>>
 <</if>>
+<<if $NPCList[_i].strapon isnot undefined>>
+	<<run delete $NPCList[_i].strapon>>
+<</if>>
 <</widget>>
 
 :: Widgets End Event [widget]
@@ -505,7 +529,7 @@
 
 <<set $molestavoid to 1>>
 
-<<if $args[0] isnot "phaseless">>
+<<if _args[0] isnot "phaseless">>
 	<<set $phaselast to $phase>>
 	<<set $phase to 0>>
 	<<set $phase2 to 0>>
@@ -627,6 +651,10 @@
 <<unset $speechcheeks>>
 <<unset $speechhandjobpenis>>
 <<unset $speechhandjobvagina>>
+<<unset $speechmasturbate>>
+<<unset $speechdildovagina>>
+<<unset $speechdildoanus>>
+<<unset $speechstroker>>
 
 <<unset $speechthroat>>
 <<unset $speechvaginafoot>>
@@ -748,7 +776,7 @@
 <</widget>>
 
 <<widget "manspeech">>
-<<set _n to $args[0]>>
+<<set _n to _args[0]>>
 <<if $NPCList[_n].speechpenisescape is 1>>
 <<set $speechpenisescape to 1>>
 <</if>>

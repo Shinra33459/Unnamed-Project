@@ -32,11 +32,22 @@ Macro.add('canvasColoursEditor', {
 				exportPrefix: 'setup.colours.hair = ',
 				exportSuffix: ';'
 			}, {
-				name: 'Eyes',
+				name: 'Left eye',
 				colours: setup.colours.eyes,
 				default: setup.colours.eyes_default,
 				setVars(variable) {
-					V.eyecolour = variable;
+					V.leftEyeColour = variable;
+					redrawImg();
+				},
+				exportPrefix: 'setup.colours.eyes = ',
+				exportSuffix: ';'
+			},
+			{
+				name: 'Right eye',
+				colours: setup.colours.eyes,
+				default: setup.colours.eyes_default,
+				setVars(variable) {
+					V.rightEyeColour = variable;
 					redrawImg();
 				},
 				exportPrefix: 'setup.colours.eyes = ',
@@ -604,7 +615,7 @@ Macro.add('canvasModelEditor', {
 
 						optionCategory("Hair"),
 						selectOption("hair_colour", hairColourOptions),
-						selectOption("hair_sides_type", ["", "default", "braid left", "braid right", "flat ponytail", "loose", "messy", "pigtails", "ponytail", "short", "side tail left", "side tail right", "straight", "swept left", "twin braids", "twintails", "curl", "defined curl", "neat", "curly pigtails", "sailor buns"]),
+						selectOption("hair_sides_type", ["", "default", "braid left", "braid right", "flat ponytail", "loose", "messy", "pigtails", "ponytail", "short", "side tail left", "side tail right", "straight", "swept left", "twin braids", "twintails", "curl", "defined curl", "neat", "curly pigtails", "sailor buns", "dreads"]),
 						selectOption("hair_sides_length", ["short", "shoulder", "chest", "navel", "thighs", "feet"]),
 						selectOption("hair_sides_position", ["front", "back"]),
 						selectOption("hair_fringe_type", ["", "default", "thin flaps", "wide flaps", "hime", "loose", "messy", "overgrown", "ringlets", "split", "straight", "swept left", "back", "parted", "flat", "quiff", "straight curl", "ringlet curl", "curtain"]),

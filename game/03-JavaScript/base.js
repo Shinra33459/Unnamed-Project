@@ -209,13 +209,13 @@ function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 		handler: function () {
 			DOL.Perflog.logWidgetStart(macroName);
 			try {
-				var oldArgs = State.variables.args;
-				State.variables.args = this.args.slice();
+				var oldArgs = State.temporary.args;
+				State.temporary.args = this.args.slice();
 				macroFunction.apply(this, this.args);
 				if (typeof oldArgs === 'undefined') {
-					delete State.variables.args;
+					delete State.temporary.args;
 				} else {
-					State.variables.args = oldArgs;
+					State.temporary.args = oldArgs;
 				}
 			} finally {
 				DOL.Perflog.logWidgetEnd(macroName);
@@ -306,6 +306,11 @@ function genitalsintegrity() {
 	return integrityWord(V.worn.genitals,'genitals');
 }
 DefineMacroS("genitalsintegrity", genitalsintegrity);
+
+function faceintegrity() {
+	return integrityWord(V.worn.face,'face');
+}
+DefineMacroS("faceintegrity", faceintegrity);
 
 /**
  * @param worn clothing article, State.variables.worn.XXXX
@@ -523,7 +528,6 @@ window.saveDataCompare = function(save1, save2){
 
 /*For the optional numpad to the right of the screen*/
 window.mobclick = function mobclick(index){
-	console.log('input：'.index)
 	$(Links.currentLinks[index-1]).click();
 }
 window.mobBtnHide = function mobBtnHide(){

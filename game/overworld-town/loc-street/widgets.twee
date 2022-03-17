@@ -895,31 +895,12 @@ You take cover in a bus shelter, just as a bus rounds the corner. It slows down 
 
 <<widget "streetedenrage">>
 	<<npc Eden>><<person1>><<set $edendays to 0>>
-	Lost in your head, you bump into a large figure. It's Eden. <<He>> looks mad.
+	<<set $NPCList[0].skills to {athletics: random(750, 1500), security: random(750, 1500)}>>
+
+	You hear heavy footsteps behind you. <span class="red">Someone is hunting you.</span>
 	<br><br>
 
-	<<if $edenCagedEscape>>
-		"Told you I'd find you again, didn't I?" <<he>> snarls, grabbing your arm. "Looks like you still haven't learnt your place. Come on."
-	<<else>>
-		<<He>> grips onto your arm and pulls you close. "Where the fuck have you been?" <<he>> snarls.
-		<<if $allure gte (3000 * $alluremod)>>
-			"I've been worried sick and you've been prancing around town like a slut!"
-		<<else>>
-			"I've been worried sick, and you're just prancing around town!"
-		<</if>>
-		<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 70>>
-			<<set $NPCName[$NPCNameList.indexOf("Eden")].love to 70>>
-			<<llllove>>
-		<</if>>
-		<br><br>
-
-		Before you can speak, Eden begins to drag you away. "I don't want to hear your excuses, either." <<He>> looks uncomfortable, eyes shifting as <<he>> walks. The corner of <<his>> lip curls in disgust. "And you made me come out here to get you. Things aren't going to be pretty when we get home."
-	<</if>>
-	<br><br>
-
-	<<link [[Resist|Street Eden Rage]]>><<set $phase to 0>><<def 1>><<npcincr Eden dom -1>><</link>><<physiquedifficulty 2000 18000>><<ldom>>
-	<br>
-	<<link [[Submit (0:30)|Street Eden Rage]]>><<set $phase to 1>><<pass 30>><<sub 1>><<npcincr Eden dom 1>><</link>><<gdom>>
+	<<link [[Next|Street Stalk Eden]]>><<set $molestationstart to 1>><</link>>
 	<br>
 <</widget>>
 
@@ -1744,7 +1725,7 @@ You stumble in your heels and fall forwards. As your face approaches the ground,
 			<br>
 		<</if>>
 	<</if>>
-	<<if $player.gender_appearance is "f" or $breastsize gt 2>>
+	<<if $player.gender_appearance is "f" or $player.breastsize gt 2>>
 		<<if $exhibitionism gte 55 and $worn.under_upper.type.includes("naked") and $uncomfortable.nude is false>>
 			<<link [[Flash your breasts|Street Exhibitionism Fame Flaunt]]>><<set $flaunt_type to 'top'>> <<set $flaunt_part to 'breasts'>><</link>><<exhibitionist4>><<lstress>><<garousal>>
 			<br>
@@ -1908,7 +1889,7 @@ You round a corner and walk right into a <<generate1>><<person1>><<person>>, cau
 	You notice some <<group>> coming towards you. One of them, a <<person>>, points at you, and says something to the other two. Your first instinct is to run, but they're already too close. They surround you, making sure not to attract any attention.
 	<br><br>
 	
-	“Hey <<girl>>,” the <<person>> says. “You're that slut that likes showing off, right?” <<He>> puts a hand in <<his>> pocket. You feel tense, but relax a little once <<he>> takes out a few bank notes. “How about a little private show?”
+	"Hey <<girl>>," the <<person>> says. "You're that slut that likes showing off, right?" <<He>> puts a hand in <<his>> pocket. You feel tense, but relax a little once <<he>> takes out a few bank notes. "How about a little private show?"
 	<br><br>
 	
 	<<if $exhibitionism gte 75>>
@@ -1996,6 +1977,38 @@ You smell freshly baked pastries, and hear a knock on a nearby door. You recogni
 
 <<endevent>>
 <<destinationeventend>>
+<</widget>>
+
+<<widget "streetmodelshow">>
+<<generate1>><<person1>>
+<<if $famemodel gte 400>>
+	A <<person>> steps in front of you, a smile on <<his>> face.
+	<br><br>
+
+	"I know you," the <<person>> exclaims. "You're that model <<girl>>, right?" <<He>> clasps your hand and <<his>> smile grows even wider. "I'm a real fan of yours."
+	<br><br>
+	"I'd love some private pictures of you," <<he>> adds before you can respond. <<He>> pulls out <<his>> phone. "Could you be my model, just for a few minutes?"
+	<br><br>
+
+	<<link [[Agree (0:05)|Street Private Photoshoot Alley]]>><<pass 5>><<set $phase to 0>><</link>>
+	<br>
+	<<link [[Demand money (0:05)|Street Private Photoshoot Alley]]>><<pass 5>><<set $phase to 1>><</link>>
+	<br>
+	<<link [[Refuse|Street Private Photoshoot Refuse]]>><</link>>
+	<br>
+<<else>>
+	You notice a <<person>> coming towards you. As <<he>> approaches, <<he>> suddenly breaks into a grin and steps in front of you, grasping your arm.
+	<br><br>
+
+	"You've got looks of a model, <<lass>>," <<he>> smirks. "Wanna pose for a few shots? I've got my camera right here." <<His>> hand cups <<his>> crotch, leaving no doubt about <<his>> intentions.
+	<br><br>
+	
+	Your face flushes. Pulling free from <<his>> grasp you hasten away, leaving the <<person>> and <<his>> crude remarks behind you.<<stress 3>><<trauma 3>><<gstress>><<gtrauma>>
+	<br><br>
+	
+	<<endevent>>
+	<<destinationeventend>>
+<</if>>
 <</widget>>
 
 :: Widget Passout Street [widget]
@@ -2899,9 +2912,12 @@ You find a quiet place and open the <<wallet>>.
 <</widget>>
 
 <<widget "eventsstreetday">>
-<<set $dangerevent to random(1, 176)>>
+<<set $dangerevent to random(1, 180)>>
 <<set $rng to random(1, 100)>>
-<<if $rng lte 10 and $worn.feet.type.includes("heels") and $feetskill lt $worn.feet.reveal>>
+<<if $location is "alley" and $schoolday isnot 1 and $bullytimer gte $rng and $NPCName[$NPCNameList.indexOf("Whitney")].init is 1 and $NPCName[$NPCNameList.indexOf("Whitney")].state isnot "dungeon" and $pillory_tenant.special.name isnot "Whitney" and $whitney_park is undefined>>
+	<<set $bullytimer to 0>>
+	<<eventsWhitneyStreet>>
+<<elseif $rng lte 10 and $worn.feet.type.includes("heels") and $feetskill lt $worn.feet.reveal>>
 	<<streetheeltrip>>
 <<elseif $rng gte 91>>
 	<<street1>>
@@ -2948,13 +2964,18 @@ You find a quiet place and open the <<wallet>>.
 	<<streetdog>>
 <<elseif $dangerevent lte 176>>
 	<<streetexshow>>
+<<elseif $dangerevent lte 180>>
+	<<streetmodelshow>>
 <</if>>
 <</widget>>
 
 <<widget "eventsstreetnight">>
-<<set $dangerevent to random(1, 149)>>
+<<set $dangerevent to random(1, 154)>>
 <<set $rng to random(1, 100)>>
-<<if $rng lte 10 and $worn.feet.type.includes("heels") and $feetskill lt $worn.feet.reveal>>
+<<if $location is "alley" and $schoolday isnot 1 and $bullytimer gte $rng and $NPCName[$NPCNameList.indexOf("Whitney")].init is 1 and $NPCName[$NPCNameList.indexOf("Whitney")].state isnot "dungeon" and $pillory_tenant.special.name isnot "Whitney" and $whitney_park is undefined>>
+	<<set $bullytimer to 0>>
+	<<eventsWhitneyStreet>>
+<<elseif $rng lte 10 and $worn.feet.type.includes("heels") and $feetskill lt $worn.feet.reveal>>
 	<<streetheeltrip>>
 <<elseif $rng gte 91>>
 	<<street1>>
@@ -2999,6 +3020,8 @@ You find a quiet place and open the <<wallet>>.
 <<elseif $dangerevent lte 149>>
 	<<eventAmbient>>
 	<<destinationeventend>>
+<<elseif $dangerevent lte 154>>
+	<<streetmodelshow>>
 <</if>>
 <</widget>>
 

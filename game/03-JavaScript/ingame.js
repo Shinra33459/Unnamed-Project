@@ -89,7 +89,7 @@ window.combatListColor = function (name, value, type) {
 			case "rightcovervagina": case "rightcoverpenis": case "rightcoveranus":
 			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
 			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull": case "rightUndressOther": case "leftUndressOther":
-			case "stopchoke": case "clench": case "shacklewhack": case "leftfold": case "rightfold":
+			case "stopchoke": case "clench": case "shacklewhack": case "leftfold": case "rightfold": case "dildowhack":
 			case "leftstruggleweak": case "rightstruggleweak":
 			case "leftresistW": case "rightresistW": case "leftstillW": case "rightstillW":
 			/*feetaction*/
@@ -121,7 +121,7 @@ window.combatListColor = function (name, value, type) {
 			case "leftcovervaginameek": case "leftcoverpenismeek": case "leftcoveranusmeek":
 			case "rightcovervaginameek": case "rightcoverpenismeek": case "rightcoveranusmeek":
 			case "leftprotect": case "rightprotect": case "leftgrip": case "rightgrip":
-			case "leftcurl": case "rightcurl":
+			case "leftcurl": case "rightcurl": case "pickupSexToy":
 			/*mouthaction*/
 			case "grasp": case "plead": case "forgive": case "down":
 			case "letout": case "letoutorgasm": case "noises": case "pay":
@@ -136,12 +136,16 @@ window.combatListColor = function (name, value, type) {
 
 			/*leftaction or rightaction*/
 			case "leftplay": case "leftgrab": case "leftstroke": case "leftchest": case "rightplay": case "rightgrab": case "rightstroke": case "rightchest":
-			case "leftchest": case "rightchest": case "leftwork": case "rightwork": case "leftclit": case "rightclit":
-			case "keepchoke":
+			case "leftchest": case "rightchest": case "leftwork": case "rightwork": case "leftclit": case "rightclit": case "keepchoke":
+			case "leftmasturbatepussy" : case "rightmasturbatepussy" : case "leftmasturbatepenis" : case "rightmasturbatepenis" :
+			case "lefthandholdkeep" : case "righthandholdkeep" : case "lefthandholdnew" : case "righthandholdnew" :
+			case "lubeanus": case "lubepussy": case "lubepenis": case "removebuttplug":
+			case "dildoOtherPussyTease": case "dildoOtherPussyFuck": case "dildoOtherAnusTease": case "dildoOtherAnusFuck": case "strokerOtherPenisTease": case "strokerOtherPenisFuck":
+			case "dildoSelfPussyEntrance": case "dildoSelfAnusEntrance": case "dildoSelfPussy": case "dildoSelfAnus": case "strokerSelfPenisEntrance": case "strokerSelfPenis":
 			/*feetaction*/
 			case "grab": case "vaginagrab": case "grabrub": case "vaginagrabrub": case "rub":
 			/*mouthaction*/
-			case "peniskiss": case "kiss": case "suck": case "lick": case "moan": case "breastsuck": case "breastlick": case "swallow": case "movetochest":
+			case "peniskiss": case "kisslips" : case "kissskin": case "suck": case "lick": case "moan": case "breastsuck": case "breastlick": case "swallow": case "movetochest":
 			case "othervagina": case "mouth": case "kissback": case "vaginalick": case "askchoke": case "anallick": case "analkiss":
 			/*penisaction*/
 			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
@@ -158,7 +162,7 @@ window.combatListColor = function (name, value, type) {
 			case "anustopenisdouble": case "anuspenisdoublefuck": case "penisdoubletease": case "penisDoubleEdging": case "doublecooperate": case "penisanusdouble":
 				color = "sub";
 				break;
-			
+
 			/*leftaction or rightaction*/
 			case "leftacceptW": case "rightacceptW": case "leftstruggleW": case "rightstruggleW":
 			/*feetaction*/
@@ -263,7 +267,7 @@ window.combatListColor = function (name, value, type) {
 			case "leftprotect": case "rightprotect": case "leftgrip": case "rightgrip": case "leftcurl": case "rightcurl":
 				color = "meek";
 				break;
-	
+
 			case "swim":
 				color = "teal";
 				break;
@@ -283,7 +287,7 @@ window.combatListColor = function (name, value, type) {
 			case "leftfold": case "rightfold": case "leftstruggleweak": case "rightstruggleweak":
 				color = "brat";
 				break;
-			
+
 			/*leftaction or rightaction*/
 			case "leftprotect": case "rightprotect": case "leftgrip": case "rightgrip": case "leftcurl": case "rightcurl":
 			case "rest":
@@ -318,7 +322,7 @@ window.combatListColor = function (name, value, type) {
 			case "leftfold": case "rightfold": case "leftstruggleweak": case "rightstruggleweak": case "vaginal_push": case "anal_push":
 				color = "brat";
 				break;
-			
+
 			case "chain_struggle": case "whack": case "vaginal_whack": case "anal_whack":
 				color = "def";
 				break;
@@ -351,10 +355,17 @@ window.combatListColor = function (name, value, type) {
 
 			/*leftaction or rightaction*/
 			case "leftprotect": case "rightprotect": case "leftgrip": case "rightgrip": case "leftcurl":
-			case "rightcurl": case "behind":
+			case "rightcurl": case "behind": case "pickupSexToy":
 			/*feetaction*/
 			case "evade": case "plant":
 				color = "meek";
+				break;
+
+			/* Masturbate */
+			case "leftmasturbatepenis" : case "rightmasturbatepenis" : case "leftmasturbatepussy" : case "rightmasturbatepussy" :
+			case "dildoSelfPussyEntrance": case "dildoSelfAnusEntrance": case "strokerSelfPenisEntrance": case "strokerSelfPenis":
+			case "lubepussy": case "lubepenis": case "lubeanus": case "removebuttplug":
+				color = "sub";
 				break;
 
 			case "swim":
@@ -414,7 +425,7 @@ function hairdressersResetAlt() {
 DefineMacroS("hairdressersResetAlt", hairdressersResetAlt);
 
 function browsDyeReset() {
-	jQuery(document).on('change', '.macro-listbox', function (e) {
+	jQuery(document).on('change', '#listbox-browsdyeoption', function (e) {
 		new Wikifier(null, '<<replace #browsColourPreview>><<browsColourPreview>><</replace>>');
 	});
 	return "";
@@ -565,7 +576,7 @@ window.getRobinLocation = function(){
 		} else {
 			return T.robin_location = "beach";
 		}
-		
+
 	} else if (V.halloween === 1 && between(V.hour, 16, 18) && V.monthday === 31){
 		return T.robin_location = "halloween";
 
@@ -585,6 +596,34 @@ window.setRobinLocationOverride = function(loc, hour){
 	// note: overrides get reset at midnight (in the <<day>> widget)
 	V.robinlocationoverride = override;
 	return;
+}
+
+window.getRobinCrossdressingStatus = function(crossdressLevel){
+	//Note returns 2 if Robin is crossdressing or 0 if not comfortable enough at that location
+	if (V.NPCName[V.NPCNameList.indexOf("Robin")].init !== 1){
+		return;
+	}
+	T.robin_cd = 0;
+
+	switch (getRobinLocation()){
+		case "orphanage":
+		case "sleep":
+			if (crossdressLevel >= 2) T.robin_cd = 2;
+			break;
+		case "park":
+		case "beach":
+			if (crossdressLevel >= 4) T.robin_cd = 2;
+			break;
+		case "school":
+			if (crossdressLevel >= 5) T.robin_cd = 2;
+			break;
+		case "missing":
+			T.robin_cd = 0;
+			break;
+		default:
+			T.robin_cd = 0;
+	}
+	return T.robin_cd;
 }
 
 window.DefaultActions = {
@@ -913,14 +952,37 @@ window.clothesIndex = function(slot, itemToIndex) {
 	let index = setup.clothes[slot].findIndex((item) => item.variable === itemToIndex.variable && item.modder === itemToIndex.modder)
 	if(index === -1){
 		console.log(`clothesIndex - ${slot} clothing item index not found for the '${itemToIndex.name}' with the modder set to '${itemToIndex.modder}'`);
-		return 0;
+		/* try and correct .modder mismatches */
+		let matches = setup.clothes[slot].filter((item) => item.variable === itemToIndex.variable);
+		if (matches.length === 1) {
+			let recovery = setup.clothes[slot].find((item) => item.variable === itemToIndex.variable);
+			itemToIndex.modder = recovery.modder;
+			index = recovery.index;
+			console.log(`attempting to recover the mismatch, new modder is '${recovery.modder}'`);
+			return index;
+		}
+		else {
+			console.log("recovery failed, matches: " + matches);
+			return 0;
+		}
 	}
 	return index;
 }
 
+var pageLoading = false;
+
+Save.onLoad.add(function(save) {
+	pageLoading = true
+});
+
 // Runs before a passage load, returning a string redirects to the new passage name.
 Config.navigation.override = function (dest) {
+	const isLoading = pageLoading; // if page is freshly loading (after a refresh etc), we hold its value in a temporary variable
+	
+	pageLoading = false
 	switch (dest) {
+		case 'Pharmacy Select Custom Lenses':
+			return isLoading ? 'Pharmacy Ask Custom Lenses' : false;
 		case 'Forest Shop Outfit':
 		case 'Forest Shop Upper':
 		case 'Forest Shop Lower':
@@ -960,10 +1022,10 @@ Config.navigation.override = function (dest) {
 
 		case 'Forest Plant Sex No Tentacles':
 			return 'Forest Plant Sex';
-		
+
 		case 'Forest Plant Sex No Tentacles Finish':
 			return 'Forest Plant Sex Finish';
-		
+
 		case 'Forest Plant Passout No Tentacles':
 			return 'Forest';
 
@@ -981,6 +1043,12 @@ Config.navigation.override = function (dest) {
 
 		case 'Evens Swimming Endure':
 			return 'Events Swimming Swim Endure';
+
+		case 'Domus House Work':
+			return 'Domus Gutters Intro';
+
+		case 'Lake Underwater Tentacles Finish Figure':
+			return 'Lake Underwater Tentacles Finish';
 
 		default:
 			return false;
@@ -1068,7 +1136,7 @@ window.currentSkillValue = function(skill){
 			}
 			if(V.worn.feet.type.includes("shackle")){
 				result = 0;
-			}			
+			}
 		break;
 		case 'willpower':
 			if(V.parasite.left_ear.name == "slime" && V.parasite.right_ear.name == "slime"){
@@ -1082,6 +1150,21 @@ window.currentSkillValue = function(skill){
 		break;
 	}
 	return result;
+}
+
+window.playerIsPenetrated = function(){
+	return [V.mouthstate, V.vaginastate, V.anusstate].some(s => ["penetrated","doublepenetrated","tentacle","tentacledeep"].includes(s))
+}
+
+window.playerHasStrapon = function(){
+	return (V.worn.under_lower.type.includes("strap-on") && V.worn.under_lower.state == "waist")
+}
+
+window.npcHasStrapon = function(index){
+	// index is 0 to 5
+	return (V.NPCList[index].penisdesc != undefined && V.NPCList[index].penisdesc.contains("strap-on"))
+	// For refactoring in the future
+	//return (V.NPCList[index].penisdesc != undefined && V.NPCList[index].strapon != undefined && V.NPCList[index].strapon.state == "worn")
 }
 
 window.getTimeString = function(minutes = 0){
@@ -1145,7 +1228,7 @@ window.npcSpecifiedClothes = function (npc, name){
 
 /*npc.crossdressing: 0 - doesnt at all, 1 - sometimes, 2 - always*/
 window.npcClothes = function (npc, type){
-	let crossdressing = npc.crossdressing || 0;
+    let crossdressing = npc.crossdressing || 0;
 	let gender = ['n'];
 	/* if you dont want those always crossdressing to wear neutral clothes
 	let gender = [];
@@ -1169,7 +1252,7 @@ window.npcClothes = function (npc, type){
 		return clothesSet.name;
 	} else {
 		console.log(`npcClothes - unable to find a clothing set with the options for '${npc.fullDescription}' with type '${type}'`)
-	}	
+	}
 }
 
 window.getWeekDay = function(day){
@@ -1184,3 +1267,156 @@ window.getWeekDay = function(day){
 window.waterproofCheck = function(clothing){
 	return clothing.type.includes("swim") || clothing.type.includes("stealthy");
 }
+
+window.getSexToysofType = function (toyType){
+	var sexToys = ["dildo","whip","stroker","vibrator","all"];
+	sexToys["dildo"] = ["dildo","length of anal beads"];
+	sexToys["whip"] = ["riding crop","flog"];
+	sexToys["stroker"] = ["stroker"];
+	sexToys["vibrator"] = ["vibrator","bullet vibe"];
+	sexToys["all"] = sexToys["dildo"].concat(sexToys["whip"],sexToys["stroker"],sexToys["vibrator"]);
+
+	if (toyType != undefined){
+		if (toyType == "dildo"){
+			var dildos = sexToys["dildo"].concat(sexToys["vibrator"]);
+			return dildos;
+		}
+		else if (toyType == "stroker"){
+			return sexToys["stroker"];
+		}
+		else if (toyType == "whip"){
+			return sexToys["whip"];
+		}
+		else if (toyType == "vibrator"){
+			return sexToys["vibrator"];
+		}
+		else if (toyType == "dildos and strokers"){
+			var dildos = sexToys["dildo"].concat(sexToys["vibrator"],sexToys["stroker"]);
+			return dildos;
+		}
+		else if (toyType == "dildos and whips"){
+			var dildos = sexToys["dildo"].concat(sexToys["vibrator"],sexToys["whip"]);
+			return dildos;
+		}
+		else {
+			return sexToys["all"];
+		}
+	}
+	else {
+		//console.log("All sex toys. Length = "+sexToys["all"].length+ " and I contain: " +sexToys["all"]);
+		return sexToys["all"];
+	}
+}
+
+window.npcHasSexToyOfType = function(npcIndex,toyType){
+	var npc = V.NPCList[npcIndex];
+	if (npc.righttool != undefined || npc.lefttool != undefined){
+		var sexToys = ["dildo","whip","stroker","all"];
+		sexToys["dildo"] = getSexToysofType("dildo");
+		sexToys["whip"] = getSexToysofType("whip");
+		sexToys["stroker"] = getSexToysofType("stroker");
+		sexToys["vibrator"] = getSexToysofType("vibrator");
+		sexToys["all"] = getSexToysofType("all");
+		console.log("sex toys: "+sexToys.all);
+
+		return sexToys[toyType].contains(V.NPCList[npcIndex].righttool) || sexToys[toyType].contains(V.NPCList[npcIndex].lefttool)
+	}
+	else {
+		return false;
+	}
+}
+
+window.randomSexToy = function(toyType){
+
+	if (toyType != undefined){
+		if (toyType == "dildo"){
+			var dildos = getSexToysofType("dildo");
+			return dildos[random(0,dildos.length-1)];
+		}
+		else if (toyType == "stroker"){
+			var strokers = getSexToysofType("stroker");
+			return strokers[random(0,strokers.length-1)];
+		}
+		else if (toyType == "whip"){
+			var whips = getSexToysofType("whip");
+			return whips[random(0,whips.length-1)];
+		}
+		else if (toyType == "vibrator"){
+			var vibrators = getSexToysofType("vibrator");
+			return vibrators[random(0,vibrators.length-1)];
+		}
+		else if (toyType == "dildos and strokers"){
+			var dildos = getSexToysofType("dildos and strokers");
+			return dildos[random(0,dildos.length-1)];
+		}
+		else if (toyType == "dildos and whips"){
+			var dildos = getSexToysofType("dildos and whips");
+			return dildos[random(0,dildos.length-1)];
+		}
+		else {
+			var sexToys = getSexToysofType("all")
+			return sexToys[random(0,sexToys.length-1)];
+		}
+	}
+	else {
+		//console.log("All sex toys. Length = "+sexToys["all"].length+ " and I contain: " +sexToys["all"]);
+		var sexToys = getSexToysofType("all")
+		return sexToys[random(0,sexToys.length-1)];
+	}
+}
+
+window.playerHasButtPlug = function(){
+	return (V.worn.butt_plug != undefined && V.worn.butt_plug.state == "worn" && V.worn.butt_plug.worn == 1) // V.worn.butt_plug.worn == 1 is just as a safeguard for now
+}
+
+window.checkIfNPCHasCategorySextoy = function (npc_name, category){
+    let found_list = []
+    let item_list = []
+
+    npc_name = npc_name.toLowerCase()
+    for (let s_item of setup.sextoys){
+        if (s_item.category == category)
+            item_list.push(s_item.name)
+    }
+    for (let i_list in V.player.inventory[npc_name].sextoys){
+        if (item_list.includes(i_list)){
+            for (let item of V.player.inventory[npc_name].sextoys[i_list]){
+                if (item.gift_state != "held")
+                found_list.push(item)
+            }
+        }
+    }
+    return (found_list.length > 0 ? found_list : 0)
+}
+
+window.handSextoysGiftToNPC = function (npc_name){
+    npc_name = npc_name.toLowerCase()
+    for (let inv in V.player.inventory){
+        if (inv == npc_name){
+            for (let cat in V.player.inventory[npc_name].sextoys){
+                for (let item in V.player.inventory[npc_name].sextoys[cat]){
+                    if (V.player.inventory[npc_name].sextoys[cat][item].gift_state == "held")
+                        V.player.inventory[npc_name].sextoys[cat][item].gift_state = "received"
+                }
+            }
+        }
+    }
+}
+
+window.ironmanScheduledSaves = function() {
+	let date = new Date(V.month +' '+V.monthday+', ' + V.year)
+
+	if (!V.ironmanautosaveschedule)
+		V.ironmanautosaveschedule = (date.getTime()).toString(8)
+	if (parseInt(V.ironmanautosaveschedule, 8) < date.getTime()){
+		//autosave
+		window.ironmanAutoSave()
+		//
+		V.ironmanautosaveschedule = (date.getTime() + (window.getRandomIntInclusive(432000, 777600) * 1000)).toString(8)
+	}
+}
+
+window.wraithSleepEventCheck = function(){
+	return V.wraith && V.wraith.state !== "" && V.wraith.nightmare === 1 && (V.moonstate === "evening" && V.hour >= 21 || V.moonstate === "morning" && V.hour < 5);
+}
+

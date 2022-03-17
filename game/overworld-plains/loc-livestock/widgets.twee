@@ -1,9 +1,6 @@
 :: Widgets Livestock [widget]
 <<widget "livestock_sleep">>
-<<if !_preventUpdate and !$autosavedisabled>>
-	<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
-	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
-<</if>>
+<<set _autosavehere to true>>
 <<if $hour is 21>>
 	<<set _livestock_sleep to 9>>
 <<elseif $hour is 22>>
@@ -56,7 +53,11 @@
 <<if ($monsterchance gte 1 and $hallucinations gte 1) or ($monsterchance gte 1 and $monsterhallucinations is "f") or ($bestialitydisable is "t")>>
 	<<set _text_output to "centaur">>
 <<else>>
-	<<set _text_output to "stallion">>
+	<<if $beastmalechance gte random(1, 100)>>
+		<<set _text_output to "stallion">>
+	<<else>>
+		<<set _text_output to "mare">>
+	<</if>>
 <</if>>
 <<print _text_output>>
 <</widget>>
@@ -204,13 +205,13 @@ You overhear two farmhands talking behind the fence.
 		<br>
 		"Who knows? Be careful what you say, don't want to scare the cattle."
 		<br>
-		<<if $breastsize gte 12>>
+		<<if $player.breastsize gte 12>>
 			"Well, whatever Remy is doing, it's working rather well on those gazongas."
-		<<elseif $breastsize gte 8>>
+		<<elseif $player.breastsize gte 8>>
 			"Well, whatever Remy is doing, it seems to be working rather well, <<phe>> has a nice pair."
-		<<elseif $breastsize gte 6>>
+		<<elseif $player.breastsize gte 6>>
 			"Well, whatever Remy is doing, it seems to be doing something, <<pher>> boobs seem to be growing."
-		<<elseif $breastsize gte 1>>
+		<<elseif $player.breastsize gte 1>>
 			"Well, whatever Remy is doing, doesn't seem to be working this time, <<phe>> is almost flat."
 		<<else>>
 			"Well, whatever Remy is doing, doesn't seem to be working this time, <<phe>> is completely flat as a board."
@@ -272,8 +273,8 @@ You overhear two farmhands talking behind the fence.
 <<if $images is 1>>
 	<<machine_init>>
 	<<if $player.penisExist and $breastfeedingdisable is "f">>
-		<<if $args[0]>>
-			<<prop haybale milk penis_pump breast_pump $args[0]>>
+		<<if _args[0]>>
+			<<prop haybale milk penis_pump breast_pump _args[0]>>
 		<<else>>
 			<<prop haybale milk penis_pump breast_pump>>
 		<</if>>
@@ -282,8 +283,8 @@ You overhear two farmhands talking behind the fence.
 		<br><br>
 		<</timed>>
 	<<elseif $breastfeedingdisable is "f">>
-		<<if $args[0]>>
-			<<prop haybale milk breast_pump $args[0]>>
+		<<if _args[0]>>
+			<<prop haybale milk breast_pump _args[0]>>
 		<<else>>
 			<<prop haybale milk breast_pump>>
 		<</if>>

@@ -275,7 +275,7 @@
 
 <<widget "farm_work_time">>
 <<set _farm_work_time to Math.trunc(($time / 20) - 17)>>
-<<if _farm_work_time gte 46 or $args[0] is "midnight">>
+<<if _farm_work_time gte 46 or _args[0] is "midnight">>
 	<<set _farm_work_time to 46>>
 <</if>>
 <</widget>>
@@ -293,9 +293,9 @@
 
 <<widget "farm_work_update">>
 <<alex_clamp>>
-<<farm_work_time $args[0]>>
+<<farm_work_time _args[0]>>
 
-<<if $args[0] is "midnight" and $farm_work>>
+<<if _args[0] is "midnight" and $farm_work>>
 	<<if $farm_work.recent_shift gte 660>>
 		<<earnFeat "Dawn to Dusk">>
 	<</if>>
@@ -542,7 +542,7 @@
 <</for>>
 
 
-<<if _farm_work_time gte 0 or $args[0] is "midnight">>
+<<if _farm_work_time gte 0 or _args[0] is "midnight">>
 	<<set $farm_work.time to _farm_work_time>>
 <</if>>
 
@@ -914,6 +914,14 @@
 <<if $farm_work.alex is "relax" and ($exposed lt 2 or $exhibitionism gte 75)>>
 	<<ind>><<link [[Join Alex (0:20)|Farm Rest]]>><<farm_count 20>><<trauma -2>><<stress -2>><<npcincr Alex love 1>><<set $phase to 1>><<pass 20>><</link>><<glove>><<ltrauma>><<lstress>>
 	<br>
+<<if $farm_stage gte 4 and $milkshake gte 2>>
+	<<ind>><<link [[Offer milkshake (0:20)|Alex Give Milkshake]]>><<farm_count 20>><<pass 20>><<set $milkshake -= 2>><<set $alexDaily.milkshake to true>><<npcincr Alex love 1>><<stress -5>><</link>><<glove>><<lstress>>
+	<br>
+<</if>>
+<<if $farm_stage gte 7 and $alex_countdown is undefined and $milkshake gte 1>>
+	<<ind>><<link [[Share milkshake (0:20)|Alex Share Milkshake]]>><<farm_count 20>><<pass 20>><<set $milkshake -= 1>><<set $alexDaily.milkshake to true>><<npcincr Alex love 2>><<stress -10>><</link>><<gglove>><<lstress>>
+	<br>
+<</if>>
 <</if>>
 <<if $farm_stage gte 7>>
 	/*The PC tends the field in more detail via the tending system after this point.*/
@@ -969,7 +977,7 @@
 
 <<if (_actions lt 2 or $farm_stage lt 7) and ($farm_work.alex isnot "relax" or $exposed gte 0)>>
 	<!-- as worker you can be lazy any time, but as partner you only get that luxury when there's (nearly) nothing else to do.
-		 also, if Alex is resting you should join them unless you're too naked for comfort -->
+		also, if Alex is resting you should join them unless you're too naked for comfort -->
 	<<ind>><<link [[Rest near the stables (0:15)|Farm Stables Rest]]>><<pass 15>><<stress -2>><</link>><<lstress>>
 <</if>>
 <br>
@@ -1038,85 +1046,85 @@
 <</widget>>
 
 <<widget "farm_pigs">>
-<<if $args[0]>>
-	<<set $farm.beasts.pigs += $args[0]>>
+<<if _args[0]>>
+	<<set $farm.beasts.pigs += _args[0]>>
 	<<set $farm.beasts.pigs = Math.clamp($farm.beasts.pigs, -30, 30)>>
 <</if>>
 <</widget>>
 
 <<widget "farm_horses">>
-<<if $args[0]>>
-	<<set $farm.beasts.horses += $args[0]>>
+<<if _args[0]>>
+	<<set $farm.beasts.horses += _args[0]>>
 	<<set $farm.beasts.horses = Math.clamp($farm.beasts.horses, -30, 30)>>
 <</if>>
 <</widget>>
 
 <<widget "farm_cattle">>
-<<if $args[0]>>
-	<<set $farm.beasts.cattle += $args[0]>>
+<<if _args[0]>>
+	<<set $farm.beasts.cattle += _args[0]>>
 	<<set $farm.beasts.cattle = Math.clamp($farm.beasts.cattle, -30, 30)>>
 <</if>>
 <</widget>>
 
 <<widget "farm_dogs">>
-<<if $args[0]>>
-	<<set $farm.beasts.dogs += $args[0]>>
+<<if _args[0]>>
+	<<set $farm.beasts.dogs += _args[0]>>
 	<<set $farm.beasts.dogs = Math.clamp($farm.beasts.dogs, -30, 30)>>
 <</if>>
 <</widget>>
 
 <<widget "farm_trust">>
-<<if $args[0] is "horses">>
+<<if _args[0] is "horses">>
 	<<set $enemytrust += ($farm.beasts.horses * 3)>>
-<<elseif $args[0] is "pigs">>
+<<elseif _args[0] is "pigs">>
 	<<set $enemytrust += ($farm.beasts.pigs * 3)>>
-<<elseif $args[0] is "cattle">>
+<<elseif _args[0] is "cattle">>
 	<<set $enemytrust += ($farm.beasts.cattle * 3)>>
-<<elseif $args[0] is "dogs">>
+<<elseif _args[0] is "dogs">>
 	<<set $enemytrust += ($farm.beasts.dogs * 3)>>
 <</if>>
 <</widget>>
 
 <<widget "farm_gen">>
-<<if $farm_work[$args[0]].monster_roll is true and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
-	<<set $farm_work[$args[0]].monster to true>>
+<<if $farm_work[_args[0]].monster_roll is true and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+	<<set $farm_work[_args[0]].monster to true>>
 	<<if $beastmalechance gte 100>>
-		<<set $farm_work[$args[0]].gender_plural to "m">>
+		<<set $farm_work[_args[0]].gender_plural to "m">>
 	<<elseif $beastmalechance gte 1>>
-		<<set $farm_work[$args[0]].gender_plural to "b">>
+		<<set $farm_work[_args[0]].gender_plural to "b">>
 	<<else>>
-		<<set $farm_work[$args[0]].gender_plural to "f">>
+		<<set $farm_work[_args[0]].gender_plural to "f">>
 	<</if>>
 	<<if $beastmalechance gte random(1, 100)>>
-		<<set $farm_work[$args[0]].gender to "m">>
+		<<set $farm_work[_args[0]].gender to "m">>
 		<<if $cbchance gte random(1, 100)>>
-			<<set $farm_work[$args[0]].genitals to "vagina">>
+			<<set $farm_work[_args[0]].genitals to "vagina">>
 		<<else>>
-			<<set $farm_work[$args[0]].genitals to "penis">>
+			<<set $farm_work[_args[0]].genitals to "penis">>
 		<</if>>
 	<<else>>
-		<<set $farm_work[$args[0]].gender to "f">>
+		<<set $farm_work[_args[0]].gender to "f">>
 		<<if $dgchance gte random(1, 100)>>
-			<<set $farm_work[$args[0]].genitals to "penis">>
+			<<set $farm_work[_args[0]].genitals to "penis">>
 		<<else>>
-			<<set $farm_work[$args[0]].genitals to "vagina">>
+			<<set $farm_work[_args[0]].genitals to "vagina">>
 		<</if>>
 	<</if>>
 <<else>>
-	<<set $farm_work[$args[0]].monster to false>>
+	<<set $farm_work[_args[0]].monster to false>>
 	<<if $beastmalechance gte 100>>
-		<<set $farm_work[$args[0]].gender_plural to "m">>
+		<<set $farm_work[_args[0]].gender_plural to "m">>
 	<<elseif $beastmalechance gte 1>>
-		<<set $farm_work[$args[0]].gender_plural to "b">>
+		<<set $farm_work[_args[0]].gender_plural to "b">>
 	<<else>>
-		<<set $farm_work[$args[0]].gender_plural to "f">>
+		<<set $farm_work[_args[0]].gender_plural to "f">>
 	<</if>>
 	<<if $beastmalechance gte random(1, 100)>>
-		<<set $farm_work[$args[0]].gender to "m">>
-		<<set $farm_work[$args[0]].genitals to "penis">>
+		<<set $farm_work[_args[0]].gender to "m">>
+		<<set $farm_work[_args[0]].genitals to "penis">>
 	<<else>>
-		<<set $farm_work[$args[0]].gender to "f">>
-		<<set $farm_work[$args[0]].genitals to "vagina">>
+		<<set $farm_work[_args[0]].gender to "f">>
+		<<set $farm_work[_args[0]].genitals to "vagina">>
 	<</if>>
 <</if>>
 <</widget>>
@@ -1222,7 +1230,7 @@
 	<br>
 	<<if $deviancy gte 55 and ($bestialitydisable is "f" or $farm_work.cattle.monster is true)>>
 		<<link [[Milk with your mouth (0:03)|Farm Cattle Milk Mouth]]>><<set $cattle_milked += 1>><<set $farm_work.cattle_milked += 1>><<tending 1>><<farm_count 3>><</link>><<deviant4>><<gtending>>
-		<<if $farm_work.cattle.genitals is "penis" and $player.virginity.oral is true>>
+		<<if $NPCList[0].penis isnot "none" and $player.virginity.oral is true>>
 			| <span class="red">This action will take your oral virginity.</span>
 		<</if>>
 		<br>
@@ -1261,17 +1269,17 @@
 <</widget>>
 
 <<widget "farm_count">>
-<<if $args[0]>>
-	<<set $farm_count += $args[0]>>
-	<<set $farm_shift += $args[0]>>
-	<<set $farm_work.recent_shift += $args[0]>>
+<<if _args[0]>>
+	<<set $farm_count += _args[0]>>
+	<<set $farm_shift += _args[0]>>
+	<<set $farm_work.recent_shift += _args[0]>>
 <</if>>
 <</widget>>
 
 <<widget "farm_aggro">>
-<<if $args[0]>>
+<<if _args[0]>>
 	<<set _aggro_mod to 1>>
-	<<if $args[0] gt 0>>
+	<<if _args[0] gt 0>>
 		<<if $farm.wall gte 1>>
 			<<set _aggro_mod -= 0.05>>
 		<</if>>
@@ -1286,10 +1294,39 @@
 			<<set _aggro_mod -= 0.10>>
 		<</if>>
 	<</if>>
-	<<set $farm.aggro += ($args[0] * _aggro_mod)>>
+	<<set $farm.aggro += (_args[0] * _aggro_mod)>>
 	<<set $farm.aggro = Math.clamp($farm.aggro, 0, 100)>>
 	<<set $farm.aggro = Math.trunc($farm.aggro)>>
 <</if>>
+<</widget>>
+
+<<widget "farm_relax_chat">>
+<<switch random(1, 10)>>
+	<<case 1>>
+		Alex chats with you, and talks about <<his>> family. "I've twelve siblings," <<he>> says at one point. "<<if $pronoun is "m">>Mum<<else>>Dad<</if>> doesn't know what to do with us all."
+	<<case 2>>
+		Alex chats with you, and talks about the farm's pigs. "Hauling all their food over is rough," <<he>> says at one point. "The truffles are worth it though."
+	<<case 3>>
+		Alex chats with you, and talks about the farm's horses. "Most of their owners are rich townies," <<he>> says. "They need to be kept active and healthy."
+	<<case 4>>
+		Alex chats with you, and talks about the farm's cattle. "They're big buggers," <<he>> says at one point. "But docile. Wish the other animals were as easy to manage."
+	<<case 5>>
+		Alex chats with you, and talks about the farm's dogs. "They aren't pets," <<he>> says at one point. "Don't be afraid to keep them in line."
+	<<case 6>>
+		<<if $farm_stage gte 12>>
+			Alex chats with you, and talks about the fields. "No one thought we'd clear all nine," <<he>> says at one point. "The forest grows fast, so we'll need to keep on top of it."
+		<<else>>
+			Alex chats with you, and talks about the fields. "There are nine in total," <<he>> says at one point. "Or were. The forest has reclaimed most of them. It's almost like trees have sprung up over night." <<He>> laughs.
+		<</if>>
+	<<case 7>>
+		Alex chats with you, and asks about life in the town. "I don't think I'd like the noise," <<he>> says at one point. "I guess you get used to it."
+	<<case 8>>
+		Alex chats with you, and asks about school. "Parents taught me," <<he>> says at one point. "Sometimes my older siblings helped."
+	<<case 9>>
+		Alex chats with you, and talks about the moor. "Don't go there at night," <<he>> warns. "Or at all if you can help it. People have disappeared."
+	<<case 10>>
+		Alex chats with you, and talks about the sea. "You don't need to walk far," <<he>> says. "If you know the paths."
+<</switch>>
 <</widget>>
 
 <<widget "farm_relax_end">>
@@ -1334,9 +1371,9 @@
 		<<switch $rng>>
 		<<case 1>>
 			<<npc Alex>><<generate2>><<generate3>><<generate4>><<person2>>
-			<<if $breastsize gte 3 and random(1, 2) is 2>>
+			<<if $player.breastsize gte 3 and random(1, 2) is 2>>
 				"Nice tits," says a <<personsimple>>'s voice.
-			<<elseif $bottomsize gte 3 and random(1, 2) is 2>>
+			<<elseif $player.bottomsize gte 3 and random(1, 2) is 2>>
 				"Nice ass," says a <<personsimple>>'s voice.
 			<<else>>
 				You hear a wolf whistle.
@@ -1971,99 +2008,109 @@
 <</widget>>
 
 <<widget "farm_tending_alex_events">>
-<<if $season is "summer" and $weather is "clear">>
-	<<set $rng to random(1, 5)>>
-<<else>>
-	<<set $rng to random(1, 4)>>
-<</if>>
+	<<cleareventpool>>
 
-<<if $rng is 5>>
-	<<npc Alex>><<person1>>
+	/* seasonal events */
+	<<if $season is "summer" and $weather is "clear">>
+		<<addinlineevent "farm_tending_alex_summer_1">>
+			<<npc Alex>><<person1>>
 
-	Alex fans <<his>> face and wipes <<his>> forehead. <<He>> squints up at the sky and huffs. "It's too hot."
-	<br><br>
+			Alex fans <<his>> face and wipes <<his>> forehead. <<He>> squints up at the sky and huffs. "It's too hot."
+			<br><br>
 
-	<<He>> starts to undo <<his>> shirt buttons, one by one, seemingly oblivious to your gaze.
-	<br><br>
+			<<He>> starts to undo <<his>> shirt buttons, one by one, seemingly oblivious to your gaze.
+			<br><br>
 
-	<<if $promiscuity gte 15>>
-		<<link [["Touch " + $NPCList[0].pronouns.him|Farm Tending Alex Summer]]>><<set $phase to 2>><<if $farm_stage lt 7 or ($farm_stage gte 7 and $alex_countdown isnot undefined)>><<npcincr Alex love -1>><</if>><<npcincr Alex dom -1>><<npcincr Alex lust 3>><</link>><<promiscuous2>><<if $farm_stage lt 7 or ($farm_stage gte 7 and $alex_countdown isnot undefined)>><<llove>><</if>><<ldom>><<gglust>>
-		<br>
+			<<if $promiscuity gte 15>>
+				<<link [["Touch " + $NPCList[0].pronouns.him|Farm Tending Alex Summer]]>><<set $phase to 2>><<if $farm_stage lt 7 or ($farm_stage gte 7 and $alex_countdown isnot undefined)>><<npcincr Alex love -1>><</if>><<npcincr Alex dom -1>><<npcincr Alex lust 3>><</link>><<promiscuous2>><<if $farm_stage lt 7 or ($farm_stage gte 7 and $alex_countdown isnot undefined)>><<llove>><</if>><<ldom>><<gglust>>
+				<br>
+			<</if>>
+			<<link [[Peek|Farm Tending Alex Summer]]>><<set $phase to 1>><<arousal 300>><<npcincr Alex lust 1>><</link>><<garousal>><<glust>>
+			<br>
+			<<link [[Ignore|Farm Tending Alex Summer]]>><<set $phase to 0>><</link>>
+			<br>
+		<</addinlineevent>>
 	<</if>>
-	<<link [[Peek|Farm Tending Alex Summer]]>><<set $phase to 1>><<arousal 300>><<npcincr Alex lust 1>><</link>><<garousal>><<glust>>
-	<br>
-	<<link [[Ignore|Farm Tending Alex Summer]]>><<set $phase to 0>><</link>>
-	<br>
-<<elseif $rng is 4>>
-	<<npc Alex>><<person1>>
-	You hear Alex shout in surprise. You rush over, and find <<him>> lying on <<his>> back.
-	<br><br>
-	"Blighter startled me," <<he>> says.
-	<br><br>
 
-
-	<<link [[Offer your arm|Farm Tending Alex Arm]]>><<npcincr Alex love 1>><<npcincr Alex dom -1>><</link>><<ldom>><<glove>>
-	<br>
-	<<link [[Get back to work|Farm Tending Alex Back]]>><</link>>
-	<br>
-<<elseif $rng is 3>>
-	<<npc Alex>><<person1>>
-	<<if $NPCName[$NPCNameList.indexOf("Alex")].lust gte 10 and random(1, 2) is 2>>
-		You catch Alex sneaking glances at you when <<he>> thinks you're not looking.
+	/* general events */
+	<<addinlineevent "farm_tending_alex_general_1">>
+		<<npc Alex>><<person1>>
+		You hear Alex shout in surprise. You rush over, and find <<him>> lying on <<his>> back.
+		<br><br>
+		"Blighter startled me," <<he>> says.
 		<br><br>
 
-		<<link [[Flirt|Farm Tending Alex Flirt]]>><</link>><<promiscuous1>>
-		<br>
-		<<link [[Ignore|Farm Tending Alex Ignore]]>><</link>>
-		<br>
-	<<elseif $exposed gte 1>>
-		You catch Alex sneaking glances at you when <<he>> thinks you're not looking.<<garousal>><<arousal 600>>
-		<br><br>
 
-		<<link [[Ignore|Farm Tending Alex Ignore]]>><<npcincr Alex lust 1>><</link>><<glust>>
+		<<link [[Offer your arm|Farm Tending Alex Arm]]>><<npcincr Alex love 1>><<npcincr Alex dom -1>><</link>><<ldom>><<glove>>
 		<br>
-		<<link [[Tease|Farm Tending Alex Tease]]>><<npcincr Alex lust 1>><<arousal 1800>><<trauma -6>><<npcincr Alex dom 1>><</link>><<glust>><<ldom>><<ggarousal>><<ltrauma>>
+		<<link [["Laugh at " + $NPCList[0].pronouns.his " expense"|Farm Tending Alex Laugh Expense]]>><<npcincr Alex dom -1>><<stress -6>><</link>><<ldom>><<lstress>>
 		<br>
-	<<else>>
-		Alex waves at you from across the field. You wave back.<<lstress>><<stress -6>>
+		<<link [[Get back to work|Farm Tending Alex Back]]>><</link>>
+		<br>
+	<</addinlineevent>>
+
+	<<addinlineevent "farm_tending_alex_general_2">>
+		<<npc Alex>><<person1>>
+		<<if $NPCName[$NPCNameList.indexOf("Alex")].lust gte 10 and random(1, 2) is 2>>
+			You catch Alex sneaking glances at you when <<he>> thinks you're not looking.
+			<br><br>
+
+			<<link [[Flirt|Farm Tending Alex Flirt]]>><</link>><<promiscuous1>>
+			<br>
+			<<link [[Ignore|Farm Tending Alex Ignore]]>><</link>>
+			<br>
+		<<elseif $exposed gte 1>>
+			You catch Alex sneaking glances at you when <<he>> thinks you're not looking.<<garousal>><<arousal 600>>
+			<br><br>
+
+			<<link [[Ignore|Farm Tending Alex Ignore]]>><<npcincr Alex lust 1>><</link>><<glust>>
+			<br>
+			<<link [[Tease|Farm Tending Alex Tease]]>><<npcincr Alex lust 1>><<arousal 1800>><<trauma -6>><<npcincr Alex dom 1>><</link>><<glust>><<ldom>><<ggarousal>><<ltrauma>>
+			<br>
+		<<else>>
+			Alex waves at you from across the field. You wave back.<<lstress>><<stress -6>>
+			<br><br>
+
+			<<destination_farm>>
+			<br>
+		<</if>>
+	<</addinlineevent>>
+
+	<<addinlineevent "farm_tending_alex_general_3">>
+		You work beside Alex, chatting all the while.<<ltrauma>><<lstress>><<trauma -6>><<stress -6>>
 		<br><br>
 
 		<<destination_farm>>
 		<br>
-	<</if>>
-<<elseif $rng is 2>>
-	You work beside Alex, chatting all the while.<<ltrauma>><<lstress>><<trauma -6>><<stress -6>>
-	<br><br>
+	<</addinlineevent>>
 
-	<<destination_farm>>
-	<br>
+	<<addinlineevent "farm_tending_alex_general_4">>
+		<<npc Alex>><<person1>>
+		You chat with Alex as you work. <<Hes>> keen to share <<his>> farming techniques.
+		<br><br>
 
-<<else>>
-	<<npc Alex>><<person1>>
-	You chat with Alex as you work. <<Hes>> keen to share <<his>> farming techniques.
-	<br><br>
-
-	<<if $tending lt 1000>>
-		<<link [[Listen (0:10)|Farm Tending Alex Listen]]>><<farm_count 10>><<tending 6>><<pass 10>><<npcincr Alex dom 1>><</link>><<gdom>><<gtending>>
+		<<if $tending lt 1000>>
+			<<link [[Listen (0:10)|Farm Tending Alex Listen]]>><<farm_count 10>><<tending 6>><<pass 10>><<npcincr Alex dom 1>><</link>><<gdom>><<gtending>>
+			<br>
+		<<else>>
+			<<link [[Teach Alex instead (0:10)|Farm Tending Alex Teach]]>><<pass 10>><<farm_count 10>><<npcincr Alex love 1>><<npcincr Alex dom -1>><</link>><<ldom>><<glove>>
+			<br>
+		<</if>>
+		<<link [[Focus on working|Farm Tending Alex Focus]]>><</link>>
 		<br>
-	<<else>>
-		<<link [[Teach Alex instead (0:10)|Farm Tending Alex Teach]]>><<pass 10>><<farm_count 10>><<npcincr Alex love 1>><<npcincr Alex dom -1>><</link>><<ldom>><<glove>>
-		<br>
-	<</if>>
-	<<link [[Focus on working|Farm Tending Alex Focus]]>><</link>>
-	<br>
+	<</addinlineevent>>
 
-<</if>>
+	<<runeventpool>>
 <</widget>>
 
 <<widget "barn_img">>
 <<machine_init>>
-<<if $args[0] is "penis">>
-	<<if $args[1] is "livestock">>
+<<if _args[0] is "penis">>
+	<<if _args[1] is "livestock">>
 		<<set _barn_semen to $livestock_semen>>
-	<<elseif $args[1] is "half_livestock">>
+	<<elseif _args[1] is "half_livestock">>
 		<<set _barn_semen to ($livestock_semen / 2)>>
-	<<elseif $args[1] is "no_livestock">>
+	<<elseif _args[1] is "no_livestock">>
 		<<set _barn_semen to 0>>
 	<<else>>
 		<<set _barn_semen to $semen_amount>>
@@ -2084,12 +2131,12 @@
 		<<set _semen_img to "semen_1">>
 	<</if>>
 	<<prop haybale semen penis_pump>>
-<<elseif $args[0] is "breasts">>
-	<<if $args[1] is "livestock">>
+<<elseif _args[0] is "breasts">>
+	<<if _args[1] is "livestock">>
 		<<set _barn_milk to $livestock_milk>>
-	<<elseif $args[1] is "half_livestock">>
+	<<elseif _args[1] is "half_livestock">>
 		<<set _barn_milk to ($livestock_milk / 2)>>
-	<<elseif $args[1] is "no_livestock">>
+	<<elseif _args[1] is "no_livestock">>
 		<<set _barn_milk to 0>>
 	<<else>>
 		<<set _barn_milk to $milk_amount>>
@@ -2111,13 +2158,13 @@
 	<</if>>
 	<<prop haybale milk breast_pump>>
 <<else>>
-	<<if $args[1] is "livestock">>
+	<<if _args[1] is "livestock">>
 		<<set _barn_semen to $livestock_semen>>
 		<<set _barn_milk to $livestock_milk>>
-	<<elseif $args[1] is "half_livestock">>
+	<<elseif _args[1] is "half_livestock">>
 		<<set _barn_semen to ($livestock_semen / 2)>>
 		<<set _barn_milk to ($livestock_milk / 2)>>
-	<<elseif $args[1] is "no_livestock">>
+	<<elseif _args[1] is "no_livestock">>
 		<<set _barn_semen to 0>>
 		<<set _barn_milk to 0>>
 	<<else>>
@@ -2167,8 +2214,8 @@
 <</widget>>
 
 <<widget "farmCatchChance">>
-<<if $args[0] gt 0 or $args[0] lt 0>>
-	<<set $farm.milking.catchChance to Math.clamp(parseFloat($farm.milking.catchChance) + parseFloat($args[0]),0,100).toFixed(3)>>
+<<if _args[0] gt 0 or _args[0] lt 0>>
+	<<set $farm.milking.catchChance to Math.clamp(parseFloat($farm.milking.catchChance) + parseFloat(_args[0]),0,100).toFixed(3)>>
 <</if>>
 <</widget>>
 
@@ -2325,28 +2372,28 @@
 
 <<widget "farm_sleep_options">>
 <<if $sleeptrouble is 1 and $controlled is 0>>
-	<<link [[Sleep for 10 hours|Farm Sleep]]>><<set $sleephour to 10>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
+	<<link [[Sleep for 10 hours|Farm Sleep]]>><<set $sleephour to 10>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 9 hours|Farm Sleep]]>><<set $sleephour to 9>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
+	<<link [[Sleep for 9 hours|Farm Sleep]]>><<set $sleephour to 9>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
 	<br>
 <</if>>
-<<link [[Sleep for 8 hours|Farm Sleep]]>><<set $sleephour to 8>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
+<<link [[Sleep for 8 hours|Farm Sleep]]>><<set $sleephour to 8>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
 <br>
-<<link [[Sleep for 7 hours|Farm Sleep]]>><<set $sleephour to 7>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
+<<link [[Sleep for 7 hours|Farm Sleep]]>><<set $sleephour to 7>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
 <br>
-<<link [[Sleep for 6 hours|Farm Sleep]]>><<set $sleephour to 6>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
+<<link [[Sleep for 6 hours|Farm Sleep]]>><<set $sleephour to 6>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
 <br>
-<<link [[Sleep for 5 hours|Farm Sleep]]>><<set $sleephour to 5>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
+<<link [[Sleep for 5 hours|Farm Sleep]]>><<set $sleephour to 5>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
 <br>
-<<link [[Sleep for 4 hours|Farm Sleep]]>><<set $sleephour to 4>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
+<<link [[Sleep for 4 hours|Farm Sleep]]>><<set $sleephour to 4>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
 <br>
-<<link [[Sleep for 3 hours|Farm Sleep]]>><<set $sleephour to 3>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
+<<link [[Sleep for 3 hours|Farm Sleep]]>><<set $sleephour to 3>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
 <br>
-<<link [[Sleep for 2 hours|Farm Sleep]]>><<set $sleephour to 2>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
+<<link [[Sleep for 2 hours|Farm Sleep]]>><<set $sleephour to 2>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
 <br>
-<<link [[Sleep for 1 hour|Farm Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
+<<link [[Sleep for 1 hour|Farm Sleep]]>><<set $sleephour to 1>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
 <br>
-<<link [[Just sleep|Farm Sleep]]>><<set $sleephour to -1>><<set $saveDetails.auto.count++>><</link>> (??:??)<<ltiredness>>
+<<link [[Just sleep|Farm Sleep]]>><<set $sleephour to -1>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (??:??)<<ltiredness>>
 <br><br>
 <<if $bus is "farm_alex_room">>
 	<<link [[Climb out of bed|Farm Alex Bedroom]]>>
@@ -2365,6 +2412,79 @@
 <br><br>
 <</widget>>
 
+<<widget "farm_tell_alex">>
+<<set _alex to $NPCName[$NPCNameList.indexOf("Alex")]>>
+<<if random(1, 14) is 14 and $famemodel gte 30>>
+	You talk about your modelling gig.
+	<<if $rng gte 60 and $alex_countdown is undefined and $farm_stage gte 7>>
+		"You model? I bet." <<He>> blushes. "You're quite the looker."
+	<<elseif $rng gte 30 and $farm_stage gte 6>>
+		"Hope you don't get too big," <<he>> says. "I'd never hear the end of it from my <<if $pronoun is "m">>dad<<else>>mum<</if>>."
+	<<else>>
+		"Don't let it get to your head," <<he>> teases. "You bet I'm giving a shout, if I catch you on TV."
+	<</if>>
+<<elseif random(1, 14) is 13 and $famescrap gte 30>>
+	You tell <<him>> that you know how to defend yourself. 
+	<<if $loveInterest.primary is "Alex" or $loveInterest.secondary is "Alex">>
+		"I knew my <<girl>>'s a tough one," <<he>> grins. "I'm your support, no matter what."
+	<<elseif $bodysize lte 0>>
+		"I'm surprised to hear, coming from a runt like you," <<he>> laughs. "No offence."
+	<<else>>
+		<<He>> nods in approval. "It's a good skill anyone should have," <<he>> says. "Perverts need to fuck off."
+	<</if>>
+<<elseif random(1, 14) is 12 and $famegood gte 30>>
+	You tell <<him>> that you go out of your way to help others. Some call you an angel.
+	<<if _alex.love lte -10>>
+		"Something just doesn't add up," <<he>> says, sounding annoyed. "Sorry, I didn't mean to be rude. But you could be a little nicer to me."
+	<<elseif $alex_countdown is undefined and $farm_stage gte 7>>
+		"You're my angel," <<he>> coos and beams. "And my <<if $player.gender_appearance is "f">>wo<</if>>man."
+	<<elseif $angel gte 6 and $transformationParts.angel.halo isnot "hidden" and $transformationParts.angel.wings isnot "hidden">>
+		"I'm glad I'm no exception," <<he>> smiles at you. "You sure do look the part."
+	<<elseif $demon gte 2>>
+		"Never took you for the righteous type," <<he>> teases. "With that devilish grin of yours."
+	<<else>>
+		"I don't know about that," <<he>> says, pretending to roll <<his>> eyes. "I'm joking. I could tell you had a good heart ever since we first met."
+	<</if>>
+<<elseif random(1, 14) is 11 and $famebusiness gte 30>>
+	You tell <<him>> that you're an entrepeneur.
+	<<if $farm_stage gte 7>>
+		"You put in a good effort," <<he>> grins, gesturing to the fields. "Making you co-owner was one of the best decisions I've made."
+	<<else>>
+		<<He>> nods and smiles. "I like what you've done so far. Keep at it."
+	<</if>>
+<<elseif random(1, 14) is 10 and $famesocialite gte 30>>
+	You tell <<him>> that you schmooze in town. "It's nice that a townie elite can still get <<pher>> hands dirty with a country<<nnpc_gendery "Alex">> like me," <<he>> says teasingly.
+<<elseif random(1, 14) is 9 and $adultshopclerk>>
+	You tell <<him>> that you also work as an adult shop clerk. "Do you get an employee discount? I could use more-" <<He>> cuts <<himself>> off. "Nevermind."
+<<elseif random(1, 14) is 8 and $spa_job gte 1>>
+	You tell <<him>> that you massage clients at the spa in town. "I'm overdue for one," <<he>> says. "Ever had a mud bath? I'd recommend it."
+<<elseif random(1, 14) is 7 and $oceanbreezejob is 1>>
+	You tell <<him>> that you also wait tables at the town's cafe. "I'd probably be fired on my first day," <<he>> says. "I don't take kindly to harrassment."
+<<elseif random(1, 14) is 6 and $chef_state gte 1>>
+	You tell <<him>> that you also work as a chef at the town's cafe. "Sounds like a good hustle," <<he>> smiles. "We should have a cook-off sometime."
+<<elseif random(1, 14) is 5 and $dockwork is 1>>
+	You tell <<him>> that you're also a dock worker. "Be careful with your spine," <<he>> warns. "Trust me. I'd know from experience."
+<<elseif random(1, 14) is 4 and $stripclubbartendingintro is 1>> 
+	You tell <<him>> that you moonlight as a bartender. "You fix up drinks? Why didn't you say something sooner?" <<His>> face lights up, and <<he>> proceeds to rave about liquor.
+<<elseif random(1, 14) is 3 and $stripclubdancingintro is 1 or $dance_job_intro is 1>>
+	You tell <<him>> that you're also a dancer. <<He>> laughs for a good while. "I think I'm pretty good at it myself. Drew up quite the crowd." You don't think <<he>> meant the same kind of dancing you do.
+<<elseif random(1, 14) is 2 and $brotheljob is 1 and $fameprostitution gte 30>>
+	"I heard the rumours about you in the brothel. I'm surprised you still show up here. With the amount of bank you must be making." <<He>> eyes you up and down, then looks away, laughing.
+	<<if $uncomfortable.lewd is true>>
+		<<stress 6>><<gstress>>
+	<</if>>
+<<elseif random(1, 14) is 1 and $famesex gte 400>>
+	"Rumours say you've racked up quite the body count," <<he>> smiles in awe.
+	<<if $alex_countdown is undefined and $farm_stage gte 7>>
+		"You're a <<if $player.gender_appearance is "f">>wo<</if>>man after my own heart, y'know that?"
+	<<else>>
+		"Takes some serious hustle. I respect it."
+	<</if>>
+<<else>>
+	You shrug and gaze <<if $hour is 5>>out the window.<<else>>up at the sky.<</if>> <<He>> does likewise. 
+<</if>>
+<</widget>>
+
 <<widget "farm_cottage_options">>
 <<link [[Your room (0:01)|Farm Bedroom]]>><<pass 1>><</link>>
 <br>
@@ -2380,7 +2500,15 @@
 <</widget>>
 
 <<widget "farm_cottage_tv_options">>
-
+<<if $alex_countdown is undefined>>
+	<<link [[Cuddle Alex (0:20)|Farm Breakfast Cuddle]]>><<npc Alex>><<npcincr Alex love 1>><<pass 20>><</link>><<glove>>
+	<br>
+	<<link [[Watch TV with Alex (0:20)|Farm Breakfast TV]]>><<npc Alex>><<stress -2>><<pass 20>><</link>><<lstress>>
+	<br>
+<<else>>
+	<<link [[Watch TV with Alex (0:20)|Farm Breakfast TV]]>><<npc Alex>><<stress -2>><<pass 20>><</link>><<lstress>>
+	<br>
+<</if>>
 <</widget>>
 
 <<widget "destination_farm">>
@@ -2496,12 +2624,12 @@
 <</widget>>
 
 <<widget "farm_fence_damage">>
-<<if $args[0]>>
+<<if _args[0]>>
 	<<set _fence_mod to 1>>
 	<<if $farm.wall gte 2>>
 		<<set _fence_mod -= 0.5>>
 	<</if>>
-	<<set $farm_work.fence_damage += ($args[0] * _fence_mod)>>
+	<<set $farm_work.fence_damage += (_args[0] * _fence_mod)>>
 	<<set $farm_work.fence_damage = Math.clamp($farm_work.fence_damage, 0, 100)>>
 <</if>>
 <</widget>>
@@ -2527,7 +2655,7 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 <</widget>>
 
 <<widget "guard_skill_text">>
-	<<if $args[0] is "tower" and $farm.tower_guard_skill isnot undefined>>
+	<<if _args[0] is "tower" and $farm.tower_guard_skill isnot undefined>>
 		<<set _guard_skill to $farm.tower_guard_skill>>
 	<<else>>
 		<<set _guard_skill to $NPCList[0].skills.security>>
@@ -2582,13 +2710,13 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 <</widget>>
 
 <<widget "farm_stock">>
-<<if $args[0]>>
-	<<if $args[1] and $args[2]>>
-		<<set $farm.stock[$args[0]] += random($args[1], $args[2])>>
-	<<elseif $args[1]>>
-		<<set $farm.stock[$args[0]] += $args[1]>>
+<<if _args[0]>>
+	<<if _args[1] and _args[2]>>
+		<<set $farm.stock[_args[0]] += random(_args[1], _args[2])>>
+	<<elseif _args[1]>>
+		<<set $farm.stock[_args[0]] += _args[1]>>
 	<<else>>
-		<<set $farm.stock[$args[0]] += 1>>
+		<<set $farm.stock[_args[0]] += 1>>
 	<</if>>
 <</if>>
 <</widget>>
@@ -2751,11 +2879,11 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 <<if $fields_damaged is undefined>>
 	<<set $fields_damaged to 0>>
 <</if>>
-<<if $args[0] is "target">>
-	<<clear_plot farm $args[1]>>
+<<if _args[0] is "target">>
+	<<clear_plot farm _args[1]>>
 	<<set $fields_damaged++>>
-<<elseif $args[0] is "loop">>
-	<<set _field_number to $args[1]>>
+<<elseif _args[0] is "loop">>
+	<<set _field_number to _args[1]>>
 	<<for _i to 0; _i lt _field_number; _i++>>
 		<<if $plots.farm[_i]>>
 			<<if $plots.farm[_i].stage gte 1>>
@@ -2867,5 +2995,103 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 			It'll be finished in <<number $farm.build_timer>> days.
 		<</if>>
 		<br><br>
+	<</if>>
+<</widget>>
+
+<<widget "farm_upgrades_status">>
+	<<set _upgrade_count to 0>>
+	Wall:
+	<<if $farm.wall gte 4 or $farm.build is "wall 4">>
+		<span class="green">As sturdy as can be</span>
+		<<set _upgrade_count += 1>>
+	<<elseif $farm.wall is 3 or $farm.build is "wall 3">>
+		<<link [[Barbed wire|Farm Upgrades Wall 4]]>><</link>>
+	<<elseif $farm.wall is 2 or $farm.build is "wall 2">>
+		<<link [[Metal fence|Farm Upgrades Wall 3]]>><</link>>
+	<<elseif $farm.wall is 1 or $farm.build is "wall 1">>
+		<<link [[Reinforce|Farm Upgrades Wall 2]]>><</link>>
+	<<else>>
+		<<link [[Full repair|Farm Upgrades Wall 1]]>><</link>>
+	<</if>>
+	<br>
+	<<if $farm_stage gte 8>>
+		Security:
+		<<if $farm.tower is 2 or $farm.build is "tower 2">>
+			<span class="green">As watchful as can be</span>
+			<<set _upgrade_count += 1>>
+		<<elseif $farm.tower is 1 or $farm.build is "tower 1">>
+			<<link [[Searchlights|Farm Upgrades Tower 2]]>><</link>>
+		<<else>>
+			<<link [[Watchtower|Farm Upgrades Tower]]>><</link>>
+		<</if>>
+		<br>
+		Woodland:
+		<<if $farm.woodland gte 3 or $farm.build is "woodland 3">>
+			<span class="green">Annexed by the farm</span>
+			<<set _upgrade_count += 1>>
+		<<elseif $farm.woodland gte 2 or $farm.build is "woodland 2">>
+			<<link [[Purchase even more|Farm Upgrades Woodland 3]]>><</link>>
+		<<elseif $farm.woodland gte 1 or $farm.build is "woodland 1">>
+			<<link [[Purchase more|Farm Upgrades Woodland 2]]>><</link>>
+		<<else>>
+			<<link [[Purchase|Farm Upgrades Woodland 1]]>><</link>>
+		<</if>>
+		<br>
+		Kennel:
+		<<if $farm.kennel gte 1 or $farm.build is "kennel 1">>
+			<span class="green">State of the art</span>
+			<<set _upgrade_count += 1>>
+		<<else>>
+			<<link [[Outfit with training facilities|Farm Upgrades Kennel 1]]>><</link>>
+		<</if>>
+		<br>
+		Barn:
+		<<if $farm.barn gte 2 or $farm.build is "barn 2">>
+			<span class="green">As robust as can be</span>
+			<<set _upgrade_count += 1>>
+		<<elseif $farm.barn gte 1 or $farm.build is "barn 1">>
+			<<link [[Expand|Farm Upgrades Barn 2]]>><</link>>
+		<<else>>
+			<<link [[Outfit with new milking equipment|Farm Upgrades Barn 1]]>><</link>>
+		<</if>>
+		<br>
+		Stable:
+		<<if $farm.stable gte 1 or $farm.build is "stable 1">>
+			<span class="green">As sophisticated as can be</span>
+			<<set _upgrade_count += 1>>
+		<<else>>
+			<<link [[Expand|Farm Upgrades Stable 1]]>><</link>>
+		<</if>>
+		<br>
+		Coop:
+		<<if $farm.coop gte 2 or $farm.build is "coop 2">>
+			<span class="green">As big as can be</span>
+			<<set _upgrade_count += 1>>
+		<<elseif $farm.coop gte 1 or $farm.build is "coop 1">>
+			<<link [[Expand again|Farm Upgrades Coop 2]]>><</link>>
+		<<else>>
+			<<link [[Expand|Farm Upgrades Coop 1]]>><</link>>
+		<</if>>
+		<br>
+		Farm Irrigation:
+		<<if $farm.irrigation gte 9>>
+			<span class="green">Every field has irrigation</span>
+			<<set _upgrade_count += 1>>
+		<<elseif $farm.irrigation is $plots.farm.length>>
+			<span class="green">Every current field has irrigation</span>
+		<<else>>
+			<<link [[Build field irrigation|Farm Upgrades Irrigation]]>><</link>>
+		<</if>>
+		<br>
+		<<if $sexStats.anus.pregnancy.motherStatus gte 1 and ($farm.parasitebarn gte 1 or $farm.build is "parasites 1")>>
+			Parasite Barn:
+			<<if $farm.parasitebarn gte 2 or $farm.build is "parasites 2">>
+				<span class="green">As big as can be</span>
+			<<else>>
+				<<link [[Expand|Farm Upgrades Parasite Barn 2]]>><</link>>
+			<</if>>
+			<br>
+		<</if>>
+		<br>
 	<</if>>
 <</widget>>

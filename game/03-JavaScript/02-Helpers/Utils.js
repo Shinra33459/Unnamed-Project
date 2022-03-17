@@ -1,5 +1,5 @@
-class Utils {
-    GetStack() {
+const Utils = (() => {
+    function getStack() {
         let output = `:: ${V.passage}`;
         if (DOL.Stack.length >= 1) {
             output += ` [${DOL.Stack.join(", ")}]`;
@@ -7,13 +7,17 @@ class Utils {
         return output;
     }
 
-    Defer(func, ...params) {
+    function defer(func, ...params) {
         if (Engine.isIdle()) {
             $(() => func(...params));
         } else {
             $(document).one(':passageend', () => func(...params));
         }
     }
-}
 
-window.Utils = new Utils();
+    return Object.preventExtensions({
+        GetStack: getStack,
+        Defer: defer
+    })
+})();
+window.Utils = Utils;

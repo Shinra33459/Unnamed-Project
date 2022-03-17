@@ -54,12 +54,12 @@
 <</widget>>
 
 <<widget "mirrorwet">>
-<<if $args[0] or $args[1]>>
+<<if _args[0] or _args[1]>>
 	<br>
-	<<set _temp to $args[0]>>
-	<<set _temp2 to $args[1]>>
-	Your $args[2]
-	<<if $args [2] is "thighs" or $args [2] is "feet">>
+	<<set _temp to _args[0]>>
+	<<set _temp2 to _args[1]>>
+	Your _args[2]
+	<<if _args [2] is "thighs" or _args [2] is "feet">>
 		are
 	<<else>>
 		is
@@ -676,6 +676,25 @@ Decreasing your allure:
 	<span class="pink">Obscure socialite</span>
 	<br>
 <</if>>
+<<if $famemodel gte 1000>>
+	<span class="green">Notorious show off</span>
+	<br>
+<<elseif $famemodel gte 600>>
+	<span class="teal">Famous model</span>
+	<br>
+<<elseif $famemodel gte 400>>
+	<span class="lblue">Recognised model</span>
+	<br>
+<<elseif $famemodel gte 200>>
+	<span class="blue">Known model</span>
+	<br>
+<<elseif $famemodel gte 100>>
+	<span class="purple">Low-key model</span>
+	<br>
+<<elseif $famemodel gte 30>>
+	<span class="pink">Obscure model</span>
+	<br>
+<</if>>
 <<if $moorLuck gt 5>>
 	<span class="green">????</span>
 	<br>
@@ -1054,7 +1073,7 @@ __Hair__
 		Default: {hairtype:$hairtype, fringetype:$fringetype, hairposition:$hairposition}
 	}>>
 <</if>>
-<<set _hairTypeByName to {"Braid left": "braid left", "Braid right": "braid right", "Flat ponytail": "flat ponytail", "Loose": "loose", "Messy": "messy", "Pigtails": "pigtails", "Ponytail": "ponytail", "Short": "short", "Side tail left": "side tail left", "Side tail right": "side tail right", "Straight": "straight", "Swept left": "swept left", "Twin braids": "twin braids", "Twintails": "twintails", "Curl": "curl", "Defined curl": "defined curl", "Neat": "neat", "Curly pigtails": "curly pigtails", "Sailor buns": "sailor buns"}>>
+<<set _hairTypeByName to {"Braid left": "braid left", "Braid right": "braid right", "Flat ponytail": "flat ponytail", "Loose": "loose", "Messy": "messy", "Pigtails": "pigtails", "Ponytail": "ponytail", "Short": "short", "Side tail left": "side tail left", "Side tail right": "side tail right", "Straight": "straight", "Swept left": "swept left", "Twin braids": "twin braids", "Twintails": "twintails", "Curl": "curl", "Defined curl": "defined curl", "Neat": "neat", "Curly pigtails": "curly pigtails", "Sailor buns": "sailor buns", "Dreads": "dreads"}>>
 <<set _fringeTypeByName to {"Thin flaps": "thin flaps", "Wide flaps": "wide flaps", "Hime": "hime", "Loose": "loose", "Messy": "messy", "Overgrown": "overgrown", "Ringlets": "ringlets", "Split": "split", "Straight": "straight", "Swept left": "swept left", "Back": "back", "Parted": "parted", "Flat": "flat", "Quiff": "quiff", "Straight curl": "straight curl", "Ringlet curl": "ringlet curl", "Curtain": "curtain"}>>
 
 <div class="no-numberify">
@@ -1132,10 +1151,10 @@ Your fringe is in the "$fringetype" style.
 <</widget>>
 
 <<widget "mirrorMakeupPart">>
-<<set _itemType = $args[0]>>
-<<set _singular = $args[1]>>
-<<set _plural = $args[2]>>
-<<set _cssClass = $args[3]>>
+<<set _itemType = _args[0]>>
+<<set _singular = _args[1]>>
+<<set _plural = _args[2]>>
+<<set _cssClass = _args[3]>>
 
 <<set _items = $makeup.owned[_itemType].filter(x => x.count > 0)>>
 <<if $makeup.owned[_itemType].length == 0>>
@@ -1199,7 +1218,7 @@ __Makeup__
 	<<set $makeup.lipstick to 0>>
 	<<set $makeup.eyeshadow to 0>>
 	<<set $makeup.mascara to 0>>
-	<<set $makeup.eyelenses to 0>>
+	<<set $makeup.eyelenses = {"left":0, "right":0}>>
 <</link>> |
 <<link [["Randomise"|$passage]]>>
 	<<for $_i to 0; $_i lt _makeupNames.length; $_i++>>
@@ -1257,11 +1276,17 @@ __Makeup__
 	<<if $makeup.owned.eyelenses.length == 0 and $makeup.owned.custom_eyelenses.length == 0>>
 		You don't own any contact lenses.<br>
 	<<else>>
+		<<set _contact_eye_selected to "Both">>
 		Wear contact lenses:<br> /* NON CUSTOMIZED ONES */
-		<<if $makeup.eyelenses != 0>>
+		Select eye : <<listbox "_contact_eye_selected" autoselect>>
+			<<option "Both">>
+			<<option "Left eye">>
+			<<option "Right eye">>
+		<</listbox>><br>
+		<<if $makeup.eyelenses.left != 0 || $makeup.eyelenses.right != 0>>
 			<span class="no-numberify">
 			<<link "None">>
-			<<set $makeup.eyelenses = 0>>
+			<<set $makeup.eyelenses = {"left":0, "right":0}>>
 			<<run Engine.show()>>
 			<</link>></span>
 			<<print " | ">>
@@ -1270,19 +1295,31 @@ __Makeup__
 			<<capture _colour>>
 			<span class="capitalize no-numberify">
 			<<link _colour>>
-			<<set $makeup.eyelenses = _colour>>
+			<<if _contact_eye_selected == "Both">>
+				<<set $makeup.eyelenses = {"left":_colour, "right":_colour}>>
+			<<elseif _contact_eye_selected == "Left eye">>
+				<<set $makeup.eyelenses["left"] = _colour>>
+			<<elseif _contact_eye_selected == "Right eye">>
+				<<set $makeup.eyelenses["right"] = _colour>>
+			<</if>>
 			<<run Engine.show()>>
 			<</link>></span>
-			<span @class="'eye-'+_colour.replace(/ /g, '-')"><span class="colour-sample bgcolour-eyes colour-eye"></span></span>
+				<span @class="'eye-'+_colour.replace(/ /g, '-')"><span class="colour-sample bgcolour-eyes left-iris"></span></span>
 			<<print " | ">>
 			<</capture>>
 		<</for>>
 		<br>
 				Custom contact lenses:<br> /* CUSTOMIZED ONES */
-		<<if $makeup.eyelenses != 0>>
+		<<set _custom_eye_selected to "Both">>
+		Select eye : <<listbox "_custom_eye_selected" autoselect>>
+			<<option "Both">>
+			<<option "Left eye">>
+			<<option "Right eye">>
+		<</listbox>><br>
+		<<if $makeup.eyelenses.left != 0 || $makeup.eyelenses.right != 0>>
 			<span class="no-numberify">
 			<<link "None">>
-			<<set $makeup.eyelenses = 0>>
+			<<set $makeup.eyelenses = {"left":0, "right":0}>>
 			<<run Engine.show()>>
 			<</link>></span>
 			<<print " | ">>
@@ -1291,14 +1328,20 @@ __Makeup__
 			<<run _colour = $makeup.owned.custom_eyelenses[_i]>>
 			<<for _e = 0; _e < $custom_eyecolours.length; _e++>>
 				<<if $custom_eyecolours[_e].variable == $makeup.owned.custom_eyelenses[_i]>>
-					<<set _background_colour to clone(V.custom_eyecolours[_e].canvasfilter.blend)>>
+					<<set _background_colour to clone($custom_eyecolours[_e].canvasfilter.blend)>>
 				<</if>>
 			<</for>>
 			<<capture _colour _background_colour>>
 			<span class="capitalize no-numberify">
 			<<set _colour_name_with_space = window.colorNameTranslate(_colour, "spaced name")>>
 			<<link _colour_name_with_space>>
-			<<set $makeup.eyelenses = _colour>>
+			<<if _custom_eye_selected == "Both">>
+				<<set $makeup.eyelenses = {"left":_colour, "right":_colour}>>
+			<<elseif _custom_eye_selected == "Left eye">>
+				<<set $makeup.eyelenses["left"] = _colour>>
+			<<elseif _custom_eye_selected == "Right eye">>
+				<<set $makeup.eyelenses["right"] = _colour>>
+			<</if>>
 			<<run Engine.show()>>
 			<</link>></span>
 			<span class="eye-custom"><span @style="'background:'+_background_colour" class="colour-sample"></span></span>
@@ -1372,8 +1415,8 @@ __New Makeup Preset__ - Saves the makeup you current have on
 <</widget>>
 
 <<widget "makeupPresets">>
-<<set _presetChosen to $makeup.presets[$args[0]]>>
-Preset: <<print $args[0]>>
+<<set _presetChosen to $makeup.presets[_args[0]]>>
+Preset: <<print _args[0]>>
 <br>
 <<for $_label, $_value range _presetChosen>>
 	<<switch $_label>>
@@ -1417,30 +1460,30 @@ Preset: <<print $args[0]>>
 	<</for>>
 <</link>> |
 <<link [[Delete preset|$passage]]>>
-	<<run delete $makeup.presets[$args[0]]>>
+	<<run delete $makeup.presets[_args[0]]>>
 <</link>>
 <</widget>>
 
 <<widget "makeupPresetsItem">>
-<<if $args[0] isnot undefined and $args[1] isnot undefined>>
-	<<if $args[1] is 0 and $args[0] is "hairdye">>
+<<if _args[0] isnot undefined and _args[1] isnot undefined>>
+	<<if _args[1] is 0 and _args[0] is "hairdye">>
 		<span class="red">Unable to remove.</span>
-	<<elseif $args[1] is 0>>
+	<<elseif _args[1] is 0>>
 		<span class="green">Remove.</span>
 	<<else>>
-		<<if $args[0] is "eyelenses">>
-			<<if $makeup.owned.eyelenses.includes($args[1]) or $makeup.owned.custom_eyelenses.includes($args[1])>>
-				<span class="green"><<print $args[1]>> (Owned).</span>
+		<<if _args[0] is "eyelenses">>
+			<<if $makeup.owned.eyelenses.includes(_args[1]) or $makeup.owned.custom_eyelenses.includes(_args[1])>>
+				<span class="green"><<print _args[1]>> (Owned).</span>
 			<<else>>
-				<span class="red"><<print $args[1]>> (Not Owned).</span>
+				<span class="red"><<print _args[1]>> (Not Owned).</span>
 			<</if>>
 		<<else>>
-			<<for $_i to 0; $_i lt $makeup.owned[$args[0]].length; $_i++>>
-				<<if $makeup.owned[$args[0]][$_i].colour is $args[1]>>
-					<<if $makeup.owned[$args[0]][$_i].count gt 0>>
-						<span class="green"><<print $args[1]>> (<<print $makeup.owned[$args[0]][$_i].count>>).</span>
+			<<for $_i to 0; $_i lt $makeup.owned[_args[0]].length; $_i++>>
+				<<if $makeup.owned[_args[0]][$_i].colour is _args[1]>>
+					<<if $makeup.owned[_args[0]][$_i].count gt 0>>
+						<span class="green"><<print _args[1]>> (<<print $makeup.owned[_args[0]][$_i].count>>).</span>
 					<<else>>
-						<span class="red"><<print $args[1]>> (0).</span>
+						<span class="red"><<print _args[1]>> (0).</span>
 					<</if>>
 					<<break>>
 				<</if>>
@@ -1518,6 +1561,7 @@ If your Trauma gets too high, you will be unable to hide.
 			<<option "Hide" "hidden">>
 			<<option "Default" "default">>
 			<<option "Classic" "classic">>
+			<<option "Pink" "pink">>
 		<</listbox>>
 		<br>
 	<</if>>
@@ -1526,6 +1570,7 @@ If your Trauma gets too high, you will be unable to hide.
 		<<listbox "$transformationParts.demon.wings" autoselect>>
 			<<option "Hide" "hidden">>
 			<<option "Default" "default">>
+			<<option "Pink" "pink">>
 		<</listbox>>
 		<br>
 	<</if>>
@@ -1535,6 +1580,7 @@ If your Trauma gets too high, you will be unable to hide.
 			<<option "Hide" "hidden">>
 			<<option "Default" "default">>
 			<<option "Classic" "classic">>
+			<<option "Pink" "pink">>
 		<</listbox>>
 		<br>
 	<</if>>
@@ -1717,7 +1763,7 @@ Fringe length: <span id="statsfringelength"><<print Math.trunc($fringelength)>><
  | <<link ">>">><<set $fringelength += 100>><<clamp>><<replace "#statsfringelength">><<print Math.trunc($fringelength)>><</replace>><</link>>
  | <<link ">>>">><<set $fringelength += 1000>><<clamp>><<replace "#statsfringelength">><<print Math.trunc($fringelength)>><</replace>><</link>>
 <br>
-Hair Colour (<<= $haircolour>>):
+Hair Colour (<<print $haircolour>>):
 <<link "Black">><<set $haircolour to "black">><<goto "Wardrobe">><</link>> |
 <<link "Brown">><<set $haircolour to "brown">><<goto "Wardrobe">><</link>> |
 <<link "Red">><<set $haircolour to "red">><<goto "Wardrobe">><</link>> |

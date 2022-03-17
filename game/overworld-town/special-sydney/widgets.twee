@@ -278,9 +278,29 @@
 			<<link [[Leave|School Library]]>><<endevent>><<set $eventskip to 1>><</link>>
 			<br>
 		<<case "shop">>
-			<<if $sydneySeen.includes("shop")>>
-				<!-- Currently Unobtainable, will be able to help set up shop in the future. -->
-				"It's closing time. I'm off to help set up the new shop." <<He>> gathers <<his>> things,<<if $sydneyromance is 1>> kisses you on the cheek,<</if>> and starts to lead any lingering students out of the library.
+			<<if $adultshopgrandopening is true>>
+				<<set $adultshopopeningsydney to true>>
+				"It's closing time.
+				<<if _sydneyStatus.includes("corrupt") or _sydneyStatus.includes("corruptLust")>>
+					Come on, we're missing the grand opening of the shop!"
+					<br><br>
+				<<elseif _sydneyStatus.includes("pure") or _sydneyStatus.includes("pureLust")>>
+					I'm wanted at the grand opening at the adult shop. Would you like to accompany me? I'd feel less awkward with company."
+					<br><br>
+				<<else>>
+					I'm off to the grand opening at the adult shop. Wanna come along? It might be fun."
+					<br><br>
+				<</if>>
+				<<link [[Go with Sydney (1:00)|Adult Shop Opening Walk]]>><<pass 10>><</link>>
+				<br>
+			<<elseif $sydneySeen.includes("shop")>>
+				"It's closing time. I'm off to help my <<sydneymum>> with the shop. You can come too, if you want." 
+				<<He>> gathers <<his>> things,<<if $sydneyromance is 1>> kisses you on the cheek,<</if>> and starts to lead any lingering students out of the library.
+				<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 20>>
+					<<elkicon>><<link [[Walk with Sydney (0:30)|Elk Sydney Walk]]>><<pass 30>><<npcincr Sydney love 1>><<stress -3>><<trauma -3>><</link>><<lstress>><<ltrauma>><<glove>>
+				<<else>>
+					<<elkicon>><<link [[Walk with Sydney (0:30)|Elk Sydney Walk]]>><<pass 30>><<npcincr Sydney love 1>><</link>><<glove>>
+				<</if>>
 			<<else>>
 				"It's closing time. I'm off to help my <<sydneymum>> with some work." <<He>> gathers <<his>> things,<<if $sydneyromance is 1>> kisses you on the cheek,<</if>> and starts to lead any lingering students out of the library. <<if $sydneySeen.includes("mass") or $sydneySeen.includes("initiate")>>Once <<he>> exits, you notice that <<hes>> not heading towards the temple, and instead towards Elk Street.<</if>>
 			<</if>>
@@ -301,6 +321,10 @@
 					<br>
 					<<prayoptions>>
 					<br>
+					<<if $sydneyChastityKnown and $sydneyromance is 1 and checkSextoysGift("Sydney") is 1>>
+						<<link [[Gift Sydney a strap-on|Gift Strap-on Sydney Temple]]>><</link>>
+						<br>
+					<</if>>
 					<<link [[Leave|Temple]]>><<endevent>><<set $eventskip to 1>><</link>>
 					<br>
 				<<default>>
@@ -334,20 +358,64 @@
 				<br>
 			<</if>>
 		<<case "shop">>
-			<<if $sydneySeen.includes("shop")>>
-				<!-- Currently Unobtainable, will be able to help set up shop in the future. -->
-				Sydney stretches. "I'm off to help set up the new shop." <<He>> gathers <<his>> things<<if $sydneyromance is 1>>, and kisses you on the cheek before leaving<</if>>.
+			<<if $adultshopgrandopening is true>>
+				<<set $adultshopopeningsydney to true>>
+				Sydney stretches.
+				<br><br>
+				<<if _sydneyStatus.includes("corrupt") or _sydneyStatus.includes("corruptLust")>>
+					"Come on, we're missing the grand opening!"
+					<br><br>
+				<<elseif _sydneyStatus.includes("pure") or _sydneyStatus.includes("pureLust")>>
+					"I'm wanted at the grand opening at the adult shop. Would you like to accompany me? I'd feel less awkward with company."
+					<br><br>
+				<<else>>
+					"I'm off to the grand opening at the adult shop. Wanna come along? It might be fun."
+					<br><br>
+				<</if>>
+				<<link [[Go with Sydney (1:00)|Adult Shop Opening Walk]]>><<pass 10>><</link>>
+				<br>
+			<<elseif $sydneySeen.includes("shop")>>
+				Sydney stretches. "I'm off to <<if $adultshopunlocked is undefined>>help set up<<else>>work at<</if>> the shop... You can come too, if you want." <<He>> gathers <<his>> things<<if $sydneyromance is 1>>, and kisses you on the cheek before leaving<</if>>.
+				<br><br>
+				<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 20>>
+					<<elkicon>><<link [[Walk with Sydney (0:30)|Elk Sydney Walk]]>><<pass 30>><<npcincr Sydney love 1>><<stress -3>><<trauma -3>><</link>><<lstress>><<ltrauma>><<glove>>
+				<<else>>
+					<<elkicon>><<link [[Walk with Sydney (0:30)|Elk Sydney Walk]]>><<pass 30>><<npcincr Sydney love 1>><</link>><<glove>>
+				<</if>>
 			<<else>>
 				Sydney stretches. "I'm off to help my <<sydneymum>> with some work." <<He>> gathers <<his>> things<<if $sydneyromance is 1>>, and kisses you on the cheek before leaving<</if>>.
 			<</if>>
 			<br><br>
-			<<link [[Next|Temple]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<<link [[Leave|Temple]]>><<endevent>><<set $eventskip to 1>><</link>>
 			<br>
 		<<default>>
 			Sydney stretches. "Time to get back to work. I'll be around." <<if $sydneyromance is 1>><<He>> kisses you on the cheek before leaving.<</if>>
 			<br><br>
 			<<link [[Next|Temple]]>><<endevent>><<set $eventskip to 1>><</link>>
 			<br>			
+	<</switch>>
+<<elseif $location is "adult_shop">>
+	<<switch _sydney_location>>
+		<<case "home">>
+			<<if $sydneySeen.includes("parent")>>
+				<<npc "Sirris" 2>><<person2>>
+				Someone places a hand on your shoulder. You look behind and see Sirris. "Hey," <<he>> smiles, "It's pretty late, do you need a ride home?"
+				<br><br>
+				Sydney sleepily stands up.
+				<br><br>
+				<<link [[Go home|Sydney Ride Home]]>><</link>>
+				<br>
+				<<link [[Stay|Sydney Ride Home No]]>><</link>>
+				<br>				
+			<</if>>
+		<<default>>
+			<<sydneyOptionsTalk>>
+			<br>
+			<<if $sydneyChastityKnown and $sydneyromance is 1 and checkSextoysGift("Sydney") is 1>>
+				<<link [[Gift Sydney a strap-on|Gift Strap-on Sydney Temple]]>><</link>>
+				<br>
+			<</if>>
+			<<link [[Back|Adult Shop]]>><<endevent>><<set $eventskip to 1>><</link>>
 	<</switch>>
 <</if>>
 <</widget>>
@@ -361,6 +429,16 @@
 	<<scienceicon>><<link [[Walk to science class (0:05)|Sydney Science Walk]]>><<pass 5>><<npcincr Sydney love 1>><</link>><<glove>>
 	<br>
 <</if>>
+<<if $location is "adult_shop">> /*Placeholder. Unfinished.*/
+	<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 20>>
+        <<link [[Help with work (0:30)|Sydney Shop Help]]>><<pass 30>><<npcincr Sydney love 1>><<stress -3>><<trauma -3>><</link>><<lstress>><<ltrauma>><<glove>>
+		<br>
+    <<else>>
+        <<link [[Help with work (0:30)|Sydney Shop Help]]>><<pass 30>><<npcincr Sydney love 1>><</link>><<glove>>
+		<br>
+    <</if>>
+<</if>>
+
 <<if $location is "school">>
 	<<if $sydneyChastityRemoveIntro is 1>>
 		<<link [[Chat (0:15)|Sydney Chastity Remove Intro]]>><<set $sydneyChastityRemoveIntro to 2>><<pass 15>><</link>>
@@ -377,6 +455,10 @@
 			<<link [[Flirt (0:15)|Sydney Flirt]]>><<pass 15>><<npcincr Sydney purity -1>><<stress -2>><</link>><<promiscuous1>><<lstress>><<lspurity>>
 			<br>
 		<</if>>
+	<</if>>
+	<<if $sydneyChastityKnown and $sydneyromance is 1 and checkSextoysGift("Sydney") is 1>>
+		<<link [[Gift Sydney a strap-on|Gift Strap-on Sydney Counter]]>><</link>>
+		<br>
 	<</if>>
 	<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 10 and $milkshake gte 2>>
 		<<link [[Offer milkshake (0:15)|Sydney Give Milkshake]]>><<pass 15>><<set $milkshake -= 2>><<npcincr Sydney love 1>><<stress -5>><</link>><<lstress>><<glove>>
@@ -449,7 +531,7 @@
 <</widget>>
 
 <<widget "sydneyLewd">>
-<<if !$sydneySeen.includes("lewd") and $args[0] isnot 'glasses'>>
+<<if !$sydneySeen.includes("lewd") and _args[0] isnot 'glasses'>>
     <<set $sydneySeen.pushUnique("lewd")>>
     <<if _sydneyStatus.includes("corrupt")>>
         "<span class="green">I've been waiting a long time to do something like this with you.</span> I'd never imagine doing it with anyone else."
@@ -457,7 +539,7 @@
         "<span class="green">I've never done anything like this before.</span> I'm scared." You spend some time reassuring <<him>>, telling <<him>> you'll stop if <<he>> asks. Eventually, <<he>> agrees. "I... I trust you."
     <</if>>
 <</if>>
-<<if $sydney.glasses isnot "contacts" and $args[0] isnot 'lewd'>>
+<<if $sydney.glasses isnot "contacts" and _args[0] isnot 'lewd'>>
     <<He>> removes <<his>> <<sydneyGlasses>>.
 <</if>>
 <</widget>>
@@ -485,10 +567,10 @@
 
 <<widget "sydneyGenitals">>
 <<set _text_output to "">>
-<<if ($NPCName[$NPCNameList.indexOf("Sydney")].chastity.penis.includes("chastity") or $NPCName[$NPCNameList.indexOf("Sydney")].chastity.vagina.includes("chastity")) and $args[0] isnot 'short' and $sydneyChastityKnown>>
+<<if ($NPCName[$NPCNameList.indexOf("Sydney")].chastity.penis.includes("chastity") or $NPCName[$NPCNameList.indexOf("Sydney")].chastity.vagina.includes("chastity")) and _args[0] isnot 'short' and $sydneyChastityKnown>>
 	<<set _text_output += "protected ">>
 <</if>>
-<<if $args[0] isnot 'short' and (($NPCName[$NPCNameList.indexOf("Sydney")].virginity.penile is true and $NPCName[$NPCNameList.indexOf("Sydney")].gender is "m") or ($NPCName[$NPCNameList.indexOf("Sydney")].virginity.vaginal is true and $NPCName[$NPCNameList.indexOf("Sydney")].gender is "f"))>>
+<<if _args[0] isnot 'short' and (($NPCName[$NPCNameList.indexOf("Sydney")].virginity.penile is true and $NPCName[$NPCNameList.indexOf("Sydney")].gender is "m") or ($NPCName[$NPCNameList.indexOf("Sydney")].virginity.vaginal is true and $NPCName[$NPCNameList.indexOf("Sydney")].gender is "f"))>>
 	<<set _text_output += "virgin ">>
 <</if>>
 <<if $NPCName[$NPCNameList.indexOf("Sydney")].gender is "m">>
@@ -501,6 +583,7 @@
 <<widget "sydneySchedule">>
 <<if $sydneyPunish is 1>>
 	<<set _sydney_location to "home">>
+	<<set _sydney_location_message to "home">>
 <<elseif $weekday is 1>>
 	<<if $hour lte 22>>
 		<<set _sydney_location to "temple">>
@@ -508,13 +591,39 @@
 		<<set _sydney_location to "home">>
 	<</if>>
 <<elseif $weekday is 7>>
-	<<if $hour gte 6>>
+	<<if $adultshopopeningsydney is true and $hour lt 21>>
+		<<set _sydney_location to "shop">>
+	<<elseif $hour gte 6>>
 		<<set _sydney_location to "temple">>
 	<<else>>
 		<<set _sydney_location to "home">>
 	<</if>>
 <<elseif $weekday is 6 and $hour gte 16 and $hour lt 20>>
-	<<set _sydney_location to "shop">>
+	<<if $adultshophelped is 1>>
+		<<set _sydney_location to "temple">>
+	<<else>>
+		<<set _sydney_location to "shop">>
+	<</if>>
+<<elseif $sydneySeen isnot undefined and $adultshopunlocked and $NPCName[$NPCNameList.indexOf("Sydney")].corruption gt 10 and $hour gte 16 and $hour lt 20>>
+	<<set $_corruption to $NPCName[$NPCNameList.indexOf("Sydney")].corruption>>
+	<<if $adultshophelped is 1>>
+		<<set _sydney_location to "temple">>
+	<<elseif $_corruption gt 10 and $weekday is 4>>
+		<<set _sydney_location to "shop">>
+		<<set _sydney_location_message to "shop">>
+	<<elseif $_corruption gt 20 and $weekday is 5>>
+		<<set _sydney_location to "shop">>
+		<<set _sydney_location_message to "shop">>
+	<<elseif $_corruption gt 30 and $weekday is 3>>
+		<<set _sydney_location to "shop">>
+		<<set _sydney_location_message to "shop">>
+	<<elseif $_corruption gt 40 and $weekday is 2>>
+		<<set _sydney_location to "shop">>
+		<<set _sydney_location_message to "shop">>
+	<<else>>
+		<<set _sydney_location to "temple">>
+		<<set _sydney_location_message to "temple">>
+	<</if>>
 <<elseif $schoolterm is 0>>
 	<<if $hour gte 6 and $hour lte 22>>
 		<<set _sydney_location to "temple">>
@@ -786,8 +895,8 @@
 <</widget>>
 
 <<widget "sydneyBodywriting">>
-<<if $args[0]>>
-	<<add_bodywriting _bodypart $args[0] "marker">>
+<<if _args[0]>>
+	<<add_bodywriting _bodypart _args[0] "marker">>
 	<<bodywriting_finalisation _bodypart>>
 <</if>>
 <</widget>>

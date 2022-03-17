@@ -87,7 +87,7 @@ You are in your bedroom.
 		<br>
 		<<link [[Test new features for DoL (0:15)|Bedroom]]>><<pass 15>><</link>>
 		<br>
-		<span class="green">Debugging ends here</span>
+		<span class="green">Debugging end here</span>
 		<br><br>
 	<</if>>
 	Your bed takes up most of the room.
@@ -124,6 +124,10 @@ You are in your bedroom.
 	<br>
 	<<wardrobeicon>><<link [[Wardrobe|Wardrobe]]>><</link>>
 	<br>
+	<<if $awareness gte 100 and playerHasSexToys()>>
+		<<sextoysicon>><<link [[Sex toys|Sextoys Inventory Home]]>><</link>>
+	<br>
+	<</if>>
 	<<if $nextPassageCheck is "Mirror">>
 		<span class="nextLink"><<mirroricon>><<link [[Mirror|Mirror]]>><</link>></span>
 		<br>
@@ -361,15 +365,12 @@ You are in the bathroom.
 <</if>>
 
 :: Sleep
+<<set _autosavehere to true>>
 
-<<if !_preventUpdate and !$autosavedisabled>>
-	<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
-	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName},Story.get($passage).description())>>
-<</if>>
 <<sleep>><<effects>>
 <<sleepeffects>>
 <<if $robindebtwake is 1>>
-	<<set $robindebtwake to 0>><<set $robindebtknown to 1>><<set $schoolwake to 0>>
+	<<set $robindebtwake to 0>><<set $robindebtknown to 1>>
 	<<npc Robin>><<person1>>You're awoken by your door opening. You freeze in fear, until you see Robin peek through the gap. "Can I come in?" <<he>> asks.
 	<br><br>
 	<<if $exposed gte 1>>
@@ -386,7 +387,7 @@ You are in the bathroom.
 	<<link [[Next|Bed]]>><</link>>
 	<br>
 <<elseif $NPCName[$NPCNameList.indexOf("Robin")].lovewake is 1>>
-	<<set $NPCName[$NPCNameList.indexOf("Robin")].lovewake to 0>><<set $robinbed to 1>><<set $schoolwake to 0>>
+	<<set $NPCName[$NPCNameList.indexOf("Robin")].lovewake to 0>><<set $robinbed to 1>>
 	<<npc Robin>><<person1>>You feel a familiar presence. Robin wraps <<his>> arms around you.
 	<br><br>
 	<<if $NPCName[$NPCNameList.indexOf("Robin")].dom gte 80>>
@@ -399,7 +400,6 @@ You are in the bathroom.
 	<<link [[Kiss|Bed Robin Sex]]>><<set $sexstart to 1>><</link>>
 	<br>
 <<elseif $location is "home" and $wraith and $wraith.nightmare is 2 and ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6)>>
-	<<set $schoolwake to 0>>
 	You dream of a beautiful figure, cloaked in white, standing under the red moon. It has its arms spread out to you in a welcoming gesture. You can feel its gaze boring into your mind as you step closer.
 	<br><br>
 	It's surrounded by trees, all bending inwards, and floating above a lake. Everything moves around you, and you find yourself hanging above a large ruin. You can't breathe.
@@ -416,7 +416,7 @@ You are in the bathroom.
 	<span class="nextLink"><<link [[Walk.|Bedroom]]>><</link>></span>
 	<br>
 <<elseif $baileyrapewake is 1>>
-	<<set $baileyrapewake to 0>><<set $schoolwake to 0>>
+	<<set $baileyrapewake to 0>>
 	<<generate1>><<person1>>You awaken to a shape looming over you and hands pulling off your covers. It's a <<person>>. "Don't struggle," <<he>> says.
 	<<if $robinbed is 1 or $kylarbed is 1>>
 		"We wouldn't want to wake up your friend." <<if $robinbed is 1>>Robin<<else>>Kylar<</if>> lays beside you, still asleep.
@@ -429,7 +429,6 @@ You are in the bathroom.
 	<br>
 <<elseif $christmas_kylar is 1>>
 	<<set $christmas_kylar to 2>>
-	<<set $schoolwake to 0>>
 	<<npc Kylar>><<person1>>
 	A jingle awakes you.
 	<br>
@@ -515,8 +514,7 @@ You are in the bathroom.
 	<<link [[Next|_newLocation]]>><</link>>
 <<else>>
 	<<if $nightmares is 1 and $controlled is 0>>
-		<<if $schoolwake is 1>>
-			<<set $schoolwake to 0>>
+		<<if _sleepinterrupt>>
 			<<if $motherwake is 1>>
 				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 			<<else>>
@@ -541,8 +539,7 @@ You are in the bathroom.
 			<br><br>
 		<</if>>
 	<<else>>
-		<<if $schoolwake is 1>>
-			<<set $schoolwake to 0>>
+		<<if _sleepinterrupt>>
 			<<if $motherwake is 1>>
 				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 			<<else>>
@@ -707,14 +704,14 @@ You scream. The trio recoil and scramble for the door handle. They flee into the
 	<br>
 <<else>>
 	They hesitate, then the <<person3>><<person>> opens the door and leaves. The others follow, though the <<person1>><<person>> lingers a moment and leers at you.
-	<<if $player.penisExist and ($penissize lte 1 or $penissize is 4) and random(0,9) gte 6>>
+	<<if $player.penisExist and ($player.penissize lte 1 or $player.penissize is 4) and random(0,9) gte 6>>
 		<<telltalepenissize>>
 	<</if>>
 	<br><br>
 	<<endevent>>
 	<<tearful>> you climb from the bath.
 	<br><br>
-	<<link [[Next|Bath Finish]]>><<clotheson>><</link>>
+	<<link [[Next|Bath Finish]]>><</link>>
 	<br>
 <</if>>
 
@@ -942,7 +939,7 @@ As you remove the plug to drain the water, you feel something probe your <<genit
 			You cover your <<lewdness>>. They stare at you with wide eyes. The <<person1>><<person>> grins and closes the door.
 		<</if>>
 
-		<<if $player.penisExist and ($penissize lte 1 or $penissize is 4) and random(0,9) gte 6>>
+		<<if $player.penisExist and ($player.penissize lte 1 or $player.penissize is 4) and random(0,9) gte 6>>
 			<<telltalepenissize>>
 			<br><br>
 		<<else>>
@@ -973,7 +970,7 @@ Your skin is still damp.
 <<link [[Dress as you were|Bathroom]]>><<clotheson>><</link>>
 <br>
 <<link [[Wrap yourself in a towel|Bathroom]]>>
-	<<if $player.gender == "f" or $breastsize > 0>>
+	<<if $player.gender == "f" or $player.breastsize > 0>>
 		<<set $wear_upper = "large_towel">>
 	<<else>>
 		<<set $wear_lower = "towel">>
@@ -1090,29 +1087,29 @@ You've pushed yourself too much.
 
 <<if _skip isnot true>>
 	<<if $sleeptrouble is 1 and $controlled is 0>>
-		<<link [[Sleep for 10 hours|Sleep]]>><<set $sleephour to 10>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
+		<<link [[Sleep for 10 hours|Sleep]]>><<set $sleephour to 10>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
 		<br>
-		<<link [[Sleep for 9 hours|Sleep]]>><<set $sleephour to 9>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
+		<<link [[Sleep for 9 hours|Sleep]]>><<set $sleephour to 9>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
 		<br>
 	<</if>>
 
-	<<link [[Sleep for 8 hours|Sleep]]>><<set $sleephour to 8>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
+	<<link [[Sleep for 8 hours|Sleep]]>><<set $sleephour to 8>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 7 hours|Sleep]]>><<set $sleephour to 7>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
+	<<link [[Sleep for 7 hours|Sleep]]>><<set $sleephour to 7>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 6 hours|Sleep]]>><<set $sleephour to 6>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
+	<<link [[Sleep for 6 hours|Sleep]]>><<set $sleephour to 6>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 5 hours|Sleep]]>><<set $sleephour to 5>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
+	<<link [[Sleep for 5 hours|Sleep]]>><<set $sleephour to 5>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 4 hours|Sleep]]>><<set $sleephour to 4>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
+	<<link [[Sleep for 4 hours|Sleep]]>><<set $sleephour to 4>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 3 hours|Sleep]]>><<set $sleephour to 3>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
+	<<link [[Sleep for 3 hours|Sleep]]>><<set $sleephour to 3>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 2 hours|Sleep]]>><<set $sleephour to 2>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
+	<<link [[Sleep for 2 hours|Sleep]]>><<set $sleephour to 2>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 1 hour|Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
+	<<link [[Sleep for 1 hour|Sleep]]>><<set $sleephour to 1>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
 	<br>
-	<<link [[Just sleep|Sleep]]>><<set $sleephour to -1>><<set $saveDetails.auto.count++>><</link>> (??:??)<<ltiredness>>
+	<<link [[Just sleep|Sleep]]>><<set $sleephour to -1>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (??:??)<<ltiredness>>
 	<br><br>
 
 	<<link [[Climb out of bed|Bedroom]]>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><<loadTempHairStyle>><<endevent>><</link>>
@@ -1123,6 +1120,7 @@ You've pushed yourself too much.
 
 :: Orphanage
 <<set $outside to 0>><<set $location to "home">><<home_effects>><<effects>>
+<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
 
 You are in the main hall of the orphanage.
 
@@ -1269,6 +1267,18 @@ You are in the main hall of the orphanage.
 <<elseif $home_event is 1 and $hour gte 6 and $hour lte 21>>
 	<<set $home_event to 0>>
 	<<homeevent>>
+<<elseif $hour gte 16 and $hour lte 21 and getRobinLocation() is "orphanage"
+and !$fromRobinRoom and _robin.cdquest is 2 and _robin.trauma lte 20 and !$robinDaily.cdevent>>
+	<<set $robinDaily.cdevent to 1>>
+	<<npc Robin>><<person1>>
+	<<generatey2>><<person2>>
+
+	You see Robin talking with a <<person2>><<person>>. Robin waves you over.
+	<br><br>
+
+	<<link [[Go over|Robin CD Socialise]]>><</link>>
+	<br>
+	<<link [[Ignore|Orphanage]]>><<endevent>><</link>>
 <<else>>
 	<<if ndef $police_hack>><<set $police_hack to 0>><</if>><<if ndef $pub_hack_job>><<set $pub_hack_job to 0>><</if>>
 	<<if $police_hack is 2 and ($pub_hack_job is 1 or $pub_hack_job is 2)>>
@@ -1320,6 +1330,9 @@ You are in the main hall of the orphanage.
 	<</if>>
 	<<home_outside>>
 	<br>
+<</if>>
+<<if $fromRobinRoom>>
+	<<unset $fromRobinRoom>>
 <</if>>
 
 :: Orphanage Handheld
@@ -2080,7 +2093,7 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	<br>
 	"Look, uh..." You smile again. You can't say if this is a boy or girl. The voice, build. It's hard to tell. "I need help."
 	<br>
-	The eyes narrow. "How so?"
+	Their eyes narrow. "How so?"
 	<br>
 	"I hear you can do things," you say. "With computers?"
 	<br>

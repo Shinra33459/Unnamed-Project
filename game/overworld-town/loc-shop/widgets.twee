@@ -7,30 +7,30 @@ Third argument - worn or send
 Forth argument - item index*/
 
 <<widget "shopbuy">>
-<<set _shop_temp to $args[3]>>
+<<set _shop_temp to _args[3]>>
 <<set $clothes_choice_previous to $clothes_choice>>
 
-<<if _shop_temp isnot undefined and ($randomLock isnot true or $args[1] is "try")>>
-	<<clothingShopColorSet $args[0]>>
+<<if _shop_temp isnot undefined and ($randomLock isnot true or _args[1] is "try")>>
+	<<clothingShopColorSet _args[0]>>
 <</if>>
 
-<<if $args[0] is "upper" or $args[0] is "lower">>
+<<if _args[0] is "upper" or _args[0] is "lower">>
 	<<ShowUnderEquip "normal">>
 <</if>>
-<<if $args[0] is "over_upper" or $args[0] is "over_lower" or $args[0] is "over_head">>
+<<if _args[0] is "over_upper" or _args[0] is "over_lower" or _args[0] is "over_head">>
 	<<ShowUnderEquip "over">>
 <</if>>
-<<if $args[1] is "buy">>
-	You buy the <<print setup.clothes[$args[0]][_shop_temp].name>>.
+<<if _args[1] is "buy">>
+	You buy the <<print setup.clothes[_args[0]][_shop_temp].name>>.
 	<br><br>
-<<elseif $args[1] is "steal">>
-	You steal the <<print setup.clothes[$args[0]][_shop_temp].name>>.
+<<elseif _args[1] is "steal">>
+	You steal the <<print setup.clothes[_args[0]][_shop_temp].name>>.
 	<br><br>
-<<elseif $args[1] is "try">>
-	<<tryOnWear $args[0] _shop_temp>>
-<<elseif $args[1] is "return">>
-	<<clothingReset $args[0]>>
-<<elseif $args[1] is "reset">>
+<<elseif _args[1] is "try">>
+	<<tryOnWear _args[0] _shop_temp>>
+<<elseif _args[1] is "return">>
+	<<clothingReset _args[0]>>
+<<elseif _args[1] is "reset">>
 	<<unset $colouraction>>
 	<<unset $colouraction2>>
 	<<unset $accessorycolouraction>>
@@ -40,17 +40,17 @@ Forth argument - item index*/
 	<<unset $randomLock>>
 <</if>>
 
-<<if $args[2] is "wear">>
-	<<generalWear $args[0] _shop_temp $colouraction2 $accessorycolouraction2>>
-	<<updateOwned $args[0]>>
-<<elseif $args[2] is "send">>
-	<<set _loop to $args[4]>>
+<<if _args[2] is "wear">>
+	<<generalWear _args[0] _shop_temp $colouraction2 $accessorycolouraction2>>
+	<<updateOwned _args[0]>>
+<<elseif _args[2] is "send">>
+	<<set _loop to _args[4]>>
 	<<if _loop is undefined>>
 		<<set _loop to 1>>
 	<</if>>
 	<<for _s to 0; _s lt _loop; _s++>>
-		<<generalSend "wardrobe" $args[0] _shop_temp $colouraction2 $accessorycolouraction2>>
-		<<clothingShopColorSet $args[0]>>
+		<<generalSend "wardrobe" _args[0] _shop_temp $colouraction2 $accessorycolouraction2>>
+		<<clothingShopColorSet _args[0]>>
 	<</for>>
 <</if>>
 
@@ -58,14 +58,14 @@ Forth argument - item index*/
 
 <<widget "clothingShopColorSet">>
 <<if $colouraction is "random">>
-	<<set _colouractionChoices to clone(setup.clothes[$args[0]][_shop_temp].colour_options)>>
+	<<set _colouractionChoices to clone(setup.clothes[_args[0]][_shop_temp].colour_options)>>
 	<<run _colouractionChoices.delete("custom")>>
 	<<set $colouraction2 to _colouractionChoices.pluck()>>
 <<else>>
 	<<set $colouraction2 to clone($colouraction)>>
 <</if>>
 <<if $accessorycolouraction is "random">>
-	<<set _accessorycolouractionChoices to clone(setup.clothes[$args[0]][_shop_temp].accessory_colour_options)>>
+	<<set _accessorycolouractionChoices to clone(setup.clothes[_args[0]][_shop_temp].accessory_colour_options)>>
 	<<run _accessorycolouractionChoices.delete("custom")>>
 	<<set $accessorycolouraction2 to _accessorycolouractionChoices.pluck()>>
 <<else>>
@@ -74,8 +74,8 @@ Forth argument - item index*/
 <</widget>>
 
 <<widget "clothingShop">>
-<<if $args[0]>>
-	<<set $clothingShopSlot to $args[0]>>
+<<if _args[0]>>
+	<<set $clothingShopSlot to _args[0]>>
 <</if>>
 <input type="button" value="DEFAULT OPTIONS" onclick="Wikifier.wikifyEval('<<shopDefaultOptionsToggle>>');">
 <input type="button" value="FILTERS" onclick="Wikifier.wikifyEval('<<shopClothingFilterToggle>>');">
@@ -303,8 +303,8 @@ Forth argument - item index*/
 		<<if !_item.shop.includes(_shopLocation) or _item.outfitSecondary isnot undefined>>
 			<<continue>>
 		<</if>>
-		<<if (_item.outfitPrimary is undefined and $args[1] is "outfits")
-		or (_item.outfitPrimary isnot undefined and $args[1] is "non-outfits")>>
+		<<if (_item.outfitPrimary is undefined and _args[1] is "outfits")
+		or (_item.outfitPrimary isnot undefined and _args[1] is "non-outfits")>>
 			<<continue>>
 		<</if>>
 
@@ -414,72 +414,105 @@ Forth argument - item index*/
 <</widget>>
 
 <<widget "shopTraitDescription">>
+	/* Do not optimize to use local ($_) variables. _clothingDesc is used elsewhere.*/
+	<<unset $noTraitDescription>>
+	<<set _clothesTrait to _args[0].toUpperFirst()>>
 
-<<unset $noTraitDescription>>
-<<switch $args[0]>>
-	<<case "normal">>
-		Normal - Suitable for everyday use.
-	<<case "formal">>
-		Formal - Suitable for important occasions, and for good etiquette among certain company.
-	<<case "school">>
-		School - Sanctioned uniform of the local school.
-	<<case "glasses">>
-		Glasses - Helps you focus, increasing the rate school skills are improved.
-	<<case "cool">>
-		Fashionable - Increases the rate status improves with your schoolmates, but some teachers may dislike it.
-	<<case "swim">>
-		Swimwear - Fares well underwater.
-	<<case "diving">>
-		Diving - Helps keep you warm in cold water.
-	<<case "dance">>
-		Dance - Flexible enough to withstand the rigours of the dance floor.
-	<<case "costume">>
-		Costume - People may look at this askance outside the right situations.
-	<<case "serving">>
-		Serving - Encourages tips when working as a bartender, waiter or waitress if visible.
-	<<case "fetish">>
-		Fetish - Intrinsically lewd.
-	<<case "sleep">>
-		Sleep - Soft and cosy. May improve sleep quality.
-	<<case "mask">>
-		Mask - Conceals your identity, stopping fame from increasing. Won't fool the police or people who know you.
-	<<case "holy">>
-		Holy - Sacred to the local faith. Increases purity gains and losses.
-	<<case "dark">>
-		Profane - Considered obscene by the local faith. Increases awareness gains and losses.
-	<<case "binding">>
-		Binding - Keeps your arms firmly secure and helpless.
-	<<case "stealthy">>
-		Stealthy - Makes your crimes harder to trace.
-	<<case "sticky_fingers">>
-		Sticky fingers - More likely to get your way, and keep that which isn't yours.
-	<<case "rainproof">>
-		Rainproof - Protects you from the rain.
-	<<case "tanLines">>
-		Tan Lines - Protects your skin from the sun leaving tan lines.
-	<<case "bimbo">>
-		Special - Something seems special about this set of clothing.
-	<<case "heels">>
-		High Heeled - Causes fatigue and tripping if you lack skilled feet. Improves kicking power.
-	<<case "rugged">>
-		Rugged - Helps you keep your footing in tough environments.
-	<<case "chest_bind">>
-		Chest Binding - Fits tight around your chest, concealing your breasts.
-	<<case "eerie">>
-		Eerie - <<if $transformdisable is "f">>Protects a specific transformation. Transformations progress and decay at midnight.<<else>>There's something peculiar about this object.<</if>>
-	<<case "shade">>
-		Shade - Blocks the sun and prevents ambient tanning.
-	<<case "asylum">>
-		Asylum - Clothes from the local asylum.
-	<<case "prison">>
-		Prison - Clothes from the local prison.
-	<<case "sticky">>
-		Sticky - Stuck to your skin.
-	<<case "covered">>
-		Covered - Protects your mouth.
-	<<default>>
-		<<set $noTraitDescription = 1>>
-<</switch>>
+	<<switch _args[0]>>
+		<<case "normal">>
+			<<set _clothesDesc to "Suitable for everyday use.">>
+		<<case "formal">>
+			<<set _clothesDesc to "Suitable for important occasions, and for good etiquette among certain company.">>
+		<<case "school">>
+			<<set _clothesDesc to "Sanctioned uniform of the local school.">>
+		<<case "glasses">>
+			<<set _clothesDesc to "Helps you focus, increasing the rate school skills are improved.">>
+		<<case "cool">>
+			<<set _clothesDesc to "Increases the rate status improves with your schoolmates, but some teachers may dislike it.">>
+		<<case "swim">>
+			<<set _clothesDesc to "Fares well underwater.">>
+		<<case "diving">>
+			<<set _clothesDesc to "Helps keep you warm in cold water.">>
+		<<case "dance">>
+			<<set _clothesDesc to "Flexible enough to withstand the rigours of the dance floor.">>
+		<<case "costume">>
+			<<set _clothesDesc to "People may look at this askance outside the right situations.">>
+		<<case "serving">>
+			<<set _clothesDesc to "Encourages tips when working as a bartender, waiter or waitress if visible.">>
+		<<case "fetish">>
+			<<set _clothesDesc to "Intrinsically lewd.">>
+		<<case "sleep">>
+			<<set _clothesDesc to "Soft and cosy. May improve sleep quality.">>
+		<<case "mask">>
+			<<set _clothesDesc to "Conceals your identity, stopping fame from increasing. Won't fool the police or people who know you.">>
+		<<case "holy">>
+			<<set _clothesDesc to "Sacred to the local faith. Increases purity gains and losses.">>
+		<<case "dark">>
+			<<set _clothesDesc to "Considered obscene by the local faith. Increases awareness gains and losses.">>
+		<<case "binding">>
+			<<set _clothesDesc to "Keeps your arms firmly secure and helpless.">>
+		<<case "stealthy">>
+			<<set _clothesDesc to "Makes your crimes harder to trace.">>
+		<<case "sticky_fingers">>
+			<<set _clothesTrait to "Sticky fingers">>
+			<<set _clothesDesc to "More likely to get your way, and keep that which isn't yours.">>
+		<<case "rainproof">>
+			<<set _clothesDesc to "Protects you from the rain.">>
+		<<case "tanLines">>
+			<<set _clothesTrait to "Tan lines">>
+			<<set _clothesDesc to "Protects your skin from the sun leaving tan lines.">>
+		<<case "bimbo">>
+			<<set _clothesTrait to "Special">>
+			<<set _clothesDesc to "Something seems special about this set of clothing.">>
+		<<case "heels">>
+			<<set _clothesTrait to "High heeled">>
+			<<set _clothesDesc to "Causes fatigue and tripping if you lack skilled feet. Improves kicking power.">>
+		<<case "rugged">>
+			<<set _clothesDesc to "Helps you keep your footing in tough environments.">>
+		<<case "chest_bind">>
+			<<set _clothesTrait to "Chest binding">>
+			<<set _clothesDesc to "Fits tight around your chest, concealing your breasts.">>
+		<<case "eerie">>
+			<<if $transformdisable is "f">>
+				<<set _clothesDesc to "Protects a specific transformation. Transformations progress and decay at midnight.">>
+			<<else>>
+				<<set _clothesDesc to "There's something peculiar about this object.">>
+			<</if>>
+		<<case "shade">>
+			<<set _clothesDesc to "Blocks the sun and prevents ambient tanning.">>
+		<<case "asylum">>
+			<<set _clothesDesc to "Clothes from the local asylum.">>
+		<<case "prison">>
+			<<set _clothesDesc to "Clothes from the local prison.">>
+		<<case "sticky">>
+			<<set _clothesDesc to "Stuck to your skin.">>
+		<<case "strap-on">>
+			<<set _clothesDesc to "Fits around your waist, can be used to penetrate.">>
+		<<case "covered">>
+			<<set _clothesDesc to "Protects your mouth.">>
+		<<case "naked">>
+			<<set _clothesDesc to "So revealing, you may as well be wearing nothing at all.">>
+		<<case "athletic">>
+			<<set _clothesDesc to "Sporty.">>
+		<<case "maid" "riding">>
+			<<set _clothesDesc to "Part of a costume set.">>
+		<<case "chastity" "cage">>
+			<<set _clothesDesc to "Protects your innocence, whether you want it or not.">>
+		<<case "hidden">>
+			<<set _clothesDesc to "Keeps your privates private.">>
+		<<case "gag">>
+			<<set _clothesDesc to "Protects your mouth, but also prevents it from use.">>
+		<<case "leash">>
+			<<set _clothesDesc to "A convenient handle to yank you around with.">>
+		<<case "event">>
+			<<set _clothesDesc to "A special outfit for a special occasion.">>
+		<<default>>
+			<<set $noTraitDescription to 1>>
+	<</switch>>
+
+	<<if $noTraitDescription isnot 1>>
+		<<print _clothesTrait>> - <<print _clothesDesc>>
+	<</if>>
 <</widget>>
 
 <<widget "shoptraits">>
@@ -734,13 +767,13 @@ Sepia:
 <</widget>>
 
 <<widget "shopCustomColorsSet">>
-<<if $args[0] and $args[1]>>
-	<<switch $args[0]>>
-		<<case "color">><<set $customColors.color[$customColors.currentType] to $args[1]>>
-		<<case "saturation">><<set $customColors.saturation[$customColors.currentType] to $args[1]>>
-		<<case "brightness">><<set $customColors.brightness[$customColors.currentType] to $args[1]>>
-		<<case "contrast">><<set $customColors.contrast[$customColors.currentType] to $args[1]>>
-		<<case "sepia">><<set $customColors.sepia[$customColors.currentType] to $args[1]>>
+<<if _args[0] and _args[1]>>
+	<<switch _args[0]>>
+		<<case "color">><<set $customColors.color[$customColors.currentType] to _args[1]>>
+		<<case "saturation">><<set $customColors.saturation[$customColors.currentType] to _args[1]>>
+		<<case "brightness">><<set $customColors.brightness[$customColors.currentType] to _args[1]>>
+		<<case "contrast">><<set $customColors.contrast[$customColors.currentType] to _args[1]>>
+		<<case "sepia">><<set $customColors.sepia[$customColors.currentType] to _args[1]>>
 	<</switch>>
 	<<replace #shopCustomColorsDisplay>><<shopCustomColorsDisplay>><</replace>>
 <</if>>
@@ -776,7 +809,7 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 
 <<widget "shopCustomColorsPresetsLoad">>
 <<set _presets to Object.keys($customColors.presets)>>
-<<set _preset to _presets[$args[0]]>>
+<<set _preset to _presets[_args[0]]>>
 <<if $customColors.action is "set">>
 	<<set $customColors.color.primary to $customColors.presets[_preset].color.primary>>
 	<<set $customColors.color.secondary to $customColors.presets[_preset].color.secondary>>
@@ -808,7 +841,7 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 
 /*Args: slots used in an array*/
 <<widget "shopBuyItemStatus">>
-<<if $args[0]>>
+<<if _args[0]>>
 	<<if $wardrobes.shopReturn is "wardrobe" or $wardrobes[$wardrobes.shopReturn] is undefined>>
 		<<set _returnWardrobe to $wardrobe>>
 	<<else>>
@@ -818,13 +851,13 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 	<<set _damagedCount to 0>>
 	<<set _space to _returnWardrobe.space>>
 	<<set _spaceLeft to clone(_space)>>
-	<<for _i to 0; _i lt $args[0].length; _i++>>
+	<<for _i to 0; _i lt _args[0].length; _i++>>
 		<<if _i is 0>>
-			<<for _j to 0; _j lt _returnWardrobe[$args[0][0]].length; _j++>>
-				<<if _returnWardrobe[$args[0][0]][_j].name is _temp_choice.name>>
+			<<for _j to 0; _j lt _returnWardrobe[_args[0][0]].length; _j++>>
+				<<if _returnWardrobe[_args[0][0]][_j].name is _temp_choice.name>>
 					<<set _undamagedCount++>>
-					<<if _returnWardrobe[$args[0][0]][_j].outfitPrimary isnot undefined>>
-						<<for _valueShop range _returnWardrobe[$args[0][0]][_j].outfitPrimary>>
+					<<if _returnWardrobe[_args[0][0]][_j].outfitPrimary isnot undefined>>
+						<<for _valueShop range _returnWardrobe[_args[0][0]][_j].outfitPrimary>>
 							<<if _valueShop is "broken">>
 								<<set _damagedCount++>>
 								<<set _undamagedCount-->>
@@ -837,10 +870,10 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 				<</if>>
 			<</for>>
 		<</if>>
-		<<if _space - _returnWardrobe[$args[0][_i]].length lt _spaceLeft>>
-			<<set _spaceLeft to _space - _returnWardrobe[$args[0][_i]].length>>
+		<<if _space - _returnWardrobe[_args[0][_i]].length lt _spaceLeft>>
+			<<set _spaceLeft to _space - _returnWardrobe[_args[0][_i]].length>>
 		<</if>>
-		Wardrobe <<print ($args[0][_i]).replace("_"," ")>> slots used: <<print _returnWardrobe[$args[0][_i]].length>> / _space.
+		Wardrobe <<print (_args[0][_i]).replace("_"," ")>> slots used: <<print _returnWardrobe[_args[0][_i]].length>> / _space.
 		<br>
 	<</for>>
 	<<if _undamagedCount gt 0>>
@@ -856,24 +889,24 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 
 /*Args: slot, itemName, outfit*/
 <<widget "shopFullImage">>
-<<if $args[0] and $args[1] isnot undefined>>
-	<<set _shopFullImageVar to [$args[0], $args[1]]>>
+<<if _args[0] and _args[1] isnot undefined>>
+	<<set _shopFullImageVar to [_args[0], _args[1]]>>
 	<a value="Refresh" onclick="Wikifier.wikifyEval('<<replace #shopFullImage>><<shopFullImage $clothingShopSlot $clothes_choice>><</replace>>');">Refresh</a>
 	<br>
 	<div class="hideImageOverflow">
 		<div class="shopImg">
 			<<set _customPrimary to customColour($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
 			<<set _customSecondary to customColour($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
-			<<shopFullImageSlot $args[0] $args[1]>>
+			<<shopFullImageSlot _args[0] _args[1]>>
 		</div>
 	</div>
 <</if>>
 <</widget>>
 
 <<widget "shopFullImageSlot">>
-<<if $args[0] and $args[1]>>
-	<<set $_slot to $args[0]>>
-	<<set $_item to $args[1]>>
+<<if _args[0] and _args[1]>>
+	<<set $_slot to _args[0]>>
+	<<set $_item to _args[1]>>
 	<<if setup.clothes[$_slot][$_item].mainImage isnot 0>>
 		<<shopFullImagePart $_slot $_item "full" $colouraction _customPrimary>>
 	<</if>>
@@ -921,9 +954,9 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 <</if>>
 <</widget>>
 
-/*$args[0] - slot, $args[1] - itemNo, $args[2] - file, $args[3] - colour, $args[4] - custom colour*/
+/*_args[0] - slot, _args[1] - itemNo, _args[2] - file, _args[3] - colour, _args[4] - custom colour*/
 <<widget "shopFullImagePart">>
-<img @class="'clothes-'+ (typeof($args[3]) == 'string' ? $args[3].replace(/ /g, '-') : '') + ' layer-' + $args[0]" @src="'img/clothes/' + $args[0] + '/' + setup.clothes[$args[0]][$args[1]].variable + '/' + $args[2] + '.png'" @style="($args[3] is 'custom'? $args[4]:'')">
+<img @class="'clothes-'+ (typeof(_args[3]) == 'string' ? _args[3].replace(/ /g, '-') : '') + ' layer-' + _args[0]" @src="'img/clothes/' + _args[0] + '/' + setup.clothes[_args[0]][_args[1]].variable + '/' + _args[2] + '.png'" @style="(_args[3] is 'custom'? _args[4]:'')">
 <</widget>>
 
 <<widget "shopFullImageToggle">>
@@ -987,13 +1020,17 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 <<if $specialClothes.rose is undefined>>
 	<<set $specialClothes.rose to "locked">>
 <</if>>
+<<if $specialClothes.scarecrowshirt is undefined>>
+	<<set $specialClothes.scarecrowshirt to "locked">>
+	<<set $specialClothes.scarecrowhat to "locked">>
+<</if>>
 <</widget>>
 
 <<widget "specialClothesUpdate">>
 <<if $headdrive is 1>>
 	<<set $specialClothes["serafuku"] to "unlocked">>
 <</if>>
-<<if $undergroundescape isnot undefined>>
+<<if $undergroundbrothelescaped>>
 	<<set $specialClothes["slutshirt"] to "unlocked">>
 <</if>>
 <<if $days gte 47>>
@@ -1004,6 +1041,8 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 	<<set $specialClothes["mummyfacewrap"] to "unlocked">>
 	<<set $specialClothes["mummytop"] to "unlocked">>
 	<<set $specialClothes["mummyskirt"] to "unlocked">>
+	<<set $specialClothes["scarecrowshirt"] to "unlocked">>
+	<<set $specialClothes["scarecrowhat"] to "unlocked">>
 <</if>>
 <<if $days gte 102>>
 	<<set $specialClothes["christmasdress"] to "unlocked">>
@@ -1100,6 +1139,8 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 	<<set $specialClothes["holystole"] to "unlocked">>
 	<<set $specialClothes["minisnowman"] to "unlocked">>
 	<<set $specialClothes["rose"] to "unlocked">>
+	<<set $specialClothes["scarecrowshirt"] to "unlocked">>
+	<<set $specialClothes["scarecrowhat"] to "unlocked">>
 <</if>>
 
 <</widget>>
@@ -1139,7 +1180,9 @@ Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="V
 		"catsuit":"Pillage a shipment.",
 		"holystole":"Requires sufficient devotion.",
 		"minisnowman":"In stock from the 15th of December.",
-		"rose":"In stock from the 7th of February."
+		"rose":"In stock from the 7th of February.",
+		"scarecrowshirt":"In stock from the 21st of October.",
+		"scarecrowhat":"In stock from the 21st of October."
 	}>>
 <</if>>
 <</widget>>
