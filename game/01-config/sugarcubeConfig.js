@@ -22,7 +22,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.8.2",
+	"version": "0.3.8.6",
 }
 window.StartConfig.version += ".h"; //stands for Herm, don't change
 window.StartConfig.version += "0"; //how many times I've released a build of this mod for this version 
@@ -39,6 +39,16 @@ Config.saves.isAllowed = function () {
 	}
 	return true;
 };
+
+$(document).on(':passagestart', function(ev) {
+	if (ev.passage.title === 'Start2') {
+		jQuery.event.trigger({
+			type    : ':start2',
+			content : ev.content,
+			passage : ev.passage
+		});
+	}
+});
 
 importStyles("style.css")
 	.then(function () {

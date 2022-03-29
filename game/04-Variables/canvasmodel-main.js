@@ -225,6 +225,7 @@ Renderer.CanvasModels["main"] = {
 			"show_tf": true,
 			"show_clothes": true,
 			// body
+			"fools": setup.isFools(),
 			"mannequin": false,
 			"breasts": "",
 			"breast_size": 1,
@@ -606,6 +607,7 @@ Renderer.CanvasModels["main"] = {
 		 */
 		"base": {
 			srcfn(options) {
+				if (options.fools) return "img/body/fools/basenoarms.png";
 				if (options.mannequin) return "img/body/mannequin/basenoarms.png"
 				return "img/body/basenoarms.png"
 			},
@@ -1086,10 +1088,12 @@ Renderer.CanvasModels["main"] = {
 					return "img/body/mannequin/penis.png"
 				} else if (options.genitals_chastity) {
 					return "img/body/penis/penis_chastity.png"
-				} else {
+				} else if (!playerHasStrapon()) {
 					return "img/body/" +
 						(options.balls ? 'penis/':'penisnoballs/') +
 						(options.penis === "virgin" ? "penis_virgin" : "penis") +options.penis_size + ".png"
+				} else {
+					return; //if the player has a strapon, then we want to hide their penis
 				}
 			},
 			showfn(options) {

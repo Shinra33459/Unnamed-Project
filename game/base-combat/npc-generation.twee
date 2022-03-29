@@ -646,6 +646,7 @@
 <!-- Future work this should call addns args to set pronoun, gender, and size of NPC(0-18) where larger number is more robust. This would eliminate much of the NPC calls from above and push to code. -->
 <!-- Added thug Vulgar/Brutish as NPC19, can only be called with $arg[2] -->
 <!-- Added strap-on functionality v2.8 -->
+<!-- Added sex toy functionality 0.3.8.0 -->
 
 <!-- check if this npc has seen the player while the player was pantiless; doesn't matter if they knew it or not. -->
 <<nounderwearcheck>>
@@ -719,9 +720,19 @@
 <<generateNPCClothes $NPCList[_n]>>
 
 /* Sex toys become more popular over time after the adult shop opens */
-<<if $adultshopunlocked and !_strapIgnore>>
+<<if $adultshopunlocked and !_strapIgnore and $NPCList[_n].teen isnot 1>>
 	<<if $adultshopdegree gte random(0, 100)>>
-		<<giveNPCsextoy _n `randomSexToy()`>>
+		<<if $toywhipdisable is "f" and $toydildodisable is "f" and $player.gender_appearance isnot "f">>
+			<<giveNPCsextoy _n `randomSexToy()`>>
+		<<elseif $toywhipdisable is "f" and $toydildodisable is "f">>
+			<<giveNPCsextoy _n `randomSexToy("dildos and whips")`>>
+		<<elseif $toywhipdisable is "f" and $toydildodisable is "t">>
+			<<giveNPCsextoy _n `randomSexToy("whip")`>>
+		<<elseif $toywhipdisable is "t" and $toydildodisable is "f">>
+			<<giveNPCsextoy _n `randomSexToy("dildo")`>>
+		<<else>>
+			/* Do nothing */
+		<</if>>
 	<</if>>
 <</if>>
 
