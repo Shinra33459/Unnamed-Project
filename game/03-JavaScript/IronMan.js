@@ -1,4 +1,6 @@
 const IronMan = (() => {
+	'use strict';
+
 	/**
 	 * Set to true to allow debug mode changes during gameplay.
 	 * By default this should always be false, if it is not false, please change it.
@@ -46,8 +48,8 @@ const IronMan = (() => {
 	/*  -------------------------------------
 		Integral IronMan mode core functions.
 		------------------------------------- */
-	
-	function freezeImportantVars() {
+
+	function ironmanLock() {
 		/* Immediately exit if on the starting passage. */
 		if (['Start', 'Clothes Testing', 'Renderer Test Page', 'Tips'].includes(V.passage)) return;
 		/* Immediately exit if the game is in debug mode or test mode. */
@@ -80,7 +82,7 @@ const IronMan = (() => {
 		}
 	}
 
-	function getSaveSignature() {
+	function getSignature() {
 		let res;
 		for (const va of [V.debug, V.autosavedisabled, V.virginity, V.player, V.enemyhealth, V.enemyarousal, V.enemytrust, V.enemystrength, V.passage, V.money]) {
 			res += JSON.stringify(va);
@@ -145,13 +147,51 @@ const IronMan = (() => {
 			}
 		});
 	}
+	
+	function getDatestamp() {
+		const now = new Date();
+		let MM = now.getMonth() + 1;
+		let DD = now.getDate();
+		let hh = now.getHours();
+		let mm = now.getMinutes();
+		let ss = now.getSeconds();
 
-	function uiExportButton() {
-		let export_name = "degrees-of-lewdity" + (V.saveName != '' ? '-' + V.saveName : '');
-		updateExportDay();
-		Save.export(export_name);
+		if (MM < 10) { MM = `0${MM}`; }
+		if (DD < 10) { DD = `0${DD}`; }
+		if (hh < 10) { hh = `0${hh}`; }
+		if (mm < 10) { mm = `0${mm}`; }
+		if (ss < 10) { ss = `0${ss}`; }
+
+		return `${now.getFullYear()}${MM}${DD}-${hh}${mm}${ss}`;
 	}
 
+	function exportSlot(slot = 8) {
+		updateExportDay();
+		const data = Save.slots.get(slot);
+		const saveId = data.metadata.saveId;
+		const saveName = data.metadata.saveName;
+		const exportName = `${data.id}-${saveName === '' ? saveId : saveName}-${getDatestamp()}.save`;
+		const saveObj = LZString.compressToBase64(JSON.stringify(data));
+		saveAs(new Blob([saveObj], { type : 'text/plain;charset=UTF-8' }), exportName);
+	}
+
+	function exportCurrent() {
+		updateExportDay();
+		Save.export();
+	}
+
+	/**
+	 * @deprecated
+	 */
+	function uiExportButton() {
+		const exportName = "degrees-of-lewdity" + (V.saveName != '' ? '-' + V.saveName : '');
+		updateExportDay();
+		Save.export(exportName);
+	}
+
+	/**
+	 * @deprecated
+	 */
 	function uiDebugExport(slot) {
 		const save = Save.slots.get(slot);
 		if (!save)
@@ -166,6 +206,9 @@ const IronMan = (() => {
 		})
 	}
 
+	/**
+	 * @deprecated
+	 */
 	function uiDebugExportButton(slot) {
 		const div = document.getElementById("saveSlot" + slot);
 		if (div) {
@@ -179,6 +222,19 @@ const IronMan = (() => {
 						+ tmp.outerHTML
 			}
 			div.setAttribute("click-count", click_value + 1)
+		}
+	}
+
+	function scheduledSaves() {
+		const date = new Date(V.month + ' ' + V.monthday + ', ' + V.year);
+
+		if (!V.ironmanautosaveschedule)
+			V.ironmanautosaveschedule = (date.getTime()).toString(8);
+		if (parseInt(V.ironmanautosaveschedule, 8) < date.getTime()){
+			//autosave
+			ironmanAutoSave();
+			//
+			V.ironmanautosaveschedule = (date.getTime() + (getRandomIntInclusive(432000, 777600) * 1000)).toString(8);
 		}
 	}
 
@@ -196,10 +252,10 @@ const IronMan = (() => {
 
 	/*  IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE
 		IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE IRONMAN PREVENTION CODE
-		
+
 		This runs at the end of the passage processing pipeline. Check docs for SugarCube.md for more information about the pipeline. */
 	$(document).on(':passageend', function() {
-		freezeImportantVars();
+		ironmanLock();
 		varsFrozen = true;
 	});
 
@@ -213,18 +269,21 @@ const IronMan = (() => {
 
 	/* Export the module object containing functions. */
 	return Object.seal({
-		freezeImportantVars: freezeImportantVars,
-		getSaveSignature: getSaveSignature,
+		lock: ironmanLock,
+		getSignature: getSignature,
 		/* Setter helpers that control the setter object, to defer variable assignments at the very beginning of the next passage. */
 		addSetter: addSetter,
 		clearSetters: clearSetters,
+		export: exportSlot,
+		exportDebug: exportCurrent,
 		UI: {
 			checkBox: uiCheckBox,
 			exportButton: uiExportButton,
 			debugExport: uiDebugExport,
-			debugExportButton: uiDebugExportButton,
+			debugExportButton: uiDebugExportButton
 		},
-		update: update
+		update: update,
+		scheduledSaves: scheduledSaves
 	});
 })();
 window.IronMan = IronMan;

@@ -102,7 +102,7 @@
 <</widget>>
 
 <<widget "penises">>
-	<!-- possible alternatives:  ...-->
+	<!-- possible alternatives: ...-->
 	<<if $arousal gte ($arousalmax / 5) * 4>>
 		shafts
 	<<elseif $arousal gte ($arousalmax / 5) * 3>>
@@ -629,9 +629,10 @@
 
 <<widget "actionsStroke">>
 	<<if _args.length lte 0>>
-		<<set $_message to "Missing parameters for <<actionsStroke>>">>
-		<<set $_source to "Called from: " + Utils.GetStack()>>
-		<<error $_message $_source>>
+		<<error {
+			message	: "Missing parameters for <<actionsStroke>>",
+			source	: "Called from: " + Utils.GetStack()
+		}>>
 	<</if>>
 	<<if $enemytype is "beast">>
 		You pat the <<beasttype>> on the head.
@@ -1395,7 +1396,7 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 						You <<voice "plead">>. "You're scarier... than Avery..."
 					<</if>>
 				<</if>>
-				
+
 			<<case "Great Hawk">>
 				<<set $speechnamedrop to 1>>
 				<<if $npc.includes("Great Hawk")>>
@@ -1516,7 +1517,7 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 				<</if>>
 
 			<<case "Sydney">>
-				<<NPCStatusCheck "Sydney">>
+				<<run statusCheck("Sydney")>>
 				<<set $speechnamedrop to 1>>
 				<<if $npc.includes("Sydney")>>
 					<<if _sydneyStatus.includes("corrupt")>>
@@ -1643,13 +1644,17 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 			<<default>>
 			<</switch>>
 		<<elseif $npc.includes("Robin")>>
-			You <<voice "plead">>. "N...not you, too..."
+			<<if $robinmist>>
+				You <<voice "plead">>. "Robin, please! You can fight it!"
+			<<else>>
+				You <<voice "plead">>. "N...not you, too..."
+			<</if>>
 		<<elseif $vaginastate is "imminent">>
 			<<if $player.virginity.vaginal is true>>
 				<<if $awarelevel gte 1>>
-			You <<voice "plead">>. "Please don't put it in, I'm a virgin!"
+					You <<voice "plead">>. "Please don't put it in, I'm a virgin!"
 				<<else>>
-			You <<voice "plead">>. "Please stop poking me there, that's my private place!"
+					You <<voice "plead">>. "Please stop poking me there, that's my private place!"
 				<</if>>
 			<<else>>
 				You <<voice "plead">>. "Please don't put it in!"
@@ -1778,13 +1783,13 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 <<checkforloveinterests>>
 <<if $npc.includes(_loveInterest) and random(0,100) lte 45>>
 	<<switch _loveInterest>>
-		<<case "Robin">> 
+		<<case "Robin">>
 			<<if $NPCName[$NPCNameList.indexOf("Robin")].dom gte 70>>
 				You <<voice "moan">>. "You know just how to turn me on."
 			<<else>>
 				You <<voice "moan">>. "I'm gonna melt, you're making me so happy."
 			<</if>>
-		<<case "Sydney">> 
+		<<case "Sydney">>
 			<<if !_sydneyChastity>>
 				<<if _sydneyStatus.includes("corrupt")>>
 					You <<voice "moan">>. "You're the most delicious sin of all."
@@ -1794,30 +1799,36 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 			<<else>>
 				You <<voice "moan">>. "You make me so lustful."
 			<</if>>
-		<<case "Whitney">> 
+		<<case "Whitney">>
 			You <<voice "moan">>. "Use me, Whitney. I'm yours."
-		<<case "Black Wolf">> 
+		<<case "Black Wolf">>
 			<<if $wolfpackleader is 1>>
 				You <<voice "moan">>. "Good <<nnpc_gendery "Black Wolf">>. Keep going."
-			<<else>>
+			<<elseif $pregnancyspeechdisable is "f">>
 				You <<voice "moan">>. "Breed me, alpha!"
+			<<else>>
+				You <<voice "moan">>. "Fuck me, alpha!"
 			<</if>>
-		<<case "Great Hawk">> 
+		<<case "Great Hawk">>
 			You <<voice "moan">>. "You're not a terror. You're all I need."
-		<<case "Eden">> 
+		<<case "Eden">>
 			You <<voice "moan">>. "I belong to you, and you alone."
-		<<case "Avery">> 
+		<<case "Avery">>
 			You <<voice "moan">>. "You're worth more than any payout."
-		<<case "Alex">> 
+		<<case "Alex">>
 			You <<voice "moan">>. "I couldn't ask for a better partner."
-		<<case "Kylar">> 
+		<<case "Kylar">>
 			You <<voice "moan">>. "You're the only one I need, Kylar."
 	<</switch>>
 <<elseif $enemytype is "beast">>
 	<<if $vaginastate is "imminent">>
 		<<if $player.virginity.vaginal is true>>
 			<<if $awarelevel gte 1>>
-				You <<voice "moan">>. "You want to breed with me? But it's my first time."
+				<<if $pregnancyspeechdisable is "f">>
+					You <<voice "moan">>. "You want to breed with me? But it's my first time."
+				<<else>>
+					You <<voice "moan">>. "You want to fuck me? But it's my first time."
+				<</if>>
 			<<else>>
 				You <<voice "moan">>. "Why are you poking my pussy? Silly <<beasttype>>!"
 			<</if>>
@@ -1827,7 +1838,11 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 	<<elseif $penisstate is "imminent">>
 		<<if $player.virginity.penile is true>>
 			<<if $awarelevel gte 1>>
-				You <<voice "moan">>. "You want to breed with me? But it's my first time."
+				<<if $pregnancyspeechdisable is "f">>
+					You <<voice "moan">>. "You want to breed with me? But it's my first time."
+				<<else>>
+					You <<voice "moan">>. "You want to fuck me? But it's my first time."
+				<</if>>
 			<<else>>
 				You <<voice "moan">>. "Why are you poking my penis? Silly <<beasttype>>!"
 			<</if>>
@@ -1837,7 +1852,11 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 	<<elseif $penisstate is "otheranusimminent">>
 		<<if $player.virginity.penile is true>>
 			<<if $awarelevel gte 1>>
-				You <<voice "moan">>. "You want to breed with me? But it's my first time."
+				<<if $pregnancyspeechdisable is "f">>
+					You <<voice "moan">>. "You want to breed with me? But it's my first time."
+				<<else>>
+					You <<voice "moan">>. "You want to fuck me? But it's my first time."
+				<</if>>
 			<<else>>
 				You <<voice "moan">>. "Why are you poking my willy? Silly <<beasttype>>!"
 			<</if>>
@@ -1847,7 +1866,11 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 	<<elseif $anusstate is "imminent">>
 		<<if $player.virginity.anal is true>>
 			<<if $awarelevel gte 1>>
-				You <<voice "moan">>. "You want to breed with me? Please be gentle, that hole hasn't been used before."
+				<<if $pregnancyspeechdisable is "f">>
+					You <<voice "moan">>. "You want to breed with me? Please be gentle, that hole hasn't been used before."
+				<<else>>
+					You <<voice "moan">>. "You want to fuck me? Please be gentle, that hole hasn't been used before."
+				<</if>>
 			<<else>>
 				You <<voice "moan">>. "Why are you poking my bottom? Silly <<beasttype>>!"
 			<</if>>
@@ -1857,7 +1880,7 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 	<<elseif $vaginastate is "penetrated">>
 		<<if $arousal lte $arousalmax / 5>>
 			You <<voice "moan">>. "A <<beasttypes>> cock is inside me, mating with me."
-		<<elseif $arousal lte ($arousalmax / 5) * 4>>
+		<<elseif $arousal lte ($arousalmax / 5) * 4 and $pregnancyspeechdisable is "f">>
 			You <<voice "moan">>. "Good <<beasttype>>. B-breed me with your <<beasttype>> cock."
 		<<else>>
 			You <<voice "moan">>. "I-I'm gonna cum, from a <<beasttype>> f-fucking my pussy."
@@ -1998,10 +2021,12 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 		<<if $awarelevel gte 1>>
 			<<if $arousal lte $arousalmax / 5>>
 				You <<voice "moan">>. "Good <<beasttype>>. Please be gentle with me."
-			<<elseif $arousal lte ($arousalmax / 5) * 3>>
+			<<elseif $arousal lte ($arousalmax / 5) * 3 and $pregnancyspeechdisable is "f">>
 				You <<voice "moan">>. "You want to breed with me? I'm flattered."
-			<<else>>
+			<<elseif $pregnancyspeechdisable is "f">>
 				You <<voice "moan">>. "B-breed me. Make me your <<beasttype>> bitch."
+			<<else>>
+				You <<voice "moan">>. "F-fuck me. Make me your <<beasttype>> bitch."
 			<</if>>
 		<<else>>
 			<<if $arousal lte $arousalmax / 5>>
@@ -2431,7 +2456,7 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 				You <<voice "demand">>. "What do you want from me?!"
 			<</if>>
 		<<elseif $rng lte 30>>
-			<<if $robinmissing is 1>>
+			<<if $robinmissing isnot 0>>
 				You <<voice "demand">>. "What the fuck did you do to Robin?"
 			<<elseif $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 60>>
 				You <<voice "demand">>. "It's your fault Robin is hurt!"
@@ -2753,7 +2778,11 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 					<<if $arousal lte $arousalmax / 5>>
 						<<if $rng lte 35>>
 							<<if $awarelevel gte 1>>
-								You <<voice "demand">>. "Only the wolves can breed with me!"
+								<<if $pregnancyspeechdisable is "f">>
+									You <<voice "demand">>. "Only the wolves can breed with me!"
+								<<else>>
+									You <<voice "demand">>. "Only the wolves can fuck me!"
+								<</if>>
 							<<else>>
 								You <<voice "demand">>. "Leave me alone! I only cuddle with the wolves!"
 							<</if>>
@@ -2949,7 +2978,7 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 				<</if>>
 
 			<<case "Sydney">>
-				<<NPCStatusCheck "Sydney">>
+				<<run statusCheck("Sydney")>>
 				<<set $speechnamedrop to 1>>
 				<<if $npc.includes("Sydney")>>
 					<<if _sydneyStatus.includes("corrupt")>>
@@ -3077,7 +3106,11 @@ You <<feettext>> press your feet against <<their _args[0]>> pelvis and fondle <<
 		<</switch>>
 
 	<<elseif $npc.includes("Robin")>>
-		You <<voice "demand">>. "Robin, get a hold of yourself!"
+		<<if $robinmist>>
+			You <<voice "demand">>. "Robin, stop! This isn't like you!"
+		<<else>>
+			You <<voice "demand">>. "Robin, get a hold of yourself!"
+		<</if>>
 
 	<<elseif $vaginastate is "imminent">>
 		<<if $player.virginity.vaginal is true>>
@@ -4383,7 +4416,7 @@ _otheraction _youraction
 	<<set _npcB to (_n is $vaginatarget ? $vaginadoubletarget : $vaginatarget)>>
 	/* State 1 is out of sync, state 2 is in sync */
 	<<set _dvp to ($NPCList[_npcA].penis isnot "vaginadouble" and $NPCList[_npcB].penis isnot "vaginadouble" ? 1 : 2)>>
-	
+
 	<<if $enemytype is "beast">> <!-- future proofing for beasts, text has not been updated -->
 		<<if $enemyarousal gte ($enemyarousalmax / 5) * 4>>
 			<<if $arousal gte ($arousalmax / 5) * 4>>
@@ -4663,16 +4696,16 @@ You <<peniletext>> rub your <<penisSimple>> against <<their _args[0]>> labia.
 	<</if>>
 <<else>>
 	<<if $arousal gte ($arousalmax / 5) * 4>>
-	   <<if $player.penissize gte 2>>
+		<<if $player.penissize gte 2>>
 			<<set _hammering to either("hammering deep into", "pounding", "bottoming out in", "battering", "driving deep and hard into", "thrusting deep into", "slamming the bottom of")>>
 			<<set _youraction to "Driven by instinct, you _skillfully fasten the pace, your _penis _hammering _their pussy as you approach your peak.">>
-	   <<else>>
+		<<else>>
 			<<set _hammering to either("hammering hard into", "pounding", "battering", "pushed fully into", "thrusting fast and hard into")>>
 			<<set _youraction to "Driven by instinct, you _skillfully fasten the pace, your _penis _hammering _their pussy as you approach your peak.">>
-	   <</if>>
-   <<elseif $arousal gte ($arousalmax / 5) * 2>>
+		<</if>>
+	<<elseif $arousal gte ($arousalmax / 5) * 2>>
 		<<set _youraction to "You _skillfully thrust your _penis deep into _their pussy, in sync with _her movements.">>
-   <<else>>
+	<<else>>
 		<<set _youraction to "You _skillfully slide your _penis in and out of _their pussy, in sync with _her movements.">>
 	<</if>>
 <</if>>
@@ -5171,7 +5204,7 @@ You <<peniletext>> tease <<their _args[0]>> anus with your <<penis>>.
 		<<else>>
 			<<set _dap to 2>>
 		<</if>>
-	
+
 	<<if _dap is 2>>
 		/* Beasts are only encountered individually. This is futureproofing */
 		<<if $enemytype is "beast">>
@@ -5314,7 +5347,7 @@ You <<peniletext>> tease <<their _args[0]>> anus with your <<penis>>.
 	<<elseif $enemyanger lte 100>>
 		<span class="blue">You shift your pelvis, moving your <<pussy>> away from the beast's incessant probing before it can penetrate you.</span> It snarls in frustration.
 	<<else>>
-		<span class="blue">You shift your pelvis, moving your <<pussy>> away from the beast's savage probing before it can penetrate you.</span> It frenziedly tries to regain purchase, furious at its attempt to breed being impeded.
+		<span class="blue">You shift your pelvis, moving your <<pussy>> away from the beast's savage probing before it can penetrate you.</span> It frenziedly tries to regain purchase, furious at its attempt to <<if $pregnancyspeechdisable is "f">>breed<<else>>fuck<</if>> being impeded.
 	<</if>>
 <<else>>
 	<<if $pain lte 20>>
@@ -5410,7 +5443,7 @@ You <<peniletext>> tease <<their _args[0]>> anus with your <<penis>>.
 	<<elseif $enemyanger lte 100>>
 		<span class="blue">You shift your pelvis, moving your <<bottom>> away from the beast's incessant probing before it can penetrate you.</span> It snarls in frustration.
 	<<else>>
-		<span class="blue">You shift your pelvis, moving your <<bottom>> away from the beast's savage probing before it can penetrate you.</span> It frenziedly tries to regain purchase, furious at its attempt to breed being impeded.
+		<span class="blue">You shift your pelvis, moving your <<bottom>> away from the beast's savage probing before it can penetrate you.</span> It frenziedly tries to regain purchase, furious at its attempt to <<if $pregnancyspeechdisable is "f">>breed<<else>>fuck<</if>> being impeded.
 	<</if>>
 <<else>>
 	<<if $pain lte 20>>
@@ -5441,75 +5474,75 @@ You <<peniletext>> tease <<their _args[0]>> anus with your <<penis>>.
 
 <<widget "actionsconfront">>
 <<if $angel gte 6 and random(1, 2) is 2>>
-    <<set _rng to random(1, 3)>>
-    <<switch _rng>>
-        <<case 1>>
+	<<set _rng to random(1, 3)>>
+	<<switch _rng>>
+		<<case 1>>
 			"Please don't debase yourself," you say. "The angels are watching."
-        <<case 2>>
+		<<case 2>>
 			"I'll forgive you if you hurt me," you say. "But the demons won't."
-        <<case 3>>
+		<<case 3>>
 			You mumble a quiet prayer.
-    <</switch>>
+	<</switch>>
 <<elseif $fallenangel gte 2 and random(1, 2) is 2>>
-    <<set _rng to random(1, 3)>>
-    <<switch _rng>>
-        <<case 1>>
+	<<set _rng to random(1, 3)>>
+	<<switch _rng>>
+		<<case 1>>
 			"You're going to hurt me too," you laugh. "Aren't you?"
-        <<case 2>>
+		<<case 2>>
 			"D-don't touch me," you say. "Not now. Not again."
-        <<case 3>>
+		<<case 3>>
 			"D-don't hurt me," you say. "Please don't."
-    <</switch>>
+	<</switch>>
 <<elseif $demon gte 6 and random(1, 2) is 2>>
-    <<set _rng to random(1, 3)>>
-    <<switch _rng>>
-        <<case 1>>
+	<<set _rng to random(1, 3)>>
+	<<switch _rng>>
+		<<case 1>>
 			"Are you going to 'prey' on me?" you ask with a smirk. "Delicious."
-        <<case 2>>
+		<<case 2>>
 			"Couldn't keep your eyes off," you say. "Don't worry. I'm used to it."
-        <<case 3>>
+		<<case 3>>
 			"Try it," you say. "I'm hungry."
-    <</switch>>
+	<</switch>>
 <<elseif $wolfgirl gte 6 and random(1, 2) is 2>>
-    <<set _rng to random(1, 3)>>
-    <<switch _rng>>
-        <<case 1>>
+	<<set _rng to random(1, 3)>>
+	<<switch _rng>>
+		<<case 1>>
 			"Come closer," you say. "I dare you." You run your tongue over your exposed fangs.
-        <<case 2>>
+		<<case 2>>
 			You growl.
-        <<case 3>>
+		<<case 3>>
 			"I might be alone," you say. "But a lone wolf is still dangerous."
-    <</switch>>
+	<</switch>>
 <<elseif $cat gte 6 and random(1, 2) is 2>>
-    <<set _rng to random(1, 3)>>
-    <<switch _rng>>
-        <<case 1>>
+	<<set _rng to random(1, 3)>>
+	<<switch _rng>>
+		<<case 1>>
 			"I'm not helpless," you say. "Try me." You run your tongue over your exposed fangs.
-        <<case 2>>
+		<<case 2>>
 			You hiss.
-        <<case 3>>
+		<<case 3>>
 			"Come closer," you say. "I'm itching to use these claws."
-    <</switch>>
+	<</switch>>
 <<elseif $cow gte 6 and random(1, 2) is 2>>
-    <<set _rng to random(1, 3)>>
-    <<switch _rng>>
-        <<case 1>>
+	<<set _rng to random(1, 3)>>
+	<<switch _rng>>
+		<<case 1>>
 			"I'm not helpless," you say. "Keep away, or I'll charge you down."
-        <<case 2>>
+		<<case 2>>
 			"I know I'm a prize," you say. "But you'll be sorry if you try anything."
-        <<case 3>>
+		<<case 3>>
 			"Always after my milk," you tut. "But you haven't earned it."
-    <</switch>>
+	<</switch>>
 <<elseif $harpy gte 6 and random(1, 2) is 2>>
-    <<set _rng to random(1, 3)>>
-    <<switch _rng>>
-        <<case 1>>
+	<<set _rng to random(1, 3)>>
+	<<switch _rng>>
+		<<case 1>>
 			You screech.
-        <<case 2>>
+		<<case 2>>
 			"Don't try anything," you say. "My mate won't be happy, and I'll remember you."
-        <<case 3>>
+		<<case 3>>
 			"I'll peck you if you get too close," you say. "Don't think I won't."
-    <</switch>>
+	<</switch>>
 <<elseif $anxiety gte 1 and $controlled is 0>>
 	<<set _rng to random(1, 3)>>
 	<<switch _rng>>
@@ -5522,47 +5555,47 @@ You <<peniletext>> tease <<their _args[0]>> anus with your <<penis>>.
 	<</switch>>
 	<<gstress>><<stress 6>>
 <<else>>
-    <<set _rng to random(1, 5)>>
-    <<if $submissive gte 1150>>
-        <<switch _rng>>
-            <<case 1>>
+	<<set _rng to random(1, 5)>>
+	<<if $submissive gte 1150>>
+		<<switch _rng>>
+			<<case 1>>
 				"St-stay back," you say. "I-I can defend myself."
-            <<case 2>>
+			<<case 2>>
 				"Please don't come closer," you say.
-            <<case 3>>
+			<<case 3>>
 				"Don't hurt me," you say. "Please don't."
-            <<case 4>>
+			<<case 4>>
 				"You'll get in trouble if you touch me," you say.
-            <<case 5>>
+			<<case 5>>
 				"Don't try anything," you say. "P-people know I'm here."
-        <</switch>>
-    <<elseif $submissive lte 850>>
-        <<switch _rng>>
-            <<case 1>>
+		<</switch>>
+	<<elseif $submissive lte 850>>
+		<<switch _rng>>
+			<<case 1>>
 				"Stay the fuck away," you say. "Or I'll make you sorry."
-            <<case 2>>
+			<<case 2>>
 				"Touch me and I'll kick your ass," you say.
-            <<case 3>>
+			<<case 3>>
 				"What you looking at?" you ask.
-            <<case 4>>
+			<<case 4>>
 				"Keep walking," you say. "Or I'll break your face."
-            <<case 5>>
+			<<case 5>>
 				"Don't even think about it," you say. "I've dealt with worse scum than you."
-        <</switch>>
-    <<else>>
-        <<switch _rng>>
-            <<case 1>>
+		<</switch>>
+	<<else>>
+		<<switch _rng>>
+			<<case 1>>
 				"Keep your distance," you say. "Or you'll be sorry."
-            <<case 2>>
+			<<case 2>>
 				"Don't touch me," you say. "Or you'll be in trouble."
-            <<case 3>>
+			<<case 3>>
 				"Don't try anything," you say.
-            <<case 4>>
+			<<case 4>>
 				"I know how to look after myself," you say. "Don't you dare."
-            <<case 5>>
+			<<case 5>>
 				"Keep moving," you say. "I'm not defenceless."
-        <</switch>>
-    <</if>>
+		<</switch>>
+	<</if>>
 <</if>>
 <</widget>>
 

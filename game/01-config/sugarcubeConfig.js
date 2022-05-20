@@ -11,6 +11,13 @@ Save.onLoad.add(function(save) {
 	window.onLoadUpdateCheck = true;
 });
 
+let pageLoading = false;
+
+Save.onLoad.add(function(save) {
+	pageLoading = true
+});
+
+
 Save.onSave.add(function(save) {
 	new Wikifier(null, '<<updateFeats>>');
 	prepareSaveDetails();
@@ -22,7 +29,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.8.6",
+	"version": "0.3.9.1",
 }
 window.StartConfig.version += ".h"; //stands for Herm, don't change
 window.StartConfig.version += "0"; //how many times I've released a build of this mod for this version 
@@ -78,3 +85,131 @@ importScripts([
 .catch(function (err) {
 	console.log(err);
 });*/
+
+// Runs before a passage load, returning a string redirects to the new passage name.
+Config.navigation.override = function (dest) {
+	const isLoading = pageLoading; // if page is freshly loading (after a refresh etc), we hold its value in a temporary variable
+
+	pageLoading = false
+	switch (dest) {
+		case 'Pharmacy Select Custom Lenses':
+			return isLoading ? 'Pharmacy Ask Custom Lenses' : false;
+		case 'Forest Shop Outfit':
+		case 'Forest Shop Upper':
+		case 'Forest Shop Lower':
+		case 'Forest Shop Under Outfit':
+		case 'Forest Shop Under Upper':
+		case 'Forest Shop Under Lower':
+		case 'Forest Shop Head':
+		case 'Forest Shop Face':
+		case 'Forest Shop Neck':
+		case 'Forest Shop Legs':
+		case 'Forest Shop Feet':
+			return 'Forest Shop';
+
+		case 'Over Outfit Shop':
+		case 'Outfit Shop':
+		case 'Top Shop':
+		case 'Bottom Shop':
+		case 'Under Outfit Shop':
+		case 'Under Top Shop':
+		case 'Under Bottom Shop':
+		case 'Head Shop':
+		case 'Face Shop':
+		case 'Neck Shop':
+		case 'Hands Shop':
+		case 'Legs Shop':
+		case 'Shoe Shop':
+			return 'Clothing Shop';
+
+		case 'Penis Inspection Flaunt Crossdress':
+			return 'Penis Inspection Flaunt No Penis';
+
+		case 'Pussy Inspection2':
+			return 'Pussy Inspection 2';
+
+		case 'Pussy Inspection Penis':
+			return 'Pussy Inspection Flaunt No Pussy';
+
+		case 'Forest Plant Sex No Tentacles':
+			return 'Forest Plant Sex';
+
+		case 'Forest Plant Sex No Tentacles Finish':
+			return 'Forest Plant Sex Finish';
+
+		case 'Forest Plant Passout No Tentacles':
+			return 'Forest';
+
+		case 'Moor Plant Sex No Tentacles':
+			return 'Moor Plant Sex';
+
+		case 'Moor Plant Sex No Tentacles Finish':
+			return 'Moor Plant Sex Finish';
+
+		case 'Underground Plant Molestation No Tentacles':
+			return 'Underground Plant Molestation';
+
+		case 'Underground Plant Molestation No Tentacles Finish':
+			return 'Underground Plant Molestation Finish';
+
+		case 'Evens Swimming Endure':
+			return 'Events Swimming Swim Endure';
+
+		case 'Domus House Work':
+			return 'Domus Gutters Intro';
+
+		case 'Trash Boys':
+			return 'Trash Compare';
+
+		case 'Trash Boys Spy':
+			return 'Trash Compare Spy';
+
+		case 'Trash Boys Greet':
+			return 'Trash Compare Greet';
+
+		case 'Trash Boys Refuse':
+			return 'Trash Compare Refuse';
+
+		case 'Trash Boys Compare':
+			return 'Trash Compare Others';
+
+		case 'Trash Boys Back Out':
+			return 'Trash Compare Back Out';
+
+		case 'Trash Boys Show':
+			return 'Trash Compare Show';
+
+		case 'Trash Boys Offer Secret':
+			return 'Trash Compare Penis Secret';
+
+		case 'Trash Boys Wrap It Up':
+			return 'Trash Compare Wrap It Up';
+
+		case 'Trash Boys Crossdressing Refuse':
+			return 'Trash Compare Breast Refuse';
+
+		case 'Trash Boys Crossdressing Show All':
+			return 'Trash Compare Breast Show All';
+
+		case 'Trash Boys Forced Strip':
+			return 'Trash Compare Forced Strip';
+
+		case 'Trash Boys Combat Win':
+			return 'Trash Compare Combat Win';
+
+		case 'Trash Boys Combat Loss':
+			return 'Trash Compare Combat Loss';
+
+		case 'Lake Underwater Tentacles Finish Figure':
+			return 'Lake Underwater Tentacles Finish';
+
+		case 'Sextoys Inventory Home':
+		case 'Sextoys Inventory Brothel':
+		case 'Sextoys Inventory Cottage':
+		case 'Sextoys Inventory Cabin':
+			return 'Sextoys Inventory';
+
+		default:
+			return false;
+	}
+}

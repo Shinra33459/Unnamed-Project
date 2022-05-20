@@ -136,7 +136,7 @@
 			<<if random(1, 120) lte 3>>
 				<<unset $lake_ice_broken>>
 			<</if>>
-		<</if>>	
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -159,7 +159,7 @@
 			<span class="red">You can't breathe! Your stress will increase and you'll soon pass out if you can't find air.</span>
 		<</if>>
 		<<oxygencaption>>
-		<<if $underwaterintro isnot 1 and $combat isnot 1>>
+		<<if $underwaterintro isnot 1 and $combat isnot 1 and !$possessed>>
 			<<set $underwaterintro to 1>>
 			<i>You can't hold your breath forever. You will pass less time and use less air per action with a higher swimming skill.</i>
 			<br><br>
@@ -245,7 +245,7 @@
 	<<if $player.vaginaExist>>
 		<<set $_wetnessChange to 0>>
 		<<set $_arousalPercent to Math.clamp($arousal / $arousalmax, 0, 1)>>
-		
+
 		<!-- Vaginal lube is produced at a fairly linear rate, between 1-3 per minute based on arousal. -->
 		<<if $arousal gte $arousalmax * (2/5)>>
 			<<set $_wetnessChange to 1 + ($_arousalPercent * 2)>>
@@ -284,7 +284,7 @@
 				<<set $lowerwet += Math.round($_change * $pass)>>
 			<</if>> */
 		<</if>>
-		
+
 		<<set $vaginaArousalWetness to Math.clamp($vaginaArousalWetness, 0, 100)>>
 		<<vaginaWetnessCalculate>>
 	<</if>>
@@ -369,6 +369,14 @@
 		<<else>>
 			<<tanned `$pass / 2`>>
 		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "virginitylosttext">>
+	<<if $templePromised is _args[0]>>
+		<span class="lblue">yet you remain pure.</span>
+	<<else>>
+		<span class="red">forever robbing you of your purity.</span>
 	<</if>>
 <</widget>>
 
@@ -1014,11 +1022,11 @@
 				<span class="gold"> You get a good workout.</span>
 			<</if>>
 		<</if>>
-    <<elseif $combat is 1>>
-        <span class="gold"> It invigorates you.</span>
-    <<else>>
-        <span class="gold"> You get a good workout.</span>
-    <</if>>
+	<<elseif $combat is 1>>
+		<span class="gold"> It invigorates you.</span>
+	<<else>>
+		<span class="gold"> You get a good workout.</span>
+	<</if>>
 <</if>>
 <</widget>>
 
@@ -1344,7 +1352,7 @@
 					<span class="pink">You're being puppeteered.</span>
 				<<else>>
 					<span class="red">You're helpless.</span>
-				<</if>>				
+				<</if>>
 			<<else>>
 				<<if $control gte $controlmax>>
 					<span class="green">You are confident.</span>
@@ -1787,15 +1795,15 @@
 			<<else>>
 				<img id="daystate" src="img/misc/day.png">
 			<</if>>
-		
+
 			<<if $location is "tentworld">>
 				<img id="weather" src="img/misc/tentskyday.png">
 			<<else>>
 				<<switch $weather>>
-					<<case "clear">>    <img id="weather" src="img/misc/clearday.png">
+					<<case "clear">>	<img id="weather" src="img/misc/clearday.png">
 					<<case "overcast">> <img id="weather" @src="'img/misc/' + _weather_display + '/overcastday.png'">
-					<<case "rain">>     <img id="weather" src="img/misc/rainday.gif">
-					<<case "snow">>     <img id="weather" src="img/misc/winter/snowday.gif">
+					<<case "rain">>		<img id="weather" src="img/misc/rainday.gif">
+					<<case "snow">>		<img id="weather" src="img/misc/winter/snowday.gif">
 				<</switch>>
 			<</if>>
 
@@ -1825,9 +1833,9 @@
 				<<case "tentworld">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/tentacles_day.gif'">
 				<<case "underground">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/undergroundday.png'">
 				<<case "sewers">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/sewersday.gif'">
 				<<case "school">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/schoolday.png'">
 				<<case "cabin">>
@@ -1890,7 +1898,7 @@
 				<<case "riding_school">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/riding_school_day.gif'">
 				<<case "estate">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/farm_day.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/remy_farm_day.png'">
 				<<case "wolf_cave">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/wolf_cave_day.png'">
 				<<case "forest_shop">>
@@ -1914,7 +1922,7 @@
 						<img id="location" @src="'img/misc/' + _weather_display + '/alley_day.gif'">
 					<</if>>
 				<<case "drain">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/drain.gif'">
 				<<case "spa">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/spa_day.gif'">
 				<<case "prison">>
@@ -1923,6 +1931,8 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/promenade_beach_day.gif'">
 				<<case "factory">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/factory_day.gif'">
+				<<case "pound">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/town_day.gif'">
 			<</switch>>
 		<<elseif $daystate is "night">>
 			<!-- if bloodmoon -->
@@ -1938,10 +1948,10 @@
 				<img id="weather" src="img/misc/tentskynight.png">
 			<<else>>
 				<<switch $weather>>
-					<<case "clear">>    <img id="weather" src="img/misc/clearnight.png">
+					<<case "clear">>	<img id="weather" src="img/misc/clearnight.png">
 					<<case "overcast">> <img id="weather" @src="'img/misc/' + _weather_display + '/overcastnight.png'">
-					<<case "rain">>     <img id="weather" src="img/misc/rainnight.gif">
-					<<case "snow">>     <img id="weather" src="img/misc/winter/snownight.gif">
+					<<case "rain">>		<img id="weather" src="img/misc/rainnight.gif">
+					<<case "snow">>		<img id="weather" src="img/misc/winter/snownight.gif">
 				<</switch>>
 			<</if>>
 
@@ -1971,9 +1981,9 @@
 				<<case "tentworld">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/tentacles_night.gif'">
 				<<case "underground">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/undergroundnight.png'">
 				<<case "sewers">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/sewersnight.gif'">
 				<<case "school">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/schoolnight.png'">
 				<<case "cabin">>
@@ -2031,7 +2041,7 @@
 				<<case "riding_school">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/riding_school_night.gif'">
 				<<case "estate">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/farm_night.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/remy_farm_night.png'">
 				<<case "wolf_cave">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/wolf_cave_night.png'">
 				<<case "forest_shop">>
@@ -2055,7 +2065,7 @@
 						<img id="location" @src="'img/misc/' + _weather_display + (_bloodmoon ? '/alley_blood.gif' : '/alley_night.gif')">
 					<</if>>
 				<<case "drain">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/drain.gif'">
 				<<case "spa">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/spa_night.gif'">
 				<<case "prison">>
@@ -2063,7 +2073,9 @@
 				<<case "promenade">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/promenade_beach_night.gif'">
 				<<case "factory">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/factory_night.gif'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/factory_night.png'">
+				<<case "pound">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/town_night.gif'">
 			<</switch>>
 		<<elseif $daystate is "dawn">>
 			<<if $location is "tentworld">>
@@ -2076,10 +2088,10 @@
 				<img id="weather" src="img/misc/tentskydawn.png">
 			<<else>>
 				<<switch $weather>>
-					<<case "clear">>    <img id="weather" src="img/misc/cleardawn.png">
+					<<case "clear">>	<img id="weather" src="img/misc/cleardawn.png">
 					<<case "overcast">> <img id="weather" @src="'img/misc/' + _weather_display + '/overcastdawn.png'">
-					<<case "rain">>     <img id="weather" src="img/misc/raindawn.gif">
-					<<case "snow">>     <img id="weather" src="img/misc/winter/snowdawn.gif">
+					<<case "rain">>		<img id="weather" src="img/misc/raindawn.gif">
+					<<case "snow">>		<img id="weather" src="img/misc/winter/snowdawn.gif">
 				<</switch>>
 			<</if>>
 
@@ -2109,9 +2121,9 @@
 				<<case "tentworld">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/tentacles_dawn.gif'">
 				<<case "underground">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/undergrounddawn.png'">
 				<<case "sewers">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/sewersdawn.gif'">
 				<<case "school">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/schooldawn.png'">
 				<<case "cabin">>
@@ -2169,7 +2181,7 @@
 				<<case "riding_school">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/riding_school_dawn.gif'">
 				<<case "estate">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/farm_dawn.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/remy_farm_dawn.png'">
 				<<case "wolf_cave">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/wolf_cave_dawn.png'">
 				<<case "forest_shop">>
@@ -2193,7 +2205,7 @@
 						<img id="location" @src="'img/misc/' + _weather_display + '/alley_dawn.gif'">
 					<</if>>
 				<<case "drain">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/drain.gif'">
 				<<case "spa">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/spa_dawn.gif'">
 				<<case "prison">>
@@ -2202,6 +2214,8 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/promenade_beach_dawn.gif'">
 				<<case "factory">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/factory_dawn.gif'">
+				<<case "pound">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/town_dawn.gif'">
 			<</switch>>
 		<<elseif $daystate is "dusk">>
 			<<if $location is "tentworld">>
@@ -2214,10 +2228,10 @@
 				<img id="weather" src="img/misc/tentskydusk.png">
 			<<else>>
 				<<switch $weather>>
-					<<case "clear">>    <img id="weather" src="img/misc/cleardusk.png">
+					<<case "clear">>	<img id="weather" src="img/misc/cleardusk.png">
 					<<case "overcast">> <img id="weather" @src="'img/misc/' + _weather_display + '/overcastdusk.png'">
-					<<case "rain">>     <img id="weather" src="img/misc/raindusk.gif">
-					<<case "snow">>     <img id="weather" src="img/misc/winter/snowdusk.gif">
+					<<case "rain">>		<img id="weather" src="img/misc/raindusk.gif">
+					<<case "snow">>		<img id="weather" src="img/misc/winter/snowdusk.gif">
 				<</switch>>
 			<</if>>
 
@@ -2247,9 +2261,9 @@
 				<<case "tentworld">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/tentacles_dusk.gif'">
 				<<case "underground">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/undergrounddusk.png'">
 				<<case "sewers">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/sewersdusk.gif'">
 				<<case "school">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/schooldusk.png'">
 				<<case "cabin">>
@@ -2307,7 +2321,7 @@
 				<<case "riding_school">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/riding_school_dusk.gif'">
 				<<case "estate">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/farm_dusk.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/remy_farm_dusk.png'">
 				<<case "wolf_cave">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/wolf_cave_dusk.png'">
 				<<case "forest_shop">>
@@ -2331,7 +2345,7 @@
 						<img id="location" @src="'img/misc/' + _weather_display + '/alley_dusk.gif'">
 					<</if>>
 				<<case "drain">>
-					<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/drain.gif'">
 				<<case "spa">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/spa_dusk.gif'">
 				<<case "prison">>
@@ -2340,6 +2354,8 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/promenade_beach_dusk.gif'">
 				<<case "factory">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/factory_dusk.gif'">
+				<<case "pound">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/town_dusk.png'">
 			<</switch>>
 		<</if>>
 	<<else>>
@@ -2399,6 +2415,14 @@
 	<</if>>
 <<else>>
 	<<set $worn.over_upper.integrity -= 1>><<set $worn.over_lower.integrity -= 1>><<set $worn.upper.integrity -= 1>><<set $worn.lower.integrity -= 1>><<set $worn.under_lower.integrity -= 1>><<set $worn.under_upper.integrity -= 1>>
+<</if>>
+<</widget>>
+
+<<widget "dry_towel">>
+<<dry_full>>
+<<exposure>>
+<<if $exposed gte 1>>
+	<<towelup>>
 <</if>>
 <</widget>>
 
@@ -2763,6 +2787,49 @@ or _args[0] is "force">>
 <</if>>
 <</widget>>
 
+<<widget "wet_all">>
+<<if !$worn.upper.type.includes("swim") and !$worn.upper.type.includes("naked")>>
+	<<set $upperwet to 200>>
+	<<set $upperwetstage to 3>>
+<</if>>
+<<if !$worn.lower.type.includes("swim") and !$worn.lower.type.includes("naked")>>
+	<<set $lowerwet to 200>>
+	<<set $lowerwetstage to 3>>
+<</if>>
+<<if !$worn.under_upper.type.includes("swim") and !$worn.under_upper.type.includes("naked")>>
+	<<set $underupperwet to 200>>
+	<<set $underupperwetstage to 3>>
+<</if>>
+<<if !$worn.under_lower.type.includes("swim") and !$worn.under_lower.type.includes("naked")>>
+	<<set $underlowerwet to 200>>
+	<<set $underlowerwetstage to 3>>
+<</if>>
+<</widget>>
+
+<<widget "wet_upper">>
+<<if !$worn.upper.type.includes("swim") and !$worn.upper.type.includes("naked")>>
+	<<set $upperwet to 200>>
+<</if>>
+<</widget>>
+
+<<widget "wet_lower">>
+<<if !$worn.lower.type.includes("swim") and !$worn.lower.type.includes("naked")>>
+	<<set $lowerwet to 200>>
+<</if>>
+<</widget>>
+
+<<widget "wet_under_upper">>
+<<if !$worn.under_upper.type.includes("swim") and !$worn.under_upper.type.includes("naked")>>
+	<<set $underupperwet to 200>>
+<</if>>
+<</widget>>
+
+<<widget "wet_under_lower">>
+<<if !$worn.under_lower.type.includes("swim") and !$worn.under_lower.type.includes("naked")>>
+	<<set $underlowerwet to 200>>
+<</if>>
+<</widget>>
+
 <<widget "storecleanup">>
 
 <<set $action_unclad_over_outfit to 0>>
@@ -3060,7 +3127,7 @@ or _args[0] is "force">>
 <<widget "clampgoo">>
 	<<for _bodypart range setup.bodyliquid.bodyparts>>
 		<<if $player.bodyliquid[_bodypart]["goo"] gte 5 or $player.bodyliquid[_bodypart]["semen"] gte 5>>
-			<<set $player.bodyliquid[_bodypart]["goo"]   to Math.clamp($player.bodyliquid[_bodypart]["goo"],   0, 5)>>
+			<<set $player.bodyliquid[_bodypart]["goo"] to Math.clamp($player.bodyliquid[_bodypart]["goo"], 0, 5)>>
 			<<set $player.bodyliquid[_bodypart]["semen"] to Math.clamp($player.bodyliquid[_bodypart]["semen"], 0, 5)>>
 		<</if>>
 	<</for>>
@@ -3114,7 +3181,7 @@ or _args[0] is "force">>
 
 <<if $combat isnot 1>>
 	<<for _bodypart range setup.bodyliquid.bodyparts>>
-		<<if $player.bodyliquid[_bodypart]["goo"] gte 1>>  <<set $waterwash += 1>><<set $allure += 500>><<set $player.bodyliquid[_bodypart]["goo"] -= 1>><</if>>
+		<<if $player.bodyliquid[_bodypart]["goo"] gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $player.bodyliquid[_bodypart]["goo"] -= 1>><</if>>
 		<<if $player.bodyliquid[_bodypart]["semen"] gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $player.bodyliquid[_bodypart]["semen"] -= 1>><</if>>
 	<</for>>
 <</if>>
@@ -3277,21 +3344,15 @@ You negotiate a price of <<printmoney $tip>>,
 <</widget>>
 
 <<widget "vaginaraped">>
-	<<fallenTransform>> /*transformations.twee*/
-	<<if $player.virginity.temple is true>>
-
-		/*Old check, remove when not required*/
-		<<set $temple_virginity to 0>>
+	<<if $enemytype isnot "man" or $NPCList[0].fullDescription is "Ivory Wraith" or $templePromised isnot $NPCList[$vaginatarget].fullDescription>>
+		<<fallenTransform>> /*transformations.twee*/
 	<</if>>
 	<<set $vaginafucked to 1>>
 <</widget>>
 
 <<widget "penisraped">>
-	<<fallenTransform>> /*transformations.twee*/
-	<<if $player.virginity.temple is true>>
-
-		/*Old check, remove when not required*/
-		<<set $temple_virginity to 0>>
+	<<if $enemytype isnot "man" or $NPCList[0].fullDescription is "Ivory Wraith" or $templePromised isnot $NPCList[$penistarget].fullDescription>>
+		<<fallenTransform>> /*transformations.twee*/
 	<</if>>
 	<<set $penisfucked to 1>>
 <</widget>>
@@ -3387,10 +3448,10 @@ __Map__<br>
 						@title="$map.arrayList[_i] + (_canMoveTo ? ' (0:05)' : '')">
 
 					<rect @x="_boxLocations[_i].x"
-						  @y="_boxLocations[_i].y"
-						  height="34"
-						  width="30"
-						  @style="'stroke:cyan;fill-opacity:0;stroke-opacity:' + (_showMarker ? '0.6' : '0') + ';'">
+							@y="_boxLocations[_i].y"
+							height="34"
+							width="30"
+							@style="'stroke:cyan;fill-opacity:0;stroke-opacity:' + (_showMarker ? '0.6' : '0') + ';'">
 					</rect>
 				</a>
 			<</for>>
@@ -3431,7 +3492,7 @@ __Map__<br>
 <</widget>>
 
 <<widget "rentday">>
-	<<set $_text_output to  ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][$rentday-1]>>
+	<<set $_text_output to ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][$rentday-1]>>
 	<<print $_text_output>>
 <</widget>>
 
@@ -3594,11 +3655,11 @@ __Map__<br>
 		<</for>>
 
 		/* Set the details to show from the current state */
-		<<set _config.level = 		_config.states[_config.currentLevel].level>>
+		<<set _config.level =		_config.states[_config.currentLevel].level>>
 		<<set _config.description = _config.states[_config.currentLevel].description>>
-		<<set _config.color = 		_config.states[_config.currentLevel].color>>
+		<<set _config.color =		_config.states[_config.currentLevel].color>>
 
-		/* Determine the color of the bottom bar based on a few types, default is to match the level color */
+		/* Determine the colour of the bottom bar based on a few types, default is to match the level colour */
 		<<if _config.meterColorType eq 'next'>>
 			<<if _config.currentLevel lt _config.states.length - 1>>
 				<<set _config.meterColor = _config.states[_config.currentLevel + 1].color>>
@@ -3667,9 +3728,9 @@ __Map__<br>
 		<<if _config.showStars>>
 			<span class="characteristic-description grade-progress">Daily Progress</span>
 			<div class="progress-stars">
-				<img class="icon" @src="'img/ui/' + (_config.starLevel > 0 ? 'bronze_star' : 'empty_star') + '.png'" />
-				<img class="icon" @src="'img/ui/' + (_config.starLevel > 1 ? 'silver_star' : 'empty_star') + '.png'" />
-				<img class="icon" @src="'img/ui/' + (_config.starLevel > 2 ? 'gold_star'   : 'empty_star') + '.png'" />
+				<img class="icon" @src="'img/ui/' + (_config.starLevel > 0 ? 'bronze_star'	: 'empty_star') + '.png'" />
+				<img class="icon" @src="'img/ui/' + (_config.starLevel > 1 ? 'silver_star'	: 'empty_star') + '.png'" />
+				<img class="icon" @src="'img/ui/' + (_config.starLevel > 2 ? 'gold_star'	: 'empty_star') + '.png'" />
 			</div>
 		<</if>>
 		<div class="meter">
@@ -3739,10 +3800,10 @@ __Map__<br>
 		<</script>>
 
 		/* Set the details to show from the current state */
-		<<set _config.preText = 	_config.currentLevel.preText || _config.preText>>
+		<<set _config.preText =		_config.currentLevel.preText || _config.preText>>
 		<<set _config.description = _config.currentLevel.description>>
-		<<set _config.postText = 	_config.currentLevel.postText || _config.postText>>
-		<<set _config.color = 		_config.currentLevel.color>>
+		<<set _config.postText =	_config.currentLevel.postText || _config.postText>>
+		<<set _config.color =		_config.currentLevel.color>>
 	<</if>>
 
 
@@ -5112,7 +5173,7 @@ __Map__<br>
 	<!-- Currently only works for strap-ons. Will need a refactor when other toy scenes are written. -->
 	<<run window.handSextoysGiftToNPC(_args[0])>>
 	<<set _strapons to checkIfNPCHasCategorySextoy(_args[0],"strap-on")>>
-	<<if _strapons isnot 0>>
+	<<if _strapons.length > 0>>
 		<<for _i = 0; _i lt _strapons.length; _i++>>
 			<<if _strapons[_i].shape is undefined>>
 				<<set _strapons[_i].shape to "dildo">>
@@ -5121,7 +5182,7 @@ __Map__<br>
 				<<set _strapons[_i].prefixdescriptor to "">>
 			<</if>>
 			<<generateNewStrapon _strapons[_i].size _strapons[_i].colour _strapons[_i].shape>>
-			<<giveNNPCnewstrapon _args[0] _strapons[_i].size _strapons[_i].colour _strapons[_i].shape _strapons[_i].prefixdescriptor>>
+			<<giveNNPCnewstrapon _args[0]>>
 		<</for>>
 	<</if>>
 <</widget>>

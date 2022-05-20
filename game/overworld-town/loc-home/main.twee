@@ -3,9 +3,84 @@
 <<bedclotheson "bed">>
 <<set $outside to 0>><<set $location to "home">><<home_effects>><<effects>><<getTarget true>>
 You are in your bedroom.
+
+<<set _furniture to $furniture.bedroom>>
+<<if _furniture.wallpaper>>
+	<<switch _furniture.wallpaper.name>>
+		<<case "vines">>
+			Lewd green vines writhe on the walls.
+			<<if $backgroundTraits.includes("plantlover")>>
+				Thoughts of sweet nectar wrack your mind.
+			<</if>>
+		<<case "tentacles">>
+			Purple tentacles slither on the walls.
+			<<if $demon gte 6>>
+				Thoughts of pleasure cross your mind.
+			<</if>>
+		<<case "plainwhite">>
+			Plain white wallpapers cover the walls.
+		<<case "wavywhite">>
+			The white wallpapers gradient to black in a wavy pattern. Is there a lewd subtext?
+		<<case "hearts">>
+			Pink hearts cover the walls.
+		<<case "cowgirls">>
+			Cowgirls dance on the walls.
+		<<case "trees">>
+			Green trees bring you a feeling of being in a forest.
+		<<case "crosses">>
+			Golden crosses cover the walls.
+		<<default>> /* Custom */
+			Images of _furniture.wallpaper.name cover the walls.
+			<<if ['dol', 'degrees of lewdity'].some(e => _furniture.wallpaper.name === e)>>
+				Somehow, they look familiar.
+			<</if>>
+	<</switch>>
+<<else>>
+	Bleak walls protect you from the outside.
+<</if>>
+
+<<set _deco to Furniture.get('decoration')>>
+<<if _deco>>
+	<br>
+	<<switch _deco.name>>
+		<<case "bearplushie">>
+			<<furnitureicon _deco.iconFile>>The _deco.name is sitting in a corner.
+		<<default>>
+			<<furnitureicon _deco.iconFile>>The _deco.name is hanging on a wall.
+	<</switch>>
+<</if>>
+
+<<set _windowsill to Furniture.get('windowsill')>>
+<<if _windowsill>>
+	<br>
+	<<switch _windowsill.name>> /* can be expanded further */
+		<<case "ominous jar">> /* unused */
+			<<furnitureicon _windowsill.iconFile>>_windowsill.nameCap stands on the windowsill menacingly.
+		<<default>>
+			<<furnitureicon _windowsill.iconFile>> Your _windowsill.name sits on the windowsill.
+	<</switch>>
+<</if>>
+
+<<if _furniture.poster>>
+	<br>
+	<<switch _furniture.poster.name>>
+		<<case "cowgirl">>
+			A cowgirl poster hangs on a wall.
+		<<case "cat">>
+			A poster of a cat hangs on a wall. The text below reads, "Hang in there!"
+		<<case "puppy">>
+			A puppy poster hangs on a wall.
+		<<default>> /* Custom */
+			A poster of _furniture.poster.name hangs on a wall.
+			<<if ['dol', 'degrees of lewdity'].some(e => _furniture.wallpaper.name === e)>>
+				You feel an odd sense of familiarity.
+			<</if>>
+	<</switch>>
+<</if>>
+
 <br><br>
-<<if $robinbed is 1 and !$possessed>>
-	<<set $robinbed to 0>>
+<<if $robinbed is "yours" and !$possessed>>
+	<<unset $robinbed>>
 	<<npc Robin>><<person1>>Robin yawns and heads to <<his>> own room.<<endevent>>
 	<br><br>
 <</if>>
@@ -21,13 +96,17 @@ You are in your bedroom.
 <</if>>
 <<if $study is 1>>
 	<<unset $study>>
-	<<if $phase is 1>><<scienceskill>>
+	<<if $phase is 1>>
+		<<scienceskill>>
 		You settle down on your bed with a science textbook and read through the material.
-	<<elseif $phase is 2>><<mathsskill>>
+	<<elseif $phase is 2>>
+		<<mathsskill>>
 		You settle down on your bed with a maths textbook and read through the material.
-	<<elseif $phase is 3>><<englishskill>>
+	<<elseif $phase is 3>>
+		<<englishskill>>
 		You settle down on your bed with an English textbook and read through the material.
-	<<elseif $phase is 4>><<historyskill>>
+	<<elseif $phase is 4>>
+		<<historyskill>>
 		You settle down on your bed with a history textbook and read through the material.
 	<</if>>
 	<<endevent>>
@@ -47,7 +126,7 @@ You are in your bedroom.
 		<<link [[Undo your bindings (0:10)|Bedroom]]>><<set $unbind to 1>><<pass 10>><<unbind>><</link>>
 		<br><br>
 	<</if>>
-	<<if $robinpaid is 1 and $robinnote isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].lust gte 10 and $NPCName[$NPCNameList.indexOf("Robin")].love gte 60 and $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 10>>
+	<<if $robinpaid is 1 and $robinmissing is 0 and $robinnote isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].lust gte 10 and $NPCName[$NPCNameList.indexOf("Robin")].love gte 60 and $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 10>>
 		<span class="gold">There's a note by the window.</span>
 		<br>
 		<<link [[Read it|Robin Note]]>><<set $robinnote to 1>><</link>>
@@ -64,9 +143,9 @@ You are in your bedroom.
 			/*indev radio testing*/
 			A radio is on:
 			<br>
-		
+
 			<<radio_placehere>>
-		
+
 			<span class="green">More debugging:</span>
 			<br>
 			<<link [[Add test news|Bedroom]]>><<radio_addnews "meteor_fall" "2">><</link>> radio_addnews "meteor_fall" "2"
@@ -91,20 +170,26 @@ You are in your bedroom.
 		<br><br>
 	<</if>>
 	Your bed takes up most of the room.
+	<<set _bed to Furniture.get('bed')>>
 	<<if $nextPassageCheck is "Bed">>
 		<br>
-		<<if $robinbed is 1>>
-			<span class="nextLink"><<bedicon>><<link [[Robin.|Bed]]>><</link>></span>
+		<<if $robinbed is "yours">>
+			<span class="nextLink"><<furnitureicon _bed.iconFile>><<link [[Robin.|Bed]]>><</link>></span>
 		<<else>>
-			<span class="nextLink"><<bedicon>><<link [[Kylar.|Bed]]>><</link>></span>
+			<span class="nextLink"><<furnitureicon _bed.iconFile>><<link [[Kylar.|Bed]]>><</link>></span>
 		<</if>>
 		<br>
 		<<listsleepoutfits>>
 	<<elseif $slimeEvent is undefined>>
 		<br>
-		<<bedicon>><<link [[Strip and get in bed|Bed]]>><<undressSleep "bed">><</link>>
+		<<furnitureicon _bed.iconFile>><<link [[Strip and get in bed|Bed]]>><<undressSleep "bed">><</link>>
 		<br>
 		<<listsleepoutfits>>
+
+		<<if _bed.type.includes("comfy")>>
+			<<furnitureicon _bed.iconFile>><<link [[Masturbate in bed|Home Masturbation]]>><<set $masturbationstart to 1>><</link>>
+			<br>
+		<</if>>
 	<<else>>
 		<br>
 		<<if $possessed>>
@@ -116,13 +201,12 @@ You are in your bedroom.
 	<</if>>
 	<<roomoptions>>
 	<br>
-	<<if $arousal gte $arousalmax / 5 and !$worn.genitals.type.includes("chastity") and $homemasturbationtest is 1>>
-		<<link [[Masturbate (0:05)|Home Masturbation]]>><<pass 5>><<set $masturbationstart to 1>><</link>>
+	<<set _wardrobe to Furniture.get('wardrobe')>>
+	<<if _wardrobe>>
+		Your clothes are kept in the wardrobe.
 	<</if>>
 	<br>
-	Your clothes are kept in the corner.
-	<br>
-	<<wardrobeicon>><<link [[Wardrobe|Wardrobe]]>><</link>>
+	<<furnitureicon _wardrobe.iconFile>><<link [[Wardrobe|Wardrobe]]>><</link>>
 	<br>
 	<<if playerHasSexToys()>>
 		<<sextoysicon>><<link [[Sex toys|Sextoys Inventory]]>><<set $sextoyInvReturnLink to $passage>><</link>>
@@ -148,8 +232,17 @@ You are in your bedroom.
 		<br>
 	<</if>>
 
-
-
+	<<set _table to Furniture.get('table')>>
+	<<set _chair to Furniture.get('chair')>>
+	<<if _table>>
+		<br>
+		Your _table.name <<if _chair>>and a pair of _chair.name are <<else>>is <</if>> situated next to a wall.
+		<br>
+		<<if $debug>>
+			<<bedroomtablechairicon>><<link [[Table (Debug)|Bedroom Table]]>><</link>>
+			<br><br>
+		<</if>>
+	<</if>>
 
 	<<if $sexStats.anus.pregnancy.seenDoctor gte 2>>
 		<<set $container.lastLocation to $location>>
@@ -243,7 +336,7 @@ You are in your bedroom.
 				<<bedroomicon>><<link [[Robin's room (0:01)|Robin's Room Entrance]]>><<pass 1>><</link>>
 				<br>
 			<</if>>
-			<<if $hour gte 18 and $hour lte 20 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40 and $robinmissing isnot 1 and !$robinTraumaVisit>>
+			<<if $hour gte 18 and $hour lte 20 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40 and $robinmissing is 0 and !$robinTraumaVisit>>
 				<<main_hall_icon>><<link [[Main hall (0:01)|Robin Trauma Visit]]>><<set $phase to 1>><<pass 1>><</link>>
 				<br>
 			<<else>>
@@ -265,7 +358,7 @@ You are in your bedroom.
 			<<bedroomicon>><<link [[Robin's room (0:01)|Robin's Room Entrance]]>><<pass 1>><</link>>
 			<br>
 		<</if>>
-		<<if $hour gte 18 and $hour lte 20 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40 and $robinmissing isnot 1 and !$robinTraumaVisit>>
+		<<if $hour gte 18 and $hour lte 20 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40 and $robinmissing is 0 and !$robinTraumaVisit>>
 			<<main_hall_icon>><<link [[Main hall (0:01)|Robin Trauma Visit]]>><<set $phase to 1>><<pass 1>><</link>>
 			<br>
 		<<else>>
@@ -285,6 +378,34 @@ You are in your bedroom.
 	<</if>>
 	<br><br>
 <</if>>
+
+:: Bedroom Robin Mist Note
+<<set _robin to statusCheck("Robin")>>
+<<bedclotheson "bed">>
+
+<<set $robinmistknown to 1>>
+When you wake up, you notice a note pushed under your door. You read it.
+<br><br>
+
+"<i>I don't know who they are or what they want, but they're making me write this letter to you.
+<br>I'm being kept in some sort of cell. It's cold and I don't know what time it is.
+<br>They told me to tell you to come to <span class="gold">the landfill on Elk Street</span>.
+<br></i>
+<<if _robin.dom gte 80>>
+	<i>Please be careful.<<if $robinromance>> I love you.<</if>></i>"
+<<else>>
+	<i>Please help. I'm scared.</i>"
+	<br><br>
+
+	The words are almost too erratic to read towards the end, with multiple errors crossed out.
+	The page also has small circles of water damage.
+<</if>>
+<br><br>
+
+<span class="red">This is Robin's handwriting.</span>
+<br><br>
+
+<<link [[Next|Bedroom]]>><</link>>
 
 :: Home Leave Undies
 
@@ -366,10 +487,11 @@ You are in the bathroom.
 
 :: Sleep
 <<set _autosavehere to true>>
+<<set _robin to statusCheck("Robin")>>
 
 <<sleep>><<effects>>
 <<sleepeffects>>
-<<if $robindebtwake is 1>>
+<<if $robindebtwake is 1 and $robinbed is undefined>>
 	<<set $robindebtwake to 0>><<set $robindebtknown to 1>>
 	<<npc Robin>><<person1>>You're awoken by your door opening. You freeze in fear, until you see Robin peek through the gap. "Can I come in?" <<he>> asks.
 	<br><br>
@@ -386,18 +508,29 @@ You are in the bathroom.
 	<<endevent>>
 	<<link [[Next|Bed]]>><</link>>
 	<br>
-<<elseif $NPCName[$NPCNameList.indexOf("Robin")].lovewake is 1>>
-	<<set $NPCName[$NPCNameList.indexOf("Robin")].lovewake to 0>><<set $robinbed to 1>>
+<<elseif _robin.lovewake is 1>>
+	<<set _robin.lovewake to 0>><<set $robinbed to "yours">>
 	<<npc Robin>><<person1>>You feel a familiar presence. Robin wraps <<his>> arms around you.
+	<<if _robin.trauma gte 50>>
+		"I'm sorry," you hear <<his>> voice whisper into your ear. "I keep having nightmares..."
+		<br><br>
+
+		You hold <<him>> closer to you, and <<his>> shaking stops.
+		<<if $trauma gte ($traumamax * 0.7)>>
+			Your own shaking stop as <<he>> returns the embrace.
+		<</if>>
+	<</if>>
 	<br><br>
-	<<if $NPCName[$NPCNameList.indexOf("Robin")].dom gte 80>>
+	<<if _robin.dom gte 80 and _robin.trauma lt 50>>
 		<<link [[Cuddle|Robin Bed Dominant]]>><</link>>
 		<br>
 	<<else>>
-		<<link [[Cuddle|Bed]]>><<endevent>><<trauma -6>><<stress -12>><</link>><<ltrauma>><<lstress>>
+		<<link [[Cuddle|Bed]]>><<endevent>><<trauma -6>><<stress -12>><<npcincr Robin trauma -3>><</link>><<ltrauma>><<lstress>><<lrtrauma>>
 		<br>
 	<</if>>
-	<<link [[Kiss|Bed Robin Sex]]>><<set $sexstart to 1>><</link>>
+	<<if _robin.trauma lt 50>>
+		<<link [[Kiss|Bed Robin Sex]]>><<set $sexstart to 1>><</link>>
+	<</if>>
 	<br>
 <<elseif $location is "home" and $wraith and $wraith.nightmare is 2 and ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6)>>
 	You dream of a beautiful figure, cloaked in white, standing under the red moon. It has its arms spread out to you in a welcoming gesture. You can feel its gaze boring into your mind as you step closer.
@@ -405,7 +538,7 @@ You are in the bathroom.
 	It's surrounded by trees, all bending inwards, and floating above a lake. Everything moves around you, and you find yourself hanging above a large ruin. You can't breathe.
 	<br><br>
 	You slowly open your eyes, and sluggishly stand from your bed.
-	<<if $robinbed is 1>>
+	<<if $robinbed is "yours">>
 		You make sure not to wake Robin.
 	<<elseif $kylarbed is 1>>
 		You make sure not to wake Kylar.
@@ -418,8 +551,8 @@ You are in the bathroom.
 <<elseif $baileyrapewake is 1>>
 	<<set $baileyrapewake to 0>>
 	<<generate1>><<person1>>You awaken to a shape looming over you and hands pulling off your covers. It's a <<person>>. "Don't struggle," <<he>> says.
-	<<if $robinbed is 1 or $kylarbed is 1>>
-		"We wouldn't want to wake up your friend." <<if $robinbed is 1>>Robin<<else>>Kylar<</if>> lays beside you, still asleep.
+	<<if $robinbed is "yours" or $kylarbed is 1>>
+		"We wouldn't want to wake up your friend." <<if $robinbed is "yours">>Robin<<else>>Kylar<</if>> lays beside you, still asleep.
 	<</if>>
 	"You looked so cute, cosy and safe sleeping. I couldn't help myself."
 	<br><br>
@@ -434,7 +567,7 @@ You are in the bathroom.
 	<br>
 	A sprinkling of hoar frost
 	<br>
-	Falls down by the window, 
+	Falls down by the window,
 	<br>
 	Now to rise or to toss?
 	<br><br>
@@ -444,74 +577,7 @@ You are in the bathroom.
 	<<link [[Toss and go back to sleep|Sleep]]>><<endevent>><</link>>
 	<br>
 <<elseif $location is "home" and $slimeWake is 1>>
-	<<set $slimeWake to 0>>
-	<<set _newLocations to ["Residential alleyways", "Commercial alleyways", "Park", "Industrial alleyways"]>>
-	<<set _newLocation to _newLocations[random(0,3)]>>
-	<<set $eventskip to 1>><<set $slimeSleepEvent to 3>>
-	<<if $hour lt 24 and $hour gt 12>>
-		<<set $slimeSleepEvent += 1>>
-	<</if>>
-	You wake up in a confused and disoriented state. The last thing you recall is getting into bed like normal. However, you're clearly not in it anymore. You have a feeling that the slime in your ear is involved in some way.
-	<br><br>
-	<<set _coveredIn to "">>
-	<<if random(0,100) gt 80>>
-		<<set _coveredIn to "slime">>
-		<<if $player.penisExist and $player.virginity.penile isnot true and !$worn.genitals.type.includes("chastity")>>
-			<<set $player.bodyliquid.penis.goo += random(1,3)>>
-		<</if>>
-		<<if $player.vaginaExist and $player.virginity.vaginal isnot true and !$worn.genitals.type.includes("chastity")>>
-			<<set $player.bodyliquid.vagina.goo += random(1,3)>>
-		<</if>>
-		<<if $player.virginity.anal isnot true and $worn.genitals.anal_shield isnot 1 and $analdisable is "f">>
-			<<set $player.bodyliquid.anus.goo += random(1,3)>>
-		<</if>>
-		<<if $player.virginity.oral isnot true>>
-			<<set $player.bodyliquid.mouth.goo += random(1,3)>>
-		<</if>>
-		<<set $player.bodyliquid.hair.goo += random(1,3)>>
-		<<set $player.bodyliquid.face.goo += random(1,3)>>
-		<<set $player.bodyliquid.neck.goo += random(1,3)>>
-		<<set $player.bodyliquid.chest.goo += random(1,3)>>
-		<<set $player.bodyliquid.leftarm.goo += random(1,3)>>
-		<<set $player.bodyliquid.rightarm.goo += random(1,3)>>
-		<<set $player.bodyliquid.thigh.goo += random(1,3)>>
-		<<set $player.bodyliquid.feet.goo += random(1,3)>>
-	<</if>>
-	<<if random(0,100) gt 80>>
-		<<if _coveredIn is "slime">>
-			<<set _coveredIn += " and semen">>
-		<<else>>
-			<<set _coveredIn to "semen">>
-		<</if>>
-		<<if $player.penisExist and $player.virginity.penile isnot true and !$worn.genitals.type.includes("chastity")>>
-			<<set $player.bodyliquid.penis.semen += random(1,3)>>
-		<</if>>
-		<<if $player.vaginaExist and $player.virginity.vaginal isnot true and !$worn.genitals.type.includes("chastity")>>
-			<<set $player.bodyliquid.vagina.semen += random(1,3)>>
-		<</if>>
-		<<if $player.virginity.anal isnot true and $worn.genitals.anal_shield isnot 1 and $analdisable is "f">>
-			<<set $player.bodyliquid.anus.semen += random(1,3)>>
-		<</if>>
-		<<if $player.virginity.oral isnot true>>
-			<<set $player.bodyliquid.mouth.semen += random(1,3)>>
-		<</if>>
-		<<set $player.bodyliquid.hair.semen += random(1,3)>>
-		<<set $player.bodyliquid.face.semen += random(1,3)>>
-		<<set $player.bodyliquid.neck.semen += random(1,3)>>
-		<<set $player.bodyliquid.chest.semen += random(1,3)>>
-		<<set $player.bodyliquid.leftarm.semen += random(1,3)>>
-		<<set $player.bodyliquid.rightarm.semen += random(1,3)>>
-		<<set $player.bodyliquid.thigh.semen += random(1,3)>>
-		<<set $player.bodyliquid.feet.semen += random(1,3)>>
-	<</if>>
-	<<if _coveredIn isnot "">>
-		<<set $slimeSleepEvent += 2>>
-		On top of this predicament, you find yourself covered in <<print _coveredIn>>. If this was the slime's doing, it clearly had its fun with your body while you slept.
-		<br><br>
-	<</if>>
-	Having a look round your surroundings, you think that you've somehow been relocated to the <<print _newLocation.toLocaleLowerCase()>>.
-	<br><br>
-	<<link [[Next|_newLocation]]>><</link>>
+	<<slime_wake_home>>
 <<else>>
 	<<if $nightmares is 1 and $controlled is 0>>
 		<<if _sleepinterrupt>>
@@ -579,12 +645,12 @@ You are in the bathroom.
 			<</if>>
 		<</if>>
 	<</if>>
-	<<if $robinbed is 1>>
-		<<set $robinbed to 0>>
+	<<if $robinbed is "yours">>
+		<<unset $robinbed>>
 		<<npc Robin>><<person1>>
 		<<wakingEffects $sleepHoursTotal>>
 		<<if _wakingEffect is "dryheaving">>
-			"Are you okay? Let me help," Robin says, easing you back up. <<He>> checks to see if you're fine before taking <<his>> leave. 
+			"Are you okay? Let me help," Robin says, easing you back up. <<He>> checks to see if you're fine before taking <<his>> leave.
 		<<elseif _orgasm is true>>
 			<<if $exposed gte 2>>
 				Robin cuddles you. "I'll leave you to get-" <<he>> pauses, noticing the moisture on their body and yours. Blushing, <<he>> gathers tissues for both of you.
@@ -607,7 +673,7 @@ You are in the bathroom.
 		<br><br>
 	<<elseif $kylarbed is 1>>
 		<<npc Kylar>><<person1>>
-		<<if $rng gte 81 and $robinmissing isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
+		<<if $rng gte 81 and $robinmissing is 0 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
 			You awaken to the sound of your door creaking open. You hear somebody gasp, before they hurriedly shut the door.
 			<br><br>
 
@@ -660,17 +726,178 @@ You are in the bathroom.
 		<<wardrobeSelection true>>
 		<<radiooutfits>>
 		<br><br>
-		<<if $renttime lte 0>><<set $bus to "home">>
+		<<if $renttime lte 0>>
+			<<set $bus to "home">>
 			<<link [[Get out of bed|Bedroom Bailey]]>><</link>>
+			<br><br>
+		<<elseif $robinmissing is "landfill" and !$robinmistknown>>
+			<<link [[Get out of bed|Bedroom Robin Mist Note]]>><</link>>
 			<br><br>
 		<<else>>
 			<<link [[Get out of bed|Bedroom]]>><</link>>
-			<br><br>
 		<</if>>
 	<</if>>
 <</if>>
 <<if $kylarbed isnot 1>>
 	<<set $phase to 0>>
+<</if>>
+
+:: Robin Sleep
+<<set _autosavehere to true>>
+<<run statusCheck("Robin")>>
+<<sleep>><<effects>>
+<<sleepeffects>>
+<<set $wear_outfit to "clotheson">>
+
+<<if $baileyrapewake>>
+	<<set $baileyrapewake to 0>>
+	<<generate1>><<person1>>You awaken to a shape looming over you and hands pulling off your covers. It's a <<person>>. "Don't struggle," <<he>> says.
+	"We wouldn't want to wake up your friend." Robin lays beside you, still asleep.
+	"You looked so cute, cosy and safe sleeping. I couldn't help myself."
+	<br><br>
+
+	<span class="red">Bailey leans against the door frame, counting money.</span>
+	<br><br>
+
+	<<link [[Next|Sleep Rape]]>><<set $molestationstart to 1>><</link>>
+	<br>
+<<elseif $location is "home" and $wraith and $wraith.nightmare is 2 and ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6)>>
+	You dream of a beautiful figure, cloaked in white, standing under the red moon. It has its arms spread out to you in a welcoming gesture. You can feel its gaze boring into your mind as you step closer.
+	<br><br>
+	It's surrounded by trees, all bending inwards, and floating above a lake. Everything moves around you, and you find yourself hanging above a large ruin. You can't breathe.
+	<br><br>
+	You slowly open your eyes, and sluggishly stand from the bed. You make sure not to wake Robin. Your ears are ringing. You make your way towards your room.
+	<br><br>
+	<<storeon "bed" "wardrobe">><<wraithPossess "home">>
+	<span class="nextLink"><<link [[Walk.|Bedroom]]>><</link>></span>
+	<br>
+<<elseif $location is "home" and $slimeWake is 1>>
+	<<slime_wake_home>>
+<<else>>
+	<<if $nightmares is 1 and $controlled is 0>>
+		<<if _sleepinterrupt is 1>>
+			<<if $motherwake is 1>>
+				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
+			<<else>>
+				<<wakingEffects $sleepHoursTotal>>
+				<<if _wakingEffect isnot undefined>>
+					You dreamt of
+				<<else>>
+					You dream you are
+				<</if>>
+				being hunted by something <<if $wraith and $wraith.state is "haunt" and $rng lte 25>>pale<<else>>dark<</if>> and terrible. The nightmares are interrupted by a hammering on your door. It's Bailey, waking you for school.
+			<</if>>
+			<br><br>
+			<<set $motherwake to 1>>
+		<<else>>
+			<<wakingEffects $sleepHoursTotal>>
+			<<if _wakingEffect isnot undefined>>
+				You dreamt of
+			<<else>>
+				You dream you are
+			<</if>>
+			being hunted by something <<if $wraith and $wraith.state is "haunt" and $rng lte 25>>pale<<else>>dark<</if>> and terrible. You quickly forget the specifics, but the sense of dread lingers.
+			<br><br>
+		<</if>>
+	<<else>>
+		<<if _sleepinterrupt is 1>>
+			<<if $motherwake is 1>>
+				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
+			<<else>>
+				<<wakingEffects $sleepHoursTotal>>
+				<<if _wakingEffect isnot undefined>>
+					After you slept
+				<<else>>
+					You sleep
+				<</if>>
+				soundly, but are awoken early by a hammering on your door. It's Bailey, waking you for school.
+			<</if>>
+			<br><br>
+			<<set $motherwake to 1>>
+		<<else>>
+			<<if !_wakingEffect>>
+				<<wakingEffects $sleepHoursTotal>>
+			<</if>>
+			<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+				You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+				<br><br>
+			<<elseif $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
+				Your sleep is plagued by dirty dreams.
+				<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+				<<arousal `100 * $sleepHoursTotal`>>
+				<<if $arousal gte $arousalmax>>
+					They push you over the edge.
+					<<orgasm>><<set _orgasm to true>>
+				<<else>>
+					<br><br>
+				<</if>>
+			<<elseif _mildNausea>>
+				You sleep soundly.
+				<br><br>
+			<<else>>
+				You sleep soundly.
+				<br><br>
+			<</if>>
+		<</if>>
+	<</if>>
+	<<unset $robinbed>>
+	<<npc Robin>><<person1>>
+	<<wakingEffects $sleepHoursTotal>>
+	<<if $renttime gte 1>> <!-- If Rent is not due -->
+		<<if _robin_location is "orphanage" or _robin_location is "sleep">>
+			<<if $hour lte 21>>
+				<<set _robinSleepyChance to ($time - 360) * 4/3>> <!-- 0% at 6, 80% at 7, and 100% starting at 7:15 -->
+				<<set _robinAwakeChance to ($time - 420) * 5/3>> <!-- 0% at 7, then increases to 100% by 8 -->
+				<<if _wakingEffect is "dryheaving">>
+					"Are you okay? Let me help," Robin says, easing you back up. <<He>> checks to see if you're fine before getting up <<himself>>.
+					<<set $phase to 1>>
+				<<elseif _orgasm is true and !$rng lte _robinAwakeChance>>
+					<<set $phase to 1>>
+					<<if $exposed gte 2>>
+						Robin cuddles you. "You should go-" <<he>> pauses, noticing the moisture on their body and yours. Blushing, <<he>> gathers tissues for both of you.
+						<<if $rng gte 71>>
+							"I-It's okay," <<he>> says.
+						<<elseif $rng gte 31>>
+							"This might be my fault," <<he>> says.
+						<<else>>
+							"I-I might need a bath," <<he>> says.
+						<</if>>
+					<<else>>
+						Robin cuddles you. "You should go ba-" <<he>> pauses, noticing the moist patch around your crotch. Blushing, <<he>> passes you a tissue.
+						"I-It's okay," <<he>> says.
+					<</if>>
+				<<else>>
+					<<if $rng lte _robinAwakeChance>>
+						"About time you woke up, sleepyhead." Robin smiles at you from the edge of the bed.
+						<<set $phase to 2>>
+					<<elseif $rng lte _robinSleepyChance>>
+						Robin cuddles you. "You should go back and get dressed," <<he>> says.
+						<<set $phase to 1>>
+					<<else>>
+						Robin cuddles you in <<his>> sleep.
+						<<set $phase to 0>>
+					<</if>>
+				<</if>>
+				<br><br>
+			<</if>>
+		<<else>>
+			You find a note on the wall next to you. "Hope you slept okay! I had to go do stuff!"
+			<br><br>
+
+			<<set $phase to 3>>
+		<</if>>
+	<</if>>
+	<<if $hour is 6>><<run setRobinLocationOverride("orphanage", 6)>><</if>>
+	<<endevent "phaseless">>
+	<<if $renttime lte 0>>
+		<<set $bus to "home">>
+		<<set $inRobinsRoom to true>>
+		<<link [[Next|Bedroom Bailey]]>><<set $wardrobe_location to "wardrobe">><</link>>
+		<br><br>
+	<<else>>
+		<<link [[Next|Robin Room Wake]]>><<set $wardrobe_location to "wardrobe">><</link>>
+		<br><br>
+	<</if>>
 <</if>>
 
 :: Bath Scream
@@ -907,7 +1134,7 @@ As you remove the plug to drain the water, you feel something probe your <<genit
 	You wash until you're squeaky clean.<<wash>>
 	<br><br>
 
-	As you remove the plug to drain the water, you hear voices from the hallway. They stop outside the door, before flinging it open. A <<person1>><<person>>, <<person2>><<person>>, and <<person3>><<person>> barge in.
+	As you remove the plug to drain the water, you hear voices from the hallway. They stop outside the door, before flinging it open. A <<fullGroup>> barge in.
 	<br><br>
 	<<set $rng to random(1, 100)>>
 	<<if $rng gte 51>>
@@ -1069,10 +1296,10 @@ You've pushed yourself too much.
 
 <<effects>>
 <<wearoutfit>>
-<<if $robinbed is 1>>
+<<if $robinbed is "yours">>
 	You snuggle under the covers with Robin.
 <<else>>
-	<<if $location is "home" and $corruption_slime gte ($willpower / 20) and random(0,100) lt 3 and ($daystate is "night" and ($hour gte 20 or $hour lte 1)) and $slimeSleepEvent is 0 and $slimeEvent is undefined>>
+	<<if $location is "home" and $corruption_slime gte (currentSkillValue('willpower') / 20) and random(0,100) lt 3 and ($daystate is "night" and ($hour gte 20 or $hour lte 1)) and $slimeSleepEvent is 0 and $slimeEvent is undefined>>
 		<<set $slimeSleepEvent to 4>>
 		<<slimeNoSleep>>
 		<<set _skip to true>>
@@ -1087,29 +1314,29 @@ You've pushed yourself too much.
 
 <<if _skip isnot true>>
 	<<if $sleeptrouble is 1 and $controlled is 0>>
-		<<link [[Sleep for 10 hours|Sleep]]>><<set $sleephour to 10>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
+		<<link [[Sleep for 10 hours|Sleep]]>><<set $sleephour to 10>><<incrementautosave>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
 		<br>
-		<<link [[Sleep for 9 hours|Sleep]]>><<set $sleephour to 9>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
+		<<link [[Sleep for 9 hours|Sleep]]>><<set $sleephour to 9>><<incrementautosave>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
 		<br>
 	<</if>>
 
-	<<link [[Sleep for 8 hours|Sleep]]>><<set $sleephour to 8>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
+	<<link [[Sleep for 8 hours|Sleep]]>><<set $sleephour to 8>><<incrementautosave>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 7 hours|Sleep]]>><<set $sleephour to 7>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
+	<<link [[Sleep for 7 hours|Sleep]]>><<set $sleephour to 7>><<incrementautosave>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 6 hours|Sleep]]>><<set $sleephour to 6>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
+	<<link [[Sleep for 6 hours|Sleep]]>><<set $sleephour to 6>><<incrementautosave>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 5 hours|Sleep]]>><<set $sleephour to 5>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
+	<<link [[Sleep for 5 hours|Sleep]]>><<set $sleephour to 5>><<incrementautosave>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 4 hours|Sleep]]>><<set $sleephour to 4>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
+	<<link [[Sleep for 4 hours|Sleep]]>><<set $sleephour to 4>><<incrementautosave>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 3 hours|Sleep]]>><<set $sleephour to 3>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
+	<<link [[Sleep for 3 hours|Sleep]]>><<set $sleephour to 3>><<incrementautosave>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 2 hours|Sleep]]>><<set $sleephour to 2>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
+	<<link [[Sleep for 2 hours|Sleep]]>><<set $sleephour to 2>><<incrementautosave>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
 	<br>
-	<<link [[Sleep for 1 hour|Sleep]]>><<set $sleephour to 1>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
+	<<link [[Sleep for 1 hour|Sleep]]>><<set $sleephour to 1>><<incrementautosave>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
 	<br>
-	<<link [[Just sleep|Sleep]]>><<set $sleephour to -1>><<if $ironmanmode isnot true>><<set $saveDetails.auto.count++>><</if>><</link>> (??:??)<<ltiredness>>
+	<<link [[Just sleep|Sleep]]>><<set $sleephour to -1>><<incrementautosave>><</link>> (??:??)<<ltiredness>>
 	<br><br>
 
 	<<link [[Climb out of bed|Bedroom]]>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><<loadTempHairStyle>><<endevent>><</link>>
@@ -1118,9 +1345,53 @@ You've pushed yourself too much.
 	<<unset _skip>>
 <</if>>
 
+:: Robin Bed
+<<effects>>
+<<wearoutfit>>
+<<npc Robin>>
+
+You snuggle under the covers with Robin. You can feel the heat from <<his>> <<print ($robinromance is 1 and $NPCName[$NPCNameList.indexOf("Robin")].trauma lte 20 ? "naked " : "")>>body warming the bed.
+<<set $robinbed to "theirs">>
+
+<<if $wraith and $wraith.state isnot "" and $wraithPrison and ($moonstate is "evening" and $hour gte 11 or $moonstate is "morning" and $hour lt 6)>>
+	You feel anxious, and your eyes dart over to the mirror.
+<</if>>
+<<endevent>>
+<br><br>
+
+<<if _skip isnot true>>
+	<<if $sleeptrouble is 1 and $controlled is 0>>
+		<<link [[Sleep for 10 hours|Robin Sleep]]>><<set $sleephour to 10>><<incrementautosave>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
+		<br>
+		<<link [[Sleep for 9 hours|Robin Sleep]]>><<set $sleephour to 9>><<incrementautosave>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
+		<br>
+	<</if>>
+
+	<<link [[Sleep for 8 hours|Robin Sleep]]>><<set $sleephour to 8>><<incrementautosave>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 7 hours|Robin Sleep]]>><<set $sleephour to 7>><<incrementautosave>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 6 hours|Robin Sleep]]>><<set $sleephour to 6>><<incrementautosave>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 5 hours|Robin Sleep]]>><<set $sleephour to 5>><<incrementautosave>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 4 hours|Robin Sleep]]>><<set $sleephour to 4>><<incrementautosave>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 3 hours|Robin Sleep]]>><<set $sleephour to 3>><<incrementautosave>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 2 hours|Robin Sleep]]>><<set $sleephour to 2>><<incrementautosave>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 1 hour|Robin Sleep]]>><<set $sleephour to 1>><<incrementautosave>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
+	<br>
+	<<link [[Just sleep|Robin Sleep]]>><<set $sleephour to -1>><<incrementautosave>><</link>> (??:??)<<ltiredness>>
+	<br><br>
+<<else>>
+	<<unset _skip>>
+<</if>>
+
 :: Orphanage
 <<set $outside to 0>><<set $location to "home">><<home_effects>><<effects>>
-<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+<<set _robin to statusCheck("Robin")>>
 
 You are in the main hall of the orphanage.
 
@@ -1184,22 +1455,43 @@ You are in the main hall of the orphanage.
 	<<if $renttime lte 0>>
 		"Pay your dues next time so we won't have to go through this again. Speaking of which..." <<He>> holds out <<his>> hand.
 		<<endevent>>
-		<<rentdue>>
+		<<if $robinfirstrentfight and ($baileypaychain lt 2 or $baileyOverdue gte 1)>>
+			<<rentduerobin 0>>
+		<<else>>
+			<<rentdue 0>>
+		<</if>>
 	<<else>>
 		"Pay your dues next time so we won't have to go through this again," <<he>> says before pinching your cheek painfully.<<stress 6>><<trauma 6>><<gstress>><<gtrauma>>
 		<br><br>
-		
+
 		Bailey walks back into <<his>> office. You rub your cheek as you trudge to your bedroom.
 		<br>
-		<<if $robinReunionScene is "dungeon">>
+		<<if $robinReunionScene is "dungeon" or $robinReunionScene is "dungeonRobin">>
 			<span class="blue"><i>Robin's probably worried sick about you. You should check on <<nnpc_him "Robin">> when you get the chance.</i></span>
 			<br>
 		<</if>>
 		<br>
-		
+
 		<<link [[Next|Bedroom]]>><<endevent>><</link>>
 		<br>
 	<</if>>
+<<elseif $robinmissing is "pillory" and !$robinPillory.known and $hour gte 7 and $hour lte 15>>
+	<<generatec1>><<person1>>
+	<<npc Robin 2>>
+
+	One of the younger orphans spots you enter the main hall as they pass by. "You're friends with Robin, right? <<person2>><<Hes>> been gone for a while," <<person1>><<he>> says.
+	"Where could <<person2>><<he>> have gone?"
+	<br><br>
+
+	<<person1>><<He>> bombards you with questions. Another orphan soon approaches you, and does the same.
+
+	"Is <<person2>><<he>> going to be okay? Where did <<he>> go?"
+	<br><br>
+
+	<<link [[Answer truthfully|Robin Pillory Truth]]>><</link>>
+	<br>
+	<<link [[Evade the question|Robin Pillory Evade]]>><</link>>
+
 <<elseif $home_gone gte 168 and $daystate isnot "night">>
 	<<generatey1>><<person1>>
 	You notice something on the wall. It's a missing person's poster with a picture of you on it. It hasn't been taken down, which means Bailey must be looking for you as well.
@@ -1230,10 +1522,15 @@ You are in the main hall of the orphanage.
 	<<link [[Next|Orphanage]]>><</link>>
 	<br>
 
-<<elseif $renttime lte 0>><<set $bus to "home">>
+<<elseif $renttime lte 0>>
+	<<set $bus to "home">>
 	A hand rests on your shoulder from behind. <span class="red">It's Bailey.</span>
 	<br><br>
-	<<rentdue>>
+	<<if $robinfirstrentfight and ($baileypaychain lt 2 or $baileyOverdue gte 1)>>
+		<<rentduerobin 0>>
+	<<else>>
+		<<rentdue 0>>
+	<</if>>
 <<elseif $christmas is 1 and $monthday is 25 and $christmas_gift is "clothes" and !$christmas_event_2 and $daystate isnot "night">>
 	<<set $christmas_event_2 to 1>>
 	<<pass 30>>
@@ -1252,7 +1549,7 @@ You are in the main hall of the orphanage.
 
 	<<link [[Next|Orphanage]]>><<endevent>><</link>>
 	<br>
-<<elseif $christmas is 1 and $monthday is 25 and $robinmissing isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1 and $christmas_robin_gift_received is undefined and $hour gte 7>>
+<<elseif $christmas is 1 and $monthday is 25 and $robinmissing is 0 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1 and $christmas_robin_gift_received is undefined and $hour gte 7>>
 	<<set $christmas_robin_gift_received to true>>
 	You spot a present laid under the tree with your name on it. It's from Robin.
 	<br><br>
@@ -1261,7 +1558,7 @@ You are in the main hall of the orphanage.
 
 	<<link [[Next|Orphanage]]>><</link>>
 	<br>
-<<elseif $christmas is 1 and $monthday is 25 and $robinmissing isnot 1 and $christmas_gift_robin_wrapped is 1 and $christmas_gift_robin_given is undefined and $daystate isnot "night">>
+<<elseif $christmas is 1 and $monthday is 25 and $robinmissing is 0 and $christmas_gift_robin_wrapped is 1 and $christmas_gift_robin_given is undefined and $daystate isnot "night">>
 	<<set $christmas_gift_robin_given to true>>
 	<<christmas_robin>>
 <<elseif $home_event is 1 and $hour gte 6 and $hour lte 21>>
@@ -1285,7 +1582,7 @@ and !$fromRobinRoom and _robin.cdquest is 2 and _robin.trauma lte 20 and !$robin
 		<<ind>><<link [[Find hacker (0:10)|Orphanage Hacker]]>><<pass 10>><</link>>
 		<br><br>
 	<</if>>
-	<<if $halloween is 1 and $robinmissing isnot 1 and $hour gte 16 and $hour lt 19 and $monthday is 31 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
+	<<if $halloween is 1 and $robinmissing is 0 and $hour gte 16 and $hour lt 19 and $monthday is 31 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
 		<<if $halloween_robin_costume is "witch">>
 			You see Robin, dressed as a witch and surrounded by excited orphans.
 		<<elseif $halloween_robin_costume is "vampire">>
@@ -1305,7 +1602,7 @@ and !$fromRobinRoom and _robin.cdquest is 2 and _robin.trauma lte 20 and !$robin
 	<br><br>
 	<<officeicon>><<link [[Bailey's office (0:01)|Bailey's Office]]>><<pass 1>><</link>>
 	<br>
-	<<if $hour gte 18 and $hour lte 20 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40 and $robinmissing isnot 1 and !$robinTraumaVisit>>
+	<<if $hour gte 18 and $hour lte 20 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40 and $robinmissing is 0 and !$robinTraumaVisit>>
 		<<bedroomicon>><<link [[Bedroom (0:01)|Robin Trauma Visit]]>><<set $phase to 0>><<pass 1>><</link>>
 		<br>
 	<<elseif $kylar.timer.home gte 100 and $kylar.home is undefined>>
@@ -1408,7 +1705,7 @@ You celebrate Christmas with the other residents.
 	<<elseif $rng gte 71>>
 		A <<generatey1>><<person1>><<person>> passes a gift to a <<generatey2>><<person2>><<person>>. <<He>> looks delighted, but is patient enough to resist unwrapping it on the spot.
 	<<elseif $rng gte 61>>
-		<<if $robinmissing isnot 1>>
+		<<if $robinmissing is 0>>
 			Robin passes out small bags of snacks. A <<generatey1>><<person1>><<person>> keeps watch for Bailey.
 		<<else>>
 			A <<generate1>><<person1>><<person>> stares out the window. <<Hes>> worried about Robin.
@@ -1719,7 +2016,8 @@ The warmth feels wonderful on your bare skin.
 :: Bath Slime
 <<effects>>
 
-<<if $molestationstart is 1>><<set $molestationstart to 0>>
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
 	<<molested>>
 	<<controlloss>>
 	<<set $combat to 1>>
@@ -1736,11 +2034,15 @@ The warmth feels wonderful on your bare skin.
 	<<set $timer to 20>>
 <</if>>
 
-<<swarmeffects>><<if $tentacledisable is "f">><<effectstentacles>><</if>>
-
-<<swarm>><<if $tentacledisable is "f">><<tentacles>><</if>>
-<<if $tentacledisable is "f">><<statetentacles>><</if>>
+<<swarmeffects>>
 <<if $tentacledisable is "f">>
+	<<effectstentacles>>
+<</if>>
+
+<<swarm>>
+<<if $tentacledisable is "f">>
+	<<tentacles>>
+	<<statetentacles>>
 	<<actionsOmni>>
 <<else>>
 	<<swarmactions>>
@@ -1890,13 +2192,38 @@ Attitudes
 <br>
 
 :: Bedroom Bailey
-<<bedclotheson "bed">>
+<<effects>><<run statusCheck("Robin")>>
+<!-- Bailey catches you by surprise, no time to get dressed -->
 
-<<effects>>
+<<if $inRobinsRoom>>
+	Robin's bedroom door bursts open without warning. <span class="red">It's Bailey.</span>
+	<br><br>
 
-Your bedroom door bursts open without warning. <span class="red">It's Bailey.</span>
+	"You thought you could hide in Robin's room?" Bailey sneers.
+<<else>>
+	Your bedroom door bursts open without warning. <span class="red">It's Bailey.</span>
+<</if>>
+
+<<if $exposed gte 1>>
+	<<nnpc_He "Bailey">> looks over you briefly. "Put your clothes on," <<nnpc_he "Bailey">> says. <<nnpc_He "Bailey">> snaps <<nnpc_his "Bailey">> fingers. "Now."
+	You hastily throw on the clothes you had on before. <<bedclotheson "bed">>
+<</if>>
 <br><br>
-<<rentdue>>
+
+<<if $robinfirstrentfight>> <!-- the first robin fight has already happened -->
+	<<if !["sleep", "orphanage"].includes(_robin_location)>>
+		<<rentduerobin 0>>
+	<<else>>
+		<<rentduerobin 1>>
+	<</if>>
+<<else>>
+	<<if ["sleep", "orphanage"].includes(_robin_location) and $inRobinsRoom>>
+		<<rentdue 1>> <!-- Robin is in the room with the PC -->
+	<<else>>
+		<<rentdue 0>>
+	<</if>>
+<</if>>
+<<unset $inRobinsRoom>>
 
 :: Mirror
 <<effects>>
@@ -1978,7 +2305,7 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	<<neutral 1>>
 	<<molested>>
 	<<maninit>>
-	<<if $robinbed is 1 or $kylarbed is 1>>
+	<<if $robinbed isnot undefined or $kylarbed is 1>>
 		<<enable_rescue>>
 	<</if>>
 <</if>>
@@ -2023,7 +2350,7 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	<<clotheson>>
 	<<endcombat>>
 	<<link [[Next|Bed]]>><</link>>
-<<elseif $robinbed is 1>>
+<<elseif $robinbed isnot undefined>>
 	Robin's eyes flutter open in response to your cry. Robin sees the <<person>> pawing at you, and kicks <<him>> in the face. <<He>> falls off the bed. "Fucking brat," <<he>> says, then turns to Bailey. "I want my money back."
 	<br><br>
 	Bailey gives <<him>> a level stare. "You got what you paid for. Not my fault you couldn't handle them."
@@ -2036,7 +2363,11 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	<br><br>
 	<<npcincr Robin dom 1>>
 	<<endevent>>
-	<<link [[Next|Bed]]>><</link>>
+	<<if $robinbed is "theirs">>
+		<<link [[Next|Robin Bed]]>><</link>>
+	<<else>>
+		<<link [[Next|Bed]]>><</link>>
+	<</if>>
 <<else>>
 	<<set $kylarDaily.sleepRape to true>>
 	Kylar's eyes snap open the moment you cry out. <<nnpc_He "Kylar">> lunges out of the bed, tackling the <<person>> to the floor. <<nnpc_He "Kylar">> pulls out a knife from
@@ -2110,9 +2441,9 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	"What?"
 	<br>
 	"I said
-	<<if $fameexhibitionism gte 600>>
+	<<if $fame.exhibitionism gte 600>>
 		strip. It's what you're famous for. Get on with it."
-	<<elseif $fameexhibitionism gte 200>>
+	<<elseif $fame.exhibitionism gte 200>>
 		strip. You've done it before. In much more public places. Get on with it."
 	<<elseif $exhibitionism lt 35>>
 		strip." The hacker's face softens. "Look, I don't 'get off' on this. I need to be sure."
@@ -2152,7 +2483,8 @@ You take off your clothes. <<if $exhibitionism gte 55>>Disappointingly, they<<el
 "What?"
 <br>
 They study your face for a long moment.
-<<if $hairlength gte 200>><<pass 5>>
+<<if $hairlength gte 200>>
+	<<pass 5>>
 	<br>
 	"Okay. Look, if- Wait! Nice try."
 	<br>
@@ -2266,7 +2598,8 @@ Your penis is locked inside the cage. Shaving around it will be a bit more trick
 	<br>
 <</if>>
 <<if $worn.genitals.name isnot "chastity belt">>
-	<<link [[Dye pubic hair->Dye pubic hair]]>><</link>><br>
+	<<link [[Dye pubic hair->Dye pubic hair]]>><</link>>
+	<br>
 <</if>>
 <<link [[Don't shave anything->Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
 <</if>>
@@ -2321,9 +2654,11 @@ You spread your legs and start carefully trimming your pubes. After a few minute
 
 <<set _ownedColours = $makeup.owned.hairdye.filter(x => x.count > 0)>>
 <<if _ownedColours.length == 0>>
-	You don't own any hair dyes. Maybe you should visit a cosmetics shop to buy some.<br>
+	You don't own any hair dyes. Maybe you should visit a cosmetics shop to buy some.
+	<br>
 <<else>>
-	What colour will it be?<br>
+	What colour will it be?
+	<br>
 	<<set _choice = _ownedColours[0].colour>>
 	<<for _i, _item range _ownedColours>>
 		<label><span class="grey-shadow"><span @class="'hair-' + _item.colour.replace(/ /g, '-')"><span class="colour-hair"><span style="color:#FD6064;"><<haircolourtext _item.colour>></span></span></span></span>&nbsp;<<print '<<radiobutton "_choice" "'+_item.colour+'" ' + (_choice is _item.colour ? "checked" : "") + '>>'>></label>
@@ -2339,8 +2674,10 @@ You spread your legs and start carefully trimming your pubes. After a few minute
 :: Dye pubic hair Finish
 <<effects>>
 
-You treat your most sensitive parts with petroleum jelly and then prepare the hair dye.<br>
-Using a small brush you carefully apply chemicals to your pubes and wait for them to soak in.<br>
+You treat your most sensitive parts with petroleum jelly and then prepare the hair dye.
+<br>
+Using a small brush you carefully apply chemicals to your pubes and wait for them to soak in.
+<br>
 <<arousal 100>>
 <br>
 After several minutes you rinse your private area with water and behold your <<genitals 2>> with <<haircolourtext $makeup.pbcolour>> pubic hair.
@@ -2546,7 +2883,7 @@ You climb onto your knees and remain there while bowing your head. The pair laug
 :: Sold Glare
 
 <<effects>>
-You glare at the <<person1>><<person>> and <<person2>><<person>> in turn, and don't look away when they look back. The pair laugh.
+You glare at the <<fullGroup>> in turn, and don't look away when they look back. The pair laugh.
 <br><br>
 "I think <<pshes>> got some thoughts of <<pher>> own," the <<person1>><<person>> says as <<he>> reaches forward and rips the gag from your mouth.
 <br><br>

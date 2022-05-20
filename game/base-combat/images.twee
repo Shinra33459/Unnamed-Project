@@ -1,14 +1,25 @@
 :: Widgets Combat Img [widget]
 
 <<widget "combatimg">>
-	<<if $enemyarousal gte ($enemyarousalmax / 5) * 4>>
-		<<set _animspeed to 'vfast'>>
-	<<elseif $enemyarousal gte ($enemyarousalmax / 5) * 3>>
-		<<set _animspeed to 'fast'>>
-	<<elseif $enemyarousal gte ($enemyarousalmax / 5) * 1>>
-		<<set _animspeed to 'mid'>>
+	<<if $enemytype is "machine">>
+		<<switch $machine.speed>>
+			<<case 1>>
+				<<set _animspeed to "slow">>
+			<<case 2>>
+				<<set _animspeed to "fast">>
+			<<case 3>>
+				<<set _animspeed to "vfast">>
+		<</switch>>
 	<<else>>
-		<<set _animspeed to 'slow'>>
+		<<if $enemyarousal gte ($enemyarousalmax / 5) * 4>>
+			<<set _animspeed to "vfast">>
+		<<elseif $enemyarousal gte ($enemyarousalmax / 5) * 3>>
+			<<set _animspeed to "fast">>
+		<<elseif $enemyarousal gte ($enemyarousalmax / 5) * 1>>
+			<<set _animspeed to "mid">>
+		<<else>>
+			<<set _animspeed to "mid">>
+		<</if>>
 	<</if>>
 	<<if window.document.body.clientWidth lt 650>>
 		<div id="divandroidsex" @class="colourContainerClasses() + ($combatAnimations isnot false ? '':' noAnimations')">
@@ -946,7 +957,7 @@ Lashes held in place during idle frames, and 4-frame hair overlay that didn't an
 		<img @class="'layer-sextears anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/body/doggyactivevaginal.png">
 		<img @class="'layer-sextears anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/body/doggyactivevaginaldp.png">
 		<<if $silhouettedisable is "f">>
-		
+
 			<<if $rightarm is "bound" or $rightarm is "grappled" or $rightarm is "behind">>
 				<img @class="'layer-sextears anim-doggy-4f-'+_animspeed" src="img/sex/doggy/shadow/activevaginal.png">
 				<img @class="'layer-sextears anim-doggy-4f-'+_animspeed" src="img/sex/doggy/shadow/activevaginaldpbound.png">
@@ -1207,12 +1218,11 @@ and _stanceCheck isnot "top">>
 				<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xraybeastvaginal.png">
 			<</if>>
 		/* STRAP-ON COLOUR TEST */
-		<<elseif $vaginatarget isnot undefined and npcHasStrapon($vaginatarget)>>
+		<<elseif $vaginatarget isnot undefined and npcHasStrapon($vaginatarget, '0x0')>>
 			<<getstraponcolor $vaginatarget>>
 			<<set _ppcolor to $phalluscolorA>>
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/strapon/xray_vaginal_interior.png">
 			<img @class="'layer-sextears '+_ppcolor+' anim-xray-8f-'+_animspeed" src="img/sex/strapon/xray_vaginal_straponRed.png">
-		<<elseif $NPCList[0].skincolour is "black">>
 		<<elseif $vaginatarget isnot undefined and $NPCList[$vaginatarget].skincolour is "black">>
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/black/xrayvaginal.png">
 		<<else>>
@@ -1264,7 +1274,7 @@ and _stanceCheck isnot "top">>
 				<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xraybeastanal.png">
 			<</if>>
 		</div>
-	<<elseif $anustarget isnot undefined and npcHasStrapon($anustarget)>>
+	<<elseif $anustarget isnot undefined and npcHasStrapon($anustarget, '0x1')>>
 		<div @class="_anusClass" @id="_anusID">
 			<<getstraponcolor $anustarget>>
 			/*<<set _ppcolor to "strapon-"+$NPCList[$anustarget].strapon.color>>*/
@@ -1405,7 +1415,7 @@ and _stanceCheck isnot "top">>
 			<img @class="'layer-sextears '+_ppcolor+' anim-xray-8f-'+_animspeed" src="img/sex/strapon/xray_anal_straponRed.png">
 		</div>
 <<elseif $NPCList[0].skincolour is "black">>
-	<<if ($condomVaginalImg or ($vaginatarget isnot undefined and npcHasStrapon($vaginatarget))) and $vaginastate is "penetrated">>
+	<<if ($condomVaginalImg or ($vaginastate is "penetrated" and ($vaginatarget isnot undefined and npcHasStrapon($vaginatarget))))>>
 		<div class="i256" @id="_vagID">
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/black/xrayvaginal.png">
 		</div>
@@ -1414,7 +1424,7 @@ and _stanceCheck isnot "top">>
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/black/xrayvaginalcum.png">
 		</div>
 	<</if>>
-	<<if ($condomAnalImg or ($vaginatarget isnot undefined and npcHasStrapon($vaginatarget))) and $vaginastate is "penetrated">>
+	<<if ($condomAnalImg or ($vaginatarget isnot undefined and $vaginastate is "penetrated" and npcHasStrapon($vaginatarget)))>>
 		<div class="i256" @id="_vagID">
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/black/xrayvaginaldoubleblack.png">
 		</div>
@@ -1465,7 +1475,7 @@ and _stanceCheck isnot "top">>
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xrayvaginaldoublecum.png">
 		</div>
 	<</if>>
-	<<if  $anusstate is "penetrated" and ($condomAnalImg or ($anustarget isnot undefined and npcHasStrapon($anustarget)))>>
+	<<if $anusstate is "penetrated" and ($condomAnalImg or ($anustarget isnot undefined and npcHasStrapon($anustarget)))>>
 		<div class="i256" @id="_anusID">
 			<img @class="'anim-xray-8f-'+_animspeed" src="img/sex/xrayanal.png">
 		</div>
@@ -1873,7 +1883,7 @@ and _stanceCheck isnot "top">>
 		<img @class="'anim-close-6f-'+_animspeed" @src="_img.chastitypenis" @style="'filter: '+_filters.body">
 		<img @class="'anim-close-6f-'+_animspeed" @src="'img/sex/close/'+_position+'/chastity.png'">
 	<<elseif playerHasStrapon()>>
-		/* Need to add strap-on close sprite here */ 
+		/* Need to add strap-on close sprite here */
 		<<if $worn.genitals.type.includes("hidden")>>
 			<img @class="'anim-close-6f-'+_animspeed" @src="'img/sex/close/' + _position + '/chastityBelt/penis'+_beltName+'.png'">
 		<</if>>

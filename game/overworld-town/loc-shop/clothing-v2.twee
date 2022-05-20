@@ -347,6 +347,16 @@
 									<<updateclotheslist _shopLocation _csslot _outfits>>
 								<</link>>
 							<</capture>>
+							<<set $_count to getOwnedClothingCount(_item.index, $_realSlot)>>
+							<<if $_count isnot 0>>
+								<span class="white">
+									&nbsp;|
+									<<if !_compact>>
+										Owned:
+									<</if>>
+									$_count
+								</span>
+							<</if>>
 							<<if _unlocked>>
 								<span class="gold">&nbsp;| Unlocked</span>
 							<</if>>
@@ -360,7 +370,7 @@
 						</div>
 					<<else>>
 						<!-- Price tag -->
-						<span class="clothing-price"><<printmoney `getClothingCost(_item,$clothingShopSlot)` true>></span>
+						<span class="clothing-price"><<printmoney `getClothingCost(_item, $_realSlot)` true>></span>
 						<!-- Integrity, Reveal and Warmth indicators -->
 						<<if !$shopDefaults.compactMode>>
 							<div class="clothing-integrity">
@@ -446,7 +456,7 @@
 		<<set _temp_choice to clone(setup.clothes[$clothingShopSlot][$clothes_choice])>>
 		<<set _realSlot to ($clothingShopSlot is "all" ? _item.realSlot : $clothingShopSlot)>>
 		<<set _realIndex to _temp_choice.index>>
-		
+
 		<!-- Unlocked text -->
 		<<if $specialClothes[_temp_choice.name.replace(/ /g,"")] is "unlocked">>
 			<<specialClothesHint>>
@@ -474,7 +484,7 @@
 		<br><br>
 		<<shoptraits>>
 		<<set _slimeSlots to ["over_upper","over_lower","upper","lower","under_upper","under_lower"]>>
-		<<if !_slimeSlots.includes($clothingShopSlot) or $willpower gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80>>
+		<<if !_slimeSlots.includes($clothingShopSlot) or currentSkillValue('willpower') gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80>>
 			<div class="clothing-colours-div">
 				<<set _hiddenMannequin = $images is 1 ? "" : "hidden">>
 				<!-- Item preview -->
@@ -692,7 +702,7 @@
 		</div>
 		<!-- Update text of "Buy and send home" button -->
 		<!-- <<run $(() => { $('#buy-multiple-slider input').on('change', () => { new Wikifier (null, "<<updateclotheslist>>") }); })>> -->
-		<<run $(() => { 
+		<<run $(() => {
 			$('#buy-multiple-slider input').on('input change', () => {
 				let cost = getClothingCost(_temp_choice, $clothingShopSlot);
 				let el = $('#buy-send-home > .buy-button > .buy-button-inner > a');

@@ -4,7 +4,7 @@
 You are on the beach.
 <<if $daystate is "day">>
 	<<if $weather is "clear">>
-		It is awash with visitors, children build sandcastles and play in the water while their parents bask in the sun. A group of teenagers are playing volleyball.
+		It is awash with visitors, children build sandcastles and play in the water while their parents bask in the sun. A group of students are playing volleyball.
 	<<elseif $weather is "overcast">>
 		The clouds have driven away most would-be visitors, but there are still people strolling along the water's edge.
 	<<elseif $weather is "rain">>
@@ -14,7 +14,7 @@ You are on the beach.
 	<</if>>
 <<elseif $daystate is "dawn">>
 	<<if $weather is "clear">>
-		It is a popular destination for joggers, some have dogs with them. A few families are setting up windbreakers. A group of teenagers are playing volleyball.
+		It is a popular destination for joggers, some have dogs with them. A few families are setting up windbreakers. A group of students are playing volleyball.
 	<<elseif $weather is "overcast">>
 		It is a popular destination for joggers, some have dogs with them. Fog blocks your view of the ocean.
 	<<elseif $weather is "rain">>
@@ -24,7 +24,7 @@ You are on the beach.
 	<</if>>
 <<elseif $daystate is "dusk">>
 	<<if $weather is "clear">>
-		Families are leaving as the sun sets. A group of teenagers are playing volleyball.
+		Families are leaving as the sun sets. A group of students are playing volleyball.
 	<<elseif $weather is "overcast">>
 		It is mostly deserted, but some people are strolling along the water's edge.
 	<<elseif $weather is "rain">>
@@ -34,7 +34,7 @@ You are on the beach.
 	<</if>>
 <<elseif $daystate is "night">>
 	<<if $weather is "clear">>
-		It appears deserted, save for a group of teenagers who are drinking around a fire.
+		It appears deserted, save for a group of students who are drinking around a fire.
 	<<elseif $weather is "overcast">>
 		It appears deserted.
 	<<elseif $weather is "rain">>
@@ -54,7 +54,7 @@ You could go for a swim, but make sure to dress appropriately.
 <<if $stress gte $stressmax>>
 	<<passoutbeach>>
 <<else>>
-	<<run getRobinLocation()>>
+	<<run statusCheck("Robin")>>
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
 	<<if $danger gte (9900 - $allure) and $eventskip is 0>>
 		<<eventsbeach>>
@@ -68,11 +68,28 @@ You could go for a swim, but make sure to dress appropriately.
 			"I don't believe it!" <<he>> squeals as <<he>> buries <<himself>> in your chest. "I-I thought you were gone forever! We need to talk about this at home. When you're ready."
 			<br><br>
 
-			You're led back to their stand. A small picture of the two of you sits on top. Robin puts it away.
+			You're led back to <<his>> stand. A small picture of the two of you sits on top. <<He>> puts it away.
 			<br>
 			<<He>> fixes you a glass of lemonade and sends you on your way.
 			<br>
 			"Don't forget to see me later," <<he>> says with a worried expression. "I'm always here for you if you need to talk."
+			<br><br>
+
+			<<link [[Next|Beach]]>><<set $eventskip to 1>><<endevent>><</link>>
+			<br>
+		<<elseif $robinReunionScene is "dungeonRobin">>
+			<<unset $robinReunionScene>>
+			You see Robin stood behind <<his>> lemonade stand. <<His>> mouth goes agape as <<he>> sees you, and <<he>> sprints towards you.
+			<br><br>
+
+			"You made it out!" <<he>> squeals as <<he>> buries <<himself>> in your chest. "When you were recaptured, I didn't know what I was going to do."
+			<br><br>
+
+			You're led back to <<his>> stand. A small picture of the two of you sits on top. <<He>> puts it away.
+			<br>
+			<<He>> fixes you a glass of lemonade and sends you on your way.
+			<br>
+			"Don't forget to see me later," <<he>> says with a worried expression. "I'm always here for you, never forget that."
 			<br><br>
 
 			<<link [[Next|Beach]]>><<set $eventskip to 1>><<endevent>><</link>>
@@ -84,12 +101,12 @@ You could go for a swim, but make sure to dress appropriately.
 			<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
 				<<He>> stares at you in disbelief.
 				<br><br>
-				
+
 				"Hi," <<he>> says quietly as you draw close. "I thought the doctors took you away. I would've tried to get you something had I known you were c-coming back," Robin's voice quivers.
 			<<else>>
 				<<He>> excitedly beckons you over when <<he>> sees you.
 				<br><br>
-				
+
 				"Hey, you're out!" <<he>> says as you draw close. "I thought you were staying at the doctor's for a while. I would've prepared something had I known you were coming back," Robin explains.
 			<</if>>
 			<br><br>
@@ -104,7 +121,7 @@ You could go for a swim, but make sure to dress appropriately.
 			<</if>>
 			<br>
 			The two of you make small talk for a bit. Eventually, Robin says <<he>> needs to get back to <<his>> stand.
-			
+
 			<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
 				<<He>> slowly shuffles away, <<his>> gaze glued to the floor.
 			<<else>>
@@ -117,11 +134,11 @@ You could go for a swim, but make sure to dress appropriately.
 		<<else>>
 			You spot Robin at <<his>> lemonade stand. <<His>> eyes pass over you momentarily, but <<he>> doesn't stare. It's as if <<he>> doesn't even recognise you.
 			<br><br>
-			
+
 			<<link [[Next|Beach]]>><<set $eventskip to 1>><<endevent>><</link>>
 			<br>
 		<</if>>
-	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].init is 0 and $season isnot "winter" and ($weekday is 7 or $weekday is 1) and between($hour, 9, 16) and $exposed lte 0>>
+	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].init is 0 and _robin_location is "beach" and $exposed lte 0>>
 		<<set $robindebt to 0>><<set $robindebtlimit to 5>>
 		<<npc Robin>><<person1>>You see someone familiar working at a stand on the beach. <<He>> notices you at the same time. "Hey!" It's Robin. <<Hes>> another resident at the orphanage. <<Hes>> always looked up to you, despite being about the same age. <<He>> motions you over while cleaning a glass pitcher. <<He>> puts it down and hugs you when you approach.
 		<br><br>
@@ -202,7 +219,7 @@ You could go for a swim, but make sure to dress appropriately.
 :: Beach Party
 
 <<location "beach">><<effects>>
-You approach the teenagers. Several are dancing near a fire on a makeshift stage while others are drinking and chattering.
+You approach the students. Several are dancing near a fire on a makeshift stage while others are drinking and chattering.
 <br><br>
 <<link [[Socialise (0:10)|Beach Party Chat]]>><<pass 10>><<stress -2>><<status 1>><<set $phase to 0>><</link>><<gcool>><<lstress>>
 <br>
@@ -223,7 +240,7 @@ You approach a group playing volleyball. A <<person1>><<person>> sits on the san
 :: Beach Volleyball Play
 
 <<location "beach">><<effects>>
-The teenagers are happy to have a sixth player, particularly the <<person1>><<person>>.
+The students are happy to have a sixth player, particularly the <<person1>><<person>>.
 <br><br>
 <<physique 3>>
 <<set $eventcheck to random(1, 10000)>>
@@ -341,7 +358,7 @@ The teenagers are happy to have a sixth player, particularly the <<person1>><<pe
 		Dour as you are, people constantly talk over you, as if unaware of your presence.
 	<</if>>
 	<<if $daystate isnot "night">>
-		The sun rises on the horizon and the remaining teenagers head home.
+		The sun rises on the horizon and the remaining students head home.
 		<br><br>
 
 		<<link [[Next|Beach]]>><<endevent>><</link>>
@@ -870,7 +887,6 @@ You run across the sand and splash through waves. The sun feels warm and gentle 
 
 You walk closer to the <<person>>. "I could get dressed," you say, leaning against <<his>> arm. "Or we could have some fun."
 <<promiscuity2>>
-<br><br>
 
 <<if $seductionrating gte $seductionrequired>>
 
@@ -982,7 +998,7 @@ The <<person>> tries to keep <<his>> camera steady, barely managing to control <
 		<br><br>
 
 		<<if $player.vaginaExist>>
-		You bend your neck to look behind you, and staring straight into the camera you suggest "Why don't you take some closeups?". You grab your <<bottom>> with both hands. Then, still gazing into the camera, you spread your <<pussy>>.
+		You bend your neck to look behind you, and staring straight into the camera you suggest "Why don't you take some closeups?" You grab your <<bottom>> with both hands. Then, still gazing into the camera, you spread your <<pussy>>.
 		<br>
 		<<if $player.bodyliquid.vagina.semen gte 2>>
 		Semen drips from your <<pussy>> onto the sand. The sight proves too much for the <<person>> and <<he>> drops <<his>> camera in the sand. Shaking excitedly, <<he>> quickly picks it up, and eagerly moves closer.
@@ -1089,7 +1105,7 @@ It is getting cold though, so you decide to get dressed for now.
 
 :: Beach Exposed
 <<location "beach">><<effects>>
-<<fameexhibitionism 20 pic>>
+<<fameexhibitionism 20 "pic">>
 <<flaunting>> you emerge from the water, <<lewdness>> freely displayed. You're soon the centre of attention, surrounded by whistles, cheers and compliments. Some break into applause while others scramble for their cameras.
 
 <<if $uncomfortable.nude is false>>

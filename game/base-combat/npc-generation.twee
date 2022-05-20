@@ -372,50 +372,62 @@
 <</widget>>
 
 <<widget "generatesm1">>
+<<set _npcClothesPreset to "school">>
 <<generateym1>>
 <</widget>>
 
 <<widget "generatesm2">>
+<<set _npcClothesPreset to "school">>
 <<generateym2>>
 <</widget>>
 
 <<widget "generatesm3">>
+<<set _npcClothesPreset to "school">>
 <<generateym3>>
 <</widget>>
 
 <<widget "generatesm4">>
+<<set _npcClothesPreset to "school">>
 <<generateym4>>
 <</widget>>
 
 <<widget "generatesm5">>
+<<set _npcClothesPreset to "school">>
 <<generateym5>>
 <</widget>>
 
 <<widget "generatesm6">>
+<<set _npcClothesPreset to "school">>
 <<generateym6>>
 <</widget>>
 
 <<widget "generatesf1">>
+<<set _npcClothesPreset to "school">>
 <<generateyf1>>
 <</widget>>
 
 <<widget "generatesf2">>
+<<set _npcClothesPreset to "school">>
 <<generateyf2>>
 <</widget>>
 
 <<widget "generatesf3">>
+<<set _npcClothesPreset to "school">>
 <<generateyf3>>
 <</widget>>
 
 <<widget "generatesf4">>
+<<set _npcClothesPreset to "school">>
 <<generateyf4>>
 <</widget>>
 
 <<widget "generatesf5">>
+<<set _npcClothesPreset to "school">>
 <<generateyf5>>
 <</widget>>
 
 <<widget "generatesf6">>
+<<set _npcClothesPreset to "school">>
 <<generateyf6>>
 <</widget>>
 
@@ -635,6 +647,11 @@
 	<<generateNPC _args[0] "t">>
 <</widget>>
 
+<<widget "generateSweaterWearer">>
+	<<set _npcClothesPreset to "sweater">>
+	<<generateNPC _args[0]>>
+<</widget>>
+
 <<widget "generateDemon">>
 	<<generateNPC _args[0] a f h 20>>
 	<<undressNPC _args[0]>>
@@ -719,19 +736,21 @@
 
 <<generateNPCClothes $NPCList[_n]>>
 
+/* Sex toy init rework */
 /* Sex toys become more popular over time after the adult shop opens */
-<<if $adultshopunlocked and !_strapIgnore and $NPCList[_n].teen isnot 1>>
-	<<if $adultshopdegree gte random(0, 100)>>
+<<if !_strapIgnore and $enemytype isnot "beast" and ($NPCList[_n].teen isnot 1 or random(1,20) is 1) and ($position isnot "wall" or $walltype isnot "front")>>
+	<<if $adultshopdegree gte random(0, 100) or random(0,100) lt 5>>
 		<<if $toywhipdisable is "f" and $toydildodisable is "f" and $player.gender_appearance isnot "f">>
-			<<giveNPCsextoy _n `randomSexToy()`>>
+			<<set _sexToy to randomSexToy()>>
 		<<elseif $toywhipdisable is "f" and $toydildodisable is "f">>
-			<<giveNPCsextoy _n `randomSexToy("dildos and whips")`>>
+			<<set _sexToy to randomSexToy("dildos and whips")>>
 		<<elseif $toywhipdisable is "f" and $toydildodisable is "t">>
-			<<giveNPCsextoy _n `randomSexToy("whip")`>>
+			<<set _sexToy to randomSexToy("whip")>>
 		<<elseif $toywhipdisable is "t" and $toydildodisable is "f">>
-			<<giveNPCsextoy _n `randomSexToy("dildo")`>>
-		<<else>>
-			/* Do nothing */
+			<<set _sexToy to randomSexToy("dildo")>>
+		<</if>>
+		<<if _sexToy isnot undefined>>
+			<<set $NPCList[_n].heldSexToy to _sexToy>>
 		<</if>>
 	<</if>>
 <</if>>
@@ -854,7 +873,7 @@
 <</if>>
 
 <<set $NPCList[_n].role to "normal">>
-
+<<set $NPCList[_n].index to _n>>
 
 /*Sets up multiple orgasms, code needs work*/
 /*<<set $NPCList[_n].maxOrgasms to 1>>
@@ -926,8 +945,7 @@
 
 <<set $rng to random(1, 100)>>
 <<if $NPCList[_n].pronoun is "f">>
-	<<if $NPCList[_n].adult is 1>><<set $rng += 20>><</if>>
-	<<if $rng gte 81>>
+	<<if $rng lte ($NPCList[_n].adult is 1 ? 40 : 20)>>
 		<<set $NPCList[_n].lactation to 1>>
 	<<else>>
 		<<set $NPCList[_n].lactation to 0>>
@@ -1040,7 +1058,7 @@
 			<</switch>>
 			<!-- Set up like this for futureproofing -->
 			<<set $NPCList[_xx].strapon to {state:"worn",color:_straponColor,description:$NPCList[_xx].penisdesc,size:$NPCList[_xx].penissize}>>
-		
+
 			<<if $_i isnot -1>>
 				<!-- Give this named npc this strapon temporarily so that they will use it in future appearances (note: they are removed in the <<day>> widget) -->
 				<<set $NPCList[_xx].strapon.temp to true>>
@@ -1080,7 +1098,7 @@
 		<<set $_npc.strapon to clone($_strapon)>>
 		<<set $_npc.strapon.state to "worn">>
 		<<set $_npc.penisdesc to $_npc.strapon.description>>
-		<<set $_npc.penissize to $_npc.strapon.size>>	
+		<<set $_npc.penissize to $_npc.strapon.size>>
 	<</if>>
 <</widget>>
 
@@ -1270,14 +1288,17 @@
 	}>>
 
 	<<set $_virginChance to ($_npc.adult is 1 ? $npcVirginityChanceAdult : $npcVirginityChance)>>
+	<<if _npcPlant and $_virginChance lt 100>>
+		<<set $_virginChance /= 20>>
+	<</if>>
 
-	<<set $_npc.virginity.penile to  (random(1,100) lte $_virginChance)>>
+	<<set $_npc.virginity.penile to (random(1,100) lte $_virginChance)>>
 	<<set $_npc.virginity.vaginal to (random(1,100) lte $_virginChance)>>
 
 	<!-- Can't lose virginity if you don't have the part. -->
 	<!-- Also, futureproofing for strapons; this runs before strapons are assigned, so they should not generate with both penile virginity AND a strapon. -->
 	<<if $_npc.penis is "none">>
-		<<set $_npc.virginity.penile to  false>>
+		<<set $_npc.virginity.penile to false>>
 	<</if>>
 	<<if $_npc.vagina is "none">>
 		<<set $_npc.virginity.vaginal to false>>

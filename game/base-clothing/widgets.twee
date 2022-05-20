@@ -418,7 +418,7 @@
 /*Returns all carried clothes back to the wardrobe*/
 <<widget "returnCarried">>
 	<<set _skip to ["naked","towel top","large towel","towel skirt","large towel bottom","plant skirt","plant top"]>>
-	
+
 	<<if _args[0] is "wardrobe" or $wardrobes[_args[0]] is undefined>>
 		<<set $_selectedWardrobe to $wardrobe>>
 	<<else>>
@@ -505,10 +505,10 @@
 
 		/*Re-buy*/
 		<<if _args[0] isnot "genitals" and $clothingrebuy is 1>>
-			<<if $carried[_args[0]].name isnot "naked">>
+			<<if $carried[_args[0]].name isnot "naked" and $carried[_args[0]].cursed isnot 1>>
 				<<generalRuinedRebuy _args[0] $carried>>
 			<</if>>
-			<<if $worn[_args[0]].name isnot "naked">>
+			<<if $worn[_args[0]].name isnot "naked" and $worn[_args[0]].cursed isnot 1>>
 				<<generalRuinedRebuy _args[0] $worn>>
 			<</if>>
 		<</if>>
@@ -1216,16 +1216,18 @@
 <<widget "storeItem">>
 <<set _storeSkip to ["naked","towel top","large towel","towel skirt","large towel bottom","plant skirt","plant top"]>>
 <<for _u to 0; _u lt $store[_args[1]].length; _u++>>
-	<<if _args[0] is $store[_args[1]][_u].location>>
-		<<set _outfitPrimaryPrevious to $store[_args[1]][_u].outfitPrimary>>
+	<<set $_item to $store[_args[1]][_u]>>
+	<<if _args[0] is $_item.location>>
+		<<set _outfitPrimaryPrevious to $_item.outfitPrimary>>
 		<<if _outfitPrimaryPrevious isnot undefined>>
 			<<for _labelStore, _value range _outfitPrimaryPrevious>>
 				<<for _iStore to 0; _iStore lt $store[_labelStore].length; _iStore++>>
-					<<if _args[0] is $store[_labelStore][_iStore].location>>
-						<<if $store[_labelStore][_iStore].outfitSecondary isnot undefined>>
-							<<if $store[_labelStore][_iStore].outfitSecondary[1] is $store[_args[1]][_iStore].name>>
-								<<if !_storeSkip.includes($store[_labelStore][_iStore].name)>>
-									<<set $wardrobe[_labelStore].push(clone($store[_labelStore][_iStore]))>>
+					<<set $_itemPair to $store[_labelStore][_iStore]>>
+					<<if _args[0] is $_itemPair.location>>
+						<<if $_itemPair.outfitSecondary isnot undefined>>
+							<<if $_itemPair.outfitSecondary[1] is $_item.name>>
+								<<if !_storeSkip.includes($_itemPair.name)>>
+									<<set $wardrobe[_labelStore].push(clone($_itemPair))>>
 								<</if>>
 								<<set $store[_labelStore].deleteAt(_iStore)>>
 							<</if>>
@@ -1236,8 +1238,8 @@
 			<</for>>
 		<</if>>
 		<<unset _outfitPrimaryPrevious>>
-		<<if !_storeSkip.includes($store[_args[1]][_u].name) and $store[_args[1]][_u].temp is undefined>>
-			<<set $wardrobe[_args[1]].push(clone($store[_args[1]][_u]))>>
+		<<if !_storeSkip.includes($_item.name) and $_item.temp is undefined>>
+			<<set $wardrobe[_args[1]].push(clone($_item))>>
 		<</if>>
 		<<set $store[_args[1]].deleteAt(_u)>>
 		<<break>>
@@ -1461,6 +1463,11 @@
 
 <<widget "dry">>
 <<set $upperwet to 0>><<set $lowerwet to 0>><<set $underlowerwet to 0>><<set $underupperwet to 0>>
+<</widget>>
+
+<<widget "dry_full">>
+<<dry>>
+<<set $upperwetstage to 0>><<set $lowerwetstage to 0>><<set $underupperwetstage to 0>><<set $underlowerwetstage to 0>>
 <</widget>>
 
 /*The "searchWardrobeForItem" widget searches the wardrobe for an item that matches a given item stored somewhere else, the argument are as follows; slot, item index.*/
@@ -1707,9 +1714,10 @@
 			<<set $_value.lastTaken to _args[0]>>
 		<<else>>
 			<!-- Expanded error handling here to help with understanding an intermittent issue. If a bug is squashed relating to an undefined $worn entry, this error handler may become redundant. -->
-			<<set $_msg to `Expected an object in $worn[${$_label}], export and report this to developers.`>>
-			<<set $_src to `Location: ${Utils.GetStack()}.\nLabel: ${$_label}. Value: ${$_value}. Wardrobe: ${_args[0]}.`>>
-			<<error $_msg $_src>>
+			<<error {
+				message	: `Expected an object in $worn[${$_label}].`,
+				source	: `Location: ${Utils.GetStack()}.\nLabel: ${$_label}. Value: ${$_value}. Wardrobe: ${_args[0]}.`
+			}>>
 		<</if>>
 	<</for>>
 <</if>>

@@ -155,17 +155,23 @@ Combat Controls:
 <<if SugarCube.Browser.isMobile.any() is true>>
 	Note that saving and loading from file does not work on Android currently.
 <<else>>
+	<<set $_errorCount to document.querySelectorAll('.error').length>>
+	<<set $_dolErrorCount to document.querySelectorAll('.dol-error').length>>
+	<<set $_customErrorCount to Errors.log.length>>
+	<<set $_bypassRestrictions to $debug is 1 or $_errorCount gt 0 or $_dolErrorCount gt 0 or $_customErrorCount gt 0>>
 	Load from file: <input id="saveImport" type="file" value="Load from file" onchange="importSave(this.files)">
 	<br><br>
 	<<if $passage is "Start" or $passage is "Start2">>
 		Please load a save before trying to export a save file.
-	<<elseif ($dancing is 0 and $combat is 0 and $replayScene is undefined) or $debug is 1>>
-		<<set _exportName to "'degrees-of-lewdity"+($saveName isnot ''?'-'+$saveName:'')+ "'">>
-		<<if $ironmanmode is true>>
-			<input type="button" value="Save to file" disabled>
+	<<elseif $ironmanmode>>
+		<<if $_bypassRestrictions>>
+			<input type="button" value="Save to file" onclick="IronMan.exportCurrent()">
 		<<else>>
-			<input type="button" value="Save to file" @onclick="'updateExportDay();SugarCube.Save.export('+_exportName+')'">
+			Unable to save to file during ironman-mode. Only autosaves can be exported.
 		<</if>>
+	<<elseif ($dancing is 0 and $combat is 0 and $replayScene is undefined) or $_bypassRestrictions>>
+		<<set _exportName to "'degrees-of-lewdity"+($saveName isnot ''?'-'+$saveName:'')+ "'">>
+		<input type="button" value="Save to file" @onclick="'updateExportDay();SugarCube.Save.export('+_exportName+')'">
 	<<else>>
 		Unable to save to file currently.
 	<</if>>
@@ -280,7 +286,7 @@ Combat Controls:
 						<div class="saveGroup">
 							<<if _saveDetails.slots[_slot].metadata.ironman == true>>
 								<div class="saveId" style="width: 10px;">
-									<img @id="'saveSlot'+_slot" src="img/ui/SilverCoin.gif" style="max-width: 16px;filter: brightness(2.2);" click-count=0 @onclick="'IronMan.UI.exportButton('+_slot+')'">
+									<img @id="'saveSlot'+_slot" src="img/ui/SilverCoin.gif" style="max-width: 16px;filter: brightness(2.2);" click-count=0 @onclick="'IronMan.export()'">
 								</div>
 							<<else>>
 								<div class="saveId" style="width: 10px;">
@@ -311,7 +317,7 @@ Combat Controls:
 							</div>
 						</div>
 						<<if _i == 9>>
-							<div id="exportButton" class="exportButton"><input type="button" class="saveMenuButton right" value="Export" onclick="IronMan.UI.exportButton()"/></div>
+							<div id="exportButton" class="exportButton"><input type="button" class="saveMenuButton right" value="Export" onclick="IronMan.export()"/></div>
 						<</if>>
 						<div class="deleteButton"><input type="button" class="saveMenuButton right" value="Delete" @onclick="'deleteSave('+ _slot +')'"/></div>
 					<<else>>

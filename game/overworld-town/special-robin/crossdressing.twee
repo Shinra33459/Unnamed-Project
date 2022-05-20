@@ -14,7 +14,7 @@
 
 :: Robin Caught CD
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<!-- flip pronoun while the player doesn't recognize robin -->
 	<<genderswap>>
 	<<run npcEquipSet(_robin, setup.npcClothesSets.find(n => n.name === (_robin.pronoun is "m" ? "femaleTown1" : "maleTown1")))>>
@@ -39,7 +39,7 @@
 	<<if $pronoun is "f">>
 		She wipes away some of her makeup with her hand.
 	<<else>>
-		You recognize his voice.
+		You recognise his voice.
 	<</if>>
 	<span class="green">It's Robin</span>.
 	<!-- restore pronoun -->
@@ -66,12 +66,12 @@
 	<br>
 	<<link [[Softly Dissuade|Robin CD Soft Discourage]]>><<npcincr Robin love 1>><</link>><<glove>>
 	<br>
-	<<link [[Berate|Robin CD Harsh Discourage]]>><<npcincr Robin dom -3>><<stress 4>><<npcincr Robin love -5>><</link>><<ggstress>><<lllove>><<lldom>>
+	<<link [[Berate|Robin CD Harsh Discourage]]>><<npcincr Robin dom -3>><<stress 4>><<npcincr Robin love -5>><<npcincr Robin trauma 3>><</link>><<gstress>><<grtrauma>><<lllove>><<lldom>>
 	<br>
 
 :: Robin CD Encourage
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.crossdress to 2>>
 	<<set _robin.cdquest to 1>>
 	<<set $robinDaily.cdevent to 1>>
@@ -141,7 +141,7 @@
 
 :: Robin CD Soft Discourage
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<run delete _robin.crossdress>>
 
 	<<if $submissive gte 1150>>
@@ -171,7 +171,7 @@
 
 :: Robin CD Harsh Discourage
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<run delete _robin.crossdress>>
 
 	"Robin, why would you dress like that? Do you not have any shame?" Still in shock, your words come out harshly.
@@ -196,9 +196,54 @@
 	<<endevent>>
 	<<link [[Leave|Bedroom]]>><</link>>
 
+:: Robin Caught CD Knock
+<<set $outside to 0>><<set $location to "home">><<effects>>
+
+<<if $submissive gte 1150>>
+	You tap on the door. There's no response, save for a soft rustling from inside. A moment later, the door cracks open, and Robin steps out. Despite <<his>> smile, you can't help but notice <<hes>> blushing.
+	<br><br>
+
+	"Come in!" <<he>> chirps. "It's not like I was in the middle of anything." <<He>> gives you a playful shove and hops onto <<his>> bed. You take a seat beside <<him>>.
+<<elseif $submissive lte 850>>
+	You pound the door. A yelp greets you from the other side. "H-hold on!" Robin stammers. A flurry of frantic footsteps and slamming drawers follows, until the door swings open, revealing a red-faced Robin.
+	<br><br>
+
+	"You scared me," <<he>> pants, flopping down on <<his>> bed. You sit beside <<him>> as <<he>> catches <<his>> breath.
+<<else>>
+	You knock on the door. Robin gasps on the other side. "J-just a minute!" <<he>> stammers. Clothes rustle from the other side, until the door finally opens. Robin pulls you inside. <<Hes>> blushing.
+	<br><br>
+
+	"Thanks for waiting," <<he>> sighs. "You can come in now." You enter the room and take a seat on the bed.
+<</if>>
+<br><br>
+
+<<link [[Ask about the note|Robin Caught CD Note]]>><</link>>
+<br>
+<<robinoptions>>
+
+:: Robin Caught CD Note
+<<set $outside to 0>><<set $location to "home">><<effects>>
+
+<<He>> tenses up. "N-note?" <<he>> echoes. "I was... studying. And I didn't want to be bothered." <<He>> pauses. "I-I'm not mad at you, though! I was gonna take a break anyway, and..."
+<br><br>
+
+<<He>> keeps babbling in avoidance of your question. Eventually, <<hes>> silent.
+<<if $robinconsole is 0>>
+	<<His>> gaze lost in <<his>> lap,
+<<else>>
+	<<His>> focus lost to the television,
+<</if>>
+you're left to stew in your curiosity.
+<br><br>
+
+<span class="blue">Perhaps if you hadn't knocked, you'd have caught what <<he>> was doing.</span>
+<br><br>
+
+<<robinoptions>>
+
 :: Robin CD Door SV Start
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<npc Robin>><<person1>>
 
 	/* Scene Viewer is difficult to use so this is a fake passage that you only reach from within it. */
@@ -206,7 +251,7 @@
 	You play a cooperative game with <<him>>. You're about to win the stage when there's a knock on the door.
 	<br><br>
 
-	Robin, still wearing <<his>> 
+	Robin, still wearing <<his>>
 	<<if _robin.pronoun is "f">>
 		<<npcClothesText _robin "upper">> and chest binder,
 	<<else>>
@@ -221,7 +266,7 @@
 
 :: Robin CD Door Answer
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set $robinDaily.cdevent to 1>>
 	<<generatey2>>
 
@@ -245,7 +290,6 @@
 
 :: Robin CD Door Ignore
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
 	<<set $robinDaily.cdevent to 1>>
 	<<generatey2>>
 
@@ -265,9 +309,8 @@
 
 :: Robin CD Door Encourage
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.cdquest to 2>>
-	<<generatey2>>
 
 	<<if $submissive gte 1150>>
 		"I think you'll be ok," you whisper to <<person1>><<him>>.
@@ -280,7 +323,7 @@
 
 	With your encouragement, Robin responds. "I'm free now, come in!" A <<person2>><<person>> opens the door and looks at the both of you.
 	"Oh, I didn't know you had some friends over already," <<he>> says before looking directly at Robin.
-	"Wait a second, Robin? You look like a <<print (_robin.pronoun is "m" ? "girl" : "boy")>> wearing that. I didn't recognize you at first."
+	"Wait a second, Robin? You look like a <<print (_robin.pronoun is "m" ? "girl" : "boy")>> wearing that. I didn't recognise you at first."
 	<br><br>
 
 	<<if _robin.dom gte 60>>
@@ -291,7 +334,7 @@
 	<br><br>
 
 	Robin helps the <<person2>><<person>> for a while, smiling every time <<he>> mentions something about <<person1>><<his>> current outfit.
-	Eventually they finish and as they leave Robin looks at you, excited. "<<person2>><<He>> didn't recognise me at first!" Robin blurts out. "I can't believe it."
+	Eventually they finish and as they leave Robin looks at you, excited. <<person2>>"<<He>> didn't recognise me at first!" Robin blurts out. "I can't believe it."
 	<br><br>
 
 	<<if $submissive gte 1150>>
@@ -308,8 +351,6 @@
 
 :: Robin CD Door Discourage
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
-	<<generatey2>>
 
 	You look at Robin and shake your head.
 	<br><br>
@@ -354,7 +395,7 @@
 
 :: Robin CD Socialise
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.cdquest to 3>>
 
 	Robin smiles at you as you approach. <<person1>><<He>> looks indistinguishable from a <<print (_robin.pronoun is "m" ? "girl" : "boy")>>.
@@ -378,7 +419,7 @@
 
 :: Robin CD Socialise Defend
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	<<if $backgroundTraits.includes("crossdresser") or $player.gender isnot $player.gender_appearance>>
 		<<if $submissive gte 1150>>
@@ -390,11 +431,11 @@
 		<</if>>
 	<<else>>
 		<<if $submissive gte 1150>>
-			You move closer to Robin, "<<person1>><<He>>'s nothing like that..."
+			You move closer to Robin, <<person1>>"<<Hes>> nothing like that..."
 		<<elseif $submissive lte 850>>
 			You move between the <<person2>><<person>> and Robin. "What did you say to <<person1>><<him>>?"
 		<<else>>
-			You frown at the <<person2>><<person>>. "<<person1>><<He>> hasn't done anything wrong."
+			You frown at the <<person2>><<person>>. <<person1>>"<<He>> hasn't done anything wrong."
 		<</if>>
 	<</if>>
 	<br><br>
@@ -418,12 +459,12 @@
 
 :: Robin CD Socialise Change
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	<<if $submissive gte 1150>>
 		You move closer to Robin, "Can we talk about something else?"
 	<<elseif $submissive lte 850>>
-		"That's right, I am." you say bluntly, looking at them until they break eye contact.
+		"That's right, I am," you say bluntly, looking at them until they break eye contact.
 	<<else>>
 		"So Robin was telling me about a test they had the other day," you bluntly try to change the subject.
 	<</if>>
@@ -450,14 +491,14 @@
 	<<set _uniqueoptions to true>>
 	<<robinroom>>
 
-	<<if $season is "winter">>	
+	<<if $season is "winter">>
 		<<set _stand to "hot chocolate stand">>
 		<<set _inLocation to "in the park">>
 	<<else>>
 		<<set _stand to "lemonade stand">>
 		<<set _inLocation to "on the beach">>
 	<</if>>
-	Robin looks at the clock on the wall and sighs. "I need to get my _stand set up." 
+	Robin looks at the clock on the wall and sighs. "I need to get my _stand set up."
 	<<He>> slowly gets up. "I'll get changed, then I'll be _inLocation if you want to see me."
 	<br><br>
 
@@ -478,7 +519,6 @@
 
 :: Robin's Stand CD Explain Demo
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
 
 	<<if $submissive gte 1150>>
 		You slowly move up to Robin and hug <<him>>. "Are you alright?" You ask softly.
@@ -505,7 +545,7 @@
 
 :: Robin's Stand CD Explain Full
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	<<if $submissive gte 1150>>
 		You slowly move up to Robin and hug <<him>>. "Are you alright?" You ask softly.
@@ -571,7 +611,6 @@
 	<</if>>
 	<br><br>
 
-	<!-- TODO: fix this pass time -->
 	<<link [[Go with Robin (1:00)|Robin's Stand CD Accept]]>><<pass 60>><<npcincr Robin love 5>><</link>><<gglove>>
 	<br>
 	<<link [[Say you can't|Robin's Stand CD Refuse]]>><<npcincr Robin love -5>><</link>><<lllove>>
@@ -579,7 +618,7 @@
 
 :: Robin's Stand CD Refuse
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.cdstanddenial to 1>>
 
 	<<if $submissive gte 1150>>
@@ -609,7 +648,7 @@
 :: Robin's Stand CD Accept
 	<<set $outside to 1>><<set $location to ($season is "winter" ? "park" : "beach")>><<effects>>
 	<<set $robinmoney += 10>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<generateNPC 2 a>>
 
 	<<if $submissive gte 1150>>
@@ -641,7 +680,6 @@
 
 :: Robin's Stand CD Listen
 	<<set $outside to 1>><<set $location to ($season is "winter" ? "park" : "beach")>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
 
 	You position yourself where you won't be seen and listen in. On closer inspection it seems that a <<person2>><<person>> is harassing Robin.
 	You strain your ears to listen in.
@@ -660,7 +698,7 @@
 
 :: Robin's Stand CD Intervene
 	<<set $outside to 1>><<set $location to ($season is "winter" ? "park" : "beach")>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.crossdress to 4>>
 	<<set _robin.cdquest to 4>>
 
@@ -687,7 +725,7 @@
 		"I just want to sell my <<print ($season is "winter" ? "hot chocolate" : "lemonade")>>, so if you're not going to buy anything could you please leave us alone?"
 		<br><br>
 
-		The <<person2>><<person>> doesn't seem dissuaded however. "I like it when they're fiesty." <<He>> says before moving a hand towards Robin's crotch.
+		The <<person2>><<person>> doesn't seem dissuaded however. "I like it when they're feisty." <<He>> says before moving a hand towards Robin's crotch.
 		<<He>> doesn't get very far, however, before it's slapped away by Robin.
 		<br><br>
 
@@ -713,7 +751,7 @@
 		<<if $submissive gte 1150>>
 			"I'm glad <<person2>><<he>>'s gone." You breathe a sigh of relief. "Are you okay Robin?"
 		<<elseif $submissive lte 850>>
-			"That asshole doesn't know what <<person2>><<he>>'s talking about." You say, rubbing Robin's shoulder. "Ignore <<him>>."
+			"That asshole doesn't know what <<person2>><<he>>'s talking about," You say, rubbing Robin's shoulder. "Ignore <<him>>."
 		<<else>>
 			"Good thing <<person2>><<he>>'s gone," you say while smiling at Robin. "You going to be alright?"
 		<</if>>
@@ -740,7 +778,7 @@
 			When it's over you move over to Robin. "I'm so sorry." You tenderly hold <<person1>><<him>> close to you.
 		<<elseif $submissive lte 850>>
 			You shove the <<person2>><<person>> away, but not before they manage to get a good grope in.
-			"Oh shit, Robin are you alright?" You gently shake Robin to snap <<him>> out of it.
+			"Oh shit, Robin are you alright?" You gently shake Robin to snap <<person1>><<him>> out of it.
 		<<else>>
 			You move to stop <<person2>><<him>> but <<he>> gets a good grab in before you can move <<his>> hand away.
 			"You ok?" You whisper into Robin's ear, low enough that the <<personsimple>> cannot hear.
@@ -784,7 +822,7 @@
 
 :: Robin's Stand CD Wait
 	<<set $outside to 1>><<set $location to ($season is "winter" ? "park" : "beach")>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	Unable to bring yourself to intervene, you wait a bit longer to see what will happen.
 	<br><br>
@@ -845,7 +883,7 @@
 			<<He>> then quickly walks off, leaving Robin shaking there silently.
 			<br><br>
 		<</if>>
-		
+
 		You move out of hiding to approach Robin now that the <<person2>><<personsimple>> is leaving. <<person1>><<He>> looks shaken.
 		<<if $submissive gte 1150>>
 			"Sorry I wasn't there for you." You feel <<him>> trembling as you hug <<him>>. "Are you alright??"
@@ -869,7 +907,7 @@
 
 :: Robin's Stand CD Reassure
 	<<set $outside to 1>><<set $location to ($season is "winter" ? "park" : "beach")>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.crossdress to 4>>
 	<<set _robin.cdquest to 4>>
 	<<person1>>
@@ -899,7 +937,7 @@
 	You separate and continue to operate the stand together. Fortunately the rest of the customers are amicable.
 	<br><br>
 
-	<<clearsinglenpc 1>>
+	<<endevent>>
 	<<if $season is "winter">>
 		<<link [[Offer help (0:30)|Robin Chocolate Help]]>><<npcincr Robin love 1>><<pass 30>><</link>><<glove>>
 		<br>
@@ -914,7 +952,7 @@
 
 :: Robin's Stand CD Discourage
 	<<set $outside to 1>><<set $location to ($season is "winter" ? "park" : "beach")>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.cdstanddenial to 1>>
 
 	<<if $submissive gte 1150>>
@@ -958,7 +996,7 @@
 
 :: Robin School CD SV Intro
 	<<npc Robin>><<person1>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	You enter Robin's room, <<he>>'s standing in front of <<his>> mirror holding a
 	<<print (_robin.pronoun is "m" ? "girl's" : "boy's")>> school uniform in front of <<him>>.
 	<<He>> seems focused on how <<he>> looks and doesn't notice you at first.
@@ -1002,7 +1040,7 @@
 
 :: Robin School CD Compliment
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	<<if $submissive gte 1150>>
 		"You look really nice in that," you say just loud enough for Robin to hear. <<He>> turns towards you.
@@ -1034,7 +1072,6 @@
 
 :: Robin School CD Refuse
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
 
 	<<if $submissive gte 1150>>
 		"I don't think I can do today, sorry," you say quietly.
@@ -1052,7 +1089,7 @@
 
 :: Robin School CD Accept
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.cdquest to 5>>
 	<<set _robin.crossdress to 5>>
 
@@ -1078,7 +1115,7 @@
 
 :: Robin School CD Change
 	<<set $outside to 0>><<set $location to "home">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	<<if $phase is 1>>
 		You can't help but watch, seeing Robin change in front of you.<<arousal 150>><<garousal>>
@@ -1104,7 +1141,7 @@
 
 :: Robin School CD Walk
 	<<set $outside to 1>><<set $location to "town">><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	The walk to school is the same as usual, save for Robin's excited banter about how great today will be.
 	Some passing students give <<him>> strange looks, but <<he>> takes it all in stride. When you arrive, Robin looks at you and smiles.
@@ -1115,7 +1152,7 @@
 
 :: Canteen Lunch Robin CD 1
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>><<sydneySchedule>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _whitney to $NPCName[$NPCNameList.indexOf("Whitney")]>>
 	<<set _robin.cdquest to 6>>
 	<<npc Robin>><<person1>>
@@ -1153,14 +1190,13 @@
 		<br><br>
 
 		<<npc Whitney 2>><<person2>>
-		"Hey bitches." Whitney says as <<he>> slams <<his>> hand down hard next to where you and Robin are sitting.
+		"Hey, bitches," Whitney says as <<he>> slams <<his>> hand down hard next to where you and Robin are sitting.
 		<br><br>
-		
+
 		<<if _robin.dom gte 60>>
 			Robin stays silent, opting to take a bite from <<person1>><<his>> food instead.
 			<br><br>
 
-			<!-- could add a scene here where the player blocks the tray but gets covered in food themselves -->
 			Whitney's amused smirk quickly goes away, replaced with an angry scowl.
 			"What are you supposed to be now? A <<genderswap>><<personsimple>>?"
 			Whitney spits at Robin's face.
@@ -1200,7 +1236,7 @@
 
 			As Whitney storms off, <<person2>><<he>> takes <<his>> friends with <<him>>.
 		<<elseif _robin.dom gte 60>>
-			Robin stays silent and tries to take another bite of <<his>> food, but you can see <<him>> shaking slightly.
+			Robin stays silent and tries to take another bite of <<person1>><<his>> food, but you can see <<him>> shaking slightly.
 			The students who were talking to Robin previously have all gone silent, opting to stare at <<him>> or Whitney instead.
 			<br><br>
 
@@ -1215,7 +1251,7 @@
 			"Serves you right, bitch." As Whitney storms off, <<person2>><<he>> takes <<his>> friends with <<him>>.
 		<<else>>
 
-			Robin sniffles and hides <<his>> face from Whitney with <<his>> hands. <<He>> opens <<his>> mouth but Whitney interrupts.
+			Robin sniffles and hides <<person1>><<his>> face from Whitney with <<his>> hands. <<He>> opens <<his>> mouth but Whitney interrupts.
 			<br><br>
 
 			"Hey slut, don't you know how to act?" Whitney flips Robin's lunch on top of <<him>>. "You look at people who are talking to you!"
@@ -1249,7 +1285,7 @@
 
 		Robin scrambles to <<person1>><<his>> feet in a panic, only to slip on some of the food pooling around <<his>> feet. <<He>> tumbles to the floor.
 		The other students who were talking to Robin are either laughing at <<his>> expense or having their own conversations. "Ouch..."
-		
+
 	<</if>>
 	<br><br>
 
@@ -1258,7 +1294,6 @@
 
 :: Canteen Lunch Robin CD 2
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>><<sydneySchedule>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
 
 	<<if $submissive gte 1150>>
 		You quickly grab one of your napkins and dab the yoghurt from Robin's face.
@@ -1301,7 +1336,7 @@
 			<<else>>
 				You give Robin one last kiss on the lips before removing your $worn[$_layer].name.
 			<</if>>
-			
+
 			<<if !$worn.under_lower.type.includes("naked") and !playerHasStrapon()>>
 				Your $worn.under_lower.name soon <<print ($worn.under_lower.plural ? "follow" : "follows")>> suit.
 			<</if>>
@@ -1394,12 +1429,12 @@
 			<<set $player.penissize to $playerPenisSizeBackup>>
 			<<unset $playerPenisSizeBackup>>
 		<</if>>
-	
+
 	<</widget>>
 
 :: School Infirmary Robin CD Intro
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _robin.cdquest to 7>>
 	<<npc Robin>><<person1>>
 	<<dontHideForNow>>
@@ -1423,7 +1458,7 @@
 	"Huh, nobody's here?" Robin looks around the room.
 	<br><br>
 
-	You guide Robin to a bed and lie <<him>> down. 
+	You guide Robin to a bed and lie <<him>> down.
 	<<if $submissive gte 1150>>
 		You motion towards Robin. "Your clothes..."
 	<<elseif $submissive lte 850>>
@@ -1445,7 +1480,7 @@
 	<<else>>
 		revealing <<his>> _robinUnderUpper.
 	<</if>>
-	Robin looks away as you take the dirty _robinUpper and set it aside. 
+	Robin looks away as you take the dirty _robinUpper and set it aside.
 	<br><br>
 
 	<<He>> kicks off <<his>> shoes, allowing you to pull down <<his>> _robinLower as well. Underneath, you see
@@ -1489,7 +1524,7 @@
 
 :: School Infirmary Robin CD Kiss
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	<<if $submissive gte 1150>>
 		You look at Robin with parted lips, <<he>> takes the message and leans forward to kiss you.
@@ -1523,7 +1558,7 @@
 			<<if _robin.dom gte 40>>
 				<<He>> lightly gropes one of them, softly holding it in <<his>> hand as <<he>> kisses.
 			<<else>>
-				<<He>> rubs <<his>> chest against your <<breasts>>, causing your nipples to rub against <<his>>.
+				<<He>> rubs <<his>> chest against your <<breasts>>, causing your nipples to rub against <<hers>>.
 			<</if>>
 		<</if>>
 	<<else>>
@@ -1565,7 +1600,8 @@
 
 :: School Infirmary Robin CD No Sex
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
+	<<earnFeat "Robin's Song">>
 
 	<<if $phase is 1>>
 		<<if $submissive gte 1150>>
@@ -1615,11 +1651,11 @@
 		<<He>> hugs you tightly before leaving the room.
 	<</if>>
 	<br><br>
-	
+
 	<<robinInfirmaryVariableCleanup>>
 
 	<<if $schoolstate is "lunch" or $schoolstate is "fourth">>
-		<<link [[Next|School History Robin CD Enter]]>><<clotheson>><<dontHideRevert>><</link>>
+		<<link [[Next|School History Robin CD Enter]]>><<endevent>><<clotheson>><<dontHideRevert>><</link>>
 	<<else>>
 		<<link [[Next|Hallways]]>><<endevent>><<clotheson>><<dontHideRevert>><</link>>
 	<</if>>
@@ -1627,21 +1663,21 @@
 
 :: School Infirmary Robin CD Receive Oral
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 
 	<<if $robinCDI.acts is 0>>
 		<<robinInfirmaryCDUndressLower>>
 		<br><br>
 	<</if>>
 
-	<<if $phase is 0>>  <!-- blowjob from Robin -->
+	<<if $phase is 0>> <!-- blowjob from Robin -->
 		Robin's eyes don't stop looking at your <<penis>>. <<He>> slowly brings <<his>> mouth closer to it before looking up at you.
 		<<if _robin.dom gte 40>>
 			"Can I?" Robin looks eager.
 		<<else>>
 			"Do you mind if I..." Robin doesn't look like <<he>> can finish <<his>> sentence.
 		<</if>>
-		You nod. <<He>> tentatively sticks <<his>> tongue out to lick it. 
+		You nod. <<He>> tentatively sticks <<his>> tongue out to lick it.
 		<br><br>
 
 		<<if _robin.virginity.oral>>
@@ -1659,6 +1695,8 @@
 		<br><br>
 
 		<<switch $player.penissize>>
+			<<case -1 0>>
+				<<He>> struggles to keep <<his>> mouth on it for a moment, before resorting to kissing it instead of trying to suck it.
 			<<case 1>>
 				Eventually <<he>> takes it all the way down to the base and makes a pleased noise as <<he>> sucks.
 			<<case 2>>
@@ -1683,12 +1721,13 @@
 				"Hahh- Sorry about that, um, got carried away."
 				<<He>> returns to your penis, but seems to focus <<his>> efforts on what <<he>> can reach. Shortly after that,
 			<<default>>
-				ERROR MESSAGE
+				Robin gags on your penis, retching. "Sorry," <<he>> says. "I didn't expect you to have a penis size of <<print $player.penissize>>.
+				<span class="red">It's a bug.</span> Could you report this to Vrelnir when you get the chance?"
 		<</switch>>
 		Robin starts using <<his>> tongue to swirl around your penis as <<he>> moves.
 		<<arousal 5000>><<gggarousal>>
 		<br><br>
-		
+
 		<<if $arousal gte $arousalmax>>
 			<<silently>><<orgasm>><</silently>>
 			<<set $robinCDI.whoOrgasmed to "pc">>
@@ -1706,7 +1745,7 @@
 			"Jeez! Warn me when you're gonna do that! You know we're not supposed to make a mess in here."
 			<br><br>
 			<<if $robinCDI.acts is 0>>
-				Then, as <<he>> strokes your cock, <<he>> adds, 
+				Then, as <<he>> strokes your cock, <<he>> adds,
 				<<if _robin.dom gte 40>>
 					"I hope you've still got more for me. I'm not done yet."
 				<<else>>
@@ -1717,7 +1756,7 @@
 				Robin snuggles up next to you with a happy sigh. "I'm so glad you enjoyed yourself," <<he>> smiles at you.
 			<</if>>
 		<<else>>
-			
+
 			You feel yourself about to orgasm when <<he>> stops.
 			<<if $robinCDI.acts is 0>>
 				"I came up with a better idea," <<he>> says, voice shaking with excitement as <<he>> lies back on the bed.
@@ -1725,7 +1764,7 @@
 				"Sorry, my jaw is hurting," <<he>> looks dejected. "I'm sorry I couldn't get you to finish," <<he>> sighs and hugs you.
 			<</if>>
 		<</if>>
-	<<else>>  <!-- eat out by Robin -->
+	<<else>><!-- eat out by Robin -->
 		Robin starts kissing you again, though this time <<his>> hands wander towards your chest.
 		<<He>> gently circles <<his>> fingertip around your nipple as <<he>> nibbles your lower lip. It soon becomes erect due to <<his>> fingernail tracing it.
 		Robin breaks the kiss, closing <<his>> eyes and starting to create a trail down your neck and to your chest.
@@ -1835,7 +1874,7 @@
 
 :: School Infirmary Robin CD Penetrate
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _hole to ($phase is 1 ? "ass" : "vagina")>>
 
 	<<if playerHasStrapon()>>
@@ -1869,7 +1908,7 @@
 		<<case 0>>
 			You easily fit the entire length within Robin.
 			<br><br>
-			
+
 			<<He>> smiles at you, reassuringly. "I don't mind if it's a little small, it's you that I care about."
 		<<case 1>>
 			You keep going until Robin reaches the base of your <<penis>>. <<He>> smiles and makes a pleased sigh.
@@ -1999,7 +2038,7 @@
 				You hold onto Robin tightly as you ride out your respective orgasms.
 			<</if>>
 		<</if>>
-	<<else>> 
+	<<else>>
 		Robin curls <<his>> toes and gives a particularly long moan. <<His>> muscles start to clench and unclench as <<he>> holds you especially close to <<him>>.
 		<<if _robin.dom gte 40>>
 			"Keep going! I'm gonna cum!" Robin squeezes you as <<he>> moans.
@@ -2019,7 +2058,7 @@
 
 :: School Infirmary Robin CD Get Penetrated
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _hole to ($phase is 1 ? "ass" : "vagina")>>
 
 	<!-- Feel free to add a Robin strap-on version -->
@@ -2144,18 +2183,18 @@
 
 :: School Infirmary Robin CD Give Oral
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<set _action to ($phase is 0 ? "blowjob" : "eat out")>>
 
 	<<if $robinCDI.acts is 0>> <!-- first act, preparing for penetration -->
 		<<robinInfirmaryCDUndressLower>>
 		<br><br>
-		
+
 		<<if _action is "blowjob">>
 			<<set $NPCList[0].intro to 1>>
 		<<elseif _action is "eat out">>
 			<<if $submissive gte 1150>>
-				"I want to make you feel good..." You mumble. 
+				"I want to make you feel good..." you mumble.
 			<<elseif $submissive lte 850>>
 				You make a lewd gesture using your fingers and your tongue. "I'd love to get a taste," you say.
 			<<else>>
@@ -2165,10 +2204,10 @@
 
 			Robin flushes. "S-sure!"
 		<</if>>
-		
+
 		<<set _soaked to (_robin.vagina isnot "none" ? "arousal-soaked" : "")>>
 		<<if _robin.pronoun is "f">>
-			<<He>> opens up the front of <<his>> _soaked boxers, revealing <<his>> 
+			<<He>> opens up the front of <<his>> _soaked boxers, revealing <<his>>
 		<<else>>
 			<<He>> slides <<his>> _soaked panties down to <<his>> knees, revealing <<his>>
 		<</if>>
@@ -2362,9 +2401,13 @@
 		<</if>>
 		"I'm gonna need a minute. That was... intense." <<He>> collapses back on the bed.
 		<<set $robinCDI.whoOrgasmed to "robin">>
-		
+
 	<<else>>
-		This is an error.
+		Robin frowns. "Sorry, I'm not... sure what to do here? <span class="red">I think __action being set to _action is a bug.</span>
+		Could you report this to Vrelnir when you get the chance?"
+		<br><br>
+
+		<<He>> awkwardly pats the top of your head, unsure of what else to do.
 	<</if>>
 	<br><br>
 
@@ -2373,7 +2416,6 @@
 
 :: School Infirmary Robin CD Aftercare
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
 	<<npcincr Robin lust -100>>
 	<<earnFeat "Robin's Song">>
 	You and Robin lie close together on the infirmary bed, holding each other in a warm embrace.
@@ -2393,7 +2435,7 @@
 	<br><br>
 
 	<<He>> starts to clean <<his>> clothes off, which have now mostly dried. Throwing them on, <<he>> smiles at you as you fix your clothing.
-	"Thanks," <<he>> says. "Not just for this, but for everything." 
+	"Thanks," <<he>> says. "Not just for this, but for everything."
 	<<if $schoolstate is "lunch" or $schoolstate is "fourth">>
 		<<He>> gives you a big hug before holding your hand and leading you to your class.
 	<</if>>
@@ -2405,7 +2447,7 @@
 	<<robinInfirmaryVariableCleanup>>
 
 	<<if $schoolstate is "lunch" or $schoolstate is "fourth">>
-		<<link [[Next|School History Robin CD Enter]]>><<clotheson>><<dontHideRevert>><</link>>
+		<<link [[Next|School History Robin CD Enter]]>><<endevent>><<clotheson>><<dontHideRevert>><</link>>
 	<<else>>
 		<<link [[Next|Hallways]]>><<endevent>><<clotheson>><<dontHideRevert>><</link>>
 	<</if>>
@@ -2413,7 +2455,7 @@
 
 :: School History Robin CD Enter
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-	<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+	<<set _robin to statusCheck("Robin")>>
 	<<npc Robin 1>>
 	<<npc Winter 2>>
 

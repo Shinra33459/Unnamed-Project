@@ -35,14 +35,17 @@
 				<<set _askActions["to not choke you" + _diffText] to "nochoke">>
 			<</if>>
 		<</if>>
-		
-        <<set $_npcname to $npc[$npcrow.indexOf($mouthtarget)]>>
-        <<if ["Robin","Kylar","Alex","Avery","Whitney","Eden","Sydney"].includes($_npcname) and !npcHasStrapon($mouthtarget)
-            and [0, "clothed"].includes($NPCList[$mouthtarget].vagina)>>
-            <<if ["Avery","Whitney"].includes($_npcname) or $npc[$npcrow.indexOf($mouthtarget)] is $_npcname and checkIfNPCHasCategorySextoy($_npcname,"strap-on")>>
-                <<set _askActions["to wear a strap-on"] to "wearStrapon">>
-            <</if>>
-        <</if>>
+
+		<<set $_npcname to $npc[$npcrow.indexOf($mouthtarget)]>>
+		<<if ["Robin","Kylar","Alex","Avery","Whitney","Eden","Sydney"].includes($_npcname) and !npcHasStrapon($mouthtarget)
+			and [0, "clothed"].includes($NPCList[$mouthtarget].vagina)>>
+			<<if ["Avery","Whitney"].includes($_npcname) or $npc[$npcrow.indexOf($mouthtarget)] is $_npcname and checkIfNPCHasCategorySextoy($_npcname,"strap-on").length > 0>>
+				<<set _askActions["to wear a strap-on"] to "wearStrapon">>
+			<</if>>
+		<</if>>
+		<<if npcHasStrapon($mouthtarget) and $NPCList[$mouthtarget].penis is 0>>
+			<<set _askActions["to remove "+$NPCList[$mouthtarget].pronouns.his+" strap-on"] to "removeStrapon">>
+		<</if>>
 
 	<<else>>
 		<<set _mouthaction["Scream"] to "scream">>
@@ -51,7 +54,9 @@
 			<<set _mouthaction["Forgive"] to "forgive">>
 		<</if>>
 		<<if $submissive lte 850>>
-			<<set _mouthaction["Demand"] to "demand">>
+			<<if $fightTargets is undefined>>
+				<<set _mouthaction["Demand"] to "demand">>
+			<</if>>
 		<</if>>
 	<</if>>
 	<<if $worn.over_upper.name isnot "naked" and $worn.over_upper.cursed isnot 1 or $worn.upper.name isnot "naked" and $worn.upper.cursed isnot 1 or $worn.under_upper.name isnot "naked" and $worn.under_upper.cursed isnot 1>>

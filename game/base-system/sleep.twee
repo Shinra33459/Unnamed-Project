@@ -12,12 +12,21 @@
 		<<set $_bonusFatigueLoss += 5>>
 	<</if>>
 	<!-- sleeping with others -->
-	<<if $robinbed is 1 or $kylarbed is 1 or $wolfbed is 1>>
+	<<if $robinbed isnot undefined or $kylarbed is 1 or $wolfbed is 1>>
 		<<set $_bonusFatigueLoss += 5>>
 	<</if>>
 	<!-- wearing any non-sleep clothing disables the sleep bonus -->
 	<<if !Object.values($worn).every(clothes => clothes.type.includes("naked") || clothes.type.includes("sleep") || clothes.type.includes("eerie"))>>
 		<<set $_bonusFatigueLoss to 0>>
+	<</if>>
+	<!-- sleeping in a poor/regular/comfy bed at home provides a -10/0/+10 bonus regardless of clothing -->
+	<<if $location is "home">>
+		<<set $_bed to Furniture.get('bed')>>
+		<<if $_bed.type.includes('comfy')>>
+			<<set $_bonusFatigueLoss += 10>>
+		<<elseif $_bed.type.includes('starter')>>
+			<<set $_bonusFatigueLoss -= 10>>
+		<</if>>
 	<</if>>
 	<!-- note: every hour of sleep gives a standard 250 fatigue reduction, so this bonus may not be all that much. -->
 
@@ -25,20 +34,21 @@
 	<!-- if you select "just sleep", then you wake up when tiredness hits 0, or after 10 hours. -->
 	<<for $sleephour gte 1 or $sleephour lte -1>>
 		<<set $sleephour -= 1>>
-		
+
 		<<if $location isnot "asylum">>
 			<<effectstime>>
 		<</if>>
 		<<switch $location>>
 			<<case "home">>
-				<<if $robinromance is 1 and $NPCName[$NPCNameList.indexOf("Robin")].lust gte 20 and $robinbed isnot 1 and $robinwakeday isnot 1 and $kylarbed isnot 1>>
+				<<set _robin to statusCheck("Robin")>>
+				<<if (($robinromance is 1 and _robin.lust gte 20) or (_robin.trauma gte 50 and $rng gte 51)) and !$robinbed and $robinwakeday isnot 1 and $kylarbed isnot 1 and $robinmissing is 0>>
 					<!-- Robin climbs into bed with you -->
 					<<if $hour gte 18 or $hour lte 6>>
 						<<set _sleepinterrupt to 1>>
-						<<set $NPCName[$NPCNameList.indexOf("Robin")].lovewake to 1>>
+						<<set _robin.lovewake to 1>>
 						<<set $robinwakeday to 1>>
 					<</if>>
-				<<elseif $NPCName[$NPCNameList.indexOf("Robin")].love gte 100 and $robindebtknown isnot 1 and $kylarbed isnot 1>>
+				<<elseif _robin.love gte 100 and $robinbed is undefined and $robindebtknown isnot 1 and $kylarbed isnot 1 and $robinmissing is 0>>
 					<<if $hour gte 18 or $hour lte 6>>
 						<<set _sleepinterrupt to 1>>
 						<<set $robindebtwake to 1>>
@@ -107,15 +117,19 @@
 				<<if wraithSleepEventCheck()>>
 					<<wraithEvent>>
 				<</if>>
+			<<case "pound">>
+				<<if $hour is 6 or $hour is 12 or $hour is 18>>
+					<<set _sleepinterrupt to 1>>
+				<</if>>
 		<</switch>>
-		
+
 		<!-- this will stop sleep from happening, meaning no fatigue reduction or time passing -->
 		<<if _sleepinterrupt>>
 			<<break>>
 		<</if>>
 
 		<<set $sleepHoursTotal += 1>><<set $sleepStat++>>
-		
+
 		<!-- fatigue is lowered by 200 for every hour slept, and another 50 more if the player has no trauma. -->
 		<<set $tiredness -= 200>>
 		<<if !($sleeptrouble is 1 and $controlled is 0)>>
@@ -252,7 +266,7 @@
 	<<else>>
 		<<set _eventsList to ["have sex with someone", "go running or swimming for an hour"]>>
 	<</if>>
-	<<if $skulduggery gt 200>>
+	<<if currentSkillValue('skulduggery') gt 200>>
 		<<set _eventsList.push("steal something")>>
 	<</if>>
 	<<if $exhibitionism gt 35>>
@@ -310,7 +324,7 @@
 <</widget>>
 
 <<widget "wraithEvent">>
-	
+
 	<!-- this is because this event wakes the player up AFTER they have slept for an hour. -->
 	<<unset _sleepinterrupt>>
 

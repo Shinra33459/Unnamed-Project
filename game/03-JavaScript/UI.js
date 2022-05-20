@@ -16,7 +16,7 @@ window.overlayMenu = function (elementId, type) {
 		if (document.getElementById(elementId) != undefined) {
 			if (V.debugMenu[2].length > 0)
 				window.toggleClassDebug(elementId, "hideWhileSearching")
-			else 
+			else
 				window.toggleClassDebug(elementId, "classicHide")
 		}
 		if ((elementId == "debugFavourites" || elementId == "debugAdd") && V.debugMenu[2] != undefined && V.debugMenu[2].length > 0){
@@ -259,13 +259,13 @@ window.getTimeNumber = function (t) {
 
 window.extendStats = function () {
 	V.extendedStats = !V.extendedStats;
-	var captionDiv = document.getElementById('storyCaptionDiv'),
+	var captionDiv = document.getElementById('storyCaptionContent'),
 		statsDiv = document.getElementById('stats');
 	if (V.extendedStats === true) {
-		captionDiv.classList.add("storyCaptionDivExtended");
+		captionDiv.classList.add("storyCaptionContentExtended");
 		statsDiv.classList.add("statsExtended");
 	} else {
-		captionDiv.classList.remove("storyCaptionDivExtended");
+		captionDiv.classList.remove("storyCaptionContentExtended");
 		statsDiv.classList.remove("statsExtended");
 	}
 	new Wikifier(null, '<<replace #stats>><<statsCaption>><</replace>>');
@@ -341,7 +341,7 @@ window.settingsAsphyxiation = function () {
 		}
 		jQuery('#numberslider-value-asphyxialvl').text('').append(text).addClass('small-description');
 	};
-	
+
 	jQuery(document).ready(() => {
 		updateText();
 		jQuery('#numberslider-input-asphyxialvl').on('input change', function (e) { updateText(); });
@@ -468,14 +468,14 @@ window.settingsPCGenderUpdate = function () {
 }
 
 window.settingsDoubleAnalToggleGreyOut = function() {
-    let updateButtonsActive = () => {
-        jQuery('[id*=checkbox-analdoubledisable]').prop("disabled", V.analdisable == "t");
-    };
+	let updateButtonsActive = () => {
+		jQuery('[id*=checkbox-analdoubledisable]').prop("disabled", V.analdisable == "t");
+	};
 
-    jQuery(document).ready(() => {
-        updateButtonsActive();
-        jQuery('[id*=checkbox-analdisable]').on('change', function (e) { updateButtonsActive(); });
-    });
+	jQuery(document).ready(() => {
+		updateButtonsActive();
+		jQuery('[id*=checkbox-analdisable]').on('change', function (e) { updateButtonsActive(); });
+	});
 }
 
 $(document).on('click', '#cbtToggleMenu .cbtToggle', function (e) {

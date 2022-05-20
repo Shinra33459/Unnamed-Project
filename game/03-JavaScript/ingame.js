@@ -328,7 +328,7 @@ window.combatListColor = function (name, value, type) {
 				break;
 
 			case "leftprotect": case "rightprotect": case "leftgrip": case "rightgrip": case "leftcurl": case "rightcurl":
-				color = "sub";
+				color = "meek";
 				break;
 
 			default:
@@ -403,6 +403,65 @@ function combatDefaults() {
 }
 
 DefineMacroS("combatDefaults", combatDefaults);
+
+/*
+* Explanation for the actionsSuccessPerSkill() function:
+* The following formula shows the old skill chance calculation.
+* (1000 - ($rng * 10) - ($enemytrust * 10) - $skill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)
+* Rearranged to
+* $skill + ($enemytrust * 10) + (($enemyarousalmax / ($enemyarousal + 1)) * 100) + ($rng * 10) gte 1000 + $enemyanger
+* The first half of the formula must be higher than the second half. So the higher the left values, the easier the action. The higher the right values, the harder the action.
+* $skill is the skill being used. That could be $handskill, $vaginalskill, $seductionskill, etc.
+* ($enemytrust * 10) is simply how much the NPC trust the player. Since $enemytrust can be negative, a bad trust can result in an increase in difficulty.
+* (($enemyarousalmax / ($enemyarousal + 1)) * 100) is the relative NPC arousal. This value can never be 100, except on the last turn.
+* The current arousal being divided by the max arousal means the higher the arousal (and by consequence the arousal percentage) the more difficult the action becomes (since the value will be lower).
+* This also means actions are more likely to succeed during the start of the combat, and get harder as the combat goes on.
+* ($rng * 10) is simply the random part of the equation, so the chance is not always locked into one result. This value varies between 0 and 1000, at a base 10 (so it can't be anything that's not a multiple of 10).
+* 1000 is the base difficulty. This rules how high the skill needs to be if all other values are 0. The higher the base difficulty, the harder the action. This is usually the main factor determining the success of the action.
+* $enemyanger is just like the trust part, but not multiplied. This means anger has 10x less impact in the action than trust, however $enemyanger cannot be negative and could be much higher than trust.
+*
+* Another form of the formula is written as
+* (700 - ($rng * 10) - ($enemytrust * 10) - $handskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * $_npc.clothes[$_clothesTarget].integrity)
+* This is the difficulty to undress an NPC. The base difficulty is lower, but the arousal multiplier is different. The 100 multiplier is replaced by the NPC's clothes' integrity, which is often higher than 100. The more tattered the clothes, the harder to succeed in the action (the arousal side becomes lower).
+*
+* The function uses the following formula:
+* skill + trust + (arousalfactor * multiplier) + rng >= basedifficulty + anger
+* Which is the same as the previous formula, just renamed.
+* trust will always be $enemytrust * 10
+* arousalfactor will always be $enemyarousalmax / ($enemyarousal + 1)
+* multiplier, if not passed as an argument, will always be 100 (to complement the ($enemyarousalmax / ($enemyarousal + 1) * 100 format).
+* rng will always be $rng * 100
+* basedifficulty, if not passed as an argument, will always be 1000
+* anger is simply $enemyanger, renamed to fit in the format.
+* skill will be the selected skill. The function uses a required string argument which is skillname, being "hand", "vaginal", "seduction", etc. Whichever string is passed will be added to "skill" to make the skill variable.
+* E.g. the function passes "anal" as the only argument (and thus skillname is "anal"). skill will become the value of $analskill used in calculation.
+* So skillname is a string, and skill is an integer. Why not simply pass the skill value as the argument? Because of possible future variants, such as moor luck, affecting some variable and not the other.
+* targetid is an optional value, that doesn't see use currently but can possibly be required in the future in case any of the "enemy" variables (such as $enemyarousal or $enemytrust) become individual values ("per NPC", as health currently is).
+*
+* The output is simply: true if the action is a success, and false if the action fails.
+*/
+/**
+ * Checks skill value against combat math to determine success of an action
+ * @param {string} skillName - Simple skill name, "anus" "hand" "feet" etc
+ * @param {number} targetid - The targetted NPC's id
+ * @param {number} difficulty - Difficulty of the check, default 1000
+ * @param {number} multiplier - Multiplier on enemy arousal, default 100
+ * @returns {boolean}
+ */
+ function combatSkillCheck(skillname, targetid = 0, basedifficulty = 1000, multiplier = 100){
+	let skill = V[skillname + "skill"];
+	let rng = V.rng * 10;
+	let arousalfactor = V.enemyarousalmax / (V.enemyarousal + 1);
+	let trust = V.enemytrust * 10;
+	let anger = V.enemyanger;
+
+	if (skill + trust + (arousalfactor * multiplier) + rng >= basedifficulty + anger){
+		return true;
+	}else{
+		return false;
+	}
+}
+window.combatSkillCheck = combatSkillCheck;
 
 function hairdressersReset() {
 	jQuery(document).on('change', '.macro-listbox', function (e) {
@@ -554,6 +613,8 @@ window.toTitleCase = function(str) {
 	});
 }
 
+window.numbersBetween = (start, end, step = 1) => Array.from({ length: (end - start) / step + 1}, (_, i) => start + (i * step));
+
 window.getRobinLocation = function(){
 	if (V.NPCName[V.NPCNameList.indexOf("Robin")].init !== 1){
 		return;
@@ -561,8 +622,17 @@ window.getRobinLocation = function(){
 	} else if (V.robinlocationoverride && V.robinlocationoverride.during.includes(V.hour)){
 		return T.robin_location = V.robinlocationoverride.location;
 
-	} else if (V.robinmissing === 1){
-		return T.robin_location = "missing";
+	} else if (V.robinmissing === "docks"){
+		return T.robin_location = "docks";
+
+	} else if (V.robinmissing === "landfill"){
+		return T.robin_location = "landfill";
+
+	} else if (V.robinmissing === "dinner"){
+		return T.robin_location = "dinner";
+
+	} else if (V.robinmissing === "pillory"){
+		return T.robin_location = "pillory";
 
 	} else if (!between(V.hour, 7, 20)){ //if hour is 6 or lower, or 21 or higher
 		return T.robin_location = "sleep";
@@ -600,11 +670,14 @@ window.setRobinLocationOverride = function(loc, hour){
 
 window.getRobinCrossdressingStatus = function(crossdressLevel){
 	//Note returns 2 if Robin is crossdressing or 0 if not comfortable enough at that location
+	//Traumatised Robin will not crossdress.
 	if (V.NPCName[V.NPCNameList.indexOf("Robin")].init !== 1){
 		return;
 	}
 	T.robin_cd = 0;
-
+	if (V.NPCName[V.NPCNameList.indexOf("Robin")].trauma >= 40){
+		return;
+	}
 	switch (getRobinLocation()){
 		case "orphanage":
 		case "sleep":
@@ -627,7 +700,7 @@ window.getRobinCrossdressingStatus = function(crossdressLevel){
 }
 
 window.DefaultActions = {
-	create:  function (isMinimal = false, preload = false) {
+	create: function (isMinimal = false, preload = false) {
 		let storage = {};
 		setup.actionsTypes.combatTypes.forEach(type => {
 			storage[type] = {};
@@ -946,7 +1019,8 @@ window.clothesReturnLocation = function(item, type){
 //the 'modder' variable is specifically for modders name, should be kept as a short string
 window.clothesIndex = function(slot, itemToIndex) {
 	if(!slot || !itemToIndex || !itemToIndex.name || !itemToIndex.variable) {
-		console.log(`clothesIndex - slot or valid object not provided`);
+		/* console.log(`clothesIndex - slot or valid object not provided`); */
+		Errors.report(`[clothesIndex]: slot or valid object not provided`, { 'Stacktrace' : Utils.GetStack(), slot, itemToIndex });
 		return 0;
 	}
 	let index = setup.clothes[slot].findIndex((item) => item.variable === itemToIndex.variable && item.modder === itemToIndex.modder)
@@ -969,105 +1043,14 @@ window.clothesIndex = function(slot, itemToIndex) {
 	return index;
 }
 
-var pageLoading = false;
-
-Save.onLoad.add(function(save) {
-	pageLoading = true
-});
-
-// Runs before a passage load, returning a string redirects to the new passage name.
-Config.navigation.override = function (dest) {
-	const isLoading = pageLoading; // if page is freshly loading (after a refresh etc), we hold its value in a temporary variable
-	
-	pageLoading = false
-	switch (dest) {
-		case 'Pharmacy Select Custom Lenses':
-			return isLoading ? 'Pharmacy Ask Custom Lenses' : false;
-		case 'Forest Shop Outfit':
-		case 'Forest Shop Upper':
-		case 'Forest Shop Lower':
-		case 'Forest Shop Under Outfit':
-		case 'Forest Shop Under Upper':
-		case 'Forest Shop Under Lower':
-		case 'Forest Shop Head':
-		case 'Forest Shop Face':
-		case 'Forest Shop Neck':
-		case 'Forest Shop Legs':
-		case 'Forest Shop Feet':
-			return 'Forest Shop';
-
-		case 'Over Outfit Shop':
-		case 'Outfit Shop':
-		case 'Top Shop':
-		case 'Bottom Shop':
-		case 'Under Outfit Shop':
-		case 'Under Top Shop':
-		case 'Under Bottom Shop':
-		case 'Head Shop':
-		case 'Face Shop':
-		case 'Neck Shop':
-		case 'Hands Shop':
-		case 'Legs Shop':
-		case 'Shoe Shop':
-			return 'Clothing Shop';
-
-		case 'Penis Inspection Flaunt Crossdress':
-			return 'Penis Inspection Flaunt No Penis';
-
-		case 'Pussy Inspection2':
-			return 'Pussy Inspection 2';
-
-		case 'Pussy Inspection Penis':
-			return 'Pussy Inspection Flaunt No Pussy';
-
-		case 'Forest Plant Sex No Tentacles':
-			return 'Forest Plant Sex';
-
-		case 'Forest Plant Sex No Tentacles Finish':
-			return 'Forest Plant Sex Finish';
-
-		case 'Forest Plant Passout No Tentacles':
-			return 'Forest';
-
-		case 'Moor Plant Sex No Tentacles':
-			return 'Moor Plant Sex';
-
-		case 'Moor Plant Sex No Tentacles Finish':
-			return 'Moor Plant Sex Finish';
-
-		case 'Underground Plant Molestation No Tentacles':
-			return 'Underground Plant Molestation';
-
-		case 'Underground Plant Molestation No Tentacles Finish':
-			return 'Underground Plant Molestation Finish';
-
-		case 'Evens Swimming Endure':
-			return 'Events Swimming Swim Endure';
-
-		case 'Domus House Work':
-			return 'Domus Gutters Intro';
-
-		case 'Lake Underwater Tentacles Finish Figure':
-			return 'Lake Underwater Tentacles Finish';
-
-		case 'Sextoys Inventory Home':
-		case 'Sextoys Inventory Brothel':
-		case 'Sextoys Inventory Cottage':
-		case 'Sextoys Inventory Cabin':
-			return 'Sextoys Inventory';
-
-		default:
-			return false;
-	}
-}
-
 window.currentSkillValue = function(skill){
 	let result = V[skill];
 	if(!result && result !== 0) {
-		console.log(`currentSkillValue - skill '${skill}' unknown`);
+		/* console.log(`currentSkillValue - skill '${skill}' unknown`); */
+		Errors.report(`[currentSkillValue]: skill '${skill}' unknown.`, { 'Stacktrace' : Utils.GetStack(), skill });
 		return 0;
 	};
-	if(['skulduggery','physique','danceskill','swimmingskill','athletics','willpower','tending','english'].includes(skill) && V.moorLuck > 0){
+	if(['skulduggery','physique','danceskill','swimmingskill','athletics','willpower','tending','science','maths','english','history'].includes(skill) && V.moorLuck > 0){
 		result = Math.floor(result * (1 + (V.moorLuck / 100)));
 	}
 	if(['physique','danceskill','swimmingskill','athletics'].includes(skill) && V.sexStats.vagina.pregnancy.bellySize >= 10){
@@ -1162,17 +1145,6 @@ window.playerIsPenetrated = function(){
 	return [V.mouthstate, V.vaginastate, V.anusstate].some(s => ["penetrated","doublepenetrated","tentacle","tentacledeep"].includes(s))
 }
 
-window.playerHasStrapon = function(){
-	return (V.worn.under_lower.type.includes("strap-on") && V.worn.under_lower.state == "waist")
-}
-
-window.npcHasStrapon = function(index){
-	// index is 0 to 5
-	return (V.NPCList[index].penisdesc != undefined && V.NPCList[index].penisdesc.contains("strap-on"))
-	// For refactoring in the future
-	//return (V.NPCList[index].penisdesc != undefined && V.NPCList[index].strapon != undefined && V.NPCList[index].strapon.state == "worn")
-}
-
 window.getTimeString = function(minutes = 0){
 	if (minutes < 0){
 		// come on don't try negative numbers, that's silly
@@ -1232,11 +1204,11 @@ window.npcSpecifiedClothes = function (npc, name){
 	}
 }
 
-/*npc.crossdressing: 0 - doesnt at all, 1 - sometimes, 2 - always*/
+/*npc.crossdressing: 0 - doesn't at all, 1 - sometimes, 2 - always*/
 window.npcClothes = function (npc, type){
-    let crossdressing = npc.crossdressing || 0;
+	let crossdressing = npc.crossdressing || 0;
 	let gender = ['n'];
-	/* if you dont want those always crossdressing to wear neutral clothes
+	/* if you don't want those always crossdressing to wear neutral clothes
 	let gender = [];
 	if(crossdressing !== 2) gender.push('n');
 	*/
@@ -1274,121 +1246,39 @@ window.waterproofCheck = function(clothing){
 	return clothing.type.includes("swim") || clothing.type.includes("stealthy");
 }
 
-window.getSexToysofType = function (toyType){
-	var sexToys = ["dildo","whip","stroker","vibrator","all"];
-	sexToys["dildo"] = ["dildo","length of anal beads"];
-	sexToys["whip"] = ["riding crop","flog"];
-	sexToys["stroker"] = ["stroker"];
-	sexToys["vibrator"] = ["vibrator","bullet vibe"];
-	sexToys["all"] = sexToys["dildo"].concat(sexToys["whip"],sexToys["stroker"],sexToys["vibrator"]);
-
-	if (toyType != undefined){
-		if (toyType == "dildo"){
-			var dildos = sexToys["dildo"].concat(sexToys["vibrator"]);
-			return dildos;
-		}
-		else if (toyType == "stroker"){
-			return sexToys["stroker"];
-		}
-		else if (toyType == "whip"){
-			return sexToys["whip"];
-		}
-		else if (toyType == "vibrator"){
-			return sexToys["vibrator"];
-		}
-		else if (toyType == "dildos and strokers"){
-			var dildos = sexToys["dildo"].concat(sexToys["vibrator"],sexToys["stroker"]);
-			return dildos;
-		}
-		else if (toyType == "dildos and whips"){
-			var dildos = sexToys["dildo"].concat(sexToys["vibrator"],sexToys["whip"]);
-			return dildos;
-		}
-		else {
-			return sexToys["all"];
-		}
-	}
-	else {
-		//console.log("All sex toys. Length = "+sexToys["all"].length+ " and I contain: " +sexToys["all"]);
-		return sexToys["all"];
-	}
+function isLoveInterest(name) {
+	return V.loveInterest.primary === name || V.loveInterest.secondary === name || V.loveInterest.tertiary === name;
 }
-
-window.npcHasSexToyOfType = function(npcIndex,toyType){
-	var npc = V.NPCList[npcIndex];
-	if (npc.righttool != undefined || npc.lefttool != undefined){
-		var sexToys = ["dildo","whip","stroker","all"];
-		sexToys["dildo"] = getSexToysofType("dildo");
-		sexToys["whip"] = getSexToysofType("whip");
-		sexToys["stroker"] = getSexToysofType("stroker");
-		sexToys["vibrator"] = getSexToysofType("vibrator");
-		sexToys["all"] = getSexToysofType("all");
-		console.log("sex toys: "+sexToys.all);
-
-		return sexToys[toyType].contains(V.NPCList[npcIndex].righttool) || sexToys[toyType].contains(V.NPCList[npcIndex].lefttool)
-	}
-	else {
-		return false;
-	}
-}
-
-window.randomSexToy = function(toyType){
-
-	if (toyType != undefined){
-		if (toyType == "dildo"){
-			var dildos = getSexToysofType("dildo");
-			return dildos[random(0,dildos.length-1)];
-		}
-		else if (toyType == "stroker"){
-			var strokers = getSexToysofType("stroker");
-			return strokers[random(0,strokers.length-1)];
-		}
-		else if (toyType == "whip"){
-			var whips = getSexToysofType("whip");
-			return whips[random(0,whips.length-1)];
-		}
-		else if (toyType == "vibrator"){
-			var vibrators = getSexToysofType("vibrator");
-			return vibrators[random(0,vibrators.length-1)];
-		}
-		else if (toyType == "dildos and strokers"){
-			var dildos = getSexToysofType("dildos and strokers");
-			return dildos[random(0,dildos.length-1)];
-		}
-		else if (toyType == "dildos and whips"){
-			var dildos = getSexToysofType("dildos and whips");
-			return dildos[random(0,dildos.length-1)];
-		}
-		else {
-			var sexToys = getSexToysofType("all")
-			return sexToys[random(0,sexToys.length-1)];
-		}
-	}
-	else {
-		//console.log("All sex toys. Length = "+sexToys["all"].length+ " and I contain: " +sexToys["all"]);
-		var sexToys = getSexToysofType("all")
-		return sexToys[random(0,sexToys.length-1)];
-	}
-}
-
-window.playerHasButtPlug = function(){
-	return (V.worn.butt_plug != undefined && V.worn.butt_plug.state == "worn" && V.worn.butt_plug.worn == 1) // V.worn.butt_plug.worn == 1 is just as a safeguard for now
-}
-
-window.ironmanScheduledSaves = function() {
-	let date = new Date(V.month +' '+V.monthday+', ' + V.year)
-
-	if (!V.ironmanautosaveschedule)
-		V.ironmanautosaveschedule = (date.getTime()).toString(8)
-	if (parseInt(V.ironmanautosaveschedule, 8) < date.getTime()){
-		//autosave
-		ironmanAutoSave();
-		//
-		V.ironmanautosaveschedule = (date.getTime() + (window.getRandomIntInclusive(432000, 777600) * 1000)).toString(8)
-	}
-}
+window.isLoveInterest = isLoveInterest;
 
 window.wraithSleepEventCheck = function(){
 	return V.wraith && V.wraith.state !== "" && V.wraith.nightmare === 1 && (V.moonstate === "evening" && V.hour >= 21 || V.moonstate === "morning" && V.hour < 5);
 }
+
+window.fameTotal = function() {
+	let result = 0;
+	for (const key in V.fame) {
+		result += V.fame[key];
+	}
+	return result;
+}
+
+window.fameSum = function(...fameTypes) {
+	let result = 0;
+	fameTypes.forEach(fameType => result += V.fame[fameType]);
+	return result;
+}
+
+function checkTFparts() {
+	const tfParts = {}
+	Object.entries(V.transformationParts).forEach(([tfName,tf]) => /* Iterate over each transformation */
+		Object.entries(tf).forEach(([pName, pStatus]) => { /* Iterate over each part of each transformation */
+			if (pStatus !== "disabled" && pStatus !== "hidden"){ /* Filter out the parts that the player doesn't have or is suppressing */
+				tfParts[tfName+pName.toUpperFirst()] = true; /* Assign properties with camelCase names for each tf part that is visible */
+			}
+		})
+	);
+	return tfParts;
+}
+window.checkTFparts = checkTFparts;
 

@@ -260,19 +260,19 @@ PenActiv: <span class="gold">$NPCList[_x].penis</span> VagActiv: <span class="go
 	PRONOUN: <span @class="_pColor"><<print _nnpc.pronoun.toUpperCase()>></span> |
 	GENDER: <span @class="_gColor"><<print _nnpc.gender.toUpperCase()>></span>
 	<br>
-	Penis Size: <span class="gold">_nnpc.penissize</span>,   Desc: <span class="gold">_nnpc.penisdesc</span>,
+	Penis Size: <span class="gold">_nnpc.penissize</span>, Desc: <span class="gold">_nnpc.penisdesc</span>,
 	State: <span @class="_nnpc.penis is 'none' ? 'red' : 'gold'">_nnpc.penis</span>
 	<br>
 	Breast Size: <span class="gold">_nnpc.breastsize</span>, Desc: <span class="gold">_nnpc.breastsdesc</span>
 	<br>
-	TYPE: <span class="blue"><<if _nnpc.adult>>Adult<<elseif _nnpc.teen>>Teen<<else>>???<</if>></span> 
+	TYPE: <span class="blue"><<if _nnpc.adult>>Adult<<elseif _nnpc.teen>>Teen<<else>>???<</if>></span>
 	| INSECURITY: <span class="red">_nnpc.insecurity</span>
 	<br>
-	  TRUST:  <span class="gold">_nnpc.trust</span>
-	| LOVE:   <span class="gold">_nnpc.love</span>
-	| DOM:    <span class="gold">_nnpc.dom</span>
-	| LUST:   <span class="gold">_nnpc.lust</span>
-	| RAGE:   <span class="gold">_nnpc.rage</span>
+	TRUST:	<span class="gold">_nnpc.trust</span>
+	| LOVE:		<span class="gold">_nnpc.love</span>
+	| DOM:		<span class="gold">_nnpc.dom</span>
+	| LUST:		<span class="gold">_nnpc.lust</span>
+	| RAGE:		<span class="gold">_nnpc.rage</span>
 	| TRAUMA: <span class="gold">_nnpc.trauma</span>
 	<br>
 	STATE: _nnpc.state
@@ -858,11 +858,11 @@ How do you respond?
 				The tentacles drop lifelessly to the ground, and sublimate into a pink mist.
 			<<elseif $wraith.gen is "arms">>
 				Its extra arms fold back in.
-			<</if>> 
+			<</if>>
 			Its head snaps back, and it dissipates into nothingness with a brief shriek that echoes in your mind. Your ears ring, and you think you hear laughter. "<span class="wraith">Worry not, we'll meet again soon.</span>"
 			<br><br>
 			<<tearful>> you sit against you bed, wondering if what just happened was real.
-			<<set $wraith.defeated ++>>
+			<<set $wraith.defeated++>>
 		<<else>>
 			<<ejaculation>>
 			With a bright flash, it vanishes. You feel lewd energy linger in the air, and its laughs echo between your ears. "<span class="wraith">Worry not, we'll meet again soon.</span>"
@@ -972,6 +972,10 @@ How do you respond?
 <<link [[Back home|Bedroom]]>><</link>>
 
 :: Possessed Fight Test
+<<generateWraith>><<endevent>>
+<<if !$wraith.will>>
+	<<set $wraith.will to random(1300, 1700)>>
+<</if>>
 <br>
 You feel a tap on your shoulder. You turn around. Nothing is there. You turn back.
 <br><br>
@@ -1016,13 +1020,13 @@ You open your mouth to scream, but it is already inside you.
 <<actionsman>>
 
 <<if $enemyhealth lte 0>>
-	<span id="next"><<link [[HEALTH|Possessed Fight Finish]]>><</link>></span><<nexttext>>
+	<span id="next" class="nextWraith"><<link [[HEALTH|Possessed Fight Finish]]>><</link>></span><<nexttext>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[ORGASM|Possessed Fight Finish]]>><</link>></span><<nexttext>>
+	<span id="next" class="nextWraith"><<link [[ORGASM|Possessed Fight Finish]]>><</link>></span><<nexttext>>
 <<elseif _controlRegain is 1>>
-	<span id="next"><<link [[CONTROL|Possessed Fight Finish]]>><</link>></span><<nexttext>>
+	<span id="next" class="nextWraith"><<link [[CONTROL|Possessed Fight Finish]]>><</link>></span><<nexttext>>
 <<else>>
-	<span id="next"><<link [[Next|Possessed Fight]]>><</link>></span><<nexttext>>
+	<span id="next" class="nextWraith"><<link [[Next|Possessed Fight]]>><</link>></span><<nexttext>>
 <</if>>
 
 :: Possessed Fight Finish
@@ -1034,7 +1038,8 @@ You open your mouth to scream, but it is already inside you.
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
-	<<link [[Fight again|Possessed Fight]]>><<endevent phaseless>><<set $fightstart to 1>><</link>><br>
+	<<link [[Fight again|Possessed Fight]]>><<endevent phaseless>><<set $fightstart to 1>><</link>>
+	<br>
 	<<link [[Freshen up, then fight again|Possessed Fight]]>><<endevent phaseless>><<set $fightstart to 1>><<set $pain to 0>><<set $arousal to 0>><</link>><<lpain>><<larousal>>
 
 <<elseif $enemyhealth lte 0>>
@@ -1048,7 +1053,8 @@ You open your mouth to scream, but it is already inside you.
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
-	<<link [[Fight again|Possessed Fight]]>><<set $fightstart to 1>><<endevent phaseless>><</link>><br>
+	<<link [[Fight again|Possessed Fight]]>><<set $fightstart to 1>><<endevent phaseless>><</link>>
+	<br>
 	<<link [[Freshen up, then fight again|Possessed Fight]]>><<set $fightstart to 1>><<endevent phaseless>><<set $pain to 0>><<set $arousal to 0>><</link>><<lpain>><<larousal>>
 
 <<else>>
@@ -1063,8 +1069,10 @@ You open your mouth to scream, but it is already inside you.
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
-	<<link [[Fight again|Possessed Fight]]>><<set $possessed to true>><<set $control to 0>><<set $fightstart to 1>><<endevent phaseless>><</link>><<lllcontrol>><<if $statdisable is "f">> | <span class="wraith">+ Wraith</span><</if>><br>
-	<<link [[Freshen up, then fight again|Possessed Fight]]>><<set $possessed to true>><<set $control to 0>><<set $fightstart to 1>><<endevent phaseless>><<set $pain to 0>><<set $arousal to 0>><</link>><<lpain>><<larousal>><<lllcontrol>><<if $statdisable is "f">> | <span class="wraith">+ Wraith</span><</if>><br>
+	<<link [[Fight again|Possessed Fight]]>><<set $possessed to true>><<set $control to 0>><<set $fightstart to 1>><<endevent phaseless>><</link>><<lllcontrol>><<if $statdisable is "f">> | <span class="wraith">+ Wraith</span><</if>>
+	<br>
+	<<link [[Freshen up, then fight again|Possessed Fight]]>><<set $possessed to true>><<set $control to 0>><<set $fightstart to 1>><<endevent phaseless>><<set $pain to 0>><<set $arousal to 0>><</link>><<lpain>><<larousal>><<lllcontrol>><<if $statdisable is "f">> | <span class="wraith">+ Wraith</span><</if>>
+	<br>
 	<<link [[Decision room|Possessed Fight Test]]>><<set $possessed to true>><<set $control to 0>><</link>><<lllcontrol>><<if $statdisable is "f">> | <span class="wraith">Also + Wraith</span><</if>>
 <</if>>
 <br><br>
@@ -1097,7 +1105,8 @@ A terminal is attached to the tube. You look at the prompts.
 	<<set $npcselectrole to $npcselectrole.replace(/[^a-zA-Z 0-9,.!()£/]+/g,"")>>
 	<<generateRole 0 $npcselectdesc $npcselectrole>><<person1>>
 	<<unset $npcselectdesc>><<unset $npcselectrole>>
-<</link>><br>
+<</link>>
+<br>
 <<link [[Fight|NPC Role Fight]]>><<set $fightstart to 1>>
 	<<if $npcselectdesc is undefined>><<set $npcselectdesc to "custom">><</if>>
 	<<if $npcselectrole is undefined>><<set $npcselectrole to "construct">><</if>>
@@ -1178,7 +1187,8 @@ A terminal is attached to the tube. You look at the prompts.
 
 <<endcombat>><<clotheson>>
 
-<<link [[Create another construct|NPC Role Select]]>><</link>><br>
+<<link [[Create another construct|NPC Role Select]]>><</link>>
+<br>
 <<link [[Back home|Bedroom]]>><</link>>
 
 :: NPC Clothing Select
@@ -1303,7 +1313,8 @@ A terminal is attached to the tube. You look at the prompts.
 
 <<endcombat>><<clotheson>>
 
-<<link [[Create another construct|NPC Clothing Select]]>><</link>><br>
+<<link [[Create another construct|NPC Clothing Select]]>><</link>>
+<br>
 <<link [[Back home|Bedroom]]>><</link>>
 
 :: NPCInsertionAssert
@@ -1311,19 +1322,25 @@ Generating two NPCs both at slot 0.
 <<generate1>><<generate1>>
 
 :: TimeTest
-Manipulating time itself.<br>
-Distorting $$time ($time) by $timeDistortion.<br>
+Manipulating time itself.
+<br>
+Distorting $$time ($time) by $timeDistortion.
+<br>
 <<set $time += $timeDistortion>>
-$$time = $time<br>
-$$hour = $hour<br>
-$$minute = $minute<br>
+$$time = $time
+<br>
+$$hour = $hour
+<br>
+$$minute = $minute
+<br>
 $$hour * 60 + $$minute = <<print $hour * 60 + $minute>>
 <br><br>
-<<link [[Fast-Forward (0:05)|TimeTest]]>><<set $timeDistortion to 5>><</link>><br>
-<<link [[Fast-Backward -(0:05)|TimeTest]]>><<set $timeDistortion to -5>><</link>><br>
+<<link [[Fast-Forward (0:05)|TimeTest]]>><<set $timeDistortion to 5>><</link>>
 <br>
-<<link [[Correct chrono variation|TimeTest]]>><<set $timeDistortion to ($hour * 60 + $minute) - $time>><</link>><br>
-<br>
+<<link [[Fast-Backward -(0:05)|TimeTest]]>><<set $timeDistortion to -5>><</link>>
+<br><br>
+<<link [[Correct chrono variation|TimeTest]]>><<set $timeDistortion to ($hour * 60 + $minute) - $time>><</link>>
+<br><br>
 <<link [[Go back|$prevPassage]]>><<run delete $timeDistortion>><</link>>
 
 :: NNPC Strapon Generator Widgets [widget]
@@ -1392,12 +1409,13 @@ A terminal is attached to the tube.
 	</span>
 
 	<<button "<i>Randomize</i>">>
-		<<set _straponSize to [2,3,4].random()>> 
-		<<set _straponColour to ["black","red","pink","purple","fleshy","blue","green"].random()>> 
-		<<set _straponShape to ["dildo","penis","beaded dildo","horse cock","knotted cock","tentacle","dolphin cock","studded cock","fist dildo"].random()>> 
+		<<set _straponSize to [2,3,4].random()>>
+		<<set _straponColour to ["black","red","pink","purple","fleshy","blue","green"].random()>>
+		<<set _straponShape to ["dildo","penis","beaded dildo","horse cock","knotted cock","tentacle","dolphin cock","studded cock","fist dildo"].random()>>
 		<<set _straponModifier to ["","","floppy","transparent","sparkly"].random()>>
 		<<replace "#straponOptions">><<straponGeneratorOptions>><</replace>>
-	<</button>><br><br>
+	<</button>>
+	<br><br>
 
 	Having selected the desired options, your finger hovers over the "Create" button. You really have no idea what this strange device is about to do...
 	<br><br>
@@ -1435,17 +1453,17 @@ A terminal is attached to the tube.
 	With a hiss of steam, the tube retracts to the ceiling.
 	A figure walks out, looking identical to <<print $NPCList[0].fullDescription>>,
 	<<if $NPCList[0].fullDescription is "Whitney">>
-		although fully nude and holding a <<print $NPCList[0].strapon.description>> in <<his>> hand. 
+		although fully nude and holding a <<print $NPCList[0].strapon.description>> in <<his>> hand.
 		<br><br>
 		<<setNPCStrapon $NPCList[0] $NPCName[$NPCNameList.indexOf("Whitney")].strapons[0]>>
 		"This thing is cute and all, but I've already got one", <<he>> says,
-		throwing it away and pulling <<his>> favorite <<print $NPCList[0].strapon.description>> out of nowhere.
+		throwing it away and pulling <<his>> favourite <<print $NPCList[0].strapon.description>> out of nowhere.
 	<<else>>
 		although fully nude and wearing a <<print $NPCList[0].strapon.description>>.
 	<</if>>
 	<br><br>
 
-	"Beginning sex encounter," the <<personsimple>> says in a flat tone, before <<his>> face morphs into a lavicious smile. <<catcall>>
+	"Beginning sex encounter," the <<personsimple>> says in a flat tone, before <<his>> face morphs into a lascivious smile. <<catcall>>
 <</if>>
 
 <<effects>>
@@ -1492,7 +1510,8 @@ Once the tube touches the floor, the lights switch off.
 
 <<endcombat>><<clotheson>>
 
-<<link [[Create another construct|NNPC Strapon Generator]]>><</link>><br>
+<<link [[Create another construct|NNPC Strapon Generator]]>><</link>>
+<br>
 <<link [[Back home|Bedroom]]>><</link>>
 
 :: Cow Test Sex

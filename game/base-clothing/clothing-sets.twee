@@ -43,6 +43,10 @@
 		<<set _passage to 'Prison Bed'>>
 		<<set $wardrobe_location to "prison">>
 		<<set $storeLocation to "prison bed">>
+	<<case "Robin Bed">>
+		<<set _passage to "Robin Room Bed">>
+		<<set $wardrobe_location to "wardrobe">>
+		<<set $storeLocation to "bed">>
 	<<default>>
 		<<set _passage to "Bed">>
 		<<set $wardrobe_location to "wardrobe">>
@@ -52,7 +56,15 @@
 <<if $alwaysSleepNaked isnot true>>
 	<<for _i to 0; _i lt $outfit.length; _i++>>
 		<<if $outfit[_i].type.includes("sleep")>>
-			<<bedicon>><<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|"'+_passage+'"]]>><<set $wear_outfit to ' + _i + '>><<saveTempHairStyle>><</link>>'>>
+			<<if _passage is "Bed">>
+				<<furnitureicon _bed.iconFile>>
+			<<else>>
+				<<bedicon>>
+			<</if>>
+			<<capture _i>>
+				<<set _outfitname to $outfit[_i].name + ($outfit[_i].colors is false? "" : " [C]")>>
+				<<link [["Wear "+_outfitname+" and climb in bed"|_passage]]>><<set $wear_outfit to _i>><<saveTempHairStyle>><</link>>
+			<</capture>>
 			<br>
 		<</if>>
 	<</for>>
@@ -211,7 +223,7 @@
 						<</if>>
 						/*Check for slime corruption*/
 						<<if _corruptionEquipSkip.includes(_equip[_i])>>
-							<<if $corruption_slime gte 80 and $willpower lt 800 and _selectedWardrobe[_equip[_i]][_j].reveal lt 500 and !_selectedWardrobe[_equip[_i]][_j].type.includesAny("school", "event")>>
+							<<if $corruption_slime gte 80 and currentSkillValue('willpower') lt 800 and _selectedWardrobe[_equip[_i]][_j].reveal lt 500 and !_selectedWardrobe[_equip[_i]][_j].type.includesAny("school", "event")>>
 								<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "corruption_slime_deny"}>>
 								<<break>>
 							<</if>>
@@ -353,7 +365,7 @@
 	<</if>>
 <</if>>
 
-<<if $wear_outfit isnot "none">>
+<<if $wear_outfit isnot "none" and _notEquipped>>
 	<<set _keys to Object.keys(_notEquipped)>>
 	<<if _keys.length gt 0>>
 		<<set _resultStrings to {}>>
@@ -482,9 +494,9 @@
 <div id="outfitEditorHelp" class="hidden">
 	All options change the settings the moment you change the option, however, they will only save or be updated in the passage only if you first change the passage (Leave the wardrobe or click on 'Update Wardrobe' at the bottom of this overlay).
 	<br><br>
-	Changing the clothing items may result in the colour settings being reset for that item. This is caused from going from an item with colour options to one that doesnt have any colour options. Just because you can change it to some item's doesn't mean you have access to every item.
+	Changing the clothing items may result in the colour settings being reset for that item. This is caused from going from an item with colour options to one that doesn't have any colour options. Just because you can change it to some item's doesn't mean you have access to every item.
 	<br><br>
-	Location is where the Outfit is unique to and will only show for that wardrobe. Please note, where it says 'No access', this is either based on the multiple wardrobe setting or may not be avaliable till a later version of the game. In most cases the 'Orphanage' wardrobe will be shared when Multiple wardrobes is set to 'isolated only' or is disabled.
+	Location is where the Outfit is unique to and will only show for that wardrobe. Please note, where it says 'No access', this is either based on the multiple wardrobe setting or may not be available till a later version of the game. In most cases the 'Orphanage' wardrobe will be shared when Multiple wardrobes is set to 'isolated only' or is disabled.
 	<br><br>
 </div>
 <<if _outfitEditorFilter is undefined>>
