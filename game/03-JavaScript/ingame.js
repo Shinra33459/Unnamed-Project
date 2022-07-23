@@ -89,7 +89,7 @@ window.combatListColor = function (name, value, type) {
 			case "rightcovervagina": case "rightcoverpenis": case "rightcoveranus":
 			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
 			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull": case "rightUndressOther": case "leftUndressOther":
-			case "stopchoke": case "clench": case "shacklewhack": case "leftfold": case "rightfold": case "dildowhack":
+			case "stopchoke": case "clench": case "shacklewhack": case "leftfold": case "rightfold": case "dildowhack": case "hypnosiswhack":
 			case "leftstruggleweak": case "rightstruggleweak":
 			case "leftresistW": case "rightresistW": case "leftstillW": case "rightstillW":
 			/*feetaction*/
@@ -121,7 +121,7 @@ window.combatListColor = function (name, value, type) {
 			case "leftcovervaginameek": case "leftcoverpenismeek": case "leftcoveranusmeek":
 			case "rightcovervaginameek": case "rightcoverpenismeek": case "rightcoveranusmeek":
 			case "leftprotect": case "rightprotect": case "leftgrip": case "rightgrip":
-			case "leftcurl": case "rightcurl": case "pickupSexToy":
+			case "leftcurl": case "rightcurl": case "pickupSexToy": case "leftcamerapose": case "rightcamerapose":
 			/*mouthaction*/
 			case "grasp": case "plead": case "forgive": case "down":
 			case "letout": case "letoutorgasm": case "noises": case "pay":
@@ -146,7 +146,7 @@ window.combatListColor = function (name, value, type) {
 			case "grab": case "vaginagrab": case "grabrub": case "vaginagrabrub": case "rub":
 			/*mouthaction*/
 			case "peniskiss": case "kisslips" : case "kissskin": case "suck": case "lick": case "moan": case "breastsuck": case "breastlick": case "swallow": case "movetochest":
-			case "othervagina": case "mouth": case "kissback": case "vaginalick": case "askchoke": case "anallick": case "analkiss":
+			case "othervagina": case "mouth": case "kissback": case "vaginalick": case "askchoke": case "anallick": case "analkiss": case "askrough":
 			/*penisaction*/
 			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
 			case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
@@ -549,6 +549,108 @@ window.deck = function(){
 	return cards;
 }
 
+window.ordinalSuffixOf = function(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
+window.lerp = function(percent, start, end) {
+	return Math.clamp(start + (end - start) * percent, start, end);
+}
+window.inverseLerp = function(value, start, end) {
+	return Math.clamp((value - start) / (end - start), 0, 1);
+}
+window.formatDecimals = function(value, decimalPlaces) {
+	return Number(Math.round(parseFloat(value + 'e' + decimalPlaces)) + 'e-' + decimalPlaces);
+}
+
+window.nCr = function(n, r) {
+	// https://stackoverflow.com/questions/11809502/which-is-better-way-to-calculate-ncr
+    if (r > n - r) {
+        // because C(n, r) == C(n, n - r)
+        r = n - r
+    }
+
+    let ans = 1;
+    for(let i = 1; i <= r; ++i) {
+        ans *= n - r + i;
+        ans /= i;
+    }
+
+    return ans;
+}
+
+/**
+ * Given there are {deckCount} cards in the deck and {markedCount} of them have been marked by the player,
+ *   calculates the chance that the player will see at least {atLeast} number of marked cards (from the top of the deck),
+ *   provided they can only see up to {depth} cards from the top.
+ *
+ * Use this debug function to calculate the probability to tweak the max depth and max count values for game balance, for the mark cards cheat feature.
+ *
+ * For example, if the deck is standard (52 cards), the player can see up to 3 cards from the top and the player has marked 8 cards,
+ *   the chance that they will see at least 1 card at the start of a round is calculateMarkedChance(52, 8, 3, 1) = 0.4 (which means they'll see at least 1 marked card in 40% of their games,
+ *   the first round at least).
+ * If that's too high of a chance, we could, for example, decrease their depth by 1, or decrease the max marked count by 2.
+ *   calculateMarkedChance(52, 8, 2, 1) = 0.28, so 28%, and calculateMarkedChance(52, 6, 3, 1) = 0.31, so 31%.
+ *
+ * Arguably, seeing what card is third from the top is also less useful than being able to more consistently see the top card or the dealer's hole card, so
+ *   it's worth assuming the REAL depth is 1/2 even if the value is passed as 3 (so while debugging, always also calculate with depth=1 or depth=2 and see if the number still seems fair).
+ *
+ * Also, note that the dealer's hole card is included in the depth. This means that if the depth is 3, then it calculates the chance the player will either see one of the top 2 cards or the dealer's second card.
+ *
+ * @param {Number} deckCount  The number of cards in the deck
+ * @param {Number} markedCount  The number of cards the player has (or can) mark in a deck
+ * @param {Number} depth  How many cards the player can see from the top of the deck (including the dealer's hole card) (to identify if they're marked or not)
+ * @param {Number} atLeast  At least how many cards the player will see (from <depth> cards from the top of the deck)
+ * @param {Boolean} doLog = false, if true - logs the steps of the solution
+ * @returns
+ */
+window.calculateMarkedChance = function(deckCount, markedCount, depth, atLeast, doLog=false) {
+    // we calculate how many possible ways we can pull DEPTH amount of cards from the deck (and put them in the front of the deck)
+    let totalEvents = nCr(deckCount, depth);
+    let logMessages = [];
+    let log = (m) => {
+        if (doLog) {
+            logMessages.push(m);
+        }
+    }
+    log(`DEPTH=${depth} cards can be placed in front of the deck from a deck of ${deckCount} cards in ${deckCount}c${depth} = ${totalEvents} ways.`);
+
+    let favorableEvents = 0;
+
+    // as per the algorithm, we go from how many marked cards we need at the very least, to either how many marked cards there are, or to how deep we can go (whichever is the limit)
+    let possibleMarkedCardsVisibleLimit = Math.min(markedCount, depth);
+    for (let nMarkedPicked = atLeast; nMarkedPicked <= possibleMarkedCardsVisibleLimit; ++nMarkedPicked) {
+        // we calculate how many possible ways we can pull a valid number of marked cards from the deck
+        //   by dividing the cards into a pool of
+        //    * marked cards (and calculating how many ways we can pull the valid nMarkedPicked cards from the pool of markedCount marked cards),  nCr(markedCount, nMarkedPicked)
+        //    * unmarked cards (and calculating how many ways we can pull the remaining possibleMarkedCardsVisibleLimit-nMarkedPicked non-marked cards from the pool of deck-markedCount unmarked cards), ncr(deck-markedCount, possibleMarkedCardsVisibleLimit-nMarkedPicked)
+        //   and then we multiply the mutually exclusive combinations to get all possible combinations (cross-joins) of the two (since for each way we can pull (say) 1 marked card, there's the second number of ways we can pull the remaining non marked ones)
+        let markedPoolWays = nCr(markedCount, nMarkedPicked);
+        let unmarkedPoolWays = nCr(deckCount - markedCount, possibleMarkedCardsVisibleLimit - nMarkedPicked);
+        let totalWays = markedPoolWays * unmarkedPoolWays;
+        favorableEvents += totalWays;
+        //log(`One marked card can be picked from MARKED=1 cards in 1c1 = 1 ways, and the remaining three (which are not marked) can be picked from DECK=5-MARKED=1 = 4 cards in 4c3 = 4 ways.
+        log(`${nMarkedPicked} marked cards can be picked from MARKED=${markedCount} cards in ${markedCount}c${nMarkedPicked} = ${markedPoolWays} ways,` +
+            `and the remaining ${deckCount - markedCount} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${deckCount - markedCount} cards in ${deckCount - markedCount}c${possibleMarkedCardsVisibleLimit - nMarkedPicked} = ${unmarkedPoolWays} ways.\n` +
+            `${markedPoolWays}*${unmarkedPoolWays} = ${totalWays} ways.`
+        );
+    }
+
+    console.log(logMessages.join("\n"));
+    return favorableEvents / totalEvents;
+}
+
 window.shuffle = function(o) {
 	for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
 	return o;
@@ -861,7 +963,7 @@ window.DefaultActions = {
 		this.addMany(type, 'Submissive', 'anusaction', ['penistease', 'cooperate']);
 		this.addMany(type, 'Submissive', 'feetaction', ['grabrub', 'grabrub', 'vaginagrabrub']);
 		this.addMany(type, 'Defiant', 'leftaction', ['lefthit', 'leftstruggle']);
-		this.addMany(type, 'Defiant', 'rightaction', ['penwhack', 'righthit', 'rightstruggle']);
+		this.addMany(type, 'Defiant', 'rightaction', ['penwhack', 'righthit', 'rightstruggle', 'hypnosiswhack']);
 		this.addMany(type, 'Defiant', 'mouthaction', ['pullaway', 'bite', 'breastbite', 'headbutt']);
 		this.addMany(type, 'Defiant', 'penisaction', ['escape', 'otheranusescape', 'othermouthescape']);
 		this.addMany(type, 'Defiant', 'vaginaaction', ['escape', 'othermouthescape']);
@@ -885,6 +987,11 @@ window.DefaultActions = {
 		return V.actionDefaults;
 	}
 }
+
+function selectWardrobe(targetLocation = V.wardrobe_location) {
+	return ((!targetLocation || targetLocation === "wardrobe" || !V.wardrobes[targetLocation]) ? V.wardrobe : V.wardrobes[targetLocation]);
+}
+window.selectWardrobe = selectWardrobe;
 
 window.transferClothing = function(slot, index, newWardrobe){
 	let oldWardrobeObject;
@@ -970,7 +1077,7 @@ window.clothesDataTrimmer = function(item){
 	});
 }
 
-window.clothesReturnLocation = function(item, type){
+function clothesReturnLocation(item, type){
 	if(!V.multipleWardrobes) return "wardrobe";
 	let isolated = ["asylum","prison"];
 	let lastTaken = item.lastTaken;
@@ -981,40 +1088,53 @@ window.clothesReturnLocation = function(item, type){
 	}
 	switch(type){
 		case "rebuy":
-			switch(V.location){
-				case "asylum":
-					if(item.type.includes("asylum")){
-						return "asylum";
-					}
-					if(!isolated.includes(lastTaken)){
-						return lastTaken;
-					}
-				case "prison":
-					if(item.type.includes("prison")){
-						return "prison";
-					}
-					if(!isolated.includes(lastTaken)){
-						return lastTaken;
-					}
-				default:
-					if(!isolated.includes(lastTaken)){
-						return lastTaken;
-					}
-			}
+			if (isolated.includes(V.location) && item.type.includes(V.location)) return V.location;
+			break;
 		default:
-			switch(V.location){
-				case "asylum":
-					return "asylum";
-				case "prison":
-					return "prison";
-				default:
-					if(!isolated.includes(lastTaken)){
-						return lastTaken;
-					}
-			}
+			if (isolated.includes(V.location)) return V.location;
 	}
+	if (!isolated.includes(lastTaken)) return lastTaken;
 	return "wardrobe";
 }
+window.clothesReturnLocation = clothesReturnLocation;
+
+function resetClothingState(slot) {
+	if (!slot || slot === "genitals") return;
+	const setupItem = setup.clothes[slot][clothesIndex(slot,V.worn[slot])];
+	// Overwrite the following properties of $worn[slot], IF the corresponding properties are defined in the setupItem.
+	// Note that no single item actually has ALL of these properties; It only changes the properties that DO exist on the item.
+	V.worn[slot] = {
+		...V.worn[slot],
+		...Object.fromEntries(Object.entries({
+			state: setupItem.state_base,
+			state_top: setupItem.state_top_base,
+			exposed: setupItem.exposed_base,
+			skirt_down: setupItem.skirt_down,
+			vagina_exposed: setupItem.vagina_exposed_base,
+			anus_exposed: setupItem.anus_exposed_base,
+		}).filter(([_,p]) => p != undefined))
+	};
+}
+window.resetClothingState = resetClothingState;
+
+function isConnectedToHood(slot) {
+	// Note: this function currently only works on hoods in the "head" slot, NOT the "over_head" slot.
+
+	// Return false if slot is undefined or not a valid clothing category
+	if (!slot || !V.worn[slot]) return false;
+	// Return true if this item IS a hood
+	if (V.worn[slot].hood && V.worn[slot].outfitSecondary[1] !== "broken") return true;
+
+	// Use the primary clothing slot for the next check if this item is connected to an outfit (and is not the primary item)
+	if (V.worn[slot].outfitSecondary && V.worn[slot].outfitSecondary[1] !== "broken"){
+		slot = V.worn[slot].outfitSecondary[0];
+	}
+	if (V.worn[slot].hoodposition && (V.worn[slot].hoodposition == "down" || (V.worn[slot].hoodposition == "up" && V.worn[slot].outfitPrimary.head !== "broken" && V.worn.head.hood == 1))){
+		return true;
+	}
+	return false;
+}
+window.isConnectedToHood = isConnectedToHood;
 
 //the 'modder' variable is specifically for modders name, should be kept as a short string
 window.clothesIndex = function(slot, itemToIndex) {
@@ -1251,6 +1371,11 @@ function isLoveInterest(name) {
 }
 window.isLoveInterest = isLoveInterest;
 
+function isBloodmoon() {
+	return V.moonstate === "evening" && V.hour >= 21 || V.moonstate === "morning" && V.hour < 5;
+}
+window.isBloodmoon = isBloodmoon;
+
 window.wraithSleepEventCheck = function(){
 	return V.wraith && V.wraith.state !== "" && V.wraith.nightmare === 1 && (V.moonstate === "evening" && V.hour >= 21 || V.moonstate === "morning" && V.hour < 5);
 }
@@ -1282,3 +1407,54 @@ function checkTFparts() {
 }
 window.checkTFparts = checkTFparts;
 
+function getSexesFromRandomGroup() {
+	if (V.malechance <= 0) { /* Only females. */
+		if (V.dgchance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
+		if (V.dgchance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
+	}
+	if (V.malechance >= 100) { /* Only males. */
+		if (V.cbchance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
+		if (V.cbchance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
+	}
+	if (V.cbchance >= 100 && V.dgchance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but males are cuntboys, and there are no dickgirls. */
+	if (V.dgchance >= 100 && V.cbchance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
+	return SexTypes.BOTH;
+}
+window.getSexesFromRandomGroup = getSexesFromRandomGroup;
+
+function getColourClassFromPercentage(percentage) {
+	/* This function is for picking the right color to use when coloring various things, primarily the sidebar stats. */
+	/* When using this function, try to keep in mind what value of your input variable you want "red" to be at. 
+	 * Example: $drugged goes higher than 500, but we want the bar to become red at 500, so we call this function as getColourClassFromPercentage($drugged / 5).   
+	*/
+	if (percentage <= 0) return "green";
+	if (percentage < 20) return "teal";
+	if (percentage < 40) return "lblue";
+	if (percentage < 60) return "blue";
+	if (percentage < 80) return "purple";
+	if (percentage < 100) return "pink";
+	return "red";
+}
+window.getColourClassFromPercentage = getColourClassFromPercentage;
+
+function playerCanBreedWith(npc) {
+	/* This function can accept either a named NPC's name, or an NPC object from either NPCList or NPCName. 
+	 * Examples: playerCanBreedWith("Kylar"), or playerCanBreedWith($NPCList[0]) or playerCanBreedWith($NPCName[$NPCNameList.indexOf("Kylar")])
+	 * Returns true or false. If you give it garbage, like a totally wrong name, it'll return false, so be careful about silent failures like that.
+	*/
+	if (typeof npc === "string") npc = V.NPCName[V.NPCNameList.indexOf(npc)];
+	
+	return (V.player.vaginaExist && npc.penis !== "none") || (V.player.penisExist && npc.vagina !== "none");
+}
+window.playerCanBreedWith = playerCanBreedWith;
+
+function outfitHoodPosition(outfit) {
+	let hoodie = setup.clothes.upper.find(item => item.name === outfit.upper);
+	if (hoodie.hoodposition === undefined) return "none";
+	if (outfit.head !== hoodie.outfitPrimary.head) return "down";
+	if (!outfit.colors) return "up";
+	if (outfit.colors.head[0] !== outfit.colors.upper[0] || outfit.colors.head[1] !== outfit.colors.upper[1]) return "down";
+	if ((outfit.colors.headcustom && outfit.colors.headcustom[0] !== outfit.colors.uppercustom[0]) || (outfit.colors.headcustom && outfit.colors.headcustom[1] !== outfit.colors.uppercustom[1])) return "down";
+	return "up";
+}
+window.outfitHoodPosition = outfitHoodPosition;

@@ -118,7 +118,7 @@ The receptionist lets you through to the dance studio proper, where you find Cha
 		<<link [[Ask for something more dangerous, but lucrative (3:00)|Dance Job Stage Ask]]>><<set $phase to 0>><</link>>
 		<br>
 	<</if>>
-<<elseif $dance_Job is "stage">>
+<<elseif $dance_job is "stage">>
 	"You ready for that job at the fancy party?" <<he>> asks.
 	<br><br>
 
@@ -145,7 +145,7 @@ The receptionist lets you through to the dance studio proper, where you find Cha
 		<<set $dance_job to ["party", "docks", "stage"].random()>>
 		*/
 		/*
-		<<set $rng to random(1, 3)>>
+		<<rng 3>>
 		<<if $rng is 3>>
 			<<set $dance_job to "party">>
 		<<elseif $rng is 2>>
@@ -739,7 +739,7 @@ You walk downstairs. Your attire draws bashful gazes.
 :: Dance Job Party Change Escape
 <<effects>>
 
-You throw open the window, and peer outside. It backs onto an alley running between buildings. You're a story up, but there's a thick drainpipe you could climb down.
+You throw open the window, and peer outside. It backs onto an alley running between buildings. You're a storey up, but there's a thick drainpipe you could climb down.
 <br><br>
 
 The door behind you opens a little more. "Everything okay?" the <<personsimple>> asks. Spurred to action, you climb the windowsill, place both hands on the drainpipe, and jump.
@@ -766,7 +766,7 @@ The door behind you opens a little more. "Everything okay?" the <<personsimple>>
 :: Dance Job Party Change Cat
 <<effects>>
 
-You throw open the window, and peer outside. It backs onto an alley running between buildings. You're a story up, but that's nothing to you. You climb onto the windowsill, then deftly drop to the pavement below.
+You throw open the window, and peer outside. It backs onto an alley running between buildings. You're a storey up, but that's nothing to you. You climb onto the windowsill, then deftly drop to the pavement below.
 <br><br>
 
 <<covered>>
@@ -933,7 +933,7 @@ You climb down from the "stage". The audience seem disappointed.<<linterest>><<d
 		<br>
 		<<link [[Schmooze|Dance Job Party Schmooze]]>><</link>><<englishdifficulty 1 1000>>
 		<br>
-		<<link [[Drink|Dance Job Party Drink]]>><<set $drunk += 5>><</link>>
+		<<link [[Drink|Dance Job Party Drink]]>><<alcohol 5>><</link>>
 		<br>
 		<<link [[Eat|Dance Job Party Eat]]>><<stress -6>><</link>><<lstress>>
 		<br>
@@ -966,7 +966,7 @@ You pour yourself a glass of wine, and drink.
 	A <<generate1>><<person1>><<person>> tops it up for you unprompted.
 	<br><br>
 
-	<<link [[Thank|Dance Job Party Thank]]>><<dance_job_interest 5>><<set $drunk += 60>><</link>><<ginterest>>
+	<<link [[Thank|Dance Job Party Thank]]>><<dance_job_interest 5>><<alcohol 60>><</link>><<ginterest>>
 	<br>
 	<<link [[Put the glass down|Dance Job Party Put]]>><<dance_job_interest -5>><</link>><<linterest>>
 	<br>
@@ -1308,8 +1308,16 @@ You wait in front of a mirror while <<he>> rummages in a wardrobe, and pulls out
 "This will do," <<he>> says. "Get changed. I'll wait outside."
 <br><br>
 
+<<if $worn.face.type.includes("mask")>>
+	<<He>> glances at your mask. "You can keep the mask on, if you want."
+	<br><br>
+<</if>>
 
 <<link [[Dress|Dance Job Stage Dress]]>><</link>>
+<br>
+<<if $worn.face.type.includes("mask")>>
+	<<link [[Dress and keep your mask on|Dance Job Stage Dress]]>><<set $phase to 1>><</link>>
+<</if>>
 <br>
 <<link [[Ask for something more solid|Dance Job Stage Solid]]>><</link>>
 <br>
@@ -1327,6 +1335,10 @@ You wait in front of a mirror while <<he>> rummages in a wardrobe, and pulls out
 <<link [[Refuse|Dance Job Stage End]]>><</link>>
 <br>
 <<if $exhibitionism gte 75>>
+	<<if $worn.face.type.includes("mask")>>
+		<<link [[Wear nothing but your mask|Dance Job Stage Nothing]]>><<set $phase to 1>><</link>><<exhibitionist5>>
+		<br>
+	<</if>>
 	<<link [[Wear nothing|Dance Job Stage Nothing]]>><</link>><<exhibitionist5>>
 	<br>
 <</if>>
@@ -1345,7 +1357,11 @@ The <<person>> shows you out the way you came. A member of security takes over o
 :: Dance Job Stage Nothing
 <<effects>>
 
-<<undress "dance_job_stage">>
+<<if $phase is 1>>
+	<<undressKeepFace "dance_job_stage">>
+<<else>>
+	<<undress "dance_job_stage">>
+<</if>>
 "Nothing?" you say. "Alright." You strip your clothes while the <<person>> watches, a perplexed look on <<his>> face. You stand, naked, with your hands on your hips. "What next?"
 <br><br>
 <<set $dance_job_exposed to 1>>
@@ -1357,8 +1373,11 @@ The <<person>> shows you out the way you came. A member of security takes over o
 :: Dance Job Stage Dress
 <<effects>>
 
-
-<<undress "dance_job_stage">>
+<<if $phase is 1>>
+	<<undressKeepFace "dance_job_stage">>
+<<else>>
+	<<undress "dance_job_stage">>
+<</if>>
 <<underupperwear 5>>
 
 You squeeze into the tight leotard. It's barely opaque, and leaves no contour to the imagination. You leave the room.
@@ -1628,7 +1647,8 @@ You feel your legs carry you back outside. A great cheer goes up from the dark.
 :: Dance Job Stage Rape Finish
 <<effects>>
 <<if $enemyarousal gte $enemyarousalmax>>
-	<<ejaculation>>	<<tearful>> you struggle to your feet.<<ggginterest>><<dance_job_interest 20>>
+	<<ejaculation>>
+	<<tearful>> you struggle to your feet.<<ggginterest>><<dance_job_interest 20>>
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
@@ -2031,7 +2051,7 @@ One of the tapestries looks older than the others, the art more primitive. You p
 :: Dance Job Stage Passage
 <<effects>>
 
-You walk through the dark, your way lit by the occasional dim light hanging from the ceiling. The passage turns this way and that, occasionally ramping up or down. Mostly down. <span class="pink">A strange haze lingers in the air.</span><<set $hallucinogen += 60>>
+You walk through the dark, your way lit by the occasional dim light hanging from the ceiling. The passage turns this way and that, occasionally ramping up or down. Mostly down. <span class="pink">A strange haze lingers in the air.</span><<hallucinogen 60>>
 <br><br>
 You come to a wooden door. Pulsing red light seeps around the edges. The chanting is clear now, coming from within.
 <br><br>

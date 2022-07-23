@@ -73,10 +73,10 @@
 
 <<widget "adultShopBackgroundEvent">>
 	<<endevent>><<generateAdultShopCustomer 1>>
-	/*<<set _reactTone to $args[0]>>
-	<<set _reactSpeech to $args[1]>>
-	<<set _reactPerson to $args[2]>>
-	<<set _reactTitle to $args[3]>>*/
+	/*<<set _reactTone to _args[0]>>
+	<<set _reactSpeech to _args[1]>>
+	<<set _reactPerson to _args[2]>>
+	<<set _reactTitle to _args[3]>>*/
 	<!-- Background event pool -->
 	<<switch random(0,12)>>
 		<<case 0 1>>
@@ -94,9 +94,9 @@
 			<</if>>
 		<<case 4 5>>
 			A <<person1>><<person>> <<print either("says","coos","<<laughs>>")>> to _reactTitle,
-			<<print either("\"hey honey, can you model this for me?\"",
-			"\"hey baby, care to show us how to use this device?\"",
-			"\"lookin' fine, baby!\" <<He>> wolf whistles.")>>
+			<<print either("\"Hey honey, can you model this for me?\"",
+			"\"Hey baby, care to show us how to use this device?\"",
+			"\"Lookin' fine, baby!\" <<He>> wolf whistles.")>>
 			<<if $adultshopstate is "sydney" and _sydneyStatus.includes("corrupt")>>
 				<<set _reactSpeech.push("That's not appropriate.","Suck my ass, piss lord!","Creep alert!","Dream on, fucknut!")>>
 			<<elseif $adultshopstate is "sirris">>
@@ -136,7 +136,7 @@
 				Something pokes your back. You spin around only to see a <<person1>><<person>> poking you with a dildo, grinning ear-to-ear.
 				<<stress 5>><<gstress>>
 			<</if>>
-			<<if $adultshopstate is "sydney" and ($sydneyromance gte 1 or $loveInterest.primary is "Sydney" or $loveInterest.secondary is "Sydney")>>
+			<<if $adultshopstate is "sydney" and $sydneyromance gte 1>>
 				<<set _reactSpeech to ["Are you okay?","Everything all right over there?", "Do you need a hand?"]>>
 				<<if $adultshopstate is "sydney" and $sydneyromance gte 1 and _reactPerson is "Sydney">>
 					<<set _reactTone to either("inquires","exclaims","huffs with bemusement","sighs good-naturedly","offers","smiles warmly")>>
@@ -216,57 +216,25 @@
 
 	<<set $_customertype to [{description:"vulgar",hp:220},{description:"shady",hp:220},{description:"shifty",hp:220},{description:"rotund",hp:250},{description:"slick-haired",hp:200},{description:"muscular",hp:275},{description:"senior",hp:175},{description:"flamboyant",hp:200},{description:"mouth-breathing",hp:200},{description:"creepy",hp:250},{description:"slender",hp:200},{description:"giggly",hp:200},{description:"boney",hp:175}]>>
 
-	<<switch _args[0]>>
-		<<case 1>> <<generate1>>
-		<<case 2>>
-			<<if _args[1] isnot undefined>>
-				<<generatep2>>
-			<<else>>
-				<<generate2>>
-			<</if>>
-		<<case 3>>
-			<<if _args[1] isnot undefined>>
-				<<generatep3>>
-			<<else>>
-				<<generate3>>
-			<</if>>
-		<<case 4>>
-			<<if _args[1] isnot undefined>>
-				<<generatep4>>
-			<<else>>
-				<<generate4>>
-			<</if>>
-		<<case 5>>
-			<<if _args[1] isnot undefined>>
-				<<generatep5>>
-			<<else>>
-				<<generate5>>
-			<</if>>
-		<<case 6>>
-			<<if _args[1] isnot undefined>>
-				<<generatep6>>
-			<<else>>
-				<<generate6>>
-			<</if>>
-	<</switch>>
+	<<if _args[1] isnot undefined>>
+		<<set _generate_partner to 1>>
+	<</if>>
+	<<generateNPC _args[0]>>
 
 	<<set $_npc to $NPCList[_args[0]-1]>>
 	<<if $_npc.pronoun is "m">>
 		<<set $_customertype.push({description:"handsome",hp:200},{description:"rugged",hp:250},{description:"brutish",hp:275},{description:"foppish",hp:175},{description:"toned",hp:250})>>
-		<<set $_npc.description to $_customertype[random(0,$_customertype.length-1)].description>>
-		<<set $_npc.fullDescription to $NPCList[0].description + " man">>
-		<<set $_npc.healthmax to $_customertype[random(0,$_customertype.length-1)].hp>>
 	<<else>>
 		<<set $_customertype.push({description:"pretty",hp:200},{description:"cute",hp:200},{description:"plush",hp:250},{description:"busty",hp:220},{description:"curvy",hp:220})>>
-		<<set $_npc.description to $_customertype[random(0,$_customertype.length-1)].description>>
-		<<set $_npc.fullDescription to $NPCList[0].description + " woman">>
-		<<set $_npc.healthmax to $_customertype[random(0,$_customertype.length-1)].hp>>
 	<</if>>
+	<<set $_chosentype to $_customertype.random()>>
+	<<set $_npc.description to $_chosentype.description>>
+	<<set $_npc.fullDescription to $_chosentype.description + ($_npc.pronoun is "m" ? " man" : " woman")>>
+	<<set $_npc.healthmax to $_chosentype.hp>>
 <</widget>>
 
-<<widget "clearadultshopvariables">>
-	<<unset $adultshopintro>>
-	<<endnpc>>
+<<widget "adultShopClear">>
+	<<set $adultshopintro to 0>>
 	<<endevent>>
 <</widget>>
 
@@ -336,7 +304,7 @@
 		<br>
 	<<elseif $adultshopintro is 1 and $adultshopunlocked is undefined>>
 		<<set $_theshop to "The adult shop">>
-		<<set $_youcanhelp to "You can help Sydney here on Fridays after 4pm.">>
+		<<set $_youcanhelp to "You can help Sydney here on Fridays after <<ampm 16>>.">>
 		<br>
 		<<if $adultshopprogress gte 22>>
 			$_theshop's official opening is tomorrow.

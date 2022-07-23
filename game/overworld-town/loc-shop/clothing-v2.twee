@@ -3,9 +3,9 @@
 <<widget "exitclothingshop">>
 	<div class="button-back-to-shop div-link">
 		<<if $clothes_choice and $shopDefaults.alwaysBackToShopButton is false>>
-			<<link "Back">><<unset $clothes_choice>><<updateclotheslist>><</link>>
+			<<link "Back">><<unset $clothes_choice>><<updateclotheslist>><<set $retrieveShopCustomColor to {}>><</link>>
 		<<else>>
-			<<link "Back to shop">><<unset $clothes_choice>><<updateclothingshop>><<set _shopNameFilter to "">><</link>>
+			<<link "Back to shop">><<unset $clothes_choice>><<updateclothingshop>><<set _shopNameFilter to "">><<set $retrieveShopCustomColor to {}>><</link>>
 		<</if>>
 	</div>
 <</widget>>
@@ -666,6 +666,15 @@
 							<</link>>
 						</div>
 					<</if>>
+					<<if $worn[$clothingShopSlot].name is _temp_choice.name and isConnectedToHood($clothingShopSlot)>>
+						<!-- If selected item is a hood or selected item has a secondary hood piece -->
+						<div class="try-button div-link"><<toggleHoodLink "shop">></div>
+						<br>
+					<</if>>
+					<<if ["upper","lower"].includes($clothingShopSlot) and $worn.lower.name isnot "naked" and $worn.upper.outfitPrimary is undefined and !setup.clothes.upper[clothesIndex("upper",$worn.upper)].notuck>>
+						<div class="try-button div-link"><<toggleUpperTuck>></div>
+						<br>
+					<</if>>
 				</div>
 			<</if>>
 		<<else>>
@@ -754,8 +763,9 @@
 					<<capture _buttonName _args[0] _acc $clothingShopSlot>>
 						<<link "">>
 							<<if _buttonName == "random">>
-								<<set _col_array = setup.clothes[$clothingShopSlot][$clothes_choice][_colourType]>>
-								<<set _colour = _col_array[Math.floor(Math.random() * _col_array.length)]>>
+								<<set $customColors.color[_acc] to getRandomIntInclusive(0,360)>> /* 0,360 are min/max hue values, representing colours */
+								<<run updateHueSlider($customColors.color[_acc], _acc)>>
+								<<set _colour = "custom">>
 							<<else>>
 								<<set _colour = _buttonName>>
 							<</if>>
@@ -796,22 +806,26 @@
 		<<set _hidden = $colouraction == "custom" ? "" : " hidden">>
 	<</if>>
 	<<capture _acc $clothingShopSlot>>
-		<div @class="'custom-colour ' + _acc + _hidden">
+		<div @class="'pt-1-em pc-c fw-wrap custom-colour ' + _acc + _hidden">
 			<div @class="'custom-colour-sliders ' + _acc">
-				<<set _varHue = "$customColors.color." + _acc>>
+				/*<<set _varHue = "$customColors.color." + _acc>>
 				<<set _varBri = "$customColors.brightness." + _acc>>
-				<<set _varSat = "$customColors.saturation." + _acc>>
+				<<set _varSat = "$customColors.saturation." + _acc>>*/
 				<<set _varCon = "$customColors.contrast." + _acc>>
-				<div class="colour-slider"><span class="colour-slider-caption">Hue</span><<numberslider _varHue $customColors.color[_acc] 0 360 1>></div>
+/* 				<div class="colour-slider"><span class="colour-slider-caption">Hue</span><<numberslider _varHue $customColors.color[_acc] 0 360 1>></div>
 				<div class="colour-slider"><span class="colour-slider-caption">Brightness</span><<numberslider _varBri $customColors.brightness[_acc] 0 4 0.01>></div>
 				<div class="colour-slider"><span class="colour-slider-caption">Saturation</span><<numberslider _varSat $customColors.saturation[_acc] 0 4 0.01>></div>
-				<div class="colour-slider"><span class="colour-slider-caption">Contrast</span><<numberslider _varCon $customColors.contrast[_acc] 0 4 0.01>></div>
+				<div class="colour-slider"><span class="colour-slider-caption">Contrast</span><<numberslider _varCon $customColors.contrast[_acc] 0 4 0.01>></div>*/
+				<<setShopCustomColors _acc>>
+				<<set $retrieveShopCustomColor[_acc] to true>>
+				<<shopclothingcustomcolourwheel _acc>>
+				<div class="colour-slider text-align-center elem-fill-available"><span class="colour-slider-caption">Contrast</span><<numberslider _varCon $customColors.contrast[_acc] 0 4 0.01>></div>
 			</div>
-			<div class="custom-colour-presets no-numberify">
+			<div class="custom-colour-presets no-numberify preset-colour-options">
 				<div class="presets-dropdown">
 					<<if _preset_choice is undefined>><<set _preset_choice = {}>><</if>>
 					<<listbox "_preset_choice[_acc]" autoselect>>
-						<!-- Just... don't try to understand the next line. In short, it adds [L] to legacy preset names in dropdown -->
+							<!-- Just... don't try to understand the next line. In short, it adds [L] to legacy preset names in dropdown -->
 						<<optionsfrom {...{'---': '---'}, ...Object.keys($customColors.presets).reduce((acc, val) => ({...acc, [($customColors.presets[val].ver >= 2 ? '' : '[L] ') + val]: val }), {})}>>
 					<</listbox>>
 					<<set _delDisabled = Object.keys($customColors.presets).includes(_preset_choice[_acc]) ? "" : "disabled">>
@@ -834,16 +848,51 @@
 						<<run updateMoment()>>
 					<</link>>
 				</div>
+				/* import/export custom colour buttons */
+				<div class="import-export-buttons">
+					<div class="colour-button div-link ">
+						<div>
+							<img src="img/ui/import-preset-colour.png">
+							<span class="capitalize colour-name-span">import</span>
+							<<link "">>
+								<<run importCustomColour(_acc)>>
+								<<run updateMoment()>>
+							<</link>>
+						</div>
+					</div>
+					<div class="colour-button div-link active">
+						<div class="bg-custom-export">
+						 	<img src="img/ui/export-preset-colour.png">
+							<span class="capitalize colour-name-span">export</span>
+							<<link "">>
+								<<run exportCustomColour(_acc)>>
+							<</link>>
+						</div>
+					</div>
+				</div>
+				<div id="export-custom-colour-box"></div>
 			</div>
 		</div>
 	<</capture>>
 <</widget>>
 
+<<widget "setShopCustomColors">>
+	<<if $retrieveShopCustomColor[_acc] is true>>
+		<<set $retrieveShopCustomColor[_acc] to false>>
+	<<else>>
+		<<set $customColors.color[_acc] to 61>>
+		<<set $customColors.contrast[_acc] to 1.46>>
+		<<set $customColors.brightness[_acc] to 3.08>>
+		<<set $customColors.value[_acc] to 100>>
+		<<set $customColors.saturation[_acc] to 0.6016>>
+		<<set $customColors.sepia[_acc] to 0>>
+	<</if>>
+<</widget>>
+
 <<widget "printcursed">>
 	<span class="blue">You can't wear this item without first removing your
 	<<set _preventClothes = _preventSlots.map(x => $worn[x].name)>>
-	<<if _preventClothes.length > 1>><<print _preventClothes.slice(0, -1).join(', ') + ' and '>><</if>>
-	<<print _preventClothes.slice(-1)>>.</span>
+	<<print formatList(_preventClothes)>>.</span>
 	<br>
 <</widget>>
 
@@ -1527,4 +1576,11 @@
 <<else>>
 	<<set $wardrobes.shopReturn to "wardrobe">>
 <</if>>
+<</widget>>
+
+/*If the player just goes to the shop and puts up their hood, make sure whatever they had on their head doesn't just disappear*/
+<<widget "shopHoodCheck">> 
+	<<if $tryOn.tryingOn.head is null and $tryOn.ownedStored.head.name isnot "naked" and $tryOn.ownedStored.head.name isnot $worn.head.name and $worn.head.hood is 1>>
+		<<wardrobeSend "head" $tryOn.ownedStored.head>>
+	<</if>>
 <</widget>>

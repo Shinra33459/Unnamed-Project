@@ -22,7 +22,7 @@
 <<widget "bodywriting_npc_bodypart">>/*Argument is the hand used.*/
 <<set _bodypart to "forehead">>
 <<for _i to 0; _i lt 10; _i++>>
-	<<set $rng to random(1, $bodypart_number)>>
+	<<rng $bodypart_number>>
 	<<switch $rng>>
 	<<case 1>>
 		<<set _bodypart to "forehead">>
@@ -207,7 +207,7 @@
 <<widget "bodywriting_npc">>
 /*First arg: bodypart
 Second arg: tool */
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $npc[$npcrow.indexOf(_n)] is "Whitney">>
 	<<bodywriting_npc_whitney _args[0] _args[1]>>
 <<elseif $npc[$npcrow.indexOf(_n)] is "Kylar">>
@@ -224,7 +224,7 @@ Second arg: tool */
 <</widget>>
 
 <<widget "bodywriting_npc_whitney">>
-<<set $rng to random(1, 3)>>
+<<rng 3>>
 <<switch $rng>>
 <<case 1>>
 	<<if $player.gender_appearance is "m">>
@@ -241,7 +241,7 @@ Second arg: tool */
 <</widget>>
 
 <<widget "bodywriting_npc_kylar">>
-<<set $rng to random(1, 3)>>
+<<rng 3>>
 <<switch $rng>>
 <<case 1>>
 	<<add_bodywriting _args[0] love_kylar_forever _args[1]>>
@@ -255,7 +255,7 @@ Second arg: tool */
 
 <<widget "bodywriting_npc_sydney">>
 <<if $consensual is 1 or $combat is 0>>
-	<<set $rng to random(1, 6)>>
+	<<rng 6>>
 	<<switch $rng>>
 	<<case 1>>
 		<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1>>
@@ -345,9 +345,9 @@ Second arg: tool */
 
 <<widget "bodywriting_npc_picture">>
 <<if $NPCList[0].type is "plant">>
-	<<set $rng to random(1, 7)>>
+	<<rng 7>>
 <<else>>
-	<<set $rng to random(1,10)>>
+	<<rng 10>>
 <</if>>
 <<switch $rng>>
 <<case 1>>
@@ -375,7 +375,7 @@ Second arg: tool */
 <</widget>>
 
 <<widget "bodywriting_normal_select">>
-<<set $rng to random(1, 39)>>
+<<rng 39>>
 <<switch $rng>>
 <<case 1>>
 	<<add_bodywriting _args[0] slut _args[1]>>
@@ -477,7 +477,7 @@ Second arg: tool */
 		<<set _bigdick to 1>>
 	<</if>>
 <</for>>
-<<set $rng to random(1, 10)>>
+<<rng 10>>
 <<if _bigdick eq 1 and $rng eq 1>>
 	<<add_bodywriting _args[0] size_queen _args[1]>>
 <<else>>
@@ -650,7 +650,7 @@ Second arg: tool */
 <</widget>>
 
 <<widget "bodywriting_npc_special">>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $rng gte 90>>
 	<<if $fame.rape gte random(200, 1000)>>
 		<<bodywriting_rape_select _args[0] _args[1]>>
@@ -714,7 +714,7 @@ Second arg: tool */
 <</widget>>
 
 <<widget "bodywriting_machine">>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $bodywriting_special is "dungeon">>
 	<<bodywriting_dungeon_select _args[0]>>
 	<<bodywriting_finalisation _args[0] machine>>
@@ -856,8 +856,8 @@ Second arg: tool */
 				<<case 5>><<He>> speaks. "I should pay you. I doubt you're good for anything else."
 			<</switch>>
 		<</if>>
-		<<He>> drops a <span class="gold">£10</span> note atop you.
-		<<set $money += 1000>><<earnFeat "Billboard">><<set $NPCList[_n].paid to 1>>
+		<<He>> drops a <<moneyGain 10>> note atop you.
+		<<earnFeat "Billboard">><<set $NPCList[_n].paid to 1>>
 	<<elseif (($enemyarousal + ($enemytrust * 5) - $enemyanger + ($attractiveness / 10) * ($seductionskill / 200)) gte 500)>>
 		<<set $enemyanger += 10>><<set $enemytrust -= 100>><<fameprostitution 1>>
 		<<if !$speechadmired>><<set $speechadmired to 1>>
@@ -869,8 +869,8 @@ Second arg: tool */
 				<<case 5>><<He>> speaks. "Cheap and dirty whores are the best."
 			<</switch>>
 		<</if>>
-		<<He>> drops a <span class="gold">£5</span> note atop you.
-		<<set $money += 500>><<earnFeat "Billboard">><<set $NPCList[_n].paid to 1>>
+		<<He>> drops a <<moneyGain 5>> note atop you.
+		<<earnFeat "Billboard">><<set $NPCList[_n].paid to 1>>
 	<<else>><<set $enemytrust -= 20>>
 		<<fameprostitution 1>>
 		<<if !$speechadmired>><<set $speechadmired to 1>>
@@ -894,8 +894,9 @@ Second arg: tool */
 			<<case 5>><<He>> speaks. "Fine, I'll pay. This time."
 		<</switch>>
 	<</if>>
-	<<He>> drops <span class="gold">£<<print Math.floor($skin[_args[0]].degree / 100)>></span> atop you.
-	<<set $money += $skin[_args[0]].degree>><<earnFeat "Billboard">><<set $NPCList[_n].paid to 1>>
+	<<set $_money to Math.floor($skin[_args[0]].degree / 100)>>
+	<<He>> drops <<moneyGain $_money>> atop you.
+	<<earnFeat "Billboard">><<set $NPCList[_n].paid to 1>>
 <<else>>
 	<<set $enemytrust -= 20>><<fameprostitution 1>>
 	<<if !$speechadmired>><<set $speechadmired to 1>>
@@ -1506,6 +1507,7 @@ Second arg: tool */
 
 <<widget "bodypart_admire_kylar">>
 <<set _silent to 1>>
+<<set $_kylar to statusCheck("Kylar")>>
 <<switch $skin[_args[0]].special>>
 	<<case "Kylar">>
 		<<switch $skin[_args[0]].writing>>
@@ -2001,6 +2003,9 @@ Second arg: tool */
 
 <<widget "bodypart_admire">>
 	<<if !$noAdmire>>
+		<<if _args[0].includes("random_")>>
+			<<set _args[0] to _args[0].replace("random_", (random(0,1) ? "left_" : "right_"))>> <!-- ex "random_cheek" turns into either "right_cheek" or "left_cheek" -->
+		<</if>>
 		<<switch _args[1]>>
 			<<case "bodywriting">>
 				<<if $skin[_args[0]] is undefined or $newlyWritten.includes(_args[0])>>
@@ -2190,19 +2195,19 @@ Second arg: tool */
 <</widget>>
 
 <<widget "bodypart_admire_chance">>
-<<if $enemytype isnot "beast" and ($NPCList[_n].mouth is 0 or $NPCList[_n].mouth is "speech_only" or ($NPCList[_n].type is "plant" and $speechkissvirgin is 1)) and $speechdisable isnot 1>>
-	<<switch random(1, 5)>>
-		<<case 5>>
-			<<bodypart_admire _args[0] bodywriting>>
-		<<case 4>>
-			<<bodypart_admire _args[0] cum>>
-		<<case 3>>
-			<<bodypart_admire _args[0] parasite>>
-		<<default>>
-			/*Do nothing*/
-			<<set _admireNothing to true>>
-	<</switch>>
-<</if>>
+	<<if $enemytype isnot "beast" and ($NPCList[_n].mouth is 0 or $NPCList[_n].mouth is "speech_only" or ($NPCList[_n].type is "plant" and $speechkissvirgin is 1)) and $speechdisable isnot 1>>
+		<<switch random(1, 5)>>
+			<<case 5>>
+				<<bodypart_admire _args[0] bodywriting>>
+			<<case 4>>
+				<<bodypart_admire _args[0] cum>>
+			<<case 3>>
+				<<bodypart_admire _args[0] parasite>>
+			<<default>>
+				/*Do nothing*/
+				<<set _admireNothing to true>>
+		<</switch>>
+	<</if>>
 <</widget>>
 
 <<widget "bodywriting">>
@@ -2210,7 +2215,7 @@ Second arg: tool */
 <<for _active_bodypart range setup.bodyparts>>
 	<<if $skin[_active_bodypart].writing>>
 		<<if $skin[_active_bodypart].type is "text">>
-			<<if $skin[_active_bodypart].special is $loveInterest.primary or $skin[_active_bodypart].special is $loveInterest.secondary>>
+			<<if isLoveInterest($skin[_active_bodypart].special)>>
 				"<span class="lewd"><<print $skin[_active_bodypart].writing>></span>" has been
 			<<elseif $skin[_active_bodypart].special isnot "none">>
 				"<span class="red"><<print $skin[_active_bodypart].writing>></span>" has been
@@ -2297,12 +2302,12 @@ Second arg: tool */
 		<<set _skin_array_special.push($skin.right_cheek.special)>>
 		<<set _bodywriting_exposed to 1>>
 	<</if>>
-	<<if $skin.left_shoulder.writing and ($worn.over_upper.exposed gte 1 or $worn.over_upper.open is 1) and ($worn.upper.exposed gte 1 or $worn.upper.open is 1) and ($worn.under_upper.exposed gte 1 or $worn.under_open is 1)>>
+	<<if $skin.left_shoulder.writing and ($worn.over_upper.exposed gte 1 or $worn.over_upper.open is 1) and ($worn.upper.exposed gte 1 or $worn.upper.open is 1) and ($worn.under_upper.exposed gte 1 or $worn.under_upper is 1)>>
 		<<set _skin_array.push("left_shoulder")>>
 		<<set _skin_array_special.push($skin.left_shoulder.special)>>
 		<<set _bodywriting_exposed to 1>>
 	<</if>>
-	<<if $skin.right_shoulder.writing and ($worn.over_upper.exposed gte 1 or $worn.over_upper.open is 1) and ($worn.upper.exposed gte 1 or $worn.upper.open is 1) and ($worn.under_upper.exposed gte 1 or $worn.under_open is 1)>>
+	<<if $skin.right_shoulder.writing and ($worn.over_upper.exposed gte 1 or $worn.over_upper.open is 1) and ($worn.upper.exposed gte 1 or $worn.upper.open is 1) and ($worn.under_upper.exposed gte 1 or $worn.under_upper is 1)>>
 		<<set _skin_array.push("right_shoulder")>>
 		<<set _skin_array_special.push($skin.right_shoulder.special)>>
 		<<set _bodywriting_exposed to 1>>

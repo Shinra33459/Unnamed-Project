@@ -2,12 +2,12 @@
 
 <<widget "setupTransformationPiecesObject">>
 	<<if $transformationParts is undefined>>
-		<<set $transformationParts to{
+		<<set $transformationParts to {
 			traits: {fangs:"disabled", sharpEyes:"disabled"},
 			angel: {halo:"disabled", wings:"disabled"},
 			fallenAngel: {halo:"disabled", wings:"disabled"},
 			demon: {horns:"disabled", wings:"disabled", tail: "disabled"},
-			cat: {ears:"disabled", tail:"disabled"},
+			cat: {ears:"disabled", tail:"disabled", heterochromia:"disabled"},
 			cow: {horns:"disabled", ears:"disabled", tail:"disabled"},
 			wolf: {ears:"disabled", tail:"disabled", pubes:"disabled", pits:"disabled"},
 			bird: {tail:"disabled", wings:"disabled", eyes:"disabled", malar:"disabled", plumage:"disabled", pubes:"disabled"}
@@ -53,6 +53,9 @@
 			<</if>>
 			<<if $cat gte 6>>
 				<<set $transformationParts.cat.tail to "default">>
+			<</if>>
+			<<if $cat gte 7>>
+				<<set $transformationParts.cat.heterochromia to "default">>
 			<</if>>
 			<<if $cow gte 2>>
 				<<set $transformationParts.cow.horns to "default">>
@@ -110,51 +113,46 @@
 			<<set $transformationParts.traits.sharpEyes to "default">>
 		<</if>>
 	<</if>>
+	/* Setup chimera's config */
+	<<set _defaultChimeraConfig to {
+		demoncat: {
+			tail: true
+		},
+		demoncow: {
+			horns: true
+		}
+	}>>
+	/* Convert chimera obj back to an object if it was something else. Necessary for object.assign next. */
+	<<if typeof $chimera !== 'object'>>
+		<<set $chimera to {}>>
+	<</if>>
+	/* Takes default object, and transposes chimera config ontop of it, assigning the result to chimera config. */
+	<<set $chimera to Object.assign(_defaultChimeraConfig, $chimera || {})>>
 <</widget>>
 
 <<widget "transform">>/*First arg is transformation, second is the intensity of change.*/
 	<<if _args[1]>>
-		<<if _args[0] is "wolf">>
-			<<set $wolfbuild += _args[1]>>
-			<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
-		<</if>>
-		<<if _args[0] is "cat">>
-			<<set $catbuild += _args[1]>>
-			<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
-		<</if>>
-		<<if _args[0] is "cow">>
-			<<set $cowbuild += _args[1]>>
-			<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
-		<</if>>
-		<<if _args[0] is "bird">>
-			<<set $birdbuild += _args[1]>>
-			<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
-		<</if>>
-		<<if _args[0] is "angel">>
-			<<set $angelbuild += _args[1]>>
-			<<set $angelbuild = Math.clamp($angelbuild, 0, 100)>>
-		<</if>>
-		<<if _args[0] is "demon">>
-			<<set $demonbuild += _args[1]>>
-			<<set $demonbuild = Math.clamp($demonbuild, 0, 100)>>
-		<</if>>
+		<<switch _args[0]>>
+			<<case "wolf">>  <<set $wolfbuild  = Math.clamp($wolfbuild  + _args[1], 0, 100)>>
+			<<case "cat">>   <<set $catbuild   = Math.clamp($catbuild   + _args[1], 0, 100)>>
+			<<case "cow">>   <<set $cowbuild   = Math.clamp($cowbuild   + _args[1], 0, 100)>>
+			<<case "bird">>  <<set $birdbuild  = Math.clamp($birdbuild  + _args[1], 0, 100)>>
+			<<case "angel">> <<set $angelbuild = Math.clamp($angelbuild + _args[1], 0, 100)>>
+			<<case "demon">> <<set $demonbuild = Math.clamp($demonbuild + _args[1], 0, 100)>>
+		<</switch>>
 	<</if>>
 	<<if _args[1] gte 1>>
 		<<if _args[0] isnot "wolf" and $worn.neck.name isnot "spiked collar" and $worn.neck.name isnot "spiked collar with leash">>
-			<<set $wolfbuild -= _args[1]>>
-			<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
+			<<set $wolfbuild = Math.clamp($wolfbuild - _args[1], 0, 100)>>
 		<</if>>
 		<<if _args[0] isnot "cat" and $worn.neck.name isnot "cat bell collar">>
-			<<set $catbuild -= _args[1]>>
-			<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
+			<<set $catbuild  = Math.clamp($catbuild  - _args[1], 0, 100)>>
 		<</if>>
 		<<if _args[0] isnot "cow" and $worn.neck.name isnot "cow bell">>
-			<<set $cowbuild -= _args[1]>>
-			<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
+			<<set $cowbuild  = Math.clamp($cowbuild  - _args[1], 0, 100)>>
 		<</if>>
 		<<if _args[0] isnot "bird" and $worn.head.name isnot "feathered hair clip">>
-			<<set $birdbuild -= _args[1]>>
-			<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
+			<<set $birdbuild = Math.clamp($birdbuild - _args[1], 0, 100)>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -179,7 +177,7 @@
 	<</if>>
 
 	<<if $wolfgirl gte 6>>
-		<<set $submissive -= 20>>
+		<<def 5>>
 	<</if>>
 
 	<<transformationAlteration>>
@@ -701,21 +699,21 @@
 					<<set $cat to 7>>
 					<<run window.determineCatEyeStages()>>
 					<<set $original_colour = [$leftEyeColour, $rightEyeColour]>>
-					<<set $leftEyeColour to "cat_tf_stage_0_left">>
-					<<set $rightEyeColour to "cat_tf_stage_0_right">>
+					<<set $transformationParts.cat.heterochromia to "default">>
+					<<catHeterochromiaTF 0>>
 					<span class="gold">Your eyes itch.</span>
 					<br><br>
 				<<elseif $catbuild lt 50>>
 					<<set $cat to 5>>
 					<span class="gold">Your cat tail disappears.</span>
 					<<set $transformationParts.cat.tail to "disabled">>
+					<<set $transformationParts.cat.heterochromia to "disabled">>
 					<br><br>
 				<</if>>
 			<<case 7>>
 				<<if $catbuild gte 60>>
 					<<set $cat to 8>>
-					<<set $leftEyeColour to "cat_tf_stage_1_left">>
-					<<set $rightEyeColour to "cat_tf_stage_1_right">>
+					<<catHeterochromiaTF 1>>
 					<span class="gold">Your eyes water from a burning sensation around the pupil.</span>
 					<br><br>
 				<<elseif $catbuild lt 55>>
@@ -728,34 +726,27 @@
 			<<case 8>>
 				<<if $catbuild gte 65>>
 					<<set $cat to 9>>
-					<<set $leftEyeColour to "cat_tf_stage_2_left">>
-					<<set $rightEyeColour to "cat_tf_stage_2_right">>
+					<<catHeterochromiaTF 2>>
 					<span class="gold">Your eyes burn, likely due to some sort of allergy, you can barely keep them open.</span>
 					<br><br>
 				<<elseif $catbuild lt 60>>
-					<<set $leftEyeColour to "cat_tf_stage_0_left">>
-					<<set $rightEyeColour to "cat_tf_stage_0_right">>
+					<<catHeterochromiaTF 0>>
 					<span class="gold">Your eyes sense less detail of your surroundings.</span>
 					<<set $cat to 7>>
 				<</if>>
 			<<case 9>>
 				<<if $catbuild gte 70>>
 					<<set $cat to 10>>
-					<<set $leftEyeColour to "cat_tf_stage_3_left">>
-					<<set $rightEyeColour to "cat_tf_stage_3_right">>
+					<<catHeterochromiaTF 3>>
 					<span class="gold">Your eyes no longer burn, and despite the darkness of the early morning, you are able to pick up every detail of the scenery around you.</span>
-					<<set $heterochromia to 1>>
 					<br><br>
 				<<elseif $catbuild lt 65>>
-					<<set $leftEyeColour to "cat_tf_stage_1_left">>
-					<<set $rightEyeColour to "cat_tf_stage_1_right">>
+					<<catHeterochromiaTF 1>>
 					<<set $cat to 8>>
-					<<set $heterochromia to 0>>
 				<</if>>
 			<<case 10>>
 				<<if $catbuild lt 70>>
-					<<set $leftEyeColour to "cat_tf_stage_2_left">>
-					<<set $rightEyeColour to "cat_tf_stage_2_right">>
+					<<catHeterochromiaTF 2>>
 					<span class="gold">Your surroundings appear darker than before. </span>
 					<<set $cat to 9>>
 				<</if>>
@@ -778,6 +769,26 @@
 		<<set $transformationParts.cat.ears to "default">>
 		<<set $transformationParts.cat.tail to "default">>
 	<</if>>
+<</widget>>
+
+<<widget "catHeterochromiaTF">>
+<<if _args[0] gte 0 or _args[0] == "hide">>
+	<<if $transformationParts.cat.heterochromia isnot "hidden" and _args[0] isnot "hide">>
+		<<set $leftEyeColour to "cat_tf_stage_" + _args[0] + "_left">>
+		<<set $rightEyeColour to "cat_tf_stage_" + _args[0] + "_right">>
+		<<if _args[0] >= 3>>
+			<<set $heterochromia to 1>>
+		<<else>>
+			<<set $heterochromia to 0>>
+		<</if>>
+	<<else>>
+		<<if V.original_colour isnot undefined>>
+			<<set $leftEyeColour to $original_colour[0]>>
+			<<set $rightEyeColour to $original_colour[1]>>
+		<</if>>
+		<<set $heterochromia to 0>>
+	<</if>>
+<</if>>
 <</widget>>
 
 <<widget "cowTransform">>

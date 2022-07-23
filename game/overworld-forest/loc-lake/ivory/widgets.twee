@@ -18,6 +18,7 @@
 	<<set $NPCList[_n].lactation to 0>>
 	<<set $NPCList[_n].name to "Ivory Wraith">>
 	<<set $NPCList[_n].pronoun to "i">>
+	<<set $NPCName[_n].virginity to clone(setup.NPCVirginityTypes)>>
 	<<npcClothesType $NPCList[_n] "Wraith">>
 	<<generatePronouns $NPCList[_n]>>
 	<<set $NPCList[_n].traits to ["brooding", "watchful", "willful", "beautiful"]>>
@@ -714,8 +715,6 @@
 	<</if>>
 
 	<<set _linePool to [
-		"<<pcPetname \"Wraith\">>.","<<pcPetname \"Wraith\">>.","<<pcPetname \"Wraith\">>.","<<pcPetname \"Wraith\">>.",
-		"<<pcPetname \"Wraith\">> <<pcpetname \"Wraith\">>.", "<<pcPetname \"Wraith\">> <<pcpetname \"Wraith\">>.",
 		"You.",
 		"Give in.",
 		"Take a bow.",
@@ -743,7 +742,9 @@
 		"It would be maddening, to only know one end of the ordeal.",
 		"Here we stand, As Two, <span class=\"tentacle\">As One</span>.",
 		"The pure die young, and the corrupt are as lambs to the slaughter.",
-		"At the bottom, you'll find only darkness, and the darkness will be your everything."
+		"At the bottom, you'll find only darkness, and the darkness will be your everything.",
+		"<<pcPetname \"Wraith\">>.","<<pcPetname \"Wraith\">>.","<<pcPetname \"Wraith\">>.",
+		"<<pcPetname \"Wraith\">> <<pcpetname \"Wraith\">>.", "<<pcPetname \"Wraith\">> <<pcpetname \"Wraith\">>."
 	]>>
 	<<if $wraith.state is "haunt">>
 		<<run _linePool.pushUnique(
@@ -757,6 +758,7 @@
 			"Carve your name. I'll wash it away.",
 			"Even if I have to drag you there myself.",
 			"Water down your shame, until the lake runs dry.",
+			"Shoot for the stars, that you may crash and burn.",
 			"Until naught remains, but carved bone and midnight blue."
 		)>>
 	<<else>>
@@ -797,7 +799,7 @@
 	<<else>>
 		<<run _linePool.pushUnique("No one else. Alone. Desolate. Disappear. Drown.")>>
 	<</if>>
-	<<if $wraith.mimic is "Sydney" or ($wraith.mimic is "" and ($loveInterest.primary is "Sydney" or $loveInterest.secondary is "Sydney" or $loveInterest.tertiary is "Sydney"))>>
+	<<if $wraith.mimic is "Sydney" or ($wraith.mimic is "" and isLoveInterest("Sydney"))>>
 		<<run _linePool.pushUnique(
 			"I was <<nnpc_his \"Sydney\">> only friend, in that dark place beyond the trees.",
 			"You think you can trust <<nnpc_him \"Sydney\">>. That's hilarious, but no one's laughing.",
@@ -978,7 +980,7 @@
 		<br><br>
 		<</if>>
 	<<elseif $alarm is 1 and $forest gte 21>>
-		<<if ($loveInterest.primary is "Eden" or $loveInterest.secondary is "Eden")>>
+		<<if isLoveInterest("Eden")>>
 			<<if $gwylan_rescue is 1>>
 				<span class="red">You're too deep into the forest for Gwylan to hear you, and Eden must not be in the area.</span>
 			<<else>>
@@ -1235,7 +1237,7 @@
 					<<clearWraith>>
 					<br><br>
 				<<else>>
-					<<set $rng to random(1, 60)>>
+					<<rng 60>>
 					<<if $rng lte 20>>
 					<span class="red">You are being hunted. Red moonlight reflects off of the water.</span> <<stress 6>><<gstress>>
 					<br><br>
@@ -1317,7 +1319,7 @@
 		<br><br>
 		<<endWraith>>
 		<<clearWraith>>
-		<<link [[Portal to the bedroom|Bedroom]]>><<endevent>><<set $eventskip to 1>><<set $hallucinogen += 180>><</link>><<gghallucinogens>>
+		<<link [[Portal to the bedroom|Bedroom]]>><<endevent>><<set $eventskip to 1>><<hallucinogen 180>><</link>><<gghallucinogens>>
 		<br>
 <</switch>>
 <<if !_args[0]>>
@@ -1382,9 +1384,9 @@
 					<br><br>
 				<</if>>
 			<</if>>
-			<<link [[Give in|Wraith Caught Obey]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><</if>><<set $submissive += 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<gcorruption>><<lpain>><<lltrauma>><<lstress>><</if>>
+			<<link [[Give in|Wraith Caught Obey]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><</if>><<sub 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<gcorruption>><<lpain>><<lltrauma>><<lstress>><</if>>
 			<br>
-			<<link [[Try to look away|Wraith Caught Resist]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><</if>><<set $submissive -= 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>><</if>><<willpowerdifficulty 1 $willpowermax>>
+			<<link [[Try to look away|Wraith Caught Resist]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><</if>><<def 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>><</if>><<willpowerdifficulty 1 $willpowermax>>
 			<br>
 			<</addinlineevent>>
 			<<addinlineevent "wraithClose2" 0.1>>
@@ -1540,9 +1542,9 @@
 							<br><br>
 						<</if>>
 					<</if>>
-					<<link [[Give in|Wraith Caught Obey]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><</if>><<set $submissive += 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<gcorruption>><<lpain>><<lltrauma>><<lstress>><</if>>
+					<<link [[Give in|Wraith Caught Obey]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><</if>><<sub 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<gcorruption>><<lpain>><<lltrauma>><<lstress>><</if>>
 					<br>
-					<<link [[Try to look away|Wraith Caught Resist]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><</if>><<set $submissive -= 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>><</if>><<willpowerdifficulty 1 $willpowermax>>
+					<<link [[Try to look away|Wraith Caught Resist]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><</if>><<def 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>><</if>><<willpowerdifficulty 1 $willpowermax>>
 					<br>
 				<</addinlineevent>>
 				<<addinlineevent "wraithClose2" 0.1>>
@@ -1658,9 +1660,9 @@ A beautiful pale figure floats just above the ground, wearing translucent white 
 		<br><br>
 	<</if>>
 <</if>>
-<<link [[Give in|Wraith Caught Obey]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><</if>><<set $submissive += 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<gcorruption>><<lpain>><<lltrauma>><<lstress>><</if>>
+<<link [[Give in|Wraith Caught Obey]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><</if>><<sub 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<gcorruption>><<lpain>><<lltrauma>><<lstress>><</if>>
 <br>
-<<link [[Try to look away|Wraith Caught Resist]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><</if>><<set $submissive -= 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>><</if>><<willpowerdifficulty 250 $willpowermax>>
+<<link [[Try to look away|Wraith Caught Resist]]>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><</if>><<def 1>><</link>><<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>><</if>><<willpowerdifficulty 250 $willpowermax>>
 <br>
 <<if $angel gte 6>>
 	<<link [[Pray|Wraith Intro Pray]]>><</link>><<angel>>
@@ -1779,7 +1781,7 @@ A beautiful pale figure floats just above the ground, wearing translucent white 
 		<<set $wraithPrison.state to "recovering">>
 	<</if>>
 	<<set $wraithPrison.timePassed += _args[0]>>
-	<<set $hallucinogen += (_args[0] * 3)>>
+	<<hallucinogen `(_args[0] * 3)`>>
 	<<set $arousal += (_args[0] * 3)>>
 <</if>>
 <</widget>>

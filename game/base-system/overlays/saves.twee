@@ -1,0 +1,401 @@
+:: Saves overlay [widget]
+
+<<widget "saves">>
+	<h3>Saves</h3>
+
+	<<if $ironmanmode is true>>
+		<span style="background-color: #ffffff1a;">Ironman mode enabled:</span>
+		<ul class="ironman-ul"><li>You can save your game in Ironman mode, but it will lead you back to the Start menu.</li>
+			<li style="text-decoration: underline;">Loading an Ironman save <span style="color: #ff0000;">will delete the save</span> after loading it</li>
+			<li>Automatic save every 5 to 8 days (in-game time), those won't be deleted on loading. Regular auto-saves that used to happen after sleep are disabled. </li>
+			<li>Cheats disabled</li>
+			<li>Ironman saves are recognisable by the <img src="img/ui/SilverCoin.gif" style="max-width: 16px;filter: brightness(2.2);"> next to them</li>
+		</ul>
+	<</if>>
+
+	<div id="saveList">
+		<<saveList>>
+	</div>
+<</widget>>
+
+<<widget "saveList">>
+<<run prepareSaveDetails()>>
+<<if $passage isnot "Start" and $passage isnot "Start2" and $replayScene is undefined>>
+	<<set _saveUnlock to true>>
+<</if>>
+<<if $replayScene isnot undefined>>
+	The scene viewer is currently in use, preventing the use of the save system.
+<</if>>
+<<set _saveDetails = getSaveDetails()>>
+<!--Extra checks incase the above fails for some reason-->
+<<if _saveDetails eq null>>
+	<<set _saveDetails to returnSaveDetails()>>
+<<elseif _saveDetails.autosave is undefined or _saveDetails.slots is undefined>>
+	<<set _saveDetails to returnSaveDetails()>>
+<</if>>
+<<set _currentTime to new Date().getTime()>>
+<div id="savesListContainer">
+	<div class="savesListRow">
+		<div class="saveGroup">
+			<div class="saveId">#</div>
+			<div class="saveButton">Save/Load</div>
+			<div class="saveName">ID/Name</div>
+			<div class="saveDetails">Details</div>
+		</div>
+		<div class="deleteButton"></div>
+	</div>
+	<<for _i to 0; _i lt 11; _i++>>
+		<<if _i != 9 or (_i == 9 and _saveDetails.slots[_i - 1] != null)>>
+			<div class="savesListRow">
+				<<if _i is 0>>
+					<<if _saveDetails.autosave isnot null>>
+						<div class="saveGroup">
+							<div class="saveId">A</div>
+							<div class="saveButton">
+								<input type="button" class="saveMenuButton" value="Load" onclick="DoLSave.loadHandler('auto')"/>
+							</div>
+
+							<<if _saveDetails.autosave.metadata isnot undefined>>
+								<div @class="'saveName' + ($saveId is _saveDetails.autosave.metadata.saveId ? ' gold' : '')">
+									<<if _saveDetails.autosave.metadata.saveName isnot "">>
+										<<print _saveDetails.autosave.metadata.saveName.slice(0,10)>>
+									<<else>>
+										<<print _saveDetails.autosave.metadata.saveId>>
+									<</if>>
+								</div>
+							<<else>>
+								<div class="saveName"></div>
+							<</if>>
+							<div class="saveDetails">
+								<span><<print _saveDetails.autosave.title.replace(/</g, "< ")>></span>
+								<span @class="'datestamp' + (_saveDetails.autosave.date gte _currentTime - 1800000 ? ' gold':'')"><<print new Date(_saveDetails.autosave.date).toLocaleString()>></span>
+							</div>
+						</div>
+						<div class="deleteButton">
+							<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('auto')"/>
+						</div>
+					<<else>>
+						<div class="saveGroup">
+							<div class="saveId">A</div>
+							<div class="saveButton">
+								<input type="button" value="Load" disabled/>
+							</div>
+							<div class="saveName"></div>
+							<div class="saveDetails"></div>
+						</div>
+						<div class="deleteButton">
+							<input class="right" type="button" value="Delete" disabled/>
+						</div>
+					<</if>>
+				<<elseif _i lt 10>>
+					<<set _slot to _i - 1>>
+					<<set _ironmanSlot to 9>>
+					<<if _saveDetails.slots[_slot] isnot null>>
+						<div class="saveGroup">
+							<<if _saveDetails.slots[_slot].metadata.ironman === true>>
+								<div class="saveId" style="width: 10px;">
+									<img src="img/ui/SilverCoin.gif" class="ironman-icon" @onclick="'IronMan.UI.exportHandler(' + _slot + ')'">
+								</div>
+							<<else>>
+								<div class="saveId" style="width: 10px;">
+									<<print _i>>
+								</div>
+							<</if>>
+							<div class="saveButton">
+								<<if _i lt 9>>
+									<<if _saveUnlock>>
+										<<set _onclick to "save("+_slot+", false, "+_saveDetails.slots[_slot].metadata.saveId+", `"+$saveName+"`)">>
+										<input type="button" class="saveMenuButton" value="Save" @onclick="clone(_onclick)"/>
+									<<else>>
+										<input type="button" value="Save" disabled/>
+									<</if>>
+								<</if>>
+								<input type="button" class="saveMenuButton" value="Load" @onclick="'DoLSave.loadHandler('+ _slot +')'"/>
+							</div>
+							<div @class="'saveName' + ($saveId is _saveDetails.slots[_slot].metadata.saveId ? ' gold' : '')">
+								<<if _saveDetails.slots[_slot].metadata.saveName isnot "">>
+									<<print _saveDetails.slots[_slot].metadata.saveName.slice(0,10)>>
+								<<else>>
+									<<print _saveDetails.slots[_slot].metadata.saveId>>
+								<</if>>
+							</div>
+							<div class="saveDetails">
+								<span><<print _saveDetails.slots[_slot].title.replace(/</g, "< ")>></span>
+								<span @class="'datestamp' + (_saveDetails.slots[_slot].date gte _currentTime - 1800000 ? ' gold':'')"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span>
+							</div>
+						</div>
+						<<if _i is _ironmanSlot>>
+							<div id="exportButton" class="exportButton"><input type="button" class="saveMenuButton right" value="Export" @onclick="'IronMan.export('+ _slot +')'"/></div>
+						<</if>>
+						<div class="deleteButton"><input type="button" class="saveMenuButton right" value="Delete" @onclick="'deleteSave('+ _slot +')'"/></div>
+					<<else>>
+						<div class="saveGroup">
+							<div class="saveId"></div>
+							<div class="saveButton">
+							<<if $passage != "Start">>
+								<input type="button" class="saveMenuButton" value="Save" @onclick="'save('+ _slot +',true,'+$saveId+', `'+$saveName+'`)'"/>
+							<<else>>
+								<input type="button" class="saveMenuButton" value="Save" @onclick="'save('+ _slot +',true,'+$saveId+', `'+$saveName+'`)'" disabled/>
+							<</if>>
+								<input type="button" value="Load" disabled/>
+							</div>
+							<div class="saveName"></div>
+							<div class="saveDetails"></div>
+						</div>
+						<div class="deleteButton">
+							<input class="right" type="button" value="Delete" disabled/>
+						</div>
+					<</if>>
+				<<else>>
+					<div class="saveGroup">
+						<div class="saveId"></div>
+						<div class="saveButton"></div>
+						<div class="saveName"></div>
+						<div class="saveDetails"></div>
+					</div>
+					<div class="saveButton"><input type="button" class="saveMenuButton right" value="Delete All" onclick="deleteSave('all')"/></div>
+				<</if>>
+			</div>
+		<</if>>
+	<</for>>
+</div>
+<label>
+	<<checkbox "$confirmSave" false true autocheck>>
+	Require Confirmation on Save
+</label>
+<br>
+<label>
+	<<checkbox "$confirmLoad" false true autocheck>>
+	Require Confirmation on Load
+</label>
+<br>
+<label>
+	<<checkbox "$confirmDelete" false true autocheck>>
+	Require Confirmation on Delete
+</label>
+<br><br>
+<<if $saveDetails isnot undefined>>
+	How many days after exporting will the export warning show:
+	<br>
+	<label><<radiobutton "$saveDetails.exported.frequency" 5 autocheck>>5</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 10 autocheck>>10</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 15 autocheck>>15</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 20 autocheck>>20</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 30 autocheck>>30</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 60 autocheck>>60</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 365 autocheck>>365</label>
+<</if>>
+<<if $debug is 1>>
+	<br>
+	<label><<print '<<checkbox "$prepareSaveDetails" false true '+($prepareSaveDetails is true ? "checked" : "")+'>>'>>
+		Run `prepareSaveDetails`. Disabling will cause saving/deleting on older version to not update the save list on newer versions but may speed up refresh loading times.
+	</label>
+<</if>>
+<</widget>>
+
+<<widget "clearAllWarning">>
+<div class="saveBorder">
+	<h4><span class="red">Warning</span> - Are you sure you would like to delete all saves?</h4>
+
+	<input type="button" class="close saveMenuConfirm" value="Confirm Delete All" onclick="deleteSave('all', true)"/>
+
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
+	<br>
+</div>
+<</widget>>
+
+<<widget "saveWarning">>
+<div class="saveBorder">
+	<<if _saveDetails.slots[_args[0]] isnot null>>
+		<<if _saveDetails.slots[_args[0]].metadata isnot undefined>>
+			<<if _saveDetails.slots[_args[0]].metadata.saveId isnot $saveId>>
+				<<set _showSaveId to true>>
+			<<else>>
+				<<set _showSaveId to false>>
+			<</if>>
+		<<else>>
+			<<set _showSaveId to "noId">>
+		<</if>>
+	<</if>>
+	<<if _saveDetails.slots[_args[0]] is null>>
+		<h4 class="red">Save on slot <<print (_args[0] is "auto"? "auto": _args[0] + 1)>></h4>
+		<<if _showSaveId is true>>
+		<span class="red">Save ID does not match, continue with overwrite?</span>
+		<br>
+		<</if>>
+		<<if _showSaveId is "noId">>
+		<span class="red">Save ID not found on older save, continue with overwrite?</span>
+		<br>
+		<</if>>
+	<<else>>
+		<h4 class="red">Overwrite Save on slot <<print (_args[0] is "auto"? "auto": _args[0] + 1)>>?</h4>
+		<<if _showSaveId is true>>
+		<span class="red">Save ID does not match, continue with overwrite?</span>
+		<br>
+		<</if>>
+		<<if _showSaveId is "noId">>
+		<span class="red">Save ID not found on older save, continue with overwrite?</span>
+		<br>
+		<</if>>
+		Old Save: <<print _saveDetails.slots[_args[0]].title>>
+		<br>
+		<<print new Date(_saveDetails.slots[_args[0]].date).toLocaleString()>>
+		<br>
+	<</if>>
+	<<if _saveDetails.slots[_args[0]].metadata isnot undefined>>
+		<<if _saveDetails.slots[_args[0]].metadata.saveName isnot undefined>>
+			Older Save Name: <<print _saveDetails.slots[_args[0]].metadata.saveName>>
+			<br>
+		<</if>>
+	<</if>>
+	<<if _showSaveId is true>>
+		Older Save ID: <<print _saveDetails.slots[_args[0]].metadata.saveId>>
+		<br><br>
+		<<if $saveName isnot undefined>>
+			Current Save Name: <<print $saveName>>
+			<br>
+		<</if>>
+		Current Save ID: <<print $saveId>>
+		<br>
+	<</if>>
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="Save" @onclick="'save('+ _args[0] +', true,'+$saveId+', `'+$saveName+'`)'"/>
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
+	<br>
+</div>
+<</widget>>
+
+<<widget "loadWarning">>
+<div class="saveBorder">
+	<h4 class="red">Load slot <<print (_args[0] is "auto"? "auto": _args[0] + 1)>></h4>
+	<<if _args[0] is "auto">>
+		<<print _saveDetails.autosave.title>>
+		<br>
+		<<print new Date(_saveDetails.autosave.date).toLocaleString()>>
+		<br>
+		<input type="button" class="saveMenuButton saveMenuConfirm" value="Load" onclick="DoLSave.loadHandler('auto', true)"/>
+	<<else>>
+		<<print _saveDetails.slots[_args[0]].title>>
+		<br>
+		<<print new Date(_saveDetails.slots[_args[0]].date).toLocaleString()>>
+		<br>
+		<input type="button" class="saveMenuButton saveMenuConfirm" value="Load" @onclick="'DoLSave.loadHandler('+ _args[0] +', true)'"/>
+	<</if>>
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
+	<br>
+</div>
+<</widget>>
+
+<<widget "loadwarningcompat">>
+	<<set $_slot to _args[0]>>
+	<div class="saveBorder">
+		<h4 class="red">Loading save into an older version!</h4>
+		Loading a save game into an older version can have many unintended consequences.
+		We do not guarantee forward compatibility, expect bugs.
+		<br>
+		<input type="button" class="saveMenuButton saveMenuConfirm" value="Load" @onclick="'DoLSave.load(' + $_slot + ')'"/>
+		<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
+		<br>
+	</div>
+<</widget>>
+
+<<widget "deleteWarning">>
+<div class="saveBorder">
+	<h4 class="red">Delete Save in slot <<print (_args[0] is "auto"? "auto": _args[0] + 1)>></h4>
+	<<if _args[0] is "auto">>
+		<<set _title to _saveDetails.autosave.title>>
+		_title
+		<br>
+		<<print new Date(_saveDetails.autosave.date).toLocaleString()>>
+		<br>
+		<input type="button" class="saveMenuButton" value="Delete Auto" onclick="deleteSave('auto', true)"/>
+	<<else>>
+		<<set _title to _saveDetails.slots[_args[0]].title>>
+		_title
+		<br>
+		<<print new Date(_saveDetails.slots[_args[0]].date).toLocaleString()>>
+		<br>
+		<input type="button" class="saveMenuButton" value="Delete" @onclick="'deleteSave('+ _args[0] +', true)'"/>
+	<</if>>
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
+	<br>
+</div>
+<</widget>>
+
+<<widget "loadBoxIronmanCheater">>
+<div class="saveBorder">
+	<h4 class="red">Cheating detected</h4>
+	<ul>
+		<li>You enabled Ironman mode for this save as to prevent yourself from cheating and savescumming.</li>
+		<li>Even if a situation in-game seems unfair or frustrating, you chose to accept it by enabling this mode.</li>
+		<li>Revert any variable changes you made, and you will be able to resume this run. You can ask us on Discord if you're having troubles</li>
+	</ul>
+	<<print _saveDetails.slots[_args[0]].title>>
+	<br>
+	<<print new Date(_saveDetails.slots[_args[0]].date).toLocaleString()>>
+	<br>
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
+	<br>
+</div>
+<</widget>>
+
+<<widget "loadBoxIronmanSafetyCancel">>
+<div class="saveBorder">
+	<h4 class="orange">Loading canceled.</h4>
+	<ul>
+		<li>Loading a save while being in-game with ironman mode activated will have you lose the current game.</li>
+		<li style="text-decoration: underline;">Save your game, then you can load the save you want.</li>
+	</ul>
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
+	<br>
+</div>
+<</widget>>
+
+<<widget "resetSaveMenu">>
+	<<if document.getElementById("saveList") != null>>
+		<<replace #saveList>>
+			<<saveList>>
+		<</replace>>
+	<</if>>
+<</widget>>
+
+<<widget "clearSaveMenu">>
+	<<replace #saveList>>
+		<<clearAllWarning>>
+	<</replace>>
+<</widget>>
+
+<<widget "saveConfirm">>
+	<<replace #saveList>>
+		<<saveWarning _args[0]>>
+	<</replace>>
+<</widget>>
+
+<<widget "loadConfirm">>
+	<<replace #saveList>>
+		<<loadWarning _args[0]>>
+	<</replace>>
+<</widget>>
+
+<<widget "loadconfirmcompat">>
+	<<replace #saveList>>
+		<<loadwarningcompat _args[0]>>
+	<</replace>>
+<</widget>>
+
+<<widget "loadIronmanSafetyCancel">>
+	<<replace #saveList>>
+		<<loadBoxIronmanSafetyCancel _args[0]>>
+	<</replace>>
+<</widget>>
+
+<<widget "loadIronmanCheater">>
+	<<replace #saveList>>
+		<<loadBoxIronmanCheater _args[0]>>
+	<</replace>>
+<</widget>>
+
+<<widget "deleteConfirm">>
+	<<replace #saveList>>
+		<<deleteWarning _args[0]>>
+	<</replace>>
+<</widget>>

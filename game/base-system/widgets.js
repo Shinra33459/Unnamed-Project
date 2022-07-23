@@ -104,7 +104,7 @@ function genderappearancecheck() {
 	addfemininityofclothingarticle('legs',V.worn.legs);
 	addfemininityofclothingarticle('feet',V.worn.feet);
 	/* Hair length */
-	if ((V.worn.over_head.hood !== 1 && V.worn.head.hood !== 1) || V.hoodDown == 1) {
+	if (V.worn.over_head.hood !== 1 && V.worn.head.hood !== 1) {
 		let lengthCap;
 		/* Set Hair Style cap */
 		if(hairStyleCap.hairtype[V.hairtype] && hairStyleCap.fringetype[V.fringetype]){
@@ -442,3 +442,30 @@ Macro.add('reqSkill', {
 		});
 	}
 });
+
+/**
+ * Turns an array into a formatted list for printing.
+ * @param {any[]} arr - An Array, ie ["a","b","c","d"]
+ * @param {String} conjunction ("and") - A conjunction for the formatted list
+ * @param {Boolean} useOxfordComma (false) - A boolean deciding whether to prepend a separator before conjunction
+ * @param {String} separator (", ") - A separator between elements of the formatted list
+ * @returns {String} A formatted list, ie "a, b, c and d"
+ */
+function formatList(arr, conjunction = "and", useOxfordComma = false, separator=", ") {
+	if (!(Array.isArray(arr) && arr.length > 0)) {
+		Errors.report(
+			"Error in formatList: Missing or invalid array argument",
+			{"Stacktrace" : Utils.GetStack(), arguments}
+		);
+		return "";
+	}
+	/*
+	conjunction += " ";
+	if (arr.length <= 2) return arr.join(" " + conjunction);
+	const oxConj = (useOxfordComma ? separator : " ") + conjunction;
+	return arr.slice(0,-1).join(separator) + oxConj + arr.at(-1);
+	*/
+	return arr.formatList({conjunction, useOxfordComma, separator});
+}
+window.formatList = formatList;
+DefineMacroS("formatList", formatList);

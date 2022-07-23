@@ -11,6 +11,7 @@ Save.onLoad.add(function(save) {
 	window.onLoadUpdateCheck = true;
 });
 
+let isReloading = true;
 let pageLoading = false;
 
 Save.onLoad.add(function(save) {
@@ -29,7 +30,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.9.3",
+	"version": "0.3.10.2",
 }
 window.StartConfig.version += ".h"; //stands for Herm, don't change
 window.StartConfig.version += "0"; //how many times I've released a build of this mod for this version 
@@ -90,8 +91,23 @@ importScripts([
 Config.navigation.override = function (dest) {
 	const isLoading = pageLoading; // if page is freshly loading (after a refresh etc), we hold its value in a temporary variable
 
+	if (isReloading) {
+		/* This must have the highest precedence. */
+		const lastVersion = DoLSave.Utils.parseVer(V.saveVersions.last());
+		const currVersion = DoLSave.Utils.parseVer(StartConfig.version);
+		if (lastVersion > currVersion) {
+			isReloading = false;
+			V.bypassHeader = true;
+			return 'Downgrade Waiting Room';
+		}
+	}
+
+	isReloading = false;
 	pageLoading = false
+
 	switch (dest) {
+		case 'Downgrade Waiting Room':
+			return V.passage;
 		case 'Pharmacy Select Custom Lenses':
 			return isLoading ? 'Pharmacy Ask Custom Lenses' : false;
 		case 'Forest Shop Outfit':
@@ -208,6 +224,17 @@ Config.navigation.override = function (dest) {
 		case 'Sextoys Inventory Cottage':
 		case 'Sextoys Inventory Cabin':
 			return 'Sextoys Inventory';
+
+		case 'Kylar Abduction Angry':
+		case 'Kylar Abduction Apologise':
+		case 'Kylar Abduction Silent':
+		case 'Kylar Abduction Eden':
+		case 'Kylar Abduction Robin':
+		case 'Kylar Abduction Whitney':
+		case 'Kylar Abduction Sydney':
+		case 'Kylar Abduction Wolf':
+		case 'Kylar Abduction Hawk':
+			return 'Kylar Abduction Event Response';
 
 		default:
 			return false;

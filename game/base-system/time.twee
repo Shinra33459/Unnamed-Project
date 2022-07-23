@@ -17,6 +17,9 @@
 		<<set $exhibitionism -= 1>>
 		<<set $promiscuity -= 1>>
 		<<set $deviancy -= 1>>
+		<<set $exhibitionism to Math.clamp($exhibitionism, 0, 100)>>
+		<<set $promiscuity to Math.clamp($promiscuity, 0, 100)>>
+		<<set $deviancy to Math.clamp($deviancy, 0, 100)>>
 	<</if>>
 	<<set $harpervisit to 0>>
 	<<set $yeardays += 1>>
@@ -58,6 +61,7 @@
 	<<unset $whitneyAsk>>
 	<<unset $whitney_text>>
 	<<unset $whitney_text_trigger>>
+	<<set $whitneyDaily to {}>>
 	<<set $policecollarseduceattempt to 0>>
 	<<set $tenyclusPlayed to 0>>
 	<<unset $beachstrip>>
@@ -139,8 +143,7 @@
 	<<set $park_fame = Math.clamp($park_fame, 0, 100)>>
 	<<unset $robinbeachpolice>>
 	<<unset $robinparksnow>>
-	<<set $sewersfeeding to 0>>
-	<<set $sewerssex to 0>>
+	<<set $sewersDaily to []>>
 	<<set $museumgreengemtouch to 0>>
 	<<unset $fenceclimb>>
 	<<set $cafeeaten to 0>>
@@ -160,7 +163,7 @@
 	<<set $leightondanceoffered to 0>>
 	<<set $home_event_timer -= 1>>
 	<<set $home_event to 1>>
-	<<set $rng to random(1, 100)>>
+	<<rng>>
 	<<if $rng gte 95>>
 		<<set $brothel_basement_price to 3000>>
 	<<elseif $rng gte 85>>
@@ -170,12 +173,12 @@
 	<<else>>
 		<<set $brothel_basement_price to 500>>
 	<</if>>
-	<<set $corruption_slime -= 1>>
+	<<corruption -1>>
 	<<if $parasite.left_ear.name is "slime">>
-		<<set $corruption_slime += 1>>
+		<<corruption 1>>
 	<</if>>
 	<<if $parasite.right_ear.name is "slime">>
-		<<set $corruption_slime += 1>>
+		<<corruption 1>>
 	<</if>>
 	<<if $chef_rework gte 1>>
 		<<set $chef_rework -= 1>>
@@ -244,6 +247,24 @@
 	<<unset $greatHawkMonsterRoll>>
 	<<unset $estate_bluffed>>
 	<<unset $estate_chaos>>
+
+	<<if not $estatePersistent>>
+		<<set $estatePersistent = {"suspicion": 0, "newDeckTimer": 3}>>
+	<</if>>
+	<<if $estatePersistent.suspicion and $estatePersistent.suspicion gte 1>>
+		<<set _cards_suspicion_decay = 5 >>
+		<<set _cards_suspicion_decay += $NPCName[$NPCNameList.indexOf("Wren")].love * 0.2 >>
+		<<blackjackSuspicion `-_cards_suspicion_decay` >>
+	<</if>>
+	<<if $estatePersistent.newDeckTimer > 0 && $estatePersistent.markedCards && $estatePersistent.markedCards.size > 0 >>
+		<!--  we don't re-set this to 3 here - we only do that in the same
+			passage where we actually reset the deck.
+			we don't do that here because we acknowledge the timer and actually reset it
+			  when the player enters the cottage, to not confuse things mid-game
+		 -->
+		<<set $estatePersistent.newDeckTimer -= 1>>
+	<</if>>
+
 	<<prison_day>>
 	<<if $stall_rejected gte 1>>
 		<<set $stall_rejected -= 1>>
@@ -280,13 +301,15 @@
 		<<set $lewd_unlock to true>>
 	<</if>>
 	<<unset $bailey_wake_day>>
+	<<unset $manor_forage>>
+	<<unset $manor_garden>>
+	<<unset $manor_kitchen>>
+	<<unset $manor_parents>>
+	<<unset $manor_lab>>
 
-	<<unset $pharmTriedSeduction>>
-	<<unset $pharmSexFinished>>
-	<<unset $pharmClosed>>
-	<!-- future plan: change pharm nurse to a persistent npc and clear it here; the generation method below can enforce npc gen that ignores settings. -->
-	<<set $pharmNurseGender = (random(100) gt $malechance ? "f" : "m")>>
-	<<set $pharmNurseLvl = random(0, 18)>>
+	<<set $left_before_nurse_returned to 0>>
+	<<set $pharmDaily to {}>>
+	<<clearNPC "pharmNurse">>
 
 	<<set $masochism *= 0.985>>
 	<<if $masochism_level is 0>>
@@ -372,8 +395,6 @@
 			<<set $alex_greenhouse to 2>>
 		<</if>>
 	<</if>>
-
-	<<set $left_before_nurse_returned to 0>>
 
 	<<if $school_crossdress_message gte 1 or $school_herm_message gte 1>>
 		<<set $effectsmessage to 1>>
@@ -514,7 +535,7 @@
 		<<set $loveInterestAwareMessage to 1>>
 		<span class = "pink"><i>Your mind is open to the possibility of multiple lovers. You may now choose a second love interest.</i></span>
 	<</if>>
-	
+
 	<<if $pound>>
 		<<set $pound.compete to 0>>
 		<<stray_happiness -1>>
@@ -703,6 +724,7 @@
 		<<unset $eden_christmas_dinner>>
 		<<unset $christmas_wraith>>
 	<</if>>
+	
 	<<if $bell_timer>>
 		<<set $bell_timer -= 1>>
 	<</if>>
@@ -737,7 +759,7 @@
 		<<set $milk_volume += 10>>
 	<</if>>
 
-	<<set $lactation_pressure -= 1>>
+	<<lactation_pressure -1>>
 	<<if $lactating is 1>>
 		<<if $lactation_pressure lt 30 or $player.breastsize lte 0>>
 			<<set $lactating to 0>>
@@ -753,6 +775,7 @@
 	<</if>>
 
 	<<set $nectar_addiction -= 5>>
+	<<set $nectar_addiction = Math.clamp($nectar_addiction, 0, 200)>>
 	<<if $backgroundTraits.includes("plantlover")>>
 		<<set $nectar_timer-->>
 		<<if $nectar_timer lte 0>>
@@ -786,6 +809,7 @@
 		<span class="red">You feel a terrible light sear through you.</span>
 		<<gstress>><<set $stress += $stressmax>>
 	<</if>>
+	<<unset $demon_window_orphan>>
 
 	<<if $featsPurityBoost>>
 		<<purity $featsPurityBoost>>
@@ -856,7 +880,7 @@
 			<<if _lessonmissed>>
 				<<set _delinquencyDecay to Math.floor(_delinquencyDecay / 2)>>
 			<</if>>
-			<<set $delinquency -= _delinquencyDecay>>
+			<<delinquency `-_delinquencyDecay / 4`>>
 			<<if $schoolfameblackmail isnot undefined>>
 				<<set $schoolfameblackmail += 1>>
 			<</if>>
@@ -1163,10 +1187,10 @@
 				<<set $bookOverdue += 1>>
 				<<if $bookOverdue gte 7>>
 					<<crimeup 1>>
-					<<set $delinquency += 5>>
+					<<delinquency `5 / 4`>>
 					<br><span class="red">You have a book severely overdue, and the police have been informed.</span><br>
 				<<elseif $bookOverdue gte 3>>
-					<<set $delinquency += 3>>
+					<<delinquency `3 / 4`>>
 					<br><span class="red">You have a book overdue, and have incurred delinquency.</span><br>
 				<</if>>
 			<</if>>
@@ -1381,6 +1405,10 @@
 		<<menstruationCycle>>
 	<</if>>
 	<<set $robinDebtAsk to 0>>
+	<<if $robinPilloryFail>>
+		<<unset $robinPilloryFail>>
+		<<unset $robinPillory>>
+	<</if>>
 	<<if $wolfcavepatrol is 1>>
 		<<set $wolfcavepatrolchance to random(1,3)>>
 	<</if>>

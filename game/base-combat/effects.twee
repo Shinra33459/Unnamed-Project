@@ -18,7 +18,7 @@
 	<<set $condomUse to false>>
 <</if>>
 
-<<set $pain -= 1>>
+<<pain -0.25>>
 
 <<if $enemyno gte 2>>
 	<<set $pronoun to "n">>
@@ -64,7 +64,7 @@
 		<<gtrauma>><<gstress>><<stress 4>><<trauma 2>>
 	<<else>>
 		<span class="red">You are suffocating beneath the water.</span>
-		<<set $pain += 20>><<gtrauma>><<gstress>><<stress 6>><<trauma 4>>
+		<<pain 20 1>><<gtrauma>><<gstress>><<gpain>><<stress 6>><<trauma 4>>
 		<br><br>
 	<</if>>
 <</if>>
@@ -95,6 +95,7 @@
 <<effectssteal>>
 <<effectspenwhack>>
 <<effectsshacklewhack>>
+<<effectshypnosiswhack>>
 <<effectshandsfreeface>>
 <<effectsdildowhack>>
 
@@ -134,7 +135,7 @@
 		You take <<someones $lefttarget>> left hand in your own.
 		<<set $leftarm to "handheld">><<set $leftactiondefault to "lefthandholdkeep">>
 		<<submission 1 $lefttarget>>
-		<<if $loveInterest.primary is $NPCList[$lefttarget].fullDescription or $loveInterest.secondary is $NPCList[$lefttarget].fullDescription>>
+		<<if isLoveInterest($NPCList[$lefttarget].fullDescription)>>
 			<<takeHandholdingVirginity $NPCList[$lefttarget].fullDescription "romantic">>
 		<<else>>
 			<<takeHandholdingVirginity $NPCList[$lefttarget].fullDescription>>
@@ -170,7 +171,7 @@
 		You take <<hisselect $righttarget>> right hand in your own.
 		<<set $rightarm to "handheld">><<set $leftactiondefault to "righthandholdkeep">>
 		<<submission 1 $righttarget>>
-		<<if $loveInterest.primary is $NPCList[$righttarget].fullDescription or $loveInterest.secondary is $NPCList[$righttarget].fullDescription>>
+		<<if isLoveInterest($NPCList[$righttarget].fullDescription)>>
 			<<takeHandholdingVirginity $NPCList[$righttarget].fullDescription "romantic">>
 		<<else>>
 			<<takeHandholdingVirginity $NPCList[$righttarget].fullDescription>>
@@ -428,6 +429,23 @@
 	<<else>>
 		<<actionshit $righttarget>><<set $speechhit to 1>><<defiance 2 $righttarget>><<set $attackstat += 1>>
 	<</if>>
+<</if>>
+
+<<if $leftaction is "leftcamerapose" and $rightaction is "rightcamerapose">>
+	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcamerapose">><<set $rightactiondefault to "rightcamerapose">>
+	<<neutral 4>>
+	You make peace signs for the cameras.
+	<<set $speechcamerapose to 1>>
+<<elseif $leftaction is "leftcamerapose">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "leftcamerapose">>
+	<<neutral 2>>
+	You make a peace sign with your left hand.
+	<<set $speechcamerapose to 1>>
+<<elseif $rightaction is "rightcamerapose">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rightcamerapose">>
+	<<neutral 2>>
+	You make a peace sign with your right hand.
+	<<set $speechcamerapose to 1>>
 <</if>>
 
 <<cover_end>>/*Resets $face and other variables that are covered */
@@ -2162,7 +2180,7 @@
 	<<set $feetaction to 0>><<submission 1 $feettarget>><<actionsfeetrub $feettarget>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 
 <<if $feetaction is "grabrub">>
 	<<feetskilluse>><<set $feetactiondefault to "grabrub">><<set $feetaction to 0>>
@@ -2175,7 +2193,7 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 
 <<if $feetaction is "vaginagrab">>
 	<<feetskilluse>><<set $feetaction to 0>><<set $feetactiondefault to "vaginagrab">><<combatpromiscuity3>>
@@ -2191,7 +2209,7 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 
 <<if $feetaction is "vaginagrabrub">>
 	<<set $feetaction to 0>><<feetskilluse>><<set $feetactiondefault to "vaginagrabrub">>
@@ -2615,6 +2633,16 @@
 	<</if>>
 <</if>>
 
+<<if $mouthaction is "ask" and $askAction is "askrough">>
+	<<set $mouthaction to 0>><<unset $askAction>><<set _sound to 1>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "ask to be rougher" 2>>
+	<<else>>
+		<<askrough>>
+		<<submission 1>><<set $enemyanger += (10 * $englishtrait)>><<set $speechaskrough to 1>>
+	<</if>>
+<</if>>
+
 <<if $mouthaction is "demand">>
 	<<set $mouthaction to 0>><<set _sound to 1>>
 	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
@@ -2842,15 +2870,24 @@
 	<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $corruption_slime gte (currentSkillValue('willpower')/ 10)>>
 		You open your mouth to scream for help, <span class="red">but your voice catches in your throat.</span> You feel the slime steal your breath away.
 		<<gwillpower>><<willpower 1>>
+	<<elseif $hypnosis_traits.scream gte 1 and $willpower lt random(1, (200 * $hypnosis_traits.scream))>>
+		<<hypnosisicon>> You intend to scream for help, <span class="pink">but the thought is snatched from your mind, and replaced with another.</span>
+		<<hypnotised 1>><<willpower 1>>
+		<<set $mouthaction to 0>><<unset $askAction>><<set _sound to 1>>
+		<<askrough>>
+		<<submission 1>><<set $enemyanger += (10 * $englishtrait)>>
+		<<hypnosisicon>>
 	<<else>>
-		You scream for help.
-		<<if $loveInterest>>
-			<<if ($loveInterest.primary is "Eden" or $loveInterest.secondary is "Eden") and $location is "forest" and !($npc.includes("Eden")) and (!$undergroundbrothel or !$undergroundbrothel.active)>>
-				<<if $rng lte 50>>
-					"Eden! Get them off of me!"
-				<<else>>
-					"Eden! Help!"
-				<</if>>
+		<<if $hypnosis_traits.scream gte 1>>
+			<span class="green">You resist intrusive thoughts,</span> and scream for help.
+		<<else>>
+			You scream for help.
+		<</if>>
+		<<if isLoveInterest("Eden") and $location is "forest" and !($npc.includes("Eden")) and (!$undergroundbrothel or !$undergroundbrothel.active)>>
+			<<if $rng lte 50>>
+				"Eden! Get them off of me!"
+			<<else>>
+				"Eden! Help!"
 			<</if>>
 		<</if>>
 		<<brat 10>><<set $alarm to 1>><<set $mouthactiondefault to "scream">><<set $speechscream to 1>>
@@ -2912,6 +2949,7 @@
 	<<else>>
 		<<set $mouthactiondefault to "plead">>
 		<<set $trauma -= $traumagain>><<set $traumagain to 0>><<set $speechforgive to 1>><<set $angelforgive to 1>>
+		<<traumaclamp>>
 		<<if $enemytype is "beast">>
 			"You don't know any better. You're just a <<beasttype>>," you say. "I forgive you."
 		<<else>>
@@ -3077,7 +3115,7 @@
 	<<set $mouthaction to 0>><<set $mouthactiondefault to "analkiss">><<actionsAnalKiss $mouthtarget>><<submission 12 $mouthtarget>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 
 <<if $mouthaction is "handbite">>
 	<<set $mouthaction to 0>><<set $mouthactiondefault to "handbite">><<personselect $mouthtarget>>
@@ -3854,7 +3892,7 @@
 	<<setnewtarget>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 
 <<if $vaginaaction is "penisthighs" and $NPCList[$vaginatarget].penis is "vaginaentrance">>
 	<<set $vaginaaction to 0>><<meek 1 $vaginatarget>><<thighskilluse>><<set $vaginaactiondefault to "penisthighs">><<combatpromiscuity4>>
@@ -3869,24 +3907,24 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsvaginatopenis>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsvaginatovagina>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsvaginapenisfuck>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsvaginatovaginafuck>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsvaginapenisdoublefuck>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsvaginatopenisdouble>>
 
 <<if $vaginaaction is "rest">>
 	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "rest">>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 
 <<if $vaginaaction is "penisanus" and $NPCList[$vaginatarget].penis is "vaginaentrance">>
 	<<if $anusstate isnot 0 and $anusstate is "entrance" or $anusstate is "imminent">>
@@ -3915,7 +3953,7 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $vaginaaction is "penisanusdvp">>
 	<<if $anusstate isnot 0 and $anusstate is "entrance" or $anusstate is "imminent">>
 		<<if $analdoubledisable is "f" and random(0,2) isnot 0 and $awareness gte 300>>
@@ -3958,7 +3996,7 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $vaginaaction is "penisanusdouble">>
 	<<set $vaginaaction to 0>><<meek 5 $vaginatarget>><<analskilluse>>
 	<<if combatSkillCheck("anal", $vaginatarget)>>
@@ -4162,7 +4200,7 @@
 	<<setnewtarget>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 
 <<if $anusaction is "rest">>
 	<<set $anusaction to 0>><<set $anusactiondefault to "rest">>
@@ -4180,7 +4218,7 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 
 <<if $anusaction is "penispussy">>
 	<!-- Check the player is not attempting to straddle and offer pussy at the same time. If so, switch to double or fail correctly -->
@@ -4236,7 +4274,7 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $anusaction is "penispussydouble">>
 	<<set $anusaction to 0>><<meek 10>><<analskilluse>><<set $anusactiondefault to "penispussydouble">>
 	<<if combatSkillCheck("vaginal", $anustarget)>>
@@ -4254,13 +4292,13 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsanustopenis>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsanuspenisfuck>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsanustopenisdouble>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectsanuspenisdoublefuck>>
 
 <<if $anusaction is "bottombay" and $NPCList[$anustarget].mouth is "anusentrance">>
@@ -4666,17 +4704,17 @@
 	<<setnewtarget>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectspenistovagina>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectspenisvaginafuck>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectspenisanusfuck>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectspenistoanus>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectspenistopenisfuck>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<effectspenistopenis>>
 
 
@@ -4913,7 +4951,7 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $penisaction is "penisanusdouble">>
 	<<set $penisaction to 0>><<meek 5 $penistarget>><<analskilluse>>
 	<<if combatSkillCheck("anal", $penistarget)>>
@@ -4963,7 +5001,7 @@
 	<</if>>
 <</if>>
 
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $penisaction is "penispussydouble">>
 	<<set $penisaction to 0>><<meek 10>><<penileskilluse>><<set $penisactiondefault to "penispussydouble">>
 	<<if combatSkillCheck("vaginal", $penistarget)>>

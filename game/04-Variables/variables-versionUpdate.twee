@@ -281,7 +281,7 @@
 <</if>>
 
 <<if $blackwolfmonster is undefined>>
-	<<set $rng to random(1, 100)>>
+	<<rng>>
 	<<if $monsterchance gte $rng>>
 		<<set $blackwolfmonster to 1>>
 	<<else>>
@@ -1160,6 +1160,7 @@
 			color:{primary:0, secondary:0},
 			saturation:{primary:1, secondary:1},
 			brightness:{primary:1, secondary:1},
+			value:{primary:100, secondary:100}
 		}>>
 	<</if>>
 	<<if $customColors.contrast is undefined>>
@@ -1169,6 +1170,13 @@
 		<<set $customColors.sepia to{primary:0, secondary:0}>>
 	<</if>>
 	<<set $objectVersion.customColors to 4>>
+<</if>>
+
+<<if $objectVersion.customColors lt 5 or $objectVersion.customColors is undefined>>
+	<<if $customColors.value is undefined>>
+		<<set $customColors.value to {primary:100, secondary:100}>>
+	<</if>>
+	<<set $objectVersion.customColors to 5>>
 <</if>>
 
 <<if $swarm is undefined or $swarm.type is undefined>>
@@ -2065,7 +2073,7 @@
 <</if>>
 
 <<if $greathawkmonster is undefined>>
-	<<set $rng to random(1, 100)>>
+	<<rng>>
 	<<if $monsterchance gte $rng>>
 		<<set $greathawkmonster to 1>>
 	<<else>>
@@ -2649,9 +2657,9 @@
 	<<run window.backCompPillsInventory()>> /* restructure V.sexStats.pills inventory */
 	<<set $runWardrobeSanityChecker to true>>
 
-	<<if $objectVersion.updateClothes lt 30 or $objectVersion.updateClothes is undefined>>
+	<<if $objectVersion.updateClothes lt 31 or $objectVersion.updateClothes is undefined>>
 		<<updateClothes>>
-		<<set $objectVersion.updateClothes to 30>>
+		<<set $objectVersion.updateClothes to 31>>
 		<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 		Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
 	<</if>>
@@ -3312,60 +3320,83 @@
 	<</if>>
 
 	<!-- <= v0.3.8.6: fame object -->
-	<<if typeof $fame isnot "object">>
-		<<set $fame to {
-			exhibitionism: $fameexhibitionism,
-			prostitution: $fameprostitution,
-			bestiality: $famebestiality,
-			sex: $famesex,
-			rape: $famerape,
-			good: $famegood,
-			business: $famebusiness,
-			scrap: $famescrap,
-			pimp: $famepimp,
-			social: $famesocial,
-			model: $famemodel,
-			pregnancy: $famepregnancy
-		}>>
-
-		<<if $statsFreeze and !$frozenValues>> <!-- For scenes like Janet and Raul, Pinch, or the Schism -->
-			<<set $real_fame to {
-				exhibitionism: $real_fameexhibitionism,
+	<<if !$objectVersion.fame>>
+		<<if typeof $fame isnot "object">>
+			<<set $fame to {
+				exhibitionism: $fameexhibitionism,
 				prostitution: $fameprostitution,
 				bestiality: $famebestiality,
-				sex: $real_famesex,
-				rape: $real_famerape,
+				sex: $famesex,
+				rape: $famerape,
 				good: $famegood,
 				business: $famebusiness,
-				scrap: $real_famescrap,
+				scrap: $famescrap,
 				pimp: $famepimp,
 				social: $famesocial,
 				model: $famemodel,
 				pregnancy: $famepregnancy
 			}>>
-		<</if>>
+			<<if $statsFreeze and !$frozenValues>> <!-- For scenes like Janet and Raul, Pinch, or the Schism -->
+				<<set $real_fame to {
+					exhibitionism: $real_fameexhibitionism,
+					prostitution: $fameprostitution,
+					bestiality: $famebestiality,
+					sex: $real_famesex,
+					rape: $real_famerape,
+					good: $famegood,
+					business: $famebusiness,
+					scrap: $real_famescrap,
+					pimp: $famepimp,
+					social: $famesocial,
+					model: $famemodel,
+					pregnancy: $famepregnancy
+				}>>
+			<</if>>
+			<<unset $fameexhibitionism>>
+			<<unset $fameprostitution>>
+			<<unset $famebestiality>>
+			<<unset $famesex>>
+			<<unset $famerape>>
+			<<unset $famegood>>
+			<<unset $famebusiness>>
+			<<unset $famescrap>>
+			<<unset $famepimp>>
+			<<unset $famesocial>>
+			<<unset $famemodel>>
+			<<unset $famepregnancy>>
+			<<unset $real_fameexhibitionism>>
+			<<unset $real_famesex>>
+			<<unset $real_famerape>>
+			<<unset $real_famescrap>>
 
-		<<unset $fameexhibitionism>>
-		<<unset $fameprostitution>>
-		<<unset $famebestiality>>
-		<<unset $famesex>>
-		<<unset $famerape>>
-		<<unset $famegood>>
-		<<unset $famebusiness>>
-		<<unset $famescrap>>
-		<<unset $famepimp>>
-		<<unset $famesocial>>
-		<<unset $famemodel>>
-		<<unset $famepregnancy>>
-		<<unset $real_fameexhibitionism>>
-		<<unset $real_famesex>>
-		<<unset $real_famerape>>
-		<<unset $real_famescrap>>
-
-		<<if $park_fame is undefined>>
-			<<set $park_fame to $famepark>>
-			<<unset $famepark>>
+			<<if $park_fame is undefined>>
+				<<set $park_fame to $famepark>>
+				<<unset $famepark>>
+			<</if>>
 		<</if>>
+		<<set $objectVersion.fame to 1>>
+	<</if>>
+	<!-- This patch makes sure certain properties exist in $fame. Defaults to 0. -->
+	<<if $objectVersion.fame is 1>>
+		<<set $_keys to [
+			'exhibitionism', 'prostitution', 'bestiality', 'sex', 'rape',
+			'good', 'business', 'scrap', 'pimp', 'social', 'model', 'pregnancy'
+		]>>
+		<<for $_key range $_keys>>
+			<<if $fame[$_key] eq null>>
+				<<set $fame[$_key] to 0>>
+			<</if>>
+		<</for>>
+		<<set $objectVersion.fame to 2>>
+	<</if>>
+	<!-- This patch checks existing properties of $fame for non-numeric values, and assigns them a default of 0. -->
+	<<if $objectVersion.fame is 2>>
+		<<for $_key, $_val range $fame>>
+			<<if typeof $_val isnot 'number' or $_val is NaN>>
+				<<set $fame[$_key] to 0>>
+			<</if>>
+		<</for>>
+		<<set $objectVersion.fame to 3>>
 	<</if>>
 
 	<!-- <= v0.3.8.6: Modeling rework -->
@@ -3399,10 +3430,10 @@
 		<<set $kylar.fameStage to 0>>
 	<</if>>
 
+	<!-- v0.3.9.0: update -->
 	<<if $pregnancyspeechdisable is undefined>>
 		<<set $pregnancyspeechdisable to "f">>
 	<</if>>
-	
 	<<if $stray_happiness is undefined>>
 		<<set $stray_happiness to 50>>
 	<</if>>
@@ -3412,4 +3443,128 @@
 		<<unset $clothes_choice>>
 	<</if>>
 
+	<!-- v0.3.9.3: Robin pillory bug -->
+	<<if $robinPillory and $robinPillory.danger gt 15>>
+		<<unset $robinPillory>>
+	<</if>>
+
+	<!-- v0.3.9.3: Heterochromia disablable -->
+	<<if $transformationParts.cat.heterochromia is undefined>>
+		<<if $cat gte 7>>
+			<<set $transformationParts.cat.heterochromia to "default">>
+		<<else>>
+			<<set $transformationParts.cat.heterochromia to "disabled">>
+		<</if>>
+	<</if>>
+
+	<!-- v0.3.9.3: pharmacy rework -->
+	<<if $objectVersion.pharmDaily is undefined>>
+		<<set $pharmDaily to {}>>
+		<<set $objectVersion.pharmDaily to 1>>
+		<<unset $pharmTriedSeduction, $pharmSexFinished, $pharmClosed, $pharmSeductionFailed>>
+	<</if>>
+
+	<!-- v0.3.9.3: customColors 'value' property added -->
+	<<if $objectVersion.customColors lt 5 or $objectVersion.customColors is undefined>>
+		<<if $customColors.value is undefined>>
+			<<set $customColors.value to {primary:100, secondary:100}>>
+		<</if>>
+		<<set $objectVersion.customColors to 5>>
+	<</if>>
+
+	<!-- v0.3.9.3: $retrieveShopCustomColor added // used for shop colour sliders -->
+	<<if $retrieveShopCustomColor is undefined or $retrieveShopCustomColor isnot {}>>
+		<<set $retrieveShopCustomColor to {}>>
+	<</if>>
+
+	<!-- v0.3.9.3: Sewers addition -->
+	<<if $sewersDaily is undefined>>
+		<<set $sewersDaily to []>>
+		<<if $sewerssex is 1>>
+			<<set $sewersDaily.push("sex")>>
+		<</if>>
+		<<if $sewersfeeding is 1>>
+			<<set $sewersDaily.push("feeding")>>
+		<</if>>
+
+		<<unset $sewerssex>>
+		<<unset $sewersfeeding>>
+	<</if>>
+
+	<!-- v0.3.9.3: Whitney park whore -->
+	<<if $NPCName[$NPCNameList.indexOf("Whitney")].init is 1 and $whitneyDaily is undefined>>
+		<<set $whitneyDaily to {}>>
+	<</if>>
+
+	<<if !$objectVersion.transformations>>
+		<<set $_demon to $transformationParts.demon>>
+		<<set $_tfConverter to {
+			blue: {
+				type: 'default',
+				colour: { h: 240, s: 100, l: 50 }
+			},
+			lime: {
+				type: 'default',
+				colour: { h: 90, s: 100, l: 50 }
+			},
+			red: {
+				type: 'default',
+				colour: { h: 0, s: 100, l: 50 }
+			},
+			yellow: {
+				type: 'default',
+				colour: { h: 55, s: 100, l: 50 }
+			},
+			pink: {
+				type: 'succubus',
+				colour: { h: 320, s: 100, l: 50 }
+			}
+		}>>
+		<<set $_demonHorn to $_tfConverter[$transformationParts.demon.horns]>>
+		<<if typeof $_demonHorn === 'object'>>
+			<<set $_demon.horns to $_demonHorn.type>>
+			<<set $_demon.horns_colour to $_demonHorn.colour>>
+		<</if>>
+		<<set $_demonWings to $_tfConverter[$transformationParts.demon.wings]>>
+		<<if typeof $_demonWings === 'object'>>
+			<<set $_demon.wings to $_demonWings.type>>
+			<<set $_demon.wings_colour to $_demonWings.colour>>
+		<</if>>
+		<<set $_demonTail to $_tfConverter[$transformationParts.demon.tail]>>
+		<<if typeof $_demonTail === 'object'>>
+			<<set $_demon.tail to $_demonTail.type>>
+			<<set $_demon.tail_colour to $_demonTail.colour>>
+		<</if>>
+		<<set $objectVersion.transformations to 0>>
+	<</if>>
+
+	<!-- v0.3.10.0 update -->
+	<<if $leftarmbruise is undefined>>
+		<<set $leftarmbruise to 0>>
+		<<set $rightarmbruise to 0>>
+	<</if>>
+
+	<<if $urinestat is "undefined">>
+		<<set $urinestat to 0>>
+	<</if>>
+
+	<<if $hypnosis_traits is undefined>>
+		<<set $hypnosis_traits to {}>>
+	<</if>>
+
+	<!-- v0.3.10.0 farm wage fix -->
+	<<if $farm and $farm.wage gte 1500>>
+		<<set $farm.wage to $farm.wage / 100>>
+	<</if>>
+
+	<!-- v0.3.10.0/v0.3.10.1 NaN variables fix -->
+	<<if _version lte 31001>>
+		/*Check to see if these variables are NaN. If they are, reset them to 0*/
+		<<run ["stress", "drugged", "drunk", "hallucinogen", "milk_amount", "orgasmcount", "urinestat"].forEach( v => V[v] ? true : V[v] = 0)>>
+	<</if>>
+
+	<!-- v0.3.10.1: Kylar dominance -->
+	<<if $NPCName[$NPCNameList.indexOf("Kylar")].dom gte 1 and ($bus isnot "manor" or $syndromekylar is 1)>>
+		<<npcincr Kylar dom -100>>
+	<</if>>
 <</widget>>

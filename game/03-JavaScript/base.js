@@ -575,10 +575,40 @@ function normalise(value, max, min = 0) {
         Errors.report('[normalise]: min and max params must be different.', { value, max, min });
         return 0;
     }
-    if (value < min || value > max) {
-        Errors.report('[normalise]: value must be within the bounds provided.', { value, max, min });
+    if (denominator < 0) {
+        Errors.report('[normalise]: max param must be greater than min param.', { value, max, min });
         return 0;
     }
-    return (value - min) / denominator;
+    return Math.clamp( (value - min) / denominator, 0, 1);
 }
 window.normalise = normalise;
+
+/**
+* This macro sets $rng. If the variable $rngOverride is set, $rng will always be set to that.
+* Set $rngOverride in the console for bugtesting purposes. Remember to unset it after testing is finished.
+* With two arguments, it sets $rng to a random value between the first arg and the second arg. This can be used to guarantee $rng is set to a specific value.
+* With one argument, it sets $rng to a random value between 1 and the arg.
+* With no arguments, it sets $rng to a random value between 1 and 100.
+*/
+Macro.add('rng', {
+	handler() {
+		if (typeof V.rngOverride === "number" && V.debug === 1) {
+			console.log(`rng override: ${V.rngOverride}`)
+			V.rng = V.rngOverride;
+		} else {
+			let min = 1;
+			let max = 100;
+
+			if (this.args.length === 2) {
+				[min, max] = this.args;
+			} else if (this.args.length === 1) {
+				max = this.args[0];
+			}
+			if (typeof min === "number" && typeof max === "number") {
+				V.rng = random(min,max);
+			} else {
+				throw new Error(`invalid arguments: ${min} | ${max}`);
+			}
+		}
+	}
+});

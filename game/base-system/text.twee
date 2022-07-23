@@ -751,7 +751,7 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "persony">><<silently>>
-	<<set $rng to random(1, 100)>>
+	<<rng>>
 	<<set _text_output to ($rng lte $malechance? "boy" : "girl")>>
 <</silently>><<print _text_output>><</widget>>
 
@@ -789,16 +789,10 @@
 	<<for _fg to 0; _fg lt $enemyno; _fg++>>
 		<<personselect _fg>><<person>>
 		<<set $_person.push(_text_output)>>
-		<<if _fg is 0>>
-			<<set $_text_output to $_person[_fg]>>
-		<<elseif _fg is $enemyno-1>>
-			<<set $_text_output += " and " + $_person[_fg]>>
-		<<else>>
-			<<set $_text_output += ", " + $_person[_fg]>>
-		<</if>>
 	<</for>>
-	<<if _args[0] is "cap">><<capitalise>><</if>>
-<</silently>><<print $_text_output>><</widget>>
+	<<set _text_output to formatList($_person, "and", true)>>
+	<<if _args[0] is "cap">><<set _text_output to _text_output.toLocaleUpperFirst()>><</if>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "enumeratedGroup">><<silently>>
 	<<set $_menCount to $NPCList.countWith(npc => npc.pronoun is "m")>>
@@ -1149,6 +1143,10 @@
 		<</if>>
 	<</if>>
 <</widget>>
+
+<<widget "male">><<silently>>
+	<<set _text_output to ($pronoun is "m" ? "male" : "female")>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "personsimple">><<silently>>
 	<<set _text_output to (!$NPCList[$index].type or $NPCList[$index].type is "human" or _args[0] is "normal" ? "" : $NPCList[$index].type)>>
@@ -1617,7 +1615,7 @@
 <</widget>>
 
 <<widget "gmystery">>
-	<<if $statdisable is "f">> | 
+	<<if $statdisable is "f">> |
 		<span class="red">+ ????</span>
 	<</if>>
 <</widget>>
@@ -2102,9 +2100,9 @@
 
 <<widget "gsydneytoy">>
 <<if $sydney_toy is undefined>>
-	| <span class="purple">Sydney will keep the $args[0] for future use</span>
+	| <span class="purple">Sydney will keep the _args[0] for future use</span>
 <<elseif $sydney_toy isnot _args[0]>>
-	| <span class="purple">Sydney will keep the $args[0] for future use, replacing their $sydney_toy</span>
+	| <span class="purple">Sydney will keep the _args[0] for future use, replacing their $sydney_toy</span>
 <</if>>
 <</widget>>
 
@@ -4056,7 +4054,7 @@ A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 	<</if>>
 <</widget>>
 
-<<widget "allTopsUnderwear">>
+<<widget "allTopsUnderwear">><<silently>>
 	<<set _tops to []>>
 	<<if $worn.over_upper.name isnot "naked">>
 		<<set _tops.push($worn.over_upper.name)>>
@@ -4067,12 +4065,12 @@ A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 	<<if $worn.under_upper.name isnot "naked">>
 		<<set _tops.push($worn.under_upper.name)>>
 	<</if>>
-	<<if _tops.length is 1>>_tops[0]<</if>>
-	<<if _tops.length is 2>>_tops[0] and _tops[1]<</if>>
-	<<if _tops.length is 3>>_tops[0], _tops[1] and _tops[2]<</if>>
-<</widget>>
+	<<if _tops.length is 1>><<set _text_output to _tops[0]>><</if>>
+	<<if _tops.length is 2>><<set _text_output to _tops[0] + " and " + _tops[1]>><</if>>
+	<<if _tops.length is 3>><<set _text_output to _tops[0] + ", " + _tops[1] + " and " + _tops[2]>><</if>>
+<</silently>>_text_output<</widget>>
 
-<<widget "allBottomsUnderwear">>
+<<widget "allBottomsUnderwear">><<silently>>
 	<<set _bottoms to []>>
 	<<if $worn.over_lower.name isnot "naked">>
 		<<set _bottoms.push($worn.over_lower.name)>>
@@ -4083,10 +4081,10 @@ A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 	<<if $worn.under_lower.name isnot "naked">>
 		<<set _bottoms.push($worn.under_lower.name)>>
 	<</if>>
-	<<if _bottoms.length is 1>>_bottoms[0]<</if>>
-	<<if _bottoms.length is 2>>_bottoms[0] and _bottoms[1]<</if>>
-	<<if _bottoms.length is 3>>_bottoms[0], _bottoms[1] and _bottoms[2]<</if>>
-<</widget>>
+	<<if _bottoms.length is 1>><<set _text_output to _bottoms[0]>><</if>>
+	<<if _bottoms.length is 2>><<set _text_output to _bottoms[0] + " and " + _bottoms[1]>><</if>>
+	<<if _bottoms.length is 3>><<set _text_output to _bottoms[0] + ", " + _bottoms[1] + " and " + _bottoms[2]>><</if>>
+<</silently>>_text_output<</widget>>
 
 <<widget "top">><<silently>>
 <<if !$worn.upper.type.includes("naked")>>
@@ -5387,7 +5385,7 @@ School finishes on the first Monday of December.
 <</widget>>
 
 <<widget "slithers">>
-	<<set $rng to random(1, 100)>>
+	<<rng>>
 	<<if $rng gte 95>>
 		slithers
 	<<elseif $rng gte 90>>
@@ -5432,7 +5430,7 @@ School finishes on the first Monday of December.
 <</widget>>
 
 <<widget "slithering">>
-	<<set $rng to random(1, 100)>>
+	<<rng>>
 	<<if $rng gte 95>>
 		slithering
 	<<elseif $rng gte 90>>
@@ -5846,7 +5844,7 @@ School finishes on the first Monday of December.
 <</widget>>
 
 <<widget "laughs">><<silently>>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $npcadult isnot 1>>
 	<<if $rng gte 51>>
 		<<set _text_output to "giggles">>
@@ -6050,7 +6048,7 @@ Mason
 <</widget>>
 
 <<widget "threaten">>
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $NPCList[_n].pronoun is "m">>
 	<<if $NPCList[_n].penis isnot "none">>
 		<<if $player.gender_appearance is "m">>
@@ -6722,6 +6720,8 @@ $worn.genitals.name
 <<widget "beast_growls_text">>
 <<if $NPCList[_n].type is "hawk">>
 	<<set _text_output to "squawks">>
+<<elseif $NPCList[_n].type is "pig">>
+	<<set _text_output to "oinks">>
 <<else>>
 	<<set _text_output to "growls">>
 <</if>>
@@ -6731,6 +6731,8 @@ $worn.genitals.name
 <<widget "beast_growling_text">>
 <<if $NPCList[_n].type is "hawk">>
 	<<set _text_output to "squawking">>
+<<elseif $NPCList[_n].type is "pig">>
+	<<set _text_output to "oinking">>
 <<else>>
 	<<set _text_output to "growling">>
 <</if>>
@@ -7323,4 +7325,10 @@ Argument 2, where appropriate, determines whether it's the player undressing the
 	<<set _text_output to "fucked">>
 <</if>>
 <<print _text_output>>
+<</widget>>
+
+<<widget "dangerousText">>
+	<<if $statdisable is "f">> |
+		<span class="red">Dangerous</span>
+	<</if>>
 <</widget>>

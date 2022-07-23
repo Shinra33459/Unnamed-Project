@@ -33,6 +33,8 @@ You are in your bedroom.
 			Images of _furniture.wallpaper.name cover the walls.
 			<<if ['dol', 'degrees of lewdity'].some(e => _furniture.wallpaper.name === e)>>
 				Somehow, they look familiar.
+			<<elseif _furniture.wallpaper.name.startsWith('&lt;&lt')>>
+				<span class="black">You feel like you got caught cheating.</span>
 			<</if>>
 	<</switch>>
 <<else>>
@@ -45,6 +47,8 @@ You are in your bedroom.
 	<<switch _deco.name>>
 		<<case "bearplushie">>
 			<<furnitureicon _deco.iconFile>>The _deco.name is sitting in a corner.
+		<<case "owl plushie">>
+			<<furnitureicon _deco.iconFile>>The _deco.name stares down from the wardrobe, blending into the gloom.
 		<<default>>
 			<<furnitureicon _deco.iconFile>>The _deco.name is hanging on a wall.
 	<</switch>>
@@ -74,6 +78,8 @@ You are in your bedroom.
 			A poster of _furniture.poster.name hangs on a wall.
 			<<if ['dol', 'degrees of lewdity'].some(e => _furniture.poster.name === e)>>
 				You feel an odd sense of familiarity.
+			<<elseif _furniture.poster.name.startsWith('&lt;&lt;')>>
+				<span class="black">You feel like you got caught cheating.</span>
 			<</if>>
 	<</switch>>
 <</if>>
@@ -82,6 +88,7 @@ You are in your bedroom.
 <<if $robinbed is "yours" and !$possessed>>
 	<<unset $robinbed>>
 	<<npc Robin>><<person1>>Robin yawns and heads to <<his>> own room.<<endevent>>
+	<<if $hour is 6 and $minute lte 20>><<run setRobinLocationOverride("orphanage", 6)>><</if>>
 	<br><br>
 <</if>>
 <<if $unbind is 1>>
@@ -345,6 +352,26 @@ You are in your bedroom.
 			<</if>>
 			<<home_outside>>
 			<br><br>
+			<<set _kylar to statusCheck("Kylar")>>
+			<<if $kylar_camera is 4>>
+				The owl plushie watches you from the wardrobe. You know there's a camera inside.
+				<br>
+				<<ind>><<link [[Decide what to do with Kylar's camera (0:05)|Bedroom Kylar Camera]]>><<pass 5>><</link>>
+				<br><br>
+			<</if>>
+			<<if $kylar_camera is 0>>
+				The box Kylar tried to gift you sits at the foot of your bed.
+				<br>
+				<<link [[Open it|Bedroom Kylar Gift Open]]>><</link>>
+				<br><br>
+			<<elseif $kylar_camera is 1>>
+				The box Kylar tried to gift you sits at the foot of your bed. The owl plushie is inside.
+				<br>
+				<<link [[Keep it as decoration|Bedroom Kylar Gift Keep]]>><</link>>
+				<br>
+				<<link [[Give it to an orphan|Bedroom Kylar Gift Orphan]]>><<hope 1>><</link>><<ghope>>
+				<br><br>
+			<</if>>
 		<<else>>
 			You are not wearing underwear! The thought of going out like this quickens your pulse.
 			<br><br>
@@ -367,6 +394,26 @@ You are in your bedroom.
 		<</if>>
 		<<home_outside>>
 		<br><br>
+		<<set _kylar to statusCheck("Kylar")>>
+		<<if $kylar_camera is 4>>
+			The owl plushie watches you from the wardrobe. You know there's a camera inside.
+			<br>
+			<<ind>><<link [[Decide what to do with Kylar's camera (0:05)|Bedroom Kylar Camera]]>><<pass 5>><</link>>
+			<br><br>
+		<</if>>
+		<<if $kylar_camera is 0>>
+			The box Kylar tried to gift you sits at the foot of your bed.
+			<br>
+			<<link [[Open it|Bedroom Kylar Gift Open]]>><</link>>
+			<br><br>
+		<<elseif $kylar_camera is 1>>
+			The box Kylar tried to gift you sits at the foot of your bed. The owl plushie is inside.
+			<br>
+			<<link [[Keep it as decoration|Bedroom Kylar Gift Keep]]>><</link>>
+			<br>
+			<<link [[Give it to an orphan|Bedroom Kylar Gift Orphan]]>><<hope 1>><</link>><<ghope>>
+			<br><br>
+		<</if>>
 	<</if>>
 	<<link [[Settings]]>><<set $settingsExitPassage to "Bedroom">><</link>>
 	<br>
@@ -378,6 +425,121 @@ You are in your bedroom.
 	<</if>>
 	<br><br>
 <</if>>
+
+
+:: Bedroom Kylar Gift Open
+<<effects>>
+
+You pull the bow, and open the lid. Inside is a grey owl plushie. It looks old. Tufts of fluff escape its worn hide.
+<br><br>
+
+<<link [[Keep it as decoration|Bedroom Kylar Gift Keep]]>><</link>>
+<br>
+<<link [[Give it to an orphan|Bedroom Kylar Gift Orphan]]>><<hope 1>><</link>><<ghope>>
+<br>
+
+:: Bedroom Kylar Gift Keep
+<<effects>>
+
+<<set $kylar_camera to 2>>
+
+You find a space on top of the wardrobe, where its black eyes can watch the room.
+<br><br>
+
+<<run Furniture.set('owlplushie', 'decoration', {
+	name	: 'owl plushie',
+	nameCap	: 'Owl plushie'
+})>>
+
+<<link [[Next|Bedroom]]>><</link>>
+<br>
+
+:: Bedroom Kylar Gift Orphan
+<<effects>>
+
+<<set $kylar_camera to 3>>
+<<generatey1>><<person1>>
+You walk into the hall. An orphan scurries towards you. You hold out the plushie. <<His>> eyes sparkle. "For me?" <<he>> asks. You barely nod once before <<he>> snatches it with both arms. "Thank you!" <<He>> dashes away, clutching the toy to <<his>> chest.
+<br><br>
+
+<<link [[Next|Bedroom]]>><<endevent>><</link>>
+<br>
+
+
+:: Bedroom Kylar Camera
+<<effects>>
+
+You take the plushie down from the wardrobe, and look into its black eyes. You can see it now, one eye is a little more reflective than the other. You push two fingers through one of the tufty holes in the head, and fish out a small camera.
+<br><br>
+
+<<link [[Destroy it|Bedroom Kylar Camera Destroy]]>><<set $phase to 0>><</link>>
+<br>
+<<if $exhibitionism gte 35>>
+	<<link [[Leave it there, for revenge|Bedroom Kylar Camera Leave]]>><<set $phase to 0>><</link>><<exhibitionist3>>
+	<br>
+<</if>>
+
+:: Orphanage Kylar Camera
+<<effects>>
+
+You find the plushie in the living room, sat beside the television with several other toys. You look into its black eyes. You can see it now, one eye is a little more reflective than the other. You push two fingers through one of the tufty holes in the head, and fish out a small camera.
+<br><br>
+
+<<link [[Destroy it|Bedroom Kylar Camera Destroy]]>><<set $phase to 1>><</link>>
+<br>
+<<if $exhibitionism gte 35>>
+	<<link [[Position it in your room, for revenge|Bedroom Kylar Camera Leave]]>><<set $phase to 1>><</link>><<exhibitionist3>>
+	<br>
+<</if>>
+
+:: Bedroom Kylar Camera Destroy
+<<effects>>
+
+You drop the camera on the floor, and stomp on it. You feel the lens crack. That should put an end to it.<<gggcontrol>><<control 100>><<llltrauma>><<trauma -30>>
+<br><br>
+
+<<set $kylar_camera to 6>>
+
+<<if $phase is 1>>
+	Disarmed and safe, you leave the plushie where you found it.
+	<br><br>
+
+	<<link [[Next|Orphanage]]>><</link>>
+	<br>
+<<else>>
+	Disarmed and safe, you place the plushie back on top of the wardrobe.
+	<br><br>
+	<<link [[Next|Bedroom]]>><</link>>
+	<br>
+<</if>>
+
+
+
+
+:: Bedroom Kylar Camera Leave
+<<effects>>
+
+
+
+<<set $kylar_camera to 7>>
+
+<<if $phase is 1>>
+	You return to your room, and place the plushie on top of your wardrobe.
+	<<run Furniture.set('owlplushie', 'decoration', {
+		name	: 'owl plushie',
+		nameCap	: 'Owl plushie'
+	})>>
+<<else>>
+	You place the plushie back on top of your wardrobe.
+<</if>>
+
+You stare right at the lens. "I wonder who I'll invite over," you say. You stick out your tongue. "I hope you enjoy the show. <i>My love.</i>"<<gggcontrol>><<control 100>><<llltrauma>><<trauma -30>><<exhibitionism3>>
+
+
+<<link [[Next|Bedroom]]>><</link>>
+<br>
+
+
 
 :: Bedroom Robin Mist Note
 <<set _robin to statusCheck("Robin")>>
@@ -704,7 +866,7 @@ You are in the bathroom.
 			<br>
 			<<link [[Berate Kylar|Kylar Orphanage Sleep Berate]]>><<set $kylarbed to 0>><<npcincr Kylar love -3>><</link>><<lllove>>
 			<br>
-			<<if $submissive lte 500>>
+			<<if $submissive lte 500 or $syndromekylar gte 1>>
 				<<link [[Slam the door|Kylar Orphanage Slam]]>><<set $kylarbed to 0>><<npcincr Kylar love 1>><<npcincr Kylar lust 1>><</link>><<glove>><<glust>><<defianttext>>
 			<</if>>
 
@@ -1136,7 +1298,7 @@ As you remove the plug to drain the water, you feel something probe your <<genit
 
 	As you remove the plug to drain the water, you hear voices from the hallway. They stop outside the door, before flinging it open. A <<fullGroup>> barge in.
 	<br><br>
-	<<set $rng to random(1, 100)>>
+	<<rng>>
 	<<if $rng gte 51>>
 		<<if $exhibitionism gte 75 and $uncomfortable.nude is false>>
 			You yelp in surprise, but make no effort to hide your <<lewdness>>. They stare at you with wide eyes, surprised you are letting them. The <<person1>><<person>> grins and closes the door.
@@ -1582,6 +1744,10 @@ and !$fromRobinRoom and _robin.cdquest is 2 and _robin.trauma lte 20 and !$robin
 		<<ind>><<link [[Find hacker (0:10)|Orphanage Hacker]]>><<pass 10>><</link>>
 		<br><br>
 	<</if>>
+	<<if $kylar_camera is 5>>
+		<<ind>><<link [[Decide what to do with Kylar's camera (0:05)|Orphanage Kylar Camera]]>><<pass 5>><</link>>
+		<br><br>
+	<</if>>
 	<<if $halloween is 1 and $robinmissing is 0 and $hour gte 16 and $hour lt 19 and $monthday is 31 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
 		<<if $halloween_robin_costume is "witch">>
 			You see Robin, dressed as a witch and surrounded by excited orphans.
@@ -1628,6 +1794,7 @@ and !$fromRobinRoom and _robin.cdquest is 2 and _robin.trauma lte 20 and !$robin
 	<<home_outside>>
 	<br>
 <</if>>
+
 <<if $fromRobinRoom>>
 	<<unset $fromRobinRoom>>
 <</if>>
@@ -1694,7 +1861,7 @@ No soldier is a match for your unstoppable onslaught. Cheater.
 <<effects>>
 
 You celebrate Christmas with the other residents.
-<<set $rng to random(1, 100)>>
+<<rng>>
 <<if $hour gte 20>>
 	They begin to take down decorations as the day comes to a close.
 <<else>>
@@ -2070,7 +2237,7 @@ The last of the water drains from the bath, taking the slime with it. <<tearful>
 
 <<if $rng gte 51>>
 	You join the game of hide-and-seek.
-		<<set $rng to random(1, 100)>>
+		<<rng>>
 		<<if $rng gte 91>>
 		You hide behind a large potted plant,
 		<<elseif $rng gte 81>>
@@ -2107,7 +2274,7 @@ The last of the water drains from the bath, taking the slime with it. <<tearful>
 	<br>
 	<</if>>
 	<<else>>
-		<<set $rng to random(1, 100)>>
+		<<rng>>
 		<<if $rng gte 81>>
 		You hear <<him>> search and find the orphans one by one, until you're the only one left. After a couple more minutes <<his>> impatience gets the better of <<him>>. "I give up. You win." <<he>> shouts. You leave your hiding place triumphant.
 		<br><br>
@@ -2156,7 +2323,7 @@ The last of the water drains from the bath, taking the slime with it. <<tearful>
 <<npc Bailey>><<person1>>You enter the main hall of the orphanage and line up with the other residents. The room falls silent as Bailey storms in, eyes livid. "Listen up," <<he>> shouts. "They're cutting our funding. And I'm not sacrificing anything for you shits." <<He>> runs a hand through <<his>> dark hair. "From now on, you're contributing. Financially."
 <br><br>
 
-<<He>> unfolds paper from <<his>> jacket pocket and examines it. "<span class="pink"><<printmoney $rentmoney true>></span> should be enough to start. For the first week. I don't care how you get it. Knock on doors and ask for work. Rent yourself as a footstool. Steal it even. Just have it a week from now. Or I'll find a way to extract value from you."
+<<He>> unfolds paper from <<his>> jacket pocket and examines it. "<<printmoney $rentmoney "pink">> should be enough to start. For the first week. I don't care how you get it. Knock on doors and ask for work. Rent yourself as a footstool. Steal it even. Just have it a week from now. Or I'll find a way to extract value from you."
 <br><br>
 
 <<else>>
@@ -2165,7 +2332,7 @@ The last of the water drains from the bath, taking the slime with it. <<tearful>
 
 You enter Bailey's office. "I know why you're here," <<he>> says, running a hand through <<his>> dark hair. "You want me to release you from my protection, so you'll be an independent citizen. I could do that. But there's a problem. You've been living under my roof without giving anything in return. You owe me. Until you pay me back, I'm not letting you go."
 <br><br>
-<<He>> looks at the paper on <<his>> desk and smiles. "<span class="pink"><<printmoney $rentmoney true>></span> should do. To start with. I don't care how you get it. Knock on doors and ask for work. Rent yourself as a footstool. Steal it even. Just have it a week from now. Or I'll find a way to extract value from you."
+<<He>> looks at the paper on <<his>> desk and smiles. "<<printmoney $rentmoney "pink">> should do. To start with. I don't care how you get it. Knock on doors and ask for work. Rent yourself as a footstool. Steal it even. Just have it a week from now. Or I'll find a way to extract value from you."
 <br><br>
 
 <</if>>
@@ -2187,7 +2354,7 @@ Attitudes
 <<set $stress -= 2000>>
 <<npc Bailey>><<person1>>You're awoken by a sharp pain in your face. It's Bailey. <<He>> slaps you again. "I provide a perfectly good bed for you, yet you opt to sleep on the floor." <<He>> slams the door shut as <<he>> leaves.
 <br><br>
-<<set $pain += 20>>
+<<pain 5>>
 <<link [[Next|Bedroom]]>><<endevent>><</link>>
 <br>
 
@@ -2528,7 +2695,7 @@ Bailey never finds me. So talk to Landry. Do the other stuff first. That's more 
 
 "Okay," you say.
 <br>
-"Good-good. Do this for me, I'll look out for you. I mean... you'll probably never see me again. But I will. Promise. Anyway get to it."
+"Good-good. Do this for me, I'll look out for you. I mean... you might never see me again. But I will. Promise. Anyway get to it."
 <br>
 "There's one thing-"
 <br>
@@ -2544,7 +2711,7 @@ They pass over the clothes basket.
 <br><br>
 You grab your clothes and dress with haste.
 <br><br>
-<<link [[Next|Orphanage]]>><<storeon "mickey">><<set $hacker_tasks to []>><</link>>
+<<link [[Next|Orphanage]]>><<storeon "mickey">><<set $hacker_tasks to []>><<endevent>><</link>>
 
 :: Shave
 <<effects>>
