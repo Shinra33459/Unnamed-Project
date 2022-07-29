@@ -2673,10 +2673,10 @@
 		<<set $objectVersion.specialClothes to 8>>
 	<</if>>
 
-	<<if $objectVersion.museumAntiques lt 9 or $objectVersion.museumAntiques is undefined>>
+	<<if $objectVersion.museumAntiques lt 10 or $objectVersion.museumAntiques is undefined>>
 		/*Moved undefined checks for new antiques to the widget below*/
 		<<updateMuseumAntiques>>
-		<<set $objectVersion.museumAntiques to 9>>
+		<<set $objectVersion.museumAntiques to 10>>
 	<</if>>
 
 	<!--Tracking for the Plant Lover trait-->
@@ -3570,4 +3570,24 @@
 	<<if $NPCName[$NPCNameList.indexOf("Kylar")].dom gte 1 and ($bus isnot "manor" or $syndromekylar is 1)>>
 		<<npcincr Kylar dom -100>>
 	<</if>>
+
+	<!-- v0.3.10.3: fix for Kylar being initialized weirdly in combat after a prior bug set kylar's NPCName data weirdly -->
+	<<if _version lte 31003>>
+		<<set _kylar to $NPCName[$NPCNameList.indexOf("Kylar")]>>
+		<<if _kylar.penis isnot "none">>
+			<<set _kylar.penis to "clothed">>
+		<</if>>
+		<<if _kylar.vagina isnot "none">>
+			<<set _kylar.vagina to "clothed">>
+		<</if>>
+		<<run delete _kylar.lefthand>>
+		<<run delete _kylar.righthand>>
+	<</if>>
+
+	<!-- v0.3.10.4: fix estatePersistent.markedCards being undefined and causing an error under very specific circumstances -->
+	<<if $estatePersistent and !$estatePersistent.markedCards>>
+		<<set $estatePersistent.markedCards = new Set() >>
+		<<set $estatePersistent.newDeckTimer = 3>>
+	<</if>>
+
 <</widget>>

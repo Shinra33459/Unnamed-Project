@@ -30,7 +30,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.10.3",
+	"version": "0.3.10.5",
 }
 window.StartConfig.version += ".h"; //stands for Herm, don't change
 window.StartConfig.version += "0"; //how many times I've released a build of this mod for this version 
