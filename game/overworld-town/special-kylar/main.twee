@@ -64,7 +64,7 @@
 		<br><br>
 
 		<<kylaroptionsleave>>
-	<<elseif $bus is "manor" and $hour lt 18>>
+	<<elseif $bus is "kylarmanor" and $hour lt 18>>
 		<<unset $kylar_action>>
 		Kylar looks at a monitor. "I should sleep," <<he>> says. <<He>> walks over to <<his>> bed and collapses atop it, fully dressed. <<He>> watches you, longing on <<his>> face, but <<he>> doesn't say anything.
 		<br><br>
@@ -155,7 +155,7 @@
 				<<set $_dest to "School Library">>
 			<<case "starfish">>
 				<<set $_dest to "Arcade">>
-			<<case "manor">>
+			<<case "kylarmanor">>
 				<<set $_dest to "Manor Kylar Room">>
 			<<default>>
 				<<set $_dest to "School Rear Playground">>
@@ -410,7 +410,7 @@
 	<</if>>
 	<br><br>
 
-	<<if _kylarStatus.includes("Love") and $bus isnot "manor">>
+	<<if _kylarStatus.includes("Love") and $bus isnot "kylarmanor">>
 		Kylar's face turns red, and <<he>> jumps to <<his>> feet to shield you from view.
 	<<else>>
 		Kylar's face turns red.
@@ -442,6 +442,7 @@
 	<<unset $kylar_abduction_bailey>>
 	<<unset $kylar_abduction_knife>>
 	<<npcincr Kylar dom -100>>
+	<<clotheson>>
 <</widget>>
 
 <<widget "kylar_abduction_return">>
@@ -588,7 +589,7 @@
 		<br>
 	<<else>>
 		Kylar pulls a chair in front of you, and sits on it backwards, facing you.
-		<<set $rng to random(1, 10)>>
+		<<rng>>
 		<<switch $rng>>
 			<<case 1>>
 				"It's very kind of my parents to let you sleep over," <<he>> says. "They're always so busy. They never seem to sleep."
@@ -800,6 +801,7 @@ You continue on, not wanting to get involved. No one gives you a second glance.
 <<set $outside to 0>><<set $location to "school">><<effects>>
 <<npc Kylar>><<person1>><<set $leftarm to "bound">><<set $rightarm to "bound">>
 <<set $stress -= 2000>><<clothesontowel>><<pain 1>>
+<<set $kylarSeen.pushUnique("basement")>>
 You awaken sat on a chair. You can't move. Your legs are chained and your arms are bound behind you. You're in a spacious basement. A tiny window lets in a little light.
 <br><br>
 
@@ -929,14 +931,13 @@ They place it on a table, then step around it into view. It's Kylar. <<His>> hai
 <br><br>
 
 <<effects>>
-<<effectsman>><<man>>
+<<effectsman>>
+<<man>>
 <<stateman>>
 <br><br>
-
 <<actionsman>>
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Kylar Basement Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+
+<<if _combatend>>
 	<span id="next"><<link [[Next|Kylar Basement Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Kylar Basement Rape]]>><</link>></span><<nexttext>>
@@ -1645,20 +1646,18 @@ pushing you down to the bed.
 	<<consensual>>
 	<<set $consensual to 1>>
 	<<neutral 1>>
-
 	<<maninit>>
 	<<set $enemytrust += 100>>
 <</if>>
+
 <<effects>>
-<<effectsman>><<man>>
+<<effectsman>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Kylar Orphanage Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Kylar Orphanage Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+
+<<if _combatend>>
 	<span id="next"><<link [[Next|Kylar Orphanage Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Kylar Orphanage Sex]]>><</link>></span><<nexttext>>
@@ -2045,16 +2044,14 @@ Content, you walk back to the bed. Kylar gazes at you with reverence. <<person1>
 	<br><br>
 <</if>>
 <<effects>>
-<<effectsman>><<man>>
+<<effectsman>>
+<<alarmstate 'You hear laughter on the other side of the bedroom door. <span class="red">No one comes to your aid.</span>'>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
-<<if $alarm is 1>>
-	You hear laughter on the other side of the bedroom door. <span class="red">No one comes to your aid.</span>
-<</if>>
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Kylar Orphanage Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+
+<<if _combatend>>
 	<span id="next"><<link [[Next|Kylar Orphanage Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Kylar Orphanage Rape]]>><</link>></span><<nexttext>>
@@ -2211,7 +2208,6 @@ The bathroom is empty. You make your way to a stall and pull Kylar in. <<Hes>> u
 	<<consensual>>
 	<<set $consensual to 1>>
 	<<neutral 1>>
-
 	<<maninit>>
 	<<set $enemytrust += 100>>
 
@@ -2221,11 +2217,7 @@ The bathroom is empty. You make your way to a stall and pull Kylar in. <<Hes>> u
 <<stateman>>
 <br><br>
 <<actionsman>>
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Kylar Bathroom Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Kylar Bathroom Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Kylar Bathroom Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Kylar Bathroom Sex]]>><</link>></span><<nexttext>>
@@ -2276,7 +2268,7 @@ The bathroom is empty. You make your way to a stall and pull Kylar in. <<Hes>> u
 	<br><br>
 
 	<<set _destination to ($kylarBathroomGender is "m" ? "School Boy's Toilets" : "School Girl's Toilets")>>
-	<<link [[Next|_destination]]>><</link>>
+	<<link [[Next|_destination]]>><<endevent>><</link>>
 
 <<else>>
 	"Let's go back to the <<print ($weather is "rain" or $weather is "snow" ? "library" : "playground")>>," <<he>> says.
@@ -2544,7 +2536,7 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 			<<print either("the arcade cabinet", "the main character of the game", "a coin on the ground", "the joystick and buttons", "a spider web strung in a ceiling corner")>>.
 		<<elseif $bus is "schoollibrary">>
 			<<print either("one of the bookshelves", "the beaker picture on a biology textbook", "the half-full return basket", "the rain-splattered window", "a spider web strung in a ceiling corner")>>.
-		<<elseif $bus is "manor">>
+		<<elseif $bus is "kylarmanor">>
 			<<print either("the tangled sheets of the bed", "the skylight", "one of the monitors", "one of the loft banisters", "a spider web strung in a ceiling corner")>>.
 		<<elseif $season is "winter">>
 			<<print either("an icicle hanging off a tree", "a snow angel in the snow nearby", "a leafless tree", "a discarded water bottle", "a spider web surviving against all odds")>>.
@@ -3394,7 +3386,7 @@ You push Whitney away. Kylar pulls you closer.
 Whitney forces <<his>> tongue into your mouth, so you bite it.
 <br><br>
 
-"Ow! You fucking bi-" <<Hes>> interrrupted by a slap across the face. Caught by surprise, <<he>> stumbles out of <<his>> seat.
+"Ow! You fucking bi-" <<Hes>> interrupted by a slap across the face. Caught by surprise, <<he>> stumbles out of <<his>> seat.
 <br><br>
 
 Heads turn around the canteen. You pull Kylar closer.
@@ -3455,27 +3447,15 @@ Excited at the prospect of violence, other students gather around.
 <</if>>
 
 <<effects>>
-<<effectsman>><<man>>
-
-<<if $alarm is 1 and $rescue is 0>>
-	<<set $alarm to 0>>
-	No teachers can hear you over the noise in the canteen. If you were more popular, maybe a fellow student would assist you.
-	<br><br>
-<</if>>
-
+<<effectsman>>
+<<alarmstate '<span class="red">No teachers can hear you over the noise in the canteen.</span> If you were more popular, maybe a fellow student would assist you.'>>
+<<man>>
 <<audience>>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Canteen Kylar Whitney Intervene Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Canteen Kylar Whitney Intervene Finish]]>><</link>></span><<nexttext>>
-<<elseif $alarm is 1 and $rescue is 1>>
-	<span id="next"><<link [[Next|Canteen Kylar Whitney Intervene Finish]]>><</link>></span><<nexttext>>
-<<elseif $pain gte 100 and $willpowerpain is 0>>
+<<if _combatend or ($pain gte 100 and $willpowerpain is 0)>>
 	<span id="next"><<link [[Next|Canteen Kylar Whitney Intervene Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Canteen Kylar Whitney Intervene]]>><</link>></span><<nexttext>>
@@ -4042,7 +4022,7 @@ You kick Kylar onto <<his>> back and stand over <<him>>.
 			<<case 3>> <<he>> shudders and semen erupts, covering your foot and quickly spreading down <<his>> thighs.
 			<<case 4>> <<he>> shudders and semen erupts, covering your foot and quickly spreading down <<his>> thighs to form a pool around <<him>>.
 		<</switch>>
-		<<feetejacstat>><<ejacstat>><<set $hygiene += 1000>><<set $player.bodyliquid.feet.semen += 2>>
+		<<feetejacstat>><<ejacstat>><<set $hygiene += 1000>><<bodyliquid "feet" "semen" 2>>
 	<<else>>
 		<<He>> squirms, so you rub harder, and keep rubbing until <<he>> shudders and moans.
 	<</if>>
@@ -4068,7 +4048,7 @@ You kick Kylar onto <<his>> back and stand over <<him>>.
 			<<case 3>>	<<he>> shudders and a wet patch appears on <<his>> _pants, quickly spreading down the sides.
 			<<case 4>>	<<he>> shudders and a wet patch appears on <<his>> _pants, quickly spreading down the sides and even leaking out to form a pool around <<him>>.
 		<</switch>>
-		<<feetejacstat>><<ejacstat>><<set $hygiene += 500>><<set $player.bodyliquid.feet.semen += 1>>
+		<<feetejacstat>><<ejacstat>><<set $hygiene += 500>><<bodyliquid "feet" "semen">>
 	<<else>>
 		<<He>> squirms, so you rub harder, and keep rubbing until <<he>> shudders and moans.
 	<</if>>
@@ -4172,21 +4152,13 @@ When <<he>> finishes, <<he>> opens <<his>> mouth to say something. You turn away
 <<actionsman>>
 
 <<if $consensual is 1>>
-	<<if $finish is 1>>
-		<span id="next"><<link [[Next|Street Kylar Sex Finish]]>><</link>></span><<nexttext>>
-	<<elseif $enemyhealth lte 0>>
-		<span id="next"><<link [[Next|Street Kylar Sex Finish]]>><</link>></span><<nexttext>>
-	<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<if _combatend>>
 		<span id="next"><<link [[Next|Street Kylar Sex Finish]]>><</link>></span><<nexttext>>
 	<<else>>
 		<span id="next"><<link [[Next|Street Kylar Sex]]>><</link>></span><<nexttext>>
 	<</if>>
 <<else>>
-	<<if $alarm is 1 and $rescue is 1>>
-		<span id="next"><<link [[Next|Street Kylar Rape Finish]]>><</link>></span><<nexttext>>
-	<<elseif $enemyhealth lte 0>>
-		<span id="next"><<link [[Next|Street Kylar Rape Finish]]>><</link>></span><<nexttext>>
-	<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<if _combatend>>
 		<span id="next"><<link [[Next|Street Kylar Rape Finish]]>><</link>></span><<nexttext>>
 	<<else>>
 		<span id="next"><<link [[Next|Street Kylar Sex]]>><</link>></span><<nexttext>>
@@ -4258,7 +4230,9 @@ When <<he>> finishes, <<he>> opens <<his>> mouth to say something. You turn away
 	<br><br>
 <</if>>
 <<effects>>
-<<effectsman>><<man>>
+<<effectsman>>
+<<alarmstate>>
+<<man>>
 <<if $NPCList[0].righthand is "none">>
 	<<He>> holds the knife to your throat. <<if $enemyarousal gte ($enemyarousalmax / 3)>>It trembles in <<his>> grip.<</if>><<gpain>><<violence 5>>
 	<br><br>
@@ -4266,11 +4240,7 @@ When <<he>> finishes, <<he>> opens <<his>> mouth to say something. You turn away
 <<stateman>>
 <br><br>
 <<actionsman>>
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Street Kylar Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Street Kylar Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $alarm is 1 and $rescue is 1>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Street Kylar Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Street Kylar Rape]]>><</link>></span><<nexttext>>
@@ -4437,7 +4407,7 @@ When you pull away <<his>> eyes remain closed. <<He>> looks serene, if red-faced
 :: Kylar Loft Lewd
 <<set $outside to 0>><<set $location to "home">><<effects>>
 <<set _kylar to statusCheck("Kylar")>>
-<<npc Kylar>>
+<<endevent>><<npc Kylar>><<person1>>
 
 You shove Kylar back against the table, holding <<him>> down with one hand while the other creeps down <<his>> tummy.
 
@@ -4660,7 +4630,7 @@ The two of you continue walking.
 :: Kylar Fountain Wish
 <<set $outside to 1>><<effects>>
 "Make a wish," you say, tossing a coin into the fountain.
-<<if $kylarSeen.includes("fountainIntro")>>
+<<if !$kylarSeen.includes("fountainIntro")>>
 	<<set $kylarSeen.pushUnique("fountainIntro")>>
 	Kylar watches you, as if entranced by what you're doing.
 	<<if $kylar.fountainCoin is 1>>
@@ -4825,4 +4795,3 @@ You give Kylar the box back. <<He>> hesitates before taking it. "Y-you don't lik
 <br><br>
 
 <<kylaroptions>>
-

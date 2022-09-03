@@ -110,9 +110,11 @@
 <<widget "control">>
 	<<if _args[0]>>
 		<<set $control += (_args[0] * 10)>>
+		<!--
 		<<if _args[0] gte 1>>
 			<<set $controlstart += (_args[0] * 10)>>
 		<</if>>
+		-->
 		<<if $control gte ($controlmax / 5) * 2>>
 			<<set $controlled to 1>>
 		<<else>>
@@ -183,13 +185,13 @@
 				<<lactation_pressure 1>>
 			<</if>>
 		<</if>>
-		<<if $lactating is 1 and _args[0] isnot 0>>
+		<<if $lactating is 1>>
 			<<set $_volume_increase to (_args[0] * 2)>>
 			<<if $cow gte 6>>
 				<<set $_volume_increase *= 2>>
 			<</if>>
 			<<set $milk_volume += $_volume_increase>>
-			<<set $milk_volume = Math.clamp($milk_volume, 24, $milk_max)>>
+			<<set $milk_volume to Math.clamp($milk_volume, 24, $milk_max)>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -405,6 +407,7 @@
 			<<set $cool *= (1 - (_args[0] / -100))>>
 			<<set $cool -= 1>>
 		<</if>>
+		<<set $cool to Math.clamp($cool, 0, $coolmax)>>
 	<</if>>
 <</widget>>
 
@@ -449,13 +452,13 @@
 				<<set $purity += (_args[0])>>
 			<</if>>
 		<</for>>
-	<<if $virginityProtected is true>>
-		<<set $purity = Math.clamp($purity, 0, 1000)>>
-	<<elseif $player.virginity.vaginal is true and $player.virginity.penile is true>>
-		<<set $purity = Math.clamp($purity, 0, 1000)>>
-	<<else>>
-		<<set $purity = Math.clamp($purity, 0, 999)>>
-	<</if>>
+		<<if $virginityProtected is true>>
+			<<set $purity = Math.clamp($purity, 0, 1000)>>
+		<<elseif $player.virginity.vaginal is true and $player.virginity.penile is true>>
+			<<set $purity = Math.clamp($purity, 0, 1000)>>
+		<<else>>
+			<<set $purity = Math.clamp($purity, 0, 999)>>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -724,7 +727,7 @@
 <</widget>>
 
 <<widget "penileskill">>
-<<if _args[0] and $player.penisExist and $statFreeze isnot true>>
+<<if _args[0] and ($player.penisExist or playerHasStrapon()) and $statFreeze isnot true>>
 	<<set $penileskill += _args[0]>>
 	<<set $penileskill = Math.clamp($penileskill, 0, 1000)>>
 <</if>>

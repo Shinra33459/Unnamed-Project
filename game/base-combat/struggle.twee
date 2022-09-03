@@ -138,7 +138,6 @@
 	<<struggle_actions>>
 <</widget>>
 
-
 <<widget "struggle_state">>
 	<<for $_part range ["mouth", "vagina", "penis", "anus", "chest"]>>
 		<<if $struggle[$_part].creature>>
@@ -368,7 +367,7 @@
 	<<if _lurker_net_possible is true>>
 		<<set _leftaction["Hurl net"] to "capture">>
 	<</if>>
-
+	<<set _leftaction["Guard"] to "guard">>
 	<<leftclothesnew>>
 
 	<<if $combatControls isnot "radio">>
@@ -518,7 +517,7 @@
 	<<if _lurker_net_possible is true>>
 		<<set _rightaction["Hurl net"] to "capture">>
 	<</if>>
-
+	<<set _rightaction["Guard"] to "guard">>
 	<<rightclothesnew>>
 
 	<<if $combatControls isnot "radio">>
@@ -807,7 +806,6 @@
 <<combatstate>>
 <<carryblock>>
 
-
 <<if $trance lte 0 and $panicparalysis is 0 and $panicviolence is 0 and $combatControls isnot "radio_old">>
 	<<struggle_difficulty_set>>
 	<<if $combatControls is "radio">>
@@ -1027,7 +1025,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 		<</if>>
 	<<elseif $mouthaction is "suck" and $mouthstate is "struggle_pen">>
 		You suck on <<struggle_name mouth>>'s <<struggle_appendage mouth>><<if $struggle.mouth.progress gte 8>>, forcing it to release more sweet fluid down your throat<</if>>.
-		<<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<set $player.bodyliquid.mouth.goo += 1>><<submission 2>>
+		<<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<bodyliquid "mouth" "goo">><<submission 2>>
 		<<if $struggle.mouth.progress gt 7 and $struggle.mouth.progress lt 13>>
 			<<set $struggle.mouth.progress += 1>>
 		<</if>>
@@ -1122,7 +1120,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 					You stroke the <<struggle_name _actionpart>>'s <<struggle_appendage _actionpart>>, hoping to excite it.
 					<<if $struggle[_actionpart].progress gt 7 and $struggle[_actionpart].progress lt (_actionpart is "chest" ? 12 : 13)>>
 						<<set $struggle[_actionpart].progress++>>
-						<<set $player.bodyliquid[_actionpart].goo++>>
+						<<bodyliquid _actionpart "goo">>
 						<<if ["vagina", "anus"].includes(_actionpart)>>
 							<<struggle_fluid _actionpart>>
 							<<purity -1>>
@@ -1296,6 +1294,19 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 			<span class="red">The creature squirms aside.</span><<gnet>><<prof net 1>>
 		<</if>>
 	<</if>>
+
+	<<if $leftaction is "guard" and $rightaction is "guard">>
+		You raise both arms, preparing to bat away any attacks.
+		<<set $left_guard to 1>>
+		<<set $right_guard to 1>>
+	<<elseif $leftaction is "guard">>
+		You raise your left arm, preparing to bat away any attacks.
+		<<set $left_guard to 1>>
+	<<elseif $rightaction is "guard">>
+		You raise your right arm, preparing to bat away any attacks.
+		<<set $right_guard to 1>>
+	<</if>>
+
 	<<if !$carryblock>>
 		<<set $leftactiondefault to ($leftaction ? $leftaction : "rest"); $leftaction to 0>>
 		<<set $rightactiondefault to ($rightaction ? $rightaction : "rest"); $rightaction to 0>>
@@ -1341,12 +1352,12 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 			<<case 6>>
 				The <<print $struggle.mouth.creature>>'s <<struggle_appendage mouth>> pushes down your throat. <<if $underwater isnot 1>><span class="purple">You can't breathe!</span><</if>><<neutral 5>>
 			<<case 7>>
-				The <<print $struggle.mouth.creature>> <span class="pink">shudders as it begins to pump a sweet fluid down your throat.</span><<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<set $player.bodyliquid.mouth.goo += 1>><<oralejacstat>><<ejacstat>>
+				The <<print $struggle.mouth.creature>> <span class="pink">shudders as it begins to pump a sweet fluid down your throat.</span><<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<bodyliquid "mouth" "goo">><<oralejacstat>><<ejacstat>>
 			<<case 13>>
 				<<if $struggle.creature is "lurker">>
 					<<impregnate "Lurker" 400>><<fertilise>>
 					<<if _impreg is true>>
-						The <<print $struggle.mouth.creature>>'s <<struggle_appendage mouth>> <span class="red">expands again</span>, but the extra pressure disappears quickly. It feels like it left something behind. <<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<set $player.bodyliquid.mouth.goo += 1>>
+						The <<print $struggle.mouth.creature>>'s <<struggle_appendage mouth>> <span class="red">expands again</span>, but the extra pressure disappears quickly. It feels like it left something behind. <<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<bodyliquid "mouth" "goo">>
 					<<else>>
 						<<set _failedImpreg to true>>
 					<</if>>
@@ -1355,7 +1366,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 					<<set _failedImpreg to true>>
 				<</if>>
 				<<if _failedImpreg>>
-					The <<print $struggle.mouth.creature>> pumps a sweet fluid down your throat.<<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<set $player.bodyliquid.mouth.goo += 1>>
+					The <<print $struggle.mouth.creature>> pumps a sweet fluid down your throat.<<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<bodyliquid "mouth" "goo">>
 				<</if>>
 			<<case 14>>
 				The <<print $struggle.mouth.creature>> shudders, <span class="blue">and withdraws its <<struggle_appendage mouth>> from your throat.</span> It leaps from your face.<<neutral 5>><<struggle_fluid mouth>>
@@ -1363,7 +1374,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 				<<set $mouthstate to 0>>
 				<<struggle_part_init "mouth" "cum">>
 			<<default>>
-				The <<print $struggle.mouth.creature>> pumps a sweet fluid down your throat.<<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<set $player.bodyliquid.mouth.goo += 1>>
+				The <<print $struggle.mouth.creature>> pumps a sweet fluid down your throat.<<neutral 5>><<struggle_fluid mouth>><<purity -1>><<internalejac>><<bodyliquid "mouth" "goo">>
 		<</switch>>
 		<<if $struggle.mouth.progress gte 6 and $struggle.mouth.progress lte 14>>
 			<<if $underwater isnot 1>>
@@ -1420,14 +1431,14 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 			<<case 6>>
 				The <<print $struggle.vagina.creature>>'s <<struggle_appendage vagina>> begins to thrust into your <<pussy>>.<<neutral 5>>
 			<<case 7>>
-				The <<print $struggle.vagina.creature>> <span class="pink">shudders and pumps a warm fluid into your <<pussy>>.</span><<neutral 5>><<struggle_fluid vagina>><<purity -1>><<internalejac>><<set $player.bodyliquid.vagina.goo += 1>><<vaginalejacstat>><<ejacstat>>
+				The <<print $struggle.vagina.creature>> <span class="pink">shudders and pumps a warm fluid into your <<pussy>>.</span><<neutral 5>><<struggle_fluid vagina>><<purity -1>><<internalejac>><<bodyliquid "vagina" "goo">><<vaginalejacstat>><<ejacstat>>
 			<<case 14>>
 				The <<print $struggle.vagina.creature>> shudders, <span class="blue">and withdraws its <<struggle_appendage vagina>> from your <<pussy>>.</span> It leaps from your pelvis.<<neutral 5>><<struggle_fluid vagina>>
 				<<set $vaginause to 0>>
 				<<set $vaginastate to 0>>
 				<<struggle_part_init "vagina" "cum">>
 			<<default>>
-				The <<print $struggle.vagina.creature>> pumps a warm fluid into your <<pussy>>.<<neutral 5>><<struggle_fluid vagina>><<purity -1>><<internalejac>><<set $player.bodyliquid.vagina.goo += 1>>
+				The <<print $struggle.vagina.creature>> pumps a warm fluid into your <<pussy>>.<<neutral 5>><<struggle_fluid vagina>><<purity -1>><<internalejac>><<bodyliquid "vagina" "goo">>
 			<</switch>>
 		<<set $struggle.vagina.progress += 1>>
 		<br>
@@ -1466,14 +1477,14 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 			<<case 6>>
 				The <<print $struggle.penis.creature>> begins to thrust against your <<penis>>.<<neutral 5>>
 			<<case 7>>
-				The <<print $struggle.penis.creature>> <span class="pink">shudders as your <<penis>> thrusts against its core.</span><<neutral 5>><<set $player.bodyliquid.penis.goo += 1>>
+				The <<print $struggle.penis.creature>> <span class="pink">shudders as your <<penis>> thrusts against its core.</span><<neutral 5>><<bodyliquid "penis" "goo">>
 			<<case 14>>
 				The <<print $struggle.penis.creature>> shudders, <span class="blue">and releases your <<penis>>.</span> It leaps from your tummy.<<neutral 5>>
 				<<set $penisuse to 0>>
 				<<set $penisstate to 0>>
 				<<struggle_part_init "penis" "cum">>
 			<<default>>
-				The <<print $struggle.penis.creature>> thrusts against your <<penis>>.<<neutral 5>><<set $player.bodyliquid.penis.goo += 1>>
+				The <<print $struggle.penis.creature>> thrusts against your <<penis>>.<<neutral 5>><<bodyliquid "penis" "goo">>
 		<</switch>>
 		<<set $struggle.penis.progress += 1>>
 		<br>
@@ -1511,14 +1522,14 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 		<<case 6>>
 			The <<print $struggle.anus.creature>>'s <<struggle_appendage anus>> begins to thrust into your <<bottom>>.<<neutral 5>>
 		<<case 7>>
-			The <<print $struggle.anus.creature>> <span class="pink">shudders as it pumps a warm fluid into your <<bottom>>.</span><<neutral 5>><<struggle_fluid anus>><<purity -1>><<internalejac>><<set $player.bodyliquid.anus.goo += 1>><<analejacstat>><<ejacstat>>
+			The <<print $struggle.anus.creature>> <span class="pink">shudders as it pumps a warm fluid into your <<bottom>>.</span><<neutral 5>><<struggle_fluid anus>><<purity -1>><<internalejac>><<bodyliquid "anus" "goo">><<analejacstat>><<ejacstat>>
 		<<case 13>>
 			<<impregnate $struggle.anus.creature 50>>
 			<<if _impreg is true>>
-				The <<print $struggle.anus.creature>>'s <<struggle_appendage mouth>> <span class="red">expands again</span>, but the extra pressure disappears quickly. It feels like it left something behind.<<neutral 5>><<set $player.bodyliquid.anus.goo += 1>><<struggle_fluid anus>><<purity -1>><<internalejac>><<set $player.bodyliquid.anus.goo += 1>>
+				The <<print $struggle.anus.creature>>'s <<struggle_appendage mouth>> <span class="red">expands again</span>, but the extra pressure disappears quickly. It feels like it left something behind.<<neutral 5>><<bodyliquid "anus" "goo">><<struggle_fluid anus>><<purity -1>><<internalejac>><<bodyliquid "anus" "goo">>
 				<<set _impreg to false>>
 			<<else>>
-				The <<print $struggle.anus.creature>>'s <<struggle_appendage anus>> thrusts into your <<bottom>>.<<neutral 5>><<set $player.bodyliquid.anus.goo += 1>><<struggle_fluid anus>><<purity -1>><<internalejac>><<set $player.bodyliquid.anus.goo += 1>>
+				The <<print $struggle.anus.creature>>'s <<struggle_appendage anus>> thrusts into your <<bottom>>.<<neutral 5>><<bodyliquid "anus" "goo">><<struggle_fluid anus>><<purity -1>><<internalejac>><<bodyliquid "anus" "goo">>
 			<</if>>
 		<<case 14>>
 			The <<print $struggle.anus.creature>> shudders <span class="blue">and withdraws its <<struggle_appendage anus>>,</span> leaping from your <<bottom>><<neutral 5>><<struggle_fluid anus>>
@@ -1526,7 +1537,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 			<<set $anusstate to 0>>
 			<<struggle_part_init "anus" "cum">>
 		<<default>>
-			The <<print $struggle.anus.creature>>'s <<struggle_appendage anus>> thrusts into your <<bottom>>.<<neutral 5>><<set $player.bodyliquid.anus.goo += 1>><<struggle_fluid anus>><<purity -1>><<internalejac>><<set $player.bodyliquid.anus.goo += 1>>
+			The <<print $struggle.anus.creature>>'s <<struggle_appendage anus>> thrusts into your <<bottom>>.<<neutral 5>><<bodyliquid "anus" "goo">><<struggle_fluid anus>><<purity -1>><<internalejac>><<bodyliquid "anus" "goo">>
 		<</switch>>
 		<<set $struggle.anus.progress += 1>>
 		<br>
@@ -1624,7 +1635,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 							The <<print $struggle.chest.creature>>'s <<struggle_appendage chest>> fucks your <<breasts>>. The creature shudders as <span class="purple">a warm fluid erupts from its <<struggle_appendage chest>>.</span>
 							<<milkvolume 1>>
 						<</if>>
-						<<sex 5>><<set $player.bodyliquid.chest.goo += 1>>
+						<<sex 5>><<bodyliquid "chest" "goo">>
 					<</if>>
 				<<else>>
 					<<struggle_flat_chest>>
@@ -1648,7 +1659,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 							The <<print $struggle.chest.creature>>'s <<struggle_appendage chest>> keeps thrusting between your <<breasts>>, pumping out a warm fluid.
 							<<milkvolume 1>>
 						<</if>>
-						<<sex 5>><<set $player.bodyliquid.chest.goo += 1>>
+						<<sex 5>><<bodyliquid "chest" "goo">>
 					<</if>>
 				<<else>>
 					<<struggle_flat_chest>>
@@ -1663,7 +1674,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 							The <<print $struggle.chest.creature>>'s appendage fucks your <<breasts>> as <span class="pink">the tentacles continue to squeeze.</span> The creature shudders as a warm fluid erupts from its <<struggle_appendage chest>>.
 							<<milkvolume 1>>
 						<</if>>
-						<<sex 5>><<set $player.bodyliquid.chest.goo += 1>>
+						<<sex 5>><<bodyliquid "chest" "goo">>
 					<<else>>
 						<<if $lactating is 1 and $breastfeedingdisable is "f" and $milk_amount gte 1>>
 							The <<print $struggle.chest.creature>>'s <<struggle_appendage chest>> fucks your <<breasts>>, pumping warm fluid with each thrust as <span class="pink">milk leaks from your buds.</span>
@@ -1672,14 +1683,14 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 							The <<print $struggle.chest.creature>>'s <<struggle_appendage chest>> keeps thrusting between your <<breasts>>, pumping out a warm fluid.
 							<<milkvolume 1>>
 						<</if>>
-						<<sex 5>><<set $player.bodyliquid.chest.goo += 1>>
+						<<sex 5>><<bodyliquid "chest" "goo">>
 					<</if>>
 				<<else>>
 					<<struggle_flat_chest>>
 				<</if>>
 			<<case 12>>
 				<<if $player.breastsize gte 3>>
-					The <<print $struggle.chest.creature>> shudders <span class="blue">and withdraws its <<struggle_appendage chest>>,</span> leaping from your <<breasts>><<set $player.bodyliquid.chest.goo += 1>>
+					The <<print $struggle.chest.creature>> shudders <span class="blue">and withdraws its <<struggle_appendage chest>>,</span> leaping from your <<breasts>><<bodyliquid "chest" "goo">>
 				<<else>>
 					The <<print $struggle.chest.creature>> <span class="blue">leaps from your <<breasts>>.</span>
 				<</if>>
@@ -1696,7 +1707,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 							The <<print $struggle.chest.creature>>'s appendage keeps thrusting between your <<breasts>>, pumping out a warm fluid.
 							<<milkvolume 1>>
 						<</if>>
-						<<sex 5>><<set $player.bodyliquid.chest.goo += 1>>
+						<<sex 5>><<bodyliquid "chest" "goo">>
 					<<else>>
 						<<if $lactating is 1 and $breastfeedingdisable is "f" and $milk_amount gte 1>>
 							The <<print $struggle.chest.creature>>'s <<struggle_appendage chest>> fucks your <<breasts>>, pumping warm fluid with each thrust as <span class="pink">milk leaks from your buds.</span>
@@ -1705,7 +1716,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 							The <<print $struggle.chest.creature>>'s <<struggle_appendage chest>> keeps thrusting between your <<breasts>>, pumping out a warm fluid.
 							<<milkvolume 1>>
 						<</if>>
-						<<sex 5>><<set $player.bodyliquid.chest.goo += 1>>
+						<<sex 5>><<bodyliquid "chest" "goo">>
 					<</if>>
 				<<else>>
 					<<struggle_flat_chest>>
@@ -1756,6 +1767,14 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 				<<set _doge_chance to (($feetskill / 3) + (currentSkillValue('danceskill') / 3) - $drunk - (!!$worn.feet.type.includes("heels") * 200))>>
 				<<feetskilluse>>
 			<</if>>
+			<<if $left_guard is 1>>
+				<<set _left_guard_chance to ($handskill / 3)>>
+				<<handskilluse>>
+			<</if>>
+			<<if $right_guard is 1>>
+				<<set _right_guard_chance to ($handskill / 3)>>
+				<<handskilluse>>
+			<</if>>
 			<<set _hit_chance to random(1, 1000)>>
 			<<if _doge_chance gte _hit_chance>>
 				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>>
@@ -1793,6 +1812,45 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 					<</if>>
 					<<neutral 2>>
 				<</if>>
+			<<elseif _left_guard_chance gte _hit_chance or _right_guard_chance gte _hit_chance>>
+				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>>
+				<<if $underwater is 1 or $struggle.enemy[_i].motion is "swimming">>
+					swims towards you,
+				<<elseif $struggle.enemy[_i].motion is "flying">>
+					flies towards you,
+				<<else>>
+					leaps towards you,
+				<</if>>
+				<<if $handskill gte 800>>
+					but you redirect its momentum with a well-timed blow,
+				<<elseif $handskill gte 200>>
+					but you bat it aside,
+				<<else>>
+					but your flailing knocks it aside,
+				<</if>>
+				<<if _left_guard_chance - _hit_chance gte 200 or _right_guard_chance - _hit_chance gte 200>>
+					<span class="green">smacking it against the ground.</span>
+					<<set $struggle.enemy[_i].health -= 1>>
+				<<else>>
+					<span class="teal">narrowly dodging it.</span>
+					<<for $_slot range ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower"]>>
+						<<if $worn[$_slot].name isnot "naked">>
+							<<set $worn[$_slot].integrity -= random(10, 15)>>
+							<<set _clothesdamaged to true>>
+							It tears your $worn[$_slot].name as it passes.
+							<<break>>
+						<</if>>
+					<</for>>
+					<<if !_clothesdamaged>>
+						It whips you as it passes. <<pain 2>>
+					<</if>>
+					<<neutral 2>>
+				<</if>>
+				<<if _left_guard_chance gte _hit_chance>>
+					<<unset $left_guard>>
+				<<elseif _right_guard_chance gte _hit_chance>>
+					<<unset $right_guard>>
+				<</if>>
 			<<elseif $rng lte 66 and _targets.length gt 0>>
 				<<set _target to _targets.pluck()>>
 				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>>
@@ -1808,6 +1866,9 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 				<<set V[_target + 'use'] to "struggle">>
 				<<set V[_target + 'state'] to "struggle">>
 				<<set V[_target + 'target'] to "struggle">>
+			<<elseif random(1, 2) is 2>>
+				An appendage emerges from the <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>>, and <span class="blue">shoots a string of sticky fluid at you.</span>
+				<<randomgoo>>
 			<<else>>
 				The <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>> waits for an opening.
 				<<set $struggle.enemy[_i].bide to true>>
@@ -1815,7 +1876,8 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and $com
 			<br>
 		<</if>>
 	<</for>>
-
+	<<unset $left_guard>>
+	<<unset $right_guard>>
 	<<if $oxygen lt $oxygenmax and $underwater isnot 1 and _strangle is 1>>
 		<<unset _strangle>>
 		<br>Air: <<oxygencaption>>

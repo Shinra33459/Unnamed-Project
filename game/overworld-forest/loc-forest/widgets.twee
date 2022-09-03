@@ -3,7 +3,7 @@
 <<if $possessed>>
 	You shamble through the forest. You know where you're going.
 <<elseif $forestmove is "quickly">>
-	You move as quick as the rough and wooded terrain will allow. Twigs and fallen branches snap loudly beneath your feet.
+	You move as quick as the rough and wooded terrain will allow. Twigs and fallen branches bend and snap beneath your feet.
 <<elseif $forestmove is "normally">>
 	You walk through the trees. The gentle sounds and scents make for a pleasant journey.
 <<elseif $forestmove is "carefully">>
@@ -11,15 +11,22 @@
 <<elseif $forestmove is "hobble">>
 	You hobble through the undergrowth, careful not to trip.
 <<elseif $forestmove is "secretin">>
-	The path you take would be invisible if you didn't know where to look. You soon find yourself much deeper in the forest.
+	The path you take would be invisible if you didn't know where to look. The trees close in around you. You're much deeper in the forest.
 <<elseif $forestmove is "secretout">>
-	The path you take would be invisible if you didn't know where to look. You soon find yourself near the edge of the forest.
+	The path you take would be invisible if you didn't know where to look. You soon hear the sounds of town up ahead. You're near the edge of the forest.
 <<elseif $forestmove is "quick_search">>
-	You search as quick as the rough and wooded terrain will allow. Twigs and fallen branches snap loudly beneath your feet.
+	You search as quick as the rough and wooded terrain will allow, tearing fallen branches off the ground to observe beneath.
 <<elseif $forestmove is "normal_search">>
 	You search for anything of value hidden between the trees.
 <<elseif $forestmove is "careful_search">>
-	You sneak through the undergrowth, scanning the ground for anything of value.
+	<<if $forest gte 50>>
+		You sneak through the undergrowth, searching among dense ferns for anything of value.
+	<<else>>
+		You sneak through the undergrowth, scanning the ground for anything of value.
+	<</if>>
+<</if>>
+<<if $weather is "rain">>
+	Thick drops of rain fall around you, gathered by the canopy.
 <</if>>
 <<if $forestmove or $possessed>>
 	<br><br>
@@ -669,8 +676,8 @@ You hear a buzzing in the surrounding trees.
 <br><br>
 
 "Cuties like you don't usually come this far into the forest," <<he>> says. "It's dangerous this deep.
-<<if $goooutsidecount + $semenoutsidecount gte 25>>
-	I'd ask if you made it through alright, but..." <<He>> eyes up the <<if $goooutsidecount gte 1 and $semenoutsidecount gte 1>>semen and slime<<elseif $goooutsidecount gte 1>>slime<<else>>semen<</if>> covering your body. "Yeah, you've had some fun."
+<<if $liquidoutsidecount gte 25>>
+	I'd ask if you made it through alright, but..." <<He>> eyes up the lewd fluids covering your body. "Yeah, you've had some fun."
 <<else>>
 	Hope you didn't run into any trouble. That'd be awful."
 <</if>>
@@ -958,23 +965,24 @@ The Black Wolf walks up to you and <<if $monster is 1>>kneels<<else>>turns<</if>
 
 
 <<widget "cabintime">>
-<<if $hour is 6>>
-<<pass 1 hour>><<tiredness -12>>
-<<elseif $hour is 5>>
-<<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>>
-<<elseif $hour is 4>>
-<<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>>
-<<elseif $hour is 3>>
-<<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>>
-<<elseif $hour is 2>>
-<<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>>
-<<elseif $hour is 1>>
-<<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>>
-<<elseif $hour is 0>>
-<<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>>
-<<elseif $hour is 23>>
-<<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>><<pass 1 hour>><<tiredness -12>>
-<</if>>
+	<<switch $hour>>
+		<<case 6>>
+			<<pass 1 hour>><<tiredness -12>>
+		<<case 5>>
+			<<pass 2 hours>><<tiredness -24>>
+		<<case 4>>
+			<<pass 3 hours>><<tiredness -36>>
+		<<case 3>>
+			<<pass 4 hours>><<tiredness -48>>
+		<<case 2>>
+			<<pass 5 hours>><<tiredness -60>>
+		<<case 1>>
+			<<pass 6 hours>><<tiredness -72>>
+		<<case 0>>
+			<<pass 7 hours>><<tiredness -84>>
+		<<case 23>>
+			<<pass 8 hours>><<tiredness -96>>
+	<</switch>>
 <</widget>>
 
 
@@ -1030,7 +1038,7 @@ You find a cluster of edible mushrooms growing at the base of a <<if _forest_shr
 
 <<if _forest_shrooms is 2>>
 	<<if currentSkillValue('science') gte 200>>
-		You remember from school that they're called wolfshrooms, and were prized by warriors in ancient times.
+		You remember from school that they're called <<icon "tending/wolfshroom.png">> wolfshrooms, and were prized by warriors in ancient times.
 	<</if>>
 
 	<br><br>
@@ -1038,15 +1046,15 @@ You find a cluster of edible mushrooms growing at the base of a <<if _forest_shr
 
 <<if _forest_shrooms is 1>>
 	<<if $scienceshroomheart lt 5>>
-	<<link [[Take for science project|Forest Science Shroom]]>><<set $phase to 0>><</link>>
+	<<link [[Take for science project (0:02)|Forest Science Shroom]]>><<pass 2>><<set $phase to 0>><</link>>
 	<br>
 	<</if>>
 	<<link [[Search for saleable specimens (0:20)|Forest Mushrooms Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
 	<br>
-	<<link [[Eat one|Forest Mushrooms]]>><<stress 3>><<tiredness -6>><</link>><<gstress>><<ltiredness>>
+	<<link [[Eat one (0:01)|Forest Mushrooms]]>><<stress 3>><<pass 1>><<tiredness -6>><</link>><<gstress>><<ltiredness>>
 <<else>>
 	<<if $scienceshroomwolf lt 5>>
-		<<link [[Take for science project|Forest Science Shroom]]>><<set $phase to 1>><</link>>
+		<<link [[Take for science project (0:02)|Forest Science Shroom]]>><<pass 2>><<set $phase to 1>><</link>>
 		<br>
 	<</if>>
 	<<if currentSkillValue('tending') gte 300>>
@@ -1056,7 +1064,7 @@ You find a cluster of edible mushrooms growing at the base of a <<if _forest_shr
 		<span class="blue">You need a higher tending skill to pick saleable mushrooms.</span>
 		<br>
 	<</if>>
-	<<link [[Eat one|Forest Mushrooms2]]>><<alcohol 60>><<arousal 3000>><<trauma -3>><<transform wolf 3>><</link>><<garousal>><<ltrauma>>
+	<<link [[Eat one (0:01)|Forest Mushrooms2]]>><<pass 1>><<alcohol 60>><<arousal 3000>><<trauma -3>><<transform wolf 3>><</link>><<garousal>><<ltrauma>>
 	<br>
 <</if>>
 <br>
@@ -1114,7 +1122,7 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 	<<if _forest_item is 1>>
 		<<if !$plants_known.includes("lily")>>
 			<<if $sciencetrait gte 1>>
-				<<link [[Search for seeds (0:30)|Forest Lily]]>><<pass 30>><<tending 6>><<set $plants_known.push("lily")>><</link>><<gtending>>
+				<<icon "tending/lily.png">> <<link [[Search for seeds (0:30)|Forest Lily]]>><<pass 30>><<tending 6>><<set $plants_known.push("lily")>><</link>><<gtending>>
 				<br>
 			<<else>>
 				<span class="blue">A higher science skill would let you harvest lily seeds.</span>
@@ -1122,21 +1130,21 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 			<</if>>
 		<</if>>
 		<<if currentSkillValue('tending') gte 100>>
-			<<link [[Pick lilies (0:20)|Forest Lily Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 400>>
+			<<icon "tending/lily.png">> <<link [[Pick lilies (0:20)|Forest Lily Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 400>>
 			<br>
 		<<else>>
 			<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
 			<br>
 		<</if>>
 	<<else>>
-		<<link [[Pick apples (0:20)|Forest Apple Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
+		<<icon "tending/apple.png">> <<link [[Pick apples (0:20)|Forest Apple Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
 		<br>
 	<</if>>
 <<elseif $forest lte 50>>
 	<<if _forest_item is 1>>
 		<<if !$plants_known.includes("red_rose")>>
 			<<if $sciencetrait gte 2>>
-				<<link [[Search for seeds (0:30)|Forest Red Rose]]>><<pass 30>><<tending 6>><<set $plants_known.push("red_rose")>><<pain 6>><</link>><<gpain>><<gtending>>
+				<<icon "tending/red_rose.png">> <<link [[Search for seeds (0:30)|Forest Red Rose]]>><<pass 30>><<tending 6>><<set $plants_known.push("red_rose")>><<pain 6>><</link>><<gpain>><<gtending>>
 				<br>
 			<<else>>
 				<span class="blue">A higher science skill would let you harvest red rose seeds.</span>
@@ -1144,7 +1152,7 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 			<</if>>
 		<</if>>
 		<<if currentSkillValue('tending') gte 200>>
-			<<link [[Pick red roses (0:20)|Forest Red Rose Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
+			<<icon "tending/red_rose.png">> <<link [[Pick red roses (0:20)|Forest Red Rose Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
 			<br>
 		<<else>>
 			<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
@@ -1153,7 +1161,7 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 		<br>
 	<<else>>
 		<<if currentSkillValue('tending') gte 100>>
-			<<link [[Pick pears (0:20)|Forest Pear Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 400>>
+			<<icon "tending/pear.png">> <<link [[Pick pears (0:20)|Forest Pear Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 400>>
 			<br>
 		<<else>>
 			<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
@@ -1164,7 +1172,7 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 	<<if _forest_item is 1>>
 		<<if !$plants_known.includes("orchid")>>
 			<<if $sciencetrait gte 3>>
-				<<link [[Search for seeds (0:30)|Forest Orchid]]>><<pass 30>><<tending 6>><<set $plants_known.push("orchid")>><</link>><<gtending>>
+				<<icon "tending/orchid.png">> <<link [[Search for seeds (0:30)|Forest Orchid]]>><<pass 30>><<tending 6>><<set $plants_known.push("orchid")>><</link>><<gtending>>
 				<br>
 			<<else>>
 				<span class="blue">A higher science skill would let you harvest orchid seeds.</span>
@@ -1172,7 +1180,7 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 			<</if>>
 		<</if>>
 		<<if currentSkillValue('tending') gte 300>>
-			<<link [[Pick orchids (0:20)|Forest Orchid Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
+			<<icon "tending/orchid.png">> <<link [[Pick orchids (0:20)|Forest Orchid Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
 			<br>
 		<<else>>
 			<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
@@ -1181,10 +1189,10 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 	<<else>>
 		<<if currentSkillValue('tending') gte 200>>
 			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6>>
-				<<link [[Pick lemons (0:20)|Forest Blood Lemon Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
+				<<icon "tending/lemon.png">> <<link [[Pick lemons (0:20)|Forest Blood Lemon Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
 				<br>
 			<<else>>
-				<<link [[Pick lemons (0:20)|Forest Lemon Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
+				<<icon "tending/lemon.png">> <<link [[Pick lemons (0:20)|Forest Lemon Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
 				<br>
 			<</if>>
 		<<else>>

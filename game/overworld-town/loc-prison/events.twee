@@ -165,7 +165,7 @@ There are pillars in the corners of the room. You strip behind one. It's hardly 
 	You see Kylar peek around the pillar.
 	<br><br>
 
-	<<link [[Just take a shower|Prison Shower Take]]>><<pass 10>><<npcincr Kylar lust 5>><</link>><<glust>>
+	<<link [[Just take a shower (0:10)|Prison Shower Take]]>><<pass 10>><<npcincr Kylar lust 5>><</link>><<glust>>
 	<br>
 	<<link [[Get angry|Prison Shower Kylar Angry]]>><<npcincr Kylar rage 1>><<prison_inmates 5>><</link>><<gksuspicion>><<grespect>>
 <<else>>
@@ -235,7 +235,7 @@ You shout. The <<person>> shoves a hand over your mouth. "You'll regret that, sl
 <<if $prison.veteran gte 80>>
 	<span class="red"><<Hes>> interrupted by a swing from a baton.</span> <<He>> reels, releasing you. "I've told you once," <<veteran_guard 1>> says, delivering another blow to the <<persons>> stomach. "I've told you twice." The next blow lands on the inmate's back, knocking <<him>> prone.
 	<br><br>
-	<<veteran_guard 1 cap>> continues the assualt. The other prisoners don't pay them any attention.
+	<<veteran_guard 1 cap>> continues the assault. The other prisoners don't pay them any attention.
 	<br><br>
 
 	<<link [[Intervene|Prison Shower Intervene]]>><<prison_rep veteran -3>><<prison_inmates 1>><<prison_guards -1>><</link>><<lllove>><<gsuspicion>><<grespect>>
@@ -300,9 +300,7 @@ You shout. The <<person>> shoves a hand over your mouth. "You'll regret that, sl
 :: Prison Shower Fight
 <<if $fightstart is 1>>
 	<<set $fightstart to 0>>
-
 	<<neutral 1>>
-
 	<<maninit>>
 	<<controlloss>>
 	<<violence 1>>
@@ -316,19 +314,14 @@ You shout. The <<person>> shoves a hand over your mouth. "You'll regret that, sl
 <</if>>
 
 <<effects>>
-<<effectsman>><<man>>
-
+<<effectsman>>
+<<man>>
 <<audience>>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Prison Shower Fight Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Prison Shower Fight Finish]]>><</link>></span><<nexttext>>
-<<elseif $timer lte 1>>
+<<if _combatend or $timer lte 1>>
 	<span id="next"><<link [[Next|Prison Shower Fight Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Prison Shower Fight]]>><</link>></span><<nexttext>>
@@ -377,26 +370,20 @@ You shout. The <<person>> shoves a hand over your mouth. "You'll regret that, sl
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-
 	<<maninit>>
 	<<enable_rescue>>
 <</if>>
 
 <<effects>>
-
-<<effectsman>><<man>>
-
+<<effectsman>>
+<<alarmstate>>
+<<man>>
 <<audience>>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Prison Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Prison Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $alarm is 1 and $rescue is 1>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Prison Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Prison Rape]]>><</link>></span><<nexttext>>
@@ -596,11 +583,11 @@ You await them <<if $leftarm isnot "bound" and $rightarm isnot "bound">>with han
 <<effects>>
 
 <<if $submissive gte 1150>>
-	"I-I don't want to!" you say.
+	<<gagged_speech "I-I don't want to" !>> you say.
 <<elseif $submissive lte 850>>
-	"Why don't you fucking make me?" you say.
+	<<gagged_speech "Why don't you fucking make me" ?>> you manage, holding back your anger.
 <<else>>
-	"No," you say. "I won't."
+	<<gagged_speech "No" ,>> you say. <<gagged_speech "I won't" .>>
 <</if>>
 <br><br>
 <<if $prison.shock is 1>>
@@ -624,28 +611,21 @@ You await them <<if $leftarm isnot "bound" and $rightarm isnot "bound">>with han
 :: Prison Attention Fight
 <<if $fightstart is 1>>
 	<<set $fightstart to 0>>
-
 	<<neutral 1>>
-
 	<<maninit>>
 	<<set $enemytrust -= 100>>
 	<<set $enemyanger += 200>>
 	<<npcidlegenitals>>
-
 <</if>>
 
 <<effects>>
-<<effectsman>><<man>>
-
+<<effectsman>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Prison Attention Fight Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Prison Attention Fight Finish]]>><</link>></span><<nexttext>>
-<<elseif $pain gte 100 and $willpowerpain is 0>>
+<<if _combatend or ($pain gte 100 and $willpowerpain is 0)>>
 	<span id="next"><<link [[Next|Prison Attention Fight Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Prison Attention Fight]]>><</link>></span><<nexttext>>
@@ -814,23 +794,17 @@ You nod. <<veteran_guard 0 cap>> shoves you through another door.
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-
 	<<maninit>><<set $position to "wall">><<set $head to "bound">>
-
 <</if>>
 
 <<effects>>
-
-<<effectsman>><<man>>
-
-
+<<effectsman>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Prison Pimp Wall Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Prison Pimp Wall Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Prison Pimp Wall]]>><</link>></span><<nexttext>>
@@ -883,23 +857,17 @@ You nod. <<veteran_guard 0 cap>> shoves you through another door.
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-
 	<<maninit>>
-
 <</if>>
 
 <<effects>>
-
-<<effectsman>><<man>>
-
-
+<<effectsman>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Prison Pimp Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Prison Pimp Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Prison Pimp Rape]]>><</link>></span><<nexttext>>
@@ -911,15 +879,12 @@ You nod. <<veteran_guard 0 cap>> shoves you through another door.
 	<<set $prison_pimp_serviced += 1>>
 	<<ejaculation>><<set $forcedprostitutionstat += 1>><<fameprostitution 3>>
 	They pay the guard on the way out. <<tearful>> you brace yourself.
-	<br><br>
-	<<endcombat>>
-
 <<else>>
 	They back away from you, not wanting to risk your wrath further, and refuse to pay the guard on the way out. <<tearful>> you brace yourself.
-	<br><br>
-	<<endcombat>>
-
 <</if>>
+
+<br><br>
+<<endcombat>>
 
 <<set $prison_pimp -= 1>>
 

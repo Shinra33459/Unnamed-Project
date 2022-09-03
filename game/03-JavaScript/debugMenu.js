@@ -19,7 +19,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`CanvasModel Exemple`, `CanvasModel Example`
+				`CanvasModel Example`, `CanvasModel Example`
 			],
 			widgets: [
 				``
@@ -150,7 +150,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Trust me`, stayOnPassageFn
+				`Enemy Trust +++`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $enemytrust += 2000>>`,
@@ -159,7 +159,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Hate me`, stayOnPassageFn
+				`Enemy Trust ---`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $enemytrust -= 2000>>`,
@@ -192,7 +192,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Finish`, stayOnPassageFn
+				`Finish Var (doesn't always work)`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $finish to 1>>`
@@ -208,7 +208,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Make consensual`, stayOnPassageFn
+				`Make Consensual`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $consensual to 1>>`
@@ -216,7 +216,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Frigify`, stayOnPassageFn
+				`Enemy Arousal ---`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $enemyarousal to 0>>`
@@ -224,7 +224,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Roll over`, stayOnPassageFn
+				`Roll Over`, stayOnPassageFn
 			],
 			widgets: [
 				function(){return (`<<set $position to ` + (V.position == "doggy" ? "doggy" : "missionary") + `>>`)}
@@ -388,51 +388,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Make all beasts monster boys`, stayOnPassageFn
-			],
-			widgets: [
-				`<<set $monsterchance to 100>>`,
-				`<<set $monsterhallucinations to "f">>`,
-				`<<set $beastmalechance to 100>>`,
-				`<<set $cbchance to 0>>`
-			]
-		},
-		{
-			link: [
-				`Make all beasts monster girls`, stayOnPassageFn
-			],
-			widgets: [
-				`<<set $monsterchance to 100>>`,
-				`<<set $monsterhallucinations to "f">>`,
-				`<<set $beastmalechance to 0>>`,
-				`<<set $dgchance to 0>>`
-			]
-		},
-		{
-			link: [
-				`Make all beasts monster cuntboys`, stayOnPassageFn
-			],
-			widgets: [
-				`<<set $monsterchance to 100>>`,
-				`<<set $monsterhallucinations to "f">>`,
-				`<<set $beastmalechance to 100>>`,
-				`<<set $cbchance to 100>>`
-			]
-		},
-		{
-			link: [
-				`Make all beasts monster dickgirls`, stayOnPassageFn
-			],
-			widgets: [
-				`<<set $monsterchance to 100>>`,
-				`<<set $monsterhallucinations to "f">>`,
-				`<<set $beastmalechance to 0>>`,
-				`<<set $dgchance to 100>>`
-			]
-		},
-		{
-			link: [
-				`Make all beasts male animals`, stayOnPassageFn
+				`Make all beasts male`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $monsterchance to 0>>`,
@@ -441,11 +397,38 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Make all beasts female animals`, stayOnPassageFn
+				`Make all beasts female`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $monsterchance to 0>>`,
 				`<<set $beastmalechance to 0>>`
+			]
+		},
+		{
+			link: [
+				`Make all beasts cuntboys`, stayOnPassageFn
+			],
+			widgets: [
+				`<<set $beastmalechance to 100>>`,
+				`<<set $cbchance to 100>>`
+			]
+		},
+		{
+			link: [
+				`Make all beasts dickgirls`, stayOnPassageFn
+			],
+			widgets: [
+				`<<set $beastmalechance to 0>>`,
+				`<<set $dgchance to 100>>`
+			]
+		},
+		{
+			link: [
+				`Make all beasts monster people`, stayOnPassageFn
+			],
+			widgets: [
+				`<<set $monsterchance to 100>>`,
+				`<<set $monsterhallucinations to "f">>`
 			]
 		},
 		{
@@ -808,7 +791,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Named NPC gangbang Test`,
+				`Named NPC Gangbang Test`,
 				`Named NPC Gangbang Select`
 			],
 			widgets: [
@@ -841,7 +824,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Plantperson test`, `Plantperson Test`
+				`Plantperson Test`, `Plantperson Test`
 			],
 			widgets: [
 				`<<endcombat>>`
@@ -849,7 +832,15 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Swarm`, `Sea Eels`
+				"Hypnotist Test", "Hypnotist Test"
+			],
+			widgets: [
+				"<<endcombat>>"
+			]
+		},
+		{
+			link: [
+				`Eels Swarm Me`, `Sea Eels`
 			],
 			widgets: [
 				`<<endcombat>>`,
@@ -887,7 +878,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Monster Rape Me`, `Monster Test`
+				`Whale Vore Me`, `Monster Test`
 			],
 			widgets: [
 				`<<endcombat>>`,
@@ -896,7 +887,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Beast Rape Me`, "Street Dogs"
+				`Dogs Rape Me`, "Street Dogs"
 			],
 			widgets: [
 				`<<endcombat>>`,
@@ -909,7 +900,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Beast Gang Test`, `The Farm`
+				`Beast Gang Test (currently broken)`, `The Farm`
 			],
 			widgets: [
 				`<<endcombat>>`,
@@ -926,6 +917,7 @@ setup.debugMenu.event_list = {
 			widgets: [
 				`<<endcombat>>`,
 				`<<set $sexstart to 1>>`,
+				`<<beastNEWinit 3 dolphin>>`,
 				`<<set $outside to 1>>`,
 				`<<location to "sea">>`,
 				`<<set $bus to "sea">>`
@@ -1220,7 +1212,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Test`, stayOnPassageFn
+				`Month is October`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $month to "october">>`
@@ -1228,7 +1220,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Wake up`, `Ambulance rescue`
+				`Ambulance Rescue Wakeup`, `Ambulance rescue`
 			],
 			widgets: [
 				`<<pass 1 hour>>`
@@ -1236,7 +1228,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Appointment`, `Hospital Foyer`
+				`Harper Appointment`, `Hospital Foyer`
 			],
 			widgets: [
 				`<<set $weekday to 6>>`,
@@ -1748,7 +1740,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`All Fame`, stayOnPassageFn
+				`All Fame Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<fameexhibitionism 1000 "none" true>>`,
@@ -1767,7 +1759,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Fame Sex`, stayOnPassageFn
+				`Fame Sex Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<famesex 2000 "none" true>>`
@@ -1775,7 +1767,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Timer`, stayOnPassageFn
+				`Timer Down`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $timer -= 60>>`
@@ -1887,12 +1879,12 @@ setup.debugMenu.event_list = {
 				`Pain Down`, stayOnPassageFn
 			],
 			widgets: [
-				`<<set $pain -= 200>>`
+				`<<set $pain -= 50>>`
 			]
 		},
 		{
 			link: [
-				`Stress`, stayOnPassageFn
+				`Stress Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $stress += 5000>>`
@@ -1900,7 +1892,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Destress`, stayOnPassageFn
+				`Stress Down`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $stress -= 5000>>`
@@ -1908,7 +1900,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Traumatise me`, stayOnPassageFn
+				`Trauma Way Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $trauma += 2000>>`
@@ -1916,7 +1908,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`DeTraumatise me`, stayOnPassageFn
+				`Trauma Way Down`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $trauma -= 2000>>`
@@ -1986,7 +1978,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Seduction`, stayOnPassageFn
+				`Seduction Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $seductionskill += 200>>`
@@ -1994,7 +1986,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Skulduggery`, stayOnPassageFn
+				`Skulduggery Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $skulduggery += 200>>`
@@ -2002,7 +1994,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Swimming Skill`, stayOnPassageFn
+				`Swimming Skill Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $swimmingskill += 100>>`
@@ -2088,7 +2080,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Breasts up`, stayOnPassageFn
+				`Breasts Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $player.breastsize += 1>>`
@@ -2096,7 +2088,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Breasts down`, stayOnPassageFn
+				`Breasts Down`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $player.breastsize -= 1>>`
@@ -2104,7 +2096,15 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Butt up`, stayOnPassageFn
+				`Butt Up`, stayOnPassageFn
+			],
+			widgets: [
+				`<<set $player.bottomsize += 1>>`
+			]
+		},
+		{
+			link: [
+				`Butt Down`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $player.bottomsize -= 1>>`
@@ -2112,7 +2112,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Penis up`, stayOnPassageFn
+				`Penis Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $player.penissize += 1>>`
@@ -2120,7 +2120,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Penis down`, stayOnPassageFn
+				`Penis Down`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $player.penissize -= 1>>`
@@ -2128,7 +2128,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Balls up`, stayOnPassageFn
+				`Balls Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $ballssize += 1>>`
@@ -2136,7 +2136,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Balls down`, stayOnPassageFn
+				`Balls Down`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $ballssize -= 1>>`
@@ -2304,7 +2304,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Status`, stayOnPassageFn
+				`School Status Up`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $cool += 400>>`
@@ -2312,7 +2312,7 @@ setup.debugMenu.event_list = {
 		},
 		{
 			link: [
-				`Status Down`, stayOnPassageFn
+				`School Status Down`, stayOnPassageFn
 			],
 			widgets: [
 				`<<set $cool -= 400>>`
@@ -2604,7 +2604,7 @@ setup.debugMenu.event_list = {
 				`Goo Me`, stayOnPassageFn
 			],
 			widgets: [
-				`<<drench both 5>>`
+				`<<drench "semen" "slime" 5>>`
 			]
 		},
 		{
@@ -2612,7 +2612,7 @@ setup.debugMenu.event_list = {
 				`Goo Me Small`, stayOnPassageFn
 			],
 			widgets: [
-				`<<drench both 1>>`
+				`<<drench "semen" "slime" 1>>`
 			]
 		},
 		{
@@ -3092,7 +3092,7 @@ window.submitNewDebugPassage = function() {
 			let match = element.value.match('<<.+>>{0,}')
 
 			if (match == null || match[0] != match.input){
-				element.setCustomValidity("Unvalid widget format. Valid : <<widget @params>>");
+				element.setCustomValidity("Invalid widget format. Valid : <<widget @params>>");
 				element.reportValidity();
 				document.getElementById("debugAddResult").innerHTML = ''
 				sigerror = 1

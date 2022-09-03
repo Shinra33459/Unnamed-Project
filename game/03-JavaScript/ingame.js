@@ -297,7 +297,7 @@ window.combatListColor = function (name, value, type) {
 				break;
 
 			/*leftaction or rightaction*/
-			case "capture": case "mouth_pull": case "mouth_spray": case "vagina_pull": case "vagina_spray":
+			case "capture": case "mouth_pull": case "mouth_spray": case "vagina_pull": case "vagina_spray": case "guard":
 			case "penis_pull": case "penis_spray": case "anus_pull": case "anus_spray": case "chest_pull": case "chest_spray":
 			/*mouthaction*/
 			case "bite":
@@ -1462,3 +1462,15 @@ function outfitHoodPosition(outfit) {
 	return "up";
 }
 window.outfitHoodPosition = outfitHoodPosition;
+
+window.combatCharacterShadow = function() {
+	if(!V.lightCombat) return;
+	const targetClass = "char-shadow-combat";
+	const mainDiv = ".char_combat";
+
+	$(document).ready(() => {
+		$(mainDiv).find('img').filter((i, n) => n.className.match(new RegExp("layer-(" + setup.shadowImage[V.position === "doggy" ? "doggy" : "missionary"].join("|") + ")( |$)", 'i')))
+		.clone(true).removeClass((i, n) => (n.match(/(^|\s)(colour|layer)-\S+/g) || []).join(' '))
+		.addClass(targetClass).removeAttr('style').appendTo($(mainDiv).last());
+	});
+}

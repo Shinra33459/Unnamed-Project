@@ -675,12 +675,13 @@
 <<if $enemytype is "man" and $enemyno gte 2>>
 	<<personselect _n>>
 	<!-- NPC's name will only appear if they are selected -->
-	/* if $npcrow.includes(_n)>>
-		<<print $npc[$npcrow.indexOf(_n)]>>'s
-	elseif $NPCList[_n].intro is 1>> */
 	<<if $NPCList[_n].intro is 1>>
+		<<if $npcrow.includes(_n)>>
+			<<print $npc[$npcrow.indexOf(_n)]>>'s
+		<<else>>
+			the <<persons>>
+		<</if>>
 		<<set $NPCList[_n].intro to 0>>
-		the <<persons>>
 	<<else>>
 		<<his>>
 	<</if>>
@@ -1229,7 +1230,13 @@
 <<set $index to _n>>
 
 <<if !$NPCList[_n] or !$NPCList[_n].pronoun>>
-	<<print `<span class="red">[ERROR: undefined NPC in personselect `+ _n +`]</span>`>>
+	<<error {
+    message: "Undefined NPC in personselect " + _n + ".",
+    source: Utils.GetStack(),
+    depth: 0,
+    exportable: false,
+	}>>
+	<!-- <<print `<span class="red">[ERROR: undefined NPC in personselect `+ _n +`]</span>`>> -->
 <<else>>
 	<<set $npcadult to $NPCList[_n].adult>>
 	<<set $pronoun to $NPCList[_n].pronoun>>
@@ -3613,6 +3620,15 @@
 <<widget "lllphysique">>
 	<<if $statdisable is "f">> |
 		<span class="red">- - - Physique</span>
+	<</if>>
+<</widget>>
+
+<!-- Awareness -->
+
+<<widget "combataware">>
+	<<if $statdisable is "f">>
+		<<set _color to ["","teal","lblue","blue","purple","pink"][_args[0]]>>
+		<span @class="_color">Awareness _args[0]</span>
 	<</if>>
 <</widget>>
 
@@ -6722,6 +6738,8 @@ $worn.genitals.name
 	<<set _text_output to "squawks">>
 <<elseif $NPCList[_n].type is "pig">>
 	<<set _text_output to "oinks">>
+<<elseif $NPCList[_n].type is "dolphin">>
+	<<set _text_output to "clicks">>
 <<else>>
 	<<set _text_output to "growls">>
 <</if>>
@@ -6733,6 +6751,8 @@ $worn.genitals.name
 	<<set _text_output to "squawking">>
 <<elseif $NPCList[_n].type is "pig">>
 	<<set _text_output to "oinking">>
+<<elseif $NPCList[_n].type is "dolphin">>
+	<<set _text_output to "clicking">>
 <<else>>
 	<<set _text_output to "growling">>
 <</if>>
@@ -7330,6 +7350,98 @@ Argument 2, where appropriate, determines whether it's the player undressing the
 <<widget "dangerousText">>
 	<<if $statdisable is "f">> |
 		<span class="red">Dangerous</span>
+	<</if>>
+<</widget>>
+
+<<widget "orgasmTrait">>
+	<<if $statdisable is "f">> |
+		<<if $submissive lte 850>>
+			<span class="lewd">Hedonist</span>
+		<<else>>
+			<span class="lewd">Orgasm Addict</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "chokeTrait">>
+	<<if $statdisable is "f">> |
+		<span class="lewd">Asphyxiophilia</span>
+	<</if>>
+<</widget>>
+
+<<widget "ejacTrait">>
+	<<if $statdisable is "f">> |
+		<<if $submissive lte 850>>
+			<span class="lewd">Cumoisseur</span>
+		<<else>>
+			<span class="lewd">Cum Dump</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "molestTrait">>
+	<<if $statdisable is "f">> |
+		<<if $submissive lte 850>>
+			<span class="lewd">Graceful</span>
+		<<else>>
+			<span class="lewd">Plaything</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "rapeTrait">>
+	<<if $statdisable is "f">> |
+		<<if $submissive lte 850>>
+			<span class="lewd">Survivor</span>
+		<<else>>
+			<span class="lewd">Fucktoy</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "bestialityTrait">>
+	<<if $statdisable is "f">> |
+		<<if $submissive lte 850>>
+			<span class="lewd">Tamer</span>
+		<<else>>
+			<span class="lewd">Bitch</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "tentacleTrait">>
+	<<if $statdisable is "f">> |
+		<<if $submissive lte 850>>
+			<span class="lewd">Witch</span>
+		<<else>>
+			<span class="lewd">Prey</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "voreTrait">>
+	<<if $statdisable is "f">> |
+		<<if $submissive lte 850>>
+			<span class="lewd">Daredevil</span>
+		<<else>>
+			<span class="lewd">Tasty</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "milkTrait">>
+	<<if $statdisable is "f">> |
+		<<if $submissive lte 850>>
+			<span class="lewd">Milk Enthusiast</span>
+		<<else>>
+			<span class="lewd">Milk Addict</span>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "note">>
+	<<if $statdisable is "f">> |
+		<span @class="_args[1]"><<print _args[0]>></span>
 	<</if>>
 <</widget>>
 

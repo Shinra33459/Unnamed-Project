@@ -147,7 +147,7 @@ The containers are virtually identical. One by one, you pick the padlocks and en
 		You know there's gold here somewhere. You break into another. It's full of brown packages. You recognise them. You search among them, and then you find it. It's heavier than the others. You tear it open, and find the small bar of gold.
 		<br><br>
 		<<earnFeat "Employee Benefits">>
-		<<link [[Take it|Docks Gold]]>><<crimeup 3000>><<set $blackmoney += 3000>><</link>><<crime>>
+		<<link [[Take it (0:05)|Docks Gold]]>><<pass 5>><<crimeup 3000>><<set $blackmoney += 3000>><</link>><<crime>>
 		<br>
 	<<else>>
 		You keep searching, and come to a container full of brown packages.
@@ -169,7 +169,7 @@ The containers are virtually identical. One by one, you pick the padlocks and en
 	<</if>>
 
 
-	<<link [[Take it|Docks Aphrodisiacs]]>><<crimeup 1200>><<set $blackmoney += 1200>><</link>><<crime>>
+	<<link [[Take it (0:05)|Docks Aphrodisiacs]]>><<pass 5>><<crimeup 1200>><<set $blackmoney += 1200>><</link>><<crime>>
 	<br>
 <<elseif $skul_dock[$bus].contents is "electronics">>
 	<<if $skul_dock[$bus].state is "known">>
@@ -180,7 +180,7 @@ The containers are virtually identical. One by one, you pick the padlocks and en
 		<br><br>
 	<</if>>
 
-	<<link [[Take them|Docks Electronics]]>><<crimeup 300>><<set $blackmoney += 300>><</link>><<crime>>
+	<<link [[Take them (0:05)|Docks Electronics]]>><<pass 5>><<crimeup 300>><<set $blackmoney += 300>><</link>><<crime>>
 	<br>
 <<elseif $skul_dock[$bus].contents is "fertiliser">>
 	<<if currentSkillValue('tending') gte 400>>
@@ -191,7 +191,7 @@ The containers are virtually identical. One by one, you pick the padlocks and en
 			You search another. The interior is loaded with bags of fertiliser. While you know you can't carry much, having some on hand might be useful.
 			<br><br>
 		<</if>>
-		<<link [[Take some|Docks fertiliser]]>><<crimeup 200>><<set $fertiliser.current++>><</link>><<crime>>
+		<<link [[Take some (0:05)|Docks fertiliser]]>><<pass 5>><<crimeup 200>><<set $fertiliser.current++>><</link>><<crime>>
 	<<else>>
 		You search another. The interior is loaded with bags of what looks like dirt filled inside.
 		<br><br>
@@ -342,9 +342,9 @@ You grab a bag of fertiliser, and leave the container.
 <<endevent>>
 
 <<set $wren_seen to "catsuit">>
-<<link [[Wear it|Docks Catsuit Wear]]>><</link>>
+<<link [[Wear it (0:05)|Docks Catsuit Wear]]>><<pass 5>><</link>>
 <br>
-<<link [[Take it|Docks Catsuit Take]]>><</link>>
+<<link [[Take it (0:02)|Docks Catsuit Take]]>><<pass 2>><</link>>
 <br>
 
 :: Docks Catsuit Wear
@@ -448,31 +448,24 @@ You squeeze between two containers, and escape to the other side.
 <br>
 
 :: Docks Sneak Rape
-<<effects>>
-
 <<if $molestationstart is 1>>
 	<<set $molestationstart to 0>>
 	<<controlloss>>
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-
 	<<maninit>>
-
-
 <</if>>
 
 <<effects>>
-
-<<effectsman>><<man>>
+<<effectsman>>
+<<man>>
 
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Docks Sneak Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Docks Sneak Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Docks Sneak Rape]]>><</link>></span><<nexttext>>
@@ -525,7 +518,7 @@ You're sat in the guardhouse beside the front gate. The <<person1>><<person>> wa
 
 	<<link [[Wait (0:10)|Docks Caught Wait]]>><<pass 10>><</link>>
 	<br>
-	<<link [[Run for it|Docks Caught Run]]>><<crimeup 100>><</link>><<athleticsdifficulty 600 1200>><<crime>>
+	<<link [[Run for it (0:02)|Docks Caught Run]]>><<pass 2>><<crimeup 100>><</link>><<athleticsdifficulty 600 1200>><<crime>>
 	<br>
 <<elseif $crime gte 1000>>
 	"Is that so?" <<he>> says. "Alright. We'll keep <<phim>> here." <<He>> hangs up. "Looks like there's a warrant out for your arrest. From the sounds of it, you've been a bit of a nuisance."
@@ -533,7 +526,7 @@ You're sat in the guardhouse beside the front gate. The <<person1>><<person>> wa
 
 	<<link [[Wait (0:10)|Docks Caught Wait]]>><<pass 10>><</link>>
 	<br>
-	<<link [[Run for it|Docks Caught Run]]>><<crimeup 100>><</link>><<athleticsdifficulty 600 1200>><<crime>>
+	<<link [[Run for it (0:02)|Docks Caught Run]]>><<pass 2>><<crimeup 100>><</link>><<athleticsdifficulty 600 1200>><<crime>>
 	<br>
 <<else>>
 	"Right," <<he>> says. "Alright." <<He>> hangs up. "Looks like you're not worth the trouble. Lucky you."
@@ -745,16 +738,11 @@ You wait around the corner, listening for the patter of feet.
 <br><br>
 <<beast $enemyno>>
 <br><br>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Docks Dog Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Docks Dog Finish]]>><</link>></span><<nexttext>>
-<<elseif $timer lte 0>>
+<<if _combatend or $timer lte 0>>
 	<span id="next"><<link [[Next|Docks Dog Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Docks Dog]]>><</link>></span><<nexttext>>
@@ -1020,21 +1008,16 @@ More phones emerge from pockets as they continue to make degrading comments.
 <br><br>
 <<beast $enemyno>>
 <br><br>
-
 <<audience>>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Docks Watch Dog Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Docks Watch Dog Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Docks Watch Dog]]>><</link>></span><<nexttext>>
 <</if>>
-
 
 :: Docks Watch Dog Finish
 <<effects>>
@@ -1202,9 +1185,7 @@ You remain still as the pair approach. They grasp your arms, and pull you toward
 :: Docks Fight
 <<if $fightstart is 1>>
 	<<set $fightstart to 0>>
-
 	<<neutral 1>>
-
 	<<maninit>>
 	<<set $enemytrust -= 100>>
 	<<set $enemyanger += 200>>
@@ -1215,17 +1196,13 @@ You remain still as the pair approach. They grasp your arms, and pull you toward
 <</if>>
 
 <<effects>>
-<<effectsman>><<man>>
-
+<<effectsman>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Docks Fight Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Docks Fight Finish]]>><</link>></span><<nexttext>>
-<<elseif $pain gte 100 and $willpowerpain is 0>>
+<<if _combatend or ($pain gte 100 and $willpowerpain is 0)>>
 	<span id="next"><<link [[Next|Docks Fight Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Docks Fight]]>><</link>></span><<nexttext>>

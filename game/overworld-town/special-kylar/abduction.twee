@@ -171,9 +171,9 @@ You are in a small room. You see the sky through a thin window near the ceiling.
 <</if>>
 <br><br>
 
-<<link [[Weaken your bonds|Kylar Abduction Weaken]]>><<pass 60>><<tiredness 6>><<pain 8>><</link>><<ggpain>><<gtiredness>>
+<<link [[Weaken your bonds (1:00)|Kylar Abduction Weaken]]>><<pass 60>><<tiredness 6>><<pain 8>><</link>><<ggpain>><<gtiredness>>
 <br>
-<<link [[Rest|Kylar Abduction Rest]]>><<pass 60>><<tiredness -12>><</link>><<ltiredness>>
+<<link [[Rest (1:00)|Kylar Abduction Rest]]>><<pass 60>><<tiredness -12>><</link>><<ltiredness>>
 <br>
 
 :: Kylar Abduction Weaken
@@ -325,14 +325,13 @@ You close your eyes, and try to ignore the rope biting into your wrists. It does
 <br><br>
 
 <<effects>>
-<<effectsman>><<man>>
+<<effectsman>>
+<<man>>
 <<stateman>>
 <br><br>
-
 <<actionsman>>
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Kylar Abduction Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+
+<<if _combatend>>
 	<span id="next"><<link [[Next|Kylar Abduction Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Kylar Abduction Rape]]>><</link>></span><<nexttext>>
@@ -398,7 +397,7 @@ You hear a dreadful thud above. Kylar hurries to the door. "I'll be back soon <<
 	<br>
 <</if>>
 <<if $kylar_abduction_grass is 1>>
-	<<link [[Tell Kylar to mow the grass (1:00)|Kylar Abduction Grass]]>><<pass 60>><<set $kylar_abduction_grass to 2>><</link>> | <span class="gold">Will help work out where you are.</span>
+	<<link [[Tell Kylar to mow the grass (1:00)|Kylar Abduction Grass]]>><<pass 60>><<set $kylar_abduction_grass to 2>><</link>><<note "Will help work out where you are" "green">>
 	<br>
 <</if>>
 <<if $NPCName[$NPCNameList.indexOf("Kylar")].dom lte 90>>
@@ -418,7 +417,7 @@ You hear a dreadful thud above. Kylar hurries to the door. "I'll be back soon <<
 	<br>
 <</if>>
 <<if $NPCName[$NPCNameList.indexOf("Kylar")].dom lte 0>>
-	<<link [[Tell Kylar to let you go|Kylar Abduction Release]]>><</link>> | <span class="gold">Escapes basement</span>
+	<<link [[Tell Kylar to let you go|Kylar Abduction Release]]>><</link>><<note "Escapes basement" "gold">>
 	<br>
 <</if>>
 
@@ -515,7 +514,7 @@ Kylar doesn't hesitate. <<He>> presses <<his>> forehead against the floor. "Sorr
 
 Kylar looks at your toes a moment, before closing <<his>> eyes and leaning closer.
 
-<<if !$worn.feet.type.includes("naked")>>
+<<if $worn.feet.type.includes("naked")>>
 	<<He>> kisses each of your toes in turn, glancing up at you to make sure <<hes>> doing it okay.
 <<else>>
 	<<He>> kisses your <<print $worn.feet.name>>, alternating between them and occasionally glancing up at you to make sure <<hes>> doing it okay.
@@ -582,7 +581,7 @@ The music stops. <<He>> waits for your appraisal.
 
 Kylar plays a track, and dances in the middle of the room. Does <<he>> mean to sway <<his>> hips? Whatever <<hes>> trying to do, it's not sensual in the typical way. It's negatively sensual.
 
-<<npcincr Kylar dom -10>><<ldom>>
+<<arousal -600>><<larousal>><<npcincr Kylar dom -10>><<ldom>>
 <br><br>
 
 The music stops. <<He>> waits for your appraisal.
@@ -860,18 +859,19 @@ The door creaks open, revealing <<his>> small form. <<His>> footsteps didn't mak
 :: Kylar Abduction Free Rescue
 <<effects>>
 
-<<npc Bailey 2>><<person1>>
-Kylar dashes from the room. <<He>> doesn't even close the door behind <<him>>. You peer through the window yourself, and see Bailey marching across the garden. <<person2>><<His>> eyes make contact with yours, but <<he>> looks away so swiftly that you wonder if you're imagining it.
+<<npc Bailey 2>><<npc Jordan 3>><<person1>>
+Kylar dashes from the room. <<He>> doesn't even close the door behind <<him>>. You peer through the window yourself, and see Bailey marching across the garden.
+<<person2>>
+<<His>> eyes make contact with yours, but <<he>> looks away so swiftly that you wonder if you're imagining it.
 <br><br>
+Behind <<him>> walks a young <<person3>><<monk>>.
 <<if $NPCName[$NPCNameList.indexOf("Jordan")].init isnot 1>>
-	<<npc Jordan 3>>
-	Behind <<person2>><<him>> walks a young <<if $pronoun is "m">>monk<<else>>nun<</if>>. <<His>> outfit covers <<him>> from head to toe, only <<his>> youthful face is visible. Locks of hair protrude from the sides of the cowl, betraying a golden shade.
+	 <<His>> outfit covers <<him>> from head to toe, only <<his>> youthful face is visible. Locks of hair protrude from the sides of the cowl, betraying a golden shade.
 	<br><br>
-		<<link [[Next|Kylar Abduction Free Rescue 2]]>><<set $phase to 1>><</link>>
+	<<link [[Next|Kylar Abduction Free Rescue 2]]>><<set $phase to 1>><</link>>
 	<br>
 <<else>>
-	<<npc Jordan 3>>
-	Behind <<person2>><<him>> walks a young <<if $pronoun is "m">>monk<<else>>nun<</if>>. <<person3>>It's Jordan, the priest from the temple.
+	It's Jordan, the priest from the temple.
 	<br><br>
 	<<link [[Next|Kylar Abduction Free Rescue 2]]>><<set $phase to 0>><</link>>
 	<br>
@@ -883,9 +883,10 @@ Kylar dashes from the room. <<He>> doesn't even close the door behind <<him>>. Y
 :: Kylar Abduction Free Rescue 2
 <<effects>>
 
+<<person3>>
 Bailey's finger twitches in your direction. It's barely perceptible, but
 <<if $phase is 1>>
-	the <<if $pronoun is "m">>monk's<<else>>nun's<</if>>
+	the <<monk>>'s
 <<else>>
 	Jordan's
 <</if>>
@@ -902,7 +903,7 @@ Bailey disappears from view. You hear a heavy rap on a door, followed by a squea
 "I'll have to meet your parents-"
 <br><br>
 <<if $phase is 1>>
-	The <<if $pronoun is "m">>monk's<<else>>nun's<</if>>
+	The <<monk>>'s
 <<else>>
 	Jordan's
 <</if>>
@@ -916,15 +917,14 @@ face appears at the window, examining the edge. <<He>> presses a thin metal tool
 :: Kylar Abduction Free Rescue 3
 <<effects>>
 
+<<person3>>
 "-I said leave, or I-I'll call the police!" Kylar sounds more anxious.
 <br>
 "We both know that's not happening," Bailey replies. "I have good reason to believe you live alone here."
 <br><br>
 
-
-
 <<if $phase is 1>>
-	The <<if $pronoun is "m">>monk<<else>>nun<</if>>
+	The <<monk>>
 <<else>>
 	Jordan
 <</if>>
@@ -938,11 +938,12 @@ winces as the glass cracks, but it doesn't make much noise. <<Hes>> wiggles the 
 :: Kylar Abduction Free Rescue 4
 <<set $outside to 1>><<effects>>
 
+<<person3>>
 "Your parents haven't been seen in years," Bailey continues. "We have room for you at the orphanage-"
 <br>
 
 <<if $phase is 1>>
-	The <<if $pronoun is "m">>monk<<else>>nun<</if>>
+	The <<monk>>
 <<else>>
 	Jordan
 <</if>>
@@ -959,12 +960,14 @@ You catch glimpses through the bushes. Bailey stands in front of the old-fashion
 :: Kylar Abduction Free Rescue 5
 <<effects>>
 
-Kylar launches <<himself>> from the window, sailing right over Bailey's head. It's an act of crazed desperation, but Bailey reacts swiftly. <<He>> steps back, catches Kylar with both arms, and forces <<him>> to the ground.
+<<person1>>
+Kylar launches <<himself>> from the window, sailing right over Bailey's head. It's an act of crazed desperation, but Bailey reacts swiftly. <<person2>><<He>> steps back, catches Kylar with both arms, and forces <<person1>><<him>> to the ground.
 <br><br>
 
+<<person3>>
 "It's not safe here,"
 <<if $phase is 1>>
-	the <<if $pronoun is "m">>monk<<else>>nun<</if>>
+	the <<monk>>
 <<else>>
 	Jordan
 <</if>>
@@ -993,12 +996,13 @@ You walk across the grass, to where Kylar lies struggling beneath Bailey's grasp
 <<else>>
 	"Don't worry," you say. You kiss <<his>> nose, and feel <<him>> tremble. "We'll see each other at school."
 <</if>>
-<<ggglove>><<npcincr Kylar love 15>>
+<<ggglove "Kylar">><<npcincr Kylar love 15>>
 <br><br>
 
 <<He>> stops struggling, and lies still, defeated. You return to
+<<person3>>
 <<if $phase is 1>>
-	the <<if $pronoun is "m">>monk<<else>>nun<</if>>,
+	the <<monk>>,
 <<else>>
 	Jordan,
 <</if>>
@@ -1027,8 +1031,9 @@ You walk across the grass, to where Kylar lies struggling beneath Bailey's grasp
 <br><br>
 
 <<He>> stops struggling, and lies still, defeated. You return to
+<<person3>>
 <<if $phase is 1>>
-	the <<if $pronoun is "m">>monk<<else>>nun<</if>>,
+	the <<monk>>,
 <<else>>
 	Jordan,
 <</if>>
@@ -1052,7 +1057,7 @@ You turn away from Kylar, and leave the garden.<<gksuspicion>><<npcincr Kylar ra
 
 <<person3>>
 <<if $phase is 1>>
-	The <<if $pronoun is "m">>monk<<else>>nun<</if>> stops you outside the gate. "I'm <<if $pronoun is "m">>brother<<else>>sister<</if>> Jordan," <<he>> says. "Priest at the temple." <<He>> bows <<his>> head a little.
+	The <<monk>> stops you outside the gate. "I'm <<if $pronoun is "m">>brother<<else>>sister<</if>> Jordan," <<he>> says. "Priest at the temple." <<He>> bows <<his>> head a little.
 <<else>>
 	Jordan stops you outside the gate.
 <</if>>
@@ -1129,6 +1134,7 @@ Bailey turns <<his>> back to the priest, and drops <<his>> smile. "You're almost
 :: Kylar Abduction Free Rescue Thank
 <<effects>>
 
+<<person2>>
 <<if $submissive gte 1150>>
 	"Th-thank you for rescuing me," you say.
 <<elseif $submissive lte 850>>
@@ -1148,6 +1154,7 @@ Bailey reaches for <<his>> phone before you've finished. "Fucking brats," <<he>>
 :: Kylar Abduction Free Rescue Angry
 <<effects>>
 
+<<person2>>
 <<if $submissive gte 1150>>
 	"D-did you care that I was missing?" you ask. "Y-You don't care what happened to me? How I am?"
 <<elseif $submissive lte 850>>
@@ -1167,6 +1174,7 @@ Bailey reaches for <<his>> phone before you've finished. "Fucking brats," <<he>>
 :: Kylar Abduction Free Rescue Silent
 <<effects>>
 
+<<person2>>
 You remain silent. Bailey reaches for <<his>> phone. "Fucking brats," <<he>> says, thumbing through a message. "No rest for the wicked. Don't be any more trouble." <<He>> marches away.
 <br><br>
 
@@ -1299,7 +1307,7 @@ You open the browser.
 	You could contact Bailey, and let <<nnpc_him "Bailey">> know where you are. Anyone else would be in danger if they came here.
 	<br><br>
 
-	<<link [[Send an email to Bailey|Kylar Abduction Free Bailey]]>><<pass 5>><</link>>
+	<<link [[Send an email to Bailey (0:05)|Kylar Abduction Free Bailey]]>><<pass 5>><</link>>
 	<br>
 <<else>>
 	You could contact someone, and let them know where you are, but you'd need to work out where that is first.
@@ -1695,7 +1703,7 @@ You black out.
 You awaken back in the small room, tied once more to the chair. Kylar kneels in front of you, <<his>> face a bizarre contortion of relief and rage.
 <br><br>
 <<set $kylar_abduction_stupid to 1>>
-"M-my love!" <<He>> cries. "My stupid love. You could have been hurt. But you're safe now." <<He>> tests your binds. "Don't go running off where you don't belong. You'll break my heart. And <i>they</i> will tear yours in two."
+"M-my love!" <<he>> cries. "My stupid love. You could have been hurt. But you're safe now." <<He>> tests your binds. "Don't go running off where you don't belong. You'll break my heart. And <i>they</i> will tear yours in two."
 <br><br>
 
 <<He>> walks to the door. "I'll be back soon <<kylar_pet_name>>."

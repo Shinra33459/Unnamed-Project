@@ -47,11 +47,12 @@
 <<widget "exam_result">>
 	<<set $_subject to _args[0]>>
 	<<if $exam_chance gte V[$_subject + '_exam_difficulty']>>
-		<<school_skill_up $_subject>>
 		<<if V[$_subject + 'trait'] gte 4>>
+			<<school_skill_up $_subject>>
 			<<school_mark $_subject>> printed and circled on the front, with <span class="green">"Distinction"</span> written beside it in green ink.<<ggcontrol>><<control 25>>
 			<<distinction_stat>>
 		<<else>>
+			<<school_skill_up $_subject>>
 			<<school_mark $_subject>> printed and circled on the front. <span class="green">You've improved your mark!</span>
 			<br>
 			<<school_skill_up_text $_subject>>
@@ -96,7 +97,7 @@
 	<<set $_trait to  $_skill + "trait">>
 
 	<<set V[$_trait] to Math.clamp(V[$_trait] + $_change, -1, 4)>>
-	<<set V[$_skill] to [0,100,200,400,700,1000][V[$_trait]]>>
+	<<set V[$_skill] to [0,100,200,400,700,1000][V[$_trait] + 1]>>
 	<<set V[$_skill + '_exam'] to 0>>
 <</widget>>
 
@@ -282,7 +283,7 @@ You join the throng of students in the hallway.
 		<<else>>
 			You glance behind you as Whitney throws, hoping to snatch the rubber from the air.
 			<br><br>
-			
+
 			<span class="red">"Eyes in front,"</span> River says, piercing you with <<person1>><<his>> gaze. <<He>> doesn't say another word on the matter, but you know your paper will be under thorough scrutiny.
 			<<gstress>><<stress 6>><<passPercent -10>><<set $exam_chance -= 10>>
 			<br><br>
@@ -292,7 +293,7 @@ You join the throng of students in the hallway.
 	<<default>>
 		<<if $phase is 4 or $phase is 5>>
 			<<npc Whitney 3>><<person3>>
-			You <<npcUndressText $NPCName[$NPCNameList.indexOf("Whitney")] "lower">>, 
+			You <<npcUndressText $NPCName[$NPCNameList.indexOf("Whitney")] "lower">>,
 			<<if $phase is 4>>
 				and wrap your fingers around <<his>> <<print $NPCName[$NPCNameList.indexOf("Whitney")].penisdesc>>.
 			<<else>>
@@ -303,7 +304,7 @@ You join the throng of students in the hallway.
 			<<if $handskill gte random(1, 1000)>>
 				You need to finish <<him>> quick, before River notices.
 				<<if $phase is 4>>
-					<<He>> has the sense not to make a noise, but shudders as <<he>> <span class="green">climaxes over your hand.</span><<set $player.bodyliquid.leftarm.semen += 1>>
+					<<He>> has the sense not to make a noise, but shudders as <<he>> <span class="green">climaxes over your hand.</span><<bodyliquid "leftarm" "semen">>
 				<<else>>
 					<<He>> has the sense not to make a noise, but shudders as <<he>> <span class="green">climaxes.</span>
 				<</if>>

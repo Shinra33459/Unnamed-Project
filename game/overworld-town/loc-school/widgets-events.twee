@@ -233,6 +233,13 @@
 
 <<widget "eventsschoolhallways">>
 <<rng>>
+
+<<set _fameRumour to []>>
+<<run ["exhibitionism", "sex", "rape", "prostitution"].forEach(name => {if (V.fame[name] >= 400) T.fameRumour.push(name)})>>
+<<if ($monsterchance gte 1 or $bestialitydisable is "f") and $fame.bestiality gte 400>>
+	<<set _fameRumour.push("bestiality")>>
+<</if>>
+
 <<if $schoolfameboard isnot 1 and $schoolfameblackmail gte 3 or $schoolfameboard isnot 1 and $schoolfamerefused is 1>>
 	<<set $schoolfameboard to 1>>
 
@@ -299,11 +306,11 @@
 
 	<<link [[Get help|Maths Drugged Help]]>><<famegood 5>><<detention -6>><<trauma -6>><</link>><<ldelinquency>><<ltrauma>>
 	<br>
-	<<link [[Copy|Maths Drugged Copy]]>><<set $mathsinfo += 1>><</link>><<if $statdisable is "f">> | <span class="green">+ Mathematical Insight</span><</if>>
+	<<link [[Copy|Maths Drugged Copy]]>><<set $mathsinfo += 1>><</link>><<note "+ Mathematical Insight" "green">>
 	<br>
-	<<link [[Rob|Maths Drugged Rob]]>><<detention 6>><<set $mathsstim += 1>><</link>><<gdelinquency>><<if $statdisable is "f">> | <span class="green">+ Stimulant</span><</if>>
+	<<link [[Rob|Maths Drugged Rob]]>><<detention 6>><<set $mathsstim += 1>><</link>><<gdelinquency>><<note "+ Stimulant" "green">>
 	<br>
-<<elseif $rng gte 100>>
+<<elseif $rng gte 91>>
 	<<generatey1>><<person1>><<generatey2>>
 	A hand clamps over your mouth from behind, and an arm wraps around your waist. "Don't squirm," says the <<person>> responsible. "I just need your help with something." <<He>> tries to pull you into an empty classroom.
 	<<if $whitneyromance is 1>>
@@ -555,7 +562,81 @@
 	<br><br>
 	<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
 	<br>
-<<elseif $rng gte 41>>
+<<elseif $rng gte 41 and _fameRumour.length gt 0>>
+	/* Using random in case the player has fame in multiple categories */
+	<<set _selectedRumour to _fameRumour.random()>>
+	<<set _trauma to false>>
+	<<generatey1>><<generatey2>>
+	As you walk down the hallway, you pass by a group of students.<br><br>
+	<<if _selectedRumour is "bestiality">>
+		<<if $bestialitydisable is "f">>
+			<<if $cool gte 120>>
+				"I swear!" you overhear the <<person1>><<person>> saying. "I heard moans coming from the alley, then some dogs walked out from there!"<br>
+				"But you didn't look into the alley?"<br>
+				"There are things I prefer not to see."
+			<<else>>
+				"Yes, dogs!" the <<person1>><<person>> whispers. "About three of them, on top of <<pher>>, one after the other."<br>
+				"My god, that's disgusting!"<br>
+				"I think it's hot."<<set _trauma to true>>
+			<</if>>
+		<<else>>
+			<<if $cool gte 120>>
+				"You're kidding," a <<person1>><<person>> says. "No one would fuck a..."<br>
+				"I'm serious!" a <<person2>><<person>> says. "People have wild tastes."<br>
+				<<person1>><<He>> shakes <<his>> head. "Is that even legal?"
+			<<else>>
+				"<<pShe>> can't get people to like <<pher>>," a <<person1>><<person>> snickers. "That's why <<pshe>> fucks..." You can't make out the rest.
+				"No way," <<his>> friend gawks. "No one's that much of a freak."<br>
+				"You haven't met <<pher>>, have you?"<<set _trauma to true>>
+			<</if>>
+		<</if>>
+	<<elseif _selectedRumour is "exhibitionism">>
+		<<if $cool gte 120>>
+			"I'm serious!" you overhear the <<person1>><<person>> saying. "A lot of people have seen a student walking around naked, all over town!"<br>
+			"If they were naked, then how did people know they were a student?"<br>
+			"Well, I mean..."
+		<<else>>
+			"I saw it!" the <<person1>><<person>> whispers. "<<pShe>> was running around naked, and seemed to like the attention."<br>
+			"My god, what a pervert!"<br>
+			"I wish I was there to see it too."<<set _trauma to true>>
+		<</if>>
+	<<elseif _selectedRumour is "sex">>
+		<<if $cool gte 120>>
+			"Did you know?" you overhear the <<person1>><<person>> saying. "I heard we have a slut at school."<br>
+			"Just one?" The group laugh.<br>
+			"Well, one bigger than the others."
+		<<else>>
+			"I'm telling you," the <<person1>><<person>> whispers. "<<pShe>>'s a total slut! Easiest bang of my life!"<br>
+			"Doesn't surprise me."<br>
+			"Maybe I should try my luck too."<<set _trauma to true>>
+		<</if>>
+	<<elseif _selectedRumour is "prostitution">>
+		<<if $cool gte 120>>
+			"It's true!" you overhear the <<person1>><<person>> saying. "I saw a student entering that shoddy building on Harvest Street."<br>
+			"Really? And who was it?"<br>
+			"Well, I couldn't see their face very well..."
+		<<else>>
+			"Can confirm it," the <<person1>><<person>> whispers. "<<pShe>> is a whore, and a really cheap one. Best five quid of my life!"<br>
+			"Five quid still sounds too much for <<pher>>." The group laugh.<br>
+			"Maybe I would give <<pher>> a penny or two."<<set _trauma to true>>
+		<</if>>
+	<<elseif _selectedRumour is "rape">>
+		<<if $cool gte 120>>
+			"I don't know the details,” you overhear the <<person1>><<person>> saying. "But I heard a student has been assaulted."<br>
+			"A rape? In this town?" <<person2>><<He>> rolls <<his>> eyes. "Never heard that before."<br>
+			"Yeah, I guess you're right."
+		<<else>>
+			"Yeah, <<pshe>> was raped," the <<person1>><<person>> whispers. "And not by just a single person either."<br>
+			"That slut? I bet <<pshe>> was loving it." The group laugh.<br>
+			"Maybe we could have a turn sometime?"<<set _trauma to true>>
+		<</if>>
+	<</if>>
+	<br><br>
+	You move along. They couldn't be talking about you, could they?<<gstress>><<stress 2>><<if _trauma>><<gtrauma>><<trauma 2>><</if>>
+	<br><br>
+	<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<<elseif $rng gte 31>>
 	<<generatey1>><<person1>>
 	<<rng>>
 	<<if $rng gte 66>>
@@ -642,7 +723,8 @@
 		<<link [[Ignore|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
 		<br>
 	<</if>>
-
+<<elseif $rng gte 11 and !$worn.lower.type.includes("naked")>>
+	<<lockerevent>>
 <<else>>
 	<<generatey1>>A <<person1>><<person>> walks up to you. "Hi," <<he>> says. Seems <<he>> wants to talk.
 	<br><br>
@@ -663,6 +745,72 @@
 		<<link [[Next|School Rear Playground]]>><<set $eventskip to 1>><</link>>
 		<br>
 	<</if>>
+<</widget>>
+
+<<widget "lockerevent">>
+	<<generatey1>><<generatey2>><<person1>>
+	<<if $cool gte 240 or $worn.under_lower.type.includes("naked")>>
+		While walking through the halls you feel a tug on your $worn.lower.name.
+		You turn to see the culprit, a <<person>> hooking the fabric inside a nearby locker. <<He>> slams the locker door shut.<<stress 5>><<gstress>>
+		<br><br>
+		<<set $phase to 0>>
+	<<elseif $cool gte 120>>
+		While walking through the halls you feel a tug on the <<print setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 ? "back hem" : "back waistband">>
+		of your $worn.under_lower.name. You turn to see the culprit, a <<person>> hooking the fabric inside a nearby locker.
+		<<He>> slams the locker door shut. It pulls uncomfortably tight against your <<bottom>>. <<pain 2>><<gpain>><<stress 5>><<gstress>>
+		<br><br>
+		<<set $phase to 1>>
+	<<else>>
+		While walking through the halls you feel a tug on the <<print setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 ? "front hem" : "front waistband">>
+		of your $worn.under_lower.name. You look down to see the culprit, a <<person>> hooking the fabric inside a nearby locker.
+		<<He>> slams the locker door shut. It pulls uncomfortably tight against your <<genitals>>.<<pain 5>><<gpain>><<stress 5>><<gstress>>
+		<br><br>
+		<<set $phase to 2>>
+	<</if>>
+	"Oops," <<he>> says with a sly grin on <<his>> face before walking off.
+	<br><br>
+	<<set $lock to 50>>
+	<<lockereventpassages>>
+<</widget>>
+
+<<widget "lockereventpassages">>
+	<<if currentSkillValue('skulduggery') gte $lock>>
+		<<link[[Try to pick the Lock (0:05)|Hallways Pick Locker Attempt]]>><<pass 5>><<crimeup 30>><<stress 5>><</link>><<crime>><<gstress>>
+		<br>
+	<<else>>
+		<span class="red">The lock is beyond your ability to pick.</span><<skulduggeryrequired>>
+		<br><br>
+	<</if>>
+	<<set _physiquemax to $physiquemax * 1.05>>
+	<<link[[Struggle Free (0:01)|Hallways Locker Struggle Free Attempt]]>><<pass 1>><</link>><<physiquedifficulty 2000 _physiquemax>>
+	<<if $worn.lower.type.includes("naked") and $exhibitionism gte 35>>
+		<br>
+		<<link[[Strip (0:01)|Hallways Strip Locker Clothing]]>><<pass 1>><</link>><<exhibitionist3>>
+	<<elseif !$worn.lower.type.includes("naked") and $exhibitionism gte 15>>
+		<br>
+		<<link[[Strip (0:01)|Hallways Strip Locker Clothing]]>><<pass 1>><</link>><<exhibitionist1>>
+	<</if>>
+<</widget>>
+
+<<widget "lockereventnext">>
+	<<if $worn.lower.type.includes("naked") and $worn.under_lower.type.includes("naked")>>
+		<<if $exhibitionism gte 35>>
+			<<flaunting>> you walk away, leaving your clothes behind.
+		<<else>>
+			<<tearful>> you stagger away, leaving your clothes behind.<<covered>>
+		<</if>>
+	<<elseif $worn.lower.type.includes("naked")>>
+		<<if $exhibitionism gte 35>>
+			<<flaunting>> you walk away.
+		<<else>>
+			<<tearful>> you run away.<<embarrassment>><<gtrauma>><<trauma 5>>
+		<</if>>
+	<<else>>
+		You walk away.
+	<</if>>
+	<br><br>
+	<<endevent>>
+	<<link[[Next|Hallways]]>><</link>>
 <</widget>>
 
 <<widget "eventsplayground">>
@@ -1052,26 +1200,26 @@
 			<</if>>
 		<<else>>
 			<<if $cool lt 120>>
-			<<generatey1>><<person1>>A <<person>> points at you and whispers to <<his>> friends. They burst into laughter.
-			<<gstress>><<stress 6>>
-			<br><br>
+				<<generatey1>><<person1>>A <<person>> points at you and whispers to <<his>> friends. They burst into laughter.
+				<<gstress>><<stress 6>>
+				<br><br>
 
-			<<endevent>>
+				<<endevent>>
 
-			<<playground>>
+				<<playground>>
 			<<else>>
-			Some students recognise you and wave. You wave back.
-			<<lstress>><<stress -6>>
-			<br><br>
+				Some students recognise you and wave. You wave back.
+				<<lstress>><<stress -6>>
+				<br><br>
 
-			<<endevent>>
+				<<endevent>>
 
-			<<playground>>
+				<<playground>>
 			<</if>>
 		<</if>>
 	<</if>>
 <<else>>
-	<<if $rng gte 1>>
+	<<if $rng gte 51>>
 		<<beastNEWinit 1 dog>>
 		<<rng>>
 		<<if $rng gte 61>>
@@ -1097,6 +1245,47 @@
 			<<endevent>>
 			<br><br>
 
+			<<playground>>
+		<</if>>
+	<<else>>
+		<<generate1>><<person1>>
+		A security guard leans against a wall,
+		<<if $weather is "rain">>
+			sheltered from the rain by an alcove.
+		<<elseif $weather is "snow">>
+			sheltered from the rain by an alcove.
+		<<else>>
+			<<if $daystate is "night">>
+				watching bats swoop overhead.
+			<<else>>
+				watching birds flutter between trees.
+			<</if>>
+		<</if>>
+		<br><br>
+		
+		<<rng>>
+		<<if $rng gte 81>>
+			<<He>> spots you, and unfastens a baton while approaching. "Well well," <<he>> says. "You're not supposed to be here. Come with me."<<gstress>><<stress 6>>
+			<br><br>
+			
+			<<link [[Go quietly|Playground Guard Quiet]]>><</link>>
+			<br>
+			<<link [[Run|Playground Guard Run]]>><</link>><<athleticsdifficulty 1 400>>
+			<br>
+			<<link [[Fight|Playground Guard Fight]]>><<set $fightstart to 1>><</link>>
+			<br>
+		<<elseif $rng gte 41>>
+			<<He>> spots you, and frowns. "I don't think you're supposed to be here," <<he>> says. "Best leave before you get in trouble."
+			<br><br>
+			
+			<<link [[Leave|Playground Guard Leave]]>><</link>>
+			<br>
+			<<link [[Convince|Playground Guard Convince]]>><</link>><<englishdifficulty 1 600>>
+			<br>
+		<<else>>
+			You're not supposed to be here, but <<hes>> distracted, and doesn't notice you.<<gstress>><<stress 6>>
+			<br><br>
+			<<endevent>>
 			<<playground>>
 		<</if>>
 	<</if>>
@@ -1512,6 +1701,17 @@
 			<<link [[Fight|Bully Fight]]>><<set $fightstart to 1>><<set $submissive -= 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
 			<br>
 		<</if>>
+	<<elseif $bullyevent is 14>>
+		<<set $bullyevent += 1>>
+		Whitney rounds the corner ahead, flanked by <<his>> friends. <<He>> grins, and forces other students to move as <<he>> strides in a straight line towards you.
+		<br><br>
+		"I've been hearing things," <<he>> says, looking you up and down while wearing a stern expression. "Have you been sleeping around, slut?"
+		<br><br>
+		
+		<<link [[Say yes|Bully Accuse Yes]]>><<npcincr Whitney lust 5>><</link>><<promiscuous1>><<gglust>>
+		<br>
+		<<link [[Say no|Bully Accuse No]]>><</link>>
+		<br>
 	<<else>>
 		<<set $bullyevent to 4>>
 		Someone grabs your hair from behind, tugging your head back. It's Whitney. <<He>> grins as <<his>> friends laugh.

@@ -340,15 +340,17 @@ $worn.under_upper.type.includes("naked") and $worn.under_lower.type.includes("na
 <<set _modeloptions.demon_tail_index to ZIndices.backhair>>
 <<set _modeloptions.demon_horns_type to $transformationParts.demon.horns>>
 
-<<set $_purpleHsl to 'hsl(275, 100%, 30%)'>>
+<!-- Calculate blend pattern for demon TF here. -->
+
+<<set $_demonHsl to ColourUtils.toHslString(Transformations.defaults.demon.colour)>>
 <<set _modeloptions.filters.demon_wings to clone(Object.assign($_filterBase, {
-	blend: ColourUtils.toHslString($transformationParts.demon.wings_colour, $_purpleHsl)
+	blend: ColourUtils.toHslString($transformationParts.demon.wings_colour, $_demonHsl)
 }))>>
 <<set _modeloptions.filters.demon_tail to clone(Object.assign($_filterBase, {
-	blend: ColourUtils.toHslString($transformationParts.demon.tail_colour, $_purpleHsl)
+	blend: ColourUtils.toHslString($transformationParts.demon.tail_colour, $_demonHsl)
 }))>>
 <<set _modeloptions.filters.demon_horns to clone(Object.assign($_filterBase, {
-	blend: ColourUtils.toHslString($transformationParts.demon.horns_colour, $_purpleHsl)
+	blend: ColourUtils.toHslString($transformationParts.demon.horns_colour, $_demonHsl)
 }))>>
 
 <<set _modeloptions.wolf_tail_type to $transformationParts.wolf.tail>>
@@ -421,29 +423,20 @@ $worn.under_upper.type.includes("naked") and $worn.under_lower.type.includes("na
 	<<set _modeloptions.clit_parasite to $parasite.clit.name>>
 <</if>>
 
-<<switch setup.bodyliquid.combined("vagina")>>
-	<<case 5 6 7 8 9 10>><<set _modeloptions.drip_vaginal = "VeryFast">>
-	<<case 4>><<set _modeloptions.drip_vaginal = "Fast">>
-	<<case 3>><<set _modeloptions.drip_vaginal = "Slow">>
-	<<case 2>><<set _modeloptions.drip_vaginal = "VerySlow">>
-	<<case 1>><<set _modeloptions.drip_vaginal = "Start">>
-<</switch>>
+<!-- Dripping Speeds -->
+<<set $_dripspeeds to ["", "Start", "VerySlow", "Slow", "Fast", "VeryFast"]>>
 
-<<switch setup.bodyliquid.combined("anus")>>
-	<<case 5 6 7 8 9 10>><<set _modeloptions.drip_anal = "VeryFast">>
-	<<case 4>><<set _modeloptions.drip_anal = "Fast">>
-	<<case 3>><<set _modeloptions.drip_anal = "Slow">>
-	<<case 2>><<set _modeloptions.drip_anal = "VerySlow">>
-	<<case 1>><<set _modeloptions.drip_anal = "Start">>
-<</switch>>
+<!-- Vagina -->
+<<set $_liquidamt to Math.clamp(setup.bodyliquid.combined("vagina"), 0, 5)>>
+<<set _modeloptions.drip_vaginal to $_dripspeeds.select($_liquidamt)>>
 
-<<switch setup.bodyliquid.combined("mouth")>>
-	<<case 5 6 7 8 9 10>><<set _modeloptions.drip_mouth = "VeryFast">>
-	<<case 4>><<set _modeloptions.drip_mouth = "Fast">>
-	<<case 3>><<set _modeloptions.drip_mouth = "Slow">>
-	<<case 2>><<set _modeloptions.drip_mouth = "VerySlow">>
-	<<case 1>><<set _modeloptions.drip_mouth = "Start">>
-<</switch>>
+<!-- Anus -->
+<<set $_liquidamt to Math.clamp(setup.bodyliquid.combined("anus"), 0, 5)>>
+<<set _modeloptions.drip_anal to $_dripspeeds.select($_liquidamt)>>
+
+<!-- Mouth -->
+<<set $_liquidamt to Math.clamp(setup.bodyliquid.combined("mouth"), 0, 5)>>
+<<set _modeloptions.drip_mouth to $_dripspeeds.select($_liquidamt)>>
 
 <<if $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1>>
 	<<set _chestVisible to true>>

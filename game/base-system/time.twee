@@ -150,7 +150,9 @@
 	<<set $mirrortentacles to 0>>
 	<<set $massattended to 0>>
 	<<set $dockexhibitionism to 0>>
-	<<set $brothel_rivalry_timer -= 1>>
+	<<if $brothel_rivalry_timer isnot undefined>>
+		<<set $brothel_rivalry_timer -= 1>>
+	<</if>>
 	<<if $museuminterest gte 60>>
 		<<set $museuminterest -= 3>>
 	<</if>>
@@ -248,9 +250,6 @@
 	<<unset $estate_bluffed>>
 	<<unset $estate_chaos>>
 
-	<<if not $estatePersistent>>
-		<<set $estatePersistent to {"suspicion": 0, "newDeckTimer": 3, "markedCards": new Set()}>>
-	<</if>>
 	<<if $estatePersistent.suspicion and $estatePersistent.suspicion gte 1>>
 		<<set _cards_suspicion_decay to 5 >>
 		<<set _cards_suspicion_decay += $NPCName[$NPCNameList.indexOf("Wren")].love * 0.2 >>
@@ -724,7 +723,7 @@
 		<<unset $eden_christmas_dinner>>
 		<<unset $christmas_wraith>>
 	<</if>>
-	
+
 	<<if $bell_timer>>
 		<<set $bell_timer -= 1>>
 	<</if>>
@@ -811,16 +810,26 @@
 	<</if>>
 	<<unset $demon_window_orphan>>
 
+	<<set $_dailyPurity to 1>>
+
 	<<if $featsPurityBoost>>
-		<<purity $featsPurityBoost>>
+		<<set $_dailyPurity += $featsPurityBoost>>
 	<</if>>
 
-	<<purity 1>>
+	<<if $fallenangel gte 2>>
+		<<set $_dailyPurity -= 10>>
+	<</if>>
+
 	<<if $player.virginity.vaginal is true and $player.virginity.penile is true>>
-		<<purity 2>>
-		<<if $purity gte 1000>>
-			<<transform angel 2>>
-		<</if>>
+		<<set $_dailyPurity += 2>>
+	<</if>>
+
+	<<purity $_dailyPurity>>
+
+	<<if $purity gte 1000>>
+		<<transform angel 1>>
+	<<else>>
+		<<transform angel -1>>
 	<</if>>
 
 	<<if $angel gte 4>>
@@ -828,12 +837,6 @@
 		<<set $angelBanish to $angelBanishMax>>
 	<<else>>
 		<<set $angelBanish to 0>>
-	<</if>>
-
-	<<transform angel -1>>
-
-	<<if $fallenangel gte 2>>
-		<<purity -10>>
 	<</if>>
 
 	<<set $physiquesize to (1000 * $devlevel)>>
@@ -908,7 +911,8 @@
 		<<set $history_star to 0>>
 	<</if>>
 
-	<<set $beauty += (100 - (($trauma / $traumamax) * 100))>>
+	<<set $_dailyBeauty to 100 - (($trauma / $traumamax) * 100)>>
+	<<beauty $_dailyBeauty>>
 
 	<<weather_select>>
 
@@ -1044,7 +1048,9 @@
 	<<if $edenshoutrescue isnot 1>>
 		<<set $edenwhip to 0>>
 	<</if>>
-	<<set $edendays += 1>>
+	<<if $edendays isnot undefined>>
+		<<set $edendays += 1>>
+	<</if>>
 	<<if $edengarden gte 1>>
 		<<set $edengarden -= 1>>
 	<</if>>
@@ -1561,6 +1567,10 @@
 	<<if $robinPillory and $robinPillory.danger isnot undefined>>
 		<<robinPilloryHour>>
 	<</if>>
+<<else>>
+	<<for $minute gte 60>>
+		<<set $minute -= 60>>
+	<</for>>
 <</if>>
 <</widget>>
 

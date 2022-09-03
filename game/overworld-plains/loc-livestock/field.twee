@@ -4,7 +4,7 @@
 You are on the cattle field within Remy's farm.
 <!-- Modified for Monster People -->
 <<if ($monsterchance gte 1 and ($hallucinations gte 1 or $monsterhallucinations is "f"))>>
-	Cowgirls and bullboys munch on grass, staying well away from the electric perimeter fence despite the grass growing thick beside it.
+	<<livestock_cows "cap">> munch on grass, staying well away from the electric perimeter fence despite the grass growing thick beside it.
 <<else>>
 	Cows munch on grass, staying well away from the electric perimeter fence despite the grass growing thick beside it.
 <</if>>
@@ -199,13 +199,14 @@ You turn away and ignore the figure.
 <<npc Eden>><<person1>>
 You sneak over to the figure, making sure not to draw attention to yourself. It's a <<personsimple>>. <span class="green">It's Eden.</span> <<He>> hurries closer. <<Hes>> carrying a pair of rubber gloves, and wire clippers.
 <br><br>
+
 "I'm getting you out," <<he>> says. "Stay low." It takes a few minutes, but <<he>> cuts a hole in the fence big enough for you to squeeze through.
 <br><br>
-Grabbing your hand, <<he>> pulls you up and you both run until you can no longer see the fields.
-<br><br>
-<<pass 1>>A minute later you hear a shrill whistle behind you, followed by shouting and the barking of dogs. Remy's voice rises above the others. <span class="red">You are being hunted.</span><<lllobey>><<livestock_obey -20>>
-<br><br>
-<<link [[Next|Livestock Eden Escape]]>><</link>>
+
+<<link [[Escape|Livestock Eden Go]]>><<pass 1>><<livestock_obey -20>><</link>><<lllobey>>
+<br>
+<<link [[Resist|Livestock Eden Resist]]>><<set $edenfarmrescue to 1>><<npcincr Eden love -10>><<livestock_obey 10>><</link>><<llove>><<gggobey>>
+<br>
 
 
 :: Livestock Field Intro Grass
@@ -450,24 +451,19 @@ You feel someone pinch your ass, and jump. "Remy won't mind if we, ah, take the 
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-
 	<<maninit>>
 
 <</if>>
 
 <<effects>>
-
-<<effectsman>><<man>>
-
+<<effectsman>>
+<<alarmstate>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Livestock Field River Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Livestock Field River Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $alarm is 1 and $rescue is 1>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Livestock Field River Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Livestock Field River Rape]]>><</link>></span><<nexttext>>
@@ -1078,9 +1074,9 @@ You do your best to keep your hands together despite the violent thrusting.
 
 <<if $handskill gte 400>>
 	<<set $livestock_horse to 2>>
-	<<set $player.bodyliquid.face.semen += 5>>
-	<<set $player.bodyliquid.chest.semen += 5>>
-	<<set $player.bodyliquid.hair.semen += 5>>
+	<<bodyliquid "face" "semen" 5>>
+	<<bodyliquid "chest" "semen" 5>>
+	<<bodyliquid "hair" "semen" 5>>
 	<span class="green">You manage it.</span> The enormous cock erupts, covering your face and hair with thick centaur semen. It spurts in such quantities that there's nothing you can do to stop it spilling on your <<breasts>>.
 	<br><br>
 
@@ -1162,9 +1158,9 @@ You fear it's too big to fit, but you can lick and suck the tip. You can try, an
 
 <<if $oralskill gte 400>>
 	<<set $livestock_horse to 2>>
-	<<set $player.bodyliquid.mouth.semen += 5>>
-	<<set $player.bodyliquid.face.semen += 5>>
-	<<set $player.bodyliquid.chest.semen += 5>>
+	<<bodyliquid "mouth" "semen" 5>>
+	<<bodyliquid "face" "semen" 5>>
+	<<bodyliquid "chest" "semen" 5>>
 	Her violent thrusting makes it difficult, but <span class="green">you manage</span> to get the occasional lick in. It's salty. <<deviancy4>>
 
 	The enormous cock erupts as the tip presses against your mouth, spurting thick centaur semen down your throat. As it pulls away it spurts again, this time covering your face in such quantities that you can't stop it dribbling over your <<breasts>>.
@@ -1189,7 +1185,7 @@ You fear it's too big to fit, but you can lick and suck the tip. You can try, an
 
 	Her violent thrusting makes it difficult, <span class="red">and you don't manage</span> to get so much as a lick in before the cock bops you on the head, knocking you on your back.
 	<<gpain>><<pain 6>> <<deviancy4>>
-	<br><br>
+
 	The centaur thrusts into empty air. She shouts in frustration and tries to reach beneath her. She can't reach that far back.
 	<br><br>
 
@@ -1235,7 +1231,7 @@ You're not sure its safe given her violent thrusts, but that doesn't stop you.
 
 	However, <span class="red">you don't manage</span> to get a single lick in before you're shoved to the grass.
 	<<gpain>><<pain 6>> <<deviancy4>>
-	<br><br>
+
 	The centaur thrusts into empty air. She shouts in frustration and tries to reach beneath her. She can't reach that far back.
 	<br><br>
 
@@ -1290,16 +1286,11 @@ The centaur doesn't need to be asked twice. She trots over, her huge body almost
 <br>
 <<beast $enemyno>>
 <br><br>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Livestock Field Centaur Female Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Livestock Field Centaur Female Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Livestock Field Centaur Female Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Livestock Field Centaur Female Sex]]>><</link>></span><<nexttext>>
@@ -1397,16 +1388,11 @@ The centaur doesn't need to be asked twice. She trots over, her huge body almost
 <br>
 <<beast $enemyno>>
 <br><br>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Livestock Field Centaur Female Vagina Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Livestock Field Centaur Female Vagina Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Livestock Field Centaur Female Vagina Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Livestock Field Centaur Female Vagina Sex]]>><</link>></span><<nexttext>>
@@ -1617,9 +1603,9 @@ You do your best to keep your hands together despite the violent thrusting.
 
 <<if $handskill gte 400>>
 	<<set $livestock_horse to 2>>
-	<<set $player.bodyliquid.face.semen += 5>>
-	<<set $player.bodyliquid.chest.semen += 5>>
-	<<set $player.bodyliquid.hair.semen += 5>>
+	<<bodyliquid "face" "semen" 5>>
+	<<bodyliquid "chest" "semen" 5>>
+	<<bodyliquid "hair" "semen" 5>>
 	<span class="green">You manage it.</span> The enormous cock erupts, covering your face and hair with thick centaur semen. It spurts in such quantities that there's nothing you can do to stop it spilling on your <<breasts>>.
 	<br><br>
 
@@ -1702,9 +1688,9 @@ You fear it's too big to fit, but you can lick and suck the tip. You can try, an
 
 <<if $oralskill gte 400>>
 	<<set $livestock_horse to 2>>
-	<<set $player.bodyliquid.mouth.semen += 5>>
-	<<set $player.bodyliquid.face.semen += 5>>
-	<<set $player.bodyliquid.chest.semen += 5>>
+	<<bodyliquid "mouth" "semen" 5>>
+	<<bodyliquid "face" "semen" 5>>
+	<<bodyliquid "chest" "semen" 5>>
 	His violent thrusting makes it difficult, but <span class="green">you manage</span> to get the occasional lick in. It's salty.
 	<<deviancy4>>
 
@@ -1730,7 +1716,7 @@ You fear it's too big to fit, but you can lick and suck the tip. You can try, an
 
 	His violent thrusting makes it difficult, <span class="red">and you don't manage</span> to get so much as a lick in before the cock bops you on the head, knocking you on your back.
 	<<gpain>><<pain 6>> <<deviancy4>>
-	<br><br>
+
 	The centaur thrusts into empty air. He shouts in frustration and tries to reach beneath him. He can't reach that far back.
 	<br><br>
 
@@ -1776,7 +1762,7 @@ Despite the danger presented by his violent thrusting, you lean forward and try 
 
 	However, <span class="red">you don't manage</span> to get a single lick in before you're shoved to the grass.
 	<<gpain>><<pain 6>> <<deviancy4>>
-	<br><br>
+
 	The centaur thrusts into empty air. He shouts in frustration and tries to reach beneath him. He can't reach that far back.
 	<br><br>
 
@@ -1831,16 +1817,11 @@ The centaur doesn't need to be asked twice. He trots over, his huge body almost 
 <br>
 <<beast $enemyno>>
 <br><br>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Livestock Field Centaur Male Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Livestock Field Centaur Male Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Livestock Field Centaur Male Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Livestock Field Centaur Male Sex]]>><</link>></span><<nexttext>>
@@ -1927,10 +1908,9 @@ The centaur doesn't need to be asked twice. He trots over, his huge body almost 
 	<<consensual>>
 	<<set $consensual to 1>>
 	<<neutral 1>>
-
-<<beastNEWinit 1 horse m vagina monster>>
+	<<beastNEWinit 1 horse m vagina monster>>
 	<<beastCombatInit>>
-<<set $NPCList[_n].stance to "top">><<set $position to "missionary">><<set $position_lock to 1>><<prop haybale>>
+	<<set $NPCList[_n].stance to "top">><<set $position to "missionary">><<set $position_lock to 1>><<prop haybale>>
 <</if>>
 
 <<effects>>
@@ -1938,16 +1918,11 @@ The centaur doesn't need to be asked twice. He trots over, his huge body almost 
 <br>
 <<beast $enemyno>>
 <br><br>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Livestock Field Centaur Male Vagina Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Livestock Field Centaur Male Vagina Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Livestock Field Centaur Male Vagina Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Livestock Field Centaur Male Vagina Sex]]>><</link>></span><<nexttext>>
@@ -2144,9 +2119,9 @@ You do your best to keep your hands together despite the violent thrusting.
 
 <<if $handskill gte 400>>
 	<<set $livestock_horse to 2>>
-	<<set $player.bodyliquid.face.semen += 5>>
-	<<set $player.bodyliquid.chest.semen += 5>>
-	<<set $player.bodyliquid.hair.semen += 5>>
+	<<bodyliquid "face" "semen" 5>>
+	<<bodyliquid "chest" "semen" 5>>
+	<<bodyliquid "hair" "semen" 5>>
 	<span class="green">You manage it.</span> The enormous cock erupts, covering your face and hair with thick horse semen. It spurts in such quantities that there's nothing you can do to stop it spilling on your <<breasts>>.
 	<br><br>
 
@@ -2212,9 +2187,9 @@ You do your best to keep your hands against it despite the violent thrusting.
 You fear it's too big to fit, but you can lick and suck the tip. You can try, anyway.
 
 <<if $oralskill gte 400>>
-	<<set $player.bodyliquid.mouth.semen += 5>>
-	<<set $player.bodyliquid.face.semen += 5>>
-	<<set $player.bodyliquid.chest.semen += 5>>
+	<<bodyliquid "mouth" "semen" 5>>
+	<<bodyliquid "face" "semen" 5>>
+	<<bodyliquid "chest" "semen" 5>>
 	<<set $livestock_horse to 2>>
 	Its violent thrusting makes it difficult, but <span class="green">you manage</span> to get the occasional lick in. It's salty. <<deviancy4>>
 
@@ -2233,7 +2208,7 @@ You fear it's too big to fit, but you can lick and suck the tip. You can try, an
 
 	Its violent thrusting makes it difficult, <span class="red">and you don't manage</span> to get so much as a lick in before the cock bops you on the head, knocking you on your back.
 	<<gpain>><<pain 6>> <<deviancy4>>
-	<br><br>
+
 	It continues thrusting into empty air, and neighs in frustration.
 	<br><br>
 
@@ -2273,7 +2248,7 @@ You try lick its pussy despite the violent thrusting.
 
 	Its violent thrusting makes it difficult, <span class="red">and you don't manage</span> to get so much as a lick in before it knocks you on your back.
 	<<gpain>><<pain 6>> <<deviancy4>>
-	<br><br>
+
 	It continues thrusting into empty air, and neighs in frustration.
 	<br><br>
 
@@ -2328,16 +2303,11 @@ The Horse doesn't need to be asked twice. It trots over, its huge body almost tr
 <br>
 <<beast $enemyno>>
 <br><br>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Livestock Field Horse Lewd Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Livestock Field Horse Lewd Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Livestock Field Horse Lewd Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Livestock Field Horse Lewd Sex]]>><</link>></span><<nexttext>>
@@ -2430,16 +2400,11 @@ The Horse doesn't need to be asked twice. It trots over, its huge body almost tr
 <br>
 <<beast $enemyno>>
 <br><br>
-
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Livestock Field Horse Lewd Female Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Livestock Field Horse Lewd Female Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Livestock Field Horse Lewd Female Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Livestock Field Horse Lewd Female Sex]]>><</link>></span><<nexttext>>
@@ -2911,7 +2876,6 @@ You slap Remy's face, too quick for <<him>> to dodge. One of the farmhands shock
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-
 	<<maninit>>
 	<<if $livestock_horse gte 2 and $hour gte 12>>
 		<<enable_rescue>>
@@ -2919,18 +2883,14 @@ You slap Remy's face, too quick for <<him>> to dodge. One of the farmhands shock
 <</if>>
 
 <<effects>>
-
-<<effectsman>><<man>>
-
+<<effectsman>>
+<<alarmstate>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
 
-<<if $enemyhealth lte 0>>
-<span id="next"><<link [[Next|Livestock Field Gang Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-<span id="next"><<link [[Next|Livestock Field Gang Finish]]>><</link>></span><<nexttext>>
-<<elseif $alarm is 1 and $rescue is 1>>
+<<if _combatend>>
 <span id="next"><<link [[Next|Livestock Field Gang Finish]]>><</link>></span><<nexttext>>
 <<else>>
 <span id="next"><<link [[Next|Livestock Field Gang]]>><</link>></span><<nexttext>>

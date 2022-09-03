@@ -770,8 +770,8 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 <</widget>>
 
 <<widget "combat-hand-hypnosis">>
-<<set $rng to random(1, 100)>>
-<<if $rng gte 51 and ($hypnosis_traits.scream is undefined or $hypnosis_traits.scream lt 5)>>
+<<rng>>
+<<if $rng gte 76 and ($hypnosis_traits.scream is undefined or $hypnosis_traits.scream lt 5)>>
 	<<if _args[0] is "left">>
 		<<He>> waves the <<print $NPCList[_n].lefttool>> at you.
 		<<set $NPCList[_n].lefthand to "hypnosis_scream">>
@@ -779,7 +779,16 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 		<<He>> waves the <<print $NPCList[_n].righttool>> at you.
 		<<set $NPCList[_n].righthand to "hypnosis_scream">>
 	<</if>>
-	<<His>> voice echoes in your mind. <span class="purple"><i>From when I click my fingers, should you try to scream, you will beg for rougher treatment instead.</i></span>
+	<<His>> voice echoes in your mind. <span class="purple"><i><span class="red">From when I click my fingers,</span> should you try to scream, you will beg for rougher treatment instead.</i></span>
+<<elseif $rng gte 51 and ($hypnosis_traits.cover is undefined or $hypnosis_traits.cover lt 5)>>
+	<<if _args[0] is "left">>
+		<<He>> waves the <<print $NPCList[_n].lefttool>> at you.
+		<<set $NPCList[_n].lefthand to "hypnosis_cover">>
+	<<else>>
+		<<He>> waves the <<print $NPCList[_n].righttool>> at you.
+		<<set $NPCList[_n].righthand to "hypnosis_cover">>
+	<</if>>
+	<<His>> voice echoes in your mind. <span class="purple"><i><span class="red">From when I click my fingers,</span> should you try to cover your body, you will display it for all to see instead.</i></span>
 <<else>>
 	<<if random(1, 2) is 2>>
 		<<His>> voice echoes in your mind. <span class="purple"><i>When I click my fingers, you will be overcome by arousal, and climax at once.</i></span>
@@ -813,7 +822,9 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 	<<set $NPCList[_n].righttool to 0>>
 <</if>>
 and clicks <<his>> fingers. A deep yearning blooms,
-<<if $willpower gte random(1, 1000)>>
+<<if $uncomfortable.hypnosis is false>>
+	nurtured by a lewd part of you. <span class="lewd">Your mind immediately accepts it.</span> Feelings of arousal overwhelm you. <<He>> flashes you a satisfied smile. <<arousal 10000>>
+<<elseif $willpower gte random(1, 1000)>>
 	nurtured by a traitorous part of you. <span class="lblue">You will it away.</span> <<He>> frowns.
 <<else>>
 	unbeckoned. <span class="pink">You can't resist it.</span> Feelings of arousal overwhelm you. <<He>> flashes you a satisfied smile. <<arousal 10000>><<willpower 1>><<gwillpower>>
@@ -831,7 +842,9 @@ and clicks <<his>> fingers. A deep yearning blooms,
 	<<set $NPCList[_n].righttool to 0>>
 <</if>>
 and clicks <<his>> fingers. A deep yearning blooms,
-<<if $willpower gte random(1, 1000)>>
+<<if $uncomfortable.hypnosis is false>>
+	nurtured by a lewd part of you. <span class="lewd">Your mind immediately accepts it.</span> You long for pain. <<He>> flashes you a satisfied smile. <<masochism 10>>
+<<elseif $willpower gte random(1, 1000)>>
 	nurtured by a traitorous part of you. <span class="lblue">You will it away.</span> <<He>> frowns.
 <<else>>
 	unbeckoned. <span class="pink">You can't resist it.</span> You long for pain. <<He>> flashes you a satisfied smile. <<masochism 10>><<willpower 1>><<gwillpower>>
@@ -856,6 +869,27 @@ and clicks <<his>> fingers.
 <<elseif $hypnosis_traits.scream lt 5>>
 	Your hypnotic yearning has deepened.
 	<<set $hypnosis_traits.scream += 1>>
+<</if>>
+<<combat-reset-hand _args[0]>>
+<</widget>>
+
+<<widget "combat-hand-hypnosis-cover">>
+<<He>> clasps <<his>> palm around the
+<<if _args[0] is "left">>
+	<<print $NPCList[_n].lefttool>>,
+	<<set $NPCList[_n].lefttool to 0>>
+<<else>>
+	<<print $NPCList[_n].righttool>>,
+	<<set $NPCList[_n].righttool to 0>>
+<</if>>
+and clicks <<his>> fingers.
+<span class="pink">You feel something shift in your consciousness.</span>
+<<if !$hypnosis_traits.cover>>
+	You've gained the <span class="pink">Hypnotic Flaunting</span> trait.
+	<<set $hypnosis_traits.cover to 1>>
+<<elseif $hypnosis_traits.cover lt 5>>
+	Your hypnotic flaunting has deepened.
+	<<set $hypnosis_traits.cover += 1>>
 <</if>>
 <<combat-reset-hand _args[0]>>
 <</widget>>
@@ -1425,25 +1459,25 @@ and clicks <<his>> fingers.
 <<widget "combat-hand-on-lube">>
 	<<if $NPCList[_n].penis is "vaginaentrance" and $player.bodyliquid.vaginaoutside.goo lt 5>>
 			<<He>> squeezes the bottle of lubricant in <<his>> _args[0] hand, <span class="pink">covering your <<pussy>> in slimy fluid.</span>
-			<<neutral 10 _n>><<set $player.bodyliquid.vaginaoutside.goo += 1>>
+			<<neutral 10 _n>><<bodyliquid "vaginaoutside" "goo">>
 	<<elseif $NPCList[_n].penis is "anusentrance" and $player.bodyliquid.bottom.goo lt 5>>
 			<<He>> squeezes the bottle of lubricant in <<his>> _args[0] hand, <span class="pink">covering your <<bottom>> in slimy fluid.</span>
-			<<neutral 10 _n>><<set $player.bodyliquid.bottom.goo += 1>>
+			<<neutral 10 _n>><<bodyliquid "bottom" "goo">>
 	<<elseif $NPCList[_n].penis is "otheranusentrance" and $player.bodyliquid.penis.goo lt 5>>
 			<<He>> squeezes the bottle of lubricant in <<his>> _args[0] hand, <span class="pink">covering your <<penis>> in slimy fluid.</span>
-			<<neutral 10 _n>><<set $player.bodyliquid.penis.goo += 1>>
+			<<neutral 10 _n>><<bodyliquid "penis" "goo">>
 	<<elseif $NPCList[_n].vagina is "penisentrance" and $player.bodyliquid.penis.goo lt 5>>
 			<<He>> squeezes the bottle of lubricant in <<his>> _args[0] hand, <span class="pink">covering your <<penis>> in slimy fluid.</span>
-			<<neutral 10 _n>><<set $player.bodyliquid.penis.goo += 1>>
+			<<neutral 10 _n>><<bodyliquid "penis" "goo">>
 	<<elseif $NPCList[_n].vagina is "otheranusentrance" and $player.bodyliquid.penis.goo lt 5>>
 			<<He>> squeezes the bottle of lubricant in <<his>> _args[0] hand, <span class="pink">covering your <<penis>> in slimy fluid.</span>
-			<<neutral 10>><<set $player.bodyliquid.penis.goo += 1>>
+			<<neutral 10>><<bodyliquid "penis" "goo">>
 	<<elseif ($NPCList[_n].penis is "vaginaentrancedouble" or $NPCList[_n].penis is "vaginaimminentdouble") and $player.bodyliquid.vaginaoutside.goo lt 5>>
 			<<He>> squeezes the bottle of lubricant in <<his>> _args[0] hand, <span class="pink">covering your <<pussy>> in slimy fluid.</span>
-			<<neutral 10>><<set $player.bodyliquid.vaginaoutside.goo += 1>>
+			<<neutral 10>><<bodyliquid "vaginaoutside" "goo">>
 	<<elseif ($NPCList[_n].penis is "anusentrancedouble" or $NPCList[_n].penis is "anusimminentdouble") and $player.bodyliquid.bottom.goo lt 5>>
 			<<He>> squeezes the bottle of lubricant in <<his>> _args[0] hand, <span class="pink">covering your <<bottom>> in slimy fluid.</span>
-			<<neutral 10>><<set $player.bodyliquid.bottom.goo += 1>>
+			<<neutral 10>><<bodyliquid "bottom" "goo">>
 	<<else>>
 		<span class="lblue"><<He>> casts aside the lube in <<his>> _args[0] hand.</span>
 		<<combat-reset-hand _args[0]>>
@@ -1921,7 +1955,7 @@ and clicks <<his>> fingers.
 			<<neutral 4 _n>><<playWithBreasts>>
 			<<bodypart_admire_chance breasts>>
 		<</if>>
-	<<elseif $enemyanger + $rng lte 70 and $pronoun is "f" and $position isnot "wall" and $head is 0 and ($mouthuse is 0 or $mouthuse is "breasts") and ($NPCList[_n].chest is 0 or $NPCList[_n].chest is "clothed") and $NPCList[_n].location.genitals isnot "head">>
+	<<elseif $enemyanger + $rng lte 70 and $pronoun is "f" and $position isnot "wall" and $head is 0 and ($mouthuse is 0 or $mouthuse is "breasts") and ($NPCList[_n].chest is 0 or $NPCList[_n].chest is "clothed") and $NPCList[_n].location.genitals isnot "head" and $NPCList[_n].location.head isnot "genitals" and $NPCList[_n].stance isnot "topface">>
 		<<if $NPCList[_n].chest is "clothed">>
 			<span class="blue"><<He>> <<npcUndressText $NPCList[_n] "upper" "self">>,</span> and <span class="pink">pushes your face against <<his>> $NPCList[_n].breastsdesc</span> with <<his>> _args[0] hand.
 			<<set $NPCList[_n].chest to 0>>
@@ -2606,6 +2640,9 @@ and clicks <<his>> fingers.
 				Respecting your wishes, <<he>> presses <<his>> $NPCList[_n].penisdesc against your <<pussy>> but does not penetrate.
 				<<sex 15 _n>><<set $speechvaginawithhold to 1>>
 			<</if>>
+			<<if setup.bodyliquid.combined("vagina") gte 1 or setup.bodyliquid.combined("vaginaoutside") gte 1>>
+				Fluid oozes from your <<pussy>>, over <<his>> length.
+			<</if>>
 		<</if>>
 	<</if>>
 
@@ -2643,7 +2680,7 @@ and clicks <<his>> fingers.
 								<<sex 5 _n>><<set $speechvaginaimminent to 1>>
 								<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 									Precum leaks from the tip, <span class="blue">lubricating your pussy.</span>
-									<<set $player.bodyliquid.vaginaoutside.semen += 1>>
+									<<bodyliquid "vaginaoutside" "semen">>
 								<</if>>
 							<</if>>
 						<</if>>
@@ -2665,6 +2702,9 @@ and clicks <<his>> fingers.
 						<</if>>
 					<</if>>
 				<</if>>
+			<</if>>
+			<<if setup.bodyliquid.combined("vagina") gte 1 or setup.bodyliquid.combined("vaginaoutside") gte 1>>
+				Fluid oozes from your <<pussy>>, over <<his>> length.
 			<</if>>
 		<</if>>
 	<</if>>
@@ -2861,6 +2901,9 @@ and clicks <<his>> fingers.
 					<<sex 15>><<set $speechvaginawithhold to 1>>
 				<</if>>
 			<</if>>
+			<<if setup.bodyliquid.combined("vagina") gte 1 or setup.bodyliquid.combined("vaginaoutside") gte 1>>
+				Fluid oozes from your <<pussy>>, over their lengths.
+			<</if>>
 		<</if>>
 	<</if>>
 
@@ -2899,7 +2942,7 @@ and clicks <<his>> fingers.
 								<<sex 5>><<set $speechvaginaimminent to 1>>
 								<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 									Precum leaks from the tip, <span class="blue">lubricating your pussy.</span>
-									<<set $player.bodyliquid.vaginaoutside.semen += 1>>
+									<<bodyliquid "vaginaoutside" "semen">>
 								<</if>>
 							<</if>>
 						<</if>>
@@ -2910,6 +2953,7 @@ and clicks <<his>> fingers.
 							<<else>>
 								<<He>> teases your <<pussy>> with <<his>> <<print $NPCList[_n].penisdesc>> without trying to penetrate.
 							<</if>>
+
 							<<sex 10>><<set $speechvaginaentrance to 1>>
 						<<else>>
 							<<if $npcSub>>
@@ -2922,6 +2966,9 @@ and clicks <<his>> fingers.
 					<</if>>
 				<</if>>
 			<</if>>
+		<</if>>
+		<<if setup.bodyliquid.combined("vagina") gte 1 or setup.bodyliquid.combined("vaginaoutside") gte 1>>
+			Fluid oozes from your <<pussy>>, over <<his>> length.
 		<</if>>
 	<</if>>
 
@@ -3067,6 +3114,9 @@ and clicks <<his>> fingers.
 				<<sex 15 _n>><<set $speechanuswithhold to 1>>
 			<</if>>
 		<</if>>
+		<<if setup.bodyliquid.combined("bottom") gte 1 or setup.bodyliquid.combined("anus") gte 1>>
+			Fluid oozes from your <<bottom>>, over <<his>> length.
+		<</if>>
 	<</if>>
 
 	<<rng>>
@@ -3101,7 +3151,7 @@ and clicks <<his>> fingers.
 									<<sex 10 _n>><<set $speechanusentrance to 1>>
 									<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 										Precum leaks from the tip, <span class="blue">lubricating your ass.</span>
-										<<set $player.bodyliquid.bottom.semen += 1>>
+										<<bodyliquid "bottom" "semen">>
 									<</if>>
 								<<case 1>>
 									<<if $NPCList[_n].lefthand is 0 or $NPCList[_n].righthand is 0>>
@@ -3111,7 +3161,7 @@ and clicks <<his>> fingers.
 										<<if $npcSub>>You rub<<else>><<He>> rubs<</if>> <<his>> $NPCList[_n].penisdesc against your anus and your $worn.butt_plug.name.
 										<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 											Precum leaks from the tip, <span class="blue">lubricating your ass.</span>
-											<<set $player.bodyliquid.bottom.semen += 1>>
+											<<bodyliquid "bottom" "semen">>
 										<</if>>
 									<</if>>
 									<<sex 10 _n>><<set $speechanusentrance to 1>>
@@ -3124,7 +3174,7 @@ and clicks <<his>> fingers.
 										<<sex 5 _n>><<set $speechanusimminent to 1>>
 										<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 											Precum leaks from the tip, <span class="blue">lubricating your ass.</span>
-											<<set $player.bodyliquid.bottom.semen += 1>>
+											<<bodyliquid "bottom" "semen">>
 										<</if>>
 									<</if>>
 							<</switch>>
@@ -3137,7 +3187,7 @@ and clicks <<his>> fingers.
 								<<sex 5 _n>><<set $speechanusimminent to 1>>
 								<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 									Precum leaks from the tip, <span class="blue">lubricating your ass.</span>
-									<<set $player.bodyliquid.bottom.semen += 1>>
+									<<bodyliquid "bottom" "semen">>
 								<</if>>
 							<</if>>
 						<</if>>
@@ -3151,6 +3201,9 @@ and clicks <<his>> fingers.
 					<</if>>
 				<</if>>
 			<</if>>
+		<</if>>
+		<<if setup.bodyliquid.combined("bottom") gte 1 or setup.bodyliquid.combined("anus") gte 1>>
+			Fluid oozes from your <<bottom>>, over <<his>> length.
 		<</if>>
 	<</if>>
 
@@ -3335,6 +3388,9 @@ and clicks <<his>> fingers.
 					<<sex 15 _n>><<set $speechanuswithhold to 1>>
 				<</if>>
 			<</if>>
+			<<if setup.bodyliquid.combined("bottom") gte 1 or setup.bodyliquid.combined("anus") gte 1>>
+				Fluid oozes from your <<bottom>>, over <<his>> length.
+			<</if>>
 		<</if>>
 	<</if>>
 	<<rng>>
@@ -3376,7 +3432,7 @@ and clicks <<his>> fingers.
 									<<sex 10 _n>><<set $speechanusentrance to 1>>
 									<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 										Precum leaks from the tip, <span class="blue">lubricating your ass.</span>
-										<<set $player.bodyliquid.bottom.semen += 1>>
+										<<bodyliquid "bottom" "semen">>
 									<</if>>
 								<<case 1>>
 									<<if $NPCList[_n].lefthand is 0 or $NPCList[_n].righthand is 0>>
@@ -3386,7 +3442,7 @@ and clicks <<his>> fingers.
 										<<if $npcSub>>You rub<<else>><<He>> rubs<</if>> <<his>> $NPCList[_n].penisdesc against your anus and your $worn.butt_plug.name.
 										<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 											Precum leaks from the tip, <span class="blue">lubricating your ass.</span>
-											<<set $player.bodyliquid.bottom.semen += 1>>
+											<<bodyliquid "bottom" "semen">>
 										<</if>>
 									<</if>>
 									<<sex 10 _n>><<set $speechanusentrance to 1>>
@@ -3399,7 +3455,7 @@ and clicks <<his>> fingers.
 										<<sex 5 _n>><<set $speechanusimminent to 1>>
 										<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 											Precum leaks from the tip, <span class="blue">lubricating your ass.</span>
-											<<set $player.bodyliquid.bottom.semen += 1>>
+											<<bodyliquid "bottom" "semen">>
 										<</if>>
 									<</if>>
 							<</switch>>
@@ -3413,7 +3469,7 @@ and clicks <<his>> fingers.
 								<<sex 5 _n>><<set $speechanusimminent to 1>>
 								<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3 and !npcHasStrapon(_n)>>
 									Precum leaks from the tip, <span class="blue">lubricating your ass.</span>
-									<<set $player.bodyliquid.bottom.goo += 1>>
+									<<bodyliquid "bottom" "goo">>
 								<</if>>
 							<</if>>
 						<</if>>
@@ -3426,6 +3482,9 @@ and clicks <<his>> fingers.
 						<<sex 5 _n>><<set $speechanusentrance to 1>>
 					<</if>>
 				<</if>>
+			<</if>>
+			<<if setup.bodyliquid.combined("bottom") gte 1 or setup.bodyliquid.combined("anus") gte 1>>
+				Fluid oozes from your <<bottom>>, over <<his>> length.
 			<</if>>
 		<</if>>
 	<</if>>
@@ -3483,7 +3542,7 @@ and clicks <<his>> fingers.
 						<<set _nectar to 1>>
 					<</if>>
 					drools down your chin as you struggle to keep your lips wrapped around <<his>> $NPCList[_n].penisdesc.</span>
-					<<set $hygiene += 500>><<set $player.bodyliquid.face.goo += 1>>
+					<<set $hygiene += 500>><<bodyliquid "face" "goo">>
 				<<default>>
 				<</switch>>
 			<</if>>
@@ -3982,7 +4041,7 @@ and clicks <<his>> fingers.
 							<<sex 5 _n>><<set $speechpenisimminent to 1>>
 							<<if $enemyarousal gte ($enemyarousalmax / 2) and random(1, 3) is 3>>
 								Lewd fluid drips from <<his>> pussy, <span class="blue">lubricating your cock.</span>
-								<<set $player.bodyliquid.penis.goo += 1>>
+								<<bodyliquid "penis" "goo">>
 							<</if>>
 						<</if>>
 					<<elseif $rng gte 1>>

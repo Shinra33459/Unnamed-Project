@@ -125,7 +125,7 @@ It is there <<he>> learns the most valuable lesson of Christmas. And it is there
 With each telling of the story, it takes different meanings. A once innocent tale has taken a turn for the worse, now more than ever in this darker version. This book seems to have taught you to believe what the true message is behind the old, happy tale - purity and innocence, defiled by debauchery and depravity. You feel a mix of jealousy, lust and anger. And some part of you likes the feelings.
 <br><br>
 
-<<link [[Read the whole book (0:20)|Olive Book Full]]>><<pass 20>><<stress -6>><<englishskill>><</link>><<if !$christmas_book_read>><<if $statdisable is "f">> | <span class="blue">? ? ?</span><</if>><<else>><<genglish>><<lstress>><<garousal>><</if>>
+<<link [[Read the whole book (0:20)|Olive Book Full]]>><<pass 20>><<stress -6>><<englishskill>><</link>><<if !$christmas_book_read>><<note "???" "blue">><<else>><<genglish>><<lstress>><<garousal>><</if>>
 <br>
 <<if $bus is "schoollibrary">>
 	<<if $schoolday is 1>>
@@ -517,7 +517,9 @@ What if, perchance, the victim were you?</i>
 	<<hand_gag 0 left>>
 <</if>>
 <<effects>>
-<<effectsman>><<man>>
+<<effectsman>>
+<<alarmstate>>
+<<man>>
 <<if random(1, 4) is 1>>
 	<<He>> <<print either("cackles","whispers","rasps","sniggers","sneers")>>.
 	<<switch $pinchSpeech>>
@@ -540,11 +542,7 @@ What if, perchance, the victim were you?</i>
 <br><br>
 <<actionsman>>
 
-<<if $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Olive Book Lew Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Olive Book Lew Finish]]>><</link>></span><<nexttext>>
-<<elseif $alarm is 1 and $rescue is 1>>
+<<if _combatend>>
 	<span id="next"><<link [[Next|Olive Book Lew Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Olive Book Lew Molestation]]>><</link>></span><<nexttext>>
@@ -938,11 +936,7 @@ They reached for <<pinchhis>> throat
 <br><br>
 <<actionsman>>
 
-<<if $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Olive Book Pinch Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Olive Book Pinch Finish]]>><</link>></span><<nexttext>>
-<<elseif $orgasmdown gte 1>>
+<<if _combatend or $orgasmdown gte 1>>
 	<span id="next"><<link [[Next|Olive Book Pinch Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Olive Book Pinch Gangbang]]>><</link>></span><<nexttext>>
@@ -1112,8 +1106,6 @@ You liked it,
 	<<set $real_penissize to $player.penissize>>
 	<<set $real_ballsexist to $player.ballsExist>>
 
-	<<set $real_goooutsidecount to $goooutsidecount>>
-	<<set $real_semenoutsidecount to $semenoutsidecount>>
 	<<set $real_bodyliquid to clone($player.bodyliquid)>>
 	<<set $real_parasite to clone($parasite)>>
 	<<set $real_virginity to clone($player.virginity)>>
@@ -1202,10 +1194,7 @@ You liked it,
 		<<lowerwear 33>>
 		<<underlowerwear 30>>
 	<</if>>
-	<<for _bodypart range setup.bodyliquid.bodyparts>>
-		<<set $player.bodyliquid[_bodypart].goo to 0>>
-		<<set $player.bodyliquid[_bodypart].semen to 0>>
-	<</for>>
+	<<bodyliquid "clear">>
 	<<for _bodypart range $parasite.bodyparts>>
 		<<set $parasite[_bodypart] to {}>>
 	<</for>>
@@ -1265,10 +1254,6 @@ You liked it,
 			<<set $vaginause to 0>>
 			<<set $vaginastate to 0>>
 	<</switch>>
-	<<if !$player.vaginaExist>>
-		<<set $player.bodyliquid.vaginaoutside.semen to 0>>
-		<<set $player.bodyliquid.vaginaoutside.goo to 0>>
-	<</if>>
 	<<if $real_lefteyecolour>>
 		<<set $leftEyeColour to $real_lefteyecolour>>
 		<<set $rightEyeColour to $real_righteyecolour>>
@@ -1281,9 +1266,7 @@ You liked it,
 	<<set $player.breastsize to $real_breastsize>>
 	<<set $player.penissize to $real_penissize>>
 	<<set $player.ballsExist to $real_ballsexist>>
-	<<set $goooutsidecount to $real_goooutsidecount>>
-	<<set $semenoutsidecount to $real_semenoutsidecount>>
-	<<set $player.bodyliquid to clone($real_bodyliquid)>>
+	<<set $player.bodyliquid to clone($real_bodyliquid)>><<goocount>>
 	<<set $parasite to clone($real_parasite)>>
 	<<set $player.virginity to clone($real_virginity)>>
 	<<set $pain to $real_pain>>

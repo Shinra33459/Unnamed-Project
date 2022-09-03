@@ -13,17 +13,25 @@ You are in the strip club on Connudatus Street. <<if $daystate isnot "day" and $
 <</if>>
 <<if $hour is 6>>
 
-	It's closing time. Security is herding everyone outside. <<if $exposed gte 1>>One hands you some towels.<<towelup>><</if>>
-	<br><br>
-
-	<<if $brothel_rivalry isnot undefined and $brothel_rivalry_timer lte 0>>
-		<<link [[Leave|Strip Club Goon]]>><</link>>
+	It's closing time. Security is herding everyone outside.
+	<<if ($stripclubdancingintro is 1 or $stripclubbartendingintro is 1) and $exposed gte 1>>
+		You are ushered towards the dressing room.
+		<br><br>
+		
+		<<link [[Dressing room|Strip Club Dressing Room]]>><</link>>
 		<br>
 	<<else>>
-		<<link [[Leave|Connudatus Street]]>><</link>>
-		<br>
-	<</if>>
+		<<if $exposed gte 1>>One hands you some towels.<<towelup>><</if>>
+		<br><br>
 
+		<<if $brothel_rivalry isnot undefined and $brothel_rivalry_timer lte 0>>
+			<<link [[Leave|Strip Club Goon]]>><</link>>
+			<br>
+		<<else>>
+			<<link [[Leave|Connudatus Street]]>><</link>>
+			<br>
+		<</if>>
+	<</if>>
 <<elseif $daystate isnot "night" and $daystate isnot "dusk">>
 	You are alone in the empty club.
 	<br><br>
@@ -139,8 +147,18 @@ You are in the strip club's dressing room. <<if $daystate isnot "day" and $dayst
 <<mirroricon>><<link [[Mirror|Strip Club Mirror]]>><</link>>
 <br><br>
 
-<<link [[Return to the club (0:01)|Strip Club]]>><<pass 1>><</link>>
-<br>
+<<if $hour is 6>>
+	<<if $exposed gte 1>>
+		<span class="blue">Security won't let you leave until you dress.</span>
+		<br>
+	<<else>>
+		<<link [[Leave|Connudatus Street]]>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	<<link [[Return to the club (0:01)|Strip Club]]>><<pass 1>><</link>>
+	<br>
+<</if>>
 
 :: Strip Club Mirror
 <<effects>>
@@ -724,7 +742,6 @@ You look to security, but they are busy dealing with a brawl on the other side o
 	<<if $phase is 0>>
 		You sprawl yourself on the counter and bite your lower lip, looking the assailant in the eyes. It has the effect you hoped. <<He>> drops Darryl and pounces on top of you. You both tumble off the counter.
 		<<promiscuity3>>
-		<br><br>
 		<<set $enemyarousal += 200>>
 	<<else>>
 		You grab a glass and smash it over the assailant's head. The shattering force causes <<him>> to drop Darryl, but <<he>> turns to you instead. Furious, <<he>> lunges over the counter knocking you to the ground.
@@ -965,22 +982,19 @@ The <<person>> leads you down the alley, and holds your arms against the wall.
 	<<consensual>>
 	<<set $consensual to 1>>
 	<<neutral 1>>
-
 	<<maninit>>
 	<<set $enemytrust += 100>><<enable_rescue>>
 <</if>>
+
 <<effects>>
-<<effectsman>><<man>>
+<<effectsman>>
+<<alarmstate>>
+<<man>>
 <<stateman>>
 <br><br>
 <<actionsman>>
-<<if $finish is 1>>
-	<span id="next"><<link [[Next|Strip Club Exposed Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
-	<span id="next"><<link [[Next|Strip Club Exposed Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next|Strip Club Exposed Sex Finish]]>><</link>></span><<nexttext>>
-<<elseif $rescue is 1 and $alarm is 1>>
+
+<<if _combatend>>
 	<span id="next"><<link [[Next|Strip Club Exposed Sex Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Strip Club Exposed Sex]]>><</link>></span><<nexttext>>
@@ -1162,8 +1176,6 @@ You give the <<person>> a rundown of Darryl's clientele and security, but play d
 	<<skulduggeryuse>>
 
 	<<link [[Next|Connudatus Street]]>><<set $eventskip to 1>><<endevent>><</link>>
-	<br>
-
 <<else>>
 
 	<<He>> smirks. <span class="red">You don't think <<he>> buys it.</span>
@@ -1174,6 +1186,4 @@ You give the <<person>> a rundown of Darryl's clientele and security, but play d
 	<<skulduggeryuse>>
 
 	<<link [[Next|Connudatus Street]]>><<set $eventskip to 1>><<endevent>><</link>>
-	<br>
-
 <</if>>

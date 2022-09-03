@@ -26,11 +26,13 @@ Save.onSave.add(function(save) {
 
 /*LinkNumberify and images will enable or disable the feature completely*/
 /*debug will enable or disable the feature only for new games*/
+/*sneaky will enable the Sneaky notice banner on the opening screen and save display*/
 window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.10.5",
+	"version": "0.3.11.4",
+	"sneaky" : false,
 }
 window.StartConfig.version += ".h"; //stands for Herm, don't change
 window.StartConfig.version += "0"; //how many times I've released a build of this mod for this version 
