@@ -46,6 +46,15 @@
 			<<else>>
 				<<set $player.virginity[_args[1]] to false>>
 			<</if>>
+			<!-- virgin purity loss -->
+			<<switch _args[1]>>
+				<<case "vaginal">><<purity -50>>
+				<<case "penile">><<purity -50>>
+				<<case "anal">><<purity -25>>
+				<<case "oral">><<purity -25>>
+				<<case "handholding">><<purity -100>>
+				<<case "kiss">><<purity -10>>
+			<</switch>>
 		<</if>>
 
 		<<if $player.virginity.temple is true and (_args[1] is "vaginal" or _args[1] is "penile") and $templePromised isnot _args[0]>>
@@ -103,57 +112,27 @@
 <</widget>>
 
 <<widget "takeKissVirginityNamed">>
-<<switch _args[0]>>
-	<<case "Robin">>
-		<<if $robinromance is 1>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<case "Whitney">>
-		<<if $whitneyromance is 1>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<case "Kylar">>
-		<<if $kylarenglish gte 1>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<case "Sydney">>
-		<<if $sydneyromance is 1>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<case "Eden">>
-		<<if $syndromeeden is 1>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<case "Avery">>
-		<<if $dateCount.Avery gte 3>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<case "Black Wolf">>
-		<<if $syndromewolves is 1 and $deviancy gte 35>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<case "Great Hawk">>
-		<<if $syndromebird is 1>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<case "Alex">>
-		<<if $farm_stage gte 7 and $alex_countdown is undefined>>
-			<<set _loveInterest to true>>
-		<</if>>
-	<<default>>
-		<<set _loveInterest to false>>
-<</switch>>
-<<if _loveInterest is true>>
-	<<if $consensual is 1 or _args[2]>>
-		<<takeKissVirginity _args[0] "loveInterest">>
+	<<switch _args[0]>>
+		<<case "Robin">>      <<set $_isLoveInterest to ($robinromance is 1)>>
+		<<case "Whitney">>    <<set $_isLoveInterest to ($whitneyromance is 1)>>
+		<<case "Kylar">>      <<set $_isLoveInterest to ($kylarenglish gte 1)>>
+		<<case "Sydney">>     <<set $_isLoveInterest to ($sydneyromance is 1)>>
+		<<case "Eden">>       <<set $_isLoveInterest to ($syndromeeden is 1)>>
+		<<case "Avery">>      <<set $_isLoveInterest to ($dateCount.Avery gte 3)>>
+		<<case "Black Wolf">> <<set $_isLoveInterest to ($syndromewolves is 1 and $deviancy gte 35)>>
+		<<case "Great Hawk">> <<set $_isLoveInterest to ($syndromebird is 1)>>
+		<<case "Alex">>       <<set $_isLoveInterest to ($farm_stage gte 7 and $alex_countdown is undefined)>>
+		<<default>>           <<run throw new Error("wrong argument passed to takeKissVirginityNamed: ", _args)>>
+	<</switch>>
+
+	<<set $_isConsensual to _args[1] or ($consensual is 1)>>
+
+	<<if $_isLoveInterest>>
+		<<set $_kissType to ($_isConsensual ? "loveInterest" : "loveRape")>>
 	<<else>>
-		<<takeKissVirginity _args[0] "loveRape">>
+		<<set $_kissType to ($_isConsensual ? "consensual" : "rape")>>
 	<</if>>
-<<elseif ($consensual is 1 or _args[2])>>
-	<<takeKissVirginity _args[0] "consensual">>
-<<else>>
-	<<takeKissVirginity _args[0] "rape">>
-<</if>>
+	<<takeKissVirginity _args[0] $_kissType>>
 <</widget>>
 
 /* Argument 0 is the npc, argument 1 is their virginity. */
@@ -162,16 +141,21 @@
 	<<set $_vType to _args[1]>>
 	<!-- if the first argument is a name, find which npc has that name, else assume it is an index. -->
 	<<if typeof $_npcId is "string">>
-		<<set $_npc to $NPCList.find(npc => npc.fullDescription === $_npcId)>>
-		<<set $_straponvirginityIgnore to ($_vType is "penile" and npcHasStrapon($NPCList.findIndex(npc => npc.fullDescription === $_npcId)))>>
-	<<elseif $_npcId isnot undefined>>
+		<<set $_npcId to $NPCList.findIndex(npc => npc.fullDescription === $_npcId)>>
+	<</if>>
+	<<if $_npcId isnot undefined and $_npcId gte 0>>
 		<<set $_npc to $NPCList[$_npcId]>>
 		<<set $_straponvirginityIgnore to ($_vType is "penile" and npcHasStrapon($_npcId))>>
 	<</if>>
 
 	<<if $_npc and $_vType and $_npc.virginity and $_npc.virginity[$_vType] and (!$wraith or $wraith.mimic isnot $_npc.nam) and !$_straponvirginityIgnore>>
+		<<if ($_vType is "vaginal" or $_vType is "penile") and $_npc.virginity.temple is true and $templePromised isnot $_npc.fullDescription>>
+			<<set $_npc.virginity.temple to false>>
+		<</if>>
+		
 		/* note: virginity must be exactly equal to true; only true means that they still have their virginity. */
 		<<if $_npc.virginity[$_vType] is true>>
+			<<personselect $_npcId>>
 			<<set $_npc.virginity[$_vType] to "player">>
 			<<switch $_vType>>
 				<<case "vaginal">>
@@ -425,7 +409,7 @@
 		<<set $_hand to _args[0]>>
 		<<set $_items to window.listUniqueCarriedSextoys()>>
 
-		<<if $_hand is "left" and ($lefttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+		<<if $_hand is "left" and ($lefttarget is "self" or $options.targetYourself is false or _targetnumber is 1)>>
 			<<if $_items.length gt 0>>
 				<<set _itemsLeft to {}>>
 
@@ -440,7 +424,7 @@
 			<</if>>
 		<</if>>
 
-		<<if $_hand is "right" and ($righttarget is "self" or $targetYourself is false or _targetnumber is 1)>>
+		<<if $_hand is "right" and ($righttarget is "self" or $options.targetYourself is false or _targetnumber is 1)>>
 			<<if $_items>>
 				<<set _itemsRight to {}>>
 

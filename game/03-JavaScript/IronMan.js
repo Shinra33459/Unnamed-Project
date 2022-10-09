@@ -70,8 +70,10 @@ var IronMan = (Save => {
 				ironmanautosaveschedule: Object.assign({}, readonly, {
 					value: V.ironmanautosaveschedule,
 				}),
-				autosavedisabled: Object.assign({}, readonly, { value: true }),
 				virginity: Object.assign({}, readonly, { value: V.player.virginity }),
+			});
+			Object.defineProperties(V.options, {
+				autosaveDisabled: Object.assign({}, readonly, { value: true }),
 			});
 			if (!IRONMAN_DEBUG) {
 				Object.defineProperty(V, "debug", Object.assign({}, readonly, { value: 0 }));
@@ -100,7 +102,7 @@ var IronMan = (Save => {
 	function getSignature(save = null) {
 		const keys = [
 			"debug",
-			"autosavedisabled",
+			"options",
 			"virginity",
 			"player",
 			"enemyhealth",
@@ -132,6 +134,17 @@ var IronMan = (Save => {
 		UI Functions relating to IronMan mode.
 		-------------------------------------- */
 
+	function sliderPerc(e) {
+		const valSpan = $(e.currentTarget).siblings().first();
+		const value = valSpan.text();
+
+		valSpan.text((i, value) => Math.round(value * 100) + "%");
+
+		if (value > 1) valSpan.css("color", "gold");
+		else if (value < 1) valSpan.css("color", "green");
+		else valSpan.css("color", "unset");
+	}
+
 	function uiCheckBox(mode = "normal") {
 		$(function () {
 			const checkbox = document.getElementById("checkbox-ironmanmode");
@@ -156,9 +169,9 @@ var IronMan = (Save => {
 							'<<replace #sliderAllureMode>><<numberslider "$alluremod" $alluremod 0.2 2 0.1 $ironmanmode>><</replace>>'
 						);
 					}
-					V.maxStates = 1;
+					V.options.maxStates = 1;
 					V.cheatdisabletoggle = "t";
-					V.autosavedisabled = true;
+					V.options.autosaveDisabled = true;
 					$(".ironman-slider input")
 						.on("input change", e => sliderPerc(e))
 						.trigger("change");
@@ -250,7 +263,7 @@ var IronMan = (Save => {
 		/* Navigate to the export-import page. */
 		T.presetData = finalData;
 		Wikifier.wikifyEval(
-			'<<overlayReplace "optionsExportImport">><<set $currentOverlay to null>>'
+			'<<overlayReplace "optionsExportImport">><<unset _currentOverlay>>'
 		);
 		return finalData;
 	}
@@ -329,7 +342,7 @@ var IronMan = (Save => {
 			//
 			V.ironmanautosaveschedule = (
 				date.getTime() +
-				getRandomIntInclusive(432000, 777600) * 1000
+				random(432000, 777600) * 1000
 			).toString(8);
 		}
 	}

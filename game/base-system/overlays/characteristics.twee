@@ -78,7 +78,23 @@ You have a <<skincolourtext>>
 	Your chest is flat, but your clothing pads it, making it look <<breastsizedesc $player.perceived_breastsize>>.
 <</if>>
 You have a <<bottom>>.
-<<if $player.penisExist>>You have a<<if $player.penissize is 4>>n<</if>> <<penis>>.<</if>>
+<<if $player.penisExist and $player.vaginaExist>>
+	<<silently>>
+	<<penis>><<set _penis to _text_output>>
+	<<pussy true>><<set _pussy to _text_output>>
+	<</silently>>
+	You have <<a _penis>> and <<a _pussy>>.
+<<else>>
+	You have
+	<<if $player.penisExist>>
+		<<silently>><<penis>><<set _penis to _text_output>><</silently>>
+		<<a _penis>>.
+	<</if>>
+	<<if $player.vaginaExist>>
+		<<silently>><<pussy>><<set _pussy to _text_output>><</silently>>
+		 <<a _pussy>>.
+	<</if>>
+<</if>>
 
 <!--Hair Details-->
 <<set _hairTextConfig = { currentValue : $hairlength, states : [
@@ -132,6 +148,7 @@ You have a <<bottom>>.
 	}>>
 	<<set _semenVolumeTextConfig = { currentValue : $semen_amount, states : [
 			{ requiredValue: 0,							color: 'red',		preText: "",				description: "but you\'ve been milked completely dry."},
+			{ requiredValue: 1,							color: 'pink',		preText: "but you\'re ", 	description: 'almost empty. '},
 			{ requiredValue: ($semen_volume / 7) * 2,	color: 'pink',		preText: "but you\'re ",	description: 'running out. '},
 			{ requiredValue: ($semen_volume / 7) * 3,	color: 'purple',	preText: "but you\'re ",	description: 'running low. '},
 			{ requiredValue: ($semen_volume / 7) * 4,	color: 'blue',		preText: "and you\'ve ",	description: 'about half left. '},
@@ -174,6 +191,7 @@ You have a <<bottom>>.
 		}>>
 	<<set _milkVolumeTextConfig = { currentValue : $milk_amount, states : [
 			{ requiredValue: 0,							color: 'red',		preText: "",				description: " but you\'ve been milked completely dry."},
+			{ requiredValue: 1,							color: 'pink',		preText: "but you\'re ", 	description: ' almost empty.'},
 			{ requiredValue: ($milk_volume / 7) * 2,	color: 'pink',		preText: "but you\'re ",	description: ' running out.'},
 			{ requiredValue: ($milk_volume / 7) * 3,	color: 'purple',	preText: "but you\'re ",	description: ' running low.'},
 			{ requiredValue: ($milk_volume / 7) * 4,	color: 'blue',		preText: "and you\'ve ",	description: ' about half left.'},
@@ -225,7 +243,9 @@ You have a <<bottom>>.
 <br>
 <<bodywriting>>
 <div id="characteristics-display">
-	<h4>Core Characteristics</h4>
+
+	<br>
+	<span class="gold">Core Characteristics</span>
 	<div id="base-characteristics" class="characteristic-box-list">
 		<!--Core skill configurations-->
 		<<silently>>
@@ -415,7 +435,8 @@ You have a <<bottom>>.
 		]>>
 	<</silently>>
 
-	<h4>Skills</h4>
+	<br>
+	<span class="gold">Skills</span>
 	<div id="base-skills" class="characteristic-box-list" @style="($parasite.left_ear.name == 'slime' || $parasite.right_ear.name == 'slime') ? '--min-width: 30%;' : ''">
 		<!--Additional skills configurations-->
 		<<silently>>
@@ -452,7 +473,7 @@ You have a <<bottom>>.
 			<<if $worn.under_upper.type.includesAny("dance", "naked") and $worn.under_lower.type.includesAny("dance", "naked")
 			and $worn.upper.type.includesAny("dance", "naked")and $worn.lower.type.includesAny("dance", "naked")>>
 				<<set _dancingConfig.modifier to Math.floor(_dancingConfig.modifier * 1.05)>>
-				<<if $worn.under_upper.type is "dance" or $worn.under_lower.type is "dance" or $worn.upper.type is "dance" or $worn.lower.type is "dance">>
+				<<if [$worn.under_upper.type, $worn.under_lower.type, $worn.upper.type, $worn.lower.type].flat().includes("dance")>>
 					<<set _dancingConfig.modTypes.good.pushUnique("dancing attire")>>
 				<<else>>
 					<<set _dancingConfig.modTypes.good.pushUnique("naked")>>
@@ -533,7 +554,8 @@ You have a <<bottom>>.
 		<<characteristic-box _tendingConfig>>
 	</div>
 
-	<h4>Sex Skills</h4>
+	<br>
+	<span class="gold">Sex Skills</span>
 	<!--Sex skills configurations-->
 	<<silently>>
 		<<set _seductionConfig =	{ name : "Seduction",	displayType : "grade",	currentValue : $seductionskill, modifier: 100, modTypes: { good: [], bad: [] },		states : _basicSkillGrades}>>
@@ -554,7 +576,7 @@ You have a <<bottom>>.
 			<<set _vaginalConfig =	{ name : "Vaginal",		displayType : "grade",	currentValue : $vaginalskill,	modifier: 100, modTypes: { good: [], bad: [] },		states : _basicSkillGrades}>>
 		<</if>>
 	<</silently>>
-	<<if $images is 1>>
+	<<if $options.images is 1>>
 		<div id="player-body">
 			<<player-base-body>>
 		</div>
@@ -645,7 +667,8 @@ You have a <<bottom>>.
 		</div>
 	<</if>>
 
-	<h4>School Performance</h4>
+	<br>
+	<span class="gold">School Performance</span>
 	<div id="school-grades" class="characteristic-box-list">
 		<!--School grade configurations-->
 		<<silently>>
@@ -694,7 +717,8 @@ You have a <<bottom>>.
 		<br>
 	</div>
 
-<h4>Weapon skills</h4>
+	<br>
+	<span class="gold">Weapon skills</span>
 	<div id="prof" class="characteristic-box-list">
 		<<silently>>
 			<<set _sprayConfig =		{ name : "Sprays",		displayType : "grade",	currentValue : $prof.spray,		modifier: 100, modTypes: { good: [], bad: [] },		states : _basicSkillGrades}>>
@@ -711,7 +735,10 @@ You have a <<bottom>>.
 </div>
 <br><br>
 
-__Insecurities__ - <i>Scrutiny becomes harder to take as insecurity increases, inflicting more stress and damaging control. Acceptance renders you immune to the effect.</i><br><br>
+<br>
+<span class="gold">Insecurities</span>
+<div class="description">Scrutiny becomes harder to take as insecurity increases, inflicting more stress and damaging control. Acceptance renders you immune to the effect.</div>
+<br><br>
 <<if $insecurity_penis_tiny gte 1 and $player.penissize lte 0 and $acceptance_penis_tiny lte 999>>
 	<span class="red">Insecurity: Tiny Penis</span>
 	<div class="meter">

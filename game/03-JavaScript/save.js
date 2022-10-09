@@ -35,9 +35,7 @@ const DoLSave = ((Story, Save) => {
 
 	function parseVersion(version) {
 		version = marshalVersion(version);
-		return version
-			? version[0] * 1000000 + version[1] * 10000 + version[2] * 100 + version[3] * 1
-			: 0;
+		return version ? version[0] * 1000000 + version[1] * 10000 + version[2] * 100 + version[3] * 1 : 0;
 	}
 
 	/**
@@ -81,15 +79,9 @@ const DoLSave = ((Story, Save) => {
 	 * @returns {void}
 	 */
 	function load(slot, saveObj, overrides) {
-		const save =
-			saveObj == null
-				? slot === "auto"
-					? Save.autosave.get()
-					: Save.slots.get(slot)
-				: saveObj;
+		const save = saveObj == null ? (slot === "auto" ? Save.autosave.get() : Save.slots.get(slot)) : saveObj;
 		const saveDetails = JSON.parse(localStorage.getItem(KEY_DETAILS));
-		const metadata =
-			slot === "auto" ? saveDetails.autosave.metadata : saveDetails.slots[slot].metadata;
+		const metadata = slot === "auto" ? saveDetails.autosave.metadata : saveDetails.slots[slot].metadata;
 		/* Check if metadata for save matches the save's computed md5 hash. If it matches, the ironman save was not tampered with.
 			Bypass this check if on a mobile, because they are notoriously difficult to grab saves from in the event of issues. */
 		if (metadata.ironman && !Browser.isMobile.any()) {
@@ -122,10 +114,7 @@ const DoLSave = ((Story, Save) => {
 	function save(saveSlot, confirm, saveId, saveName) {
 		if (saveId == null) {
 			Wikifier.wikifyEval(`<<saveConfirm ${saveSlot}>>`);
-		} else if (
-			(V.confirmSave === true && confirm !== true) ||
-			(V.saveId !== saveId && saveId != null)
-		) {
+		} else if ((V.confirmSave === true && confirm !== true) || (V.saveId !== saveId && saveId != null)) {
 			Wikifier.wikifyEval(`<<saveConfirm ${saveSlot}>>`);
 		} else {
 			if (saveSlot != null) {
@@ -143,8 +132,9 @@ const DoLSave = ((Story, Save) => {
 						ironman: V.ironmanmode,
 						signature: V.ironmanmode ? IronMan.getSignature(save) : false,
 					});
-					V.currentOverlay = null;
-					overlayShowHide("customOverlay");
+					delete T.currentOverlay;
+					// todo: find a better solution
+					closeOverlay();
 					if (V.ironmanmode === true) Engine.restart();
 				}
 			}
@@ -406,9 +396,7 @@ window.copySavedata = function (id) {
 window.updateExportDay = function () {
 	if (V.saveDetails != null && State.history[0].variables.saveDetails != null) {
 		V.saveDetails.exported.days = clone(V.days);
-		State.history[0].variables.saveDetails.exported.days = clone(
-			State.history[0].variables.days
-		);
+		State.history[0].variables.saveDetails.exported.days = clone(State.history[0].variables.days);
 		V.saveDetails.exported.count++;
 		State.history[0].variables.saveDetails.exported.count++;
 		V.saveDetails.exported.dayCount++;
@@ -481,16 +469,8 @@ const importSettingsData = function (data) {
 				if (namedObjects.includes(listKey[i]) && S.starting[listKey[i]] != null) {
 					const itemKey = Object.keys(listObject[listKey[i]]);
 					for (let j = 0; j < itemKey.length; j++) {
-						if (
-							V[listKey[i]][itemKey[j]] != null &&
-							S.starting[listKey[i]][itemKey[j]] != null
-						) {
-							if (
-								validateValue(
-									listObject[listKey[i]][itemKey[j]],
-									S.starting[listKey[i]][itemKey[j]]
-								)
-							) {
+						if (V[listKey[i]][itemKey[j]] != null && S.starting[listKey[i]][itemKey[j]] != null) {
+							if (validateValue(listObject[listKey[i]][itemKey[j]], S.starting[listKey[i]][itemKey[j]])) {
 								V[listKey[i]][itemKey[j]] = S.starting[listKey[i]][itemKey[j]];
 							}
 						}
@@ -509,21 +489,24 @@ const importSettingsData = function (data) {
 			const listObject = settingsObjects("general");
 			const listKey = Object.keys(listObject);
 			const namedObjects = ["map", "skinColor", "shopDefaults"];
+			// correct swapped min/max values
+			if (S.general.breastsizemin > S.general.breastsizemax) {
+				const temp = S.general.breastsizemin;
+				S.general.breastsizemin = S.general.breastsizemax;
+				S.general.breastsizemax = temp;
+			}
+			if (S.general.penissizemin > S.general.penissizemax) {
+				const temp = S.general.penissizemin;
+				S.general.penissizemin = S.general.penissizemax;
+				S.general.penissizemax = temp;
+			}
 
 			for (let i = 0; i < listKey.length; i++) {
 				if (namedObjects.includes(listKey[i]) && S.general[listKey[i]] != null) {
 					const itemKey = Object.keys(listObject[listKey[i]]);
 					for (let j = 0; j < itemKey.length; j++) {
-						if (
-							V[listKey[i]][itemKey[j]] != null &&
-							S.general[listKey[i]][itemKey[j]] != null
-						) {
-							if (
-								validateValue(
-									listObject[listKey[i]][itemKey[j]],
-									S.general[listKey[i]][itemKey[j]]
-								)
-							) {
+						if (V[listKey[i]][itemKey[j]] != null && S.general[listKey[i]][itemKey[j]] != null) {
+							if (validateValue(listObject[listKey[i]][itemKey[j]], S.general[listKey[i]][itemKey[j]])) {
 								V[listKey[i]][itemKey[j]] = S.general[listKey[i]][itemKey[j]];
 							}
 						}
@@ -554,12 +537,7 @@ const importSettingsData = function (data) {
 							S.npc[V.NPCNameList[i]][listKey[j]] === "none"
 						) {
 							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
-						} else if (
-							validateValue(
-								listObject[listKey[j]],
-								S.npc[V.NPCNameList[i]][listKey[j]]
-							)
-						) {
+						} else if (validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])) {
 							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
 						}
 					}
@@ -632,12 +610,7 @@ function exportSettings(data, type) {
 				const itemKey = Object.keys(listObject[listKey[i]]);
 				for (let j = 0; j < itemKey.length; j++) {
 					if (V[listKey[i]][itemKey[j]] != null) {
-						if (
-							validateValue(
-								listObject[listKey[i]][itemKey[j]],
-								V[listKey[i]][itemKey[j]]
-							)
-						) {
+						if (validateValue(listObject[listKey[i]][itemKey[j]], V[listKey[i]][itemKey[j]])) {
 							S.starting[listKey[i]][itemKey[j]] = V[listKey[i]][itemKey[j]];
 						}
 					}
@@ -661,9 +634,7 @@ function exportSettings(data, type) {
 			const itemKey = Object.keys(listObject[listKey[i]]);
 			for (let j = 0; j < itemKey.length; j++) {
 				if (V[listKey[i]][itemKey[j]] != null) {
-					if (
-						validateValue(listObject[listKey[i]][itemKey[j]], V[listKey[i]][itemKey[j]])
-					) {
+					if (validateValue(listObject[listKey[i]][itemKey[j]], V[listKey[i]][itemKey[j]])) {
 						S.general[listKey[i]][itemKey[j]] = V[listKey[i]][itemKey[j]];
 					}
 				}
@@ -682,11 +653,7 @@ function exportSettings(data, type) {
 		S.npc[V.NPCNameList[i]] = {};
 		for (let j = 0; j < listKey.length; j++) {
 			// Overwrite to allow for "none" default value in the start passage to allow for rng to decide
-			if (
-				V.passage === "Start" &&
-				["pronoun", "gender"].includes(listKey[i]) &&
-				V.NPCName[i][listKey[j]] === "none"
-			) {
+			if (V.passage === "Start" && ["pronoun", "gender"].includes(listKey[i]) && V.NPCName[i][listKey[j]] === "none") {
 				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
 			} else if (validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])) {
 				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
@@ -780,7 +747,6 @@ function settingsObjects(type) {
 				},
 				gamemode: { strings: ["normal", "soft", "hard"] },
 				ironmanmode: { bool: false },
-				maxStates: { min: 1, max: 20, decimals: 0 },
 				player: {
 					gender: { strings: ["m", "f", "h"], randomize: "characterAppearance" },
 					gender_body: { strings: ["m", "f", "a"], randomize: "characterAppearance" },
@@ -792,16 +758,7 @@ function settingsObjects(type) {
 				},
 				skinColor: {
 					natural: {
-						strings: [
-							"light",
-							"medium",
-							"dark",
-							"gyaru",
-							"ylight",
-							"ymedium",
-							"ydark",
-							"ygyaru",
-						],
+						strings: ["light", "medium", "dark", "gyaru", "ylight", "ymedium", "ydark", "ygyaru"],
 						randomize: "characterAppearance",
 					},
 					range: { min: 0, max: 100, decimals: 0, randomize: "characterAppearance" },
@@ -868,7 +825,7 @@ function settingsObjects(type) {
 				asphyxiaLvl: { min: 0, max: 4, decimals: 0 },
 				NudeGenderDC: { min: 0, max: 2, decimals: 0 },
 				breastsizemin: { min: 0, max: 4, decimals: 0 },
-				breastsizemax: { min: 0, max: 13, decimals: 0 },
+				breastsizemax: { min: 0, max: 12, decimals: 0 },
 				bottomsizemax: { min: 0, max: 9, decimals: 0 },
 				penissizemax: { min: -2, max: 4, decimals: 0 },
 				penissizemin: { min: -2, max: 0, decimals: 0 },
@@ -880,13 +837,6 @@ function settingsObjects(type) {
 				// playerPregnancyHumanDisable: {boolLetter: true, bool: true},
 				// playerPregnancyBeastDisable: {boolLetter: true, bool: true},
 				// npcPregnancyDisable: {boolLetter: true, bool: true},
-				images: { min: 0, max: 1, decimals: 0 },
-				sidebarAnimations: { bool: true },
-				combatAnimations: { bool: true },
-				bodywritingImages: { bool: true },
-				silhouettedisable: { boolLetter: true, bool: true },
-				blinkingdisable: { boolLetter: true, bool: true },
-				halfcloseddisable: { boolLetter: true, bool: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
 				checkstyle: {
@@ -897,33 +847,42 @@ function settingsObjects(type) {
 				debugdisable: { boolLetter: true, bool: true },
 				statdisable: { boolLetter: true, bool: true },
 				cheatdisabletoggle: { boolLetter: true, bool: true },
-				showCaptionText: { bool: true },
 				confirmSave: { bool: true },
 				confirmLoad: { bool: true },
 				confirmDelete: { bool: true },
-				newWardrobeStyle: { bool: true },
-				lightSpotlight: { decimals: 0.1 },
-				lightGradient: { decimals: 0 },
-				lightGlow: { decimals: 0 },
-				lightFlat: { decimals: 0 },
-				lightCombat: { decimals: 0.1 },
-				lightTFColor: { decimals: 0.1 },
-				sidebarStats: { strings: ["Disabled", "Limited", "All"] },
-				sidebarTime: { strings: ["Disabled", "top", "bottom"] },
-				combatControls: { strings: ["radio", "lists", "limitedLists"] },
 				reducedLineHeight: { bool: true },
-				neverNudeMenus: { bool: true },
-				skipStatisticsConfirmation: { bool: true },
 				multipleWardrobes: { strings: [false, "isolated"] }, //, "all"
 				outfitEditorPerPage: { min: 5, max: 20, decimals: 0 }, //, "all"
-				map: {
-					movement: { bool: true },
-					top: { bool: true },
-					markers: { bool: true },
-				},
-				skinColor: {
-					tanImgEnabled: { boolLetter: true, bool: true },
+				options: {
+					neverNudeMenus: { bool: true },
+					showCaptionText: { bool: true },
+					sidebarStats: { strings: ["disabled", "limited", "all"] },
+					sidebarTime: { strings: ["disabled", "top", "bottom"] },
+					combatControls: { strings: ["radio", "lists", "limitedLists"] },
+					mapMovement: { bool: true },
+					mapTop: { bool: true },
+					mapMarkers: { bool: true },
+					images: { min: 0, max: 1, decimals: 0 },
+					combatImages: { min: 0, max: 1, decimals: 0 },
+					bodywritingImages: { bool: true },
+					silhouetteEnabled: { bool: true },
+					tanImgEnabled: { bool: true },
 					tanningEnabled: { bool: true },
+					sidebarAnimations: { bool: true },
+					blinkingEnabled: { bool: true },
+					combatAnimations: { bool: true },
+					halfClosedEnabled: { bool: true },
+					characterLightEnabled: { bool: true },
+					lightSpotlight: { min: 0, max: 1, decimals: 2 },
+					lightGradient: { min: 0, max: 1, decimals: 2 },
+					lightGlow: { min: 0, max: 1, decimals: 2 },
+					lightFlat: { min: 0, max: 1, decimals: 2 },
+					lightCombat: { min: 0, max: 1, decimals: 2 },
+					lightTFColor: { min: 0, max: 1, decimals: 2 },
+					maxStates: { min: 1, max: 20, decimals: 0 },
+					newWardrobeStyle: { bool: true },
+					useNarrowMarket: { bool: true },
+					skipStatisticsConfirmation: { bool: true },
 				},
 				shopDefaults: {
 					alwaysBackToShopButton: { bool: true },
@@ -1066,14 +1025,9 @@ window.randomizeSettings = function (filter) {
 		Object.entries(settingsObject).forEach(setting => {
 			if (settingContainers.includes(setting[0])) {
 				randomizeSettingLoop(setting[1], mainObject, setting[0]);
-			} else if (
-				(!filter && setting[1].randomize) ||
-				(filter && filter === setting[1].randomize)
-			) {
+			} else if ((!filter && setting[1].randomize) || (filter && filter === setting[1].randomize)) {
 				if (subObject) {
-					settingsResult[mainObject][subObject][setting[0]] = randomizeSettingSet(
-						setting[1]
-					);
+					settingsResult[mainObject][subObject][setting[0]] = randomizeSettingSet(setting[1]);
 				} else {
 					settingsResult[mainObject][setting[0]] = randomizeSettingSet(setting[1]);
 				}
@@ -1152,9 +1106,10 @@ window.isJsonString = function (s) {
  * @param {object} result An object to store the results in. - leave blank.
  * @param {Set} hist A set used for Cycle history. - leave blank.
  */
+
 function recurseNaN(obj, path, result = null, hist = null) {
-	if (result === null) result = { nulls: [], nan: [], cycle: [] };
-	if (hist === null) hist = new Set([obj]);
+	result = Object.assign({ nulls: [], nan: [], cycle: [] }, result);
+	if (hist == null) hist = new Set([obj]);
 	/* let result = {"nulls" : [], "nan" : [], "cycle" : []}; */
 	for (const [key, val] of Object.entries(obj)) {
 		const newPath = `${path}.${key}`;
@@ -1180,3 +1135,40 @@ function recurseNaN(obj, path, result = null, hist = null) {
 	return result;
 }
 window.recurseNaN = recurseNaN;
+
+/**
+ * Recursively traverse target object, finding and returning an object containing all the NaN vars inside.
+ *
+ * Use with objectAssignDeep to re-assign 0 to all bad NaN'd vars.  Use with caution.
+ *
+ * @param {object} target The object to traverse.  Defaults to V ($).
+ * @returns {object} An object containing all the properties/sub-props that were NaN.
+ */
+function scanNaNs(target = V) {
+	// If this gets set to true during function, a NaN was hit within scope.
+	let isMutated = false;
+	const current = Object.create({});
+	// Loop through all properties of the target for NaNs and objects to scan.
+	for (const [key, value] of Object.entries(target)) {
+		// If value is an object, scan that property.
+		if (value && typeof value === "object") {
+			const resp = scanNaNs(value);
+			// If scanNaNs returns a non-null object, there was a NaN somewhere, so make sure to update current obj.
+			if (resp && typeof resp === "object") {
+				current[key] = resp;
+				isMutated = true;
+			}
+		} else if (typeof value === "number") {
+			// Does what it says on the tin, make sure you only test numbers.
+			if (isNaN(value)) {
+				// Set property to a default value, likely zero.
+				current[key] = 0;
+				isMutated = true;
+			}
+		}
+	}
+	// Return a fully realised object, indicating there were NaNs, or null, which can be ignored.
+	// isMutated controls whether we have encountered NaNs, remember to update where necessary.
+	return isMutated ? current : null;
+}
+window.scanNaNs = scanNaNs;

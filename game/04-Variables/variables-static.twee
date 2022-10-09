@@ -20,7 +20,11 @@ and are required for processing for loops, default objects, etc.*/
 <<init_locations>>
 <<init_tips>>
 
-<<set setup.baseNNPC = {penis : 0, vagina: 0, gender: 0, description: 0, title: 0, insecurity: 0, pronoun: 0, penissize: 0, penisdesc: 0, bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 0, init: 0, intro: 0, type: "human", trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: 0, trauma: 0, eyeColour: 0, hairColour: 0}>>
+<<set setup.baseNNPC = {penis : 0, vagina: 0, gender: "none", description: 0, title: 0, insecurity: 0, pronoun: "none", penissize: 0, penisdesc: "none", bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 0, init: 0, intro: 0, type: "human", trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: "", trauma: 0, eyeColour: 0, hairColour: 0, chastity: {penis: "", vagina: "", anus: ""}}>>
+<<set setup.NPCNameList = ["Avery","Bailey","Briar","Charlie","Darryl","Doren","Eden","Gwylan","Harper","Jordan","Kylar","Landry","Leighton","Mason","Morgan","River","Robin","Sam","Sirris","Whitney","Winter","Black Wolf","Niki","Quinn","Remy","Alex","Great Hawk","Wren","Sydney"]>>
+
+/* this initialises the C.npc object */
+<<run initCNPC()>>
 
 <<set setup.skinColor to {
 	"light": {"hStart": 30, "hEnd": 47, "sStart": 0.15, "sEnd": 0.30,"bStart": 4.3, "bEnd": 3.4},
@@ -185,6 +189,7 @@ and are required for processing for loops, default objects, etc.*/
 			"doggyactiveblush3":"img/sex/doggyRed/active/body/doggyactiveblush3.png",
 			"doggyactiveblush4":"img/sex/doggyRed/active/body/doggyactiveblush4.png",
 			"doggyactiveblush5":"img/sex/doggyRed/active/body/doggyactiveblush5.png",
+			"doggyactivemouth":"img/sex/doggyRed/active/body/doggyactivemouth.png",
 			"freckles":"img/sex/doggyRed/active/body/freckles.png",
 			"breastsTiny":"img/sex/doggyRed/active/body/doggyactivebreaststiny.png",
 			"breastsSmall":"img/sex/doggyRed/active/body/doggyactivebreastssmall.png",
@@ -234,6 +239,7 @@ and are required for processing for loops, default objects, etc.*/
 			"doggyactiveblush3":"img/sex/doggy/active/body/doggyactiveblush3.png",
 			"doggyactiveblush4":"img/sex/doggy/active/body/doggyactiveblush4.png",
 			"doggyactiveblush5":"img/sex/doggy/active/body/doggyactiveblush5.png",
+			"doggyactivemouth":"img/sex/doggy/active/body/doggyactivemouth.png",
 			"freckles":"img/sex/doggy/active/body/freckles.png",
 			"breastsSmall":"img/sex/doggy/active/body/doggyactivebreastssmall.png",
 			"breastsLarge":"img/sex/doggy/active/body/doggyactivebreastslarge.png",
@@ -287,6 +293,7 @@ and are required for processing for loops, default objects, etc.*/
 			"activeblush3":"img/sex/missionaryRed/active/body/activeblush3.png",
 			"activeblush4":"img/sex/missionaryRed/active/body/activeblush4.png",
 			"activeblush5":"img/sex/missionaryRed/active/body/activeblush5.png",
+			"activemouth":"img/sex/missionaryRed/active/body/activemouth.png",
 			"freckles":"img/sex/missionaryRed/active/body/freckles.png",
 			"breastsTiny":"img/sex/missionaryRed/active/body/activebreaststiny.png",
 			"breastsSmall":"img/sex/missionaryRed/active/body/activebreastssmall.png",
@@ -328,6 +335,7 @@ and are required for processing for loops, default objects, etc.*/
 			"activeblush3":"img/sex/missionary/active/body/activeblush3.png",
 			"activeblush4":"img/sex/missionary/active/body/activeblush4.png",
 			"activeblush5":"img/sex/missionary/active/body/activeblush5.png",
+			"activemouth":"img/sex/missionary/active/body/activemouth.png",
 			"freckles":"img/sex/missionary/active/body/freckles.png",
 			"breastsTiny":"img/sex/missionary/active/body/activebreaststiny.png",
 			"breastsSmall":"img/sex/missionary/active/body/activebreastssmall.png",
@@ -483,6 +491,17 @@ and are required for processing for loops, default objects, etc.*/
 
 <<set setup.bodyparts to ["forehead", "left_cheek", "right_cheek", "left_shoulder", "right_shoulder", "breasts", "back", "left_bottom", "right_bottom", "pubic", "left_thigh", "right_thigh"]>>
 
+<<set setup.clothingLayer to {
+	"all": ["over_upper","over_lower","over_head","upper","lower","under_upper","under_lower","head","face","neck","hands","legs","feet"],
+	"body": ["upper","lower","under_upper","under_lower","head","face","neck","hands","legs","feet"],
+	"torso": ["over_upper","over_lower","upper","lower","under_upper","under_lower"],
+	"torso_inner": ["upper","lower","under_upper","under_lower"],
+	"torso_outer": ["over_upper","over_lower","upper","lower"],
+	"over": ["over_upper","over_lower","over_head"],
+	"upper": ["upper", "under_upper"],
+	"lower": ["lower","under_lower"]
+}>>
+
 <<set setup.actionsTypes to {
 	'personTypes': [
 		'Everyone', 'Strangers', 'Acquaintances', 'Alternative', 'Defiant', 'Submissive', 'Animals', 'Tentacles', 'Bailey', 'Robin', 'Whitney', 'Kylar', 'Sydney', 'Eden', 'Avery', 'Leighton'
@@ -633,6 +652,20 @@ and are required for processing for loops, default objects, etc.*/
 	"betSteps":    [100,   200,   500   ], 
 	"baseMaxBets": [2500,  5000,  10000 ],
 	"anteSizes":   [25000, 50000, 100000],
+}>>
+
+<<set setup.parasiteTypesPerBodypart to {
+	"nipples": ["none", "urchin", "slime"],
+	"penis": ["none", "urchin", "slime"],
+	"clit": ["none", "urchin", "slime"],
+	"bottom": ["none", "urchin", "slime", "maggot"],
+	"left_thigh": ["none", "maggot"],
+	"right_thigh": ["none", "maggot"],
+	"left_arm": ["none", "maggot"],
+	"right_arm": ["none", "maggot"],
+	"left_ear": ["none", "slime"],
+	"right_ear": ["none", "slime"],
+	"tummy": ["none", "maggot"],
 }>>
 
 <</widget>>

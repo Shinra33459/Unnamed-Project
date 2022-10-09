@@ -9,7 +9,7 @@
 	<<set $noon_check to 0>>
 	<<set $dawn_check to 0>>
 	<<if $renttime lte 0>>
-		<<set $baileyOverdue++>>
+		<<set $baileyOverdue to ($baileyOverdue || 0) + 1>>
 	<</if>>
 	<<set $renttime -= 1>>
 	<<set $motherwake to 0>>
@@ -34,7 +34,7 @@
 	<<set $detentionattended to 0>>
 	<<unset $school_infirmary_painkiller>>
 	<<unset $school_infirmary_bed>>
-	<<if $locker_suspicion isnot undefined and $locker_suspicion gt 0>>
+	<<if $locker_suspicion gt 0>>
 		<<locker_suspicion -1>>
 	<</if>>
 	<<unset $locker_mason>>
@@ -61,6 +61,7 @@
 	<<unset $whitneyAsk>>
 	<<unset $whitney_text>>
 	<<unset $whitney_text_trigger>>
+	<<unset $whitneyPub>>
 	<<set $whitneyDaily to {}>>
 	<<set $policecollarseduceattempt to 0>>
 	<<set $tenyclusPlayed to 0>>
@@ -185,6 +186,9 @@
 	<<if $chef_rework gte 1>>
 		<<set $chef_rework -= 1>>
 	<</if>>
+	<<if $chef_sus gt 0>>
+		<<set $chef_sus -= 1>>
+	<</if>>
 	<<if $slimeSleepEvent gt 0>>
 		<<set $slimeSleepEvent -= 1>>
 	<</if>>
@@ -234,16 +238,19 @@
 	<<unset $ex_brothel>>
 	<<unset $ex_studio>>
 	<<unset $ex_high>>
+	<<unset $ex_connudatus>>
 	<<unset $ex_stall>>
 	<<unset $ex_mason>>
 	<<unset $ex_flyover>>
 	<<unset $ex_cream>>
 	<<unset $ex_road>>
 	<<unset $ex_fence>>
+	<<unset $ex_lorries>>
+	<<unset $ex_fountain>>
 	<<unset $mason_spoken>>
 	<<unset $stall_rented>>
 	<<unset $rocks_pool_invite>>
-	<<set $bird.satisfied to undefined>>
+	<<run delete $bird.satisfied>>
 	<<unset $bird_wash>>
 	<<unset $birdDailyGreeting>>
 	<<unset $greatHawkMonsterRoll>>
@@ -616,38 +623,28 @@
 
 	<<moonstate>>
 
+
 	<<if $schoolday is 1 and $location isnot "prison">>
-		<<if $scienceattended isnot 1>>
-			<<set $sciencemissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
-		<<else>>
-			<<set $sciencemissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
-		<</if>>
-		<<if $mathsattended isnot 1>>
-			<<set $mathsmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
-		<<else>>
-			<<set $mathsmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
-		<</if>>
-		<<if $englishattended isnot 1>>
-			<<set $englishmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
-		<<else>>
-			<<set $englishmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
-		<</if>>
-		<<if $historyattended isnot 1>>
-			<<set $historymissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
-		<<else>>
-			<<set $historymissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
-		<</if>>
-		<<if $swimmingattended isnot 1>>
-			<<set $swimmingmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
-		<<else>>
-			<<set $swimmingmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
-		<</if>>
-		<<set $scienceattended to 0>>
-		<<set $mathsattended to 0>>
-		<<set $englishattended to 0>>
-		<<set $historyattended to 0>>
-		<<set $swimmingattended to 0>>
+		<!-- We calculate and add to missed values, missed lesson counts, etc. -->
+		<!-- The math below uses doubled values to calculate the adds and subtracts in one equation each -->
+		<<set $_attended to $scienceattended + $mathsattended + $englishattended + $historyattended + ($swimmingattended % 2)>>
+		<<set $sciencemissed += 1 - $scienceattended * 2>>
+		<<set $mathsmissed += 1 - $mathsattended * 2>>
+		<<set $englishmissed += 1 - $englishattended * 2>>
+		<<set $historymissed += 1 - $historyattended * 2>>
+		<<set $swimmingmissed += 1 - ($swimmingattended % 2) * 2>>
+		<<set $lessonmissed += 5 - $_attended * 2>>
+		<<set $lessonmissedtext to 5 - $_attended>>
+
+		<<set $lessonmissed to Math.max(0, $lessonmissed)>>
 	<</if>>
+	<<set $scienceattended to 0>>
+	<<set $mathsattended to 0>>
+	<<set $englishattended to 0>>
+	<<set $historyattended to 0>>
+	<<set $swimmingattended to 0>>
+
+	<<schoolclothesreset>>
 
 	<<switch $month>>
 	<<case "january" "may" "september">>
@@ -660,7 +657,19 @@
 			<</if>>
 		<</if>>
 	<<case "april" "july" "december">>
-		<<if $weekday is 7 or $weekday is 1 or $weekday is 2>>
+		<<if $weekday is 1>>
+            <!-- If it's the last day of the Holidays and a Sunday, then tomorrow is a school day -->
+            <<if $monthday is getLastDayOfMonth()>>
+                <<set $schoolterm to 1>>
+            <<else>>
+                <<set $schoolterm to 0>>
+            <</if>>
+        <<elseif $weekday is 7 or $weekday is 2>>
+            <<set $schoolterm to 0>>
+        <</if>>
+    <<case "march" "june" "november">>
+        <<if $weekday is 1 and $monthday is getLastDayOfMonth()>>
+            <!-- If it's the last day before the Holidays and a Sunday, then tomorrow is not a school day -->
 			<<set $schoolterm to 0>>
 		<</if>>
 	<</switch>>
@@ -880,7 +889,7 @@
 			<<if $NPCName[$NPCNameList.indexOf("Mason")].love gte $npclovehigh>>
 				<<set _delinquencyDecay += 1>>
 			<</if>>
-			<<if _lessonmissed>>
+			<<if $lessonmissedtext>>
 				<<set _delinquencyDecay to Math.floor(_delinquencyDecay / 2)>>
 			<</if>>
 			<<delinquency `-_delinquencyDecay / 4`>>
@@ -1123,7 +1132,7 @@
 		<<unset $averyDismissalSceneWait>>
 	<</if>>
 
-	<<if $sydneyScience isnot 1 and $days gte random(7, 12)>>
+	<<if $sydneyScience isnot 1 and $days gte random(14, 21)>>
 		/*<<set $sydneyLate to 1>><<set $sydneyScience to 1>>*/ <!-- Uncomment this when Sydney can show up in Science Class -->
 	<</if>>
 
@@ -1148,7 +1157,9 @@
 		<<else>>
 			<<set $NPCName[$NPCNameList.indexOf("Sydney")].title to "faithful">>
 		<</if>>
-		<<unset $sydneyLate>> <!-- Remove this line when Sydney can show up in Science Class -->
+		<<if $sydneyScience isnot 1 or $sydneySeen.includes("science")>>
+			<<unset $sydneyLate>>
+		<</if>>
 		<<if $schoolday is 1 and random(1, 4) is 1>>
 			<<set $sydneyLate to 1>>
 		<</if>>
@@ -1172,6 +1183,8 @@
 		<<set $sydneyDaily to {}>>
 		<<set $sydneyDaily.sex to 0>>
 		<<unset $sydneyScienceWarn>>
+		<<unset $sydneyClassWarn>>
+		<<unset $sydneyScienceWalk>>
 		<<unset $sydneyPunish>>
 		<<unset $sydneyTempleSkip>>
 
@@ -1429,6 +1442,26 @@
 			}
 		})>>
 	<</if>>
+	
+	<<if $hypnosis_traits.deviancy and $bestialitydisable is "f">>
+		<<if $hypnosis_deviancy_day isnot true>>
+			<<switch $hypnosis_traits.deviancy>>
+			<<case 1>>
+				<<trauma 60>>
+			<<case 2>>
+				<<trauma 120>>				
+			<<case 3>>
+				<<trauma 180>>				
+			<<case 4>>
+				<<trauma 240>>
+			<<case 5>>
+				<<trauma 300>>				
+			<</switch>>
+			<<set $effectsmessage to 1>><<set $hypnosis_deviancy_message to 1>>
+		<<else>>
+			<<unset $hypnosis_deviancy_day>>
+		<</if>>
+	<</if>>
 <</if>>
 <</widget>>
 
@@ -1471,6 +1504,7 @@
 <<unset $alexwake>>
 <<unset $alex_bed>>
 <<unset $alex_bed_spurned>>
+<<unset $connudatus_stripped>>
 <</widget>>
 
 <<widget "hour">>
@@ -1774,6 +1808,7 @@
 	<<set $moonstate to 0>>
 	<<unset $moonEvent>>
 	<<clearWraith>>
+	<<unset $noEarSlime>>
 <</if>>
 
 <</widget>>

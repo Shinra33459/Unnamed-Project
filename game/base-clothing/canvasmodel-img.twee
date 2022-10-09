@@ -8,7 +8,7 @@ Render full player image.
 	<<selectmodel "main" "sidebar">>
 	<<modelprepare-player-body>>
 	<<modelprepare-player-clothes>>
-	<<if $sidebarAnimations isnot false>>
+	<<if $options.sidebarAnimations isnot false>>
 		<<animatemodel _args[0]>>
 	<<else>>
 		<<rendermodel _args[0]>>
@@ -50,7 +50,7 @@ for (let i = 0; i < $skinColor.tanLoc.length; i++) {
 
 _modeloptions.skin_type = $skinColor.natural || "light";
 _modeloptions.skin_tone = tanValByName["body"];
-if ($skinColor.tanningEnabled is true){
+if ($options.tanningEnabled is true){
 	for (let loc in tanValByName) {
 		if (loc !== 'body') {
 			_modeloptions['skin_tone_'+loc] = tanValByName[loc];
@@ -66,6 +66,9 @@ if ($skinColor.tanningEnabled is true){
 <</if>>
 <<if $makeup.mascara != 0>>
 	<<set _modeloptions.mascara_colour to $makeup.mascara>>
+<</if>>
+<<if $makeup.mascara_running != 0>>
+	<<set _modeloptions.mascara_running to $makeup.mascara_running>>
 <</if>>
 <<if $makeup.lipstick != 0>>
 	<<set _modeloptions.lipstick_colour to $makeup.lipstick>>
@@ -237,7 +240,7 @@ if ($skinColor.tanningEnabled is true){
  -     ███ ███  ██   ██ ██    ██    ██ ██   ████  ██████  ███████
 -->
 
-<<if $bodywritingImages is true>>
+<<if $options.bodywritingImages is true>>
 	<<for _label, _value range $skin>>
 		<<if _value.writing>>
 			<<set _modeloptions["writing_"+_label] to setup.bodywriting_namebyindex[_value.index]>>
@@ -257,15 +260,17 @@ if ($skinColor.tanningEnabled is true){
 
 <<set _modeloptions.freckles = $player.freckles == true and $makeup.concealer != 1>>
 
+<<set _modeloptions.toast = _toast == true>>
+
 <!-- Eyes -->
 <<if $possessed>>
 	<<set _modeloptions.trauma to $possessed>>
 <<else>>
 	<<set _modeloptions.trauma to $trauma gte ($traumamax * 0.9)>>
 <</if>>
-<<set _modeloptions.blink to $blinkingdisable is "f">>
-<<set _modeloptions.eyes_bloodshot to $pain gte 100 and $willpowerpain is 0 or $tiredness >= $tirednessmax>>
-<<set _modeloptions.eyes_half to $halfcloseddisable isnot "t" and ($arousal gte ($arousalmax / 5) * 4 or $orgasmdown gte 1) and $trauma lt ($traumamax * 0.9) and $pain lt 60 and $eyelidTEST is true or ($possessed or $tiredness >= $tirednessmax * 0.75)>>
+<<set _modeloptions.blink to $options.blinkingEnabled>>
+<<set _modeloptions.eyes_bloodshot to $pain gte 100 and $willpowerpain is 0 or $tiredness >= C.tiredness.max>>
+<<set _modeloptions.eyes_half to $options.halfClosedEnabled and ($arousal gte ($arousalmax / 5) * 4 or $orgasmdown gte 1) and $trauma lt ($traumamax * 0.9) and $pain lt 60 and $eyelidTEST is true or ($possessed or $tiredness >= C.tiredness.max * 0.75)>>
 
 <!-- Brows -->
 <<if $trauma gte $traumamax or $possessed>>
@@ -309,7 +314,7 @@ $worn.under_upper.type.includes("naked") and $worn.under_lower.type.includes("na
 <</if>>
 
 <!-- Tears -->
-<<set _modeloptions.tears = Math.floor(Math.clamp($pain, 0, 99) / 20)>>
+<<set _modeloptions.tears = painToTearsLvl($pain)>>
 
 <!--
  -    ████████ ███████ ███████
@@ -387,8 +392,9 @@ $worn.under_upper.type.includes("naked") and $worn.under_lower.type.includes("na
 	<<set _modeloptions.demon_tail_index to ZIndices.tailPenisCoverOverlay>>
 <</if>>
 <!-- Demon-harpy wings -->
-<<if isPartEnabled(_modeloptions.demon_wing_type) && isPartEnabled(_modeloptions.bird_wings_type)>>
-	<!-- Empty for now. -->
+<<if isPartEnabled(_modeloptions.demon_wings_type) and isPartEnabled(_modeloptions.bird_wings_type) and isChimeraEnabled("demonharpy", "wings")>>
+	<<set _modeloptions.bird_wings_type to 'default-demon'>>
+	<<set _modeloptions.demon_wings_type to 'hidden'>>
 <</if>>
 <!-- Demon-cow horns -->
 <<if isPartEnabled(_modeloptions.cow_horns_type) and isPartEnabled(_modeloptions.demon_horns_type) and isChimeraEnabled("demoncow", "horns")>>
@@ -493,6 +499,8 @@ Set model options & filters for player clothes
 
 <<set _modeloptions.upper_tucked to $upperTucked and !setup.clothes.upper[clothesIndex('upper', $worn.upper)].notuck and $worn.upper.outfitPrimary is undefined>>
 
+
+
 <<twinescript>>
 	let slots = [
 		["upper", $upperwetstage],
@@ -562,7 +570,7 @@ Set model options & filters for player clothes
 	<<set _modeloptions.drip_anal to "">>
 	<<set _modeloptions.drip_mouth to "">>
 
-	<<if $neverNudeMenus>>
+	<<if $options.neverNudeMenus>>
 		<<set _modeloptions.crotch_visible to false>>
 		<<set _modeloptions.penis to "">>
 		<<if $player.gender_appearance neq "m" or $player.perceived_breastsize gte 3>>
@@ -581,7 +589,7 @@ Set model options & filters for player clothes
 		<<set _modeloptions.worn_under_lower_colour to ($worn.under_lower.colourCustom ? $worn.under_lower.colourCustom : $worn.under_lower.colour)>>
 	<</if>>
 
-	<<if $sidebarRenderer is 'both'>>
+	<<if $options.sidebarRenderer is 'both'>>
 		<<rendermodel 'canvasimg-both'>>
 	<<else>>
 		<<rendermodel>>

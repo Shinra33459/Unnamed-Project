@@ -97,6 +97,7 @@
 <<effectsshacklewhack>>
 <<effectshypnosiswhack>>
 <<effectshandsfreeface>>
+<<effectshandpull>>
 <<effectsdildowhack>>
 
 <<if $bodyaction is "doggy">>
@@ -198,6 +199,80 @@
 	<</if>>
 <</if>>
 
+<<if $leftaction is "handguide">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "handguide">><<combatpromiscuity2>>
+
+	<<if combatSkillCheck("hand", $lefttarget)>>
+		<<if $rightaction is "handguide" and $handGuideLeft is $handGuideRight>>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+		<</if>>
+
+		<<switch $handGuideLeft>>
+			<<case "penis">>
+				You lower <<someones $lefttarget>> hand to your <<penis>>.
+				<<set $NPCList[$lefttarget].righthand to "penisentrance">><<set $penisuse to 1>><<set $penisstate to "otherhandentrance">>
+			<<case "pussy">>
+				You lower <<someones $lefttarget>> hand to your <<pussy>>.
+				<<set $NPCList[$lefttarget].righthand to "vaginaentrance">><<set $vaginause to 1>><<set $vaginastate to "otherhandentrance">>
+			<<case "ass">>
+				You press <<someones $lefttarget>> hand against your <<bottom>>.
+				<<set $NPCList[$lefttarget].righthand to "anusentrance">><<set $anususe to "handentrance">><<set $anusstate to "handentrance">>
+			<<default>>
+		<</switch>>
+		<<set $leftactiondefault to "rest">><<set $leftarm to 0>><<submission 1 $lefttarget>>
+	<<else>>
+		You try to guide <<someones $lefttarget>> hand to
+		<<switch $handGuideRight>>
+			<<case "penis">>your <<penis>>,
+			<<case "pussy">>your <<pussy>>,
+			<<case "ass">>your <<bottom>>,
+			<<default>>
+		<</switch>>
+
+		<<if $enemyanger gte random(30, 100)>>
+			<span class="purple">but <<he>> wrenches it out of your grasp.</span>
+			<<set $leftactiondefault to "rest">><<set $leftarm to 0>>
+			<<set $NPCList[$lefttarget].righthand to 0>><<violence 2>>
+		<<else>>
+			but <<his>> grip is too tight.
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if $rightaction is "handguide">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "handguide">><<combatpromiscuity2>>
+
+	<<if combatSkillCheck("hand", $righttarget)>>
+		<<switch $handGuideRight>>
+			<<case "penis">>
+				You lower <<someones $lefttarget>> hand to your <<penis>>.
+				<<set $NPCList[$righttarget].lefthand to "penisentrance">><<set $penisuse to 1>><<set $penisstate to "otherhandentrance">>
+			<<case "pussy">>
+				Your lower <<someones $lefttarget>> hand to your <<pussy>>.
+				<<set $NPCList[$righttarget].lefthand to "vaginaentrance">><<set $vaginause to 1>><<set $vaginastate to "otherhandentrance">>
+			<<case "ass">>
+				You press <<someones $lefttarget>> hand against your <<bottom>>.
+				<<set $NPCList[$righttarget].lefthand to "anusentrance">><<set $anususe to "handentrance">><<set $anusstate to "handentrance">>
+		<</switch>>
+		<<set $rightactiondefault to "rest">><<set $rightarm to 0>><<submission 1 $righttarget>>
+	<<else>>
+		You try to guide <<someones $lefttarget>> hand to
+		<<switch $handGuideRight>>
+			<<case "penis">>your <<penis>>,
+			<<case "pussy">>your <<pussy>>,
+			<<case "ass">>your <<bottom>>,
+		<</switch>>
+
+		<<if $enemyanger gte random(30, 100)>>
+			<span class="purple">but <<he>> wrenches it out of your grasp.</span>
+			<<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+			<<set $NPCList[$righttarget].lefthand to 0>><<violence 2>>
+		<<else>>
+			but <<his>> grip is too tight.
+		<</if>>
+	<</if>>
+<</if>>
+
 <<if $leftaction is "leftgrab">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "leftgrab">><<handskilluse>><<combatpromiscuity3>>
 	<<if combatSkillCheck("hand", $lefttarget)>>
@@ -261,6 +336,16 @@
 		<<set $rightarm to 0>><<set $NPCList[$righttarget].penis to 0>>
 		<span class="blue">You try to rub <<hisselect $righttarget>> shaft, but <<he>> moves away.</span>
 	<</if>>
+<</if>>
+
+<<if $leftaction is "handedge">>
+	<<personselect $lefttarget>><<actionshandedge $lefttarget $leftarm>><<set $leftaction to 0>><<set $leftactiondefault to "handedge">>
+	<<submission 5 $lefttarget>><<sexControl 5 $handskill $lefttarget>><<handskilluse>>
+<</if>>
+
+<<if $rightaction is "handedge">>
+	<<personselect $righttarget>><<actionshandedge $righttarget $rightarm>><<set $rightaction to 0>><<set $rightactiondefault to "handedge">>
+	<<submission 5 $righttarget>><<sexControl 5 $handskill $righttarget>><<handskilluse>>
 <</if>>
 
 <<if $leftaction is "leftstoppenis" and $NPCList[$lefttarget].penis is "leftarm">>
@@ -598,7 +683,7 @@
 
 <<if $leftaction is "leftcovervagina" and $rightaction is "rightcovervagina">>
 	<<if $uncomfortable.hypnosis is false and $hypnosis_traits.cover gte random(1,5)>>
-		<<hypnosisicon>> You intend to vagina your face, but a lewd thought intrudes <span class="lewd">and your mind immediately accepts it.</span>
+		<<hypnosisicon>> You intend to cover your vagina, but a lewd thought intrudes <span class="lewd">and your mind immediately accepts it.</span>
 		You gently tease your pussy, spreading it open with both hands.
 		<<submission 1>><<set $speechcamerapose to 1>><<hypnotised 1>>
 		<<hypnosisicon>>
@@ -2627,6 +2712,7 @@
 <<if !$stalk_end>>
 	<<if $feetaction is "walk">>
 		<<set $feetaction to 0>><<set $feetactiondefault to "walk">>
+		<<set $feetuse to "walk">>
 		You keep walking,
 		<<if $control gte ($controlmax * 0.8)>>
 			your feet sure and steady.
@@ -2639,6 +2725,25 @@
 		<<else>>
 			suppressing the urge to break into a run.
 		<</if>>
+		<<stalk_walk_events>>
+	<</if>>
+	
+	<<if $feetaction is "strut">>
+		<<set $feetaction to 0>><<set $feetactiondefault to "strut">>
+		<<set $feetuse to "strut">>
+		You strut,
+		<<if $control gte ($controlmax * 0.8)>>
+			swaying your shoulders and hips.
+		<<elseif $control gte ($controlmax * 0.6)>>
+			putting one foot in front of the other.
+		<<elseif $control gte ($controlmax * 0.4)>>
+			though worried about the gaining footsteps.
+		<<elseif $control gte ($controlmax * 0.2)>>
+			doing your best to stay calm.
+		<<else>>
+			suppressing the urge to break into a run.
+		<</if>>
+		<<meek 3>>
 		<<stalk_walk_events>>
 	<</if>>
 
@@ -2960,7 +3065,7 @@
 <</if>>
 
 <<if $mouthaction is "kisslips">>
-	<<set $mouthaction to 0>><<set $mouthactiondefault to "kisslips">><<personselect $mouthtarget>>
+	<<set $mouthaction to 0>><<set $mouthactiondefault to "kisslips">><<personselect $mouthtarget>><<combatpromiscuity1>>
 	<<if combatSkillCheck("oral", $mouthtarget)>>
 		You move your lips close to <<hers>>.
 		<<set $mouthuse to "kiss">><<set $mouthstate to "kissentrance">>
@@ -2969,6 +3074,13 @@
 	<<else>>
 		You try to move your head closer to <<hers>>, but <<he>> moves away.
 	<</if>>
+<</if>>
+
+<<if $mouthaction is "growl">>
+	<<set $mouthaction to 0>><<set $mouthactiondefault to "growl">><<set _sound to 1>>
+	<<set $speechgrowl to 1>>
+	<<actionsgrowl>>
+	<<brat 2>>
 <</if>>
 
 <<if $mouthaction is "plead">>
@@ -3239,10 +3351,7 @@
 	<<elseif $drugged gt 0>>
 		You try to scream for help, <span class="pink">but the aphrodisiacs make it sound like a lewd moan.</span>
 		<<neutral 1>><<set $speechmoan to 1>>
-	<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $corruption_slime gte (currentSkillValue('willpower')/ 10)>>
-		You open your mouth to scream for help, <span class="red">but your voice catches in your throat.</span> You feel the slime steal your breath away.
-		<<gwillpower>><<willpower 1>>
-	<<elseif $uncomfortable.hypnosis is false and $hypnosis_traits.cover gte random(1,5)>>
+	<<elseif $uncomfortable.hypnosis is false and $hypnosis_traits.scream gte random(1,5)>>
 		<<hypnosisicon>> You intend to scream for help, but a lewd thought intrudes <span class="lewd">and your mind immediately accepts it.</span>
 		<<hypnotised 1>>
 		<<set $mouthaction to 0>><<unset $askAction>><<set _sound to 1>>
@@ -3256,6 +3365,9 @@
 		<<askrough>>
 		<<submission 1>><<set $enemyanger += (10 * $englishtrait)>>
 		<<hypnosisicon>>
+	<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $corruption_slime gte (currentSkillValue('willpower')/ 10)>>
+		You open your mouth to scream for help, <span class="red">but your voice catches in your throat.</span> You feel the slime steal your breath away.
+		<<gwillpower>><<willpower 1>>
 	<<else>>
 		<<if $hypnosis_traits.scream gte 1>>
 			<span class="green">You resist intrusive thoughts,</span> and scream for help.
@@ -3349,6 +3461,11 @@
 
 <<if $mouthaction is "suck">>
 	<<set $mouthaction to 0>><<set $mouthactiondefault to "suck">><<actionspenissuck $mouthtarget>><<submission 10 $mouthtarget>><<oralskilluse>>
+<</if>>
+
+<<if $mouthaction is "oraledge">>
+	<<personselect $mouthtarget>><<actionsoraledge $mouthtarget>><<set $mouthaction to 0>><<set $mouthactiondefault to "oraledge">>
+	<<submission 5 $mouthtarget>><<sexControl 5 $oralskill $mouthtarget>><<oralskilluse>>
 <</if>>
 
 <<if $mouthaction is "pullaway">>
@@ -3494,6 +3611,25 @@
 	<<set $mouthaction to 0>><<set $mouthactiondefault to "analkiss">><<actionsAnalKiss $mouthtarget>><<submission 12 $mouthtarget>>
 <</if>>
 
+<<if $mouthaction is "analpull" and ($NPCList[$mouthtarget].penis is "mouthotheranus" or $NPCList[$mouthtarget].vagina is "mouthotheranus")>>
+	<<set $mouthaction to 0>><<set $mouthactiondefault to "analpull">><<personselect $mouthtarget>>
+	You try to pull away from the anus menacing your mouth.
+	<<oralskilluse>><<brat 1 $mouthtarget>>
+	<<if combatSkillCheck("oral", $mouthtarget)>>
+		<span class="green"><<He>> doesn't stop you.</span>
+		<<set $mouthstate to 0>><<set $mouthuse to 0>>
+		<<if $NPCList[$mouthtarget].penis is "mouthotheranus">><<set $NPCList[$mouthtarget].penis to 0>><</if>>
+		<<if $NPCList[$mouthtarget].vagina is "mouthotheranus">><<set $NPCList[$mouthtarget].vagina to 0>><</if>>
+		<<set $NPCList[$mouthtarget].location.genitals to 0>>
+	<<else>>
+		<span class="red">However, <<combatperson>> refuses to allow it,</span> forcing your face into <<his>> ass.
+		<<violence 1>>
+		<<if $consensual is 1>>
+			<<set $consensual to 0>><<molested>><<controlloss>>
+		<</if>>
+	<</if>>
+<</if>>
+
 <<rng>>
 
 <<if $mouthaction is "handbite">>
@@ -3575,7 +3711,7 @@
 		<</if>>
 	<<else>>
 		<<if $player.breastsize is 0>>
-			You squeeze your <<breasts>> together as best you can and try to grab <<a>> penis between them, to no avail.
+			You squeeze your <<breasts>> together as best you can and try to grab <<his>> penis between them, to no avail.
 		<<else>>
 			You try to grab <<hisselect $mouthtarget>> penis between your <<breasts>>, but fail.
 		<</if>>
@@ -4380,7 +4516,7 @@
 <<rng>>
 <<if $vaginaaction is "penisanusdouble">>
 	<<set $vaginaaction to 0>><<meek 5 $vaginatarget>><<analskilluse>>
-	<<if combatSkillCheck("anal", $vaginatarget)>>
+	<<if combatSkillCheck("anal", $vaginatarget) and $anususe is "penis">>
 		<<personselect $vaginatarget>><<set $vaginaactiondefault to "rest">>
 		<span class="blue">You give your <<bottom>> a little wiggle, <<combatperson>> responds to the provocation and moves <<his>> penis to join the phallus in front of your butt.</span>
 		<<submission 2 $vaginatarget>>
@@ -4420,7 +4556,7 @@
 <</if>>
 
 <<if $vaginaaction is "penisDoubleEdging">>
-	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "penisDoubleEdging">><<actionspenisdoubleedging>><<submission 5>><<sexControl 5 $vaginalskill>><<vaginalskilluse>><<combatpromiscuity4>>
+	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "penisDoubleEdging">><<actionspenisdoubleedging>><<submission 5>><<sexControl 5 $vaginalskill>><<vaginalskilluse>>
 <</if>>
 
 <<if $vaginaaction is "doubletake">>
@@ -4436,7 +4572,7 @@
 <</if>>
 
 <<if $vaginaaction is "penisEdging">>
-	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "penisEdging">><<actionspenisedging $vaginatarget>><<submission 5 $vaginatarget>><<sexControl 5 $vaginalskill $vaginatarget>><<vaginalskilluse>><<combatpromiscuity4>>
+	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "penisEdging">><<actionspenisedging $vaginatarget>><<submission 5 $vaginatarget>><<sexControl 5 $vaginalskill $vaginatarget>><<vaginalskilluse>>
 <</if>>
 
 <<if $vaginaaction is "take">>
@@ -4453,6 +4589,11 @@
 
 <<if $vaginaaction is "tribtake">>
 	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "tribtake">><<actionstribtake $vaginatarget>>
+<</if>>
+
+<<if $vaginaaction is "tribedge">>
+	<<personselect $vaginatarget>><<actionstribedge $vaginatarget>><<set $vaginaaction to 0>><<set $vaginaactiondefault to "tribedge">>
+	<<submission 5 $vaginatarget>><<sexControl 5 $vaginalskill $vaginatarget>><<vaginalskilluse>>
 <</if>>
 
 <<if $vaginaaction is "tribrest">>
@@ -4587,6 +4728,38 @@
 	<<set $anusaction to 0>><<set $anusactiondefault to "rest">>
 <</if>>
 
+<<if $anusaction is "wiggle">>
+	<<set $anusaction to 0>><<set $anusactiondefault to "wiggle">>
+	<<if currentSkillValue('seductionskill') gte random(1, 1000)>>
+		<<meek 2>>
+		<<if $rng gte 81>>
+			You wiggle your <<bottom>> in time with your steps,
+		<<elseif $rng gte 61>>
+			You sway your <<bottom>>,
+		<<elseif $rng gte 41>>
+			You shake your <<bottom>>,
+		<<elseif $rng gte 21>>
+			You add some bounce to your steps, lifting your <<bottom>> and
+		<<else>>
+			You emphasise your <<bottom>> with each step,
+		<</if>>
+		drawing attention to it.
+	<<else>>
+		<<meek 1>>
+		<<if $rng gte 81>>
+			You wiggle your <<bottom>>.
+		<<elseif $rng gte 61>>
+			You sway your <<bottom>>.
+		<<elseif $rng gte 41>>
+			You shake your <<bottom>>.
+		<<elseif $rng gte 21>>
+			You bounce your <<bottom>>.
+		<<else>>
+			You put emphasis on your <<bottom>>.
+		<</if>>
+	<</if>>
+<</if>>
+
 <<if $anusaction is "penischeeks" and $NPCList[$anustarget].penis is "anusentrance">>
 	<<set $anusaction to 0>><<meek 1 $anustarget>><<bottomskilluse>><<set $anusactiondefault to "penischeeks">><<combatpromiscuity4>>
 	<<if combatSkillCheck("bottom", $anustarget)>>
@@ -4658,7 +4831,7 @@
 <<rng>>
 <<if $anusaction is "penispussydouble">>
 	<<set $anusaction to 0>><<meek 10>><<analskilluse>><<set $anusactiondefault to "penispussydouble">>
-	<<if combatSkillCheck("vaginal", $anustarget)>>
+	<<if combatSkillCheck("vaginal", $anustarget) and $vaginause is "penis">>
 		<<selectNpcWithPartInPosition "penis" "anusentrance">>
 		<<personselect _j>>
 		<<submission 2 _j>><<set $vaginause to "penisdouble">><<set $NPCList[_j].penis to "vaginaentrancedouble">><<set $anususe to 0>><<set $vaginastate to "double" + $vaginastate>><<set $anusstate to 0>>
@@ -4760,7 +4933,7 @@
 <</if>>
 
 <<if $anusaction is "penisEdging">>
-	<<set $anusaction to 0>><<set $anusactiondefault to "penisEdging">><<actionsanusedging $anustarget>><<submission 5 $anustarget>><<sexControl 5 $analskill $anustarget>><<analskilluse>><<combatpromiscuity4>>
+	<<set $anusaction to 0>><<set $anusactiondefault to "penisEdging">><<actionsanusedging $anustarget>><<submission 5 $anustarget>><<sexControl 5 $analskill $anustarget>><<analskilluse>>
 <</if>>
 
 <<if $anusaction is "take">>
@@ -4841,7 +5014,7 @@
 <</if>>
 
 <<if $anusaction is "penisDoubleEdging">>
-	<<set $anusaction to 0>><<set $anusactiondefault to "penisDoubleEdging">><<actionsanusdoubleedging $anustarget $anusdoubletarget>><<submission 5 $anustarget $anusdoubletarget>><<sexControl 5 $analskill $anustarget $anusdoubletarget>><<analskilluse>><<combatpromiscuity5>>
+	<<set $anusaction to 0>><<set $anusactiondefault to "penisDoubleEdging">><<actionsanusdoubleedging $anustarget $anusdoubletarget>><<submission 5 $anustarget $anusdoubletarget>><<sexControl 5 $analskill $anustarget $anusdoubletarget>><<analskilluse>>
 <</if>>
 
 <<if $anusaction is "doubletake">>
@@ -5148,7 +5321,7 @@
 <</if>>
 
 <<if $penisaction is "vaginaEdging">>
-	<<set $penisaction to 0>><<set $penisactiondefault to "vaginaEdging">><<actionspussyedging $penistarget>><<submission 5 $penistarget>><<sexControl 5 $penileskill $penistarget>><<penileskilluse>><<combatpromiscuity4>>
+	<<set $penisaction to 0>><<set $penisactiondefault to "vaginaEdging">><<actionspussyedging $penistarget>><<submission 5 $penistarget>><<sexControl 5 $penileskill $penistarget>><<penileskilluse>>
 <</if>>
 
 <<if $penisaction is "take">>
@@ -5286,7 +5459,7 @@
 <</if>>
 
 <<if $penisaction is "otheranusEdging">>
-	<<set $penisaction to 0>><<set $penisactiondefault to "otheranusEdging">><<actionsotheranusedging $penistarget>><<submission 5 $penistarget>><<sexControl 5 $penileskill $penistarget>><<penileskilluse>><<combatpromiscuity4>>
+	<<set $penisaction to 0>><<set $penisactiondefault to "otheranusEdging">><<actionsotheranusedging $penistarget>><<submission 5 $penistarget>><<sexControl 5 $penileskill $penistarget>><<penileskilluse>>
 <</if>>
 
 <<if $penisaction is "otheranustake">>
@@ -5335,7 +5508,7 @@
 <<rng>>
 <<if $penisaction is "penisanusdouble">>
 	<<set $penisaction to 0>><<meek 5 $penistarget>><<analskilluse>>
-	<<if combatSkillCheck("anal", $penistarget)>>
+	<<if combatSkillCheck("anal", $penistarget) and $anususe is "penis">>
 		<<personselect $penistarget>><<set $penisactiondefault to "rest">>
 		<span class="blue">You give your <<bottom>> a little wiggle, <<combatperson>> responds to the provocation and moves <<his>> penis to join the phallus in front of your butt.</span>
 		<<submission 2 $penistarget>><<set $anususe to "penisdouble">><<set $NPCList[$penistarget].penis to "anusentrancedouble">><<set $penisuse to 0>><<set $anusstate to "doubleentrance">><<set $penisstate to 0>>
@@ -5385,7 +5558,7 @@
 <<rng>>
 <<if $penisaction is "penispussydouble">>
 	<<set $penisaction to 0>><<meek 10>><<penileskilluse>><<set $penisactiondefault to "penispussydouble">>
-	<<if combatSkillCheck("vaginal", $penistarget)>>
+	<<if combatSkillCheck("vaginal", $penistarget) and $vaginause is "penis">>
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].penis is "penisentrance" or $NPCList[_j].penis is "penisimminent">>
 				<<personselect _j>>

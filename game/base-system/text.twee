@@ -273,11 +273,13 @@
 <</if>>
 <</widget>>
 
+<!-- [0] - string 
+	 prints string [0] prepended with an indefinite article based on the [0]'s first character -->
 <<widget "a">><<silently>>
-	<<if $enemyno gte 2 and $enemytype is "man">>
-		<<set _text_output to "a">>
+	<<if ["a","e","i","o","u","A","E","I","O","U"].contains(_args[0][0]) >>
+		<<set _text_output to "an " + _args[0]>>
 	<<else>>
-		<<his>>
+		<<set _text_output to "a " + _args[0]>>
 	<</if>>
 <</silently>>_text_output<</widget>>
 
@@ -928,20 +930,14 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "underoutfit">><<silently>>
-<<outfitChecks>>
-<<breasts>><<set _breasts_text to _text_output>>
-<<genitals>><<set _genitals_text to _text_output>>
-<<if _underOutfit>>
-	<<set _text_output to $worn.under_upper.name>>
-<<elseif $worn.under_upper.name is "naked" and $worn.under_lower.name is "naked">>
-	<<set _text_output to _breasts_text + " and " + _genitals_text>>
-<<elseif $worn.under_lower.name is "naked">>
-	<<set _text_output to $worn.under_upper.name + " and " + _breasts_text>>
-<<elseif $worn.under_upper.name is "naked">>
-	<<set _text_output to _breasts_text + " and " + $worn.under_lower.name>>
-<<else>>
-	<<set _text_output to $worn.under_upper.name + " and " + $worn.under_lower.name>>
-<</if>>
+	<<outfitChecks>>
+	<<undies>><<set $_secondhalf to _text_output>>
+	<<undertop>>
+	<!-- _text_output now has top (either worn under_upper name, or breasts desc) -->
+	
+	<<if !_underOutfit>> <!-- Two separate items, not an outfit -->
+		<<set _text_output += " and " + $_secondhalf>>
+	<</if>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "genitalstate">><<silently>>
@@ -983,12 +979,6 @@
 	<<set _text_output to _text_output + [" ass", " bum", " butt"].pluck()>>
 <</silently>><<print _text_output>><</widget>>
 
-<<widget "pussy">><<silently>>
-	<<genitalstate>><<set _genital_state_text to _text_output>>
-	<<set _text_output to ["pussy","pussy","pussy","quim"].pluck()>>
-	<<set _text_output to _genital_state_text + _text_output>>
-<</silently>><<genitalsensitivity>><<print _text_output>><</widget>>
-
 <!-- Too small and too big outputs are intended as error messages
 	so that it's more obvious what's wrong when people report bugs -->
 <<widget "penissize">><<silently>>
@@ -1013,22 +1003,41 @@
 <</if>>
 <</silently>><<print _text_output>><</widget>>
 
+<!-- [0] - if truthy, genital sensitivity is omitted -->
+<<widget "pussy">><<silently>>
+	<<genitalstate>><<set _genital_state_text to _text_output>>
+	<<set _text_output to "">>
+	<<if !_args[0]>>
+		<<genitalsensitivity>>
+	<</if>>
+	<<set _text_output += _genital_state_text + ["pussy","pussy","pussy","quim"].pluck()>>
+<</silently>><<print _text_output>><</widget>>
+
+<!-- [0] - if truthy, genital sensitivity is omitted -->
 <<widget "clit">><<silently>>
 <<if $player.penisExist>>
 	<<penis>>
 <<else>>
-	<<set _text_output to "clit">>
+	<<set _text_output to "">>
+	<<if !_args[0]>>
+		<<genitalsensitivity>>
+	<</if>>
+	<<set _text_output += "clit">>
 <</if>>
-<</silently>><<genitalsensitivity>><<print _text_output>><</widget>>
+<</silently>><<print _text_output>><</widget>>
 
-<<widget "penis">><<silently>>
+<!-- [0] - if truthy, genital sensitivity is omitted -->
+<<widget "penis">><<silently>>	
 	<<penissize>><<set _penissize_text to _text_output>>
 	<<if _penissize_text isnot "">>
 		<<set _penissize_text to _penissize_text + " ">>
 	<</if>>
 	<<genitalstate>><<set _genital_state_text to _text_output>>
-
-	<<set _text_output to _penissize_text + _genital_state_text + "penis">>
+	<<set _text_output to "">>
+	<<if !_args[0]>>
+		<<genitalsensitivity>>
+	<</if>>
+	<<set _text_output += _penissize_text + _genital_state_text + "penis">>
 
 	<<if playerHasStrapon()>>
 		<<if _args[0] isnot undefined and _args[0] is "strap-on" and $player.penisExist>>
@@ -1037,7 +1046,7 @@
 			<<set _text_output to _penissize_text + "strap-on">>
 		<</if>>
 	<</if>>
-<</silently>><<genitalsensitivity>><<print _text_output>><</widget>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "reveal">>
 <<if _args[0]>>
@@ -1112,7 +1121,7 @@
 <<else>>
 	No effect on warmth.
 <</if>>
-<<if $images is 1>>
+<<if $options.images is 1>>
 	(<span class="cold-resist-icon">_args[0]</span>)
 <<else>>
 	(Warmth rating: _args[0])
@@ -1210,6 +1219,12 @@
 <<widget "combatPerson">><<silently>>
 	<<combatperson>><<capitalise>>
 <</silently>><<print _text_output>><</widget>>
+
+<<widget "genderswapPlayer">>
+	<!-- Note: You'll want to call this again when you're done, because its effects are visible on the sidebar caption if you leave it swapped, and we don't want that. -->
+	<!-- Note 2: gender_appearance is recalculated at the start of each passage, so don't expect the effects to stick around. -->
+	<<set $player.gender_appearance to ($player.gender_appearance is "f" ? "m" : "f")>>
+<</widget>>
 
 <<widget "genderswap">>
 	<!-- Changes the current pronoun, without modifying the NPC it's referencing. Useful for crossdressing NPC dialogue. -->
@@ -1381,52 +1396,51 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "genitalsensitivity">><<silently>>
-<<if $genitalsensitivity > 5>>
-	<<set _text_output2 to "sensitive ">>
-<<elseif $genitalsensitivity >= 3>>
-	<<set _text_output2 to "tender ">>
-<<elseif $genitalsensitivity >= 1.5>>
-	<<set _text_output2 to "receptive ">>
-<<else>>
-	<<set _text_output2 to "">>
-<</if>>
-<</silently>><<print _text_output2>><</widget>>
-
-<<widget "genitals">><<silently>>
-<<if $worn.genitals.type.includes("chastity") and _args[0] is undefined and _chastityBreak isnot 1>>
-	<<set _text_output to $worn.genitals.name>>
-<<else>>
-	<<set _text_output to "">>
 	<<if $genitalsensitivity > 5>>
-		<<set _text_output += "sensitive ">>
+		<<set _text_output to "sensitive ">>
 	<<elseif $genitalsensitivity >= 3>>
-		<<set _text_output += "tender ">>
+		<<set _text_output to "tender ">>
 	<<elseif $genitalsensitivity >= 1.5>>
-		<<set _text_output += "receptive ">>
+		<<set _text_output to "receptive ">>
+	<<else>>
+		<<set _text_output to "">>
 	<</if>>
-	<<if $player.penisExist>>
-		<<if $player.virginity.penile is true and _args[0] isnot 2>>
-			<<set _text_output += "virgin ">>
+<</silently>><<print _text_output>><</widget>>
+
+<!--
+	Optional parameter [0] possible values:
+	0 or omitted or null - display chastity and virginity
+	1 - omit chastity, display virginity
+	2 - omit chastity, omit virginity
+ -->
+<<widget "genitals">><<silently>>
+	<<if $worn.genitals.type.includes("chastity") and !_args[0] and _chastityBreak isnot 1>>
+		<<set _text_output to $worn.genitals.name>>
+	<<else>>
+		<<genitalsensitivity>>
+		<<if $player.penisExist>>
+			<<if $player.virginity.penile is true and _args[0] isnot 2>>
+				<<set _text_output += "virgin ">>
+			<</if>>
+			<<set _text_output += "penis">>
 		<</if>>
-		<<set _text_output += "penis">>
-	<</if>>
-	<<if $player.penisExist and $player.vaginaExist>>
-		<<set _text_output += " and ">>
-	<</if>>
-	<<if $player.vaginaExist>>
-		<<if $player.virginity.vaginal is true and _args[0] isnot 2>>
-			<<set _text_output += "virgin ">>
+		<<if $player.vaginaExist>>
+			<<if $player.penisExist>>
+				<<set _text_output += " and ">>
+			<</if>>
+			<<if $player.virginity.vaginal is true and _args[0] isnot 2>>
+				<<set _text_output += "virgin ">>
+			<</if>>
+			<<if $vaginaWetness gte 75 and $pbdisable is "f" and $pblevel gte 8>>
+				<<set _text_output += "visibly aroused and bushy ">>
+			<<elseif $vaginaWetness gte 75>>
+				<<set _text_output += "visibly aroused ">>
+			<<elseif $pbdisable is "f" and $pblevel gte 8>>
+				<<set _text_output += "bushy ">>
+			<</if>>
+			<<set _text_output += ["pussy", "pussy", "pussy", "quim"].pluck()>>
 		<</if>>
-		<<if $pblevel gte 8 and $vaginaWetness gte 75 and $pbdisable is "f">>
-			<<set _text_output += "visibly aroused and bushy ">>
-		<<elseif $vaginaWetness gte 75>>
-			<<set _text_output += "visibly aroused ">>
-		<<elseif $pblevel gte 8 and $pbdisable is "f">>
-			<<set _text_output += "bushy ">>
-		<</if>>
-		<<set _text_output += ["pussy", "pussy", "pussy", "quim"].pluck()>>
 	<</if>>
-<</if>>
 <</silently>><<print _text_output>><</widget>>
 
 <!-- optionally takes 2 parameters: what to add after the text for singular/plural -->
@@ -4138,7 +4152,8 @@ A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 	<<set _text_output to $worn.upper.name>>
 	<<set $stripset to 1>>
 <<else>>
-	<<set _text_output to $worn.upper.name + " and " + $worn.lower.name>>
+	<<set $_clothes to [$worn.upper.name, $worn.lower.name].filter(a => a !== "naked")>>
+	<<set _text_output to $_clothes.formatList()>>
 	<<set $stripset to 0>>
 <</if>>
 <</silently>>_text_output<</widget>>
@@ -5784,7 +5799,7 @@ School finishes on the first Monday of December.
 /* Argument 0 is the npc, argument 1 is their virginity. */
 <<widget "NPCvirginitywarning">>
 <<if $NPCNameList.indexOf(_args[0]) >= 0 and $NPCName[$NPCNameList.indexOf(_args[0])].virginity[_args[1]] is true and $statdisable is "f">>
-	<<if $combatControls.includes("ists")>>
+	<<if $options.combatControls.includes("ists")>>
 		<br>
 	<</if>>
 	<<switch _args[1]>>
@@ -6003,6 +6018,7 @@ Mason
 			<<case "piggirl" "pigboy">><<set _text_output to "piggirls and pigboys">>
 			<<case "boargirl" "boarboy">><<set _text_output to "boargirls and boarboys">>
 			<<case "foxgirl" "foxboy">><<set _text_output to "foxgirls and foxboys">>
+			<<case "spidergirl" "spiderboy">><<set _text_output to "spidergirls and spiderboys">>
 			<<default>><<set _text_output to "creatures">>
 		<</switch>>
 	<</if>>
@@ -6740,6 +6756,8 @@ $worn.genitals.name
 	<<set _text_output to "oinks">>
 <<elseif $NPCList[_n].type is "dolphin">>
 	<<set _text_output to "clicks">>
+<<elseif $NPCList[_n].type is "spider">>
+	<<set _text_output to "chitters">>
 <<else>>
 	<<set _text_output to "growls">>
 <</if>>
@@ -6921,6 +6939,22 @@ $worn.genitals.name
 	<</if>>
 <</widget>>
 
+<<widget "npcChest">>
+	<<if !_args[0]>>
+		<<set _npcGen to $index>>
+	<<else>>
+		<<set _npcGen to _args[0]>>
+	<</if>>
+
+	<<if $NPCList[_npcGen].pronoun is "m" or $NPCList[_npcGen].breastsize is 0>>
+		<<set _text_output to "chest">>
+	<<else>>
+		<<set _text_output to $NPCList[_npcGen].breastsdesc>>
+	<</if>>
+
+	<<print _text_output>>
+<</widget>>
+
 <<widget "npcHairColour">>
 <<if _args[0]>>
 	<<switch $NPCName[$NPCNameList.indexOf(_args[0])].hairColour>>
@@ -6990,9 +7024,27 @@ Argument 2, where appropriate, determines whether it's the player undressing the
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "npcRevealText">><<silently>>
-	<<set $_npc to _args[0]>>
-	<<set $_part to _args[1]>> /* can be "upper" or "lower" */
-	<<set _text_output to "revealing <<his>> ">>
+	<<set $_npc to _args[0]>><<set _foo0 to _args[0]>>
+	<<set $_part to _args[1]>><<set _foo1 to _args[0]>> /* can be "upper" or "lower" */
+	<<set $_mod to _args[2]>><<set _foo2 to _args[0]>>
+	<<set _text_output to "revealing ">>
+	<<if $_mod is "name">>
+		<<if $NPCNameList.includes($_npc.fullDescription)>>
+			<<set _text_output += "$_npc.fullDescription's ">>
+		<<elseif $_npc.name_known is 1>>
+			<<set _text_output += "$_npc.name's ">>
+		<<else>>
+			<<set _text_output += "the $_npc.fullDescription's ">>
+		<</if>>
+	<<elseif $_mod is "desc">>
+		<<if $NPCNameList.includes($_npc.fullDescription)>>
+			<<set _text_output += "the $_npc.description's ">>
+		<<else>>
+			<<set _text_output += "the $_npc.fullDescription's ">>
+		<</if>>
+	<<else>>
+		<<set _text_output += "<<his>> ">>
+	<</if>>
 	<<if $_part is "both">>
 		<<set _text_output += "$_npc.breastsdesc and ">>
 	<</if>>
@@ -7436,6 +7488,12 @@ Argument 2, where appropriate, determines whether it's the player undressing the
 		<<else>>
 			<span class="lewd">Milk Addict</span>
 		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "stockholmTrait">>
+	<<if $statdisable is "f">>
+		| <span class="gold">Stockholm Syndrome<<if _args[0]>>: <<print _args[0]>><</if>></span>
 	<</if>>
 <</widget>>
 

@@ -111,7 +111,7 @@
 /* <<clothing_data>> Keeps clothing data up to date with new and changed items */
 /* unnecessary because it is run in variables-static every time game is loaded */
 
-<<if $npcListVersion isnot 1>>
+<<if $npcListVersion isnot 2>>
 	<<npcList>>
 <</if>>
 <<npcNamedUpdate>> /*Updates old Named NPC code to new system*/
@@ -576,10 +576,6 @@
 
 <<if ($NPCName[$NPCNameList.indexOf("Robin")].state is undefined or $NPCName[$NPCNameList.indexOf("Robin")].state is "") and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
 	<<npcset Robin state "active">>
-<</if>>
-
-<<if $crimemax is undefined>>
-	<<set $crimemax to 50000>>
 <</if>>
 
 <<if $catbuild is undefined>>
@@ -1524,10 +1520,6 @@
 
 <<setupDefaults>>
 
-<<if $zoom is undefined>>
-	<<set $zoom to 100>>
-<</if>>
-
 <<if $bodywritingImages is undefined>>
 	<<set $bodywritingImages to true>>
 <</if>>
@@ -1576,7 +1568,7 @@
 	<<unset $shoot_stat>>
 <</if>>
 
-<<set $BeastList to ["dog","cat","pig","wolf","dolphin","lizard","bear","boar","creature","horse","fox","hawk"]>>
+<<set $BeastList to ["dog","cat","pig","wolf","dolphin","lizard","bear","boar","creature","horse","fox","hawk","spider"]>>
 
 <<if $niki_seen is undefined and $chef_state gte 5>>
 	<<set $niki_seen to "chef">>
@@ -1661,6 +1653,7 @@
 	<<set $makeup.eyeshadow = 0>>
 	<<set $makeup.eyelenses = {"left":0, "right":0}>>
 	<<set $makeup.mascara = 0>>
+	<<set $makeup.mascara_running = 0>>
 	<<set $makeup.pbcolour = 0>>
 	<<set $makeup.browscolour = 0>>
 	<<set $makeup.concealer = 0>>
@@ -2276,7 +2269,7 @@
 	<<set $stat_police.prison to 0>>
 <</if>>
 
-<<if [undefined, NaN, null].includes($locker_suspicion) or [undefined, NaN, null].includes($panties_held) or $locker_suspicion lt 0>>
+<<if !$locker_suspicion or !$panties_held or $locker_suspicion lt 0>>
 	<<set $locker_suspicion to 0>>
 	<<set $panties_held to 0>>
 <</if>>
@@ -2296,10 +2289,6 @@
 		<<run delete V[_bodypart+"goo"]>>
 		<<run delete V[_bodypart+"semen"]>>
 	<</for>>
-<</if>>
-
-<<if $npcdescription isnot undefined>>
-	<<unset $npcdescription>>
 <</if>>
 
 <<if $npc is 0>>
@@ -2628,7 +2617,7 @@
 	<</if>>
 <</for>>
 
-<<pregnancyVar>>
+<!-- pregnancyVar was moved to <<backComp>>-->
 <</widget>>
 
 <<widget "hermNPCsUpdate">>
@@ -2684,6 +2673,8 @@
 		<<set $nectar_addiction to 0>>
 		<<set $nectar_timer to 0>>
 	<</if>>
+
+	<<pregnancyVar>>
 
 	<<if $hypnotised is undefined>>
 		<<set $hypnotised to 0>>
@@ -2741,7 +2732,7 @@
 
 	<!-- Jimmy: Run updater for EventSystem.
 				Only runs if behind on schema, and if $event exists. -->
-	<<run EventSystem.Update()>>
+	<<run EventSystem.update()>>
 
 	<!-- Jimmy: Updater for NNPCs that lack pronouns structures.
 				Based off of $perNPCFix located in VVU -->
@@ -3041,7 +3032,7 @@
 	<</if>>
 
 	<!-- v0.3.6.2: cow update -->
-	<<set $BeastList to ["dog","cat","pig","wolf","dolphin","lizard","bear","boar","creature","horse","fox","hawk","cow"]>>
+	<<set $BeastList to ["dog","cat","pig","wolf","dolphin","lizard","bear","boar","creature","horse","fox","hawk","cow","spider"]>>
 
 	<!-- v0.3.6.2 unnamed npc virginity update -->
 	<<if $npcVirginityChance is undefined>>
@@ -3650,4 +3641,121 @@
 			   "enemytrust", "turnCount"].forEach( v => V[v] ? true : V[v] = 0)>>
 	<</if>>
 
+	<!-- v0.3.11.4 -->
+	<<if $outfitTmp is undefined>>
+		<<set $outfitTmp to {}>>
+	<</if>>
+
+	<!-- v0.3.11.4 - Remove $crimemax -->
+	<<if $crimemax isnot undefined>>
+		<<unset $crimemax>>
+	<</if>>
+
+	<!-- v0.3.11.4 options rework -->
+	<<if $options is undefined>>
+		<<set $options to {
+			neverNudeMenus: $neverNudeMenus !== undefined ? $neverNudeMenus : false,
+			autosaveDisabled: $autosaveDisabled !== undefined ? $autosaveDisabled : false,
+			showCaptionText: $showCaptionText !== undefined ? $showCaptionText : true,
+			sidebarRenderer: $sidebarRenderer !== undefined ? $sidebarRenderer : "canvas",
+			sidebarStats: $sidebarStats && ["disabled", "limited", "all"].includes($sidebarStats) ? $sidebarStats : "disabled",
+			sidebarTime: $sidebarTime && ["disabled", "top", "bottom"].includes($sidebarTime) ? $sidebarTime : "disabled",
+			combatControls: $combatControls !== undefined ? $combatControls : "radio",
+			targetYourself: $targetYourself !== undefined ? $targetYourself : false,
+			scrollRemember: $scroll_remember !== undefined ? $scroll_remember : false,
+			mapMovement: $map.movement !== undefined ? $map.movement : true,
+			mapLegacy: $map.legacy !== undefined ? $map.legacy : false,
+			mapMarkers: $map.markers !== undefined ? $map.markers : false,
+			mapTop: $map.top !== undefined ? $map.top : false,
+			images: $images !== undefined && StartConfig.enableImages !== false ? $images : 0,
+			combatImages: $combatimages !== undefined && StartConfig.enableImages !== false ? $combatimages : 0,
+			bodywritingImages: $bodywritingImages !== undefined ? $bodywritingImages : true,
+			silhouetteEnabled: $silhouettedisable !== undefined ? $silhouettedisable === "f" : true,
+			tanImgEnabled: $skinColor.tanImgEnabled !== undefined ? $skinColor.tanImgEnabled !== "f" : true,
+			tanningEnabled: $skinColor.tanningEnabled !== undefined ? $skinColor.tanningEnabled === "f" : true,
+			sidebarAnimations: $sidebarAnimations !== undefined ? $sidebarAnimations : true,
+			blinkingEnabled: $blinkingdisable !== undefined ? $blinkingdisable === "f" : true,
+			combatAnimations: $combatAnimations !== undefined ? $combatAnimations : true,
+			halfClosedEnabled: $halfcloseddisable !== undefined ? $halfcloseddisable === "f" : true,
+			characterLightEnabled: true,
+			lightSpotlight: $lightSpotlight !== undefined ? $lightSpotlight : 0.2,
+			lightGradient: $lightGradient !== undefined ? $lightGradient : 0.1,
+			lightGlow: $lightGlow !== undefined ? $lightGlow : 0.1,
+			lightFlat: $lightFlat !== undefined ? $lightFlat : 0,
+			lightCombat: $lightCombat !== undefined ? $lightCombat : 0.2,
+			lightTFColor: $lightTFColor !== undefined ? $lightTFColor : 0.2,
+			maxStates: $maxStates !== undefined ? $maxStates : 1,
+			numpad: $numpad !== undefined ? $numpad : false,
+			newWardrobeStyle: $newWardrobeStyle !== undefined ? $newWardrobeStyle : true,
+			useNarrowMarket: $useNarrowMarket !== undefined ? $useNarrowMarket : false,
+			skipStatisticsConfirmation: $skipStatisticsConfirmation !== undefined ? $skipStatisticsConfirmation : false,
+			showDebugRenderer: $showDebugRenderer !== undefined ? $showDebugRenderer : !!StartConfig.debug,
+		};>>
+	<</if>>
+
+	<!-- v0.3.11.4 creampie.npc.penis and tentacle fix -->
+	<!-- IMPORTANT NOTE: please REMOVE this section if these stats come back into use -->
+	<<if _version lte 31104>>
+		<<run delete $sexStats.creampie.npc.penis>>
+		<<run delete $sexStats.creampie.npc.tentacle>>
+
+		<!-- Fixing most named npcs missing all of their virginities -->
+		<!-- Resetting all virginities to defaults, keeping virginities already taken by player -->
+		<<if $NPCName[$NPCNameList.indexOf("Jordan")].virginity.penile is false>>
+			<<for $_i to 0; $_i lt $NPCNameList.length; $_i++>>
+				<<set $_takenVirginities to []>>
+				<<for $_virginity, $_status range $NPCName[$_i].virginity>>
+					<<if $_status is "player">>
+						<<set $_takenVirginities.push($_virginity)>>
+					<</if>>
+				<</for>>
+				<<if $NPCNameList[$_i] is "Sydney">>
+					<<set $NPCName[$_i].virginity to {"anal": true, "oral": true, "penile": true, "vaginal": true, "handholding": true, "temple": true, "kiss": true}>>
+				<<else>>
+					<<initNNPCVirginity $_i>>
+				<</if>>
+				<<set $_takenVirginities.forEach(taken => $NPCName[$_i].virginity[taken] = "player")>>
+			<</for>>
+		<</if>>
+
+		<!-- Fix for saves where people were able to change wraith's gender -->
+		<<if $per_npc.wraith and $per_npc.wraith.pronoun isnot "i">>
+			<<set $per_npc.wraith.pronoun to "i">>
+			<<generatePronouns $per_npc.wraith>>
+		<</if>>
+	<</if>>
+
+	<!-- v0.3.11.4 $tirednessmax change to C.tiredness.max -->
+	<<if $tirednessmax>>
+		<<unset $tirednessmax>>
+	<</if>>
+	
+	<!-- v0.3.11.4 - Add $makeup.mascara_running -->
+	<<if $makeup.mascara_running is undefined>>
+		<<set $makeup.mascara_running = 0>>
+	<</if>>
+
+	<!-- v0.3.11.4 - Remove defunct vars -->
+	<<if $npcdescription isnot undefined>>
+		<<unset $npcdescription>>
+	<</if>>
+	<<if $currentOverlay isnot undefined>>
+		<<unset $currentOverlay>>
+	<</if>>
+
+	<!-- v0.3.11.4 New pepper spray display -->
+	<<if $options.pepperSprayDisplay is undefined>>
+		<<set $options.pepperSprayDisplay to "sprays">>
+	<</if>>
+	
+	<<prison_feat_check>>
+
+	<!-- v.0.3.12.1 Fix classroom attendance vars -->
+	<<if _version lte 31201>>
+		<<set $scienceattended to $scienceattended || 0>>
+		<<set $mathsattended to $mathsattended || 0>>
+		<<set $englishattended to $englishattended || 0>>
+		<<set $historyattended to $historyattended || 0>>
+		<<set $swimmingattended to $swimmingattended || 0>>
+	<</if>>
 <</widget>>
