@@ -2300,7 +2300,7 @@ Renderer.CanvasModels["main"] = {
 				return options.belly_mask_upper_shadow_src;
 			},
 			zfn(options) {
-				return ZIndices.under_lower_top_high;
+				return ZIndices.under_upper_top_high;
 			}
 		}),
 		"under_upper_belly_acc": genlayer_clothing_belly_acc("under_upper", {
@@ -2308,7 +2308,7 @@ Renderer.CanvasModels["main"] = {
 				return options.belly_mask_src;
 			},
 			zfn(options) {
-				return options.worn_lower_setup.high_img ? ZIndices.under_lower_high : ZIndices.under_lower;
+				return options.worn_lower_setup.high_img ? ZIndices.under_upper_top_acc : ZIndices.under_upper_top_acc;
 			}
 		}),
 		"under_upper_breasts": genlayer_clothing_breasts("under_upper"),
@@ -2630,9 +2630,10 @@ function genlayer_clothing_belly(slot, overrideOptions) {
 			return gray_suffix(path, options.filters['worn_' + slot]);
 		},
 		showfn(options) {
-			return options.show_clothes &&
-				options["worn_" + slot] > 0 &&
-				options["worn_" + slot + "_setup"].mainImage !== 0
+			return options.belly > 5
+				&& options.show_clothes
+				&& options["worn_" + slot] > 0
+				&& options["worn_" + slot + "_setup"].mainImage !== 0
 		},
 		alphafn(options) {
 			return options["worn_" + slot + "_alpha"]
@@ -2667,9 +2668,10 @@ function genlayer_clothing_belly_2(slot, overrideOptions) {
 			return gray_suffix(path, options.filters['worn_' + slot]);
 		},
 		showfn(options) {
-			return options.show_clothes &&
-				options["worn_" + slot] > 0 &&
-				options["worn_" + slot + "_setup"].mainImage !== 0
+			return options.belly > 5
+				&& options.show_clothes
+				&& options["worn_" + slot] > 0
+				&& options["worn_" + slot + "_setup"].mainImage !== 0
 		},
 		alphafn(options) {
 			return options["worn_" + slot + "_alpha"]
@@ -2700,9 +2702,10 @@ function genlayer_clothing_belly_shadow(slot, overrideOptions) {
 			return gray_suffix(path, options.filters['worn_' + slot]);
 		},
 		showfn(options) {
-			return options.show_clothes &&
-				options["worn_" + slot] > 0 &&
-				options["worn_" + slot + "_setup"].mainImage !== 0
+			return options.belly > 5
+				&& options.show_clothes
+				&& options["worn_" + slot] > 0
+				&& options["worn_" + slot + "_setup"].mainImage !== 0
 		},
 		alphafn(options) {
 			return options["worn_" + slot + "_alpha"]
@@ -2729,9 +2732,10 @@ function genlayer_clothing_belly_highlight(slot, overrideOptions) {
 			return gray_suffix(path, options.filters['worn_' + slot]);
 		},
 		showfn(options) {
-			return options.show_clothes &&
-				options["worn_" + slot] > 0 &&
-				options["worn_" + slot + "_setup"].mainImage !== 0
+			return options.belly > 5
+				&& options.show_clothes
+				&& options["worn_" + slot] > 0
+				&& options["worn_" + slot + "_setup"].mainImage !== 0
 		},
 		alphafn(options) {
 			return options["worn_" + slot + "_alpha"]
@@ -2777,9 +2781,10 @@ function genlayer_clothing_belly_acc(slot, overrideOptions) {
 			return gray_suffix(path, options.filters['worn_' + slot + '_acc']);
 		},
 		showfn(options) {
-			return options.show_clothes &&
-				options["worn_" + slot] > 0 &&
-				options["worn_" + slot + "_setup"].accessory === 1
+			return options.belly > 5
+				&& options.show_clothes
+				&& options["worn_" + slot] > 0
+				&& options["worn_" + slot + "_setup"].accessory === 1
 		},
 		alphafn(options) {
 			return options["worn_" + slot + "_alpha"]
