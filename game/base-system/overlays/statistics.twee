@@ -74,6 +74,8 @@
 	<br>
 	Smugglers intercepted: $smuggler_stolen_stat
 	<br>
+	Tasks performed at the pub: $pub_task_stat
+	<br>
 	Produce sold: $produce_sold
 	<br>
 	<<if $farmersProduce>>
@@ -125,6 +127,12 @@
 	Orally penetrated: $oralstat
 	<br>
 	Ejaculated in orally: $oralejacstat
+	<br>
+	Semen swallowed: $semenswallowedstat mL
+	<<if $bestialitydisable is "f">>
+		<br>
+		Animal semen swallowed: $animalsemenswallowedstat mL
+		<</if>>
 	<br>
 	Handjobs given: $handstat
 	<br>
@@ -396,7 +404,7 @@
 	Days in prison: $stat_police.prison
 	<br>
 	Hypnotised: $hypnotised
-	<<if $wraith and $wraith.possessCount>>
+	<<if $wraith.possessCount>>
 		<br>
 		Possessed: $wraith.possessCount
 	<</if>>
@@ -406,6 +414,14 @@
 
 <<foldout false "_saveFoldout">>
 	<span class="gold">Save Game Details</span>
+	<<if $passageCount>>
+		Total Passages Count: $passageCount
+		<mouse class="tooltip linkBlue">(?)<span>Total number of times a new passage has been loaded (Clicking on links in most cases). Passages such as the settings are excluded. Not tracked in versions '0.3.12.X' and older</span></mouse>
+		<br>
+		Total Passage Changes Count: $passageChangesCount
+		<mouse class="tooltip linkBlue">(?)<span>Total number of times a new passage has changed (Clicking on links in most cases). Passages such as the settings are excluded. Not tracked in versions '0.3.12.X' and older</span></mouse>
+		<br>
+	<</if>>
 	<<if $saveDetails isnot undefined>>
 		<br>
 		Normal saves count: <<print $saveDetails.slot.count>>
@@ -413,6 +429,12 @@
 		Exported saves count: <<print $saveDetails.exported.count>>
 		<br>
 		Auto saves count: <<print $saveDetails.auto.count>>
+		<br>
+		Times Loaded: <<print $saveDetails.loadCount || 0>>
+		<mouse class="tooltip linkBlue">(?)<span>Total number of times a save has been loaded, does not track repeated load times of the same save. Not tracked in versions '0.3.12.X' and older</span></mouse>
+		<br>
+		Play Time: <<print msToTime(($saveDetails.playTime ? $saveDetails.playTime : 0) + (new Date() - ($saveDetails.loadTime ? $saveDetails.loadTime : 0)))>>
+		<mouse class="tooltip linkBlue">(?)<span>Formatted into 'h:mm:ss'. Be aware that leaving the game for hours alone, then saving will have it's time tracked, to avoid, save the game before ending play and then load the save when you resume play. Not tracked in versions '0.3.12.X' and older</span></mouse>
 		<br>
 	<</if>>
 	<<if $saveVersions isnot undefined>>
@@ -645,7 +667,7 @@
 		<<print ($fallenangel is undefined ? 0 : Math.trunc($fallenangel))>>
 		<br><br>
 	<</foldout>>
-	
+
 	<<foldout false "_violenceFoldout">>
 		<span class="gold">Anal Pregnancy</span>
 		<<set _pregnancy to $sexStats.anus.pregnancy>>

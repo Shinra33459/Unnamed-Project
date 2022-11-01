@@ -245,8 +245,9 @@
 
 <!-- Deprecated, not in use. See "leftstealnew"-->
 <<widget "leftsteal">>
-<<if currentSkillValue('skulduggery') gte 200 and $stealstateleft isnot 3 and $enemytype is "man" and $abomination isnot 1 and $npc.length is 0 and $water isnot 1 and $punishmentposition isnot "gloryhole">>
-<<set $skulduggerydifficulty to 1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger>>
+<<if (currentSkillValue('skulduggery') gte 200 or $easySteal is 1) gte 200 and $stealstateleft isnot 3 and $enemytype is "man" and $abomination isnot 1 and $npc.length is 0 and $water isnot 1 and $punishmentposition isnot "gloryhole">>
+	<<set $skulduggerydifficulty to 1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger>>
+	<<if $easySteal is 1>><<set $skulduggerydifficulty to 0>><</if>>
 	<<if $leftactiondefault is "steal">>
 	| <label><span class="brat">Steal</span> <<radiobutton "$leftaction" "steal" checked>> <<skulduggerydifficulty>><<combatcrime>></label>
 	<<else>>
@@ -257,8 +258,9 @@
 
 <<widget "leftstealnew">>
 <<if $lefttarget isnot "self" and !($stealtarget.includes($lefttarget))>>
-	<<if currentSkillValue('skulduggery') gte 200 and $enemytype is "man" and $abomination isnot 1 and !($npcrow.includes($lefttarget)) and $water isnot 1 and $punishmentposition isnot "gloryhole">>
+	<<if (currentSkillValue('skulduggery') gte 200 or $easySteal is 1) and $enemytype is "man" and $abomination isnot 1 and !($npcrow.includes($lefttarget)) and $water isnot 1 and $punishmentposition isnot "gloryhole">>
 		<<set $skulduggerydifficulty to (1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger) * $stealdifficulty>>
+		<<if $easySteal is 1>><<set $skulduggerydifficulty to 0>><</if>>
 		/*Missing <<skulduggerydifficulty>><<combatcrime>>*/
 		<<if $stealstateleft is undefined>>
 			<<set _leftaction["Steal"] to "steal">>
@@ -724,8 +726,9 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <!-- Deprecated, not in use. See "rightstealnew"-->
 <<widget "rightsteal">>
-<<if currentSkillValue('skulduggery') gte 200 and $stealstateright isnot 3 and $enemytype is "man" and $abomination isnot 1 and $npc.length is 0 and $water isnot 1 and $punishmentposition isnot "gloryhole">>
-<<set $skulduggerydifficulty to 1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger>>
+<<if (currentSkillValue('skulduggery') gte 200 or $easySteal is 1) and $stealstateright isnot 3 and $enemytype is "man" and $abomination isnot 1 and $npc.length is 0 and $water isnot 1 and $punishmentposition isnot "gloryhole">>
+	<<set $skulduggerydifficulty to 1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger>>
+	<<if $easySteal is 1>><<set $skulduggerydifficulty to 0>><</if>>
 	<<if $rightactiondefault is "steal">>
 	| <label><span class="brat">Steal</span> <<radiobutton "$rightaction" "steal" checked>> <<skulduggerydifficulty>><<combatcrime>></label>
 	<<else>>
@@ -736,8 +739,9 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <<widget "rightstealnew">>
 <<if $righttarget isnot "self" and !($stealtarget.includes($righttarget))>>
-	<<if currentSkillValue('skulduggery') gte 200 and $enemytype is "man" and $abomination isnot 1 and !($npcrow.includes($righttarget)) and $water isnot 1 and $punishmentposition isnot "gloryhole">>
+	<<if (currentSkillValue('skulduggery') gte 200 or $easySteal is 1) and $enemytype is "man" and $abomination isnot 1 and !($npcrow.includes($righttarget)) and $water isnot 1 and $punishmentposition isnot "gloryhole">>
 		<<set $skulduggerydifficulty to (1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger) * $stealdifficulty>>
+		<<if $easySteal is 1>><<set $skulduggerydifficulty to 0>><</if>>
 		/*Missing <<skulduggerydifficulty>><<combatcrime>>*/
 		<<if $stealstateright is undefined>>
 			<<set _rightaction["Steal"] to "steal">>
@@ -1056,13 +1060,13 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <<widget "combatMasturbate">>
 	<<if _args[0] isnot undefined>>
-		<<if $worn.lower.state isnot setup.clothes.lower[clothesIndex('lower', $worn.lower)].state_base or setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 or $worn.lower.type.includes("naked")>>
+		<<if ($worn.lower.state isnot setup.clothes.lower[clothesIndex('lower', $worn.lower)].state_base or setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 or $worn.lower.type.includes("naked")) and !$worn.genitals.type.includes('hidden')>>
 			<<if _args[0] is "left">>
 				<<if $promiscuity gt 14 and ($lefttarget is "self" or $options.targetYourself is false or _targetnumber is 1)>>
 					<<if $player.vaginaExist>>
 						<<set _leftaction["Play with your pussy"] to "leftmasturbatepussy">>
 					<</if>>
-					<<if $player.penisExist and $penisuse is 0>>
+					<<if $player.penisExist and $penisuse is 0 and !$worn.genitals.type.includes('cage')>>
 						<<set _leftaction["Stroke your penis"] to "leftmasturbatepenis">>
 					<</if>>
 				<</if>>
@@ -1072,7 +1076,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 					<<if $player.vaginaExist>>
 						<<set _rightaction["Play with your pussy"] to "rightmasturbatepussy">>
 					<</if>>
-					<<if $player.penisExist and $penisuse is 0>>
+					<<if $player.penisExist and $penisuse is 0 and !$worn.genitals.type.includes('cage')>>
 						<<set _rightaction["Stroke your penis"] to "rightmasturbatepenis">>
 					<</if>>
 				<</if>>
@@ -1586,7 +1590,7 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <<if $leftaction is "steal" and $rightaction is "steal" and $lefttarget is $righttarget>>
 	<<set $leftaction to 0>><<set $rightaction to 0>>
 	<<set $leftactiondefault to "steal">><<set $rightactiondefault to "steal">>
-	<<set $skulduggerydifficulty += 400>><<skulduggerycheck>>
+	<<if $easySteal isnot 1>><<set $skulduggerydifficulty += 400>><</if>><<skulduggerycheck>>
 	<<unset $stealstateleft>><<unset $stealstateright>>
 	<<personselect $lefttarget>>
 	<<if $skulduggerysuccess is 1>>
@@ -1848,21 +1852,18 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 			<<set $leftaction to 0>><<set $leftactiondefault to "freeface">>
 			<<set $rightaction to 0>><<set $rightactiondefault to "freeface">>
 			<<set _freestrength to 2.5>>
-			<<set $_t to $lefttarget>>
 			You try to use both hands to free your face,
 		<<elseif $leftaction is "freeface">>
 			<<set $leftaction to 0>><<set $leftactiondefault to "freeface">>
 			<<set _freestrength to 1>>
-			<<set $_t to $lefttarget>>
 			You try to use your hand to free your face,
 		<<elseif $rightaction is "freeface">>
 			<<set $rightaction to 0>><<set $rightactiondefault to "freeface">>
 			<<set _freestrength to 1>>
-			<<set $_t to $rightarget>>
 			You try to use your hand to free your face,
 		<</if>>
 
-		<<set _npc to $NPCList[$_t]>><<personselect $_t>>
+		<<set _npc to $NPCList[$mouthtarget]>><<personselect $mouthtarget>>
 		<<set _nectarDifficulty to Math.clamp($drugged, 0, 500) + Math.clamp($nectar_addiction, 0, 500)>>
 		<<willpowerdifficulty _nectarDifficulty $willpowermax "silent">>
 		<<if (($mouthuse is "facesit" and $mouthstate is "vagina") or ["nipple","breasts"].includes($mouthstate)) and (_npc.type is "plant") and !$willpowerSuccess>>
@@ -2044,7 +2045,6 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 		<</if>>
 		<<brat 1>>
 
-		
 		<<if combatSkillCheck("hand", _n, $_handPullDifficulty)>>
 			You grasp <<combatpersons>> wrist,
 			<<if $penisstate is "otherhand">>

@@ -1,6 +1,6 @@
 :: Robin's Room Entrance
 <<set $outside to 0>><<set $location to "home">><<effects>>
-<<run statusCheck("Robin")>>
+<<set _robin to statusCheck("Robin")>>
 
 <<if $robindebt gte $robindebtlimit and $robindebtintro isnot 1 and $robinpaid isnot 1>>
 	<<set $robinconsole to 0>>
@@ -52,23 +52,24 @@
 	<br>
 <<elseif _robin_location is "sleep">>
 	You go to Robin's room. There's a note on the door. "Sleeping!"
-	<br><br>
+	<<if _robin.lust gte 80 and $robinromance is 1 and between($hour, 21, 23) and !$daily.robin.sleepMasturbate>>
+		<<set $daily.robin.sleepMasturbate to true>>
+		<span class="lewd">You notice the door is slightly open.</span>
+		<br><br>
 
-	<<link [[Leave|Orphanage]]>><</link>>
-	<br>
+		<<link [[Take a peek|Robin Mischief]]>><</link>>
+		<br>
+		<<link [[Close the door|Robin Mischief Close]]>><</link>>
+	<<else>>
+		<br><br>
+
+		<<link [[Leave|Orphanage]]>><</link>>
+	<</if>>
+	<br>	
 	<<if $debug is 1>>
 		<<link [[Wait for Robin (DEBUG)|$passage]]>><<set _rem to ($time lt 420 ? (420 - $time) : (1440 - $time + 420))>><<pass _rem>><</link>>
 	<</if>>
 
-<<elseif _robin_location is "sleepMasturbate">>
-	<<set $robinDaily.sleepMasturbate to true>>
-	You go to Robin's room. There's a note on the door. "Sleeping!" <span class="lewd">You notice the door is slightly open.</span>
-	<br><br>
-
-	<<link [[Take a peek|Robin Mischief]]>><</link>>
-	<br>
-	<<link [[Close the door|Robin Mischief Close]]>><</link>>
-	<br>
 <<elseif _robin_location is "beach">>
 	You go to Robin's room. There's a note on the door. "Out selling lemonade!"
 	<br><br>
@@ -194,7 +195,7 @@ Robin's eyes light up, and <<he>> rises to <<his>> feet. <<He>> points up. There
 			<<set $penisuse to 0>><<set $penisstate to 0>>
 		<</if>>
 		playful. "But you didn't cum yet," <<he>> whispers. <<His>> hands wander over your <<genitals>>.
-		<<arousal 2500>>
+		<<arousal 2500 "genitals">>
 		<<if $arousal gte $arousalmax>>
 			<<orgasm>>Robin looks pleased.
 		<<else>>
@@ -212,7 +213,7 @@ Robin's eyes light up, and <<he>> rises to <<his>> feet. <<He>> points up. There
 		<br>
 		Robin disappears under the cover. A moment later you feel <<his>> tongue licking your <<genitals>>.
 		<br>
-		<<arousal 4000>>
+		<<arousal 4000 "genitals">>
 		<<if $arousal gte $arousalmax>>
 			<<orgasm>>
 		<<else>>
@@ -487,6 +488,7 @@ The doctor frowns. "Some of this needs bandaging. You'll also need painkillers..
 <br><br>
 
 <<person1>>The doctor sees to Robin's wounds while you sit and hold <<his>> hand. Robin turns to you once dressed. "I'm a mummy!" <<he>> says, tapping the bandage wrapped around <<his>> head. <<He>> looks cheerful again for just a moment.
+<<set $robinSeen.pushUnique("hospitalMummy")>>
 <br><br>
 
 Once home, Robin gives you a surprise hug. "Thank you," <<he>> says. <<Hes>> tearful, but smiling. "I feel better already." <<He>> heads back to <<his>> room.
@@ -1165,8 +1167,8 @@ Bailey shoves Robin into the back seat, and drives away.
 <<else>>
 	You enter Bailey's office and find <<him>> sitting at <<his>> desk.
 
-	<<if !$baileyvisit>>
-		<<set $baileyvisit to 0>>
+	<<if !$daily.baileyVisit>>
+		<<set $daily.baileyVisit to 0>>
 		<<set _options to 1>>
 		<<if $dissociation gte 1>>
 			<<He>> looks at your eyes and grimaces. "I'm sure someone's into it," <<he>> mutters, shifting aside a paper <<he>> had been reading.
@@ -1179,42 +1181,49 @@ Bailey shoves Robin into the back seat, and drives away.
 		<<else>>
 			<<He>> looks at you. "You better not waste my time."
 		<</if>>
-	<<elseif $baileyvisit is 1>>
+	<<elseif $daily.baileyVisit is 1>>
 		<<set _options to 1>>
-		<<if $robinDebtAsk is 1>>
+		<<if $daily.robin.debtAsk is 1>>
 			<<He>> stares at you. "This better be about that payment you mentioned."
 		<<elseif $mason_pond is 2>>
 			<<He>> stares at you. "Is this about the spring? You better have the money."
 		<<else>>
 			<<He>> glares at you. "You again? Piss off."
 		<</if>>
-	<<elseif $baileyvisit is 2>>
+	<<elseif $daily.baileyVisit is 2>>
 		<<set _options to 1>>
 		<<He>> glares at you. "Stop bothering me, brat."
-	<<elseif $baileyvisit is 3>>
+	<<elseif $daily.baileyVisit is 3>>
 		<<set _options to 2>>
 		<<He>> glares at you, then storms out of <<his>> chair and marches your way. "I told you to stop bothering me," <<he>> hisses. "Couldn't leave well enough alone, could you?" <<He>> grabs you before you can react and bends you over <<his>> desk.
 		<br><br>
 		<<link [[Next|Bailey Beating]]>><<set $molestationstart to 1>><<set $phase to 0>><</link>>
-	<<elseif $baileyvisit is 100>>
+	<<elseif $daily.baileyVisit is 100>>
 		<<He>> looks tired. "Don't you have anything better to do?"
 	<<else>>
 		<<He>> ignores you.
-		<<if ($robinpaid isnot 1 and $robindebtknown is 1) or ($pub_hack_job is 3 and not $hacker_tasks.includes("bailey")) or $mason_pond is 1 or $mason_pond is 2 or $bailey_pound is 1>>
+		<<if ($robinpaid isnot 1 and $robindebtknown is 1) or ($pub_hack_job is 3 and not $hacker_tasks.includes("bailey")) or $mason_pond is 1 or $mason_pond is 2 or $bailey_pound is 1 or isPubfameTaskAccepted("bailey")>>
 			<span class="blue">You've bothered <<him>> too much today for <<him>> to listen to anything you say.</span>
 		<</if>>
 	<</if>>
-	<<set $baileyvisit++>>
+	<<set $daily.baileyVisit++>>
 <</if>>
 <br><br>
 
 <<if _options is 1>>
-	<<if $pub_hack_job is 3 and not $hacker_tasks.includes("bailey")>>
+	<<if $pub_hack_job is 3 and !$hacker_tasks.includes("bailey")>>
 		Bailey is working on something on <<his>> computer. You have the hacker's device ready.
 		<br><br>
 		<<set $skulduggerydifficulty to 800>>
 
 		<<link [[Trick Bailey|Bailey's Office Hack]]>><<set $phase to 1>><</link>><<skulduggerydifficulty>>
+		<br>
+	<<elseif isPubfameTaskAccepted("bailey")>>
+		Bailey is working on something on <<his>> computer. You have the hacker's device ready.
+		<br><br>
+		<<set $skulduggerydifficulty to 800>>
+
+		<<link [[Trick Bailey|Bailey Sheet]]>><<set $phase to 1>><</link>><<skulduggerydifficulty>>
 		<br>
 	<</if>>
 
@@ -1446,10 +1455,10 @@ You take the plushie back to your room and nestle it atop your wardrobe. It shou
 :: Bailey's Office Robin
 <<set $outside to 0>><<set $location to "home">><<effects>>
 
-<<if $robinDebtAsk is 1>>
+<<if $daily.robin.debtAsk is 1>>
 	"Have you made up your mind this time?" <<he>> asks.
 <<else>>
-	<<set $robinDebtAsk to 1>>
+	<<set $daily.robin.debtAsk to 1>>
 	"You want to take on that worthless waif's debt? Why?" Bailey says. "Don't answer. I don't care." <<He>> smiles.
 <</if>>
 "People pay more for your ass anyway."
@@ -1564,7 +1573,7 @@ Robin</i>"
 <br><br>
 
 "I'm sorry," <<he>> says. "I didn't mean to embarrass you." You lean forward and kiss <<him>>.
-<<glove>><<npcincr Robin love 1>><<garousal>><<ltrauma>><<lstress>><<arousal 600>><<trauma -6>><<stress -12>>
+<<glove>><<npcincr Robin love 1>><<garousal>><<ltrauma>><<lstress>><<arousal 600 "mouth">><<trauma -6>><<stress -12>>
 <<takeKissVirginity "Robin" "loveInterest">>
 <br><br>
 
@@ -2185,7 +2194,7 @@ Robin leans on to you, panting, beads of sweat dripping down <<his>> naked body.
 			<<set $penisuse to 0>><<set $penisstate to 0>>
 		<</if>>
 		disappointed. "But you didn't finish yet," Robin says. <<His>> hands wander over your <<genitals>>, and a tenacious look crosses <<his>> face. <br><br>
-		<<arousal 2500>>
+		<<arousal 2500 "genitals">>
 		<<if $arousal gte $arousalmax>>
 			<<orgasm>>Robin looks content with <<his>> work and <<he>> kisses your cheek.
 		<<else>>
@@ -2214,7 +2223,7 @@ Robin leans on to you, panting, beads of sweat dripping down <<his>> naked body.
 		<<His>> eyes gaze up at you, begging you to climax.
 		<br>
 
-		<<arousal 4000>>
+		<<arousal 4000 "genitals">>
 		<<if $arousal gte $arousalmax>>
 			<<orgasm>>
 		<<else>>
@@ -2600,7 +2609,7 @@ Robin leans on to you, panting, beads of sweat dripping down <<his>> naked body.
 			<<set $penisuse to 0>><<set $penisstate to 0>>
 		<</if>>
 		playful. "But you didn't cum yet," <<he>> whispers. <<His>> hands wander over your <<genitals>>.
-		<<arousal 2500>>
+		<<arousal 2500 "genitals">>
 		<<if $arousal gte $arousalmax>>
 			<<orgasm>>Robin looks pleased.
 		<<else>>
@@ -2618,7 +2627,7 @@ Robin leans on to you, panting, beads of sweat dripping down <<his>> naked body.
 		<br>
 		Robin disappears under the cover. A moment later you feel <<his>> tongue licking your <<genitals>>.
 		<br>
-		<<arousal 4000>>
+		<<arousal 4000 "genitals">>
 		<<if $arousal gte $arousalmax>>
 			<<orgasm>>
 		<<else>>
@@ -2920,13 +2929,13 @@ You leave the bigger things off the table though, you don't really want Robin kn
 :: Robin Blame
 <<set $outside to 0>><<set $location to "home">><<effects>>
 
-<<if $robinpolicebody is 1>>
+<<if $daily.robin.policeBody is 1>>
 	You are feeling irritated at Robin, so you tell <<him>> what you think about having to do what you did with those police.
 	You don't give any details, but you make it clear you are sore about it and don't want to have to do that again. <<He>> hangs <<his>> head and nods.
 	<br><br>
 	<<robinoptions>>
 
-<<elseif $robinpolicepay is 1>>
+<<elseif $daily.robin.policePay is 1>>
 	You are feeling irritated at Robin, so you tell <<him>> what you think about having to pay for <<him>> not having a permit.
 	<<He>> hangs <<his>> head and nods.
 	<br><br>
@@ -2949,7 +2958,7 @@ You leave the bigger things off the table though, you don't really want Robin kn
 :: Robin Persecute
 <<set $outside to 0>><<set $location to "home">><<effects>>
 
-<<if $robinpolicebody is 1>>
+<<if $daily.robin.policeBody is 1>>
 	You said you were fine with it earlier, but ever since you paid off those cops with your body you have been winding tighter and tighter.
 	You begin unloading on Robin and chewing <<him>> out about not having a permit,
 	and when you are done with that you begin finding every little fault of <<his>> you can possibly dig at <<him>> about.
@@ -3666,13 +3675,218 @@ You cuddle Robin, but <<his>> hands continue to wander and grope. <<He>> pulls y
 	<br><br>
 <</if>>
 <<clotheson>>
-<<if $hacker_tasks.length gte 2 and $phase is 1>>
-	<span class="green">You have completed the hacker's tasks. You should talk to Landry.</span>
-	<br><br>
+<<if $phase is 1>>
+	<<if $hacker_tasks.length gte 2>>
+		<span class="green">You have completed the hacker's tasks. You should talk to Landry.</span>
+		<br><br>
+	<<elseif $pubfame and $pubfame.task is "bailey" and $pubfame.status isnot "done">>
+		<span class="red">You can't say for sure that Mickey isn't on <<his>> computer. You'll need to try again.</span>
+	<</if>>
 <</if>>
 <<endcombat>>
 <<link [[Next|Orphanage]]>><</link>>
 <br>
+
+:: Bailey Sheet
+<<set $outside to 0>><<set $location to "home">><<effects>>
+
+<<rng>>
+<<if $pronoun is "m">>"Sir,"<<else>>"Miss Bailey,"<</if>>
+<<if $rng gte 67>>
+	you shout. "There's a <<personsimple>> in the garden trying to drag away one of the orphans!"
+	<br>
+	Bailey sneers, and strides out of the office in the direction of the garden.
+<<elseif $rng gte 33>>
+	you whisper. "There's a strange <<personsimple>> peeking through one of the back windows. It's frightening."
+	<br>
+	Bailey sneers, and strides from the office.
+	<br>
+	<<He>> marches out in the direction of the dormitory.
+<<else>>
+	you pant. "There's a <<personsimple>> outside shouting that this place should be shut down. But where will we live?"
+	<br>
+	Bailey scowls, and strides from the office.
+<</if>>
+<br><br>
+
+<<skulduggerycheck "silent">><<skulduggeryuse>>
+
+You install the USB, and a file folder automatically pops up a second later. You assume the USB found something on its own.
+<br><br>
+
+<<rng>>
+<<if $rng gte 76 and $skulduggerysuccess is 1>>
+	You look through the folder. Bailey is gone for long enough for you to be relatively thorough. <span class="green">You don't find anything mentioning Mickey.</span>
+	<<pubfameComplete "bailey">>
+
+	You remove the device and leave before Bailey returns.
+	<br><br>
+
+	<<link [[Next|Orphanage]]>><<endevent>><</link>>
+
+<<elseif $rng gte 51 and $skulduggerysuccess is 0>>
+	You look through the folder, and can't find anything mentioning Mickey. You're scanning through a document when <span class="red">Bailey stomps back into the room</span>.
+	<br>
+	"I knew you were up to something, brat."
+	<br>
+	<<He>> rips the device out and grabs your arm.
+	<br><br>
+
+	<<link [[Next|Bailey Beating]]>><<set $molestationstart to 1>><</link>>
+
+<<elseif $rng gte 26>>
+	You look through the folder and find a text file listing things to do throughout the week. Nestled between names you don't recognize with numbers next to them, you see a mention of <span class="blue">retrieving the hacker</span>. You assume it's referring to Mickey.
+	<br><br>
+
+	<<if $skulduggerysuccess is 1>>
+		You delete the line and add a line about "refilling the fuel" in its place. <span class="green">Bailey is gone long enough for you to remove the device and escape.</span>
+		<<pubfameComplete "bailey" "list">>
+
+		<<link [[Next|Orphanage]]>><<endevent>><</link>>
+	<<else>>
+		You delete the line and add a line about "refilling the fuel" in its place. You remove the USB and go to leave, but <span class="red">a scowling Bailey blocks the door</span>.
+		<br>
+		"I knew you were up to something, brat."
+		<br>
+		<<He>> grabs your arm.
+		<br><br>
+
+		<<pubfameComplete "bailey" "list">>
+
+		<<link [[Next|Bailey Beating]]>><<set $molestationstart to 1>><</link>>
+	<</if>>
+<<else>>
+	You look through the folder and find a spreadsheet. You open it and look through it. It's filled with dozens of names, <span class="red">all of them of orphans that ran away from the orphanage</span>.
+	<br><br>
+
+	You recognize the name of a <<girl>> that disappeared two weeks ago, before appearing again. <<pShes>> in the "retrieved" column. Other names are in the "sold", "released", "escaped" and "other" columns. Mickey's name is in the escaped column.
+	<br><br>
+
+	You could remove Mickey from the list and ensure their safety. You could also try to delete the spreadsheet entirely, but Bailey won't be happy with you.
+	<<if $skulduggerysuccess is 1>>
+		It will probably take long enough that Bailey will catch you, regardless of how long <<he>> was distracted.
+	<</if>>
+	<br><br>
+
+	<<link [[Remove Mickey|Bailey Sheet 2]]>><<set $phase to $skulduggerysuccess>><</link>>
+	<br>
+	<<link [[Delete the entire file|Bailey Sheet 2]]>><<set $phase to 2>><</link>><<dangerousText>>
+<</if>>
+
+:: Bailey Sheet 2
+<<effects>>
+<<if $phase is 0>>
+	<<set $pubfame.detail to "baileyList">>
+	You remove Mickey's name from the list, save and close the file, and remove the USB. As you go to leave, <span class="red">a scowling Bailey blocks the door</span>.
+	<br>
+	"I knew you were up to something, brat."
+	<br>
+	<<He>> grabs your arm.
+	<br><br>
+
+	<<pubfameComplete "bailey" "list">>
+
+	<<link [[Next|Bailey Beating]]>><<set $molestationstart to 1>><</link>>
+<<elseif $phase is 1>>
+	<<set $pubfame.detail to "baileyList">>
+	You remove Mickey's name from the list, save and close the file, and remove the USB. <span class="green">Bailey is gone long enough for you to escape.</span>
+	<<pubfameComplete "bailey" "list">>
+
+	<<link [[Next|Orphanage]]>><<endevent>><</link>>
+<<elseif $phase is 2>>
+	<<set $pubfame.detail to "baileyWiped">><<set $pubfame.bailey.fight to "ready">>
+	You exit out of the file and delete it from the folder. You also clear the file's history. You then delete it from the recycling bin, and use a program on the USB to clear the cache. It also automatically deletes all system restore points, which you hadn't thought of doing.
+	<br><br>
+
+	<<pubfameComplete "bailey" "clear">>
+
+	Bailey marches into the room while you're still at the computer. <<He>> snaps <<his>> fingers. "Away from that. Now." You step away, and Bailey looks over <<his>> computer. "I knew you were up to..."
+	<br><br>
+
+	<<He>> trails off, staring at the screen and occasionally clicking or typing. <<His>> expression tightens. You can't see what <<hes>> doing, but you imagine <<hes>> checking the file history, then the recycling bin, then the cache, then restore points. <<His>> expression barely changes throughout it all.
+	<br><br>
+
+	Finally, <<he>> looks up at you. "I see." <<He>> stares at you for an uncomfortably long time. "You can go." You feel <<his>> eyes on you as you leave.
+	<br><br>
+
+	<<link [[Next|Orphanage]]>><<endevent>><</link>>
+<</if>>
+
+:: Bailey Sheet Fight
+<<if $fightstart is 1>>
+	<<set $fightstart to 0>>
+	<<neutral 1>>
+
+	<<maninit>>
+	<<set $enemytrust -= 100>>
+	<<set $enemyanger += 200>>
+	<<npcidlegenitals>>
+	<<set $apologised to 1>>
+<</if>>
+
+<<effects>>
+<<effectsman>><<man>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if _combatend or ($pain gte 100 and $willpowerpain is 0)>>
+	<span id="next"><<link [[Next|Bailey Sheet Fight Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Bailey Sheet Fight]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Bailey Sheet Fight Finish
+<<effects>><<set $pubfame.bailey.fight to "done">>
+<<if $enemyhealth lte 0>>
+	<<earnFeat "Slip Through the Backdoor">>
+	The <<person1>><<person>> staggers back, nursing a wound. "Damn," <<he>> says. "Boss isn't gonna be happy with us."
+	<br><br>
+
+	"Let's just skip town, buy us a few weeks," the <<person3>><<person>> says, as the group disperses.
+	<br><br>
+
+	<span class="gold">Bailey must have hired them after you deleted the spreadsheet.</span> <<tearful>> you watch as they scatter.
+	<br><br>
+
+	<<endcombat>><<clotheson>>
+
+	<<destinationeventend>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<earnFeat "Slip Through the Backdoor">>
+	<<ejaculation>>
+
+	<<tearful>> you make your getaway while they're dazed.
+	<br><br>
+
+	<span class="gold">Bailey must have hired them after you deleted the spreadsheet.</span> <<tearful>> you watch as they scatter.
+	<br><br>
+
+	<<endcombat>><<clotheson>>
+
+	<<destinationeventend>>
+<<else>>
+	<<pass 5>>
+	You collapse to the ground, too hurt to move.
+	<br><br>
+
+	The <<person1>><<person>> binds your arms together and hauls you into a truck. <<He>> slams the trunk shut. After a few minutes, the truck takes off. You try to open the trunk, but it's locked from the other side.
+	<br><br>
+
+	Time passes, and the truck comes to a stop. Someone opens the trunk. <span class="red">It's Bailey.</span>
+	<br><br>
+
+	<<if $renttime lte 0>>
+		"It's about time you paid up anyway," <<he>> sneers.
+	<<else>>
+		"It's not quite payment day yet," <<he>> sneers.
+	<</if>>
+	"But I don't care. After what you put me through, I'm not accepting anything less than this."
+	<br><br>
+
+	<<link [[Next|Rent Intro]]>><<clotheson>><<endcombat>><</link>>
+<</if>>
 
 :: Robin Give Milkshake
 <<effects>>
@@ -3866,7 +4080,7 @@ You get into bed next to <<him>>, and turn off the lamp.
 <<set _autosavehere to true>>
 <<sleep>><<effects>>
 <<sleepeffects>>
-<<if $wraith and $wraith.nightmare is 2 and ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6)>>
+<<if $wraith.nightmare is 2 and isBloodmoon()>>
 	You dream of a beautiful figure, cloaked in white, standing under the red moon. It has its arms spread out to you in a welcoming gesture. You can feel its gaze boring into your mind as you step closer.
 	<br><br>
 	It's surrounded by trees, all bending inwards, and floating above a lake. Everything moves around you, and you find yourself hanging above a large ruin. You can't breathe.
@@ -4649,7 +4863,7 @@ Robin's grip on your hand trembles, then tightens. <<His>> arm reaches up yours,
 
 <<link [[Forgive Robin|Robin Mist Forgive]]>><<stress 10>><<npcincr Robin trauma -5>><</link>><<ggstress>><<llrtrauma>>
 <br>
-<<link [[Stay Silent|Robin Mist Silence]]>><<stress -3>><<npcincr Robin trauma 3>><</link>><<lstress>><<grtrauma true>>
+<<link [[Stay silent|Robin Mist Silence]]>><<stress -3>><<npcincr Robin trauma 3>><</link>><<lstress>><<grtrauma true>>
 
 :: Robin Mist Forgive
 <<set $location to "landfill">><<set $outside to 1>><<effects>>
@@ -5982,7 +6196,7 @@ You get up from the bed and leave the room. Robin doesn't look at you.
 	<br>
 	Robin disappears under the cover. A moment later you feel <<his>> tongue licking your <<genitals>>.
 	<br>
-	<<arousal 4000>>
+	<<arousal 4000 "genitals">>
 	<<if $arousal gte $arousalmax>>
 		<<orgasm>>
 	<<else>>

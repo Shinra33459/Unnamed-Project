@@ -381,8 +381,11 @@
 	<</if>>
 <</widget>>
 
-<<widget "neutral">>
-	<<if _args[0]>>
+<<widget "neutral">> <!-- This widget's names ('neutral') is awful. Maybe 'molest' might better describe its use? -->
+	<!-- args[1] now modifies the arousal applied to the PC -->
+	<!-- Consult the 'arousal' widget to see how -->
+	<<if _args[0] and (typeof _args[0]) is "number">>
+		
 		<<if $consensual isnot 1>>
 			<<if $drunk gt 0>>
 				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
@@ -393,50 +396,41 @@
 			<<stress _args[0] $_stress_multiplier>>
 			<<combattrauma _args[0]>>
 		<</if>>
+
 		<<set _arousal to 20 * _args[0]>>
-		<<arousal _arousal>>
-		<<set $enemyarousal += _args[0]>>
+		<<if _args[1] and _args[2] and (typeof _args[1]) is "string" and (typeof _args[2]) is "number">>
+			<<arousal _arousal _args[1]>>
+			<<enemyarousal _args[0] _args[2]>>
+		<<elseif _args[1] and (typeof _args[1]) is "string">>
+			<<arousal _arousal _args[1]>>
+			<<enemyarousal _args[0]>>
+		<<elseif _args[1] and (typeof _args[1]) is "number">>
+			<<arousal _arousal>>
+			<<enemyarousal _args[0] _args[1]>>
+		<</if>>
 	<</if>>
 <</widget>>
 
 <<widget "neutralbreast">>
-	<<if _args[0]>>
-		<<if $consensual isnot 1>>
-			<<if $drunk gt 0>>
-				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
-				<<set $_stress_multiplier to [9,8,6,4,3][$_drunk_level]>>
-			<<else>>
-				<<set $_stress_multiplier to 10>>
-			<</if>>
-			<<stress _args[0] $_stress_multiplier>>
-			<<combattrauma _args[0]>>
-		<</if>>
-		<<set _arousal to 20 * _args[0] * $breastsensitivity>>
-		<<arousal _arousal>>
-		<<set $enemyarousal += _args[0]>>
-	<</if>>
+	<<neutral _args[0] "breasts">>
 <</widget>>
 
 <<widget "neutralgenitals">>
-	<<if _args[0]>>
-		<<if $consensual isnot 1>>
-			<<if $drunk gt 0>>
-				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
-				<<set $_stress_multiplier to [9,8,6,4,3][$_drunk_level]>>
-			<<else>>
-				<<set $_stress_multiplier to 10>>
-			<</if>>
-			<<stress _args[0] $_stress_multiplier>>
-			<<combattrauma _args[0]>>
-		<</if>>
-		<<set _arousal to 20 * _args[0] * $genitalsensitivity>>
-		<<arousal _arousal>>
-		<<set $enemyarousal += _args[0]>>
-	<</if>>
+	<<neutral _args[0] "genitals">>
+<</widget>>
+
+<<widget "enemyarousal">>
+	<<set $enemyarousal += _args[0]>>
 <</widget>>
 
 <<widget "sex">>
-	<<if _args[0]>>
+	<!-- args[1] - indicates target: "genitals" if penile or vaginal, "anus" if anal, "mouth" if oral -->
+
+	<!-- Comment Akoz: args[2] was used at some places to show double penetration and at others -->
+	<!-- to pass which enemy NPC is doing the fucking. I'd leave it to mean the later, but -->
+	<!-- I didn't want to make a decision about a system I'm not working on. -->
+	<!-- So I chose to leave args[2] unused -->
+	<<if _args[0] and (typeof _args[0]) is "number">>
 		<<if $consensual isnot 1>>
 			<<if $drunk gt 0>>
 				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
@@ -450,8 +444,15 @@
 			<<stress _args[0] -10>>
 		<</if>>
 		<<set _arousal to 20 * _args[0]>>
-		<<arousal _arousal>>
-		<<set $enemyarousal += 2 * _args[0]>>
+		<<set _enemyarousal to 2 * _args[0]>>
+		<<if _args[1] is undefined>>
+			<<error {
+				message : `Expected a second parameter, but none was provided.`,
+				source : "Called from " + Utils.GetStack()
+			}>>
+		<</if>>
+		<<arousal _arousal _args[1]>>
+		<<enemyarousal _enemyarousal>>
 	<</if>>
 <</widget>>
 
@@ -487,7 +488,7 @@
 		<<set _stressMod = _args[1] || 1>>
 		<<set _traumaMod = _args[2] || 1>>
 		<<set _painMod = _args[3] || 1>>
-		<<set _arousalMod = _args[4] || 1>>
+		<!-- args[4] - indicates NPC id (but is currently unused) -->
 
 		<<if _violence gt 0 or _violence lt 0>>
 			<<if $drunk gt 0>>
@@ -497,7 +498,8 @@
 				<<set _drunkMod to 10>>
 			<</if>>
 			<<if $possessed is true and _violence gte 0>>
-				<<control `_violence / 10`>>
+				<<set $_controlMod to (10 * $enemyno)>>
+				<<control `_violence / $_controlMod`>>
 				<<set $wraith.will -= _violence>>
 				<<set _possessMod to 3>>
 			<<else>>
@@ -506,9 +508,8 @@
 			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
 			<<combattrauma _violence * _traumaMod>>
 			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>
-			<<set _arousal to (_violence * _arousalMod * (0 + ($masochism / 18)))>>
-			<<arousal _arousal/_possessMod>>
-			<<set $arousalmasochism += (_violence * (0 + ($masochism / 7)))>>
+			<<set _arousal to (_violence * (0 + ($masochism / 18)))>>
+			<<arousal _arousal/_possessMod "maso">>
 			<<if $orgasmdown gte 1>>
 				<<if $masochism gte 800>>
 					<<masochism `(_violence / 20)`>>
@@ -556,7 +557,7 @@
 			<<trauma _violence * _traumaMod>>
 			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))>>
 			<<set _arousal to (_violence * _arousalMod * (0 + ($masochism / 18)))>>
-			<<arousal _arousal>>
+			<<arousal _arousal "maso">>
 			<<set $arousalmasochism += (_violence * (0 + ($masochism / 7)))>>
 			<<if $orgasmdown gte 1>>
 				<<if $masochism gte 800>>
@@ -581,6 +582,10 @@
 <</widget>>
 
 <<widget "submission">>
+	<!-- Comment Akoz: this won't use sensitivities as I reckon this arousal source is -->
+	<!-- entirely psychological. -->
+	<!-- args[0] - the submission value -->
+	<!-- args[1] - the NPC to whom PC is submitting (currently unused) -->
 	<<if _args[0]>>
 		<<if $consensual isnot 1>>
 			<<if $drunk gt 0>>
@@ -645,6 +650,10 @@
 <</widget>>
 
 <<widget "meek">>
+	<!-- Comment Akoz: this won't use sensitivities as I reckon this arousal source is -->
+	<!-- entirely psychological. -->
+	<!-- args[0] - the meek value -->
+	<!-- args[1] - the NPC for whom PC is acting meekly (currently unused) -->
 	<<if _args[0]>>
 		<<if $consensual isnot 1>>
 			<<sub `_args[0] / 4`>>
@@ -1823,10 +1832,14 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/factory_day.gif'">
 				<<case "pound">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/town_day.gif'">
+				<<case "office_building">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/office_day.png'">
+				<<case "kylar_manor">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/kylar_manor_day.png'">
 			<</switch>>
 		<<elseif $daystate is "night">>
 			<!-- if bloodmoon -->
-			<<set _bloodmoon to ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6)>>
+			<<set _bloodmoon to (isBloodmoon() or $forcedBloodmoon)>>
 
 			<<if $location is "tentworld">>
 				<img id="daystate" src="img/misc/tentskynight.png">
@@ -1970,6 +1983,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/factory_night.png'">
 				<<case "pound">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/town_night.gif'">
+				<<case "office_building">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/office_night.png'">
+				<<case "kylar_manor">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/kylar_manor_night.png'">
 			<</switch>>
 		<<elseif $daystate is "dawn">>
 			<<if $location is "tentworld">>
@@ -2110,6 +2127,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/factory_dawn.gif'">
 				<<case "pound">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/town_dawn.gif'">
+				<<case "office_building">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/office_dawn.png'">
+				<<case "kylar_manor">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/kylar_manor_dawn.png'">
 			<</switch>>
 		<<elseif $daystate is "dusk">>
 			<<if $location is "tentworld">>
@@ -2254,6 +2275,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/factory_dusk.gif'">
 				<<case "pound">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/town_dusk.png'">
+				<<case "office_building">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/office_dusk.png'">
+				<<case "kylar_manor">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/kylar_manor_dusk.png'">
 			<</switch>>
 		<</if>>
 	<<else>>
@@ -2767,7 +2792,7 @@ or _args[0] is "force">>
 		<<set $_arousal += $pass * 10 * $genitalsensitivity>>
 	<</if>>
 	<<if $parasite.bottom.name>>
-		<<set $_arousal += $pass * 10>>
+		<<set $_arousal += $pass * 10 * $bottomsensitivity>>
 	<</if>>
 	<<if $parasite.tummy.name>>
 		<<set $_arousal += $pass * 10>>
@@ -2975,36 +3000,29 @@ or _args[0] is "force">>
 <<bodyliquid "feet" "goo">>
 <</widget>>
 
-<<widget "randomgoo">>
-<<set _rng to random (1, 10)>>
-It
-<<if random(1, 2) is 2>>
-	splatters onto your
-<<else>>
-	coats your
+<<widget "waist_goo">>
+<<bodyliquid "feet" "goo" 5>>
+<<bodyliquid "bottom" "goo" 5>>
+<<bodyliquid "thigh" "goo" 5>>
+<<if $player.penisExist>>
+	<<bodyliquid "penis" "goo" 5>>
 <</if>>
-<<switch _rng>>
-	<<case 1>>
-		<<bodyliquid "neck" "goo">><span class="purple">neck</span>
-	<<case 2>>
-		<<bodyliquid "rightarm" "goo">><span class="purple">right arm.</span>
-	<<case 3>>
-		<<bodyliquid "leftarm" "goo">><span class="purple">left arm.</span>
-	<<case 4>>
-		<<bodyliquid "thigh" "goo">><span class="purple">thighs.</span>
-	<<case 5>>
-		<<bodyliquid "bottom" "goo">><span class="purple">bottom.</span>
-	<<case 6>>
-		<<bodyliquid "tummy" "goo">><span class="purple">tummy.</span>
-	<<case 7>>
-		<<bodyliquid "chest" "goo">><span class="purple">chest.</span>
-	<<case 8>>
-		<<bodyliquid "face" "goo">><span class="purple">face.</span>
-	<<case 9>>
-		<<bodyliquid "hair" "goo">><span class="purple">hair.</span>
-	<<case 10>>
-		<<bodyliquid "feet" "goo">><span class="purple">feet.</span>
-<</switch>>
+<<if $player.vaginaExist>>
+	<<bodyliquid "vaginaoutside" "goo" 5>>
+<</if>>
+<</widget>>
+
+<<widget "random_goo">>
+	<<set $_rng to random (0, 9)>> <!-- 1-10 but 0 indexed -->
+	<<set $_part_text to [
+		"neck", "right arm", "left arm", "thigh", "bottom",
+		"tummy", "chest", "face", "hair", "feet"
+		].select($_rng)>>
+	<<set $_part to $_part_text.replace(" ","")>>
+	<<set $player.bodyliquid[$_part].goo += 1>>
+
+	It <<print either("splatters onto your", "coats your", "lands on your", "splashes your")>>
+	<span class="purple">$_part_text.</span>
 <</widget>>
 
 <<widget "random_semen">>
@@ -3021,11 +3039,11 @@ It
 <</widget>>
 
 <<widget "washmakeup">>
-<<if $makeup.lipstick != 0 or $makeup.eyeshadow != 0 or ($makeup.mascara != 0 and !$makeup.mascara.contains('waterproof')) or $makeup.concealer != 0>>
+<<if $makeup.lipstick != 0 or $makeup.eyeshadow != 0 or ($makeup.mascara != 0 and !$makeup.mascara.includes('waterproof')) or $makeup.concealer != 0>>
 	<<set $makeupWashed = 1>>
 	<<set $makeup.lipstick = 0>>
 	<<set $makeup.eyeshadow = 0>>
-	<<if $makeup.mascara and !$makeup.mascara.contains('waterproof')>>
+	<<if $makeup.mascara and !$makeup.mascara.includes('waterproof')>>
 		<<set $makeup.mascara = 0>>
 		<<set $makeup.mascara_running = 0>>
 	<</if>>
@@ -3383,7 +3401,13 @@ __Map__<br>
 
 <<widget "encountersteal">>
 	<<rng>>
-	<<if $location is "prison">>
+	<<if isPubfameTaskAccepted("morgan") and $npc.includes("Morgan")>>
+		<<pubfameComplete "morgan" "steal">>
+		<<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
+	<<elseif isPubfameTaskAccepted("hospital") and $pubfame.hospital.active is 1>>
+		<<pubfameComplete "hospital" "steal">>
+		<<crimeup 20>><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
+	<<elseif $location is "prison">>
 		<<set _teeth to random(3,10)>>
 		You steal a handful of white, translucent gems.
 		<<prison_teeth _teeth>> <<prison_teeth_text _teeth>>
@@ -3391,7 +3415,7 @@ __Map__<br>
 		<<spray 1>>
 		<span class="green">You steal a charge for your pepper spray.</span>
 		<<crimeup 50>><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
-	<<elseif $rng gte 90 and $compoundstate is undefined and $compoundcard is undefined>>
+	<<elseif $rng gte 90 and !$compoundcard>>
 		<<set $compoundcard to 1>>
 		You steal a strange card. There's an address on it, for a location on <span class="gold">Elk Street.</span>
 	<<else>>
@@ -3732,13 +3756,13 @@ __Map__<br>
 				},
 				"purity" : {
 					name: "Purity",
-					value: State.temporary.npcData.purity,
-					activeIcon: (State.temporary.npcData.virginity.vaginal == false || State.temporary.npcData.virginity.penile == false ? "img/ui/sym_fallen_purity.png" : "img/ui/sym_purity.png"),
+					value: T.npcData.purity,
+					activeIcon: (T.npcData.virginity.vaginal == false || T.npcData.virginity.penile == false ? "img/ui/sym_fallen_purity.png" : "img/ui/sym_purity.png"),
 					color: 'white'
 				},
 				"corruption" : {
 					name: "Corruption",
-					value: State.temporary.npcData.corruption,
+					value: T.npcData.corruption,
 					iconOrientation : 'horizontal-inverted',
 					activeIcon: "img/ui/sym_demon_purity.png",
 					color: 'purple'
@@ -3765,7 +3789,58 @@ __Map__<br>
 		<</script>>
 	<</silently>>
 	<<if _npcData and _npcData.init is 1>>
-		<<if _npcOverrides and _npcOverrides.important>>
+		<<if (_npcData.nam is ("Ivory Wraith") or ($wraith.mimic is _npcData.nam and $wraith.revealed))>>
+			<<rngWraithSocial>>
+			<<if _npcData.nam is ("Ivory Wraith") and ($wraith.mimic is "" and (_wraithEventSocial or $wraith.type)) and $wraithIntro>>
+				<div class="relation-box">
+					<div class="relation-top-line">
+						<span class="relation-name">
+							_npcData.nam
+							<small class="relation-title black"><i>The _wraithTitle</i></small>
+						</span>
+						<div class="quick-stats">
+							<<for _j = 0; _j lt _otherNpcStats.length; _j++>>
+								<<if _npcData[_otherNpcStats[_j]] gt 0 and _checkRequirements(_otherNpcStats[_j])>>
+									<<relation-box-stat _getStatConfig(_otherNpcStats[_j])>>
+								<</if>>
+							<</for>>
+						</div>
+					</div>
+					<div class="relation-description">
+						<<if $options.images is 1 and (_rngWraithFace is 1 or $possessed)>>
+							<img id="wraith" @src="'img/misc/icon/wraith' + V.wraith.state + '.png'">
+						<<else>>
+							<<npcrelationship _npcData.nam>>
+						<</if>>
+					</div>
+				</div>
+			<<elseif $wraithIntro and $wraith.mimic is _npcData.nam and $wraith.revealed and _npcOverrides and _npcOverrides.important>>
+				<div class="relation-box">
+					<div class="relation-top-line">
+						<span class="relation-name">
+							_npcData.nam?
+							<small class="relation-title black"><i>The _wraithTitle</i></small>
+						</span>
+						<<if _loveInterest>>
+							<img class="love-interest-icon" src="img/ui/love_interest.png" alt="Love Interest" title="Love Interest"/>
+						<</if>>
+					</div>
+					<div class="relation-description">
+						<<set _rngWraithLineChance to 1>>
+						<<npcrelationship "Ivory Wraith">>
+					</div>
+					<div @class="'relation-stat-list' + ($options.images ? '' : ' no-images')">
+						<<for _j = 0; _j lt _importantNpcStats.length; _j++>>
+							<<if _npcData[_importantNpcStats[_j]] gt 0 and _checkRequirements(_importantNpcStats[_j])>>
+								<<relation-box-stat _getStatConfig(_importantNpcStats[_j]) true>>
+							<</if>>
+						<</for>>
+					</div>
+				</div>
+			<<else>>
+			/* Do not display anything */
+			<</if>>		
+		<<elseif _npcOverrides and _npcOverrides.important>>
 			<div class="relation-box">
 				<div class="relation-top-line">
 					<span class="relation-name">
@@ -3850,7 +3925,7 @@ __Map__<br>
 <</widget>>
 
 <<widget "oralpassage">>
-	<<takeVirginity _args[0] "oral">><<oralstat>><<oralejacstat>><<ejacstat>><<set $hunger -= 200>><<set $thirst -= 200>><<bodyliquid "mouth" "semen" 1>>
+	<<takeVirginity _args[0] "oral">><<oralstat>><<oralejacstat>><<ejacstat>><<cumswallow 'human'>>
 <</widget>>
 
 <<widget "relationshipclamp">>
@@ -3941,6 +4016,15 @@ __Map__<br>
 	<<set _i to $NPCNameList.indexOf("Remy")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
+
+	<<set _i to $NPCNameList.indexOf("Ivory Wraith")>>
+	<<if $wraith.state is "haunt">>
+		<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 10)>>
+		<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 10, 20)>>
+	<<else>>
+		<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 20)>>
+		<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 20)>>
+	<</if>>
 <</widget>>
 
 <<widget "fringecheck">>
@@ -3956,18 +4040,23 @@ __Map__<br>
 <</widget>>
 
 <<widget "fringelength">>
+	<<set _fringecolour = "">>
+	<<if $haircolour isnot $hairfringecolour>>
+		<<set _fringecolour = $hairfringecolour + " ">>	
+	<</if>>
+
 	<<if $fringelength gte 980>>
-		and your fringe is very long.
+		and your <<print _fringecolour>>fringe is very long.
 	<<elseif $fringelength gte 800>>
-		and your fringe is long.
+		and your <<print _fringecolour>>fringe is long.
 	<<elseif $fringelength gte 600>>
-		and your fringe is somewhat long.
+		and your <<print _fringecolour>>fringe is somewhat long.
 	<<elseif $fringelength gte 400>>
-		and your fringe is quite normal.
+		and your <<print _fringecolour>>fringe is quite normal.
 	<<elseif $fringelength gte 200>>
-		and your fringe is short.
+		and your <<print _fringecolour>>fringe is short.
 	<<else>>
-		and your fringe is very short.
+		and your <<print _fringecolour>>fringe is very short.
 	<</if>>
 <</widget>>
 
@@ -4823,8 +4912,8 @@ __Map__<br>
 <<widget "schoolrep">>
 <<if _args[0] and _args[1] and (!$worn.face.type.includes("mask") or _args[1] lt 0)>>
 	<<if $schoolrep[_args[0]] lt 5 or _args[1] lt 0>>
-		<<if _args[0] is "crossdress" and ($school_crossdress_day is undefined or _args[1] lt 0)>>
-			<<set $school_crossdress_day to 1>>
+		<<if _args[0] is "crossdress" and ($daily.school.crossdress is undefined or _args[1] lt 0)>>
+			<<set $daily.school.crossdress to 1>>
 			<<set $schoolrep[_args[0]] += _args[1]>>
 			<<if $schoolrep.crossdress gte 5>>
 				<<set $genderknown.pushUnique("Kylar")>>
@@ -4841,8 +4930,8 @@ __Map__<br>
 				<<set $school_crossdress_message to $schoolrep.crossdress>>
 			<</if>>
 			<<set $schoolrep.crossdress = Math.clamp($schoolrep.crossdress, 0, 5)>>
-		<<elseif _args[0] is "herm" and ($school_herm_day is undefined or _args[1] lt 0)>>
-			<<set $school_herm_day to 1>>
+		<<elseif _args[0] is "herm" and ($daily.school.herm is undefined or _args[1] lt 0)>>
+			<<set $daily.school.herm to 1>>
 			<<set $schoolrep[_args[0]] += _args[1]>>
 			<<if $schoolrep.herm gte 5>>
 				<<set $genderknown.pushUnique("Kylar")>>
@@ -5156,5 +5245,18 @@ __Map__<br>
 			message	: `bodyliquid widget on ${Utils.GetStack()} failed, please report`,
 			source	: `Arguments: ${$_bodypart} | ${_args[0]} | ${_args[1]} | ${_args[2]} | ${_args[3]}.`
 		}>>
+	<</if>>
+<</widget>>
+
+
+<<widget "semenswallowedstat">>
+	<<if $statFreeze isnot true and $args[0] isnot undefined>>
+		<<set $semenswallowedstat += $args[0]>>
+	<</if>>
+<</widget>>
+
+<<widget "animalsemenswallowedstat">>
+	<<if $statFreeze isnot true and $args[0] isnot undefined>>
+		<<set $animalsemenswallowedstat += $args[0]>>
 	<</if>>
 <</widget>>

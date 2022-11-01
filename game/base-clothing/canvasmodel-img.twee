@@ -75,13 +75,15 @@ if ($options.tanningEnabled is true){
 <</if>>
 
 <<if $possessed>>
-	<<set _modeloptions.left_eye = ($wraith and $wraith.state is "haunt" and !$schism ? "red possessed" : "blue possessed")>>
-	<<set _modeloptions.right_eye = ($wraith and $wraith.state is "haunt" and !$schism ? "red possessed" : "blue possessed")>>
+	<<set _modeloptions.left_eye = ($wraith.state is "haunt" and !$schism ? "red possessed" : "blue possessed")>>
+	<<set _modeloptions.right_eye = ($wraith.state is "haunt" and !$schism ? "red possessed" : "blue possessed")>>
 <<else>>
 	<<set _modeloptions.left_eye = $makeup.eyelenses.left != 0 ? $makeup.eyelenses.left : $leftEyeColour>>
 	<<set _modeloptions.right_eye = $makeup.eyelenses.right != 0 ? $makeup.eyelenses.right : $rightEyeColour>>
 <</if>>
 <<set _modeloptions.hair_colour = $haircolour>>
+<<set _modeloptions.hair_fringe_colour = $hairfringecolour>>
+
 <<set _modeloptions.brows_colour = ($makeup.browscolour != 0 ? $makeup.browscolour : $naturalhaircolour)>>
 <<set _modeloptions.pbhair_colour = ($makeup.pbcolour != 0 ? $makeup.pbcolour : $naturalhaircolour)>>
 
@@ -379,11 +381,11 @@ $worn.under_upper.type.includes("naked") and $worn.under_lower.type.includes("na
 <<set _modeloptions.bird_pubes_type to $transformationParts.bird.pubes>>
 
 <!--
- -	 ██████ ██   ██ ██ ███    ███ ███████ ██████   █████  
- -	██      ██   ██ ██ ████  ████ ██      ██   ██ ██   ██ 
- -	██      ███████ ██ ██ ████ ██ █████   ██████  ███████ 
- -	██      ██   ██ ██ ██  ██  ██ ██      ██   ██ ██   ██ 
- -	 ██████ ██   ██ ██ ██      ██ ███████ ██   ██ ██   ██ 
+ -	 ██████ ██   ██ ██ ███    ███ ███████ ██████   █████
+ -	██      ██   ██ ██ ████  ████ ██      ██   ██ ██   ██
+ -	██      ███████ ██ ██ ████ ██ █████   ██████  ███████
+ -	██      ██   ██ ██ ██  ██  ██ ██      ██   ██ ██   ██
+ -	 ██████ ██   ██ ██ ██      ██ ███████ ██   ██ ██   ██
 -->
 
 <!-- Demon-cat tail -->
@@ -499,8 +501,6 @@ Set model options & filters for player clothes
 
 <<set _modeloptions.upper_tucked to $upperTucked and !setup.clothes.upper[clothesIndex('upper', $worn.upper)].notuck and $worn.upper.outfitPrimary is undefined>>
 
-
-
 <<twinescript>>
 	let slots = [
 		["upper", $upperwetstage],
@@ -540,6 +540,12 @@ Set model options & filters for player clothes
 		}
 	}
 <</twinescript>>
+
+<<if Object.keys($modeloptionsOverride).length gte 1>>
+	<<for _m to 0; _m lt Object.keys($modeloptionsOverride).length; _m++>>
+		<<set _modeloptions[Object.keys($modeloptionsOverride)[_m]] to Object.values($modeloptionsOverride)[_m]>>
+	<</for>>
+<</if>>
 
 <</widget>>
 
@@ -594,4 +600,8 @@ Set model options & filters for player clothes
 	<<else>>
 		<<rendermodel>>
 	<</if>>
+<</widget>>
+
+<<widget "canvas-model-override">>
+	<<set $modeloptionsOverride[_args[0]] to _args[1]>>
 <</widget>>

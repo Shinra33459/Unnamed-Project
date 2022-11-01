@@ -141,7 +141,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 
 	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 2>><</link>>
 	<br>
-<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is undefined and $rng lte ($corruption_slime / 2) and $slimeFarmNakedStored is undefined and $exposed lt 2>>
+<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $daily.slimeFarmNaked is undefined and $rng lte ($corruption_slime / 2) and $slimeFarmNakedStored is undefined and $exposed lt 2>>
 	<span class="lewd">You feel the slime in your head command you to expose yourself and hide your clothes while you work today.</span> It promises rewards if you comply, and threatens consequences if you do not.
 	<br><br>
 
@@ -149,12 +149,12 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 	<br>
 	<<link [[Defy|Farm Slime Strip Defy]]>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><<def 1>><</link>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>>
 	<br>
-<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is true and $slimeFarmNakedStored is undefined>>
+<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $daily.slimeFarmNaked is true and $slimeFarmNakedStored is undefined>>
 	Following the slime's command, you find a spot where you think your clothes will be safe and strip before heading to work.
-	<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $slimeFarmNaked to true>>
+	<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $daily.slimeFarmNaked to true>>
 	<br><br>
 	<<link [[Next|Farm Work]]>><</link>>
-<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is true and ($worn.lower.name.includes("towel") or $worn.upper.name.includes("towel")) and $farm_naked is 1>>
+<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $daily.slimeFarmNaked is true and ($worn.lower.name.includes("towel") or $worn.upper.name.includes("towel")) and $farm_naked is 1>>
 	<<generalRuined "upper">><<generalRuined "lower">>
 	Following the slime's command, you leave the towel for Alex to find.
 	<br><br>
@@ -619,7 +619,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 			<br>
 
 			<<if $farm_work.alex isnot "shower">>
-				<<link [[Shower Shed (0:01)|Farm Shed]]>><<pass 1>><</link>>
+				<<link [[Shower shed (0:01)|Farm Shed]]>><<pass 1>><</link>>
 				<br>
 			<</if>>
 			/* Go to farm barn passage if outside of farming hours, go to cattle milking passage otherwise. */
@@ -665,8 +665,8 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 		<</if>>
 		<<link [[Leave|Farmland]]>><</link>>
 		<br>
-		<<if ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is undefined>>
-			<<set $slimeFarmNaked to false>>
+		<<if ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $daily.slimeFarmNaked is undefined>>
+			<<set $daily.slimeFarmNaked to false>>
 		<</if>>
 	<</if>>
 <</if>>
@@ -675,7 +675,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 <<effects>>
 Following the slime's command, you find a spot where you think your clothes will be safe and strip before heading to work.
 
-<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $slimeFarmNaked to true>>
+<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $daily.slimeFarmNaked to true>>
 
 <br><br>
 
@@ -687,12 +687,12 @@ Following the slime's command, you find a spot where you think your clothes will
 	You try to ignore the slime but feel a jolt of pain as it punishes you for defiance. However, <span class="red">you fail</span> to resist its influence.<<ggwillpower>><<willpower 3>>
 	<br><br>
 	Following the slime's command, you find a spot where you think your clothes will be safe and strip before heading to work.
-	<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $slimeFarmNaked to true>>
+	<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $daily.slimeFarmNaked to true>>
 	<br><br>
 
 	<<link [[Next|Farm Work]]>><</link>>
 <<else>>
-	You try to ignore the slime but feel a jolt of pain as it punishes you for defiance. You feel it try, <span class="green">but fail,</span> to force you to expose yourself.<<gwillpower>><<willpower 1>><<set $slimeFarmNaked to false>>
+	You try to ignore the slime but feel a jolt of pain as it punishes you for defiance. You feel it try, <span class="green">but fail,</span> to force you to expose yourself.<<gwillpower>><<willpower 1>><<set $daily.slimeFarmNaked to false>>
 	<br><br>
 	<<link [[Next|Farm Work]]>><</link>>
 <</if>>
@@ -1898,6 +1898,7 @@ you have a bucket full of <<beasttype>> milk.
 :: Farm Cattle Milk Mouth
 <<effects>>
 <<pass 3>>
+<<set  $consensual to 1>>
 <<if $monster is 1>>
 	You lead a <<beasttype>> into the barn. <<bHe>> starts to kneel, but you interrupt. Instead, <<bhe>> watches with a puzzled expression as you
 
@@ -1921,7 +1922,7 @@ you have a bucket full of <<beasttype>> milk.
 	<!-- Milk Penis -->
 	<<if $NPCList[0].penis isnot "none">>
 		<<bHis>> cock is already erect in anticipation. You take it into your mouth. <<if $player.virginity.oral is true>><span class="red">It tastes strange.</span><</if>>
-		<<takeVirginity $NPCList[0].fullDescription "oral">><<oralstat>><<oralejacstat>><<ejacstat>><<bodyliquid "mouth" "semen" 1>>
+		<<takeVirginity $NPCList[0].fullDescription "oral">><<oralstat>><<oralejacstat>><<ejacstat>><<animalsemenswallowedstat 15>>
 		<br><br>
 
 		You grasp <<bhis>> thighs for purchase as you bob your head back and forth. Thick <<beasttype>> cream surges into your mouth. You pull away from <<bhis>> cock and spit into the bucket, directing the rest of the flow the same way. The <<beasttype>> moos in pleasure, and you soon have the bucket filled.
@@ -1929,10 +1930,10 @@ you have a bucket full of <<beasttype>> milk.
 <<else>>
 	<<if $NPCList[0].penis isnot "none">>
 		You lead a bull into the barn, and kneel beneath it. Its cock is already erect in anticipation. You take it into your mouth. <<if $player.virginity.oral is true>><span class="red">It tastes strange.</span><</if>>
-		<<takeVirginity $NPCList[0].fullDescription "oral">><<oralstat>><<oralejacstat>><<ejacstat>><<bodyliquid "mouth" "semen" 1>>
+		<<takeVirginity $NPCList[0].fullDescription "oral">><<oralstat>><<oralejacstat>><<ejacstat>><<animalsemenswallowedstat 15>>
 
 		You grasp its hind legs for purchase as you bob your head back and forth. Thick bull cream surges into your mouth. You pull away from its cock and spit into the bucket, directing the rest of the flow the same way. The bull moos in pleasure, and you soon have the bucket filled.
-
+		<<animalsemenswallowedstat 15>>
 	<<else>>
 		You lead a cow into the barn, and kneel beneath it. You lean down, and take one of its udders into your mouth. Thick, creamy milk flows into your mouth. You spit most into the bucket, but can't help but swallow some.<<transform cat 1>>
 
@@ -2542,10 +2543,10 @@ You are in the barn. The <<farm_text_many cattle>> sleep sound.
 You take two of the suction tubes, and attach them to your <<breasts>>.
 <br><br>
 <<if $daystate is "night">>
-	The machine comes alive, and sucks your chest. You <<if $cow gte 6>>moo<<else>>gasp<</if>> at the sensation, almost waking one of the <<farm_text cattle>>s.<<gggarousal>><<arousal 2000>>
+	The machine comes alive, and sucks your chest. You <<if $cow gte 6>>moo<<else>>gasp<</if>> at the sensation, almost waking one of the <<farm_text cattle>>s.<<gggarousal>><<arousal 2000 "breasts">>
 	<br><br>
 <<else>>
-	The machine comes alive, and sucks your chest. You <<if $cow gte 6>>moo<<else>>gasp<</if>> at the sensation, causing one of the <<farm_text cattle>> to turn their head in your direction<<if $cow gte 6>> and moo back<</if>>.<<gggarousal>><<arousal 2000>>
+	The machine comes alive, and sucks your chest. You <<if $cow gte 6>>moo<<else>>gasp<</if>> at the sensation, causing one of the <<farm_text cattle>> to turn their head in your direction<<if $cow gte 6>> and moo back<</if>>.<<gggarousal>><<arousal 2000 "breasts">>
 	<br><br>
 <</if>>
 
@@ -2659,10 +2660,10 @@ You take one of the suction tubes, and attach it to your <<penis>>.
 <br><br>
 
 <<if $daystate is "night">>
-	The machine comes alive, and sucks at your penis. You <<if $cow gte 6>>moo<<else>>gasp<</if>> at the sensation, almost waking one of the <<farm_text cattle>>s.<<gggarousal>><<arousal 2000>>
+	The machine comes alive, and sucks at your penis. You <<if $cow gte 6>>moo<<else>>gasp<</if>> at the sensation, almost waking one of the <<farm_text cattle>>s.<<gggarousal>><<arousal 2000 "genitals">>
 <br><br>
 <<else>>
-	The machine comes alive, and sucks at your penis. You <<if $cow gte 6>>moo<<else>>gasp<</if>> at the sensation, causing one of the <<farm_text cattle>> to turn their head in your direction<<if $cow gte 6>> and moo back<</if>>.<<gggarousal>><<arousal 2000>>
+	The machine comes alive, and sucks at your penis. You <<if $cow gte 6>>moo<<else>>gasp<</if>> at the sensation, causing one of the <<farm_text cattle>> to turn their head in your direction<<if $cow gte 6>> and moo back<</if>>.<<gggarousal>><<arousal 2000 "genitals">>
 	<br><br>
 <</if>>
 

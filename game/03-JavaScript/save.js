@@ -86,9 +86,8 @@ const DoLSave = ((Story, Save) => {
 			Bypass this check if on a mobile, because they are notoriously difficult to grab saves from in the event of issues. */
 		if (metadata.ironman && !Browser.isMobile.any()) {
 			IronMan.update(save, metadata);
-			const signature = IronMan.getSignature(save);
 			// (if ironman mode enabled) following checks md5 signature of the save to see if the variables have been modified
-			if (signature !== metadata.signature) {
+			if (!IronMan.compare(metadata, save)) {
 				Wikifier.wikifyEval(`<<loadIronmanCheater ${slot}>>`);
 				return;
 			}
@@ -126,12 +125,15 @@ const DoLSave = ((Story, Save) => {
 				});
 				if (success) {
 					const save = Save.slots.get(saveSlot);
-					setSaveDetail(saveSlot, {
-						saveId,
-						saveName,
-						ironman: V.ironmanmode,
-						signature: V.ironmanmode ? IronMan.getSignature(save) : false,
-					});
+					const metadata = { saveId, saveName };
+					if (V.ironmanmode) {
+						Object.assign(metadata, {
+							ironman: V.ironmanmode,
+							signature: V.ironmanmode ? IronMan.getSignature(save) : false,
+							schema: IronMan.schema,
+						});
+					}
+					setSaveDetail(saveSlot, metadata);
 					delete T.currentOverlay;
 					// todo: find a better solution
 					closeOverlay();
@@ -294,12 +296,15 @@ const DoLSave = ((Story, Save) => {
 		});
 		if (success) {
 			const save = Save.slots.get(saveSlot);
-			setSaveDetail(saveSlot, {
-				saveId: V.saveId,
-				saveName: V.saveName,
-				ironman: V.ironmanmode,
-				signature: V.ironmanmode ? IronMan.getSignature(save) : false,
-			});
+			const metadata = { saveId: V.saveId, saveName: V.saveName };
+			if (V.ironmanmode) {
+				Object.assign(metadata, {
+					ironman: V.ironmanmode,
+					signature: V.ironmanmode ? IronMan.getSignature(save) : false,
+					schema: IronMan.schema,
+				});
+			}
+			setSaveDetail(saveSlot, metadata);
 		}
 	}
 
@@ -685,8 +690,10 @@ function settingsObjects(type) {
 		case "starting":
 			result = {
 				bodysize: { min: 0, max: 3, decimals: 0, randomize: "characterAppearance" },
-				breastsensitivity: { min: 0, max: 5, decimals: 0, randomize: "characterTrait" },
-				genitalsensitivity: { min: 0, max: 5, decimals: 0, randomize: "characterTrait" },
+				breastsensitivity: { min: 1, max: 3, decimals: 0, randomize: "characterTrait" },
+				genitalsensitivity: { min: 1, max: 3, decimals: 0, randomize: "characterTrait" },
+				mouthsensitivity: { min: 1, max: 3, decimals: 0, randomize: "characterTrait" },
+				bottomsensitivity: { min: 1, max: 3, decimals: 0, randomize: "characterTrait" },
 				eyeselect: {
 					strings: [
 						"purple",
@@ -746,6 +753,7 @@ function settingsObjects(type) {
 					randomize: "characterTrait",
 				},
 				gamemode: { strings: ["normal", "soft", "hard"] },
+				startingseason: { strings: ["autumn", "winter", "spring", "summer", "random"] },
 				ironmanmode: { bool: false },
 				player: {
 					gender: { strings: ["m", "f", "h"], randomize: "characterAppearance" },
@@ -858,7 +866,7 @@ function settingsObjects(type) {
 					showCaptionText: { bool: true },
 					sidebarStats: { strings: ["disabled", "limited", "all"] },
 					sidebarTime: { strings: ["disabled", "top", "bottom"] },
-					combatControls: { strings: ["radio", "lists", "limitedLists"] },
+					combatControls: { strings: ["radio", "columnRadio", "lists", "limitedLists"] },
 					mapMovement: { bool: true },
 					mapTop: { bool: true },
 					mapMarkers: { bool: true },
@@ -883,6 +891,8 @@ function settingsObjects(type) {
 					newWardrobeStyle: { bool: true },
 					useNarrowMarket: { bool: true },
 					skipStatisticsConfirmation: { bool: true },
+					passageCount: { strings: ["disabled", "changes", "total"] },
+					playtime: { bool: true },
 				},
 				shopDefaults: {
 					alwaysBackToShopButton: { bool: true },

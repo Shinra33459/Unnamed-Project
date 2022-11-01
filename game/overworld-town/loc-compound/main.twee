@@ -19,14 +19,14 @@ You are in the compound on Elk Street. Three red brick buildings stand surrounde
 	<span class="red">You are trespassing.</span>
 <</if>>
 <br><br>
-<<if $compoundstate is undefined>>
+<<if $compoundcard isnot 2>>
 	<span class="gold">You've discovered the compound on Elk Street.</span>
 	<<earnFeat "Illicit Science">>
 	<br><br>
-	<<set $compoundstate to 0>>
+	<<set $compoundcard to 2>>
 <</if>>
 <<if $compoundalarm gte 1>>
-	<<set $compoundstate to 1>>
+	<<set $daily.compoundState to 1>>
 <</if>>
 <<if $compoundalarm is undefined>>
 	<<set $compoundalarm to 0>>
@@ -43,6 +43,48 @@ You are in the compound on Elk Street. Three red brick buildings stand surrounde
 <br><br>
 <<if $stress gte $stressmax>>
 	<<passoutcompound>>
+<<elseif $hallucinations gte 2 and $wraithCompoundEvent is true and !(isPubfameTaskAccepted("compound") and $pubfame.compound.cameras.length is 0)>>
+	<<unset $wraithCompoundEvent>>
+	<<generateWraith 1 true>><<person1>><<hallucinogen 15>>
+	<<if !$wraith.will>>
+		<<set $wraith.will to random(1300, 1700)>>
+	<</if>>
+	The compound suddenly falls silent, and you look around. You take a deep breath, but it feels like you're breathing through cotton. <<rainWraith true>>
+	<br><br>
+
+	Your ears begin to ring, and a shape forms in the $weather. A beautiful pale figure floats just above the ground, wearing translucent white robes that flow in the wind. Its eyes flash a bright <<wraithEyes>>.
+	<br><br>
+
+	<<if $wraith.state is "haunt" or $wraith.offspring is "dead">>
+		<<if $wraith.state is "haunt">>
+			It claws angrily at its neck, glaring at you. "<span class="wraith">Thief among thieves. You're right at home.</span>"
+		<<else>>
+			It glares at you. "<span class="wraith">Butcher among butchers. You're right at home.</span>"
+		<</if>>
+		It's silent for a few seconds.
+		<br><br>
+
+		<<if $wraith.offspring is "sold">>
+			"<span class="wraith">Or did you hear your children calling to you?</span>"
+			<br><br>
+		<</if>>
+
+		Abruptly, it turns to look at something at the ground, or possibly through it. It looks agitated. You try to take a step back, and it twists its head to stare at you. "<span class="wraith">Enemy of my enemy. A tool.</span>" In an instant, it's standing in front of you. Shapes begin to spin in its eyes, and your body starts to relax in spite of yourself.
+		<br><br>
+
+		<<link [[Give in|Elk Compound Wraith Give]]>><<endevent>><</link>>
+	<<else>>
+		It doesn't seem to notice you at first. It looks agitated. It stares at the ground, or possibly through it, before catching you in the corner of its eye and turning to you. "<span class="wraith"><<pcPetname "Wraith">>.</span>"
+		<br><br>
+
+		It looks you over, before floating toward you. "<span class="wraith">You are not with them. Are you against them?<<if $wraith.offspring is "sold">> Or did you hear our children crying out?<</if>></span>" It reaches you and holds out a hand, palm open. "<span class="wraith">Lend me yourself.</span>" Shapes begin to spin in its eyes, and your body starts to relax in spite of yourself.
+		<br><br>
+
+		<<link [[Take its hand|Elk Compound Wraith Give]]>><<endevent>><</link>>
+	<</if>>
+	<br>
+
+	<<link [[Resist|Elk Compound Wraith Resist]]>><</link>>
 <<else>>
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
 	<<if $danger lte (3000 * $compoundalarm) and $eventskip isnot 1>>
@@ -82,15 +124,19 @@ You are in the compound on Elk Street. Three red brick buildings stand surrounde
 			<br>
 		<</if>>
 	<<else>>
-		<<if $compoundpipes isnot 1>>
+		<<if isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the courtyard")>>
+			<<link [[Put down a camera|Elk Compound Camera]]>><<set $compoundalarm++>><<set $pubfame.compound.cameras.unshift("the courtyard")>><</link>><<gsecurity>>
+			<br><br>
+		<</if>>
+		<<if $compoundpipes isnot 1 or isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the building with storage tanks")>>
 			<<link [[Investigate the building with storage tanks outside|Elk Compound Pipes]]>><</link>>
 			<br>
 		<</if>>
-		<<if $compoundsmoke isnot 1>>
+		<<if $compoundsmoke isnot 1 or isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the building with smokestacks")>>
 			<<link [[Investigate the building with smokestacks|Elk Compound Smoke]]>><</link>>
 			<br>
 		<</if>>
-		<<if $compoundcentre isnot 1>>
+		<<if $compoundcentre isnot 1 or isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the central building")>>
 			<<link [[Investigate the central building|Elk Compound Central]]>><</link>>
 			<br>
 		<</if>>
@@ -103,10 +149,21 @@ You are in the compound on Elk Street. Three red brick buildings stand surrounde
 :: Elk Compound Pipes
 
 <<set $outside to 0>><<set $location to "compound">><<effects>>
-The door to the building opens easily, and you enter. The inside is dominated by a pool of pink liquid. In the centre sits a pink crystal on a plinth, connected to the side by a thin walkway. It looks valuable.
-<br><br>
-<<link [[Take|Elk Compound Crystal]]>><</link>><<crime>><<gsecurity>>
-<br>
+The door to the building opens easily, and you enter. The inside is dominated by a pool of pink liquid.
+<<if !$compoundpipes>>
+	In the centre sits a pink crystal on a plinth, connected to the side by a thin walkway. It looks valuable.
+	<br><br>
+	<<link [[Take|Elk Compound Crystal]]>><</link>><<crime>><<gsecurity>>
+	<br>
+<<else>>
+	<br><br>
+<</if>>
+
+<<if isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the building with storage tanks")>>
+	<<link [[Put down a camera|Elk Compound Pipes Camera]]>><<set $compoundalarm++>><<set $pubfame.compound.cameras.pushUnique("the building with storage tanks")>><</link>><<gsecurity>>
+	<br>
+<</if>>
+
 <<link [[Leave|Elk Compound]]>><</link>>
 <br>
 
@@ -115,7 +172,15 @@ The door to the building opens easily, and you enter. The inside is dominated by
 <<set $outside to 0>><<set $location to "compound">><<effects>>
 The door opens easily and you enter the building. The inside is full of a sweet-smelling smoke. You can only see a few feet in front of you. The smoke makes you feel light-headed.
 <br><br>
-<<link [[Explore (0:10)|Elk Compound Explore]]>><<pass 10>><</link>>
+
+<<if !$compoundsmoke>>
+	<<link [[Explore (0:10)|Elk Compound Explore]]>><<pass 10>><</link>>
+	<br>
+<</if>>
+<<if isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the building with smoke stacks")>>
+	<<link [[Put down a camera|Elk Compound Smoke Camera]]>><<set $compoundalarm++>><<set $pubfame.compound.cameras.pushUnique("the building with smoke stacks")>><</link>><<gsecurity>>
+	<br>
+<</if>>
 <br>
 <<link [[Leave|Elk Compound]]>><</link>>
 <br>
@@ -293,7 +358,7 @@ The <<person>> slams the door. An alarm blares a moment later.
 		They see what the <<beasttype 0>> wants from you and laugh. "Good <<beasttype 0>>," the <<person2>><<person>> says.
 		<br><br>
 	<</if>>
-	<<person3>>We should probably let the <<beasttype 0>> have its treat," says the <<person>> as <<he>> crouches for a closer look. <<He>> pulls out <<his>> phone and starts filming.
+	<<person3>>"We should probably let the <<beasttype 0>> have its treat," says the <<person>> as <<he>> crouches for a closer look. <<He>> pulls out <<his>> phone and starts filming.
 	<br><br>
 	<<set $alarm to 0>><<set $rescue to 0>>
 	<<link [[Next|Elk Compound Bestiality 2]]>><</link>>
@@ -558,8 +623,15 @@ The wires have pads on one end. <<He>> starts sticking them to your body. <<He>>
 		<<set $blackmoney += 50>>
 		<<set $compoundalarm += 1>>
 		<<crimeup 50>>
-		<<link [[Next|Elk Compound]]>><</link>>
-		<br>
+		<<if isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the building with storage tanks")>>
+			<<link [[Put down a camera|Elk Compound Pipes Camera]]>><<set $compoundalarm++>><<set $pubfame.compound.cameras.pushUnique("the building with storage tanks")>><</link>><<gsecurity>>
+			<br>
+			<<link [[Leave|Elk Compound]]>><</link>>
+			<br>
+		<<else>>
+			<<link [[Next|Elk Compound]]>><</link>>
+			<br>
+		<</if>>
 	<</if>>
 <<else>>
 	You cross the walkway and take the crystal. It's warm to the touch.
@@ -568,8 +640,15 @@ The wires have pads on one end. <<He>> starts sticking them to your body. <<He>>
 	<<set $blackmoney += 50>>
 	<<set $compoundalarm += 1>>
 	<<crimeup 50>>
-	<<link [[Next|Elk Compound]]>><</link>>
-	<br>
+	<<if isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the building with storage tanks")>>
+		<<link [[Put down a camera|Elk Compound Pipes Camera]]>><<set $compoundalarm++>><<set $pubfame.compound.cameras.pushUnique("the building with storage tanks")>><</link>><<gsecurity>>
+		<br>
+		<<link [[Leave|Elk Compound]]>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Elk Compound]]>><</link>>
+		<br>
+	<</if>>
 <</if>>
 
 :: Elk Compound Tentacles
@@ -605,7 +684,15 @@ The creature loses interest in you, and disappears into the pink liquid. <<tearf
 <<set $blackmoney += 50>>
 <<set $compoundalarm += 1>>
 <<crimeup 50>>
-<<link [[Next|Elk Compound]]>><</link>>
+<<if isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the building with storage tanks")>>
+	<<link [[Put down a camera|Elk Compound Pipes Camera]]>><<set $compoundalarm++>><<set $pubfame.compound.cameras.pushUnique("the building with storage tanks")>><</link>><<gsecurity>>
+	<br>
+	<<link [[Leave|Elk Compound]]>><</link>>
+	<br>
+<<else>>
+	<<link [[Next|Elk Compound]]>><</link>>
+	<br>
+<</if>>
 
 :: Elk Compound Explore
 
@@ -642,30 +729,80 @@ Finding your way out is much easier than getting here.
 :: Elk Compound Honest
 
 <<set $outside to 0>><<set $location to "compound">><<effects>>
-<<if $compoundhonest is 1>>
-	"I'm not working for anyone," you say. "I'm here alone."
-	<br><br>
-	<<He>> looks at a screen that you can only see the back of, then turns a dial. Soothing waves emanate from the pads attached to you, pleasuring every inch of your body. "Good. See, that wasn't so bad, was it? Now then, why are you here?"
-	<br><br>
-<<elseif $compoundhonest is 2>>
-	"I<<if $blackmoney is 0>> was trapped while robbing a car. It drove me here<<else>>'m here to steal things<</if>>," you say. "<<if $blackmoney is 0>>Honest<<else>>For money<</if>>."
-	<<He>> turns the dial again, and you are once more assailed by the soothing waves. "Now," <<he>> says. "What did you <<if $blackmoney is 0>>try to<</if>> steal?"
-	<br><br>
-<<elseif $compoundhonest is 3>>
-	"<<if $blackmoney is 0>>M<<else>>I steal m<</if>>oney or anything I can sell," you say.
-	<br><br>
-	<<He>> turns the dial again, and you are once more assailed by the soothing waves. "Where do you sell things?"
-	<br><br>
-<<elseif $compoundhonest is 4>>
-	"<<if $produce_sold gte 1 or $pubintro is 1>>I sell <<if $produce_sold gte 1>>flowers in a stall I rent at Connudatus,<</if>><<if $produce_sold gte 1 and $pubintro is 1>> and <</if>><<if $pubintro is 1>>stolen things on Harvest street,<</if>><<else>>I've never sold anything<</if>>" you say.<<if $chef_state gte 1>> "I've <<if $produce_sold gte 1 and $pubintro is 1>>also <</if>>baked," you add.<</if>><<if $prostitutionstat gte 1 or $forcedprostitutionstat gte 1>> "... <<if $produce_sold gte 1 or $pubintro is 1 or $chef_state gte 1>>and <</if>>I've sold myself," you mumble quietly<<if $forcedprostitutionstat gte 1>>, "whether I wanted to or not."<</if>><<else>>.<</if>>
-	<br><br>
-	<<He>><<if !$pubintro>> looks uninterested as <<he>><</if>> turns the dial again, and you are once more assailed by the soothing waves. "<<if $pubintro is 1>>Who do you sell your stolen goods to?<<else>>Is that really all you do?<</if>>" <span class="red">If you're honest again, <<he>> will have everything <<he>> needs from you.</span>
-	<br><br>
+<<if isPubfameTaskAccepted("compound")>>
+	<<if $compoundhonest is 1>>
+		"I'm working for a favour for someone," you say, avoiding the question.
+		<br><br>
+		<<He>> looks at a screen that you can only see the back of, then turns a dial. Soothing waves emanate from the pads attached to you, pleasuring every inch of your body. "Good. See, that wasn't so bad, was it? Now then, why are you here?"
+	<<elseif $compoundhonest is 2>>
+		<<if $pubfame.compound.cameras.length gte 1>>
+			"I was placing down cameras," you say. "They look like rocks. There's one in <<print formatList($pubfame.compound.cameras, "and", true)>>."
+		<<else>>
+			"I was supposed to place cameras," you say. "But I got caught before I could put any down."
+		<</if>>
+		<br><br>
+		<<He>> writes something down and turns the dial again, and you are once more assailed by the soothing waves. "You mentioned a favour," <<he>> says. "What kind of favour?"
+	<<elseif $compoundhonest is 3>>
+		<<if $pubfame.goal.includes("Lower")>>
+			"I want to be less famous," you say. "To lower my <<fameProse $pubfame.target>> reputation."
+			<br><br>
+			<<if $fame[$pubfame.target] gte 400>>
+				<<He>> nods.
+				<<if ["sex","prostitution","rape","bestiality","scrap"].includes($pubfame.target)>>
+					"<<underworld_nickname>>,
+				<<else>>
+					"<<overworld_nickname>>,
+				<</if>>
+				then? That makes sense."
+			<<else>>
+				<<He>> squints. "Not sure you need it, but I don't care."
+			<</if>>
+		<<else>>
+			"I want to be more famous," you say. "To boost my <<fameProse $pubfame.target>> reputation."
+			<br><br>
+			<<if $fame[$pubfame.target] gte 400>>
+				<<He>> raises an eyebrow.
+				<<if ["sex","prostitution","rape","bestiality","scrap"].includes($pubfame.target)>>
+					"<<underworld_nickname>>,
+				<<else>>
+					"<<overworld_nickname>>,
+				<</if>>
+				then? You're already up there."
+			<<else>>
+				<<He>> squints. "I don't recognize you. You definitely need it."
+			<</if>>
+		<</if>>
+		<<He>> turns the dial again, and you are once more assailed by the soothing waves. "You dodged my first question. Who are you working for? Who's fiddling with your reputation?"
+	<<elseif $compoundhonest is 4>>
+		"Someone at the pub," you say. "A hacker. Landry knows them."
+		<br><br>
+		<<He>> smiles and turns the dial, sending soothing waves rippling over your body. "Now we're getting somewhere. Who exactly are they?" <span class="red">If you're honest again, <<he>> will have everything <<he>> needs from you, and Mickey will be in trouble.</span>
+	<<else>>
+		"I don't know their real name," you say. "But they go by Mickey." You look away, ashamed.
+	<</if>>
 <<else>>
-	"I<<if $pubintro is 1>> sell things to Landry<<else>>'ve told you everything<</if>>," you say<<if $pubintro is 1 or $prostitutionstat gte 1 or $forcedprostitutionstat gte 1>>, ashamed<</if>>.
-	<br><br>
-
+	<<if $compoundhonest is 1>>
+		"I'm not working for anyone," you say. "I'm here alone."
+		<br><br>
+		<<He>> looks at a screen that you can only see the back of, then turns a dial. Soothing waves emanate from the pads attached to you, pleasuring every inch of your body. "Good. See, that wasn't so bad, was it? Now then, why are you here?"
+	<<elseif $compoundhonest is 2>>
+		"I<<if $blackmoney is 0>> was trapped while robbing a car. It drove me here<<else>>'m here to steal things<</if>>," you say. "<<if $blackmoney is 0>>Honest<<else>>For money<</if>>."
+		<br><br>
+		<<He>> turns the dial again, and you are once more assailed by the soothing waves. "Now," <<he>> says. "What did you <<if $blackmoney is 0>>try to<</if>> steal?"
+	<<elseif $compoundhonest is 3>>
+		"<<if $blackmoney is 0>>M<<else>>I steal m<</if>>oney or anything I can sell," you say.
+		<br><br>
+		<<He>> turns the dial again, and you are once more assailed by the soothing waves. "Where do you sell things?"
+	<<elseif $compoundhonest is 4>>
+		"<<if $produce_sold gte 1 or $pubintro is 1>>I sell <<if $produce_sold gte 1>>flowers in a stall I rent at Connudatus,<</if>><<if $produce_sold gte 1 and $pubintro is 1>> and <</if>><<if $pubintro is 1>>stolen things on Harvest street,<</if>><<else>>I've never sold anything<</if>>" you say.<<if $chef_state gte 1>> "I've <<if $produce_sold gte 1 and $pubintro is 1>>also <</if>>baked," you add.<</if>><<if $prostitutionstat gte 1 or $forcedprostitutionstat gte 1>> "...<<if $produce_sold gte 1 or $pubintro is 1 or $chef_state gte 1>>and <</if>>I've sold myself," you mumble quietly<<if $forcedprostitutionstat gte 1>>, "whether I wanted to or not."<</if>><<else>>.<</if>>
+		<br><br>
+		<<He>><<if !$pubintro>> looks uninterested as <<he>><</if>> turns the dial again, and you are once more assailed by the soothing waves. "<<if $pubintro is 1>>Who do you sell your stolen goods to?<<else>>Is that really all you do?<</if>>" <span class="red">If you're honest again, <<he>> will have everything <<he>> needs from you.</span>
+	<<else>>
+		"I<<if $pubintro is 1>> sell things to Landry<<else>>'ve told you everything<</if>>," you say<<if $pubintro is 1 or $prostitutionstat gte 1 or $forcedprostitutionstat gte 1>>, ashamed<</if>>.
+	<</if>>
 <</if>>
+<br><br>
+
 <<compoundoptions>>
 
 :: Elk Compound Lie
@@ -795,28 +932,39 @@ Finding your way out is much easier than getting here.
 
 <<set $outside to 0>><<set $location to "compound">><<effects>>
 You successfully pick the lock and enter the building.
-<<set $compoundcentre to 1>><<set $compoundalarm += 1>>
+<<set $compoundalarm += 1>>
 <<if $skulduggery lt 400>>
 	<<skulduggeryskilluse>>
 <<else>>
 	<span class="blue">There's nothing more you can learn from locks this simple.</span>
 <</if>>
 <br><br>
-The inside is dominated by a large lift. You see no way to operate it, but a laptop sits on a table in the corner beside a small canister.
-<br><br>
-<<if $compoundspray isnot 1>>
-	<<link [[Take them and leave|Elk Compound Interior Take]]>><<set $blackmoney += 100>><<crimeup 100>><<set $spraymax += 1>><<spray 5>><</link>><<crime>><<gspraymax>>
-	<br>
+The inside is dominated by a large lift.
+<<if $compoundcentre is 1>>
+	You see no way to operate it.
 <<else>>
-	<<link [[Take them and leave|Elk Compound Interior Take]]>><<set $blackmoney += 100>><<crimeup 100>><<spray 1>><</link>><<crime>><<gspray>>
+	You see no way to operate it, but a laptop sits on a table in the corner beside a small canister.
+<</if>>
+<br><br>
+<<if $compoundcentre isnot 1>>
+	<<if $compoundspray isnot 1>>
+		<<link [[Take them and leave|Elk Compound Interior Take]]>><<set $blackmoney += 100>><<crimeup 100>><<set $spraymax += 1>><<spray 5>><</link>><<crime>><<gspraymax>>
+	<<else>>
+		<<link [[Take them and leave|Elk Compound Interior Take]]>><<set $blackmoney += 100>><<crimeup 100>><<spray 1>><</link>><<crime>><<gspray>>
+	<</if>>
 	<br>
 <</if>>
+<<if isPubfameTaskAccepted("compound") and !$pubfame.compound.cameras.includes("the central building")>>
+	<<link [[Put down a camera|Elk Compound Interior Camera]]>><<set $compoundalarm++>><<set $pubfame.compound.cameras.pushUnique("the central building")>><</link>><<gsecurity>>
+	<br>
+<</if>>
+<br>
 <<link [[Leave|Elk Compound]]>><</link>>
 <br>
 
 :: Elk Compound Interior Take
 
-<<set $outside to 0>><<set $location to "compound">><<effects>>
+<<set $outside to 0>><<set $location to "compound">><<effects>><<set $compoundcentre to 1>>
 
 <<if $compoundspray is 1>>
 	You pick up the laptop and canister then head for the exit.
@@ -835,7 +983,7 @@ The inside is dominated by a large lift. You see no way to operate it, but a lap
 	<br><br>
 	<span class="red">INTRUDER DETECTED.</span> The alarm rings out. Someone will hear, if they haven't already.
 	<<set $compoundalarm += 1>>
-	<<set $compoundstate to 1>>
+	<<set $daily.compoundState to 1>>
 	<br><br>
 	<<if $player.vaginaExist or $analdisable is "f">>
 		<<link [[Protest|Elk Compound Interior Seduce]]>><</link>>
@@ -1120,8 +1268,8 @@ You walk up to the gate. It's guarded by two security guards. <<generateSecurity
 	<<link [[Show them the aphrodisiac phial|Elk Compound Show]]>><</link>>
 	<br>
 <</if>>
-<<if $compoundcard is 1 and $compoundstate is undefined>>
-	<<link [[Show them the stolen card|Elk Compound Card]]>><</link>>
+<<if $compoundcard is 1>>
+	<<link [[Show them the stolen card|Elk Compound Card]]>><<set $compoundcard to 2>><</link>>
 	<br>
 <</if>>
 <<link [[Leave|Elk Street]]>><<endevent>><</link>>

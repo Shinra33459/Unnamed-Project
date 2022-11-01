@@ -133,7 +133,7 @@ Someone screams. Everyone turns and backs away from the newcomer, a <<beasttype>
 
 <<widget "eventlakewater">>
 
-<<if ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 5) and $wraith and $wraith.state isnot "" and $wraith.hunt is 0 and $wraith.timer gte random(0, 10)>>
+<<if isBloodmoon(true) and $wraith.state and $wraith.hunt is 0 and $wraith.timer gte random(0, 10)>>
 	<<wHunt "lake">>
 <<elseif $bus is "lakeshallows">>
 	<<if $laketeenspresent is 1>>
@@ -163,7 +163,7 @@ Someone screams. Everyone turns and backs away from the newcomer, a <<beasttype>
 	<<link [[Next|Lake Vore]]>><<set $molestationstart to 1>><</link>>
 	<br>
 	<<elseif $rng gte 81 and $swarmdisable is "f">>
-		<<if $slimedisable is "f" and ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6)>>
+		<<if $slimedisable is "f" and isBloodmoon()>>
 			The water is agitated. Swarms of pale slimes encircle you.
 		<<else>>
 			The water is agitated. Swarms of small fish encircle you.
@@ -192,7 +192,7 @@ Someone screams. Everyone turns and backs away from the newcomer, a <<beasttype>
 
 <<widget "eventlakeice">>
 <<rng>>
-<<if ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 5) and $wraith and $wraith.state isnot "" and $wraith.hunt is 0 and $wraith.timer gte random(0, 10)>>
+<<if isBloodmoon(true) and $wraith.state and $wraith.hunt is 0 and $wraith.timer gte random(0, 10)>>
 	<<wHunt "lake">>
 <<elseif $rng gte 81>>
 	<<dancedifficulty 1 1000 true>>
@@ -237,7 +237,7 @@ Someone screams. Everyone turns and backs away from the newcomer, a <<beasttype>
 		<</if>>
 	<<elseif $weather is "clear">>
 		<<if $daystate is "night">>
-			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 6>>
+			<<if isBloodmoon()>>
 				The red moon reflects off the ice. Dread stabs at you.<<gtrauma>><<gstress>><<trauma 6>><<stress 6>>
 				<br><br>
 			<<else>>
@@ -280,7 +280,7 @@ Someone screams. Everyone turns and backs away from the newcomer, a <<beasttype>
 <</widget>>
 
 <<widget "eventlake">>
-<<if ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lt 5) and $wraith and $wraith.state isnot "" and $wraith.hunt is 0 and $wraith.timer gte random(0, 10)>>
+<<if isBloodmoon(true) and $wraith.state and $wraith.hunt is 0 and $wraith.timer gte random(0, 10)>>
 	<<wHunt "lake">>
 <<elseif $rng gte 81>>
 	<!-- Modified for Monster People -->
@@ -299,7 +299,7 @@ Someone screams. Everyone turns and backs away from the newcomer, a <<beasttype>
 		<<destinationlake>>
 	<</if>>
 <<elseif $rng gte 51>>
-	<<if $wraith and $wraith.state isnot "" or $hallucinations gte 1>>
+	<<if $wraith.state or $hallucinations gte 1>>
 	You thought you heard someone call your name, but there's no one there.
 	<<gtrauma>><<trauma 3>>
 	<<else>>
@@ -340,8 +340,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 		<</link>><<lawareness>><<gwillpower>><<lstress>><<larousal>>
 		<br>
 
-<<if $insecurity_penis_tiny gte 1 and $player.penissize lte 0 and $acceptance_penis_tiny lte 999 and $lake_meditate isnot 1>>
-<<link [[Meditate on your small penis (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 4>><<willpower 1>><<set $lake_meditate to 1>>
+<<if $insecurity_penis_tiny gte 1 and $player.penissize lte 0 and $acceptance_penis_tiny lte 999 and $daily.lakeMeditate isnot 1>>
+<<link [[Meditate on your small penis (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 4>><<willpower 1>><<set $daily.lakeMeditate to 1>>
 	<<if $willpower gte (($willpowermax / 7) * 6)>>
 	<<stress 5>><<acceptance "penis_tiny" 20>>
 	<<elseif $willpower gte (($willpowermax / 7) * 5)>>
@@ -360,8 +360,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 <</link>><<gstress>><<gwillpower>><<gacceptance>>
 <br>
 <</if>>
-<<if $insecurity_penis_small gte 1 and $player.penissize is 1 and $acceptance_penis_small lte 999 and $lake_meditate isnot 1>>
-<<link [[Meditate on your small penis (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 5>><<willpower 1>><<set $lake_meditate to 1>>
+<<if $insecurity_penis_small gte 1 and $player.penissize is 1 and $acceptance_penis_small lte 999 and $daily.lakeMeditate isnot 1>>
+<<link [[Meditate on your small penis (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 5>><<willpower 1>><<set $daily.lakeMeditate to 1>>
 	<<if $willpower gte (($willpowermax / 7) * 6)>>
 	<<stress 5>><<acceptance "penis_small" 20>>
 	<<elseif $willpower gte (($willpowermax / 7) * 5)>>
@@ -381,8 +381,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 <br>
 <</if>>
 <<if $player.gender is "m">>
-	<<if $insecurity_penis_big gte 1 and $player.penissize gte 4 and $acceptance_penis_big lte 999 and $lake_meditate isnot 1>>
-	<<link [[Meditate on your big penis (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 6>><<willpower 1>><<set $lake_meditate to 1>>
+	<<if $insecurity_penis_big gte 1 and $player.penissize gte 4 and $acceptance_penis_big lte 999 and $daily.lakeMeditate isnot 1>>
+	<<link [[Meditate on your big penis (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 6>><<willpower 1>><<set $daily.lakeMeditate to 1>>
 		<<if $willpower gte (($willpowermax / 7) * 6)>>
 		<<stress 5>><<acceptance "penis_big" 20>>
 		<<elseif $willpower gte (($willpowermax / 7) * 5)>>
@@ -402,8 +402,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 	<br>
 	<</if>>
 <<else>>
-	<<if $insecurity_penis_big gte 1 and $player.penissize gte 2 and $acceptance_penis_big lte 999 and $lake_meditate isnot 1>>
-	<<link [[Meditate on your big penis (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 6>><<willpower 1>><<set $lake_meditate to 1>>
+	<<if $insecurity_penis_big gte 1 and $player.penissize gte 2 and $acceptance_penis_big lte 999 and $daily.lakeMeditate isnot 1>>
+	<<link [[Meditate on your big penis (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 6>><<willpower 1>><<set $daily.lakeMeditate to 1>>
 		<<if $willpower gte (($willpowermax / 7) * 6)>>
 		<<stress 5>><<acceptance "penis_big" 20>>
 		<<elseif $willpower gte (($willpowermax / 7) * 5)>>
@@ -423,8 +423,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 	<br>
 	<</if>>
 <</if>>
-<<if $insecurity_breasts_tiny gte 1 and $player.breastsize lte 0 and $player.gender is "f" and $acceptance_breasts_tiny lte 999 and $lake_meditate isnot 1>>
-<<link [[Meditate on your flat chest (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 7>><<willpower 1>><<set $lake_meditate to 1>>
+<<if $insecurity_breasts_tiny gte 1 and $player.breastsize lte 0 and $player.gender is "f" and $acceptance_breasts_tiny lte 999 and $daily.lakeMeditate isnot 1>>
+<<link [[Meditate on your flat chest (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 7>><<willpower 1>><<set $daily.lakeMeditate to 1>>
 	<<if $willpower gte (($willpowermax / 7) * 6)>>
 	<<stress 5>><<acceptance "breasts_tiny" 20>>
 	<<elseif $willpower gte (($willpowermax / 7) * 5)>>
@@ -443,8 +443,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 <</link>><<gstress>><<gwillpower>><<gacceptance>>
 <br>
 <</if>>
-<<if $insecurity_breasts_small gte 1 and $player.breastsize gte 1 and $player.breastsize lte 5 and $acceptance_breasts_small lte 999 and $lake_meditate isnot 1>>
-<<link [[Meditate on your small breasts (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 8>><<willpower 1>><<set $lake_meditate to 1>>
+<<if $insecurity_breasts_small gte 1 and $player.breastsize gte 1 and $player.breastsize lte 5 and $acceptance_breasts_small lte 999 and $daily.lakeMeditate isnot 1>>
+<<link [[Meditate on your small breasts (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 8>><<willpower 1>><<set $daily.lakeMeditate to 1>>
 	<<if $willpower gte (($willpowermax / 7) * 6)>>
 	<<stress 5>><<acceptance "breasts_small" 20>>
 	<<elseif $willpower gte (($willpowermax / 7) * 5)>>
@@ -464,8 +464,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 <br>
 <</if>>
 <<if $player.gender is "f">>
-	<<if $insecurity_breasts_big gte 1 and $player.breastsize gte 8 and $acceptance_breasts_big lte 999 and $lake_meditate isnot 1>>
-		<<link [[Meditate on your big breasts (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 9>><<willpower 1>><<set $lake_meditate to 1>>
+	<<if $insecurity_breasts_big gte 1 and $player.breastsize gte 8 and $acceptance_breasts_big lte 999 and $daily.lakeMeditate isnot 1>>
+		<<link [[Meditate on your big breasts (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 9>><<willpower 1>><<set $daily.lakeMeditate to 1>>
 		<<if $willpower gte (($willpowermax / 7) * 6)>>
 		<<stress 5>><<acceptance "breasts_big" 20>>
 		<<elseif $willpower gte (($willpowermax / 7) * 5)>>
@@ -485,8 +485,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 		<br>
 	<</if>>
 <<else>>
-	<<if $insecurity_breasts_big gte 1 and $player.breastsize gte 6 and $acceptance_breasts_big lte 999 and $lake_meditate isnot 1>>
-	<<link [[Meditate on your big breasts (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 9>><<willpower 1>><<set $lake_meditate to 1>>
+	<<if $insecurity_breasts_big gte 1 and $player.breastsize gte 6 and $acceptance_breasts_big lte 999 and $daily.lakeMeditate isnot 1>>
+	<<link [[Meditate on your big breasts (1:00)|Lake Meditate]]>><<pass 60>><<set $phase to 9>><<willpower 1>><<set $daily.lakeMeditate to 1>>
 		<<if $willpower gte (($willpowermax / 7) * 6)>>
 		<<stress 5>><<acceptance "breasts_big" 20>>
 		<<elseif $willpower gte (($willpowermax / 7) * 5)>>
@@ -532,6 +532,8 @@ A pair of eyes stares at you from between the trees, then vanishes.
 
 <<widget "lakeclothes">>
 	<<if !$possessed>>
+		<br>
+		<<storeactions "lakeshore">>
 		<<wardrobeSelection true>>
 		<<wearoutfit>>
 		<<set _store_location to "lakeshore">>
@@ -539,7 +541,6 @@ A pair of eyes stares at you from between the trees, then vanishes.
 		<<if _store_check is 1>>
 			<<set _clothes to clothingInStorage(_store_location)>>
 			<<if _clothes.length gt 0>>
-				<br>
 				<<if _clothes.length gt 2>>
 					Your clothes are lying on the ground behind a rock.
 					<br>
@@ -551,10 +552,9 @@ A pair of eyes stares at you from between the trees, then vanishes.
 					<br>
 				<</if>>
 				<<dressasyouwereicon>><<link [[Put on clothes|$passage]]>><<set $eventskip to 1>><<storeload _store_location>><</link>>
-				<br>
+				<br><br>
 			<</if>>
 		<</if>>
-		<br>
 		//Swimming sets://
 		<br>
 		<<listswimoutfits $wardrobe_location _store_location true>>
@@ -577,4 +577,22 @@ A pair of eyes stares at you from between the trees, then vanishes.
 		<<link [[Next|Lake Ruin Deep]]>><<endevent>><<set $eventskip to 1>><</link>>
 <</switch>>
 <br>
+<</widget>>
+
+<<widget "halloween_lake_invite">>
+	<<generates1>><<generates2>>
+	<<set $halloween_lake to 1>>
+	You pass a <<person1>><<person>>
+	<<if $location is "school">>
+		with a stack of flyers tucked under <<his>> arm.
+	<<else>>
+		touting a cooler over <<his>> shoulder.
+	<</if>>
+	At <<his>> side, a <<person2>><<person>> is deep in a phone call. <<He>> mentions a Halloween party.
+	<br><br>
+
+	<<link [[Inquire|Lake Halloween Invite Inquire]]>><</link>>
+	<br>
+	<<link [[Ignore|Lake Halloween Invite Ignore]]>><</link>>
+	<br>
 <</widget>>

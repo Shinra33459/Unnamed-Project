@@ -1,9 +1,16 @@
 :: PassageHeader
 <<set $passagePrev to $passage ? $passage : "none">>
-<<set $passage to passage()>><<set $tags to tags()>>
+<<set $passage to $passageOverride ? $passageOverride : passage()>>
+<<set $tags to tags()>>
 
 <<if !["Start", "Start2", "Clothes Testing", "Renderer Test Page", "Tips"].includes($passage) && !$bypassHeader>>
 	<<doVersionCheck>>
+	<<if !["Settings", "Asylum Settings", "Cabin Settings", "Wolf Cave Settings", "Farm Settings", "Livestock Settings", "Prison Settings"].includes($passage)>>
+		<<if $passagePrev isnot $passage>>
+			<<set $passageChangesCount to $passageChangesCount ? $passageChangesCount + 1 : 1>>
+		<</if>>
+		<<set $passageCount to $passageCount ? $passageCount + 1 : 1>>
+	<</if>>
 <</if>>
 
 /* Catch time desyncs for debugging*/
@@ -11,6 +18,7 @@
 	<<checkTimeSystem "Header">>
 <</if>>
 
+<<unset $passageOverride>>
 <<unset $bypassHeader>>
 
 :: Widgets VersionCheck [widget]

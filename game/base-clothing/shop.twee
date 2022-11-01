@@ -20,7 +20,7 @@
 		"A customer!"
 	<</if>>
 	<<he>> says, dropping the ladder and walking over. <<He>> wipes <<his>> hands on <<his>> apron. "Welcome to my shop."
-	
+
 	<<if $gwylan_rescue is 1 and $gwylan_aborted gte 1>>
 		<br><br>
 		<<gwylanRescueApologyShop "Intro">>
@@ -38,6 +38,30 @@
 	<br>
 <</widget>>
 
+<<widget "forestShop-text">>
+	You are in the forest shop. The interior is dark and crowded by tall shelves, holding all manner of items. Most are useless knick-knacks, but some interest you.
+	<br><br>
+	<<if $gwylan_aborted gte 1>>
+		<<gwylanRescueApologyShop>>
+		<<set $gwylan_aborted to 0>>
+	<<else>>
+		You hear Gwylan shuffling somewhere in the gloom.
+	<</if>>
+	<<if $robin_in_forest_shop>>
+		Robin is busy admiring the costumes.
+		<<if !$halloween_robin_costume or $halloween_robin_costume is "ghost">>
+			<br><br>
+
+			<<link [[Talk to Robin|Robin Forest Costume Intro]]>><<forestShop-leave>><<clothingReset>><</link>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "forestShop-leave">>
+	<<shopClothingFilterReset>><<unset $clothes_choice>><<ShowUnderEquip "normal">><<ShowUnderEquip "over">>
+	<<set $tryOn.autoReset to true>><<set $eventskip to 1>><<unset $tempDisable>>
+<</widget>>
+
 <<widget "forestShop-main">>
 	<<set $outside to 0>><<set $location to "forest_shop">><<effects>>
 	<<set $shopName = "forest">>
@@ -47,14 +71,7 @@
 		<<set $forest_shop_intro to 1>>
 		<<forestShop-intro>>
 	<<else>>
-		You are in the forest shop. The interior is dark and crowded by tall shelves, holding all manner of items. Most are useless knick-knacks, but some interest you.
-		<br><br>
-		<<if $gwylan_aborted gte 1>>
-			<<gwylanRescueApologyShop>>
-			<<set $gwylan_aborted to 0>>
-		<<else>>
-			You hear Gwylan shuffling somewhere in the gloom.
-		<</if>>
+		<<forestShop-text>>
 		<br><br>
 
 		<div id="tryonstats-div"><<tryOnStats>></div>
@@ -70,7 +87,15 @@
 		<br><br>
 
 		<<if $christmas_gift_robin is undefined and $christmas is 1 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
-			<<link [[Find a gift for Robin (0:10)|Forest Christmas Robin]]>><<pass 10>><</link>>
+			<<ind>><<link [[Find a gift for Robin (0:10)|Forest Christmas Robin]]>><<pass 10>><</link>>
+			<br>
+		<</if>>
+		<<if isPubfameTaskAccepted("gwylan")>>
+			<<if $pubfame.gwylan.snowglobe isnot 1>>
+				<<ind>><<link [[Look for the snow globe (0:20)|Forest Snowglobe]]>><<pass 20>><</link>>
+			<<elseif $money gte 2000>>
+				<<ind>><<link [[Purchase the snow globe (£20)|Forest Snowglobe Buy]]>><<set $money -= 2000>><</link>>
+			<</if>>
 			<br>
 		<</if>>
 		<<clothingcategoryicon "all">>
@@ -128,10 +153,11 @@
 			<</link>>
 			<br>
 		<<elseif $tryOn.value is 0>>
-			<<link [[Leave|Forest]]>>
-				<<shopClothingFilterReset>><<endnpc>><<unset $clothes_choice>><<ShowUnderEquip "normal">><<ShowUnderEquip "over">>
-				<<set $tryOn.autoReset to true>><<set $eventskip to 1>><<unset $tempDisable>>
-			<</link>>
+			<<if $robin_in_forest_shop>>
+				<<link [[Leave with Robin (0:10)|Robin Forest Shop Home]]>><<endnpc "Gwylan">><<forestShop-leave>><<pass 10>><</link>>
+			<<else>>
+				<<link [[Leave|Forest]]>><<endnpc "Gwylan">><<forestShop-leave>><</link>>
+			<</if>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -160,3 +186,62 @@ You hand Gwylan the cash.
 
 <<link [[Next|Forest Shop]]>><</link>>
 <br>
+
+:: Forest Snowglobe
+<<effects>><<npc Gwylan>>
+
+You prowl around the shop, looking under cloaks, on top of shelves and behind dressing racks. There's a vague sense of organisation, but things are scattered around anyway, so it could be anywhere. You find a few snow globes, but none with anything written on the bottom.
+<br><br>
+
+"Are you looking for something in particular?" Gwylan says from beside you, startling you. <<He>> hadn't made a sound in <<his>> approach. "I know that look in your eye. You have something in mind."
+<br>
+
+<<if $submissive gte 1150>>
+	"I'm trying to find a snow globe," you say.
+<<elseif $submissive lte 850>>
+	"Yeah, there's a snow globe I'm looking for," you say.
+<<else>>
+	"I'm looking for a specific snow globe," you say.
+<</if>>
+<br>
+
+<<He>> grins. "There's plenty of snow globe around, if that's the case."
+<br>
+
+You shake your head. "I need a specific one. It has something written on the bottom."
+<br><br>
+
+Gwylan thinks for a second. "I think I know which one you're talking about. Hold on."
+<<switch random(1,5)>>
+	<<case 1>>
+		<<He>> flips up a trapdoor in the floor a few feet away and pulls a snow globe out of a hidden compartment. You stare in bemusement.
+	<<case 2>>
+		<<He>> beelines for the shoe section, rummages through the sandals and pulls a snowgsnow globelobe out from the pile. You stare in bemusement.
+	<<case 3>>
+		<<He>> pushes a witch dress out of the way and enters what appears to be a hidden maintenance room. <<He>> emerges holding a snow globe. You stare in bemusement.
+	<<case 4>>
+		<<He>> quickly exits the shop. You see <<him>> reaching into a nearby bush before the door fully closes. <<He>> quickly enters again, holding a snow globe. You stare, bewildered.
+	<<case 5>>
+		<<He>> walks over to a shelf full of snow globes and plucks one out of the bunch. You resist the urge to groan. How did you miss that shelf?
+<</switch>>
+<br><br>
+
+<<He>> walks back to you and shows you the bottom. There's a string of random letters and numbers you can't understand. "This the one?" You nod. "Good! That'll be £20."
+<br><br>
+
+<<if $money gte 2000>>
+	<<link [[Purchase the snow globe (£20)|Forest Snowglobe Buy]]>><<set $money -= 2000>><</link>>
+<<else>>
+	You can't afford it.
+<</if>>
+<br>
+<<link [[Back|Forest Shop]]>><<set $pubfame.gwylan.snowglobe to 1>><<endevent>><</link>>
+
+:: Forest Snowglobe Buy
+<<effects>><<npc Gwylan>>
+
+You hand over the money to Gwylan, and <<he>> hands you the snow globe. "Don't know how you knew there'd be something on the bottom," <<he>> says. "I bet it was looking for you, just as much as you were looking for it!"
+<br><br>
+
+<<pubfameComplete "gwylan">>
+<<link [[Next|Forest Shop]]>><<endevent>><</link>>

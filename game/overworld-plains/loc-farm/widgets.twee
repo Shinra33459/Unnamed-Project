@@ -1008,11 +1008,11 @@
 	<<ind>><<link [[Join Alex (0:20)|Farm Rest]]>><<farm_count 20>><<trauma -2>><<stress -2>><<npcincr Alex love 1>><<set $phase to 1>><<pass 20>><</link>><<glove>><<ltrauma>><<lstress>>
 	<br>
 <<if $farm_stage gte 4 and $milkshake gte 2>>
-	<<ind>><<link [[Offer milkshake (0:20)|Alex Give Milkshake]]>><<farm_count 20>><<pass 20>><<set $milkshake -= 2>><<set $alexDaily.milkshake to true>><<npcincr Alex love 1>><<stress -5>><</link>><<glove>><<lstress>>
+	<<ind>><<link [[Offer milkshake (0:20)|Alex Give Milkshake]]>><<farm_count 20>><<pass 20>><<set $milkshake -= 2>><<set $daily.alex.milkshake to true>><<npcincr Alex love 1>><<stress -5>><</link>><<glove>><<lstress>>
 	<br>
 <</if>>
 <<if $farm_stage gte 7 and $alex_countdown is undefined and $milkshake gte 1>>
-	<<ind>><<link [[Share milkshake (0:20)|Alex Share Milkshake]]>><<farm_count 20>><<pass 20>><<set $milkshake -= 1>><<set $alexDaily.milkshake to true>><<npcincr Alex love 2>><<stress -10>><</link>><<gglove>><<lstress>>
+	<<ind>><<link [[Share milkshake (0:20)|Alex Share Milkshake]]>><<farm_count 20>><<pass 20>><<set $milkshake -= 1>><<set $daily.alex.milkshake to true>><<npcincr Alex love 2>><<stress -10>><</link>><<gglove>><<lstress>>
 	<br>
 <</if>>
 <</if>>
@@ -1861,7 +1861,7 @@
 		<<elseif $farm_stage gte 7>>
 			Alex smacks your <<bottom>> as you pass by.<<gpain>><<pain 1>>
 			<br><br>
-			
+
 			<<link [[Scold|Farm Spank Scold]]>><</link>>
 			<br>
 			<<link [[Retaliate|Farm Spank Retaliate]]>><</link>><<athleticsdifficulty 400 1000>>
@@ -2203,6 +2203,13 @@
 
 <<widget "barn_img">>
 <<machine_init>>
+
+<<if _args[2]>>
+	<<set $_prop to _args[2]>>
+<<else>>
+	<<set $_prop to "haybale">>
+<</if>>
+
 <<if _args[0] is "penis">>
 	<<if _args[1] is "livestock">>
 		<<set _barn_semen to $livestock_semen>>
@@ -2228,7 +2235,7 @@
 	<<else>>
 		<<set _semen_img to "semen_1">>
 	<</if>>
-	<<prop haybale semen penis_pump>>
+	<<prop $_prop semen penis_pump>>
 <<elseif _args[0] is "breasts">>
 	<<if _args[1] is "livestock">>
 		<<set _barn_milk to $livestock_milk>>
@@ -2254,7 +2261,7 @@
 	<<else>>
 		<<set _milk_img to "milk_1">>
 	<</if>>
-	<<prop haybale milk breast_pump>>
+	<<prop $_prop milk breast_pump>>
 <<else>>
 	<<if _args[1] is "livestock">>
 		<<set _barn_semen to $livestock_semen>>
@@ -2299,7 +2306,7 @@
 	<<else>>
 		<<set _milk_img to "milk_1">>
 	<</if>>
-	<<prop haybale semen penis_pump milk breast_pump>>
+	<<prop $_prop semen penis_pump milk breast_pump>>
 <</if>>
 <<if $options.images is 1 and $options.combatImages is 1>>
 	<br><br>
@@ -2469,6 +2476,8 @@
 <</widget>>
 
 <<widget "farm_sleep_options">>
+<<nightmareCheck "Farm Sleep">>
+
 <<if $sleeptrouble is 1 and $controlled is 0>>
 	<<link [[Sleep for 10 hours|Farm Sleep]]>><<set $sleephour to 10>><<incrementautosave>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
 	<br>

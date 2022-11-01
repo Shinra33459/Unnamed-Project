@@ -6,7 +6,7 @@
 		<!-- Do nothing -->
 	<<else>>
 		<<if $player.virginity[_args[1]] is true>>
-			<<if $wraith and $wraith.mimic is _args[0]>>
+			<<if $activeNightmare or ($wraith.mimic is _args[0])>>
 				<<switch _args[0]>>
 					<<case "Robin">><<displayFeatFake "Robin the Lover">>
 					<<case "Kylar">><<displayFeatFake "Kylar the Obsessed">>
@@ -21,7 +21,9 @@
 					<<case "Harper">><<displayFeatFake "Harper the Hypnotist">>
 					<<case "Morgan">><<displayFeatFake "Morgan the Lost">>
 				<</switch>>
-				<<set _args[0] to "Ivory Wraith">>
+				<<if !$activeNightmare>>
+					<<set _args[0] to "Ivory Wraith">>
+				<</if>>
 			<<elseif _args[1] is "vaginal" or _args[1] is "penile">>
 				<<switch _args[0]>>
 					<<case "Robin">><<earnFeat "Robin the Lover">>
@@ -52,7 +54,7 @@
 				<<case "penile">><<purity -50>>
 				<<case "anal">><<purity -25>>
 				<<case "oral">><<purity -25>>
-				<<case "handholding">><<purity -100>>
+				<<case "handholding">><<purity -10>>
 				<<case "kiss">><<purity -10>>
 			<</switch>>
 		<</if>>
@@ -92,7 +94,7 @@
 	<<switch $_kissType>>
 		<<case "loveInterest">>
 			<span class="lewd">You're happy your first kiss went to a love interest.</span><<arousal 3000>><<stress -12>><<trauma -12>><<ggarousal>><<llstress>>
-			<<if (!$wraith or $wraith.mimic isnot _args[0])>><<earnFeat "First Kiss">><</if>>
+			<<if ($wraith.mimic isnot _args[0])>><<earnFeat "First Kiss">><</if>>
 		<<case "romantic">>
 			<span class="lewd">You're happy your first kiss was taken in such a romantic way.</span><<arousal 1500>><<stress -6>><<trauma -6>><<garousal>><<lstress>>
 		<<case "rape">>
@@ -148,11 +150,11 @@
 		<<set $_straponvirginityIgnore to ($_vType is "penile" and npcHasStrapon($_npcId))>>
 	<</if>>
 
-	<<if $_npc and $_vType and $_npc.virginity and $_npc.virginity[$_vType] and (!$wraith or $wraith.mimic isnot $_npc.nam) and !$_straponvirginityIgnore>>
+	<<if $_npc and $_vType and $_npc.virginity and $_npc.virginity[$_vType] and ($wraith.mimic isnot $_npc.nam) and !$_straponvirginityIgnore>>
 		<<if ($_vType is "vaginal" or $_vType is "penile") and $_npc.virginity.temple is true and $templePromised isnot $_npc.fullDescription>>
 			<<set $_npc.virginity.temple to false>>
 		<</if>>
-		
+
 		/* note: virginity must be exactly equal to true; only true means that they still have their virginity. */
 		<<if $_npc.virginity[$_vType] is true>>
 			<<personselect $_npcId>>
@@ -195,13 +197,19 @@
 				<<default>>
 			<</switch>>
 
-			<<run $virginTaken[$_vType].pushUnique($_npc.fullDescription)>>
-			<<set $_i to $NPCNameList.indexOf($_npc.fullDescription)>>
-			<<if $_i isnot -1>>
+			<<if $activeNightmare>>
 				<<if $_npc.fullDescription is "Sydney" and ($_vType is "vaginal" or $_vType is "penile")>>
-					<<earnFeat "Sydney the Pure Hearted">>
+					<<displayFeatFake "Sydney the Pure Hearted">>
 				<</if>>
-				<<set $NPCName[$_i].virginity to $_npc.virginity>>
+			<<else>>
+				<<run $virginTaken[$_vType].pushUnique($_npc.fullDescription)>>
+				<<set $_i to $NPCNameList.indexOf($_npc.fullDescription)>>
+				<<if $_i isnot -1>>
+					<<if $_npc.fullDescription is "Sydney" and ($_vType is "vaginal" or $_vType is "penile")>>
+						<<earnFeat "Sydney the Pure Hearted">>
+					<</if>>
+					<<set $NPCName[$_i].virginity to $_npc.virginity>>
+				<</if>>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -286,6 +294,7 @@
 		<</for>>
 	<</if>>
 	<<set $active_enemy to 0>>
+	<<unset $hypnosis_deviancy_check>>
 <</widget>>
 
 <<widget "beastTrainGenerate">>/*Saves all beasts/monsters in $NPCList, then loads the first into slot 0.*/

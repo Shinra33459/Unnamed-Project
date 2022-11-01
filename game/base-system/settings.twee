@@ -10,7 +10,9 @@
 <<set $player.penissize to 1>>
 <<set $devlevel to 12>>
 <<set $bodysize to 2>>
+<<set $mouthsensitivity to 1>>
 <<set $breastsensitivity to 1>>
+<<set $bottomsensitivity to 1>>
 <<set $genitalsensitivity to 1>>
 <<set $eyeselect to "purple">>
 <<set $hairselect to "red">>
@@ -472,18 +474,32 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<label>No <<radiobutton "$player.ballsExist" false autocheck>></label> |
 	</span><br><br>
 
+	<span class="gold">Mouth sensitivity</span>
+	<br>
+	<label>Normal <<radiobutton "$mouthsensitivity" 1 autocheck>></label> |
+	<label><span class="pink">Sensitive</span> <<radiobutton "$mouthsensitivity" 2 autocheck>></label> |
+	<label><span class="red">Very sensitive</span> <<radiobutton "$mouthsensitivity" 3 autocheck>></label>
+	<br><br>
+
 	<span class="gold">Chest sensitivity</span>
 	<br>
 	<label>Normal <<radiobutton "$breastsensitivity" 1 autocheck>></label> |
-	<label><span class="pink">Sensitive</span> <<radiobutton "$breastsensitivity" 3 autocheck>></label> |
-	<label><span class="red">Very sensitive</span> <<radiobutton "$breastsensitivity" 5 autocheck>></label>
+	<label><span class="pink">Sensitive</span> <<radiobutton "$breastsensitivity" 2 autocheck>></label> |
+	<label><span class="red">Very sensitive</span> <<radiobutton "$breastsensitivity" 3 autocheck>></label>
+	<br><br>
+
+	<span class="gold">Ass sensitivity</span>
+	<br>
+	<label>Normal <<radiobutton "$bottomsensitivity" 1 autocheck>></label> |
+	<label><span class="pink">Sensitive</span> <<radiobutton "$bottomsensitivity" 2 autocheck>></label> |
+	<label><span class="red">Very sensitive</span> <<radiobutton "$bottomsensitivity" 3 autocheck>></label>
 	<br><br>
 
 	<span class="gold">Genital sensitivity</span>
 	<br>
 	<label>Normal <<radiobutton "$genitalsensitivity" 1 autocheck>></label> |
-	<label><span class="pink">Sensitive</span> <<radiobutton "$genitalsensitivity" 3 autocheck>></label> |
-	<label><span class="red">Very sensitive</span> <<radiobutton "$genitalsensitivity" 5 autocheck>></label>
+	<label><span class="pink">Sensitive</span> <<radiobutton "$genitalsensitivity" 2 autocheck>></label> |
+	<label><span class="red">Very sensitive</span> <<radiobutton "$genitalsensitivity" 3 autocheck>></label>
 	<br><br>
 
 	<span class="gold">Eye Colour</span>
@@ -794,6 +810,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<mouse class="tooltip linkBlue">(?)<span>Does not prevent cunnilingus.</span></mouse>
 	</div></label>
 
+	/*ToDo: Pregnancy, remove duplicate option once enabled*/
 	<label><div class="settingsToggle">
 	<<checkbox "$pregnancyspeechdisable" "t" "f" autocheck>> Enable fertility references.
 	<mouse class="tooltip linkBlue">(?)<span>Allow references to the PC being impregnated, or impregnating others. Disabling does not prevent all references to pregnancy, especially if other pregnancy settings are enabled.</span></mouse>
@@ -1150,7 +1167,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 			<<numberslider "$wolfPregnancyWeeks" $wolfPregnancyWeeks 2 12 1>>
 		</div>
 		<br>
-		<div class="small-description"><span class="red">Will not stop existing pregnancy.</span></div>
+		<div class="small-description"><span class="red">Will not stop existing pregnancy or prevent the player from interacting with their existing children.</span></div>
 		<label><div class="settingsToggle">
 			<<checkbox "$playerPregnancyHumanDisable" "t" "f" autocheck>>
 			Enable Player Human Pregnancy
@@ -1158,11 +1175,18 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 		<label><div class="settingsToggle">
 			<<checkbox "$playerPregnancyBeastDisable" "t" "f" autocheck>> Enable Player Beast Pregnancy
 		</div></label>
-		<label><div class="settingsToggle">
-			<<checkbox "$npcPregnancyDisable" "t" "f" autocheck>> Enable NPC Pregnancy
-		</div></label>
+		/*ToDo: Pregnancy NPC - Remove when adding pregnancy for named npc's */
+		<<if $pregnancyTesting>>
+			<label><div class="settingsToggle">
+				<<checkbox "$npcPregnancyDisable" "t" "f" autocheck>> Enable NPC Pregnancy
+			</div></label>
+		<</if>>
 		<label><div class="settingsToggle">
 		<<checkbox "$analpregdisable" "t" "f" autocheck>> Enable anal parasitic pregnancy
+		</div></label>
+		<label><div class="settingsToggle">
+		<<checkbox "$pregnancyspeechdisable" "t" "f" autocheck>> Enable fertility references.
+		<mouse class="tooltip linkBlue">(?)<span>Allow references to the PC being impregnated, or impregnating others. Disabling does not prevent all references to pregnancy, especially if other pregnancy settings are enabled.</span></mouse>
 		</div></label>
 		<div style="clear:both;">/*Keep at end of toggles*/</div>
 	</div>
@@ -1269,7 +1293,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<label><div class="settingsToggleBig">
 	<<checkbox "$tipdisable" "t" "f" autocheck>> Enable hints and tips
 	<div class="description">Shows in the sidebar.</div>
-	<div><<link [["View all tips"|Tips]]>><<set $lastPassage to $passage>><</link>></div>
+	<div><<link [[View all tips|Tips]]>><<set $lastPassage to $passage>><</link>></div>
 	</div></label>
 	<br><br>
 
@@ -1299,7 +1323,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<span class="gold">Gallery</span> - these will not affect your save in any way.
 	<br>
 	<<if version.major gt 2 or version.minor gt 29>>
-		<<link [["Character Viewer"|Clothes Testing]]>>
+		<<link [[Character Viewer|Clothes Testing]]>>
 			<<set $lastPassage to $passage>>
 			<<set $gameTanImgSetting to clone($options.tanImgEnabled)>>
 		<</link>>
@@ -1307,7 +1331,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 		<br>
 	<</if>>
 	<<if $passage isnot "Start">>
-		<<link [["Scene Viewer"|Scene Viewer]]>>
+		<<link [[Scene Viewer|Scene Viewer]]>>
 			<<set $lastPassage to $passage>>
 			<<seenPassageChecks>>
 		<</link>>
@@ -1317,7 +1341,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 		The Scene Viewer is not available on the start page.
 		<br>
 	<</if>>
-	<<link [["Test Renderer"|Renderer Test Page]]>>
+	<<link [[Test Renderer|Renderer Test Page]]>>
 		<<set $lastPassage to $passage>>
 	<</link>>
 	- This will check your browser's capabilities required for new renderer.
@@ -1377,6 +1401,9 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<<for $_i to 0; $_i lt $NPCNameList.length; $_i++>>
 		<<set _npcList[clone($NPCNameList[$_i])] to clone($_i)>>
 	<</for>>
+	<<if $passage is "Start" or !$wraithIntro>>
+		<<run delete _npcList["Ivory Wraith"]>>
+	<</if>>
 <</if>>
 
 <div id="npcSettingsMenu">
@@ -1392,7 +1419,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 
 			T.keys = {};
 			T.keyNames = [];
-			const allowed_npcs = ["steed", "guard", "inmate", "panty_thief", "school_nurse", "tower_creature", "wraith", "pinch", "black_dog"];
+			const allowed_npcs = ["steed", "guard", "inmate", "panty_thief", "school_nurse", "tower_creature", "pinch", "black_dog", "hacker"];
 			Object.keys(V.per_npc).forEach(k => {
 				for (const j of allowed_npcs){
 					if (k.includes(j)){
@@ -1476,19 +1503,31 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 		<<else>>
 			<<set _npcId-->>
 		<</if>>
+		<<if _npcList[$NPCName[_npcId].nam] is undefined>>
+			<<set _npcId-->>
+		<</if>>
 		<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
 	<</link>> |
 	<<link "Next">>
-		<<set _npcId++>>
+		<<if _npcId is $NPCNameList.length - 1>>
+			<<set _npcId to 0>>
+		<<else>>
+			<<set _npcId++>>
+		<</if>>
+		<<if _npcList[$NPCName[_npcId].nam] is undefined>>
+			<<set _npcId++>>
+		<</if>>
 		<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
 	<</link>>
 	<br><br>
 	<span class="gold">$NPCName[_npcId].nam the $NPCName[_npcId].title</span>
 	<br>
+	<span data-target="npcname-npcidpronoun" data-disabledif="V.NPCName[T.npcId].pronoun==='i'">
 	<label><<radiobutton "$NPCName[_npcId].pronoun" "f" autocheck>> Female</label> |
 	<label><<radiobutton "$NPCName[_npcId].pronoun" "m" autocheck>> Male</label>
+	</span>
 	<br>
-	<<if $NPCName[_npcId].pregnancy[0] is null>>
+	<<if !$NPCName[_npcId].pregnancy or !$NPCName[_npcId].pregnancy.enabled or !$NPCName[_npcId].pregnancy.fetus.length>>
 		<label><<radiobutton "$NPCName[_npcId].gender" "f" autocheck>> Vagina</label> |
 		<label><<radiobutton "$NPCName[_npcId].gender" "m" autocheck>> Penis</label>
 		| <label><<radiobutton "$NPCName[_npcId].gender" "h" autocheck>> Both</label>
@@ -1509,6 +1548,19 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<</for>>
 	</span>
 	<br><br>
+
+	<<if $NPCName[_npcId].pregnancy && $NPCName[_npcId].pregnancy.enabled isnot undefined>>
+		<<if !$NPCName[_npcId].pregnancy.fetus.length>>
+			Enable pregnancy for npc - if applicable:
+			<mouse class="tooltip linkBlue">(?)<span>Still requires 'NPC Pregnancy' toggle to be enabled.</span></mouse>
+			<br>
+			<label><<radiobutton "$NPCName[_npcId].pregnancy.enabled" true autocheck>> True</label> |
+			<label><<radiobutton "$NPCName[_npcId].pregnancy.enabled" false autocheck>> False</label>
+		<<else>>
+			Unable to change the npc pregnancy settings due to their pregnancy.
+		<</if>>
+		<br><br>
+	<</if>>
 
 	<div class="settingsToggle" style="display: inline-flex;">
 	Breast size
@@ -1595,10 +1647,10 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 	<<else>>
 		<<if $per_npc[_pNPCId].name_known>>
 			<span class="gold">$per_npc[_pNPCId].name the <<print _pNPCId.replace(/_/g, ' ')>></span>
-		<<elseif $per_npc[_pNPCId].name is "Ivory Wraith">>
-			<span class="wraith">The Ivory Wraith</span>
 		<<elseif _pNPCId is "tower_creature">>
 			<span class="gold">The Night Monster</span>
+		<<elseif _pNPCId is "hacker">>
+			<span class="gold">'Mickey' the hacker</span>
 		<<else>>
 			<span class="gold"><<print _pNPCId.toUpperFirst().replace(/_/g, ' ')>></span>
 		<</if>>
@@ -1613,7 +1665,7 @@ Values above 5 can lead to errors when creating new saves! Make sure you know wh
 			<</link>>
 		<</if>>
 		<br>
-		<span data-target="pernpc-npcidpronoun" data-disabledif="V.per_npc[T.pNPCId].pronoun==='i'">
+		<span data-target="pernpc-npcidpronoun" data-disabledif="V.per_npc[T.pNPCId].pronoun==='i'||V.per_npc[T.pNPCId].pronoun==='t'">
 		<label><<radiobutton "$per_npc[_pNPCId].pronoun" "f" autocheck>> Female</label> |
 		<label><<radiobutton "$per_npc[_pNPCId].pronoun" "m" autocheck>> Male</label>
 		</span>

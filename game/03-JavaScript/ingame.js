@@ -105,7 +105,7 @@ const combatActionColours = {
 			/* feetaction */
 			"run", "hide", "confront", "feetresistW",
 			/* mouthaction */
-			"pullaway", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl",
+			"pullaway", "ejacspit", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl",
 			/* penisaction */
 			"othermouthescape", "escape", "otheranusescape", "fencingescape",
 			/* vaginaaction */
@@ -141,7 +141,7 @@ const combatActionColours = {
 			/* feetaction */
 			"grab", "vaginagrab", "grabrub", "vaginagrabrub", "rub",
 			/* mouthaction */
-			"peniskiss", "kisslips", "kissskin", "suck", "lick", "moan", "breastsuck", "breastlick", "swallow", "movetochest", "othervagina", "mouth", "kissback", "vaginalick", "oraledge", "askchoke", "anallick", "analkiss", "askrough",
+			"peniskiss", "kisslips", "kissskin", "suck", "lick", "ejacswallow", "moan", "breastsuck", "breastlick", "swallow", "movetochest", "othervagina", "mouth", "kissback", "vaginalick", "oraledge", "askchoke", "anallick", "analkiss", "askrough",
 			/* penisaction */
 			"penistovagina", "penistoanus", "penisvaginafuck", "penisanusfuck", "othermouthtease", "othermouthrub", "othermouthcooperate", "tease", "cooperate", "otheranustease", "otheranusrub", "otheranuscooperate", "clitrub", "vaginaEdging", "otheranusEdging", "handtease", "handAnusRub", "handcooperate", "strokerCooperate",
 			/* fencing */
@@ -391,7 +391,7 @@ function browsDyeReset() {
 DefineMacroS("browsDyeReset", browsDyeReset);
 
 function NPCSettingsReset() {
-	jQuery(document).on("change", "#listbox--npcid", function (e) {
+	jQuery(".passage").on("change", "#listbox--npcid", function (e) {
 		Wikifier.wikifyEval("<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>");
 	});
 	return "";
@@ -650,28 +650,20 @@ function numbersBetween(start, end, step = 1) {
 window.numbersBetween = numbersBetween;
 
 function getRobinLocation() {
-	if (V.NPCName[V.NPCNameList.indexOf("Robin")].init !== 1) {
+	if (C.npc.Robin.init !== 1) {
 		return;
 	} else if (V.robinlocationoverride && V.robinlocationoverride.during.includes(V.hour)) {
 		T.robin_location = V.robinlocationoverride.location;
 	} else if (["docks", "landfill", "dinner", "pillory"].includes(V.robinmissing)) {
 		T.robin_location = V.robinmissing;
 	} else if (!between(V.hour, 7, 20)){ //if hour is 6 or lower, or 21 or higher
-		if (V.NPCName[V.NPCNameList.indexOf("Robin")].lust >= 80 && V.robinromance === 1 && between(V.hour, 21, 23) && !V.robinDaily.sleepMasturbate){
-			return T.robin_location = "sleepMasturbate";
-		} else {
-			return T.robin_location = "sleep";
-		}
+		T.robin_location = "sleep";
 	} else if (V.schoolday === 1 && between(V.hour, 8, 15)) {
-		return (T.robin_location = "school");
-	} else if ((V.weekday === 7 || V.weekday === 1) && between(V.hour, 9, 16) && V.NPCName[V.NPCNameList.indexOf("Robin")].trauma < 80) {
-		if (V.season === "winter") {
-			T.robin_location = "park";
-		} else {
-			T.robin_location = "beach";
-		}
+		T.robin_location = "school";
 	} else if (V.halloween === 1 && between(V.hour, 16, 18) && V.monthday === 31) {
 		T.robin_location = "halloween";
+	} else if ((V.weekday === 7 || V.weekday === 1) && between(V.hour, 9, 16) && C.npc.Robin.trauma < 80) {
+		T.robin_location = (V.season === "winter" ? "park" : "beach");
 	} else {
 		T.robin_location = "orphanage";
 	}
@@ -704,7 +696,6 @@ function getRobinCrossdressingStatus(crossdressLevel) {
 	switch (getRobinLocation()) {
 		case "orphanage":
 		case "sleep":
-		case "sleepMasturbate":
 			if (crossdressLevel >= 2) T.robin_cd = 2;
 			break;
 		case "park":
@@ -1416,13 +1407,38 @@ function isLoveInterest(name) {
 }
 window.isLoveInterest = isLoveInterest;
 
-function isBloodmoon() {
-	return V.moonstate === "evening" && V.hour >= 21 || V.moonstate === "morning" && V.hour < 5;
+function getMoonState(forced = false, forecast) {
+	if (!T.timeChecked) time(); // ensure that T.nightstate exists before running (but don't call it every time bc that's wasteful)
+	if (T.moonChecked === V.time && !forced) return V.moonstate; // don't bother recalculating this if time hasn't changed (unless forced to)
+
+	const nightstate = forecast || T.nightstate;
+	let moonstate = V.moonstate;
+
+	if (nightstate === "evening") {
+		if (V.monthday === getLastDayOfMonth()) { // blood moon happens on the last night of the month
+			moonstate = "evening";
+		} else {
+			moonstate = 0; // moonstate will stay "morning" until the night after the blood moon
+		}
+	} else if (nightstate === "morning") { 
+		if (V.moonstate === "evening") { // if it's after midnight and there was a blood moon before midnight, then it's still a blood moon
+			moonstate = "morning";
+		}
+	}
+
+	T.moonChecked = V.time; //set this temp var to $time so that we don't recalculate it unless time changes in this passage for some reason
+	if (!forecast) V.moonstate = moonstate; //don't modify the real moonstate if this is just a forecast 
+	return moonstate;
+}
+window.getMoonState = getMoonState;
+
+function isBloodmoon(wraithEvent = false) {
+	return (V.daystate === "night" && getMoonState() !== 0 && (!wraithEvent || V.hour < 5)); // it's only a blood moon if it's night. also, wraith events can't start at 5 AM.
 }
 window.isBloodmoon = isBloodmoon;
 
 function wraithSleepEventCheck() {
-	return V.wraith && V.wraith.state !== "" && V.wraith.nightmare === 1 && (V.moonstate === "evening" && V.hour >= 21 || V.moonstate === "morning" && V.hour < 5);
+	return V.wraith.state !== "" && V.wraith.nightmare === 1 && isBloodmoon(true);
 }
 window.wraithSleepEventCheck = wraithSleepEventCheck;
 
@@ -1532,3 +1548,299 @@ window.painToTearsLvl = painToTearsLvl;
 
 const mascaraNameToCSS = (name) => nullable(setup.colours.mascara.find(x => x.variable === name)).csstext;
 window.mascaraNameToCSS = mascaraNameToCSS;
+
+function isPubfameTaskAccepted(task, status) {
+	return V.pubfame && V.pubfame.task === task && (V.pubfame.status === "accepted" || V.pubfame.status === status);
+}
+window.isPubfameTaskAccepted = isPubfameTaskAccepted;
+
+window.msToTime = (s) => {
+	function pad(n, z) {
+		z = z || 2;
+		return ('00' + n).slice(-z);
+	}
+	var ms = s % 1000;
+	s = (s - ms) / 1000;
+	var secs = s % 60;
+	s = (s - secs) / 60;
+	var mins = s % 60;
+	var hrs = (s - mins) / 60;
+
+	return (hrs ? hrs : 0) + ':' + pad(mins) + ':' + pad(secs);
+}
+
+function getHalloweenCostume() {
+	const upper = V.worn.upper;
+	const lower = V.worn.lower;
+
+	T.tf = checkTFparts();
+
+	// I'm really not sure if there's any better way to do this than going through each name. Please forgive my sins.
+	// (Note: We could just add new types to clothes? ex: ["costume", "vampire"]. Update this function if you do.)
+	if (upper.name.includes("vampire jacket")) {
+		return "vampire";
+	} else if (upper.name === "witch dress" && lower.name === "witch skirt") {
+		return "witch";
+	} else if (upper.name === "scarecrow shirt" && lower.name === "scarecrow skirt") {
+		return "scarecrow";
+	} else if (upper.name.includes("gothic") && lower.name.includes("gothic")) {
+		return "gothic";
+	} else if (upper.name === "nun's habit" && lower.name === "nun's habit skirt") {
+		return "nun";
+	} else if (upper.name === "maid dress" && lower.name === "maid skirt") {
+		return "maid";
+	} else if (upper.name.includes("christmas") && lower.name.includes("christmas")) {
+		return "christmas";
+	} else if (upper.name === "cheerleading top" && lower.name === "cheerleading skirt") {
+		return "cheerleader";
+	} else if (upper.name.includes("prison") && lower.name.includes("prison")) {
+		return "prison";
+	} else if (upper.name === "karate jacket" && lower.name === "karate trousers") {
+		return "karate";
+	} else if (upper.name === "monk's habit" && lower.name === "monk's habit skirt") {
+		return "monk";
+	} else if (upper.name === "padded football shirt" && lower.name === "football shorts") {
+		return "football";
+	} else if (upper.name === "belly dancer's top" && lower.name === "belly dancer's bottoms") {
+		return "belly dancer";
+	} else if (V.worn.head.name === "cowboy hat" && lower.name === "cowboy chaps" && V.worn.feet.name === "cowboy boots") {
+		return "cowboy";
+	} else if (["costume", "riding"].every(type => V.worn.head.type.includes(type) && upper.type.includes(type))) {
+		return "riding";
+	} else if (upper.name === "cow onesie" && lower.name === "cow onesie bottoms") {
+		return "cow onesie";
+	} else if (upper.name === "mummy top" && lower.name === "mummy skirt") {
+		return "mummy";
+	} else if (upper.name.includes("sailor") && lower.name.includes("sailor")) {
+		return "sailor";
+	} else if (upper.name === "skeleton outfit" && lower.name === "skeleton bottoms") {
+		return "skeleton";
+	
+	/* Transformations */
+	} else if (T.tf.angelHalo && T.tf.angelWings) {
+		return "angel TF";
+	} else if (T.tf.wolfEars && T.tf.wolfTail) {
+		return "wolf TF";
+	} else if (T.tf.fallenAngelHalo && T.tf.fallenAngelWings) {
+		return "fallen angel TF";
+	} else if (T.tf.demonHorns && T.tf.demonWings) {
+		return "demon TF";
+	} else if (T.tf.catEars && T.tf.catTail) {
+		return "cat TF";
+	} else if (T.tf.cowHorns && T.tf.cowTail) {
+		return "cow TF";
+	} else if (T.tf.birdWings && T.tf.birdEyes) {
+		return "harpy TF";
+	
+	/* Misc outcomes */
+	} else if (V.worn.upper.type.includes("costume") || V.worn.lower.type.includes("costume") || (V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("costume")) || (V.worn.lower.type.includes("naked") && V.worn.under_lower.type.includes("costume"))) {
+		return "mixed";
+	} else if (V.exposed >= 2) {
+		return "fully naked";
+	} else if (V.exposed >= 1) {
+		return "exposed";
+	} else {
+		return "none";
+	}
+}
+window.getHalloweenCostume = getHalloweenCostume;
+
+function dailyConvert() {
+	if (V.daily === undefined) {
+		/* transfer old vars */
+		V.daily = {
+			school: {
+				scienceInterrupted: V.scienceinterrupted,
+				mathsInterrupted: V.mathsinterrupted,
+				englishInterrupted: V.englishinterrupted,
+				historyInterrupted: V.historyinterrupted,
+				swimmingInterrupted: V.swimminginterrupted,
+				headInterrupted: V.headinterrupted,
+				lunchEaten: V.luncheaten,
+				canteenApproach: V.canteenapproach,
+				detentionAttended: V.detentionattended,
+				boysRoomEntered: V.boysroomentered,
+				girlRroomEntered: V.girlsroomentered,
+				scienceExcused: V.scienceExcused,
+				mathsExcused: V.mathsExcused,
+				englishExcused: V.englishExcused,
+				historyExcused: V.historyExcused,
+				swimmingExcused: V.swimmingExcused,
+				herm: V.school_herm_day,
+				crossdress: V.school_crossdress_day,
+			},
+			whitney: {
+				bullyGate: V.bullygate,
+				toiletCheck: V.whitney_toilet_check,
+				park: V.whitney_park,
+				textTrigger: V.whitney_text_trigger,
+				flirt: V.whitneyFlirt,
+				chat: V.whitneyChat,
+				ask: V.whitneyAsk,
+				text: V.whitney_text,
+			},
+			robin: {
+				walk: V.robinwalk,
+				hugCry: V.robinhugcry,
+				hugComplain: V.robinhugcomplain,
+				blame: V.robinblame,
+				persecute: V.robinpersecute,
+				policeBody: V.robinpolicebody,
+				policePay: V.robinpolicepay,
+				tending: V.robin_tending,
+				beachPolice: V.robinbeachpolice,
+				parkSnow: V.robinparksnow,
+				debtAsk: V.robinDebtAsk,
+			},
+			kylar: V.kylarDaily || {},
+			morgan: {},
+			eden: {
+				breakfastLust: V.edenbreakfastlust,
+				breakfast: V.edenbreakfast,
+				bath: V.edenbath,
+				walk: V.edenwalk,
+				chopLust: V.edenchoplust,
+				hunting: V.edenhunting,
+				lunch: V.edenlunch,
+				dinner: V.edendinner,
+				distract: V.edendistract,
+				asylumDisarm: V.edenasylumdisarm,
+				asylumRescue: V.eden_asylum_rescue,
+				sew: V.eden_sew,
+				supplies: V.eden_supplies,
+				sweep: V.eden_sweep,
+				salve: V.eden_salve,
+				soap: V.eden_soap,
+				search: V.eden_search,
+				exposed: V.edenexposed,
+				springJoin: V.edenspringjoin,
+				salveUse: V.salveuse,
+				massage: V.edenmassage,
+				huntCaught: V.edenhuntcaught,
+				farmRescue: V.edenfarmrescue,
+			},
+			alex: V.alexDaily || {},
+			sydney: {
+				scienceWarn: V.sydneyScienceWarn,
+				classWarn: V.sydneyClassWarn,
+				scienceWalk: V.sydneyScienceWalk,
+				punish: V.sydneyPunish,
+				templeSkip: V.sydneyTempleSkip,
+			},
+			ex: {
+				day: V.ex_day,
+				club: V.ex_club,
+				brothel: V.ex_brothel,
+				studio: V.ex_studio,
+				high: V.ex_high,
+				connudatus: V.ex_connudatus,
+				stall: V.ex_stall,
+				mason: V.ex_mason,
+				flyover: V.ex_flyover,
+				cream: V.ex_cream,
+				road: V.ex_road,
+				fence: V.ex_fence,
+				lorries: V.ex_lorries,
+				fountain: V.ex_fountain,
+			},
+			pharm: V.pharmDaily || {},
+			motherWake: V.motherwake,
+			harperVisit: V.harpervisit,
+			policeCollarSeduceAttempt: V.policecollarseduceattempt,
+			tenyclusPlayed: V.tenyclusPlayed,
+			beachStrip: V.beachstrip,
+			compoundState: V.compoundstate,
+			baileyVisit: V.baileyvisit,
+			lakeCouple: V.lakecouple,
+			museumGreenGemTouch: V.museumgreengemtouch,
+			fenceClimb: V.fenceclimb,
+			cafeEaten: V.cafeeaten,
+			mirrorTentacles: V.mirrortentacles,
+			massAttended: V.massattended,
+			dockExhibitionism: V.dockexhibitionism,
+			homeEvent: V.home_event,
+			leightonDanceOffered: V.leightondanceoffered,
+			wolfCaveDog: V.wolf_cave_dog,
+			jordan_missing: V.jordan_missing,
+			blackWolfMonsterRoll: V.blackWolfMonsterRoll,
+			templePray: V.temple_pray,
+			lakeMeditate: V.lake_meditate,
+			masonSpoken: V.mason_spoken,
+			stallRented: V.stall_rented,
+			rocksPoolInvite: V.rocks_pool_invite,
+			birdWash: V.bird_wash,
+			birdDailyGreeting: V.birdDailyGreeting,
+			greatHawkMonsterRoll: V.greatHawkMonsterRoll,
+			estateBluffed: V.estate_bluffed,
+			estateChaos: V.estate_chaos,
+			spaEvent: V.spa_event,
+			estateDone: V.estate_done,
+			baileyWake: V.bailey_wake_day,
+			manorForage: V.manor_forage,
+			manorGarden: V.manor_garden,
+			manorKitchen: V.manor_kitchen,
+			manorParents: V.manor_parents,
+			manorLab: V.manor_lab,
+			promiscuityStress1: V.promiscuitystress1,
+			promiscuityStress2: V.promiscuitystress2,
+			promiscuityStress3: V.promiscuitystress3,
+			promiscuityStress4: V.promiscuitystress4,
+			promiscuityStress5: V.promiscuitystress5,
+			exhibitionismStress1: V.exhibitionismstress1,
+			exhibitionismStress2: V.exhibitionismstress2,
+			exhibitionismStress3: V.exhibitionismstress3,
+			exhibitionismStress4: V.exhibitionismstress4,
+			exhibitionismStress5: V.exhibitionismstress5,
+			deviancyStress1: V.deviancystress1,
+			deviancyStress2: V.deviancystress2,
+			deviancyStress3: V.deviancystress3,
+			deviancyStress4: V.deviancystress4,
+			deviancyStress5: V.deviancystress5,
+			seenPets: V.seenPets,
+			asylumFirstTreatment: V.asylumfirsttreatment,
+			asylumSecondTreatment: V.asylumsecondtreatment,
+			asylumAssessment: V.asylumassessment,
+			asylumExercise: V.asylumexercise,
+			slimeFarmNaked: V.slimeFarmNaked,
+		};
+		/* merge values from old daily objects */
+		if (V.whitneyDaily) Object.keys(V.whitneyDaily).forEach(n => (V.daily.whitney[n] = V.whitneyDaily[n]));
+		if (V.robinDaily) Object.keys(V.robinDaily).forEach(n => (V.daily.robin[n] = V.robinDaily[n]));
+		if (V.sydneyDaily) Object.keys(V.sydneyDaily).forEach(n => (V.daily.sydney[n] = V.sydneyDaily[n]));
+		/* $sewersDaily to $daily.morgan. somehow, it's an array */
+		if (V.sewerssex === 1) V.daily.morgan.sex = 1;
+		if (V.sewersfeeding === 1) V.daily.morgan.feeding = 1;
+		if (V.sewersDaily) V.sewersDaily.forEach(n => (V.daily.morgan[n] = 1));
+		/* `$compoundstate != undefined` is no longer used as an indicator of the access to compound,
+		as it migrated to $daily.compoundState. $compoundcard === 2 is used for that instead. */
+		if (V.compoundstate !== undefined) V.compoundcard = 2;
+		V.daily.pharm.impatient = V.left_before_nurse_returned;
+
+		/* unset old vars */
+		[
+			// eslint-disable-next-line prettier/prettier
+			/* school */ "scienceinterrupted", "mathsinterrupted", "englishinterrupted", "historyinterrupted", "swimminginterrupted", "headinterrupted", "luncheaten", "canteenapproach", "detentionattended", "boysroomentered", "girlsroomentered", "scienceExcused", "mathsExcused", "englishExcused", "historyExcused", "swimmingExcused", "school_herm_day", "school_crossdress_day",
+			// eslint-disable-next-line prettier/prettier
+			/* whitney */ "bullygate", "whitney_toilet_check", "whitney_park", "whitney_text_trigger", "whitneyFlirt", "whitneyChat", "whitneyAsk","whitney_text", "whitney_text_trigger", "whitneyDaily",
+			// eslint-disable-next-line prettier/prettier
+			/* robin */ "robinwalk", "robinhugcry", "robinhugcomplain", "robinblame", "robinpersecute", "robinpolicebody", "robinpolicepay", "robin_tending", "robinDaily", "robinbeachpolice", "robinparksnow", "robinDebtAsk", 
+			// eslint-disable-next-line prettier/prettier
+			/* kylar */ "kylarDaily",
+			// eslint-disable-next-line prettier/prettier
+			/* morgan */ "sewerssex", "sewersfeeding", "sewersDaily",
+			// eslint-disable-next-line prettier/prettier
+			/* eden */ "edenbreakfastlust", "edenbreakfast", "edenbath", "edenwalk", "edenbath", "edenchoplust", "edenhunting", "edenlunch", "edendinner", "edendistract", "edenasylumdisarm", "eden_asylum_rescue", "eden_sew", "eden_supplies", "eden_sweep", "eden_salve", "eden_soap", "eden_search", "edenexposed", "edenspringjoin", "salveuse", "edenmassage", "edenhuntcaught", "edenfarmrescue", 
+			// eslint-disable-next-line prettier/prettier
+			/* alex */ "alexDaily",
+			// eslint-disable-next-line prettier/prettier
+			/* sydney */ "sydneyScienceWarn", "sydneyClassWarn", "sydneyScienceWalk", "sydneyPunish", "sydneyTempleSkip", "sydneyDaily",
+			// eslint-disable-next-line prettier/prettier
+			/* ex */ "ex_day", "ex_club", "ex_brothel", "ex_studio", "ex_high", "ex_stall", "ex_mason", "ex_flyover", "ex_cream", "ex_road", "ex_fence", "ex_connudatus", "ex_lorries", "ex_fountain", "ex_high",
+			// eslint-disable-next-line prettier/prettier
+			/* pharm */ "left_before_nurse_returned", "pharmTriedSeduction", "pharmSexFinished", "pharmClosed", "pharmSeductionFailed", "pharmDaily",
+			// eslint-disable-next-line prettier/prettier
+			/* misc */ "comb", "motherwake", "harpervisit", "policecollarseduceattempt", "tenyclusPlayed", "beachstrip", "compoundstate", "baileyvisit", "lakecouple", "museumgreengemtouch", "fenceclimb", "cafeeaten", "mirrortentacles", "massattended", "dockexhibitionism", "home_event", "leightondanceoffered", "wolf_cave_dog", "jordan_missing", "blackWolfMonsterRoll", "temple_pray", "lake_meditate", "mason_spoken", "stall_rented", "rocks_pool_invite", "bird_wash", "birdDailyGreeting", "greatHawkMonsterRoll", "estate_bluffed", "estate_chaos", "spa_event", "estate_done", "lewd_unlock", "bailey_wake_day", "manor_forage", "manor_garden", "manor_kitchen", "manor_parents", "manor_lab", "promiscuitystress1", "promiscuitystress2", "promiscuitystress3", "promiscuitystress4", "promiscuitystress5", "exhibitionismstress1", "exhibitionismstress2", "exhibitionismstress3", "exhibitionismstress4", "exhibitionismstress5", "deviancystress1", "deviancystress2", "deviancystress3", "deviancystress4", "deviancystress5", "seenPets", "asylumfirsttreatment", "asylumsecondtreatment", "asylumassessment", "asylumexercise", "slimeFarmNaked"
+		].forEach(n => delete V[n]);
+	}
+}
+window.dailyConvert = dailyConvert;

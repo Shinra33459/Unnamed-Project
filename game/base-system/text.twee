@@ -81,7 +81,7 @@
 <</widget>>
 
 <<widget "charles">><<silently>>
-	<<if $wraith and $wraith.mimic is "Morgan" and $wraith.state is "haunt" and random(1,3) is 1>>
+	<<if $wraith.mimic is "Morgan" and $wraith.state is "haunt" and random(1,3) is 1>>
 		<<set _text_output to "graverobber">>
 	<<else>>
 		<<set _text_output to ($player.gender_appearance is "m" ? "Charles" : "Charlene")>>
@@ -273,10 +273,10 @@
 <</if>>
 <</widget>>
 
-<!-- [0] - string 
+<!-- [0] - string
 	 prints string [0] prepended with an indefinite article based on the [0]'s first character -->
 <<widget "a">><<silently>>
-	<<if ["a","e","i","o","u","A","E","I","O","U"].contains(_args[0][0]) >>
+	<<if ["a","e","i","o","u","A","E","I","O","U"].includes(_args[0][0]) >>
 		<<set _text_output to "an " + _args[0]>>
 	<<else>>
 		<<set _text_output to "a " + _args[0]>>
@@ -573,6 +573,8 @@
 	<<if $npcrow.includes($index)>>
 		<<if $npc.includes("Black Wolf") or $npc.includes("Great Hawk")>>
 			<<set _text_output to "The " + $npc[$npcrow.indexOf($index)]>>
+		<<elseif $npc.includes("Ivory Wraith")>>
+			<<set _text_output to "The pale figure">>
 		<<else>>
 			<<set _text_output to $npc[$npcrow.indexOf($index)]>>
 		<</if>>
@@ -861,6 +863,14 @@
 	<<pherself>><<capitalise>>
 <</silently>>_text_output<</widget>>
 
+<<widget "psir">><<silently>>
+	<<set _text_output to ($player.gender_appearance is "m"? "sir" : "ma'am")>><<gendercheck>>
+<</silently>>_text_output<</widget>>
+
+<<widget "pSir">><<silently>>
+	<<psir>><<capitalise>>
+<</silently>>_text_output<</widget>>
+
 <!-- Commented out for deprecation. Use: ?animals
 			See 03-JavaScript/Templates/..
 <<widget "animals">>
@@ -884,12 +894,36 @@
 <</if>>
 <</silently>><<print _text_output>><</widget>>
 
-<<widget "breastsensitivity">><<silently>>
-<<if $breastsensitivity > 5>>
+<<widget "mouthsensitivity">><<silently>>
+<<if $mouthsensitivity > 3.5>>
 	<<set _text_output2 to "sensitive ">>
-<<elseif $breastsensitivity >= 3>>
+<<elseif $mouthsensitivity >= 2.5>>
+	<<set _text_output2 to "tender ">>
+<<elseif $mouthsensitivity >= 1.5>>
+	<<set _text_output2 to "receptive ">>
+<<else>>
+	<<set _text_output2 to "">>
+<</if>>
+<</silently>><<print _text_output2>><</widget>>
+
+<<widget "breastsensitivity">><<silently>>
+<<if $breastsensitivity > 3.5>>
+	<<set _text_output2 to "sensitive ">>
+<<elseif $breastsensitivity >= 2.5>>
 	<<set _text_output2 to "tender ">>
 <<elseif $breastsensitivity >= 1.5>>
+	<<set _text_output2 to "receptive ">>
+<<else>>
+	<<set _text_output2 to "">>
+<</if>>
+<</silently>><<print _text_output2>><</widget>>
+
+<<widget "bottomsensitivity">><<silently>>
+<<if $bottomsensitivity > 3.5>>
+	<<set _text_output2 to "sensitive ">>
+<<elseif $bottomsensitivity >= 2.5>>
+	<<set _text_output2 to "tender ">>
+<<elseif $bottomsensitivity >= 1.5>>
 	<<set _text_output2 to "receptive ">>
 <<else>>
 	<<set _text_output2 to "">>
@@ -921,6 +955,10 @@
 	<</if>>
 <</silently>><<breastsensitivity>><<print _text_output>><</widget>>
 
+<<widget "mouth">><<silently>>
+	<<set _text_output to "lips">>
+<</silently>><<mouthsensitivity>><<print _text_output>><</widget>>
+
 <<widget "undertop">><<silently>>
 	<<if $worn.under_upper.exposed lte 0>>
 		<<set _text_output to $worn.under_upper.name>>
@@ -934,7 +972,7 @@
 	<<undies>><<set $_secondhalf to _text_output>>
 	<<undertop>>
 	<!-- _text_output now has top (either worn under_upper name, or breasts desc) -->
-	
+
 	<<if !_underOutfit>> <!-- Two separate items, not an outfit -->
 		<<set _text_output += " and " + $_secondhalf>>
 	<</if>>
@@ -977,7 +1015,7 @@
 <<widget "bottom">><<silently>>
 	<<set _text_output to ["slender", "slim", "modest", "cushioned", "soft", "round", "plump", "large", "huge"][Math.clamp(0, 8, $player.bottomsize)]>>
 	<<set _text_output to _text_output + [" ass", " bum", " butt"].pluck()>>
-<</silently>><<print _text_output>><</widget>>
+<</silently>><<bottomsensitivity>><<print _text_output>><</widget>>
 
 <!-- Too small and too big outputs are intended as error messages
 	so that it's more obvious what's wrong when people report bugs -->
@@ -1027,7 +1065,7 @@
 <</silently>><<print _text_output>><</widget>>
 
 <!-- [0] - if truthy, genital sensitivity is omitted -->
-<<widget "penis">><<silently>>	
+<<widget "penis">><<silently>>
 	<<penissize>><<set _penissize_text to _text_output>>
 	<<if _penissize_text isnot "">>
 		<<set _penissize_text to _penissize_text + " ">>
@@ -1174,7 +1212,7 @@
 	<<if ($NPCList[$index].type and $NPCList[$index].type isnot "human") and _args[0] isnot "normal">>
 		<<set _text_output += $NPCList[$index].type>>
 	<</if>>
-	<<if $npc_named is 1 or $description is "pale figure">>
+	<<if $npc_named is 1>>
 		<<set _text_output to $description>>
 	<<elseif $role and $role isnot "normal">>
 		<<set _text_output += $role>>
@@ -1191,7 +1229,7 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "combatperson">><<silently>>
-<<if $npc_named is 1>>
+<<if $npc_named is 1 and $description isnot "pale figure">>
 	<<set _text_output to $NPCList[$index].fullDescription>>
 <<elseif $NPCList[$index].name_known is 1>>
 	<<set _text_output to $NPCList[$index].name>>
@@ -1259,6 +1297,9 @@
 		<<set $description to $NPCName[$npcnum[$npcrow.indexOf(_n)]].title>>
 		<<set $role to "normal">>
 		<<set $npc_named to 1>>
+		<<if $NPCName[$npcnum[$npcrow.indexOf(_n)]].nam is "Ivory Wraith">>
+			<<set $description to "pale figure">>
+		<</if>>
 	<<else>>
 		<<set $description to $NPCList[_n].description>>
 		<<set $role to $NPCList[_n].role>>
@@ -1396,9 +1437,9 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "genitalsensitivity">><<silently>>
-	<<if $genitalsensitivity > 5>>
+	<<if $genitalsensitivity > 3.5>>
 		<<set _text_output to "sensitive ">>
-	<<elseif $genitalsensitivity >= 3>>
+	<<elseif $genitalsensitivity >= 2.5>>
 		<<set _text_output to "tender ">>
 	<<elseif $genitalsensitivity >= 1.5>>
 		<<set _text_output to "receptive ">>
@@ -4143,6 +4184,18 @@ A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 	<<set _text_output to $worn.under_upper.name>>
 <<else>>
 	<<breasts>>
+<</if>>
+<</silently>>_text_output<</widget>>
+
+<<widget "bottomaside">><<silently>>
+<<if $worn.over_lower.exposed lte 1>>
+	<<set _text_output to $worn.over_lower.name>>
+<<elseif $worn.lower.exposed lte 1>>
+	<<set _text_output to $worn.lower.name>>
+<<elseif $worn.under_lower.exposed is 0>>
+	<<set _text_output to $worn.under_lower.name>>
+<<else>>
+	<<set _text_output to "bottom">>
 <</if>>
 <</silently>>_text_output<</widget>>
 
@@ -7498,7 +7551,7 @@ Argument 2, where appropriate, determines whether it's the player undressing the
 <</widget>>
 
 <<widget "note">>
-	<<if $statdisable is "f">> |
+	<<if $statdisable is "f" and _args[0]>> |
 		<span @class="_args[1]"><<print _args[0]>></span>
 	<</if>>
 <</widget>>
