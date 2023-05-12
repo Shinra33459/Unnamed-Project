@@ -1,4 +1,6 @@
+/* eslint-disable no-new */
 /* eslint-disable jsdoc/require-description-complete-sentence */
+/* eslint-disable no-undef */
 function setfemininitymultiplierfromgender(gender) {
 	if (gender === "f") {
 		T.femininity_multiplier = 1;
@@ -69,10 +71,30 @@ const hairStyleCap = {
 	},
 };
 
+window.calculatePenisBulge = () => {
+	const compressed = V.player.penisExist && V.worn.genitals.type.includes("hidden");
+	if (!V.player.penisExist || compressed) return 0;
+
+	if (V.worn.genitals.type.includes("cage")) {
+		return Math.clamp(V.player.penissize, 0, Infinity);
+	}
+	// Mentioned in combat about npcs `trying to force an erection`, when below the specific arousal checks
+	if ((V.arousal > 9000 && V.player.penissize === -1) || (V.arousal > 9500 && V.player.penissize === -2)) return 1;
+
+	let erectionState = 1;
+	if (V.arousal >= 8000) {
+		erectionState = 3;
+	} else if (V.arousal >= 6000) {
+		erectionState = 2;
+	}
+	return Math.clamp((V.player.penissize + 1) * erectionState, 0, Infinity);
+};
+
 /** Calculate the player's gender appearance */
 function genderappearancecheck() {
 	/* Calculate bulge size */
-	T.penis_compressed = V.player.penisExist && V.worn.genitals.type.includes("hidden");
+	T.bulge_size = calculatePenisBulge();
+	/* T.penis_compressed = V.player.penisExist && V.worn.genitals.type.includes("hidden");
 	if (V.worn.genitals.type.includes("cage")) {
 		T.bulge_size = Math.clamp(V.player.penissize, 0, Infinity);
 	} else {
@@ -88,12 +110,10 @@ function genderappearancecheck() {
 			T.erection_state = 2;
 		}
 		T.bulge_size = Math.clamp(V.player.penissize * T.erection_state, 0, Infinity);
-	}
+	} */
 	/* Determine how visible the player's bottom is */
 	if (
-		(setup.clothes.lower[clothesIndex("lower", V.worn.lower)].skirt === 1 &&
-			V.worn.lower.skirt_down === 1 &&
-			V.worn.lower.state === "waist") ||
+		(setup.clothes.lower[clothesIndex("lower", V.worn.lower)].skirt === 1 && V.worn.lower.skirt_down === 1 && V.worn.lower.state === "waist") ||
 		(setup.clothes.over_lower[clothesIndex("over_lower", V.worn.over_lower)].skirt === 1 &&
 			V.worn.over_lower.skirt_down === 1 &&
 			V.worn.over_lower.state === "waist")
@@ -133,10 +153,10 @@ function genderappearancecheck() {
 	addfemininityfromfactor(V.makeup.eyeshadow ? 50 : 0, "Eye shadow");
 	addfemininityfromfactor(V.makeup.mascara ? 50 : 0, "Mascara");
 	/* Body structure */
-	addfemininityfromfactor(Math.trunc(V.player.bottomsize * T.bottom_visibility * 50),	"Bottom size (" + Math.trunc(T.bottom_visibility * 100) + "% visible)");
+	addfemininityfromfactor(Math.trunc(V.player.bottomsize * T.bottom_visibility * 50), "Bottom size (" + Math.trunc(T.bottom_visibility * 100) + "% visible)");
 	setfemininitymultiplierfromgender(V.player.gender_body);
 	addfemininityfromfactor(T.femininity_multiplier * 200, "Natural features");
-	addfemininityfromfactor(Math.trunc((V.physique + V.physiquesize / 2) / V.physiquesize * -100), "Toned muscles");
+	addfemininityfromfactor(Math.trunc(((V.physique + V.physiquesize / 2) / V.physiquesize) * -100), "Toned muscles");
 	/* Behaviour */
 	setfemininitymultiplierfromgender(V.player.gender_posture);
 	T.acting_multiplier = V.englishtrait + 1;
@@ -147,16 +167,22 @@ function genderappearancecheck() {
 	T.under_lower_protected = !V.worn.under_lower.exposed;
 	T.apparent_femininity_noow = T.apparent_femininity;
 	T.gender_appearance_factors_noow = clone(T.gender_appearance_factors);
-	T.over_lower_femininity = setup.clothes.over_lower[clothesIndex("over_lower", V.worn.over_lower)].femininity ? setup.clothes.over_lower[clothesIndex("over_lower", V.worn.over_lower)].femininity : 0; 
-	T.lower_femininity = setup.clothes.lower[clothesIndex("lower", V.worn.lower)].femininity ? setup.clothes.lower[clothesIndex("lower", V.worn.lower)].femininity : 0;
-	T.under_lower_femininity = setup.clothes.under_lower[clothesIndex("under_lower", V.worn.under_lower)].femininity ? setup.clothes.under_lower[clothesIndex("under_lower", V.worn.under_lower)].femininity : 0;
+	T.over_lower_femininity = setup.clothes.over_lower[clothesIndex("over_lower", V.worn.over_lower)].femininity
+		? setup.clothes.over_lower[clothesIndex("over_lower", V.worn.over_lower)].femininity
+		: 0;
+	T.lower_femininity = setup.clothes.lower[clothesIndex("lower", V.worn.lower)].femininity
+		? setup.clothes.lower[clothesIndex("lower", V.worn.lower)].femininity
+		: 0;
+	T.under_lower_femininity = setup.clothes.under_lower[clothesIndex("under_lower", V.worn.under_lower)].femininity
+		? setup.clothes.under_lower[clothesIndex("under_lower", V.worn.under_lower)].femininity
+		: 0;
 	/* find maximum possible femininity of the last lower piece you can strip down to, and add it to the counter */
 	addfemininityfromfactor(Math.max(T.over_lower_femininity, T.lower_femininity, T.under_lower_femininity), "Lower clothes", "noow");
 	/* bulge and genitals checks for topless gender */
 	if (T.under_lower_protected && V.NudeGenderDC > 0) {
-		addfemininityfromfactor(T.bulge_size * -100, "Bulge visible through underwear", "noow");
+		addfemininityfromfactor(T.bulge_size * -60, "Bulge visible through underwear", "noow");
 	} else if ((T.over_lower_protected || T.lower_protected) && V.NudeGenderDC > 0) {
-		addfemininityfromfactor(Math.clamp((T.bulge_size - 3) * -100, 0, Infinity), "Bulge visible through clothing", "noow");
+		addfemininityfromfactor(Math.clamp((T.bulge_size - 6) * -60, 0, Infinity), "Bulge visible through clothing", "noow");
 	} else if (V.worn.genitals.exposed && V.NudeGenderDC === 1) {
 		if (V.player.penisExist) {
 			addfemininityfromfactor((V.player.penissize + 2.5) * -150, "Penis exposed", "noow");
@@ -203,7 +229,7 @@ function genderappearancecheck() {
 			T.bottom_visibility *= 0.75;
 			/* Bulge visible through underwear */
 			if (V.NudeGenderDC > 0) {
-				addfemininityfromfactor(-T.bulge_size * 100, "Bulge visible through underwear");
+				addfemininityfromfactor(T.bulge_size * -60, "Bulge visible through underwear");
 			}
 		}
 	} else {
@@ -211,7 +237,7 @@ function genderappearancecheck() {
 		T.bottom_visibility *= 0.75;
 		/* Bulge covered by lower clothes */
 		if (V.NudeGenderDC > 0) {
-			addfemininityfromfactor(-Math.clamp((T.bulge_size - 3) * 100, 0, Infinity), "Bulge visible through clothing");
+			addfemininityfromfactor(-Math.clamp((T.bulge_size - 6) * 60, 0, Infinity), "Bulge visible through clothing");
 		}
 	}
 	/* Upper clothing and breasts */
@@ -235,15 +261,18 @@ function genderappearancecheck() {
 		addfemininityfromfactor(Math.clamp((V.player.perceived_breastsize - 4) * 100, 0, Infinity), "Breast size visible through clothing");
 	}
 	/* Pregnant Belly */
-	if (V.sexStats === undefined) {
+	if (V.sexStats === undefined || !pregnancyBellyVisible()) {
 		// do glorious nothing
-	} else if (V.sexStats.vagina.pregnancy.bellySize >= 8) {
-		addfemininityfromfactor(Math.clamp(100000, 0, Infinity), "Pregnant Belly");
-	} else if (V.sexStats.vagina.pregnancy.bellySize >= 5) {
-		addfemininityfromfactor(Math.clamp((V.sexStats.vagina.pregnancy.bellySize - 4) * 500, 0, Infinity), "Pregnant Belly");
+	} else if (playerBellySize() >= 18) {
+		addfemininityfromfactor(Math.clamp(10000, 0, Infinity), playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly");
+	} else if (playerBellySize() >= 8) {
+		addfemininityfromfactor(
+			Math.clamp((playerBellySize() - 7) * 250, 0, Infinity),
+			playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly"
+		);
 	}
 	/* Body writing */
-	Wikifier.wikifyEval("<<bodywriting_exposure_check>>"); // TODO convert to JS when possible
+	bodywritingExposureCheck(true);
 	T.skinValue = 0;
 	T.skinValue_noow = 0;
 	Object.keys(V.skin).forEach(label => {
@@ -302,41 +331,102 @@ function genderAppearanceHermTiebreak() {
 
 function apparentbreastsizecheck() {
 	T.tempbreast = V.player.breastsize;
-	if (clothingData("upper", V.worn.upper, "bustresize") != null) { T.tempbreast += clothingData("upper", V.worn.upper, "bustresize"); }
-	if (clothingData("under_upper", V.worn.under_upper, "bustresize") != null) { T.tempbreast += clothingData("under_upper", V.worn.under_upper, "bustresize"); }
-	if (clothingData("over_upper", V.worn.over_upper, "bustresize") != null) { T.tempbreast += clothingData("over_upper", V.worn.over_upper, "bustresize"); }
+	if (clothingData("upper", V.worn.upper, "bustresize") != null) {
+		T.tempbreast += clothingData("upper", V.worn.upper, "bustresize");
+	}
+	if (clothingData("under_upper", V.worn.under_upper, "bustresize") != null) {
+		T.tempbreast += clothingData("under_upper", V.worn.under_upper, "bustresize");
+	}
+	if (clothingData("over_upper", V.worn.over_upper, "bustresize") != null) {
+		T.tempbreast += clothingData("over_upper", V.worn.over_upper, "bustresize");
+	}
 	V.player.perceived_breastsize = Math.clamp(V.breastsizemin, T.tempbreast, V.breastsizemax);
 }
 
 function apparentbottomsizecheck() {
 	T.tempbutt = V.player.bottomsize;
-	if (V.worn.lower.rearresize != null) { T.tempbutt += V.worn.lower.rearresize }
-	if (V.worn.under_lower.rearresize != null) { T.tempbutt += V.worn.under_lower.rearresize }
-	if (V.worn.lower.rearresize != null) { T.tempbutt += V.worn.over_lower.rearresize }
+	if (V.worn.lower.rearresize != null) {
+		T.tempbutt += V.worn.lower.rearresize;
+	}
+	if (V.worn.under_lower.rearresize != null) {
+		T.tempbutt += V.worn.under_lower.rearresize;
+	}
+	if (V.worn.lower.rearresize != null) {
+		T.tempbutt += V.worn.over_lower.rearresize;
+	}
 	V.player.perceived_bottomsize = Math.clamp(V.bottomsizemin, T.tempbutt, V.bottomsizemax);
 }
 
-function exposedcheck() {
-	if (!V.combat || V.args[0] === true) {
+function exposedcheck(alwaysRun) {
+	if (!V.combat || alwaysRun) {
 		apparentbreastsizecheck();
 		apparentbottomsizecheck();
 		genderappearancecheck();
-		
+
 		V.player.gender_appearance = T.gender_appearance;
 		T.gender_appearance_factors.sort((a, b) => a.femininity > b.femininity);
 		V.player.gender_appearance_factors = T.gender_appearance_factors;
 		V.player.femininity = T.apparent_femininity;
-		
+
 		V.player.gender_appearance_without_overwear = T.gender_appearance_noow;
 		T.gender_appearance_factors_noow.sort((a, b) => a.femininity > b.femininity);
 		V.player.gender_appearance_without_overwear_factors = T.gender_appearance_factors_noow;
 		V.player.femininity_without_overwear = T.apparent_femininity_noow;
-		
+
 		V.breastindicator = T.breast_indicator;
-		
 	}
 }
 DefineMacro("exposedcheck", exposedcheck);
+
+/* Checks if bodywriting or tattoos are visible to NPCs. */
+function bodywritingExposureCheck(overwrite, skipRng) {
+	if (!T.skin_array || overwrite) {
+		T.visible_areas = ["forehead"];
+		T.bodywriting_exposed = 0;
+
+		if (!V.worn.face.type.includes("mask")) T.visible_areas.push("left_cheek", "right_cheek");
+		if (
+			(V.worn.over_upper.exposed >= 1 || V.worn.over_upper.open === 1) &&
+			(V.worn.upper.exposed >= 1 || V.worn.upper.open === 1) &&
+			(V.worn.under_upper.exposed >= 1 || V.worn.under_upper.open === 1)
+		) {
+			T.visible_areas.push("left_shoulder", "right_shoulder");
+		}
+		if (V.worn.over_upper.exposed >= 1 && V.worn.upper.exposed >= 1 && V.worn.under_upper.exposed >= 1) {
+			T.visible_areas.push("breasts");
+		}
+		if (
+			(V.worn.over_upper.exposed >= 1 || V.worn.over_upper.state !== "waist") &&
+			(V.worn.upper.exposed >= 1 || V.worn.upper.state !== "waist") &&
+			(V.worn.under_upper.exposed >= 1 || V.worn.under_upper.state !== "waist")
+		) {
+			T.visible_areas.push("back");
+		}
+		if (
+			(V.worn.over_lower.exposed >= 1 || V.worn.over_lower.anus_exposed >= 1) &&
+			(V.worn.lower.exposed >= 1 || V.worn.lower.anus_exposed >= 1) &&
+			(V.worn.under_lower.exposed >= 1 || !V.worn.under_lower.type.includes("athletic"))
+		) {
+			T.visible_areas.push("left_bottom", "right_bottom");
+		}
+		if (V.worn.over_lower.exposed >= 1 && V.worn.lower.exposed >= 1 && (V.worn.under_lower.exposed >= 1 || !V.worn.under_lower.type.includes("athletic"))) {
+			T.visible_areas.push("pubic");
+		}
+		if (V.worn.over_lower.vagina_exposed >= 1 && V.worn.lower.vagina_exposed >= 1 && !V.worn.under_lower.type.includes("athletic")) {
+			T.visible_areas.push("left_thigh", "right_thigh");
+		}
+
+		// second: filter out every area where there is no writing and store it in _skin_array
+		T.skin_array = T.visible_areas.filter(loc => V.skin[loc].writing);
+
+		// third: make an array of all the special properties of the visible bodywriting
+		T.skin_array_special = T.skin_array.map(loc => V.skin[loc].special);
+
+		if (T.skin_array.length >= 1) T.bodywriting_exposed = 1;
+	}
+	if (!skipRng) T.bodypart = T.skin_array.random();
+}
+DefineMacro("bodywritingExposureCheck", bodywritingExposureCheck);
 
 /**
  * Jimmy: A potential improvement is to not wikify the hints that are appended to the ends of the links,
@@ -353,7 +443,7 @@ Macro.add("reqSkill", {
 				/* If <<reqSkill>> has no arguments, report an error.
 				   However, if <<reqElse>> had none, print out the section as normal, no need to add skill hints to the links. */
 				if (section.name === "reqSkill") {
-					Errors.inlineReport(`Missing arguments for <<${section.name}>>`, `${this.source}`).appendTo(this.output);
+					throwError(this.output, `Missing arguments for <<${section.name}>>`, `${this.source}`, exportable);
 				} else {
 					new Wikifier(this.output, section.contents);
 				}
@@ -368,7 +458,7 @@ Macro.add("reqSkill", {
 				const tier = Number.parseInt(arg.slice(-1));
 				/* Check if parseInt returned an actual number, and not NaN. */
 				if (!Number.isInteger(tier)) {
-					Errors.inlineReport(`Invalid argument (${arg}) for <<${section.name}>> | Tier`, `${this.source}`).appendTo(this.output);
+					throwError(this.output, `Invalid argument (${arg}) for <<${section.name}>> | Tier`, `${this.source}`, exportable);
 					return true;
 				}
 				switch (type) {
@@ -388,7 +478,7 @@ Macro.add("reqSkill", {
 						output += `<<deviant${tier}>>`;
 						return false;
 					default:
-						Errors.inlineReport(`Invalid argument (${arg}) for <<${section.name}>> | Type`, `${this.source}`).appendTo(this.output);
+						throwError(this.output, `Invalid argument (${arg}) for <<${section.name}>> | Type`, `${this.source}`, exportable);
 						return true;
 				}
 			});

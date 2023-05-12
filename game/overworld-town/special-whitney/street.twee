@@ -47,7 +47,7 @@
 		<<destinationeventend>>
 	<<elseif $NPCName[$NPCNameList.indexOf("Whitney")].love gte 20 and $whitneyromance isnot 1>>
 		<<set $whitneyromance to 1>>
-		Whitney approaches you. <<He>> looks more angry than usual. You take a cautionary step back, and nearly tumble into a pile of rubbish. <<He>> grabs you by the <<if $worn.upper.name is "naked">>arm<<else>>collar<</if>> at the last second.
+		Whitney approaches you. <<He>> looks angrier than usual. You take a cautionary step back, and nearly tumble into a pile of rubbish. <<He>> grabs you by the <<if $worn.upper.name is "naked">>arm<<else>>collar<</if>> at the last second.
 		<br><br>
 
 		"Stupid slut," <<he>> says. <<He>> pulls you upright and shoves you against a wall. "You've been asking for this, don't try to deny it." <<He>> kisses you with surprising tenderness. <<takeKissVirginity "Whitney" "loveInterest">>
@@ -200,7 +200,7 @@
 					<</if>>
 				<</if>>
 			<<case 5>><<set $bullyeventstreet += 1>>
-				<<if $season is "winter">>
+				<<if Time.season is "winter">>
 					You pass by Whitney leaning against a wall. <<He>> doesn't make a move for you. "You look cold," <<he>> says.
 					<br><br>
 
@@ -303,7 +303,7 @@
 				You spot Whitney up ahead. Mischief flashes in <<his>> eyes when <<he>> sees you. <<He>> <<if $whitneyromance is 1>>presses a hand to your back and marches you along<<else>>grabs you by the hair and yanks you along<</if>>, towards the street.
 				<br><br>
 
-				"Here's what's gonna happen," <<he>> says. "This street's real busy. <<if $daystate is "night">>Even<<else>>Especially<</if>> 'round this time. Next person who drives by, you're gonna jump out and show them your
+				"Here's what's gonna happen," <<he>> says. "This street's real busy. <<if Time.dayState is "night">>Even<<else>>Especially<</if>> 'round this time. Next person who drives by, you're gonna jump out and show them your
 				<<switch $phase>>
 					<<case 3>>tits."
 					<<case 2>>junk."
@@ -429,7 +429,7 @@
 					nearly knocking you over.
 					<br><br>
 
-					"Where's a slut like you headed at this time of night?" <<he>> says. <<if $daystate isnot "night">>You don't bother to correct <<him>>.<</if>> "You shouldn't. Not without this." <<He>> fumbles for a paper bag at <<his>> side, and shoves it into your arms. <<He>> pats you on the cheek, then stumbles away without another word.
+					"Where's a slut like you headed at this time of night?" <<he>> says. <<if Time.dayState isnot "night">>You don't bother to correct <<him>>.<</if>> "You shouldn't. Not without this." <<He>> fumbles for a paper bag at <<his>> side, and shoves it into your arms. <<He>> pats you on the cheek, then stumbles away without another word.
 					<br><br>
 
 					You tear into the bag to examine its contents. A bottle, half-full.
@@ -441,8 +441,11 @@
 						You could hazard a guess as to its contents.
 					<</if>>
 					<br><br>
-
-					<<link [[Drink|Street Bully Drunk]]>><<set $phase to 1>><<trauma -6>><<stress -12>><<alcohol 240>><<if $phase2 is 1>><<arousal 2000>><<drugs 120>><</if>><</link>><<ltrauma>><<lstress>><<galcohol>>
+					<<if playerAwareTheyArePregnant()>>
+						You can't bring yourself to drink while you know you're with child.
+					<<else>>
+						<<link [[Drink|Street Bully Drunk]]>><<set $phase to 1>><<trauma -6>><<stress -12>><<alcohol 240>><<if $phase2 is 1>><<arousal 2000>><<drugs 120>><</if>><</link>><<ltrauma>><<lstress>><<galcohol>>
+					<</if>>
 					<br>
 					<<link [[Leave it|Street Bully Drunk]]>><<set $phase to 0>><</link>>
 					<br>
@@ -679,7 +682,7 @@
 
 <<effectsman>><<man>>
 
-<<if $daystate isnot "night">>
+<<if Time.dayState isnot "night">>
 	<<switch random(1, 10)>>
 		<<case 10>>
 			<<if random(1, 100) lte $malechance>><<set _whitAudience to "m">><<else>><<set _whitAudience to "f">><</if>>
@@ -791,8 +794,12 @@
 	<<if $submissive gte 1150>>
 		You give Whitney a pleading look over your shoulder. <<He>> glares, but relents, sending you away with a shove. You scurry onwards.
 	<<elseif $submissive lte 850>>
-		/*ToDo: Pregnancy, account for Whitney being preggers(?)*/
-		You jab your elbow into Whitney's gut. <<He>> releases you with a wheeze. <<He>> shoots you a sour look before leading <<his>> friends away.
+		<<if npcBellySize("Whitney") gte 8>>
+			You push Whitney away. <<He>> instinctively releases you.
+		<<else>>
+			You jab your elbow into Whitney's gut. <<He>> releases you with a wheeze.
+		<</if>>
+		<<He>> shoots you a sour look before leading <<his>> friends away.
 	<<else>>
 		You twist out of Whitney's grasp. <<He>> makes another grab for you, but you duck under <<his>> arm and hurry ahead. <<He>> doesn't follow.
 	<</if>>
@@ -979,7 +986,7 @@ Held by the ankles, you're forced over the edge of the dumpster. Your fall is cu
 	<<He>> doesn't miss a beat,
 	<<if $NPCName[$NPCNameList.indexOf("Whitney")].dom gte 10>>
 		grabbing your shoulders and throwing you on your back in turn. You grapple with each other for control, until
-		<<if $NPCName[$NPCNameList.indexOf("Whitney")].dom gte 15>>
+		<<if $NPCName[$NPCNameList.indexOf("Whitney")].dom gte 15 and !pregnancyBellyVisible(true)>>
 			<<he>> sits on your stomach, pinning you down.<<arousal 1000>><<garousal>>
 			<br><br>
 
@@ -1136,9 +1143,7 @@ A sudden, sharp pain shocks your <<genitals>> as the fabric of your <<print $wor
 	<<else>>
 		<<exhibitionism1>>
 	<</if>>
-	<<if !$worn.over_upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $overupperwet to 200>><</if>>
-	<<if !$worn.upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $upperwet to 200>><</if>>
-	<<if !$worn.under_upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $underupperwet to 200>><</if>>
+	<<wet_upper>>
 
 	The <<person2>><<person>> shoves you into Whitney's arms. <<person1>><<He>> pulls you close.
 	<br><br>
@@ -1157,9 +1162,7 @@ A sudden, sharp pain shocks your <<genitals>> as the fabric of your <<print $wor
 		<</if>>
 	<<else>>
 		<span class="red"><<His>> hold is too strong,</span> however, <span class="lewd">and you're soaked from the waist up.</span>
-		<<if !$worn.over_upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $overupperwet to 200>><</if>>
-		<<if !$worn.upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $upperwet to 200>><</if>>
-		<<if !$worn.under_upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $underupperwet to 200>><</if>>
+		<<wet_upper>>
 		<<trauma 6>><<stress 12>><<gtrauma>><<ggstress>>
 		<br><br>
 
@@ -1167,9 +1170,7 @@ A sudden, sharp pain shocks your <<genitals>> as the fabric of your <<print $wor
 	<</if>>
 <<else>>
 	You lie still and shut your eyes. You hear the sound of plastic crunching. You're hit by sharp, cool sensation, right in the chest. <span class="lewd">You're soaked from the waist up.</span>
-	<<if !$worn.over_upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $overupperwet to 200>><</if>>
-	<<if !$worn.upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $upperwet to 200>><</if>>
-	<<if !$worn.under_upper.type.includes("naked", "rainproof", "stealthy", "swim")>><<set $underupperwet to 200>><</if>>
+	<<wet_upper>>
 	<<trauma 6>><<stress 6>><<gtrauma>><<gstress>>
 	<br><br>
 
@@ -1230,7 +1231,7 @@ A sudden, sharp pain shocks your <<genitals>> as the fabric of your <<print $wor
 	<<else>>
 		<<He>> puts a hand on your head and pushes down.
 	<</if>>
-	<<if $daystate isnot "night">>
+	<<if Time.dayState isnot "night">>
 		<span class="lewd">You're in plain view of an adjacent street.</span>
 	<</if>>
 	<br><br>
@@ -1469,7 +1470,7 @@ Once <<hes>> through with <<his>> critique, Whitney shoves you along.
 	You're so focused on tuning out their stares
 <</if>>
 that you fail to notice <<his>> friends stepping out of line behind you. They snatch up your clothes.
-<<if $daystate is "night">>
+<<if Time.dayState is "night">>
 	"We're going for a walk," Whitney says. "You might wanna come with."
 	<br><br>
 
@@ -1573,7 +1574,7 @@ that you fail to notice <<his>> friends stepping out of line behind you. They sn
 		<<npc Whitney>><<person1>>
 
 		"Now that's done," Whitney says, smirking.
-		<<if $daystate is "night">>
+		<<if Time.dayState is "night">>
 			"Let's take you for a walk."
 			<br><br>
 
@@ -1791,7 +1792,7 @@ Hid behind a bin to conceal your <<lewdness>>, you peek out. Whitney and <<his>>
 <br><br>
 
 You'll have to cross traffic to reach <<him>>.
-<<if $daystate is "day">>
+<<if Time.dayState is "day">>
 	It's busy. You'll have to be quick.
 	<<if $exhibitionism gte 75>>
 		<span class="lewd">Or bold.</span>
@@ -1890,7 +1891,7 @@ You'll have to cross traffic to reach <<him>>.
 	You crouch low and wait for an opening, before creeping out onto the street. You duck and dive between anything you can find, be it parked cars or rubbish bins, hoping no one notices.
 	<br><br>
 
-	<<if ($daystate is "day" and random(1, 10) lte 3) or ($daystate isnot "day" and random(1))>>
+	<<if (Time.dayState is "day" and random(1, 10) lte 3) or (Time.dayState isnot "day" and random(1))>>
 		Taking advantage of a gap in traffic, <span class="green">you manage to cross without a hitch.</span> Commuters flood back onto the road shortly after, oblivious to the naked <<girl>> they narrowly missed.
 		<br><br>
 
@@ -1958,9 +1959,9 @@ You'll have to cross traffic to reach <<him>>.
 	You reach for your clothes.
 	<<if $NPCName[$NPCNameList.indexOf("Whitney")].dom gte 10>>
 		Whitney holds them overhead, smirking. <<His>> friends laugh as you
-		<<if $devlevel lte 10>>
+		<<if $bodysize lte 1>>
 			stand on tiptoe, straining to reach them. <<He>> eventually grows bored of this torment and dumps them on top of you.<<stress 2>><<npcincr Whitney lust 5>><<gstress>><<glust>>
-		<<elseif $devlevel lte 12>>
+		<<elseif $bodysize lte 2>>
 			<<if $submissive gte 1150>>desperately<<elseif $submissive lte 850>>angrily<<else>>impatiently<</if>> leap to grab them.
 		<<else>>
 			<<if $submissive gte 1150>>desperately<<elseif $submissive lte 850>>angrily<<else>>impatiently<</if>> snatch them out of <<his>> grasp.
@@ -2344,7 +2345,7 @@ Over <<his>> shoulder, you spy Whitney hiding under a parked car. <<nnpc_He "Whi
 <<set $outside to 1>><<effects>>
 
 True to Whitney's word, it's not long before
-<<if $daystate is "night">>
+<<if Time.dayState is "night">>
 	the flash of headlights around the corner
 <<else>>
 	the sound of gravel under rubber
@@ -2440,7 +2441,7 @@ signals an oncoming vehicle. You get into position,
 				<<if $NPCList[0].penis isnot "none">>
 					letting <<his>> erect <<print $NPCList[0].penisdesc>> swing free in front of your face.
 				<<else>>
-					<<his>> wet pussy glistening <<if $daystate is "night">>under the glow of a streetlamp<<else>>in the sunlight<</if>>.
+					<<his>> wet pussy glistening <<if Time.dayState is "night">>under the glow of a streetlamp<<else>>in the sunlight<</if>>.
 				<</if>>
 			<<else>>
 				Whitney <<npcUndressText $NPCName[$NPCNameList.indexOf("Whitney")] "lower" "self">> to do the same.
@@ -2456,7 +2457,7 @@ signals an oncoming vehicle. You get into position,
 	<</switch>>
 	<br><br>
 
-	<<person2>>The <<person>> gapes at the <<person1>><<if $player.gender_appearance is $pronoun>>pair of <<girls>><<else>>boy and girl<</if>> stood exposed <<if $daystate is "night">>under a streetlight<<else>>in broad daylight<</if>>. <<person2>><<Hes>> too busy leering to stop a collision with another oncoming vehicle. A <<generate3>><<person3>><<person>> stumbles out of <<his>> car, unhurt but enraged.
+	<<person2>>The <<person>> gapes at the <<person1>><<if $player.gender_appearance is $pronoun>>pair of <<girls>><<else>>boy and girl<</if>> stood exposed <<if Time.dayState is "night">>under a streetlight<<else>>in broad daylight<</if>>. <<person2>><<Hes>> too busy leering to stop a collision with another oncoming vehicle. A <<generate3>><<person3>><<person>> stumbles out of <<his>> car, unhurt but enraged.
 	<br><br>
 
 	The <<person2>><<person>> points an accusatory finger in your direction, but Whitney's already whisked you back into the alley, laughing hysterically. <<person1>><<His>> friends cover your tracks.
@@ -3047,7 +3048,7 @@ You run until you're sure Whitney and <<nnpc_his "Whitney">> friends won't follo
 "There's something I want you to show me," Whitney says, gesturing at the ladder. "At the top. Get climbing."
 <br><br>
 
-<<if $worn.lower.skirt is 1>>
+<<if setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
 	<<if $worn.under_lower.exposed gte 1>>
 		You just know Whitney will look up your $worn.lower.name, <span class="pink">and you're wearing nothing beneath.</span> <<His>> friends crowd around as well. They'll all see.
 		<br><br>
@@ -3292,7 +3293,7 @@ You walk a meandering path through the streets, arm locked with Whitney, with <<
 <<endevent>>
 <<npc Whitney>><<person1>>
 
-<<if $daystate is "night">>
+<<if Time.dayState is "night">>
 	You arrive outside the silent orphanage. "What a shithole," Whitney exclaims, kicking open the front door. The main hall is deserted. Whitney strides inside, and <<his>> friends follow.
 	<br><br>
 	"So where can we put our feet up?"
@@ -3351,7 +3352,7 @@ You arrive outside your room. Whitney looks inside. "You live like this?" <<he>>
 :: Street Bully Orphanage Office
 <<effects>>
 
-<<if $daystate is "night">>
+<<if Time.dayState is "night">>
 	You enter Bailey's office. There's little chance of Bailey being here, but that doesn't stop the nerves.
 	<br><br>
 
@@ -3544,19 +3545,19 @@ You press your ear against the door. Whitney's friends laugh, but don't interrup
 :: Street Bully Orphanage Living
 <<effects>>
 
-<<if $daystate is "night">>
+<<if Time.dayState is "night">>
 	You enter the deserted living room.
 <<else>>
 	You enter the living room. A group of frightened residents vacate at the sight of Whitney and <<his>> friends.
 <</if>>
 
 <<if $kylar_camera is 3>>
-	<<if $daystate is "night">>
+	<<if Time.dayState is "night">>
 		Moonlight glints off a beady pair of eyes. <span class="purple">Kylar's plush owl sits abandoned by the television.</span>
 	<<else>>
 		<span class="purple">One leaves the soft owl toy lying by the television in their haste to escape.</span>
 	<</if>>
-<<elseif $daystate isnot "night">>
+<<elseif Time.dayState isnot "night">>
 	One almost knocks over the television in their haste to escape.
 <</if>>
 <br><br>

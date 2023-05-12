@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 Config.history.controls = false;
 Config.saves.slots = 9;
 Config.history.maxStates = 1;
@@ -7,15 +8,27 @@ State.prng.init();
 window.versionUpdateCheck = true;
 window.onLoadUpdateCheck = false;
 
-let isReloading = true;
 let pageLoading = false;
 
 Save.onLoad.add(save => {
 	pageLoading = true;
 	window.onLoadUpdateCheck = true;
+
+	// clear errors from previous save and reset imageError cache so (possibly) save-specific errors might be logged again
+	Errors.Reporter.hide(true);
+	Renderer.ImageErrors = {};
+
+	// decompression should be the FIRST save modification
+	DoLSave.decompressIfNeeded(save);
+
 	save.state.history.forEach(h => {
+		if (h.prng && Array.isArray(h.prng.S)) {
+			h.prng.S.forEach((i, index, array) => {
+				if (i < 0 || i > 255) array[index] %= 256;
+			});
+		}
 		h.variables.saveDetails = defaultSaveDetails(h.variables.saveDetails);
-		h.variables.saveDetails.loadTime = new Date()
+		h.variables.saveDetails.loadTime = new Date();
 	});
 });
 
@@ -23,56 +36,26 @@ Save.onSave.add(save => {
 	Wikifier.wikifyEval("<<updateFeats>>");
 	save.state.history.forEach(h => {
 		h.variables.saveDetails = defaultSaveDetails(h.variables.saveDetails);
-		h.variables.saveDetails.playTime += (new Date() - h.variables.saveDetails.loadTime ? h.variables.saveDetails.loadTime : 0);
+		h.variables.saveDetails.playTime += h.variables.saveDetails.loadTime ? new Date() - h.variables.saveDetails.loadTime : 0;
 		h.variables.saveDetails.loadCount++;
 	});
 	// eslint-disable-next-line no-undef
 	prepareSaveDetails(); // defined in save.js
-});
 
-function defaultSaveDetails(input){
-	let saveDetails = input;
-	if(!saveDetails){
-		//In the rare case the variable doesnt exist
-		saveDetails = {
-			exported:{
-				days: clone(variables.days),
-				frequency: 15,
-				count: 0,
-				dayCount: 0,
-			},
-			auto:{
-				count: 0
-			},
-			slot:{
-				count: 0,
-				dayCount: 0,
-			}
-		}
-	}
-	if(!saveDetails.playTime){
-		saveDetails.playTime = 0;
-		saveDetails.loadCount = 0;
-	}
-	if(saveDetails.f !== 1){
-		saveDetails.f = 1;
-		saveDetails.playTime = 0;
-	}
-	if(saveDetails.f !== 2 && saveDetails.playTime > 1000000000){
-		saveDetails.playTime = 0;
-	}
-	saveDetails.f = 2;
-	return saveDetails;
-}
+	// compression should be the LAST save modification
+	DoLSave.compressIfNeeded(save);
+});
 
 /* LinkNumberify and images will enable or disable the feature completely */
 /* debug will enable or disable the feature only for new games */
 /* sneaky will enable the Sneaky notice banner on the opening screen and save display */
+/* versionName will be displayed in the top right of the screen, leave as "" to not display anything */
 window.StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.3.13.5",
+	version: "0.4.0.9",
+	versionName: "",
 	sneaky: false,
 };
 window.StartConfig.version += ".h"; //stands for Herm, don't change
@@ -80,8 +63,7 @@ window.StartConfig.version += "0"; //how many times I've released a build of thi
 
 /* convert version string to numeric value */
 const tmpver = StartConfig.version.replace(/[^0-9.]+/g, "").split(".");
-window.StartConfig.version_numeric =
-	tmpver[0] * 1000000 + tmpver[1] * 10000 + tmpver[2] * 100 + tmpver[3] * 1;
+window.StartConfig.version_numeric = tmpver[0] * 1000000 + tmpver[1] * 10000 + tmpver[2] * 100 + tmpver[3] * 1;
 
 Config.saves.autosave = "autosave";
 
@@ -94,7 +76,7 @@ Config.saves.isAllowed = function () {
 
 $(document).on(":passagestart", function (ev) {
 	if (ev.passage.title === "Start2") {
-		jQuery.event.trigger({
+		$.event.trigger({
 			type: ":start2",
 			content: ev.content,
 			passage: ev.passage,
@@ -132,38 +114,61 @@ importScripts([
 	console.log(err);
 }); */
 
+function defaultSaveDetails(input) {
+	let saveDetails = input;
+	if (!saveDetails) {
+		// In the rare case the variable doesnt exist
+		saveDetails = {
+			exported: {
+				days: clone(variables.days),
+				frequency: 15,
+				count: 0,
+				dayCount: 0,
+			},
+			auto: {
+				count: 0,
+			},
+			slot: {
+				count: 0,
+				dayCount: 0,
+			},
+		};
+	}
+	if (!saveDetails.playTime) {
+		saveDetails.playTime = 0;
+		saveDetails.loadCount = 0;
+	}
+	if (!saveDetails.f || saveDetails.f < 1) {
+		saveDetails.f = 1;
+		saveDetails.playTime = 0;
+	}
+	if (saveDetails.f < 3) {
+		saveDetails.playTime = 0;
+		saveDetails.f = 3;
+	}
+	return saveDetails;
+}
+
 // Runs before a passage load, returning a string redirects to the new passage name.
 Config.navigation.override = function (dest) {
-	const isLoading = pageLoading; // if page is freshly loading (after a refresh etc), we hold its value in a temporary variable
-
-	if (isReloading) {
-		/* This must have the highest precedence. */
+	const checkPassages = dest => {
 		const lastVersion = DoLSave.Utils.parseVer(V.saveVersions.last());
 		const currVersion = DoLSave.Utils.parseVer(StartConfig.version);
 		if (lastVersion > currVersion) {
-			isReloading = false;
 			V.bypassHeader = true;
 			return "Downgrade Waiting Room";
 		}
-	}
-
-	isReloading = false;
-	pageLoading = false;
-
-	/* Check for passage rerouting using events */
-	const passageArgs = { name: dest };
-	jQuery.event.trigger(":passageoverride", passageArgs);
-	if (passageArgs.name !== dest) {
-		/* Return new passage dest. Will divert the processed passage to this. */
-		return passageArgs.name;
-	}
-
-	const checkPassages = (dest) => {
+		if (dest.includes("Playground")) {
+			return dest.replace("Playground", "Courtyard");
+			/* Try not to include "Playground" in any passage names after this. */
+		}
 		switch (dest) {
 			case "Downgrade Waiting Room":
 				return V.passage;
+
 			case "Pharmacy Select Custom Lenses":
-				return isLoading ? "Pharmacy Ask Custom Lenses" : false;
+				return "Pharmacy Ask Custom Lenses";
+
 			case "Forest Shop Outfit":
 			case "Forest Shop Upper":
 			case "Forest Shop Lower":
@@ -191,6 +196,12 @@ Config.navigation.override = function (dest) {
 			case "Legs Shop":
 			case "Shoe Shop":
 				return "Clothing Shop";
+
+			case "Danube Oak":
+				return "Danube Challenge";
+
+			case "Danube Oak Strip":
+				return "Danube Challenge";
 
 			case "Penis Inspection Flaunt Crossdress":
 				return "Penis Inspection Flaunt No Penis";
@@ -426,9 +437,21 @@ Config.navigation.override = function (dest) {
 		}
 	};
 
-	let passageOverride = checkPassages(dest);
-	if(passageOverride)
-		V.passageOverride = passageOverride
+	/* Check for passage rerouting using events */
+	const passageArgs = { name: dest };
+	$.event.trigger(":passageoverride", passageArgs);
+	if (passageArgs.name !== dest) {
+		/* Return new passage dest. Will divert the processed passage to this. */
+		return passageArgs.name;
+	}
 
-	return passageOverride;
+	if (pageLoading) {
+		pageLoading = false;
+		const passageOverride = checkPassages(dest);
+		if (passageOverride) V.passageOverride = passageOverride;
+
+		return passageOverride;
+	}
+
+	return false;
 };

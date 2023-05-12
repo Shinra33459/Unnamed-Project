@@ -425,7 +425,7 @@ in quicksand!
 	<<link [[Next|Moor]]>><<quicksand_end>><<set $eventskip to 1>><</link>>
 	<br>
 <<elseif $phase is 2>>
-	<<if $daystate is "night" and random(1, 100) gte 91 or $daystate isnot "night" and random(1, 100) gte 30>>
+	<<if Time.dayState is "night" and random(1, 100) gte 91 or Time.dayState isnot "night" and random(1, 100) gte 30>>
 		<<if random(1, 2) is 2>>
 			You call for help.
 			<br><br>
@@ -547,7 +547,7 @@ The <<person2>><<person>> helps you to your feet,
 <<else>>
 	"You shouldn't wander the moor alone," <<he>> says.
 <</if>>
-<<if $daystate is "night">>
+<<if Time.dayState is "night">>
 	"Not this deep, and especially not at night."
 <<else>>
 	"Not this deep."
@@ -700,7 +700,7 @@ The others jostle closer.
 		<<link [[Climb out|Moor Crack Climb]]>><</link>><<athleticsdifficulty 300 1300>>
 		<br>
 	<</if>>
-	<<link [[Call for help|Moor Crack Call]]>><</link>><<if $daystate is "night">><<difficulty 10>><<else>><<difficulty 70>><</if>>
+	<<link [[Call for help|Moor Crack Call]]>><</link>><<if Time.dayState is "night">><<difficulty 10>><<else>><<difficulty 70>><</if>>
 	<br>
 	<<link [[Follow the passage (0:20)|Moor Crack Passage]]>><<pass 20>><</link>>
 	<br>
@@ -734,6 +734,7 @@ The others jostle closer.
 	<<voreeffects>><<effectstentacles>>
 	<<vore>><<tentacles>>
 	<<statetentacles>>
+	<br><br>
 	<<actionsvorentacles>>
 <<else>>
 	<<voreeffects>>
@@ -806,7 +807,7 @@ You grasp the rough wall, and start to climb. You're halfway up when an outcrop 
 :: Moor Crack Call
 <<effects>>
 
-<<if $daystate is "night" and random(1, 100) gte 91 or $daystate isnot "night" and random(1, 100) gte 30>>
+<<if Time.dayState is "night" and random(1, 100) gte 91 or Time.dayState isnot "night" and random(1, 100) gte 30>>
 	<<if random(1, 2) is 2>>
 		You call for help.
 		<br><br>
@@ -1030,7 +1031,7 @@ You examine the ring. A black gemstone sits surrounded by engravings of what app
 	<<generateWraith 1>><<initWraith>><<rainWraith>>
 	"<span class="wraith">Graverobber.</span>"
 	<br><br>
-	You snap around to face the voice, and see a beautiful pale figure floating just above the water. <<Hes>> naked,<<if $wraith.state is "haunt">> and scratches at <<his>> own neck.<<else>> save for an ornate white necklace with blue gemstons around <<his>> neck.<</if>> <<if $wraith.seen gte 3>>You immediately try to scramble away.<<else>>You slowly back away.<</if>> A translucent tendril wraps around your leg, lifting you and dropping you flat on your back.
+	You snap around to face the voice, and see a beautiful pale figure floating just above the water. <<Hes>> naked,<<if ["haunt", "despair"].includes($wraith.state)>> and scratches at <<his>> own neck.<<else>> save for an ornate white necklace with blue gemstons around <<his>> neck.<</if>> <<if $wraith.seen gte 3>>You immediately try to scramble away.<<else>>You slowly back away.<</if>> A translucent tendril wraps around your leg, lifting you and dropping you flat on your back.
 	<br><br>
 	You have the wind knocked out of you. <<pain 4>><<gpain>>
 	<br><br>
@@ -1308,9 +1309,9 @@ You keep low within the heather. The vehicle closes in, until heavy wheels rumbl
 
 	<<link [[Insist on the Remy Estate|Moor Vehicle Journey]]>><<set $phase to 3>><</link>>
 	<br>
-	<<link [[Go to the farmlands instead (0:30)|Moor Vehicle Journey]]>><<pass 20>><<set $phase to 0>><</link>>
+	<<link [[Go to the farmlands instead (0:20)|Moor Vehicle Journey]]>><<pass 20>><<set $phase to 0>><</link>>
 	<br>
-	<<link [[Go deeper into the moor instead (0:30)|Moor Vehicle Journey]]>><<pass 20>><<set $phase to 1>><</link>>
+	<<link [[Go deeper into the moor instead (0:20)|Moor Vehicle Journey]]>><<pass 20>><<set $phase to 1>><</link>>
 	<br>
 <<else>>
 	The <<person2>><<person>> shakes <<his>> head, but doesn't argue. <<He>> drives you through the moor. <<He>> can't move too fast, but it's faster than on foot.
@@ -1693,15 +1694,17 @@ A heat travels down your spine, resting in your loins. You're filled with a desp
 <</if>>
 <<masturbationeffects>>
 <<masturbationactions>>
-<<link [[Continue|Moor Flower Masturbation]]>><</link>><<nexttext>>
-<br>
-<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
-	<<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>>
-<<elseif $corruptionMasturbation isnot true>>
-	<<link [[Stop|Moor Flower Masturbation Finish]]>><<set $finish to 1>><</link>>
-<<else>>
-	The slime in your ear will not allow you to stop.
-<</if>>
+
+<div id="masturbationButtons">
+	<div><<link [[Continue|Moor Flower Masturbation]]>><</link>><<nexttext>></div>
+	<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
+		<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
+	<<elseif $corruptionMasturbation isnot true>>
+		<div><<link [[Stop|Moor Flower Masturbation Finish]]>><<set $finish to 1>><</link>></div>
+	<<else>>
+		<div class="red">The slime in your ear will not allow you to stop.</div>
+	<</if>>
+</div>
 <br>
 
 :: Moor Flower Masturbation Finish
@@ -1775,21 +1778,22 @@ A heat travels down your spine, resting in your loins. You're filled with a desp
 <<masturbationeffects>>
 <<masturbationactions>>
 
-<<if $masturbationorgasm gte 3 and ($anususe is "mpenisflowerpenetrate" or $vaginause is "mpenisflowerpenetrate" or $mouth is "mpenisflowersuck")>>
-	<<link [[Continue|Moor Phallus Plant Masturbation Finish]]>><<set $finish to 1>><</link>>
-<<else>>
-	<<link [[Continue|Moor Phallus Plant Masturbation]]>><</link>><<nexttext>>
-<</if>>
-<br>
-<<if ($anususe is "mpenisflowerpenetrate" or $vaginause is "mpenisflowerpenetrate" or $mouth is "mpenisflowersuck")>>
-	<span class="red">You can't stop.</span>
-<<elseif $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
-	<<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>>
-<<elseif $corruptionMasturbation isnot true>>
-	<<link [[Stop|Moor Phallus Plant Masturbation Finish]]>><<set $finish to 1>><</link>>
-<<else>>
-	The slime in your ear will not allow you to stop.
-<</if>>
+<div id="masturbationButtons">
+	<<if $masturbationorgasm gte 3 and ($anususe is "mpenisflowerpenetrate" or $vaginause is "mpenisflowerpenetrate" or $mouth is "mpenisflowersuck")>>
+		<div><<link [[Continue|Moor Phallus Plant Masturbation Finish]]>><<set $finish to 1>><</link>></div>
+	<<else>>
+		<div><<link [[Continue|Moor Phallus Plant Masturbation]]>><</link>><<nexttext>></div>
+	<</if>>
+	<<if ($anususe is "mpenisflowerpenetrate" or $vaginause is "mpenisflowerpenetrate" or $mouth is "mpenisflowersuck")>>
+		<div class="red">You can't stop.</div>
+	<<elseif $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
+		<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
+	<<elseif $corruptionMasturbation isnot true>>
+		<div><<link [[Stop|Moor Phallus Plant Masturbation Finish]]>><<set $finish to 1>><</link>></div>
+	<<else>>
+		<div class="red">The slime in your ear will not allow you to stop.</div>
+	<</if>>
+</div>
 
 :: Moor Phallus Plant Masturbation Finish
 
@@ -1833,13 +1837,23 @@ A heat travels down your spine, resting in your loins. You're filled with a desp
 	<</if>>
 <<else>>
 	<<if $anususe is "mpenisflowerpenetrate">>
-		<<purity -1>><<bodyliquid "anus" "goo">><<analejacstat>><<ejacstat>>
+		<<purity -1>><<bodyliquid "anus" "nectar">><<analejacstat>><<ejacstat>>
 		Slimy fluid erupts from the tip, flooding your bowels with its warmth.
+		<<if canImpregnateParasite("anus")>>
+			<span class="red">As it finishes, you feel it briefly expand.</span>
+			<<impregnateParasite "vine" true "anus">>
+			<<fertiliseParasites "anus">>
+		<</if>>
 	<<elseif $vaginause is "mpenisflowerpenetrate">>
-		<<purity -1>><<bodyliquid "vagina" "goo">><<vaginalejacstat>><<ejacstat>>
+		<<purity -1>><<bodyliquid "vagina" "nectar">><<vaginalejacstat>><<ejacstat>>
 		Slimy fluid erupts from the tip, flooding your womb with its warmth.
+		<<if canImpregnateParasite("vagina")>>
+			<span class="red">As it finishes, you feel it briefly expand.</span>
+			<<impregnateParasite "vine" true "vagina">>
+			<<fertiliseParasites "vagina">>
+		<</if>>
 	<<elseif $mouth is "mpenisflowersuck">>
-		<<purity -1>><<bodyliquid "mouth" "goo">><<oralejacstat>><<ejacstat>>
+		<<purity -1>><<bodyliquid "mouth" "nectar">><<oralejacstat>><<ejacstat>>
 		Slimy fluid erupts from the tip, flooding your mouth with its warmth.
 	<</if>>
 	You feel satisfied, and break out of the daze caused by the scent.
@@ -2751,9 +2765,9 @@ You lie in the crystal water, letting it wash over you. It's chilly, but you soo
 	<<generate1>><<person1>>
 	As you turn to leave however, <span class="purple">you find a <<person>> sat on your clothes.</span><<covered>>
 	<br><br>
-	<<if $season is "winter">>
+	<<if Time.season is "winter">>
 		"I can't imagine swimming in this cold," <<he>> chuckles. "You're made of stronger stuff than I."
-	<<elseif $season is "summer">>
+	<<elseif Time.season is "summer">>
 		"Good day for a swim," <<he>> says. "I'm almost envious in this heat."
 	<<else>>
 		"Nice day for a swim, eh?" <<he>> says.
@@ -2791,9 +2805,9 @@ You lie in the crystal water, letting it wash over you. It's chilly, but you soo
 	<<generate1>><<person1>>
 	As you turn to leave the water however, <span class="purple">you find a <<person>> sat on a rock, watching.</span>
 	<br><br>
-	<<if $season is "winter">>
+	<<if Time.season is "winter">>
 		"I can't imagine swimming in this cold," <<he>> chuckles. "You're made of stronger stuff than I."
-	<<elseif $season is "summer">>
+	<<elseif Time.season is "summer">>
 		"Good day for a swim," <<he>> says. "I'm almost envious in this heat."
 	<<else>>
 		"Nice day for a swim, eh?" <<he>> says.
@@ -2820,7 +2834,7 @@ You lie in the crystal water, letting it wash over you. It's chilly, but you soo
 :: Moor Low Wash Refuse
 <<effects>>
 
-"Oh," the <<person>> says, unsurprised. <<He>> stands, <span class="pink">your clothes in <<his>> hand <<him>>.</span> "I'll be taking these with me if you don't mind. And if you do. Unless you're willing to give me a show."
+"Oh," the <<person>> says, unsurprised. <<He>> stands, <span class="pink">your clothes in <<his>> hand.</span> "I'll be taking these with me if you don't mind. And if you do. Unless you're willing to give me a show."
 <br><br>
 
 <<link [[Masturbate|Moor Low Wash Masturbate]]>><<set $masturbationstart to 1>><</link>>
@@ -2985,20 +2999,20 @@ The <<person>> shrugs. "Have fun getting home." <<He>> walks to the top of the v
 <</if>>
 <br><br>
 
-<<if $audience_lust gte 3>>
-	<<link [[Continue|Moor Low Wash Masturbate Finish]]>><</link>><<nexttext>>
-	<br>
-<<else>>
-	<<link [[Continue|Moor Low Wash Masturbate]]>><</link>><<nexttext>>
-	<br>
-<</if>>
-<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
-	<<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>>
-<<elseif $corruptionMasturbation isnot true>>
-	<<link [[Stop|Moor Low Wash Masturbate Finish]]>><<set $finish to 1>><</link>>
-<<else>>
-	The slime in your ear will not allow you to stop.
-<</if>>
+<div id="masturbationButtons">
+	<<if $audience_lust gte 3>>
+		<div><<link [[Continue|Moor Low Wash Masturbate Finish]]>><</link>><<nexttext>></div>
+	<<else>>
+		<div><<link [[Continue|Moor Low Wash Masturbate]]>><</link>><<nexttext>></div>
+	<</if>>
+	<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
+		<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
+	<<elseif $corruptionMasturbation isnot true>>
+		<div><<link [[Stop|Moor Low Wash Masturbate Finish]]>><<set $finish to 1>><</link>></div>
+	<<else>>
+		<div class="red">The slime in your ear will not allow you to stop.</div>
+	<</if>>
+</div>
 <br>
 
 :: Moor Low Wash Masturbate Finish

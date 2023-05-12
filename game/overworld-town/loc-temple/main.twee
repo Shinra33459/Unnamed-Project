@@ -2,10 +2,10 @@
 
 <<set $outside to 0>><<set $location to "temple">><<sydneySchedule>><<temple_effects>><<effects>>
 You are in the main hall of the temple. Stone walls and pillars tower into darkness. Rows of seats face an altar at the end of the room.
-<<if $daystate isnot "night" and $daystate isnot "dusk">>
+<<if Time.dayState isnot "night" and Time.dayState isnot "dusk">>
 	A figure wearing a white cowl kneels before the altar.
 <</if>>
-<<if $weekday is 1 and $hour is 12 and $daily.massAttended isnot 1>>
+<<if Time.weekDay is 1 and Time.hour is 12 and $daily.massAttended isnot 1>>
 	The seats are filled with worshippers, here for Sunday mass.
 <</if>>
 <<if $exposed gte 1>>
@@ -17,7 +17,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 <<elseif $temple_chastity_timer lte 0 and $temple_rank isnot undefined and $temple_rank isnot "prospective" and $exposed lte 0>><<set $temple_chastity_timer to 30>>
 	<<if $templePromised is "Sydney">>
 		<<npc Jordan>><<person1>>
-		<<if $daystate isnot "night" and $daystate isnot "dusk">>
+		<<if Time.dayState isnot "night" and Time.dayState isnot "dusk">>
 			The figure turns. It's Jordan. "My child," <<he>> says. "It is time for your chastity examination.
 		<<else>>
 			"My child," says a voice from the side. It's Jordan. "It is time for you chastity examination.
@@ -38,7 +38,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 		<br>
 	<<elseif $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].virginity.temple isnot true and $templePromised isnot "Sydney">>
 		<<npc Jordan>><<person1>>
-		<<if $daystate isnot "night" and $daystate isnot "dusk">>
+		<<if Time.dayState isnot "night" and Time.dayState isnot "dusk">>
 			The figure turns. It's Jordan, holding Sydney by the arm. "My child," <<he>> says. "<span class="red">Sydney has failed <<nnpc_his "Sydney">> chastity examination.</span>
 		<<else>>
 			"My child," says a voice from the side. It's Jordan, holding Sydney by the arm. "<span class="red">Sydney has failed <<nnpc_his "Sydney">> chastity examination.</span>
@@ -52,7 +52,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 		<br>
 	<<else>>
 		<<npc Jordan>><<person1>>
-		<<if $daystate isnot "night" and $daystate isnot "dusk">>
+		<<if Time.dayState isnot "night" and Time.dayState isnot "dusk">>
 			The figure turns. It's Jordan. "My child," <<he>> says. "It is time for your chastity examination.
 		<<else>>
 			"My child," says a voice from the side. It's Jordan. "It is time for you chastity examination.
@@ -68,7 +68,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 		<br>
 	<</if>>
 
-<<elseif $temple_event is 1 and $daystate isnot "night" and $exposed lte 0>><<set $temple_event to 0>>
+<<elseif $temple_event is 1 and Time.dayState isnot "night" and $exposed lte 0>><<set $temple_event to 0>>
 	<<eventstemple>>
 
 <<elseif _sydneyTemple and $sydneyAnalRosary>>
@@ -150,12 +150,12 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 		<<link [[Search for lichen (0:30)|Temple Lichen]]>><<pass 30>><<set $sciencelichentemple to 1>><</link>>
 		<br>
 	<</if>>
-	<<if $daystate isnot "night" and $daystate isnot "dusk" and $exposed is 0 and $daily.jordanMissing isnot 1>>
+	<<if Time.dayState isnot "night" and Time.dayState isnot "dusk" and $exposed is 0 and $daily.jordanMissing isnot 1>>
 		<<link [[Approach the figure|Temple Jordan]]>><</link>>
 		<br>
 	<</if>>
 
-	<<if $weekday is 1 and $hour gte 11 and $hour lte 12 and $daily.massAttended isnot 1 and $exposed lte 0 and $NPCName[$NPCNameList.indexOf("Jordan")].init is 1>>
+	<<if Time.weekDay is 1 and Time.hour gte 11 and Time.hour lte 12 and $daily.massAttended isnot 1 and $exposed lte 0 and $NPCName[$NPCNameList.indexOf("Jordan")].init is 1>>
 		<<if $angel gte 6>>
 			<<link [[Attend mass (1:00)|Temple Mass Angel]]>><<purity 10>><<pass 60>><<trauma -18>><<stress -18>><<alcohol 10>><<set $daily.massAttended to 1>><</link>><<gpurity>><<lltrauma>><<llstress>>
 			<br>
@@ -179,12 +179,12 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 	<</if>>
 
 	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and $exposed lte 0>>
-		<<if _sydney_location is "late" and $schoolday is 1>>
+		<<if _sydney_location is "late" and Time.schoolDay>>
 			<<if $sydneyScience is 1 and !$sydneySeen.includes("science")>>
 			/* Do nothing. Prevents Sydney from being interactable if their science intro is ready. */
 			<<else>>
 				<br>
-				You see a figure asleep at one of the pews. Upon closer examination, you realise it's Sydney. <<if $hour is 9>><<nnpc_Hes "Sydney">> late for school.<<else>><<nnpc_He "Sydney">> might be late for school if someone doesn't wake <<nnpc_him "Sydney">>.<</if>>
+				You see a figure asleep at one of the pews. Upon closer examination, you realise it's Sydney. <<if Time.hour is 9>><<nnpc_Hes "Sydney">> late for school.<<else>><<nnpc_He "Sydney">> might be late for school if someone doesn't wake <<nnpc_him "Sydney">>.<</if>>
 				<br>
 				<<link [["Wake " + $NPCName[$NPCNameList.indexOf("Sydney")].pronouns.him|Temple Sydney Wakeup]]>><<npcincr Sydney love 1>><</link>><<glove>>
 				<br>
@@ -205,7 +205,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 				<<case "sleep">>
 					<span class="teal">Sydney is staying overnight.</span>
 			<</switch>>
-		<<elseif !$daily.sydney.offSchedule and (_sydney_location_message is "shop" or _sydney_location_message is "home")>>
+		<<elseif !$daily.sydney.offSchedule and (_sydney_location_message is "shop" or _sydney_location_message is "home" or _sydney_location_message is "rehearsal")>>
 			<span class="blue">You don't see Sydney around.</span>
 			<br>
 			<<link [[Ask around for Sydney|Temple Sydney Ask]]>><<set $daily.sydney.offSchedule to true>><</link>>
@@ -313,6 +313,16 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 	<br><br>
 	<<if $acceptance_breasts_big gte 1000>>
 		Realisation dawns as you lean back. Your <<breasts>> are beautiful. Why should you care what other people say about them? You've gained the <span class="green">Acceptance: Big Breasts</span> trait.
+		<br><br>
+	<</if>>
+<<elseif $phase is 10>>
+	<<set $phase to 0>>
+	Your thoughts turn to your <<print playerAwareTheyArePregnant() ? "pregnant belly" : "pregnant looking belly">>, and the mocking way people regard it. The torment returns. You try to remain detached.
+	<br><br>
+	An hour passes, and for a few moments the weight of scrutiny lifts.
+	<br><br>
+	<<if $acceptance_pregnancy gte 1000>>
+		Realisation dawns as you lean back. Your belly is beautiful. Why should you care what other people say about it? You've gained the <span class="green">Acceptance: <<print playerAwareTheyArePregnant() ? "Acceptance: Pregnant Belly" : "Acceptance: Pregnant Looking Belly">></span> trait.
 		<br><br>
 	<</if>>
 <</if>>
@@ -748,7 +758,7 @@ You look away from the <<monk>>, and <<he>> continues down the aisle.
 	<br><br>
 <</if>>
 <<if $kylar_manor_secret is 1>>
-	<<link [[Inquire about the monstrance you found in Kylar's manor|Temple Kylar Monstrance]]>><<set $kylar_manor_secret to 2>><</link>>
+	<<link [["Inquire about the monstrance you found in Kylar's manor"|Temple Kylar Monstrance]]>><<set $kylar_manor_secret to 2>><</link>>
 	<br>
 <</if>>
 <<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
@@ -770,7 +780,7 @@ You look away from the <<monk>>, and <<he>> continues down the aisle.
 	<<link [[Request forgiveness|Temple Forgiveness]]>><</link>><<fallenangel>>
 	<br>
 <<elseif $money gte 1000000 and $fallenangel gte 2>>
-	<<link [[Buy forgiveness (£10,000 1:00)|Temple Buy Forgiveness]]>><<trauma 6>><<set $money -= 1000000>><</link>><<gtrauma>><<garousal>><<fallenangel>> <i>Removes the fallen angel trait.</i>
+	<<link [[Buy forgiveness (£10,000 1:00)|Temple Buy Forgiveness]]>><<trauma 6>><<set $money -= 1000000>><</link>><<gtrauma>><<garousal>><<fallenangel>> <<note "Removes the fallen angel trait" "italic">>
 	<br>
 <<elseif $fallenangel gte 2>>
 	<span class="blue">You can't afford forgiveness.</span>
@@ -779,7 +789,7 @@ You look away from the <<monk>>, and <<he>> continues down the aisle.
 <<if $temple_rank is undefined or $temple_rank is "prospective">>
 	<<link [[Inquire about joining the temple|Temple Join]]>><</link>>
 	<br>
-<<elseif $temple_fire isnot 1>>
+<<elseif !$weekly.templeFire>>
 	<<link [[Inquire about the trial of purity|Temple Fire Repeat]]>><</link>>
 	<br>
 <</if>>
@@ -842,7 +852,7 @@ You tell Jordan you were attacked. <<He>> listens without a word, only speaking 
 <<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
 
 <<if $temple_rank is "prospective">>
-	<<if $temple_fire is 1>>
+	<<if $weekly.templeFire>>
 		"I'm afraid you can only attempt a trial of purity once per week," <<he>> says.
 	<<else>>
 		"I'll prepare the trial when you're ready," <<he>> says.
@@ -851,8 +861,8 @@ You tell Jordan you were attacked. <<He>> listens without a word, only speaking 
 		"Unless you'd prefer to prove your purity in a different way?"
 	<</if>>
 	<br><br>
-	<<if $temple_fire isnot 1>>
-	<<link [[Trial by fire (1:00)|Temple Join Fire]]>><<set $phase to 0>><<pass 60>><<set $temple_fire to 1>><</link>>
+	<<if !$weekly.templeFire>>
+	<<link [[Trial by fire (1:00)|Temple Join Fire]]>><<set $phase to 0>><<pass 60>><<set $weekly.templeFire to true>><</link>>
 	<br>
 	<</if>>
 	<<if $templetest isnot "failed">>
@@ -907,25 +917,33 @@ You tell Jordan you were attacked. <<He>> listens without a word, only speaking 
 :: Temple Chastity
 
 <<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
-<<if !$worn.genitals.type.includes("chastity")>>
-	"We fit chastity belts to any virgin who should want one. You will need to undergo a brief examination beforehand, that we might verify your purity. If you are not a virgin, then we can provide you with a belt for £80. If you already have a chastity belt, an anal shield can be fitted for £50. Even virgins must pay for the shield however."
-	<br><br>
-	"Our belts are very durable, designed to protect from even the most vicious of assailants. We don't use keys; once on, only specialised equipment can remove them. Be warned however, those that cannot sate their lust through obvious means may be driven to other violent urges. Also keep in mind that they don't conceal much from view, nor do they protect well against finer assaults, by fingers and the like. They are designed to protect chastity as written in the holy texts."
+<<if !playerChastity()>>
+	"We fit chastity belts to any virgin who should want one.
+	<<if pregnancyBellyVisible()>>
+		However, for safety reasons, we can't give them to those bearing life in their womb. Apologies."
+	<<else>>
+		You will need to undergo a brief examination beforehand, that we might verify your purity. If you are not a virgin, then we can provide you with a belt for £80. If you already have a chastity belt, an anal shield can be fitted for £50. Even virgins must pay for the shield however."
+		<br><br>
+
+		"Our belts are very durable, designed to protect from even the most vicious of assailants. We don't use keys; once on, only specialised equipment can remove them. Be warned however, those that cannot sate their lust through obvious means may be driven to other violent urges. Also keep in mind that they don't conceal much from view, nor do they protect well against finer assaults, by fingers and the like. They are designed to protect chastity as written in the holy texts."
+	<</if>>
 	<br><br>
 <<else>>
-	<<if $player.virginity.penile is true and $player.virginity.vaginal is true>>
+	<<if pregnancyBellyVisible()>>
+		"We should remove yours immediately. It's unsafe to wear one whilst pregnant."
+	<<elseif $player.virginity.penile is true and $player.virginity.vaginal is true>>
 		"It is written that we should never remove the chastity belt from a virgin. However, if you really want it removed, we will overlook that rule in return for an £80 donation."
-		<br><br>
 	<<else>>
 		"We can remove your belt if you like. Once it's off however, you'll need to pay again to have another put on."
-	<br><br>
 	<</if>>
-	<<if $worn.genitals.anal_shield is 0>>
+	<br><br>
+
+	<<if $worn.genitals.anal_shield is 0 and !pregnancyBellyVisible()>>
 		"Or would you prefer to have even more protection? We can fit a shield that will protect your rear for £50."
 		<br><br>
 	<</if>>
 <</if>>
-<<if !$worn.genitals.type.includes("chastity")>>
+<<if !playerChastity() and !pregnancyBellyVisible()>>
 	<<if $templetest isnot "failed">>
 		<<link [[Virginity test (0:05)|Temple Test]]>><<set $phase to 0>><<pass 5>><</link>>
 		<br>
@@ -935,7 +953,7 @@ You tell Jordan you were attacked. <<He>> listens without a word, only speaking 
 		<br>
 	<</if>>
 <</if>>
-<<if $worn.genitals.type.includes("chastity") and $worn.genitals.anal_shield is 0>>
+<<if playerChastity() and $worn.genitals.anal_shield is 0 and !pregnancyBellyVisible()>>
 	<<if $money gte 5000>>
 		<<link [[Have shield fitted (£50 0:05)|Temple Chastity Shield]]>><<pass 5>><<set $money -= 5000>><</link>>
 		<br>
@@ -943,21 +961,21 @@ You tell Jordan you were attacked. <<He>> listens without a word, only speaking 
 		You can't afford to have a shield fitted.
 		<br><br>
 	<</if>>
-<<elseif $worn.genitals.type.includes("chastity") and $worn.genitals.anal_shield is null>>
+<<elseif playerChastity() and $worn.genitals.anal_shield is null>>
 	You're unable to get a shield fitted with your $worn.genitals.name.
 	<br>
 <</if>>
-<<if $worn.genitals.type.includes("chastity") and $worn.genitals.anal_shield is 1>>
+<<if playerChastity() and playerChastity("anus")>>
 	<<link [[Have shield removed (0:05)|Temple Chastity Shield Removal]]>><<pass 5>><</link>>
 	<br>
 <</if>>
-<<if $worn.genitals.type.includes("chastity") and $player.virginity.penile is true and $player.virginity.vaginal is true>>
+<<if playerChastity() and $player.virginity.penile is true and $player.virginity.vaginal is true and !pregnancyBellyVisible()>>
 	<<if $money gte 8000>>
 		<<link [[Have belt removed (£80 0:05)|Temple Chastity Removal]]>><<set $money -= 8000>><<pass 5>><</link>>
 		<br>
 	<<else>>
 	<</if>>
-<<elseif $worn.genitals.type.includes("chastity")>>
+<<elseif playerChastity()>>
 	<<link [[Have belt removed (0:05)|Temple Chastity Removal]]>><<pass 5>><</link>>
 	<br>
 <</if>>
@@ -973,8 +991,15 @@ Jordan gives you a solemn nod. "Please come with me."
 <br><br>
 
 You remove your clothing, wishing it wasn't quite so cold in here. Jordan rubs white powder between <<his>> hands, then kneels in front of you.
-<<if ($phase is 1 or $phase is 2) and $worn.genitals.type.includes("chastity") and $worn.genitals.origin is "temple">>
-<<He>> holds a strange rod against your $worn.genitals.name, and the device clatters to the floor.
+<<if ($phase is 1 or $phase is 2) and playerChastity() and $worn.genitals.origin is "temple">>
+	<<He>> holds a strange rod against your $worn.genitals.name, and the device clatters to the floor.
+	<<if playerBellySize() gte 8>>
+		<<if playerIsPregnant()>><<setKnowsAboutPregnancy "pc" "Jordan">><</if>>
+		<<Hes>> briefly taken aback upon seeing your belly. "You are with child?" <<He>> pauses. "The examination will continue. But I can not return your chastity device, for safety reasons."
+		<<set $worn.genitals.type.push("broken")>>
+		<<genitalsruined>>
+		<br><br>
+	<</if>>
 <</if>>
 <<if $player.penisExist>>
 	<<He>> holds your penis between both forefingers, and stares at it intently, gently manipulating the length. You try to distract yourself, but you soon feel it hardening under <<his>> scrutiny.
@@ -1010,7 +1035,7 @@ The fondling continues for a few minutes. Finally, <<he>> finishes <<his>> work.
 	<<if $player.virginity.penile is true and $player.virginity.vaginal is true or $player.virginity.temple is true>>
 
 		"You are unblemished, and may it stay that way."
-		<<if $worn.genitals.type.includes("chastity") and $worn.genitals.origin is "temple">>
+		<<if playerChastity() and $worn.genitals.origin is "temple">>
 			With one anxious motion, <<he>> returns your $worn.genitals.name to its place, guarding your crotch.
 		<</if>>
 		<br><br>
@@ -1053,7 +1078,7 @@ The fondling continues for a few minutes. Finally, <<he>> finishes <<his>> work.
 	<<if $player.virginity.penile is true and $player.virginity.vaginal is true>>
 		<<inittemple>>
 		"You are unblemished, and may it stay that way. You are now an initiate of the temple. Welcome, <<if $player.gender_appearance is "m">>brother.<<else>>sister.<</if>>"
-		<<if $worn.genitals.type.includes("chastity") and $worn.genitals.origin is "temple">>
+		<<if playerChastity() and $worn.genitals.origin is "temple">>
 			With one anxious motion, <<he>> returns your $worn.genitals.name to its place, guarding your crotch.
 		<</if>>
 		<br><br>
@@ -1075,30 +1100,39 @@ The fondling continues for a few minutes. Finally, <<he>> finishes <<his>> work.
 
 <<else>>
 	<<if $player.virginity.penile is true and $player.virginity.vaginal is true>>
-		"You are unblemished, and may it stay that way. Please be patient, I'll return shortly with your belt." <<He>> leaves you briefly, and returns with the
-		<<if $player.gender isnot "m">>
-			metallic device. Without a word <<he>> kneels once more and wraps it round your waist. You hear a loud click, and Jordan steps back to admire <<his>> handiwork.
-			<br><br>
-			You look down to examine it yourself. It doesn't feel as tight or uncomfortable as you expected, you wonder if it's on right. You try to slip your fingers beneath it, but have no success. You push down on the belt with both hands, but it doesn't give at all.
-			<br><br>
-			<<genitalswear 1>>
-			<<set $worn.genitals.origin to "temple">>
-
-			"Everything is satisfactory," <<he>> says. "If there are any problems, come see me." <<He>> leaves you alone in the room.
+		"You are unblemished, and may it stay that way.
+		<<if playerBellySize() gte 8>>
+			<<if playerIsPregnant()>><<setKnowsAboutPregnancy "pc" "Jordan">><</if>>
+			However, due to your pregnancy, I can not fit you with a chastity device. Congratulations on your immaculate conception."
 			<br><br>
 			<<clotheson>>
 			<<link [[Next|Temple]]>><<endevent>><</link>>
 		<<else>>
-			metallic belt and cage.
-			<br><br>
-			"Thanks to your <<genitals 2>>, you have two options. You could wear this cage, secured at the base of your <<genitals 2>>. However, it would only protect your <<genitals 2>>, leaving you vulnerable to sodomy."
-			<br><br>
-			After giving you a chance to examine it, <<he>> continues, "Your other option would be this chastity belt. It would be able to protect your <<genitals 2>>, and can be fitted with a shield to protect you from sodomy. It's been designed to both prevent rubbing and to hold a flaccid penis in place. This is the best protection, but others may mistake you for a girl."
-			<br><br>
+			Please be patient, I'll return shortly with your belt." <<He>> leaves you briefly, and returns with the
+			<<if $player.gender isnot "m">>
+				metallic device. Without a word <<he>> kneels once more and wraps it round your waist. You hear a loud click, and Jordan steps back to admire <<his>> handiwork.
+				<br><br>
+				You look down to examine it yourself. It doesn't feel as tight or uncomfortable as you expected, you wonder if it's on right. You try to slip your fingers beneath it, but have no success. You push down on the belt with both hands, but it doesn't give at all.
+				<br><br>
+				<<genitalswear 1>>
+				<<set $worn.genitals.origin to "temple">>
 
-			<<link [[Ask for the chastity cage|Temple Male Chastity Fitting]]>><<genitalswear 2>><</link>>
-			<br>
-			<<link [[Ask for the chastity belt|Temple Male Chastity Fitting]]>><<genitalswear 1>><</link>>
+				"Everything is satisfactory," <<he>> says. "If there are any problems, come see me." <<He>> leaves you alone in the room.
+				<br><br>
+				<<clotheson>>
+				<<link [[Next|Temple]]>><<endevent>><</link>>
+			<<else>>
+				metallic belt and cage.
+				<br><br>
+				"Thanks to your <<genitals 2>>, you have two options. You could wear this cage, secured at the base of your <<genitals 2>>. However, it would only protect your <<genitals 2>>, leaving you vulnerable to sodomy."
+				<br><br>
+				After giving you a chance to examine it, <<he>> continues, "Your other option would be this chastity belt. It would be able to protect your <<genitals 2>>, and can be fitted with a shield to protect you from sodomy. It's been designed to both prevent rubbing and to hold a flaccid penis in place. This is the best protection, but others may mistake you for a girl."
+				<br><br>
+
+				<<link [[Ask for the chastity cage|Temple Male Chastity Fitting]]>><<genitalswear 2>><</link>>
+				<br>
+				<<link [[Ask for the chastity belt|Temple Male Chastity Fitting]]>><<genitalswear 1>><</link>>
+			<</if>>
 		<</if>>
 	<<else>>
 		<<set $templetest to "failed">>
@@ -1128,7 +1162,15 @@ You look down to examine it yourself. It doesn't feel as tight or uncomfortable 
 <<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
 <<He>> leads you out of the main hall and into a small room. "Please undress, I'll be back shortly." You remove your clothing, wishing the room were warmer. This is embarrassing, but it'll be worth it. <<He>> soon returns, carrying a metallic belt and cage.
 <br><br>
-<<if $player.gender isnot "m">>
+<<if playerBellySize() gte 8>>
+	<<if playerIsPregnant()>><<setKnowsAboutPregnancy "pc" "Jordan">><</if>>
+	<<He>> pauses upon seeing your belly. "You are... with child? I'm sorry, but we can't provide chastity devices to those bearing children. It's unsafe."
+	<br><br>
+	<<He>> gives you your money back. <<set $money += 8000>>
+	<br><br>
+	<<clotheson>>
+	<<link [[Next|Temple]]>><<endevent>><</link>>
+<<elseif $player.gender isnot "m">>
 	Without a word <<he>> places the cage to the side followed by wrapping the chastity belt around your waist. You hear a loud click, and Jordan steps back to admire <<his>> handiwork.
 	<br><br>
 	You look down to examine it yourself. It doesn't feel as tight or uncomfortable as you expected, you wonder if it's on right. You try to slip your fingers beneath it, but have no success. You push down on the belt with both hands, but it doesn't give at all.
@@ -1209,7 +1251,7 @@ You look down to examine it yourself. It doesn't feel as tight or uncomfortable 
 		<br>
 		<<set $analchastityparasite to 0>>
 	<</if>>
-	<<if $worn.genitals.anal_shield is 1>><<set $worn.genitals.anal_shield to 0>><</if>>
+	<<if playerChastity("anus")>><<set $worn.genitals.anal_shield to 0>><</if>>
 	<<clotheson>>
 <<else>>
 	<br><br>
@@ -1312,7 +1354,7 @@ The group stops once more, but this time someone rests their hand on your arm. Y
 <<strip>>
 The <<monks>> grasp your clothing and try to remove it. Between your blindness and the sheer number of hands pulling and tugging there's nothing you can do to stop them. They soon have you stripped and bare. <<covered>><<gtrauma>>
 <br><br>
-<<if $worn.genitals.type.includes("chastity")>>
+<<if playerChastity()>>
 	Someone grabs hold of your $worn.genitals.name and you hear a grinding sound. A cool breeze caresses your <<genitals 1>> directly. "We've opened your belt for the ceremony. We'll protect you again afterwards."
 	<br><br>
 <</if>>
@@ -1510,7 +1552,7 @@ You tell Jordan about the ghostly figure <<if $wraith.state is "haunt">>that's b
 <br><br>
 
 "There's one constant through all their appearances. They always wore a precious piece of jewelry, believed to have divine significance. It was a necklace,
-<<if $wraith.state is "haunt">>
+<<if ["haunt", "despair"].includes($wraith.state)>>
 	<span class="red">carved from ivory, and set with large sapphires.</span>"
 <<else>>
 	carved from ivory, and set with large sapphires."
@@ -1544,7 +1586,7 @@ You tell Jordan about the ghostly figure <<if $wraith.state is "haunt">>that's b
 "You can attempt the trial of purity once a week," Jordan says. "Some brothers and sisters find it helps focus their will."
 <br><br>
 
-<<link [[Attempt trial (1:00)|Temple Join Fire]]>><<set $temple_fire to 1>><<pass 60>><<set $phase to 1>><</link>>
+<<link [[Attempt trial (1:00)|Temple Join Fire]]>><<set $weekly.templeFire to true>><<pass 60>><<set $phase to 1>><</link>>
 <br>
 <<link [[Leave|Temple]]>><<endevent>><</link>>
 <br>
@@ -1786,7 +1828,7 @@ Your feet sink into the cool earth. The <<person2>><<monk>> looks impressed. Stu
 You follow Jordan back inside as the <<person2>><<monk>> smothers the coal with a bucket of sand.
 <br><br>
 <<person1>>"You are unblemished, and may it stay that way. You are now an initiate of the temple. Welcome, <<if $player.gender_appearance is "m">>brother.<<else>>sister.<</if>>"
-<<if $worn.genitals.type.includes("chastity")>>
+<<if playerChastity()>>
 	With one anxious motion, <<he>> returns your $worn.genitals.name to its place, guarding your crotch.
 <</if>>
 <br><br>
@@ -2172,25 +2214,24 @@ You search for a secluded spot. It's not easy, as the temple is so busy. You wat
 <<masturbationeffects>>
 <<masturbationactions>>
 
-<<if $timer lte 1>>
-	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple">>
-		<<link [[Continue|Temple Masturbation Sydney]]>><</link>><<nexttext>>
-		<br>
+<div id="masturbationButtons">
+	<<if $timer lte 1>>
+		<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple">>
+			<div><<link [[Continue|Temple Masturbation Sydney]]>><</link>><<nexttext>></div>
+		<<else>>
+			<div><<link [[Continue|Temple Masturbation Finish]]>><</link>><<nexttext>></div>
+		<</if>>
 	<<else>>
-		<<link [[Continue|Temple Masturbation Finish]]>><</link>><<nexttext>>
-		<br>
+		<div><<link [[Continue|Temple Masturbation]]>><</link>><<nexttext>></div>
 	<</if>>
-<<else>>
-	<<link [[Continue|Temple Masturbation]]>><</link>><<nexttext>>
-<br>
-<</if>>
-<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
-	<<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>>
-<<elseif $corruptionMasturbation isnot true>>
-	<<link [[Stop|Temple Masturbation Finish]]>><<set $finish to 1>><</link>>
-<<else>>
-	The slime in your ear will not allow you to stop.
-<</if>>
+	<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
+		<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
+	<<elseif $corruptionMasturbation isnot true>>
+		<div><<link [[Stop|Temple Masturbation Finish]]>><<set $finish to 1>><</link>></div>
+	<<else>>
+		<div class="red">The slime in your ear will not allow you to stop.</div>
+	<</if>>
+</div>
 <br>
 
 :: Temple Masturbation Finish
@@ -2265,8 +2306,15 @@ You open your mouth. Jordan examines the interior, and sighs in relief. "You are
 :: Temple Kylar Monstrance Refuse
 <<effects>>
 
-You shake your head. Jordan moves at once, <span class="red">striking your stomach</span>. You lurch forward, mouth open. Jordan seizes your jaws with both hands, holding them open. Then <<he>> sighs with relief, and pulls away.
+You shake your head. Jordan moves at once,
+<<if playerBellySize(true) gte 8>>
+	<span class="red">roughly grabbing your cheeks with one hand and applying pressure.</span>. Jordan seizes your jaws with <<his>> free hand, holding them open. 
+<<else>>
+	<span class="red">striking your stomach</span>. You lurch forward, mouth open. Jordan seizes your jaws with both hands, holding them open. 
+<</if>>
+Then <<he>> sighs with relief, and pulls away.
 <br><br>
+
 "Forgive the violation," <<he>> says. <<His>> voice shakes with genuine shame. "I must follow the precepts." <<He>> incants a quick prayer. "As for the monstrance, I doubt it's of significance to the temple. But thank you for bringing it to our attention."
 <br><br>
 

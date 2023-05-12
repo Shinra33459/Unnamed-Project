@@ -58,19 +58,22 @@
 	<br>
 	<<link [[Pack of 14 butt growth blocker|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["bottom_blocker"]>><</link>>
 	<br><br>
-	/*ToDo: Pregnancy, remove check to properly enable*/
-	<<if $pregnancyTesting>>
-		<<link [[Pack of 10 condoms|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["condoms"]>><</link>>
+	<<link [[Tube of anti-parasite cream|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["Anti-Parasite Cream"]>><</link>>
+	<br><br>
+	<<link [[Breast Pump|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["breast_pump"]>><</link>>
+	<br><br>
+	<<if $condomLvl gte 1>>
+		<<link [[Pack of 3 condoms|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["condoms"]>><</link>>
 		<br>
-		<<link [[Pack of 2 pregnancy tests|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["pregnancy_test"]>><</link>>
-		<br>
-		<<link [[Pack of 14 fertility pills|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["fertility_pills"]>><</link>>
-		<br>
-		<<link [[Pack of 14 contraceptive pills|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["contraceptive_pills"]>><</link>>
-		<br>
-		<<link [[Ask for the morning-after-pill|Pharmacy Morning After pill]]>><<set $pharmacyItem to setup.pharmacyItems["Morning_After_pill"]>><</link>>
-		<br><br>
 	<</if>>
+	<<link [[Pack of 2 pregnancy tests|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["pregnancy_test"]>><</link>>
+	<br>
+	<<link [[Pack of 14 fertility pills|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["fertility_pills"]>><</link>>
+	<br>
+	<<link [[Pack of 14 contraceptive pills|Pharmacy Sale]]>><<set $pharmacyItem to setup.pharmacyItems["contraceptive_pills"]>><</link>>
+	<br>
+	<<link [[Ask for the morning-after-pill|Pharmacy Morning After pill]]>><<set $pharmacyItem to setup.pharmacyItems["Morning_After_pill"]>><</link>>
+	<br><br>
 	<<link [[Take a look at the contact lenses display|Pharmacy Lenses]]>><</link>>
 	<<if !($daily.pharm.impatient gte 3) and $lenses_ordered.length gt 0>>
 		<br><<link [[Ask if your custom contact lenses arrived|Pharmacy Ask If Lenses Delivered]]>><</link>>
@@ -172,10 +175,10 @@ An assortment of colourful contact lenses is displayed behind the glass. You can
 <<link [[Order it|Pharmacy Order Custom Lenses]]>>
 	<<set $money -= 50000>>
 	<<set $custom_lenses_already_ordered to 1>>
-	<<run $lenses_ordered.push([window.colorNamer(_color_lenses_temp[0].hexString), $monthday.toString() + $month + $year.toString(), [_color_lenses_temp[0].hexString, _color_lenses_temp[0].hsl["l"] / 500]])>>
+	<<run $lenses_ordered.push([window.colorNamer(_color_lenses_temp[0].hexString), Time.monthDay.toString() + Time.month + Time.year.toString(), [_color_lenses_temp[0].hexString, _color_lenses_temp[0].hsl["l"] / 500]])>>
 	<<if $pharmacy_order_colours is 2>>
 		<<set $money -= 45000>>
-		<<run $lenses_ordered.push([window.colorNamer(_color_lenses_temp[1].hexString), $monthday.toString() + $month + $year.toString(), [_color_lenses_temp[1].hexString, _color_lenses_temp[1].hsl["l"] / 500]])>>
+		<<run $lenses_ordered.push([window.colorNamer(_color_lenses_temp[1].hexString), Time.monthDay.toString() + Time.month + Time.year.toString(), [_color_lenses_temp[1].hexString, _color_lenses_temp[1].hsl["l"] / 500]])>>
 	<</if>>
 <</link>>
 <br>
@@ -207,7 +210,7 @@ An assortment of colourful contact lenses is displayed behind the glass. You can
 <<set _received to 0>>
 <<set _tmp_length to clone($lenses_ordered.length)>>
 <<for _i = 0; _i < $lenses_ordered.length; _i++>>
-	<<if $monthday.toString() + $month + $year.toString() != $lenses_ordered[_i][1]>>
+	<<if Time.monthDay.toString() + Time.month + Time.year.toString() != $lenses_ordered[_i][1]>>
 		<<set _received += 1>>
 		<<set _spaced_colour_name = window.colorNameTranslate($lenses_ordered[_i][0], "spaced name")>>
 		<<run $makeup.owned.custom_eyelenses.push(clone($lenses_ordered[_i][0]))>>
@@ -248,7 +251,6 @@ An assortment of colourful contact lenses is displayed behind the glass. You can
 
 :: Pharmacy Sale
 <<set $outside to 0>><<set $location to "hospital">><<effects>>
-<<run console.log($pharmacyItem)>>
 The <<person>> looks at the <<print $pharmacyItem.name>> you're holding,
 <<formatmoney $pharmacyItem.price>>
 <<switch $pharmacyItem.type>>
@@ -270,12 +272,15 @@ The <<person>> looks at the <<print $pharmacyItem.name>> you're holding,
 		"_printmoney please. The effects will vary."
 	<<case "bottom blocker">>
 		"_printmoney please."
+	<<case "Anti-Parasite Cream">>
+		"_printmoney please. The tube should last for about 2 weeks, depending on where you need to apply it."
+	<<case "Breast Pump">>
+		"_printmoney please."
 	<<case "condoms">>
 		"_printmoney please." <<He>> looks you over.
 		<<if $player.gender_appearance is "m">>
 			"Glad to see people playing it safe, your girl is lucky."
 		<</if>>
-		<<if $condoms is undefined>><<set $condoms to 0>><</if>>
 	<<case "pregnancy test">>
 		"_printmoney please." <<He>> looks you over.
 		<<if $player.gender_appearance is "m">>
@@ -283,7 +288,7 @@ The <<person>> looks at the <<print $pharmacyItem.name>> you're holding,
 		<<else>>
 			"Hope you get the result you're after.
 		<</if>>
-		They are somewhat inaccurate right after conception, so just give it some time or take a test a couple of days later."
+		They're somewhat inaccurate right after conception, so just give it some time, or take another test a couple of days later."
 		<<if $pregnancyTest is undefined>><<set $pregnancyTest to 0>><</if>>
 	<<case "fertility booster">>
 		"_printmoney please." <<He>> looks you over.
@@ -301,15 +306,19 @@ The <<person>> looks at the <<print $pharmacyItem.name>> you're holding,
 		<</if>>
 		Take one per day, try to normalise the time. You still need to be careful, the only sure way to be safe is still to be abstinent."
 	<<default>>
-		<<run throw new Error("Missing pharmacyItem type!")>>
+		<<run throw new Error(`Missing pharmacyItem type! ${V.pharmacyItem.type}`)>>
 <</switch>>
 <br><br>
 
 <<if $money gte $pharmacyItem.price>>
-	<<if $pharmacyItem.type is "condoms">>
-		<<link [[Hand over the money|Pharmacy]]>><<set $money -= $pharmacyItem.price>><<set $condoms += 10>><</link>>
+	<<if $pharmacyItem.type is "Breast Pump">>
+		<<link [[Hand over the money|Pharmacy]]>><<run sexShopOnBuyClick(11, false)>><</link>>
+	<<elseif $pharmacyItem.type is "condoms">>
+		<<link [[Hand over the money|Pharmacy]]>><<set $money -= $pharmacyItem.price>><<gcondoms 3>><</link>>
 	<<elseif $pharmacyItem.type is "pregnancy test">>
 		<<link [[Hand over the money|Pharmacy]]>><<set $money -= $pharmacyItem.price>><<set $pregnancyTest += 2>><</link>>
+	<<elseif $pharmacyItem.type is "Anti-Parasite Cream">>
+		<<link [[Hand over the money|Pharmacy]]>><<set $money -= $pharmacyItem.price>><<set $sexStats.pills.pills[$pharmacyItem.type].owned += 1>><<boughtOnce>><</link>>
 	<<else>>
 		<<link [[Hand over the money|Pharmacy]]>><<set $money -= $pharmacyItem.price>><<set $sexStats.pills.pills[$pharmacyItem.type].owned += 14>><<boughtOnce>><</link>>
 	<</if>>
@@ -416,7 +425,7 @@ The <<person>> looks at the <<print $pharmacyItem.name>> you're holding,
 
 <!-- Reaction to seeing penis for the first time during encounter -->
 <<if $exposed is 2 and $exposedPrev lt 2>> <!-- if penis was exposed just now -->
-	<<if $worn.genitals.type.includes("chastity")>>
+	<<if playerChastity()>>
 		"What the fuck is this?" <<he>> looks at your <<genitals>>. "That's not funny!"
 		<br>
 		<<He>> stays silent for a moment.
@@ -546,7 +555,7 @@ The <<person>> looks at the <<print $pharmacyItem.name>> you're holding,
 	<<clearNPC "pharmNurse">>
 	<<link [[Steal the pills before the nurse picks themselves up|Hospital Foyer]]>>
 		<<set $eventskip to 1>>
-		<<crimeup $price>><<set $sexStats.pills.pills[$pharmacyItem.type].owned += 14>><<boughtOnce>>
+		<<crimeup $pharmacyItem.price>><<set $sexStats.pills.pills[$pharmacyItem.type].owned += 14>><<boughtOnce>>
 	<</link>><<crime>>
 	<br>
 	<<link [[Just leave|Hospital Foyer]]>><<set $eventskip to 1>><</link>>
@@ -557,7 +566,6 @@ The <<person>> looks at the <<print $pharmacyItem.name>> you're holding,
 		<<case "chastity">>
 			Embarrassed, you don't speak as you rise to your feet.
 			<<clotheson>><<endcombat>>
-			<br>
 
 		<<case "tiny">>
 			Face red from intense embarrassment, you rise to your feet. <<clotheson>>
@@ -603,19 +611,99 @@ The <<person>> looks at the <<print $pharmacyItem.name>> you're holding,
 <<set $outside to 0>><<set $location to "hospital">><<effects>>
 You ask the nurse for after morning pills.
 <br><br>
-"£500 please. For legal reasons, we're unable to sell these in bulk. You'll have to take it while I'm supervising you, just in case issues occur."
-<br><br>
-<<if $money gte 50000>>
-	<<link [[Hand over the money and take the pill|Pharmacy Morning After pill 2]]>><<set $money -= 50000>><<set $pregnancyStats.aftermorningpills++>><</link>>
+<<if pregnancyBellyVisible()>>
+	"You <<if $pregnancyStats.aftermorningpills>>already know you <</if>>can't take these pills if you are pregnant, and it's obvious you are. It's very dangerous for your health and it won't have the desired effects", <<he>> tells you while looking openly at your <<bellyDescription "pc">>. "If you still want to take it, £500 please. For legal reasons, we're unable to sell these in bulk. You'll have to take it while I'm supervising you, just in case issues occur."
+	<br><br>
+	<<if not getPregnancyObject().awareOf>>
+		<<if $money gte 50000>>
+			<<link [[Hand over the money and take the pill anyway (0:15)|Pharmacy Morning After pill 2]]>><<pass 15>><</link>>
+		<<else>>
+			<span class="purple">You cannot afford them.</span>
+		<</if>>
+	<<else>>
+		You know you are pregnant and you won't take any risks.
+		<br>
+	<</if>>
+	<br>
+	<<link [["Don't buy"|Pharmacy]]>><</link>>
 <<else>>
-	<span class="purple">You cannot afford them.</span>
+	"These pills are only effective for a short period after intercourse. If an egg has been fertilised and nestled in your uterus, taking them can be dangerous to your health.<<if $pregnancyStats.aftermorningpills>> Keep in mind that these pills are not a contraceptive method. Perhaps you should consider the option of using condoms or contraceptive pills that you can buy here, they are less harmful.<</if>>"
+	<br><br>
+	<<He>> opens a drawer and pulls out a blister with a single pill. "£500 please. For legal reasons, we're unable to sell these in bulk. You'll have to take it while I'm supervising you, just in case issues occur."
+	<br><br>
+	<<if $money gte 50000>>
+		<<link [[Hand over the money and take the pill (0:15)|Pharmacy Morning After pill 2]]>><<pass 15>><</link>>
+	<<else>>
+		<span class="purple">You cannot afford them.</span>
+	<</if>>
+	<br>
+	<<link [["Don't buy"|Pharmacy]]>><</link>>
 <</if>>
-<br>
-<<link [[Don't buy|Pharmacy]]>><</link>>
+
 
 :: Pharmacy Morning After pill 2
 <<set $outside to 0>><<set $location to "hospital">><<effects>>
+<<set $money -= 50000>>
+<<set $pregnancyStats.aftermorningpills++>>
 <<pregnancyMorningAfterPill>>
-ToDo: Morning After pill scene
+
+The nurse points you to a chair to sit on and you take the pill while <<he>> watches you carefully.
 <br><br>
-<<link [[Next|Pharmacy]]>><<set $eventskip to 1>><</link>>
+<<switch _morningAfterPillResult>>
+	<<case "no pregnant">>
+		You sit on the chair and wait for it to take effect. You only feel a cold sensation in your belly. After a few minutes, the nurse checks your pupils and your blood pressure. "Everything is fine, you can go." <<lllarousal>> <<llstress>>
+		<br><br>
+		<<arousal -5000>>
+		<<stress -12>>
+		<<clamp>>
+		<<link [[Go back|Pharmacy]]>><</link>>
+	<<case "successful">>
+		You sit on the chair and wait for it to take effect. You feel a cold sensation in your belly and a little pain. After a few minutes, the nurse checks your pupils and your blood pressure. <<He>> can see the discomfort in your face. "It seems that the pill has taken effect. You may feel some pain, but it will pass quickly. You can go now." <<lllarousal>> <<llstress>> <<gpain>>
+		<br><br>
+		<<arousal -5000>>
+		<<stress -12>>
+		<<pain 2>>
+		<<clamp>>
+		<<link [[Go back|Pharmacy]]>><</link>>
+	<<case "a little late">>
+		You sit on the chair and wait for it to take effect. You feel an unpleasant sensation in your belly and a sharp pain. The nurse notices your pained face and approaches you. <<He>> check your pupils and your blood pressure. "It seems that the pill has taken effect, but you have reached the limit of time. If you ever need this pill again, don't wait for so long. The pain you feel now will disappear after a while. You can go now." <<lllarousal>> <<llstress>> <<ggpain>>
+		<br><br>
+		<<arousal -5000>>
+		<<stress -12>>
+		<<pain 8>>
+		<<clamp>>
+		<<link [[Go back|Pharmacy]]>><</link>>
+	<<case "late">>
+		You sit on the chair and wait for it to take effect. You feel a strange sensation in your belly and immediately you writhe in pain. The nurse rushes over to you and checks your pupils and your blood pressure. <<He>> can see the discomfort in your face. "It seems like it's been too long since..." You feel a sharp pinch in your belly and wince in pain. The nurse notices your pained face. "Well, in any case, the pill has taken effect. You will feel pain for a while, it's normal, it will pass. If you ever need this pill again, don't wait for so long. You can go now." <<lllarousal>> <<ggtrauma>> <<ggpain>>
+		<br><br>
+		<<arousal -5000>>
+		<<trauma 20>>
+		<<pain 20>>
+		<<clamp>>
+		<<link [[Go back|Pharmacy]]>><</link>>
+	<<case "too late">>
+		You sit on the chair and wait for it to take effect. You feel an unpleasant sensation in your belly and immediately writhe in pain. The nurse rushes over to you and checks your pupils and your blood pressure. <<He>> can see the discomfort in your face. "It seems like it's been too long since..." You notice a very sharp pain in your belly, you bend over and fall from the chair. Your vision blurs, the pain is unbearable. <<lllarousal>> <<ggtrauma>> <<ggpain>>
+		<br><br>
+		<<set $arousal to 0>>
+		<<trauma 50>>
+		<<pain 200>>
+		<<clamp>>
+		<<link [[Everything fades to black...|Pharmacy Morning After pill passout]]>><<pass 60>><<endevent>><</link>>
+	<<default>>
+		There must be an error...
+		<br><br>
+		<<link [[Go back|Pharmacy]]>><</link>>
+<</switch>>
+
+:: Pharmacy Morning After pill passout
+You feel your body rise, being moved, you hear voices around you. You open your eyes for a moment and you see the nurse with a worried face. Another person in a white coat approaches and you recognise Dr. Harper. "I don't know if you were aware of it, but you're pregnant. You shouldn't have taken that pill." <<lllarousal>> <<ggstress>>
+<br><br>
+Before you can answer, you feel another intense and painful cramp in your belly. <<ggtrauma>> <<gggpain>>
+<br><br>
+<<set getPregnancyObject().awareOf to true>>
+<<arousal -5000>>
+<<stress 12>>
+<<trauma 50>>
+<<pain 200>>
+<<clamp>>
+<<link [[Next|Passout hospital]]>><<pass 60>><</link>>

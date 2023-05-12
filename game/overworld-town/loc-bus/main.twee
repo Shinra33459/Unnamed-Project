@@ -49,7 +49,14 @@ Industrial
 <br>
 
 <<harvesticon>><<link [[Buy a ticket to Harvest Street (Pub)|Bus seat]]>><<set $bus to "harvest">><<set $money -= 100>><</link>>
+<br><br>
+
+Forest
 <br>
+<<if $town_projects.road gte 4>>
+	<<lakeicon>><<link [[Buy a ticket to the lake|Bus seat]]>><<set $bus to "lakebus">><<set $money -= 100>><</link>>
+	<br>
+<</if>>
 
 <<else>>
 
@@ -66,18 +73,31 @@ Get off
 :: Bus seat
 
 <<set $outside to 0>><<effects>>
-<<if $weekday isnot 1 and $weekday isnot 7 and $hour gte 7 and $hour lte 8 and $schoolday is 1>>
+<<if Time.schoolDay and Time.hour gte 7 and Time.hour lte 8>>
 	Your bus is crowded with students on their way to school.
-<<elseif $weekday isnot 1 and $weekday isnot 7 and $hour is 15 and $schoolday is 1>>
+<<elseif Time.schoolDay and Time.hour is 15>>
 	Your bus is crowded with students on their way home from school.
 <</if>>
 <<if $weather is "rain">>
 	Rain thuds against the windowpanes.
 <</if>>
-You take a seat and look out the window.
+<<if pregnancyBellyVisible()>>
+	<<generate1>>Upon seeing your belly, a <<person1>><<person>> at the very front of the bus quickly stands up and offers you <<his>> seat. <<if !$daily.pregnancyBus>><<set $daily.pregnancyBus to true>><<trauma -3>><<ltrauma>><</if>>
+	<<endevent>>
+<<else>>
+	You take a seat and look out the window.
+<</if>>
 <br><br>
 <<if $stress gte $stressmax>>
 	<<passoutbus>>
+<<elseif pregnancyBellyVisible() and $rng gte 75 and getPregnancyObject().awareOf is true>>
+	/* event is only possible if the player knows they are pregnant, and their belly is visible */
+	A <<generate1>><<person1>><<person>> next to you keeps sparing glances down at your belly.
+	<br><br>
+	<<link [["Let " + $NPCList[0].pronouns.him + " touch your belly"|Bus Pregnancy Touch]]>><</link>>
+	<br>
+	<<link [[Just wait for your stop|Bus Pregnancy Wait]]>><</link>>
+	<br>	
 <<else>>
 	<<set $dangerbus to 0>>
 	<<set $danger to random(1, 10000)>>
@@ -110,7 +130,7 @@ You take a seat and look out the window.
 				<br><br>
 			<</if>>
 		<<elseif $dangerbus is 2>>
-			<<if $weekday isnot 1 and $weekday isnot 7 and $hour gte 7 and $hour lte 8 and $schoolday is 1>>
+			<<if Time.hour gte 7 and Time.hour lte 8 and Time.schoolDay>>
 				Some delinquents are picking on the less popular students.
 				<br><br>
 				<<if $cool lt 80>>
@@ -151,7 +171,7 @@ You take a seat and look out the window.
 					Your bus arrives at your destination.
 					<<destination5>>
 				<</if>>
-			<<elseif $weekday isnot 1 and $weekday isnot 7 and $hour is 15 and $schoolday is 1>>
+			<<elseif Time.hour is 15 and Time.schoolDay>>
 				Some delinquents are picking on the less popular students.
 				<br><br>
 				<<if $cool lt 80>>
@@ -196,7 +216,7 @@ You take a seat and look out the window.
 			<<else>>
 				<<generate1>><<generate2>>The <<people>> in the bus seem to be crowding around you. Some even move seats to be closer.
 				<br><br>
-				<<if $daystate is "night">>
+				<<if Time.dayState is "night">>
 					The bus approaches your destination but doesn't slow down. You stand to tell the driver, but a <<person1>><<person>> blocks your path. "Going so soon?" A <<person2>><<person>> grabs you from behind. "You should know better than to wander at night."
 					<br><br>
 					<<link [[Next|Bus Seat Rape]]>><<set $molestationstart to 1>><</link>>
@@ -222,7 +242,7 @@ You feel strangely cold as you awaken. You are still on the bus. You are about t
 <br><br>
 You cautiously look around the bus. No one seems to have noticed your predicament.
 <br><br>
-<<if $daystate is "night">>
+<<if Time.dayState is "night">>
 	It's dark out and there are only a few people on the streets. You might be able to slip out the window at the next stop. Alternatively, you could hide under a seat and wait until the bus returns to the station.
 	<br><br>
 	<<link [[Climb out (0:05)|Climb Out Bus]]>><<pass 5>><</link>>
@@ -410,7 +430,7 @@ After several minutes the bus stop and the <<person2>><<person>> pokes the <<per
 
 <<if _combatend or ($timer lte 1) or
 	($worn.upper.type.includes("naked") and $worn.lower.type.includes("naked") and $worn.under_lower.type.includes("naked")) or
-	($worn.upper.type.includes("naked") and $worn.lower.type.includes("naked") and $worn.genitals.type.includes("chastity"))
+	($worn.upper.type.includes("naked") and $worn.lower.type.includes("naked") and playerChastity())
 >>
 	<span id="next"><<link [[Next|Bus School Strip Finish]]>><</link>></span><<nexttext>>
 <<else>>
@@ -907,3 +927,52 @@ You've pushed yourself too much.
 <</if>>
 <<pass 1 hour>>
 <<trauma 6>><<set $stress -= 2000>>
+
+:: Bus Pregnancy Wait
+<<effects>>
+Your bus arrives at your destination.
+<<destination5>>
+<<endevent>>
+
+:: Bus Pregnancy Touch
+<<effects>>
+You give the <<person>> a patient smile and pat your baby bump.
+<<if $submissive gte 1150>>
+	"It's okay, y-you can touch," you say.
+<<elseif $submissive lte 850>>
+	"I know you want to feel it. Go ahead," you say.
+<<else>>
+	"It's okay, you can feel it," you say.
+<</if>>
+<br><br>
+<<set $danger to random(1, 10000)>>
+<<if $danger gte (9900 - $allure) and $rng gte 90>>
+	"Always wanted to fuck a pregnant <<girl>>," <<he>> says plainly. You quickly look away. <<stress 3>><<gstress>>
+<<else>>
+	<<set _pregnancy to getPregnancyObject()>>
+	<<His>> eyes light up, and <<he>> gently places <<his>> hand on your belly.
+	<<if between(Math.clamp(_pregnancy.timer / _pregnancy.timerEnd), 0.7, 1)>>
+		You feel your <<pregnancyBabyText 'pc'>> kick lightly. <<He>> feels it too. <<He>> gazes with a smile.
+	<<else>>
+		<<He>> rubs it up and down, and gazes with a smile.
+	<</if>>
+	<<trauma -3>><<ltrauma>>
+	<br><br>
+	You spend some time engaging in small talk.
+	<<if $homochance isnot 100 and $npcPregnancyDisable is "f" and $rng gte 65>>
+		"My <<if $NPCList[0].pronoun is "f">>husband<<else>>wife<</if>> and I are trying for a baby, too. You've given me a little hope today."
+	<<else>>
+		<<switch random(1,5)>>
+			<<case 1>>"I'm sure you'll be a great mother."
+			<<case 2>>"It won't be easy raising a kid in this town, but I'm sure you can do it."
+			<<case 3>>"There's a kid's toy shop at the shopping centre, you should give it a visit."
+			<<case 4>>"You look great, be sure to keep your chin up!"
+			<<default>>"Congratulations, and good luck!"
+		<</switch>>
+	<</if>>
+	<<He>> stands up as the bus stops, giving you one last smile before leaving.
+<</if>>
+<br><br>
+Your bus arrives at your destination.
+<<destination5>>
+<<endevent>>

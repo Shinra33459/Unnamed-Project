@@ -46,16 +46,7 @@
 		<br><br>
 	<</if>>
 
-	<<if $location is "school" and $hour isnot 12>>
-		<<if _kylarStatus.includes("Love")>>
-			<<He>> looks at <<his>> watch. "I need to go," <<he>> says. "I'll be late for my lesson." <<He>> keeps looking over <<his>> shoulder as <<he>> walks.
-		<<else>>
-			<<He>> looks at <<his>> watch, mumbles something, then walks away.
-		<</if>>
-		<br><br>
-
-		<<kylaroptionsleave>>
-	<<elseif ($bus is "starfish" or $bus is "park") and $daystate isnot "day">>
+	<<if $location is "school" and Time.hour gte 17>>
 		<<if $syndromekylar is 1>>
 			<<He>> looks at <<his>> watch. "I need to go," <<he>> says. "They're waiting for me." <<He>> looks at you.
 		<<elseif _kylarStatus.includes("Love")>>
@@ -66,7 +57,27 @@
 		<br><br>
 
 		<<kylaroptionsleave "manor">>
-	<<elseif $bus is "kylarmanor" and $hour lt 18>>
+	<<elseif $location is "school" and Time.hour isnot 12 and $schoolstate isnot "afternoon">>
+		<<if _kylarStatus.includes("Love")>>
+			<<He>> looks at <<his>> watch. "I need to go," <<he>> says. "I'll be late for my lesson." <<He>> keeps looking over <<his>> shoulder as <<he>> walks.
+		<<else>>
+			<<He>> looks at <<his>> watch, mumbles something, then walks away.
+		<</if>>
+		<br><br>
+
+		<<kylaroptionsleave>>
+	<<elseif ($bus is "starfish" or $bus is "park") and Time.dayState isnot "day">>
+		<<if $syndromekylar is 1>>
+			<<He>> looks at <<his>> watch. "I need to go," <<he>> says. "They're waiting for me." <<He>> looks at you.
+		<<elseif _kylarStatus.includes("Love")>>
+			<<He>> looks at <<his>> watch. "I need to go," <<he>> says. "They're waiting for me." <<He>> keeps looking over <<his>> shoulder as <<he>> walks.
+		<<else>>
+			<<He>> looks at <<his>> watch, mumbles something, then walks away.
+		<</if>>
+		<br><br>
+
+		<<kylaroptionsleave "manor">>
+	<<elseif $bus is "kylarmanor" and Time.hour lt 18>>
 		<<unset $kylar_action>>
 		Kylar looks at a monitor. "I should sleep," <<he>> says. <<He>> walks over to <<his>> bed and collapses atop it, fully dressed. <<He>> watches you, longing on <<his>> face, but <<he>> doesn't say anything.
 		<br><br>
@@ -101,6 +112,10 @@
 		<<if !$daily.kylar.walkKiss and $kylar_action is "walk">>
 			<<link [[Kiss|Kylar Walk In The Park End 2]]>><</link>><<glove>><<glust>><<llksuspicion>><<kissvirginitywarning>><<NPCvirginitywarning "Kylar" "kiss">>
 			<br>
+		<</if>>
+		<<if $location is "school" and $englishPlay is "ongoing" and $englishPlayRoles.Kylar isnot "none" and $englishPlayRoles.KylarKnown and $schoolstate is "afternoon">>
+			<<link [[Rehearse your roles (2:00)|English Play Rehearse Kylar]]>><<pass 2 hours>><<npcincr Kylar rage -5>><<englishskill 18>><</link>><<llksuspicion>><<gggenglish>><<ggreadiness>>
+			<br><br>
 		<</if>>
 		<<link [[Chat (0:15)|Kylar Chat]]>><<pass 15>><<npcincr Kylar love 1>><<npcincr Kylar rage -1>><<stress -2>><</link>><<lstress>><<glove>><<lksuspicion>>
 		<br>
@@ -158,8 +173,10 @@
 				<<set $_dest to "Arcade">>
 			<<case "kylarmanor">>
 				<<set $_dest to "Manor Kylar Room">>
+			<<case "rehearsal">>
+				<<set $_dest to "Oxford Street">>
 			<<default>>
-				<<set $_dest to "School Rear Playground">>
+				<<set $_dest to "School Rear Courtyard">>
 		<</switch>>
 		<<if _args[0] is "manor" and $syndromekylar is 1>>
 			<<link [["Walk with " + _kylar.pronouns.him + " (0:20)"|Kylar Walk Manor]]>><</link>>
@@ -193,7 +210,7 @@
 				<</if>>
 			<</if>>
 			<<He>> looks away.
-		<<elseif $bus is "park" and $kylar.fountain is 1 and $season is "winter" and !$kylarSeen.includes("fountainWinter")>>
+		<<elseif $bus is "park" and $kylar.fountain is 1 and Time.season is "winter" and !$kylarSeen.includes("fountainWinter")>>
 			<<set $kylarSeen.pushUnique("fountainWinter")>>
 			<<He>> seems spellbound. The constantly running water and the cold temperature has caused much of the fountain's structure to freeze over and form icicles thicker than your arm, and at least twice as long. Near the centre, some water remains unfrozen.
 			"It's so pretty. It's the most amazing thing I've ever seen!" <<He>> glances at you. "W-well, second most."
@@ -219,7 +236,22 @@
 			<<He>> smiles at you.
 		<</if>>
 	<<else>>
-		<<if _kylar.love gte 90 and $spray lt $spraymax and !$daily.kylar.spray>>
+		<<if $englishPlay is "ongoing" and $englishPlayRoles.Kylar isnot "none" and !$englishPlayRoles.KylarKnown>>
+			<<set $englishPlayRoles.KylarKnown to true>>
+			"H-Hey," Kylar says, squeezing your arm gently. "I got a surprise for you. We'll be performing together for the stage play." <<he>> pulls a small booklet from <<his>> bag, and shows it to you.
+			<br><br>
+
+			<<switch $englishPlayRoles.Kylar>>
+				<<case "Sterling">>
+					<<set _playPronoun to (C.npc.Kylar.pronoun is "m" ? "Mr" : "Mrs")>>
+					"I'll be playing the parent, _playPronoun Sterling," <<he>> says. "There's always someone getting in the way, but love always wins in the end, don't you think?" <<He>> draws closer to you before coming to <<his>> senses and withdrawing. "Sorry."
+				<<default>>
+					"I get to play as that rich kid, Taylor, who falls in love with someone." <<He>> blushes deeply and looks you in the eyes. "I... still don't know who, though."
+			<</switch>>
+			<br><br>
+
+			<<He>> looks down timidly. "Say, maybe we should spend some time together? T-To practice, I mean." <<Hes>> about to say something else, but stops <<himself>>. "Just... come see me<<if $schoolstate isnot "afternoon">> after school<</if>>, alright? <span class="gold">I'll be in the rear courtyard.</span>"
+		<<elseif _kylar.love gte 90 and $spray lt $spraymax and !$daily.kylar.spray>>
 			<<set $daily.kylar.spray to true>>
 			"I made you something," <<he>> says as <<he>> rummages in <<his>> bag. <<He>> hands you a charge for your pepper spray.
 			"I made it myself. It'll keep sluts and perverts away." <<He>> beams.
@@ -259,6 +291,12 @@
 		<span class="red">Kylar has been imprisoned. <<nnpc_He "Kylar">> can no longer be claimed as your love interest.</span>
 	<<else>>
 		<span class="red">Kylar has been imprisoned.</span>
+	<</if>>
+	<<if $englishPlay is "ongoing">>
+		<<if $englishPlayRoles.Kylar isnot "none">>
+			<<set $englishPlayKylarReplace to true>>
+			<<set $englishPlayRoles.Kylar to "none">>
+		<</if>>
 	<</if>>
 	<br><br>
 <</widget>>
@@ -553,7 +591,7 @@
 		Kylar puts <<his>> hands against <<his>> chest. "I wrote a song for you," <<he>> says, and takes a deep breath.
 		<br><br>
 
-		"I love you I love you so much you we are together and happy and..." <<he>> rambles on, following no tune in particular. It's pretty terrible.
+		"I love you I love you so much we are together and happy and..." <<he>> rambles on, following no tune in particular. It's pretty terrible.
 		<br><br>
 		"W-well? <<he>> asks after recovering from a shortage of breath. "Do you like it?"
 		<br><br>
@@ -623,7 +661,6 @@
 		<<link [[Next|Kylar Abduction Event End]]>><</link>>
 		<br>
 	<</if>>
-
 <</widget>>
 
 
@@ -724,6 +761,34 @@
 	<<unset $syndromekylarbuild>>
 <</widget>>
 
+<<widget "kylarStockholmDefaultRape">>
+	"A-ah, aha," Kylar pants, gazing at you with hunger in <<his>> eyes.
+
+	<<if _kylar.penis isnot "none">>
+		<!-- Kylar penis - will try to fuck you -->
+		<<He>> lifts your thighs, and rests your legs against <<his>> shoulders.
+	<<elseif ($genderknown.includes("Kylar") and $player.penisExist) or $player.gender_appearance is "m">>
+		<!-- Kylar vag and you penis - will try to ride you -->
+		<<He>> straddles your thighs, pulling <<his>> body against yours.
+	<<else>>
+		<!-- Kylar vag and you vag - will try to scissor -->
+		<<He>> spreads your legs, pulling <<his>> body against yours.
+	<</if>>
+	<br><br>
+	<<if $pregnancyspeechdisable is "f" and (
+		(_kylar.vagina isnot "none" and ($genderknown.includes("Kylar") ? $player.penisExist : $player.gender_appearance is "m") )
+		or
+		(_kylar.penis isnot "none" and ($genderknown.includes("Kylar") ? $player.vaginaExist : $player.gender_appearance is "f") )
+	)>>
+		"We're going to make lots of babies," <<he>> says.
+	<</if>>
+	<<He>> gazes into your eyes with a mad intensity. "I'm going to fuck you again and again. Until I'm the only one who can satisfy you."
+	<br><br>
+
+	<<link [[Next|Kylar Abduction Rape]]>><<set $molestationstart to 1>><</link>>
+	<br>
+<</widget>>
+
 
 :: Kylar Intro Intervene
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
@@ -743,15 +808,16 @@ The <<person>> regards you for a moment, then laughs. Some of the audience join 
 <br><br>
 
 The bullied <<person1>><<personsimple>> picks up <<his>> bag and starts gathering the contents. "Th-thank you," <<he>> stutters. "I-I'm," <<he>> looks at you, but blushes and looks away. "I'm Kylar." You thought <<he>> was younger than you, but <<he>> seems the same age.
-<<if $devlevel lte 6>>
-	Even with your small stature, <<hes>> only a little taller than you.
-<<elseif $devlevel lte 10>>
-	Even with your short height, <<hes>> a little shorter than you.
-<<elseif $devlevel lte 12>>
-	<<Hes>> just small.
-<<else>>
-	<<Hes>> just quite short compared to you.
-<</if>>
+<<switch $bodysize>>
+	<<case 0>>
+		Even with your small stature, <<hes>> only a little taller than you.
+	<<case 1>>
+		Even with your short height, <<hes>> a little shorter than you.
+	<<case 2>>
+		<<Hes>> just small.
+	<<case 3>>
+		<<Hes>> just quite short compared to you.
+<</switch>>
 <<He>> turns and runs.
 <br><br>
 <<endevent>>
@@ -777,15 +843,16 @@ You're the only one still paying <<person1>><<him>> attention when you walk up t
 <br><br>
 
 <<person1>>"Th-thank you," <<he>> stutters. "I-I'm," <<he>> looks at you, but blushes and looks away. "I'm Kylar." You thought <<he>> was younger than you, but <<he>> seems the same age.
-<<if $devlevel lte 6>>
-	Even with your small stature, <<hes>> only a little taller than you.
-<<elseif $devlevel lte 10>>
-	Even with your short height, <<hes>> a little shorter than you.
-<<elseif $devlevel lte 12>>
-	<<Hes>> just small.
-<<else>>
-	<<Hes>> just quite short compared to you.
-<</if>>
+<<switch $bodysize>>
+	<<case 0>>
+		Even with your small stature, <<hes>> only a little taller than you.
+	<<case 1>>
+		Even with your short height, <<hes>> a little shorter than you.
+	<<case 2>>
+		<<Hes>> just small.
+	<<case 3>>
+		<<Hes>> just quite short compared to you.
+<</switch>>
 <<He>> turns and runs.
 <br><br>
 <<endevent>>
@@ -1101,11 +1168,11 @@ They arrest Kylar. They untie you too, after you make a bit of noise. They decid
 <br><br>
 
 <<person1>>
-<<if $schoolday is 1 and $schoolstate isnot "early" and $schoolstate isnot "late">>
+<<if Time.schoolDay and $schoolstate isnot "early" and $schoolstate isnot "late">>
 	You climb the stairs and emerge into the school hallways. Students are being lined up outside and a register taken. They march Kylar through to reach the waiting car, giving the students one last chance to jeer at <<him>>.
 	<br><br>
 <<else>>
-	You climb the stairs and emerge into the school hallways. They march Kylar across the playground and into a waiting car.
+	You climb the stairs and emerge into the school hallways. They march Kylar across the courtyard and into a waiting car.
 	<br><br>
 <</if>>
 
@@ -1146,7 +1213,7 @@ Kylar watches as you are led away. <<person1>><<He>> weeps harder.
 
 <<generatePolice 1>><<generatePolice 2>>A <<fullGroup>> lead you up the stairs. You emerge in a school hallway.
 
-<<if $schoolday is 1 and $schoolstate isnot "early" and $schoolstate isnot "late">>
+<<if Time.schoolDay and $schoolstate isnot "early" and $schoolstate isnot "late">>
 	Students are being lined up outside and a register taken. The police march you through, giving the other students lots to gossip about no doubt, until you're through the gates and out of sight.
 	<br><br>
 <<else>>
@@ -1675,7 +1742,7 @@ pushing you down to the bed.
 	<<ejaculation>><<npcincr Kylar lust -20>><<lllust>>
 
 	<<He>> lies on top of you for a few moments, eyes closed in contentment.
-	<<if $orgasmcurrent is 0 and !$worn.genitals.type.includes("chastity")>>
+	<<if $orgasmcurrent is 0 and !playerChastity()>>
 		<<if _kylarStatus.includes("Rage")>>
 			After a few seconds, <<he>> backs up until <<hes>> facing your <<genitals>>. "You didn't cum," <<he>> murmurs. "Was I... not good enough?" <<He>> shakes <<his>> head violently. "I'll make up for it. I'll show you."
 		<<else>>
@@ -1762,7 +1829,7 @@ You ignore the voices in the corridor and lie back down, your arms still wrapped
 
 <<link [[Just cuddle (0:30)|Kylar Orphanage Cuddle]]>><<trauma -12>><<ltrauma>><<set $phase to 1>><<pass 30>><</link>>
 <br>
-<<link [[Sleep|Kylar Orphanage Bed]]>><<set $kylarbed to 1>><</link>>
+<<link [[Sleep|Kylar Orphanage Bed]]>><<set $kylarbed to 1>><<set $bedGuest to "Kylar">><</link>>
 
 :: Kylar Orphanage Cuddle
 <<effects>>
@@ -1794,10 +1861,10 @@ You can feel <<his>> breath, now stabilised and calm, against your skin.
 	<<if $phase is 0>>
 		Kylar clings to you for a few minutes, not wanting to get up.
 	<</if>>
-	Eventually <<he>> untangles <<himself>> from you, looking disappointed. "I shouldn't stay here much longer," <<he>> says.<<if $hour gte 18 or $hour lte 7>> "They're waiting for me."<</if>> You <<if $phase isnot 2>>push yourself into a sitting position and <</if>>look at <<him>>. <<His>> hair is sticking to <<his>> face. You reach forward and brush it away, and <<he>> smiles.
+	Eventually <<he>> untangles <<himself>> from you, looking disappointed. "I shouldn't stay here much longer," <<he>> says.<<if Time.hour gte 18 or Time.hour lte 7>> "They're waiting for me."<</if>> You <<if $phase isnot 2>>push yourself into a sitting position and <</if>>look at <<him>>. <<His>> hair is sticking to <<his>> face. You reach forward and brush it away, and <<he>> smiles.
 	<br><br>
 
-	<<if $hour lte 18 and $hour gte 7>>
+	<<if Time.hour lte 18 and Time.hour gte 7>>
 		<<if $weather is "rain" or $weather is "snow">>
 			<<link [[Walk to the arcade together (0:15)|Kylar Arcade Walk]]>><<pass 15>><</link>>
 		<br>
@@ -1939,16 +2006,16 @@ You decide to ignore what <<hes>> saying. <<His>> stammering slowly stops, and <
 <<effects>>
 
 <<if $phase is 1>>
-	Eventually <<he>> pulls back from you, looking disappointed. "I shouldn't stay here much longer," <<he>> says. <<if $hour gte 18 or $hour lte 7>>"They're waiting for me."<</if>>You look at <<him>>. <<His>> hair is sticking to <<his>> face<<if $makeup.lipstick isnot 0>>, and <<his>> mouth is smeared with your lipstick<</if>>. You reach forward and brush <<his>> hair away, and <<he>> smiles.
+	Eventually <<he>> pulls back from you, looking disappointed. "I shouldn't stay here much longer," <<he>> says. <<if Time.hour gte 18 or Time.hour lte 7>>"They're waiting for me."<</if>>You look at <<him>>. <<His>> hair is sticking to <<his>> face<<if $makeup.lipstick isnot 0>>, and <<his>> mouth is smeared with your lipstick<</if>>. You reach forward and brush <<his>> hair away, and <<he>> smiles.
 	<br><br>
 
 	"I'm so happy you love me back," <<he>> says. "Well, of course I am, but I'm also relieved. That was... that was the first time I told you I loved you<<if $kylarSeen.includes("saidLove")>>, and meant it<</if>>. I was so scared that you'd... not accept me. That you'd think I was going too fast." <<He>> grabs your hand in both of <<hers>>. "Thank you. For... thank you."
 <<else>>
-	<<He>> stands up from the bed, looking disappointed. "I shouldn't stay here much longer," <<he>> says. <<if $hour gte 18 or $hour lte 7>>"They're waiting for me."<</if>>You look at <<him>>. <<His>> hair is sticking to <<his>> face. You reach forward and brush <<his>> hair away, and <<he>> smiles.
+	<<He>> stands up from the bed, looking disappointed. "I shouldn't stay here much longer," <<he>> says. <<if Time.hour gte 18 or Time.hour lte 7>>"They're waiting for me."<</if>>You look at <<him>>. <<His>> hair is sticking to <<his>> face. You reach forward and brush <<his>> hair away, and <<he>> smiles.
 <</if>>
 <br><br>
 
-<<if $hour lte 18 and $hour gte 7>>
+<<if Time.hour lte 18 and Time.hour gte 7>>
 	<<if $weather is "rain" or $weather is "snow">>
 		<<link [[Walk to the arcade together (0:15)|Kylar Arcade Walk]]>><<pass 15>><</link>>
 		<br>
@@ -2251,7 +2318,7 @@ The bathroom is empty. You make your way to a stall and pull Kylar in. <<Hes>> u
 	<<lllust>>
 	<br><br>
 
-	<<if $orgasmcurrent is 0 and !$worn.genitals.type.includes("chastity")>>
+	<<if $orgasmcurrent is 0 and !playerChastity()>>
 		<<if _kylarStatus.includes("Rage")>>
 			After a few seconds, <<he>> kneels down in front of you. "You didn't cum," <<he>> murmurs. "Was I... not good enough?" <<He>> shakes <<his>> head violently. "I'll make up for it. I'll show you."
 		<<else>>
@@ -2279,7 +2346,7 @@ The bathroom is empty. You make your way to a stall and pull Kylar in. <<Hes>> u
 <<endcombat>>
 <<npc Kylar>><<person1>>
 
-<<if $hour isnot 12>>
+<<if Time.hour isnot 12>>
 	<<He>> looks at <<his>> watch. "I need to go," <<he>> says. "I'll be late for my lessons." <<He>> keeps looking over <<his>> shoulder as <<he>> walks out.
 	<<if $kylarBathroomGender isnot _kylar.pronoun and random(1,100) lte 75>>
 		<<He>> flinches upon hearing laughter from the halls. Somebody saw <<him>> come out of the <<print ($kylarBathroomGender is "m" ? "boy" : "girl")>>'s bathroom.
@@ -2290,7 +2357,7 @@ The bathroom is empty. You make your way to a stall and pull Kylar in. <<Hes>> u
 	<<link [[Next|_destination]]>><<endevent>><</link>>
 
 <<else>>
-	"Let's go back to the <<print ($weather is "rain" or $weather is "snow" ? "library" : "playground")>>," <<he>> says.
+	"Let's go back to the <<print ($weather is "rain" or $weather is "snow" ? "library" : "courtyard")>>," <<he>> says.
 	<br><br>
 	<<link [[Next|Kylar Bathroom Return]]>><</link>>
 <</if>>
@@ -2302,8 +2369,8 @@ The bathroom is empty. You make your way to a stall and pull Kylar in. <<Hes>> u
 	<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>><<set $bus to "schoollibrary">>
 	You and Kylar return to your spots at the library.
 <<else>>
-	<<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>><<set $bus to "schoolrearplayground">>
-	You and Kylar return to the stump in the rear playground.
+	<<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>><<set $bus to "schoolrearcourtyard">>
+	You and Kylar return to the stump in the rear courtyard.
 <</if>>
 <br><br>
 
@@ -2447,8 +2514,8 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 <<set $kylar_action to "chat">>
 
 <<if _kylarStatus.includes("Love")>>
-	<<bodywriting_exposure_check>>
-	<<if _bodywriting_exposed gte 1 and !$daily.kylar.bodywriting>>
+	<<bodywritingExposureCheck>>
+	<<if _bodywriting_exposed gte 1 and !$daily.kylar.bodywriting and _bodypart>>
 		<<set $daily.kylar.bodywriting to true>>
 		<<if $skin[_bodypart].special is "Kylar">>
 			<<if $kylarenglish gte 1>>
@@ -2470,6 +2537,7 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 			<</if>>
 		<<elseif ["Robin","Whitney","Eden","Avery","Alex","Black Wolf","Great Hawk"].includes($skin[_bodypart].special) or ($skin[_bodypart].special is "Sydney" and $kylarSeen.includes("sydneyWriting") and ($skin[_bodypart].lewd is 1 or !_kylarStatus.includes("Calm")))>>
 			<<if ["marker","tattoo","brand","magic"].includes($skin[_bodypart].pen)>>
+				<<set $kylarBodywriting to 1>>
 				You chat with Kylar. <<He>> tries to wipe off your <<tattoo _bodypart>> on your <<bodypart _bodypart>>. <<He>> scowls when it doesn't come off, and eventually sits back down with a huff.
 				<<ggksuspicion>><<glust>><<npcincr Kylar lust 1>><<npcincr Kylar rage 3>>
 			<<else>>
@@ -2496,7 +2564,7 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 				<<gksuspicion>><<glust>><<npcincr Kylar lust 1>><<npcincr Kylar rage 1>>
 			<<else>>
 				You chat with Kylar. <<He>> stares at the <<tattoo _bodypart>> on your <<bodypart _bodypart>> and chuckles. "<<nnpc_He "Sydney">> got to you too?"
-				<<if ($rng gte 51 or $daily.sydney.kylarBook) and $schoolterm is 1 and $weekday isnot 1 and $weekday isnot 7>>
+				<<if ($rng gte 51 or $daily.sydney.kylarBook) and Time.schoolDay>>
 					<<He>> lifts up <<his>> hair to reveal
 					<<if $skin[_bodypart].writing is "Book Criminal >:(">>
 						the same thing
@@ -2512,6 +2580,7 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 			/*ToDo: Pregnancy, write once Kylar's reaction to/thoughts on pregnancy is better understood.
 			May differ based on gender, jealousy and whether or not Kylar has impregnated the PC in the past.*/
 		<<elseif ["prostitution","rape","exhibitionism","sex"].includes($skin[_bodypart].special) or $skin[_bodypart].lewd is 1>>
+			<<set $kylarBodywriting to 1>>
 			You chat with Kylar. <<He>> stares at the <<tattoo _bodypart>> on your <<bodypart _bodypart>>, but doesn't mention it.
 			<<gksuspicion>><<glust>><<npcincr Kylar lust 1>><<npcincr Kylar rage 1>>
 		<<else>>
@@ -2528,7 +2597,7 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 				<<default>>
 					"That won't stay on forever, you know," <<he>> says. "I used to write on myself a lot when I was younger. The ink always fades away eventually."
 			<</switch>>
-			<</if>>
+		<</if>>
 	<<elseif $rng gte 96>>
 		You chat with Kylar. "You haven't been thinking of anyone else, right?" <<he>> says. "I'll know."
 		<<if $loveInterest.primary is "Kylar" and $loveInterest.secondary is "None">>
@@ -2557,7 +2626,7 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 			<<print either("one of the bookshelves", "the beaker picture on a biology textbook", "the half-full return basket", "the rain-splattered window", "a spider web strung in a ceiling corner")>>.
 		<<elseif $bus is "kylarmanor">>
 			<<print either("the tangled sheets of the bed", "the skylight", "one of the monitors", "one of the loft banisters", "a spider web strung in a ceiling corner")>>.
-		<<elseif $season is "winter">>
+		<<elseif Time.season is "winter">>
 			<<print either("an icicle hanging off a tree", "a snow angel in the snow nearby", "a leafless tree", "a discarded water bottle", "a spider web surviving against all odds")>>.
 		<<else>>
 			<<print either("a squirrel a fair distance away", "a chipmunk running in circles", "a pigeon roosting on a branch", "some wildflowers", "a weird cloud in the sky", "a spider web strung between the branches of a tree")>>.
@@ -2616,6 +2685,13 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 				Your tail <<print (_tf.wolfTail ? "wags happily" : "swishes in contentment")>>, brushing against <<him>> on occasion.
 			<</if>>
 			<br><br>
+		<<elseif _tf.foxEars and _tfSplit is 1>>
+			After a while, <<his>> hand brushes against your fox ears. It wiggles at <<his>> touch.
+			<<He>> smiles. "Are they sensitive?" For a few minutes, <<he>> scratches around your ears, blowing into them at one point.
+			<<if _tf.foxTail>>
+				Your tail swishes up and down, brushing against <<him>> on occasion.
+			<</if>>
+			<br><br>			
 		<<elseif _tf.birdPlumage and _tfSplit is 1>>
 			After a while, <<he>> brings <<his>> other hand to you and brushes your plumage. "Are these feathers?" <<he>> asks.
 			For a few minutes, <<he>> strokes your hair with one hand and your plumage with the other.
@@ -2640,7 +2716,7 @@ You nod, and <<he>> blushes. You think <<hes>> going to turn you down, but <<he>
 		You tell some jokes. <<He>> mumbles laughter, but doesn't look at you.
 	<<elseif $rng gte 41>>
 		You comment on how nice the weather is. <<He>> nods absently, <<if $weather is "clear" or $weather is "overcast">>silent<<else>>before blinking and looking at you incredulously<</if>>.
-	<<elseif $rng gte 31 and $season isnot "winter">>
+	<<elseif $rng gte 31 and Time.season isnot "winter">>
 		You ask if <<he>> can help you with some schoolwork.
 		<<if $bus is "schoollibrary">>
 			<<He>> wordlessly hands you a nearby <<print either("science textbook", "maths textbook", "English textbook", "history textbook", "comic book. <<He>> doesn't seem to notice what <<he>> gave you")>>.
@@ -3134,7 +3210,7 @@ Kylar laughs. "I-I forgot," <<he>> says. "I have somewhere I need to be." <<He>>
 "I feel bad sending <<him>> away," Robin says when <<hes>> gone. "Everyone picks on <<him>>."
 <br><br>
 <<endevent>><<npc Robin>><<person1>>
-<<if $sydneyromance is 1 and _sydney_location is "library" and $schoolstate is "lunch" and $minute lte 35 and random(1, 100) gte 50>>
+<<if $sydneyromance is 1 and _sydney_location is "library" and $schoolstate is "lunch" and Time.minute lte 35 and random(1, 100) gte 50>>
 	/* Checks if _sydney_location is "library" instead of "canteen" because it's impossible for it to be "canteen" given the time passed from eating with Robin */
 	You chat with Robin while eating. You notice Sydney stand up from the corner of the canteen, gathering <<nnpc_his "Sydney">> books and speedwalking to the library. <<nnpc_He "Sydney">> stops by your table to smooch you on the cheek, nearly dropping one of <<nnpc_his "Sydney">> books from leaning down. <<arousal 50>><<garousal>>
 	<br><br>
@@ -3352,7 +3428,7 @@ You sit beside Kylar and say hello.
 	<</if>>
 	<br><br>
 
-	You finish your food. Kylar carries your trays away, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear playground<</if>>.
+	You finish your food. Kylar carries your trays away, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear courtyard<</if>>.
 	<br><br>
 
 	<<link [[Next|Canteen]]>><<endevent>><</link>>
@@ -3362,7 +3438,7 @@ You sit beside Kylar and say hello.
 	<<He>> stops spearing <<his>> food, but doesn't respond. You try to make small talk. You think <<hes>> listening.
 	<br><br>
 
-	You finish your food and depart. Kylar walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear playground<</if>>.
+	You finish your food and depart. Kylar walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear courtyard<</if>>.
 	<br><br>
 
 	<<link [[Next|Canteen]]>><<endevent>><</link>>
@@ -3414,7 +3490,7 @@ Heads turn around the canteen. You pull Kylar closer.
 "Fucking freaks," Whitney says. "I'm done with you losers." <<He>> leaves the canteen, <<his>> cronies in tow.
 <br><br>
 
-The other students lose interest. You finish your food beside a relieved Kylar. <<person1>><<He>> carries your trays away once finished, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear playground<</if>>.
+The other students lose interest. You finish your food beside a relieved Kylar. <<person1>><<He>> carries your trays away once finished, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear courtyard<</if>>.
 <br><br>
 
 <<link [[Next|Canteen]]>><<endevent>><</link>>
@@ -3518,7 +3594,7 @@ Excited at the prospect of violence, other students gather around.
 	Kylar hugs you from behind. "I-I knew you'd save me," <<person1>><<he>> says.<<gglove>><<npcincr Kylar love 3>>
 	<br><br>
 
-	The other students lose interest after Whitney's departure. You finish your food beside a relieved Kylar. <<He>> carries your trays away when you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear playground<</if>>.
+	The other students lose interest after Whitney's departure. You finish your food beside a relieved Kylar. <<He>> carries your trays away when you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear courtyard<</if>>.
 	<br><br>
 
 	<<link [[Next|Canteen]]>><<endevent>><</link>>
@@ -3536,7 +3612,7 @@ Excited at the prospect of violence, other students gather around.
 	Kylar hugs you from behind. "I-I knew you'd save me," <<he>> says.<<gglove>><<npcincr Kylar love 3>>
 	<br><br>
 
-	The other students lose interest after Whitney's departure. You finish your food beside a relieved Kylar. <<He>> carries your trays away when you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear playground<</if>>.
+	The other students lose interest after Whitney's departure. You finish your food beside a relieved Kylar. <<He>> carries your trays away when you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear courtyard<</if>>.
 	<br><br>
 
 	<<link [[Next|Canteen]]>><<endevent>><</link>>
@@ -3567,14 +3643,19 @@ Excited at the prospect of violence, other students gather around.
 	Kylar hugs you from behind. "I-I knew you'd save me," <<he>> says.<<gglove>><<npcincr Kylar love 3>>
 	<br><br>
 
-	The other students lose interest after Whitney's departure. You finish your food beside a relieved Kylar. <<He>> carries your trays away once you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear playground<</if>>.
+	The other students lose interest after Whitney's departure. You finish your food beside a relieved Kylar. <<He>> carries your trays away once you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear courtyard<</if>>.
 	<br><br>
 
 	<<link [[Next|Canteen]]>><<endevent>><</link>>
 	<br><br>
 
 <<else>>
-	Whitney gains the upper hand, pinning you to the wall. "Stupid little shit!" <<He>> knees you in the stomach, and you keel over. <<He>> leaves you on the canteen floor.<<lcool>><<status -10>>
+	Whitney gains the upper hand, pinning you to the wall. "Stupid little shit!"
+	<<if playerBellySize(true) gte 8>>
+		<<He>> pushes you to the ground, and leaves you on the canteen floor.<<lcool>><<status -10>>
+	<<else>>
+		<<He>> knees you in the stomach, and you keel over. <<He>> leaves you on the canteen floor.<<lcool>><<status -10>>
+	<</if>>
 	<br><br>
 
 	<<clotheson>>
@@ -3591,7 +3672,7 @@ Excited at the prospect of violence, other students gather around.
 		"I want to be able to stand up to <<nnpc_him "Whitney">>. Especially for you. B-but <<nnpc_hes "Whitney">> so..." <<He>> trails off.
 	<</if>>
 
-	<<tearful>> you finish your food beside a brooding Kylar. <<He>> carries your trays away when you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear playground<</if>>.
+	<<tearful>> you finish your food beside a brooding Kylar. <<He>> carries your trays away when you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear courtyard<</if>>.
 	<br><br>
 
 	<<link [[Next|Canteen]]>><<endevent>><</link>>
@@ -3634,7 +3715,7 @@ Kylar looks around, as if looking for a way out, until <<person1>><<his>> eyes r
 "Alright," Whitney says. "My turn, freak." <<He>> charges. Kylar <<person1>>raises <<his>> arms to defend <<himself>>, but the force shoves <<him>> to the ground. The crowd livens up again, and cheers for Whitney.
 <br><br>
 
-"That hurt?" Whitney asks. <<person2>><<He>> delivers a kick to Kylar's stomach, much to the delight of the onlookers.
+"That hurt?" Whitney asks. <<person2>><<He>> delivers a kick to Kylar's <<if npcIsPregnant("Kylar")>>bottom<<else>>stomach<</if>>, much to the delight of the onlookers.
 <br><br>
 
 <<link [[Cheer for Kylar|Canteen Kylar Cheer]]>><<status -10>><<npcincr Kylar rage -10>><<npcincr Kylar love 3>><<npcincr Whitney dom -1>><</link>><<lcool>><<llksuspicion>><<glove>><<ldom "Whitney">>
@@ -3695,7 +3776,7 @@ You smile and squeeze <<his>> other hand. <<He>> drops the knife with a horrifie
 "You really are perfect," <<he>> says into your shoulder, <<his>> grip a little too tight.
 <br><br>
 
-You continue eating, sat beside a dazed Kylar. <<He>> carries your trays away when you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear playground<</if>>.
+You continue eating, sat beside a dazed Kylar. <<He>> carries your trays away when you're done, then walks in the direction of the <<if $weather is "rain" or $weather is "snow">>library<<else>>rear courtyard<</if>>.
 <br><br>
 
 <<link [[Next|Canteen]]>><<endevent>><</link>>
@@ -3774,7 +3855,7 @@ You approach Kylar's desk.
 <br><br>
 <<kylaroptions>>
 
-:: Kylar Playground
+:: Kylar Courtyard
 <<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>><<run statusCheck("Kylar")>>
 
 <<npc Kylar>><<person1>>
@@ -4191,7 +4272,7 @@ When <<he>> finishes, <<he>> opens <<his>> mouth to say something. You turn away
 	<<ejaculation>><<npcincr Kylar lust -20>>
 
 	Kylar closes <<his>> eyes and rests <<his>> head on you.
-	<<if $orgasmcurrent is 0 and !$worn.genitals.type.includes("chastity")>>
+	<<if $orgasmcurrent is 0 and !playerChastity()>>
 		<<if _kylarStatus.includes("Rage")>>
 			After a few seconds, <<he>> backs up until <<hes>> facing your <<genitals>>. "You didn't cum," <<he>> murmurs. "Was I... not good enough?" <<He>> shakes <<his>> head violently. "I'll make up for it. I'll show you."
 		<<else>>
@@ -4238,7 +4319,7 @@ When <<he>> finishes, <<he>> opens <<his>> mouth to say something. You turn away
 	<<neutral 1>>
 	<<molested>>
 	<<maninit>><<set $kylar.raped += 1>>
-	<<if $daystate isnot "night">><<enable_rescue>><</if>>
+	<<if Time.dayState isnot "night">><<enable_rescue>><</if>>
 	Kylar pushes you toward the alley, <<his>> knife poking the small of your back. You turn another corner and find a mattress already lying there.
 	<<if _kylarStatus.includes("MaxRage")>>
 		<<set $NPCList[0].righthand to "none">>
@@ -4306,9 +4387,8 @@ When <<he>> finishes, <<he>> opens <<his>> mouth to say something. You turn away
 :: Kylar Parasites Feed
 <<set $outside to 0>><<set $location to "home">><<effects>>
 <<set _container to $container[$location]>>
-<<set _pregnancy to $sexStats.anus.pregnancy>>
 
-Nothing seems to be amiss, until you check in on <<print (_pregnancy.namesChildren is true ? "your children" : "the parasites")>>.
+Nothing seems to be amiss, until you check in on <<print ($pregnancyStats.namesParasitesChild is true ? "your children" : "the parasites")>>.
 <br><br>
 You see a small note near to the <<print _container.name>> with the letter "K" on it.
 
@@ -4324,7 +4404,7 @@ You see a small note near to the <<print _container.name>> with the letter "K" o
 	<br><br>
 	You bury them.
 	<<ggtrauma>>
-	<<set _traumaMulti to (_pregnancy.namesChildren is true ? 2 : 1)>>
+	<<set _traumaMulti to ($pregnancyStats.namesParasitesChild is true ? 2 : 1)>>
 	<<trauma `30 * _traumaMulti * _container.deadCreatures`>>
 	<<if $wraith.state and $wraithShow>>
 		<<if !$wraithAngerCount>>
@@ -4350,11 +4430,16 @@ You see a small note near to the <<print _container.name>> with the letter "K" o
 <<set $outside to 0>><<effects>>
 <<set $kylar_action to "loft">>
 
-You tell Kylar about the loft at the orphanage, and ask if <<he>> has any thoughts on what to do with the space.
+You tell Kylar about the loft at the orphanage and ask if <<he>> has any thoughts on what to do with the space.
 <br><br>
 
-"You could hide anything up there," <<he>> says. "I-I have an idea. I could set up a lab like I have at ho-" <<he>> interrupts <<himself>>, and glances around. "Like I've seen on TV. You could make pepper spray. The basic ingredients aren't hard to get, it just takes time to ferment."
+"You could hide anything up there," <<he>> says. "I-I have an idea. I could set up a lab like I have at ho-" <<he>> interrupts <<himself>> and glances around. "Like I've seen on TV. You could make pepper spray. The basic ingredients aren't hard to get, it just takes time to ferment."
 <br><br>
+
+<<if $daily.manorLab gte 1>>
+	You're intimately familiar with the lab Kylar's referring to, having cleaned it yourself. <<He>> doesn't need to hide it from you, but you get the feeling <<he>> doesn't want the other orphans to overhear.
+	<br><br>
+<</if>>
 
 "I know where to get the equipment," <<he>> adds. "It will be expensive though."
 <br><br>
@@ -4623,7 +4708,7 @@ The two of you continue walking.
 <<else>>
 	Eventually, you reach the park's fountain.
 <</if>>
-<<if $season is "winter">>
+<<if Time.season is "winter">>
 	<<if !$kylarSeen.includes("fountainWinter")>>
 		<<set $kylarSeen.pushUnique("fountainWinter")>>
 		Kylar stops in place, staring at the fountain. <<He>> seems spellbound. The constantly running water and the cold temperature has caused much of the fountain's structure to freeze over and form icicles thicker than your arm, and at least twice as long. Near the centre, some water remains unfrozen.
@@ -4805,7 +4890,7 @@ Kylar lowers the box, and nods. "I-it's okay," <<he>> says. "P-people refuse gif
 <br><br>
 <<set $kylar_camera to 2>>
 
-<<run Furniture.set('owlplushie', 'decoration', {
+<<run Furniture.set('owlplushie', 'owlplushie', {
 	name	: 'owl plushie',
 	nameCap	: 'Owl plushie'
 })>>

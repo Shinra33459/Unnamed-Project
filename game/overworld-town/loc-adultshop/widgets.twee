@@ -201,7 +201,7 @@
 
 <<widget "getadultshopstate">>
 	<<sydneySchedule>>
-	<<if $hour gte 21 or $weekday is 1 or ($weekday is 7 ? $hour lt 9 : $hour lt 16) or $adultshophelped is 1>>
+	<<if Time.hour gte 21 or Time.weekDay is 1 or (Time.weekDay is 7 ? Time.hour lt 9 : Time.hour lt 16) or $adultshophelped is 1>>
 		<<set $adultshopstate to "closed">>
 	<<elseif _sydney_location is "shop">>
 		<<set $adultshopstate to "sydney">>
@@ -251,7 +251,7 @@
 		<</addinlineevent>>
 	<</if>>
 
-	<<if $adultshopstate is "sydney" and ($NPCName[$NPCNameList.indexOf("Whitney")].state is "active" or $NPCName[$NPCNameList.indexOf("Whitney")].state is "rescued")>>
+	<<if $adultshopstate is "sydney" and C.npc.Whitney.state is "active">>
 		<<addinlineevent "whitneydildothief" 1>>
 			<<adultshopicon>><<link [[Adult Shop (0:01)|Whitney Dildo Thief]]>><<pass 1>><</link>>
 		<</addinlineevent>>
@@ -270,7 +270,6 @@
 	<</if>>
 
 	<<runeventpool>>
-
 <</widget>>
 
 <<widget "giveNPCsextoy">>
@@ -487,10 +486,10 @@
 		<</addinlineevent>>
 	<</if>>
 
-	<<if $NPCName[$NPCNameList.indexOf("Whitney")].state isnot "dungeon" and $whitneyromance gte 1 and !$adultShopWhitney and $adultshopstate isnot "sydney" and $NPCName[$NPCNameList.indexOf("Whitney")].dom gte 10>>
+	<<if $NPCName[$NPCNameList.indexOf("Whitney")].state isnot "dungeon" and $whitneyromance gte 1 and !$weekly.adultShopWhitney and $adultshopstate isnot "sydney" and $NPCName[$NPCNameList.indexOf("Whitney")].dom gte 10>>
 		<<addinlineevent "whitneytoysex" 1>>
 			/*Whitney arm locks you, forces you outside, spanks you with a flog.*/
-			<<set $adultShopWhitney to true>> /* this event will only happen once a week */
+			<<set $weekly.adultShopWhitney to true>> /* this event will only happen once a week */
 			<<npc "Whitney">>
 			As you're leaning over stocking shelves, a hand twists your arm behind your back. The faint scent of cigarettes fills your nostrils.
 			<br><br>
@@ -548,7 +547,7 @@
 		<</addinlineevent>>
 	<</if>>
 
-	<<if $weekday is 7 or $weekday is 6>>
+	<<if Time.weekDay is 7 or Time.weekDay is 6>>
 		<<addinlineevent "adultshopleighton" 0.5>>
 			Leighton walks into the store.
 			<<npc "Leighton">><<person1>>
@@ -580,7 +579,7 @@
 	<<addinlineevent "customerassistance" 1>>
 		<<generateAdultShopCustomer 1>><<person1>>
 		A <<person>> approaches the counter looking confused and embarrassed.
-		"Uh, hi. Can you help me find a…" Lost for words, <<he>> resorts to gestures.
+		"Uh, hi. Can you help me find a..." Lost for words, <<he>> resorts to gestures.
 
 		<<if $awareness gte 300>>
 			<br><br>
@@ -683,8 +682,7 @@
 <</widget>>
 
 <<widget "passoutadultshop">>
-/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
-	<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+	<<if isPlayerNonparasitePregnancyEnding()>>
 		<<pregnancyWatersBrokenPassout "adultShop">>
 	<<else>>
 		<<link [[Everything fades to black...|Adult Shop Passout Bondage]]>><</link>>
@@ -695,14 +693,20 @@
 	<<set _wage to 15>>
 <</widget>>
 
-<<widget "unlockAdultShop">><<nobr>>
-<<set $adultshopunlocked to true>>
-<<unset $adultshopgrandopening>>
-<<unset $adultshopopeningevent>>
-<<unset $adultshopopeningsydney>>
-<<if $adultshopdegree is undefined>>
-	<<set $effectsmessage to 1>>
-	<<set $toy_message to 1>>
-	<<set $adultshopdegree to 1>>
-<</if>>
-<</nobr>><</widget>>
+<<widget "unlockAdultShop">>
+	<<set $adultshopunlocked to true>>
+	<<unset $adultshopgrandopening>>
+	<<unset $adultshopopeningevent>>
+	<<unset $adultshopopeningsydney>>
+	<<if $adultshopdegree is undefined>>
+		<<set $effectsmessage to 1>>
+		<<set $toy_message to 1>>
+		<<set $adultshopdegree to 1>>
+	<</if>>
+	<<if $adultshopcontribution>>
+		<<earnFeat "Opened Pandoras Box">>
+		<<if $adultshopcontribution gte 12>>
+			<<earnFeat "Opened Pandoras Cocks">>
+		<</if>>
+	<</if>>
+<</widget>>

@@ -1,7 +1,9 @@
 /* eslint-disable jsdoc/require-description-complete-sentence */
 // adjust mousetrap behavior, see mousetrap.js
-// eslint-disable-next-line no-undef
 Mousetrap.prototype.stopCallback = function (e, element, combo) {
+	// game uses V.tempDisable to indicate when the keyboard shortcuts shouldn't trigger
+	// e.g. when typing a name of a new outfit
+	if (V.tempDisable) return true; // don't trigger shortcut actions when it's set
 	return false;
 };
 
@@ -9,47 +11,6 @@ Mousetrap.prototype.stopCallback = function (e, element, combo) {
 // eslint-disable-next-line no-undef
 Mousetrap.bind(["z", "n", "enter", "space"], function () {
 	$("#passages #next a.macro-link").trigger("click");
-});
-
-/* obsolete
-// add bind for fixing stuck animations
-// eslint-disable-next-line no-undef
-Mousetrap.bind(["f"], function () {
-	if (document.activeElement.tagName === "INPUT" && document.activeElement.type !== "radio" && document.activeElement.type !== "checkbox")
-		return;
-
-	fixStuckAnimations();
-});
-*/
-
-Macro.add("time", {
-	handler() {
-		let daystate; // Never checked and always overwritten - no need to init with old value
-		let nightstate; // Tracks whether it's before midnight or after
-		let time = V.time;
-		// Sanity check
-		if (time < 0) time = 0;
-		if (time >= 24 * 60) time = (24 * 60) - 1; //note: no changes are made to V.time in this function
-
-		const hour = Math.floor(time / 60);
-		if (hour < 6) {
-			daystate = "night";
-			nightstate = "morning";
-		} else if (hour < 9) {
-			daystate = "dawn";
-		} else if (hour < 18) {
-			daystate = "day";
-		} else if (hour < 21) {
-			daystate = "dusk";
-		} else {
-			daystate = "night";
-			nightstate = "evening";
-		}
-		V.hour = hour;
-		V.daystate = daystate;
-		T.nightstate = nightstate;
-		T.timeChecked = true;
-	},
 });
 
 /*
@@ -90,8 +51,9 @@ Macro.add("twinescript", {
  * Can iterate over
  *
  * Copied from SugarCube sources.
- * @param range
- * @param {function(key,value):void} handler
+ *
+ * @param {any} range Can be String or Object.
+ * @param {function(string,any):void} handler Function for each key and value pair.
  */
 function rangeIterate(range, handler) {
 	let list;
@@ -128,7 +90,12 @@ function rangeIterate(range, handler) {
 window.rangeIterate = rangeIterate;
 
 /**
- * Define macro, passing arguments to function and store them in $args, preserving & restoring previous $args
+ * Define macro, passing arguments to function and store them in $args, preserving & restoring previous $args.
+ *
+ * @param {string} macroName
+ * @param {Function} macroFunction
+ * @param {object} tags
+ * @param {boolean} skipArgs
  */
 function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 	Macro.add(macroName, {
@@ -154,7 +121,15 @@ function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 }
 
 /**
- * Define macro, where macroFunction returns text to wikify & print
+ * Define macro, passing arguments to function and store them in $args, preserving & restoring previous $args.
+ *
+ * Expectation: macroFunction returns text to wikify & print.
+ *
+ * @param {string} macroName
+ * @param {Function} macroFunction
+ * @param {object} tags
+ * @param {boolean} skipArgs
+ * @param {boolean} maintainContext
  */
 function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext) {
 	DefineMacro(
@@ -168,8 +143,10 @@ function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext)
 }
 
 /**
- * @param worn clothing article, State.variables.worn.XXXX
- * @param slot clothing article slot used
+ * Creates and returns the keyword describing the integrity of a clothing article.
+ *
+ * @param {object} worn clothing article, State.variables.worn.XXXX
+ * @param {string} slot clothing article slot used
  * @returns {string} condition key word ("tattered"|"torn|"frayed"|"full")
  */
 function integrityKeyword(worn, slot) {
@@ -187,8 +164,10 @@ function integrityKeyword(worn, slot) {
 window.integrityKeyword = integrityKeyword;
 
 /**
- * @param worn clothing article, State.variables.worn.XXXX
- * @param slot clothing article, State.variables.worn.XXXX
+ * Returns the integrity prefix of the clothing object.
+ *
+ * @param {object} worn clothing article, State.variables.worn.XXXX
+ * @param {string} slot clothing article slot used
  * @returns {string} printable integrity prefix
  */
 function integrityWord(worn, slot) {
@@ -249,7 +228,7 @@ function faceintegrity() {
 DefineMacroS("faceintegrity", faceintegrity);
 
 /**
- * @param worn clothing article, State.variables.worn.XXXX
+ * @param {object} worn clothing article, State.variables.worn.XXXX
  * @returns {string} printable clothing colour
  */
 function clothesColour(worn) {
@@ -269,9 +248,9 @@ window.clothesColour = clothesColour;
  * @returns {void}
  */
 function outfitChecks() {
-	T.underOutfit = V.worn.under_lower.outfitSecondary && V.worn.under_lower.outfitSecondary[1] === V.worn.under_upper.name;
-	T.middleOutfit = V.worn.lower.outfitSecondary && V.worn.lower.outfitSecondary[1] === V.worn.upper.name;
-	T.overOutfit = V.worn.over_lower.outfitSecondary && V.worn.over_lower.outfitSecondary[1] === V.worn.over_upper.name;
+	T.underOutfit = (V.worn.under_lower.outfitSecondary && V.worn.under_lower.outfitSecondary[1] === V.worn.under_upper.name) || false;
+	T.middleOutfit = (V.worn.lower.outfitSecondary && V.worn.lower.outfitSecondary[1] === V.worn.upper.name) || false;
+	T.overOutfit = (V.worn.over_lower.outfitSecondary && V.worn.over_lower.outfitSecondary[1] === V.worn.over_upper.name) || false;
 
 	T.underNaked = V.worn.under_lower.name === "naked" && V.worn.under_upper.name === "naked";
 	T.middleNaked = V.worn.lower.name === "naked" && V.worn.upper.name === "naked";
@@ -281,17 +260,15 @@ function outfitChecks() {
 	T.fullyNaked = T.topless && T.bottomless;
 }
 window.outfitChecks = outfitChecks;
+DefineMacro("outfitChecks", outfitChecks);
 
 /**
- * @return {boolean} whether or not any main-body clothing is out of place or wet
+ * @returns {boolean} whether or not any main-body clothing is out of place or wet
  */
 function checkForExposedClothing() {
 	return setup.clothingLayer.torso.some(clothingLayer => {
 		const wetstage = V[clothingLayer.replace("_", "") + "wetstage"];
-		return (
-			V.worn[clothingLayer].state !== setup.clothes[clothingLayer][clothesIndex(clothingLayer, V.worn[clothingLayer])].state_base ||
-			wetstage >= 3
-		);
+		return V.worn[clothingLayer].state !== setup.clothes[clothingLayer][clothesIndex(clothingLayer, V.worn[clothingLayer])].state_base || wetstage >= 3;
 	});
 }
 window.checkForExposedClothing = checkForExposedClothing;
@@ -373,44 +350,6 @@ function numberify(selector) {
 }
 DefineMacroS("numberify", numberify);
 
-/* obsolete
-// blink entire page to fix a bug in Chrome where animation on images doesn't start
-function fixStuckAnimations() {
-	const scrollX = window.scrollX;
-	const scrollY = window.scrollY;
-	const imgs = $("#story").add($("#ui-bar"));
-	imgs.toggleClass("hidden");
-	window.setTimeout(() => {
-		imgs.toggleClass("hidden");
-		window.scroll(scrollX, scrollY);
-	}, 5);
-}
-window.fixStuckAnimations = fixStuckAnimations;
-
-// attaches event listeners to combat images
-function initTouchToFixAnimations() {
-	$(document).on("click", "#divsex img", fixStuckAnimations);
-}
-
-$(document).on(":passagedisplay", function (ev) {
-	if (V.combat) {
-		initTouchToFixAnimations();
-	}
-	function checkFadingSpans() {
-		const spans = $(".fading");
-		if (spans.length > 0) {
-			const span = spans[Math.floor(Math.random() * spans.length)];
-			setTimeout(() => {
-				$(span).removeClass("fading").addClass("faded");
-				checkFadingSpans();
-			}, Math.random() * 1000 + 500);
-		}
-	}
-
-	setTimeout(checkFadingSpans, 1000);
-});
-*/
-
 function saveDataCompare(save1, save2) {
 	const result = {};
 	const keys = Object.keys(save1);
@@ -424,6 +363,40 @@ function saveDataCompare(save1, save2) {
 	return result;
 }
 window.saveDataCompare = saveDataCompare;
+
+/**
+ * Replays current passage with different RNG and records updated RNG into sessionStorage
+ */
+function updateSessionRNG() {
+	if (!(V.debug || V.cheatdisable === "f" || V.testing)) return; // do nothing unless debug is enabled
+	State.restore(); // restore game state before the passage was processed
+	const sessionData = session.get("state"); // get game state from session storage
+	const delta = sessionData.delta[sessionData.index]; // current history frame
+	State.random(); // re-roll rng
+	const sprng = State.prng.state; // get new prng state
+	const deltaprng =
+		typeof delta.prng.i === "number" // check if encoded
+			? sprng
+			: { S: [2, sprng.S], i: [2, sprng.i], j: [2, sprng.j] };
+	delta.prng = deltaprng; // save new rng state
+	session.set("state", sessionData); // send altered session data back into storage
+	Engine.show(); // replay the passage with new rng
+}
+window.updateSessionRNG = updateSessionRNG;
+
+// Add binds for going back and forth in history and re-rolling RNG
+Mousetrap.bind("/", () => {
+	Engine.backward();
+	return false;
+});
+Mousetrap.bind("*", () => {
+	updateSessionRNG();
+	return false;
+});
+Mousetrap.bind("-", () => {
+	Engine.forward();
+	return false;
+});
 
 // For the optional numpad to the right of the screen
 function mobClick(index) {
@@ -610,13 +583,3 @@ Macro.add("foldout", {
 		e.appendTo(this.output);
 	},
 });
-
-/**
- * @returns 30 for November, 31 for December, 28 for February (29 if leap year), et cetera 
- * Uses current in-game month and year when no arguments provided
- */
-function getLastDayOfMonth(month, year) {
-    let monthNumber = new Date(Date.parse((month || V.month) + ' 1 ' + (year || V.year))).getMonth() + 1;
-    return new Date((year || V.year), monthNumber, 0).getDate();
-}
-window.getLastDayOfMonth = getLastDayOfMonth;

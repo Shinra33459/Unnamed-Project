@@ -27,32 +27,41 @@ const ErrorSystem = ((Scripting, Errors) => {
 		handler() {
 			const exp = this.args.full;
 			const result = Scripting.evalJavaScript(exp[0] === "{" ? `(${exp})` : exp);
-			let { message, source, depth, exportable } = Object.assign(
+			let { message, source, depth, exportable, logged } = Object.assign(
 				{
 					message: "Message not set",
 					source: null,
 					depth: 0,
 					exportable: true,
+					logged: true,
 				},
 				result
 			);
 			if (source === null) source = getTargetSource.call(this, depth);
-			Errors.inlineReport(message, source, exportable).appendTo(this.output);
+			throwError(this.output, message, source, exportable, logged);
 		},
 	});
 
 	Macro.add("errorp", {
 		handler() {
-			if (this.args.length < 1)
-				return this.error(`Missing <<errorP>> arguments. ${this.args}`);
+			if (this.args.length < 1) return this.error(`Missing <<errorP>> arguments. ${this.args}`);
 			const message = this.args[0];
-			const source =
-				this.args[1] || this.parser.source.slice(0, this.parser.matchStart).slice(-128);
-			Errors.inlineReport(message, source).appendTo(this.output);
+			const source = this.args[1] || this.parser.source.slice(0, this.parser.matchStart).slice(-128);
+			const isExportable = this.args[2] || true;
+			const isLogged = this.args[3] || true;
+			throwError(this.output, message, source, isExportable, isLogged);
+		},
+	});
+
+	Macro.add("log", {
+		handler() {
+			console.log(...this.args);
 		},
 	});
 
 	/**
+	 * DEPRECATED: Time should no longer be able to desynchronise, so this check is unnecessary.
+	 *
 	 * Jimmy: checkTimeSystem macro to print a message if time desynchronises.
 	 *  	   Potential to place time correction code here instead of in backComp.
 	 */
@@ -60,16 +69,12 @@ const ErrorSystem = ((Scripting, Errors) => {
 		handler() {
 			if (V.time !== undefined && V.hour !== undefined && V.minute !== undefined) {
 				if (V.time !== V.hour * 60 + V.minute) {
-					const message = `$time: ${V.time} desynchronised from $hour: ${
-						V.hour
-					} and $minute: ${V.minute}. Total: ${V.hour * 60 + V.minute}.`;
+					const message = `$time: ${V.time} desynchronised from $hour: ${V.hour} and $minute: ${V.minute}. Total: ${V.hour * 60 + V.minute}.`;
 					const source = `Caught in Passage ${this.args[0]}. ${V.passage}, <<checkTimeSystem>>.`;
-					Errors.inlineReport(message, source).appendTo(this.output);
+					throwError(this.output, message, source);
 				}
 			} else {
-				console.debug(
-					`One of the time variables is not accessible yet: ${V.passage}: ${DOL.Stack}.`
-				);
+				console.debug(`One of the time variables is not accessible yet: ${V.passage}: ${DOL.Stack}.`);
 			}
 		},
 	});
@@ -162,7 +167,7 @@ var General = ((Macro, SexTypes) => {
 		handler() {
 			const type = getGooTypes(...this.args)[0];
 			if (type === "cum" || type === "both") {
-				Wikifier.wikifyEval("<<fertilise>>");
+				Wikifier.wikifyEval("<<fertiliseParasites>><<fertiliseParasites 'vagina'>>");
 			}
 		},
 	});
@@ -200,11 +205,7 @@ var General = ((Macro, SexTypes) => {
 			const exp = this.args.full;
 			const map = Scripting.evalJavaScript(exp[0] === "{" ? `(${exp})` : exp);
 			if (typeof map !== "object") {
-				Errors.inlineReport(
-					"Incorrect argument used in <<reroute>>",
-					{ exp, map },
-					false
-				).appendTo(this.output);
+				throwError(this.output, "Incorrect argument used in <<reroute>>", { exp, map }, false);
 				return this.output;
 			}
 			linkOverride(map);

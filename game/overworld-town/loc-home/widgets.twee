@@ -2,34 +2,38 @@
 
 <<widget "home_outside">>
 	<<if $exposed gte 2>>
-		<<if $daystate is "night">>
+		<<if Time.dayState is "night">>
 			<<if $exhibitionism gte 55>>
-				<<doubledoorsicon>><<link [[Sneak outside (0:02)|Home Leave Naked]]>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist4>><</if>>
+				<<orphanagedoorsicon>><<link [[Sneak outside (0:02)|Home Leave Naked]]>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist4>><</if>>
+				<br>
 			<</if>>
 		<<else>>
 			<<if $exhibitionism gte 75>>
-				<<doubledoorsicon>><<link [[Sneak outside (0:05)|Home Leave Naked Day]]>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist5>><</if>>
+				<<orphanagedoorsicon>><<link [[Sneak outside (0:05)|Home Leave Naked Day]]>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist5>><</if>>
+				<br>
 			<</if>>
 		<</if>>
 	<<elseif $exposed gte 1>>
-		<<if $daystate is "night">>
+		<<if Time.dayState is "night">>
 			<<if $exhibitionism gte 15>>
-				<<doubledoorsicon>><<link [[Sneak outside (0:02)|Home Leave Undies]]>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist2>><</if>>
+				<<orphanagedoorsicon>><<link [[Sneak outside (0:02)|Home Leave Undies]]>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist2>><</if>>
+				<br>
 			<</if>>
 		<<else>>
 			<<if $exhibitionism gte 35>>
-				<<doubledoorsicon>><<link [[Sneak outside (0:05)|Home Leave Undies Day]]>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist3>><</if>>
+				<<orphanagedoorsicon>><<link [[Sneak outside (0:05)|Home Leave Undies Day]]>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist3>><</if>>
+				<br>
 			<</if>>
 		<</if>>
 	<<else>>
-		<<if $hour gte 18 and $hour lte 20 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40 and $robinmissing is 0 and !$robinTraumaVisit>>
-			<<doubledoorsicon>><<link [[Leave orphanage (0:01)|Robin Trauma Visit]]>><<set $phase to 2>><<pass 1>><</link>>
+		<<if Time.hour gte 18 and Time.hour lte 20 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40 and $robinmissing is 0 and !$robinTraumaVisit>>
+			<<orphanagedoorsicon>><<link [[Leave orphanage (0:01)|Robin Trauma Visit]]>><<set $phase to 2>><<pass 1>><</link>>
+			<br>
 		<<else>>
-			<<doubledoorsicon>><<link [[Leave orphanage (0:01)|Domus Street]]>><<pass 1>><</link>>
+			<<orphanagedoorsicon>><<link [[Leave orphanage (0:01)|Domus Street]]>><<pass 1>><</link>>
 			<br>
 		<</if>>
 	<</if>>
-
 <</widget>>
 
 <<widget "home_effects">>
@@ -40,13 +44,13 @@
 
 <<widget "slime_wake_bodyliquid">>
 	<<set _liquid to _args[0]>>
-	<<if $player.penisExist and $player.virginity.penile isnot true and !$worn.genitals.type.includes("chastity")>>
+	<<if $player.penisExist and $player.virginity.penile isnot true and !playerChastity("penis")>>
 		<<bodyliquid "penis" _liquid random(1,3)>>
 	<</if>>
-	<<if $player.vaginaExist and $player.virginity.vaginal isnot true and !$worn.genitals.type.includes("chastity")>>
+	<<if $player.vaginaExist and $player.virginity.vaginal isnot true and !playerChastity("hidden")>>
 		<<bodyliquid "vagina" _liquid random(1,3)>>
 	<</if>>
-	<<if $player.virginity.anal isnot true and $worn.genitals.anal_shield isnot 1 and $analdisable is "f">>
+	<<if $player.virginity.anal isnot true and !playerChastity("anus") and $analdisable is "f">>
 		<<bodyliquid "anus" _liquid random(1,3)>>
 	<</if>>
 	<<if $player.virginity.oral isnot true>>
@@ -67,7 +71,7 @@
 	<<set _newLocation to ["Residential alleyways", "Commercial alleyways", "Park", "Industrial alleyways"].random()>>
 	<<set $eventskip to 1>>
 	<<set $slimeSleepEvent to 3>>
-	<<if $hour lt 24 and $hour gt 12>>
+	<<if Time.hour lt 24 and Time.hour gt 12>>
 		<<set $slimeSleepEvent += 1>>
 	<</if>>
 	You wake up in a confused and disoriented state. The last thing you recall is getting into bed <<if $robinbed is "theirs">>with Robin<<else>>like normal<</if>>. However, you're clearly not in it anymore. You have a feeling that the slime in your ear is involved in some way.
@@ -89,4 +93,48 @@
 	Having a look round your surroundings, you think that you've somehow been relocated to the <<print _newLocation.toLocaleLowerCase()>>.
 	<br><br>
 	<<link [[Next|_newLocation]]>><</link>>
+<</widget>>
+
+<<widget "orphanageWard">>
+	<<if $debug is 1 or $ward_unlocked>>
+		<<if $exposed gt 0 or ["split dress", "short ballgown", "large towel", "cropped hoodie", "slut shirt,", "tie-front top", "towel top"].includes($worn.upper.name) or ["split dress skirt", "short ballgown skirt", "micro pleated skirt", "miniskirt", "towel skirt"].includes($worn.lower.name)>>
+			<span class="pink">You're dressed too indecently to enter the youth ward.</span>
+		<<elseif $liquidcount gte 1>>
+			<span class="pink">You should clean yourself before entering the youth ward.</span>
+		<<else>>
+			<<if !$orphanageWardIntro>>
+				<<childicon "blocks">><<link [[Ward (0:01)|Orphanage Ward Intro]]>><<pass 1>><</link>>
+			<<else>>
+				<<childicon "blocks">><<link [[Ward (0:01)|Orphanage Ward]]>><<pass 1>><</link>>
+			<</if>>
+		<</if>>
+		<br>
+	<</if>>
+<</widget>>
+
+<<widget "orphanageWardOptions">>
+	<<childicon "crib">><<link [[Nursery|Childrens Home]]>><<set $exitPassage to $passage>><</link>>
+	<br>
+	<<if $hallucinations gte 2 and $rng is 100>>
+		<<main_hall_icon>><<link [[Main Hall|Orphanage Ward Door]]>><</link>>
+		<br>
+	<<else>>
+		<<main_hall_icon>><<link [[Main Hall|Orphanage]]>><</link>>
+		<br>
+	<</if>>
+<</widget>>
+
+<<widget "bathroomLink">>
+	<<if getRobinLocation() is "bath" and $halloween isnot 1>>
+		<<if $robinBathKnown>>
+			Robin is in the bath.
+			<br>
+		<</if>>
+		<<bathroomicon>><<link [[Bathroom (0:01)|Robin Bath]]>><<pass 1>><</link>>
+	<<else>>
+		<<if $robinBathKnown>>
+			<<unset $robinBathKnown>>
+		<</if>>
+		<<bathroomicon>><<link [[Bathroom (0:01)|Bathroom]]>><<pass 1>><</link>>
+	<</if>>
 <</widget>>

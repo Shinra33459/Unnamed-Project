@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /*
  * On caching.
  *
@@ -42,32 +43,32 @@
  * @property {string} [blendMode] Recoloring mode (see docs for globalCompositeOperation; "hard-light", "multiply" and "screen" ), default none.
  * @property {string|object} [blend] Color for recoloring, CSS color string or gradient spec (see model.d.ts).
  * @property {string} [masksrc] Mask image path. If present, only parts where mask is opaque will be displayed.
- * @property {string} [animation] Name of animation to apply, default none
+ * @property {string} [animation] Name of animation to apply, default none.
  * @property {number} [frames] Frame numbers used to display static images, array of subsprite indices. For example, if model frame count is 6 but layer has only 3 subsprites, default frames would be [0, 0, 1, 1, 2, 2].
- * @property {string[]} [filters] Names of filters that should be applied to the layer; filters themselves are taken from model options
- * @property {number} [dx] Layer X position on the image, default 0
- * @property {number} [dy] Layer Y position on the image, default 0
- * @property {number} [width] Layer subsprite width, default = model width
- * @property {number} [height] Layer subsprite width, default = model height
+ * @property {string[]} [filters] Names of filters that should be applied to the layer; filters themselves are taken from model options.
+ * @property {number} [dx] Layer X position on the image, default 0.
+ * @property {number} [dy] Layer Y position on the image, default 0.
+ * @property {number} [width] Layer subsprite width, default = model width.
+ * @property {number} [height] Layer subsprite width, default = model height.
  *
- * The following functions can be used instead of constant properties. Their arguments are (options) where options are model options provided in render call (from _modeloptions variable for <<rendermodel>>/<<animatemodel>> widget)
- * @property {function} [showfn] (options)=>boolean Function generating `show` property. Should return boolean, do not use undefined/null/0/"" to hide layer, use of !! (double not) operator recommended.
- * @property {function} [srcfn] (options)=>string
- * @property {function} [zfn] (options)=>number
- * @property {function} [alphafn] (options)=>number
- * @property {function} [desaturatefn] (options)=>boolean
- * @property {function} [brightnessfn] (options)=>number
- * @property {function} [contrastftn] (options)=>number
- * @property {function} [blendModefn] (options)=>(string|object)
- * @property {function} [blendfn] (options)=>string
- * @property {function} [masksrcfn] (options)=>string
- * @property {function} [animationfn] (options)=>string
- * @property {function} [framesfn] (options)=>number[]
- * @property {function} [filtersfn] (options)=>string[]
- * @property {function} [dxfn] (options)=>number
- * @property {function} [dyfn] (options)=>number
- * @property {function} [widthfn] (options)=>number
- * @property {function} [heightfn] (options)=>number
+ * The following functions can be used instead of constant properties. Their arguments are (options) where options are model options provided in render call (from _modeloptions variable for <<rendermodel>>/<<animatemodel>> widget).
+ * @property {Function} [showfn] (options)=>boolean Function generating `show` property. Should return boolean, do not use undefined/null/0/"" to hide layer, use of !! (double not) operator recommended.
+ * @property {Function} [srcfn] (options)=>string.
+ * @property {Function} [zfn] (options)=>number.
+ * @property {Function} [alphafn] (options)=>number.
+ * @property {Function} [desaturatefn] (options)=>boolean.
+ * @property {Function} [brightnessfn] (options)=>number.
+ * @property {Function} [contrastftn] (options)=>number.
+ * @property {Function} [blendModefn] (options)=>(string|object).
+ * @property {Function} [blendfn] (options)=>string.
+ * @property {Function} [masksrcfn] (options)=>string.
+ * @property {Function} [animationfn] (options)=>string.
+ * @property {Function} [framesfn] (options)=>number[].
+ * @property {Function} [filtersfn] (options)=>string[].
+ * @property {Function} [dxfn] (options)=>number.
+ * @property {Function} [dyfn] (options)=>number.
+ * @property {Function} [widthfn] (options)=>number.
+ * @property {Function} [heightfn] (options)=>number.
  */
 
 /**
@@ -79,7 +80,7 @@
  * @property {Object<string, CanvasModelLayer>} layers Layers (by name).
  * @property {Function} [generatedOptions] Function ()=>string[] names of generated options.
  * @property {Function} [defaultOptions] Function ()=>object returning default options.
- * @property {function} [preprocess] Preprocessing function (options)=>void to generate temp options
+ * @property {Function} [preprocess] Preprocessing function (options)=>void to generate temp options.
  */
 
 // Consider doing proper class inheritance
@@ -170,12 +171,21 @@ window.CanvasModel = class CanvasModel {
 		}
 	}
 
+	hideLayer(name) {
+		const layer = this.layers[name];
+		if (!layer) {
+			console.error("Layer not found: " + this.name + "/" + name);
+			return;
+		}
+		layer.show = false;
+	}
+
 	/**
 	 * Update layers according to options and render them as static image.
 	 *
 	 * @param {CanvasRenderingContext2D} canvas Canvas to render on (can be created with {@link createCanvas}).
 	 * @param {object} options Options to use when rendering model.
-	 * @param [listener] Listener for Renderer events.
+	 * @param {listener} listener For Renderer events.
 	 */
 	render(canvas, options, listener) {
 		if (typeof options === "undefined") options = this.options;
@@ -191,7 +201,7 @@ window.CanvasModel = class CanvasModel {
 	 *
 	 * @param {CanvasRenderingContext2D} canvas Canvas to render on (can be created with {@link createCanvas}).
 	 * @param {object} options Options to use when rendering model.
-	 * @param [listener] Listener for Renderer events.
+	 * @param {listener} listener For Renderer events.
 	 * @returns {AnimatingCanvas} AnimatingCanvas object.
 	 */
 	animate(canvas, options, listener) {
@@ -212,19 +222,9 @@ window.CanvasModel = class CanvasModel {
 		}
 		Renderer.lastModel = this;
 		if (this.animated) {
-			return Renderer.animateLayers(
-				this.canvas,
-				this.compile(this.options),
-				this.listener,
-				true
-			);
+			return Renderer.animateLayers(this.canvas, this.compile(this.options), this.listener, true);
 		} else {
-			return Renderer.composeLayers(
-				this.canvas,
-				this.compile(this.options),
-				this.canvas.canvas.width / this.width,
-				this.listener
-			);
+			return Renderer.composeLayers(this.canvas, this.compile(this.options), this.canvas.canvas.width / this.width, this.listener);
 		}
 	}
 
@@ -232,14 +232,14 @@ window.CanvasModel = class CanvasModel {
 	 * Pre-process options. Typically you calculate some expression here and store them as generated options
 	 * Override in subclass.
 	 *
-	 * @param options Model options.
+	 * @param {options} options Model options.
 	 */
 	preprocess(options) {}
 
 	/**
 	 * Compile list of layers according to options.
 	 *
-	 * @param options Model options.
+	 * @param {options} options Model options.
 	 * @returns {CompositeLayerSpec[]} Layers.
 	 */
 	compile(options) {
@@ -279,24 +279,21 @@ window.CanvasModel = class CanvasModel {
 					layer[propname] = layer[fnkey](options);
 				} catch (e) {
 					if (layer.show) {
-						console.error(
-							"Error evaluating layer " + layer.name + " property " + propname
-						);
+						console.error("Error evaluating layer " + layer.name + " property " + propname);
 					}
 				}
 			}
 		}
 
 		for (const layer of this.layerList) {
-			propeval(layer, "show");
+			layer.show || propeval(layer, "show");
 			propeval(layer, "src");
 			if (!layer.src) {
 				layer.src = ""; // force string value
 				layer.show = false;
 			}
 			propeval(layer, "z");
-			if (typeof layer.z !== "number" && layer.show !== false)
-				console.error("Layer " + layer.name + " missing property z");
+			if (typeof layer.z !== "number" && layer.show !== false) console.error("Layer " + layer.name + " missing property z");
 			propeval(layer, "alpha");
 			propeval(layer, "blendMode");
 			propeval(layer, "blend");
@@ -372,7 +369,7 @@ Renderer.locateModel = function (modelName, slot) {
  */
 function assignDefaults(target, source) {
 	for (const k in source) {
-		if (!source.hasOwnProperty(k)) continue;
+		if (!Object.hasOwn(source, k)) continue;
 		if (!(k in target)) target[k] = source[k];
 	}
 	return target;

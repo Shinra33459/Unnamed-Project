@@ -1,4 +1,5 @@
-/* eslint-disable dot-notation */
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-undef */
 function mapMove(moveTo) {
 	const currentPassage = V.passage;
 	const destinationTable = [];
@@ -11,12 +12,11 @@ function mapMove(moveTo) {
 	const available = V.map.available;
 
 	// if(V.debug == 1 || available[currentPassage].includes(moveTo))
-	if (
-		V.debug === 1 ||
-		(available[currentPassage].includes(moveTo) && destinationTable.includes(moveTo))
-	) {
+	if (V.debug === 1 || (available[currentPassage].includes(moveTo) && destinationTable.includes(moveTo))) {
+		window.ironmanFlag = true;
 		Wikifier.wikifyEval("<<pass 5>>");
-		SugarCube.State.display(moveTo);
+		delete window.ironmanFlag;
+		Engine.play(moveTo);
 	}
 }
 window.mapMove = mapMove;
@@ -35,64 +35,36 @@ function shopClothingFilterToggleTrait(trait) {
 window.shopClothingFilterToggleTrait = shopClothingFilterToggleTrait;
 
 function shopClothingFilterSortOnDescription(traitOne, traitTwo) {
-	const descriptionOne = Wikifier.wikifyEval(
-		`<<shopTraitDescription ${traitOne}>>`
-	).textContent.trim();
-	const descriptionTwo = Wikifier.wikifyEval(
-		`<<shopTraitDescription ${traitTwo}>>`
-	).textContent.trim();
+	const descriptionOne = Wikifier.wikifyEval(`<<shopTraitDescription ${traitOne}>>`).textContent.trim();
+	const descriptionTwo = Wikifier.wikifyEval(`<<shopTraitDescription ${traitTwo}>>`).textContent.trim();
 
 	return descriptionOne > descriptionTwo;
 }
 window.shopClothingFilterSortOnDescription = shopClothingFilterSortOnDescription;
 
-window.wikifier = function (widget, arg1, arg2, arg3) {
-	if (arg3 !== undefined) {
-		Wikifier.wikifyEval("<<" + widget + " " + arg1 + " " + arg2 + " " + arg3 + ">>");
-	} else if (arg2 !== undefined) {
-		Wikifier.wikifyEval("<<" + widget + " " + arg1 + " " + arg2 + ">>");
-	} else if (arg1 !== undefined) {
-		Wikifier.wikifyEval("<<" + widget + " " + arg1 + ">>");
-	} else if (arg1 === undefined) {
-		Wikifier.wikifyEval("<<" + widget + ">>");
-	}
+// A wrapper for wikifyEval, only use for singular macro calls.
+function wikifier(widget, ...args) {
+	if (widget == null) return document.createDocumentFragment();
+	return Wikifier.wikifyEval("<<" + widget + (args.length ? " " + args.join(" ") : "") + ">>");
 };
-
-window.wikifier2 = function (str) {
-	// eslint-disable-next-line no-new
-	new Wikifier(null, str);
-};
+window.wikifier = wikifier;
 
 function actionsreplace(bodypart) {
 	const check = bodypart + "target";
 	if (V[check] === "tentacles") {
-		Wikifier.wikifyEval(
-			"<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitTentacle>><</replace>>"
-		);
+		Wikifier.wikifyEval("<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitTentacle>><</replace>>");
 	} else if (V[check] === "swarm") {
-		Wikifier.wikifyEval(
-			"<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitSwarm>><</replace>>"
-		);
+		Wikifier.wikifyEval("<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitSwarm>><</replace>>");
 	} else if (V[check] === "vore") {
-		Wikifier.wikifyEval(
-			"<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitVore>><</replace>>"
-		);
+		Wikifier.wikifyEval("<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitVore>><</replace>>");
 	} else if (V[check] === "struggle") {
-		Wikifier.wikifyEval(
-			"<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitStruggle>><</replace>>"
-		);
+		Wikifier.wikifyEval("<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitStruggle>><</replace>>");
 	} else if (V[check] === "machine") {
-		Wikifier.wikifyEval(
-			"<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitMachine>><</replace>>"
-		);
+		Wikifier.wikifyEval("<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitMachine>><</replace>>");
 	} else if (V[check] === "self") {
-		Wikifier.wikifyEval(
-			"<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitSelf>><</replace>>"
-		);
+		Wikifier.wikifyEval("<<replace #" + bodypart + "action>><<" + bodypart + "ActionInitSelf>><</replace>>");
 	} else {
-		Wikifier.wikifyEval(
-			"<<replace #" + bodypart + "action>><<" + bodypart + "ActionInit>><</replace>>"
-		);
+		Wikifier.wikifyEval("<<replace #" + bodypart + "action>><<" + bodypart + "ActionInit>><</replace>>");
 	}
 }
 window.actionsreplace = actionsreplace;
@@ -101,13 +73,13 @@ const combatActionColours = {
 	Default: {
 		brat: [
 			/* leftaction or rightaction */
-			"steal", "penwhack", "freeface", "leftcovervagina", "leftcoverpenis", "leftcoveranus", "rightcovervagina", "rightcoverpenis", "rightcoveranus", "leftunderpull", "leftskirtpull", "leftlowerpull", "leftupperpull", "rightunderpull", "rightskirtpull", "rightlowerpull", "rightupperpull", "rightUndressOther", "leftUndressOther", "stopchoke", "clench", "shacklewhack", "leftfold", "rightfold", "dildowhack", "hypnosiswhack", "leftstruggleweak", "rightstruggleweak", "handpullpenis", "handpullvagina", "handpullanus", "leftresistW", "rightresistW", "leftstillW", "rightstillW",
+			"steal", "penwhack", "freeface", "leftcovervagina", "leftcoverpenis", "leftcoveranus", "rightcovervagina", "rightcoverpenis", "rightcoveranus", "leftunderpull", "leftskirtpull", "leftlowerpull", "leftupperpull", "rightunderpull", "rightskirtpull", "rightlowerpull", "rightupperpull", "rightUndressOther", "leftUndressOther", "stopchoke", "clench", "shacklewhack", "leftfold", "rightfold", "dildowhack", "hypnosiswhack", "leftstruggleweak", "rightstruggleweak", "handpullpenis", "handpullvagina", "handpullanus", "leftresistW", "rightresistW", "leftstillW", "rightstillW", "penisremovecondom", "npcremovecondom",
 			/* feetaction */
-			"run", "hide", "confront", "feetresistW",
+			"run", "hide", "confront", "feetresistW", "legLock", "legLocked", "feetHold",
 			/* mouthaction */
-			"pullaway", "ejacspit", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl",
+			"pullaway", "ejacspit", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl", "askPullOut",
 			/* penisaction */
-			"othermouthescape", "escape", "otheranusescape", "fencingescape",
+			"othermouthescape", "escape", "otheranusescape", "fencingescape", "pullOut",
 			/* vaginaaction */
 			"tribescape",
 			/* anusaction */
@@ -123,9 +95,9 @@ const combatActionColours = {
 		],
 		meek: [
 			/* leftaction or rightaction */
-			"behind", "fold", "leftcovervaginameek", "leftcoverpenismeek", "leftcoveranusmeek", "rightcovervaginameek", "rightcoverpenismeek", "rightcoveranusmeek", "leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "pickupSexToy", "leftcamerapose", "rightcamerapose",
-			/*feetaction*/
-			"strut",
+			"behind", "fold", "leftcovervaginameek", "leftcoverpenismeek", "leftcoveranusmeek", "rightcovervaginameek", "rightcoverpenismeek", "rightcoveranusmeek", "leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "pickupSexToy", "leftcamerapose", "rightcamerapose", "peniscondom", "npcgivecondom",
+			/* feetaction */
+			"strut", "feetCurl",
 			/* mouthaction */
 			"grasp", "plead", "forgive", "down", "letout", "letoutorgasm", "noises", "pay",
 			/* penisaction */
@@ -137,17 +109,17 @@ const combatActionColours = {
 		],
 		sub: [
 			/* leftaction or rightaction */
-			"leftplay", "leftgrab", "leftstroke", "leftchest", "rightplay", "rightgrab", "rightstroke", "rightchest", "leftchest", "rightchest", "leftwork", "rightwork", "leftclit", "rightclit", "handedge", "keepchoke", "leftmasturbatepussy", "rightmasturbatepussy", "leftmasturbatepenis", "rightmasturbatepenis", "lefthandholdkeep", "righthandholdkeep", "lefthandholdnew", "righthandholdnew", "handguide", "lubeanus", "lubepussy", "lubepenis", "removebuttplug", "dildoOtherPussyTease", "dildoOtherPussyFuck", "dildoOtherAnusTease", "dildoOtherAnusFuck", "strokerOtherPenisTease", "strokerOtherPenisFuck", "dildoSelfPussyEntrance", "dildoSelfAnusEntrance", "dildoSelfPussy", "dildoSelfAnus", "strokerSelfPenisEntrance", "strokerSelfPenis",
+			"leftplay", "leftgrab", "leftstroke", "leftchest", "rightplay", "rightgrab", "rightstroke", "rightchest", "leftchest", "rightchest", "leftwork", "rightwork", "leftclit", "rightclit", "handedge", "keepchoke", "leftmasturbatepussy", "rightmasturbatepussy", "leftmasturbateanus", "rightmasturbateanus", "leftmasturbatepenis", "rightmasturbatepenis", "lefthandholdkeep", "righthandholdkeep", "lefthandholdnew", "righthandholdnew", "handguide", "lubeanus", "lubepussy", "lubepenis", "removebuttplug", "dildoOtherPussyTease", "dildoOtherPussyFuck", "dildoOtherAnusTease", "dildoOtherAnusFuck", "strokerOtherPenisTease", "strokerOtherPenisFuck", "dildoSelfPussyEntrance", "dildoSelfAnusEntrance", "dildoSelfPussy", "dildoSelfAnus", "strokerSelfPenisEntrance", "strokerSelfPenis",
 			/* feetaction */
 			"grab", "vaginagrab", "grabrub", "vaginagrabrub", "rub",
 			/* mouthaction */
-			"peniskiss", "kisslips", "kissskin", "suck", "lick", "ejacswallow", "moan", "breastsuck", "breastlick", "swallow", "movetochest", "othervagina", "mouth", "kissback", "vaginalick", "oraledge", "askchoke", "anallick", "analkiss", "askrough",
+			"peniskiss", "kisslips", "kissskin", "suck", "lick", "ejacswallow", "moan", "breastsuck", "breastlick", "swallow", "movetochest", "othervagina", "mouth", "kissback", "vaginalick", "oraledge", "askchoke", "anallick", "analkiss", "askrough", "condoms", "noCondoms",
 			/* penisaction */
 			"penistovagina", "penistoanus", "penisvaginafuck", "penisanusfuck", "othermouthtease", "othermouthrub", "othermouthcooperate", "tease", "cooperate", "otheranustease", "otheranusrub", "otheranuscooperate", "clitrub", "vaginaEdging", "otheranusEdging", "handtease", "handAnusRub", "handcooperate", "strokerCooperate",
 			/* fencing */
 			"otherpenisrub", "penistopenis", "penistopenisfuck", "fencingcooperate",
 			/* vaginaaction */
-			"vaginatopenis", "vaginapenisfuck", "othervaginarub", "vaginatovagina", "vaginatovaginafuck", "tribcooperate", "penisEdging", "tribedge", "vaginatopenisdouble", "vaginapenisdoublefuck", "penispussydouble", "penisanusdvp",
+			"vaginatopenis", "vaginapenisfuck", "othervaginarub", "vaginatovagina", "vaginatovaginafuck", "tribcooperate", "penisEdging", "tribedge", "vaginatopenisdouble", "vaginapenisdoublefuck", "penispussydouble", "penisanusdvp", "forceImpregnation",
 			/* anusaction */
 			"anustopenis", "anuspenisfuck", "penistease", "otherMouthAnusRub", "otherAnusRub", "penisEdging",
 			/* doubleanusaction */
@@ -174,6 +146,8 @@ const combatActionColours = {
 		brat: [
 			/* leftaction or rightaction */
 			"leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak",
+			/* feetaction */
+			"feetHold",
 			/* mouthaction */
 			"mouthpullawaytentacle", "stifleorgasm", "stifle", "mouthlulltentacle",
 			/* penisaction */
@@ -204,24 +178,26 @@ const combatActionColours = {
 		meek: [
 			/* leftaction or rightaction */
 			"leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl",
+			/* feetaction */
+			"feetCurl",
 			/* mouthaction */
 			"letout", "letoutorgasm", "noises",
 		],
 	},
 	Vore: {
 		brat: [
-			"leftescape", "rightescape", "lefthold", "righthold", "leftvorefree", "rightvorefree", "leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak",
+			"leftescape", "rightescape", "lefthold", "righthold", "leftvorefree", "rightvorefree", "leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak", "feetHold",
 		],
 		meek: [
-			"leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl",
+			"leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "feetCurl",
 		],
 	},
 	Swarm: {
 		brat: [
-			"leftfree", "rightfree", "frontpurgeleft", "frontpurgeright", "frontclearleft", "frontclearright", "backpurgeleft", "backpurgeright", "backclearleft", "backclearright", "chestclearleft", "chestclearright", "leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak",
+			"leftfree", "rightfree", "frontpurgeleft", "frontpurgeright", "frontclearleft", "frontclearright", "backpurgeleft", "backpurgeright", "backclearleft", "backclearright", "chestclearleft", "chestclearright", "leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak", "feetHold",
 		],
 		meek: [
-			"leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl",
+			"leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "feetCurl",
 		],
 		teal: ["swim"],
 	},
@@ -229,12 +205,14 @@ const combatActionColours = {
 		brat: [
 			/* leftaction or rightaction */
 			"mouth_strengthen", "mouth_grasp", "vagina_strengthen", "vagina_grasp", "penis_strengthen", "penis_grasp", "anus_strengthen", "anus_grasp", "chest_strengthen", "chest_grasp", "leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak",
+			/* feetaction */
+			"feetHold",
 		],
 		meek: [
 			/* leftaction or rightaction */
 			"leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "rest",
 			/* feetaction */
-			"evade", "plant",
+			"evade", "plant", "feetCurl",
 		],
 		def: [
 			/* leftaction or rightaction */
@@ -250,24 +228,24 @@ const combatActionColours = {
 		],
 	},
 	Machine: {
-		brat: ["leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak", "vaginal_push", "anal_push"],
+		brat: ["leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak", "vaginal_push", "anal_push", "feetHold"],
 		def: ["chain_struggle", "whack", "vaginal_whack", "anal_whack"],
-		meek: ["leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl"],
+		meek: ["leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "feetCurl"],
 	},
 	Self: {
 		brat: [
 			/* leftaction or rightaction */
-			"leftfree", "rightfree", "leftcovervagina", "leftcoverpenis", "leftcoveranus", "rightcovervagina", "rightcoverpenis", "rightcoveranus", "leftunderpull", "leftskirtpull", "leftlowerpull", "leftupperpull", "rightunderpull", "rightskirtpull", "rightlowerpull", "rightupperpull", "leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak",
+			"leftfree", "rightfree", "leftcovervagina", "leftcoverpenis", "leftcoveranus", "rightcovervagina", "rightcoverpenis", "rightcoveranus", "leftunderpull", "leftskirtpull", "leftlowerpull", "leftupperpull", "rightunderpull", "rightskirtpull", "rightlowerpull", "rightupperpull", "leftfold", "rightfold", "leftstruggleweak", "rightstruggleweak", "feetHold",
 		],
 		meek: [
 			/* leftaction or rightaction */
 			"leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "behind", "pickupSexToy",
 			/* feetaction */
-			"evade", "plant",
+			"evade", "plant", "feetCurl",
 		],
 		sub: [
 			/* Masturbate */
-			"leftmasturbatepenis", "rightmasturbatepenis", "leftmasturbatepussy", "rightmasturbatepussy", "dildoSelfPussyEntrance", "dildoSelfAnusEntrance", "strokerSelfPenisEntrance", "strokerSelfPenis", "lubepussy", "lubepenis", "lubeanus", "removebuttplug",
+			"leftmasturbatepenis", "rightmasturbatepenis", "leftmasturbatepussy", "rightmasturbatepussy", "leftmasturbateanus", "rightmasturbateanus", "dildoSelfPussyEntrance", "dildoSelfAnusEntrance", "strokerSelfPenisEntrance", "strokerSelfPenis", "lubepussy", "lubepenis", "lubeanus", "removebuttplug",
 		],
 		teal: ["swim"],
 	},
@@ -286,7 +264,7 @@ window.combatListColor = combatListColor;
 DefineMacroS("combatListColor", combatListColor);
 
 function combatButtonAdjustments(name, extra) {
-	jQuery(document).on("change", "#listbox-" + name, { name: name, extra: extra }, function (e) {
+	jQuery(document).on("change", "#listbox-" + name, { name, extra }, function (e) {
 		/* console.log(e.data); */
 		Wikifier.wikifyEval("<<replace #" + e.data.name + "Difficulty>><<" + e.data.name + "Difficulty" + e.data.extra + ">><</replace>>");
 		$("#" + e.data.name + "Select").removeClass("whiteList bratList meekList defList subList");
@@ -298,7 +276,7 @@ DefineMacroS("combatButtonAdjustments", combatButtonAdjustments);
 
 function combatDefaults() {
 	jQuery(document).on("change", "#listbox--defaultoption", function (e) {
-		Wikifier.wikifyEval('<<replace #othersFeelings>><<othersFeelings ' + this.value + '>><</replace>>');
+		Wikifier.wikifyEval("<<replace #othersFeelings>><<othersFeelings " + this.value + ">><</replace>>");
 	});
 	return "";
 }
@@ -365,38 +343,38 @@ function combatSkillCheck(skillname, targetid = 0, basedifficulty = 1000, multip
 window.combatSkillCheck = combatSkillCheck;
 
 function hairdressersReset() {
-	$(() => $("#hairDressers").on("change", ".macro-listbox", function (e) {
-		Wikifier.wikifyEval("<<replace #hairDressers>><<hairDressersOptions>><</replace>>");
-		Wikifier.wikifyEval("<<replace #currentCost>>To pay: £<<print _currentCost / 100>><</replace>>");
-	}));
-	return "";
+	$(() =>
+		$("#hairDressers").on("change", ".macro-listbox, .macro-radiobutton, .macro-checkbox", function (e) {
+			Wikifier.wikifyEval("<<replace #hairDressers>><<hairDressersOptions>><</replace>>");
+			Wikifier.wikifyEval("<<replace #currentCost>>To pay: £<<print _currentCost / 100>><</replace>><<numberify \"#passages > .passage\">>");
+		})
+	);
 }
-DefineMacroS("hairdressersReset", hairdressersReset);
+DefineMacro("hairdressersReset", hairdressersReset);
 
 function hairdressersResetAlt() {
-	$(() => $("#hairDressersSydney").on("click", ".macro-cycle", function (e) {
-		Wikifier.wikifyEval("<<replace #hairDressersSydney>><<hairDressersOptionsSydney>><</replace>>");
-		Wikifier.wikifyEval("<<replace #currentCost>>To pay: £<<print _currentCost / 100>><</replace>>");
-	}));
-	return "";
+	$(() =>
+		$("#hairDressersSydney").on("click", ".macro-cycle", function (e) {
+			Wikifier.wikifyEval("<<replace #hairDressersSydney>><<hairDressersOptionsSydney>><</replace>>");
+			Wikifier.wikifyEval("<<replace #currentCost>>To pay: £<<print _currentCost / 100>><</replace>><<numberify \"#passages > .passage\">>");
+		})
+	);
 }
-DefineMacroS("hairdressersResetAlt", hairdressersResetAlt);
+DefineMacro("hairdressersResetAlt", hairdressersResetAlt);
 
 function browsDyeReset() {
 	jQuery(document).on("change", "#listbox-browsdyeoption", function (e) {
 		Wikifier.wikifyEval("<<replace #browsColourPreview>><<browsColourPreview>><</replace>>");
 	});
-	return "";
 }
-DefineMacroS("browsDyeReset", browsDyeReset);
+DefineMacro("browsDyeReset", browsDyeReset);
 
 function NPCSettingsReset() {
 	jQuery(".passage").on("change", "#listbox--npcid", function (e) {
 		Wikifier.wikifyEval("<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>");
 	});
-	return "";
 }
-DefineMacroS("NPCSettingsReset", NPCSettingsReset);
+DefineMacro("NPCSettingsReset", NPCSettingsReset);
 
 function loveInterestFunction() {
 	jQuery(document).on("change", "#listbox-loveinterestprimary", function (e) {
@@ -405,12 +383,19 @@ function loveInterestFunction() {
 	jQuery(document).on("change", "#listbox-loveinterestsecondary", function (e) {
 		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
 	});
-	return "";
 }
-DefineMacroS("loveInterestFunction", loveInterestFunction);
+DefineMacro("loveInterestFunction", loveInterestFunction);
 
+/**
+ * Checks if x is equal or higher than min and lower or equal to max
+ *
+ * @param {number} x
+ * @param {any} min
+ * @param {any} max
+ * @returns {boolean}
+ */
 function between(x, min, max) {
-	return x >= min && x <= max;
+	return typeof x === "number" && x >= min && x <= max;
 }
 window.between = between;
 
@@ -423,13 +408,9 @@ function featsPointsMenuReset() {
 DefineMacroS("featsPointsMenuReset", featsPointsMenuReset);
 
 function startingPlayerImageReset() {
-	jQuery(document).on(
-		"change",
-		"#settingsDiv .macro-radiobutton,#settingsDiv .macro-numberslider,#settingsDiv .macro-checkbox",
-		() => {
-			Wikifier.wikifyEval("<<startingPlayerImageUpdate>>");
-		}
-	);
+	jQuery(document).on("change", "#settingsDiv .macro-radiobutton,#settingsDiv .macro-numberslider,#settingsDiv .macro-checkbox", () => {
+		Wikifier.wikifyEval("<<startingPlayerImageUpdate>>");
+	});
 	return "";
 }
 DefineMacroS("startingPlayerImageReset", startingPlayerImageReset);
@@ -484,7 +465,7 @@ function nCr(n, r) {
 	// https://stackoverflow.com/questions/11809502/which-is-better-way-to-calculate-ncr
 	if (r > n - r) {
 		// because C(n, r) == C(n, n - r)
-		r = n - r
+		r = n - r;
 	}
 
 	let ans = 1;
@@ -508,19 +489,19 @@ window.nCr = nCr;
  *   the chance that they will see at least 1 card at the start of a round is calculateMarkedChance(52, 8, 3, 1) = 0.4 (which means they'll see at least 1 marked card in 40% of their games,
  *   the first round at least).
  * If that's too high of a chance, we could, for example, decrease their depth by 1, or decrease the max marked count by 2.
- *   calculateMarkedChance(52, 8, 2, 1) = 0.28, so 28%, and calculateMarkedChance(52, 6, 3, 1) = 0.31, so 31%.
+ *   Thus, calculateMarkedChance(52, 8, 2, 1) = 0.28, so 28%, and calculateMarkedChance(52, 6, 3, 1) = 0.31, so 31%.
  *
  * Arguably, seeing what card is third from the top is also less useful than being able to more consistently see the top card or the dealer's hole card, so
  *   it's worth assuming the REAL depth is 1/2 even if the value is passed as 3 (so while debugging, always also calculate with depth=1 or depth=2 and see if the number still seems fair).
  *
  * Also, note that the dealer's hole card is included in the depth. This means that if the depth is 3, then it calculates the chance the player will either see one of the top 2 cards or the dealer's second card.
  *
- * @param {Number} deckCount  The number of cards in the deck
- * @param {Number} markedCount  The number of cards the player has (or can) mark in a deck
- * @param {Number} depth  How many cards the player can see from the top of the deck (including the dealer's hole card) (to identify if they're marked or not)
- * @param {Number} atLeast  At least how many cards the player will see (from <depth> cards from the top of the deck)
- * @param {Boolean} doLog = false, if true - logs the steps of the solution
- * @returns
+ * @param {number} deckCount  The number of cards in the deck.
+ * @param {number} markedCount  The number of cards the player has (or can) mark in a deck.
+ * @param {number} depth  How many cards the player can see from the top of the deck (including the dealer's hole card) (to identify if they're marked or not).
+ * @param {number} atLeast  At least how many cards the player will see (from <depth> cards from the top of the deck).
+ * @param {boolean} doLog = false, if true - logs the steps of the solution.
+ * @returns {number} Percentage chance.
  */
 function calculateMarkedChance(deckCount, markedCount, depth, atLeast, doLog = false) {
 	// we calculate how many possible ways we can pull DEPTH amount of cards from the deck (and put them in the front of the deck)
@@ -531,41 +512,28 @@ function calculateMarkedChance(deckCount, markedCount, depth, atLeast, doLog = f
 			logMessages.push(m);
 		}
 	};
-	log(
-		`DEPTH=${depth} cards can be placed in front of the deck from a deck of ${deckCount} cards in ${deckCount}c${depth} = ${totalEvents} ways.`
-	);
+	log(`DEPTH=${depth} cards can be placed in front of the deck from a deck of ${deckCount} cards in ${deckCount}c${depth} = ${totalEvents} ways.`);
 
 	let favorableEvents = 0;
 
 	// as per the algorithm, we go from how many marked cards we need at the very least, to either how many marked cards there are, or to how deep we can go (whichever is the limit)
 	const possibleMarkedCardsVisibleLimit = Math.min(markedCount, depth);
-	for (
-		let nMarkedPicked = atLeast;
-		nMarkedPicked <= possibleMarkedCardsVisibleLimit;
-		++nMarkedPicked
-	) {
+	for (let nMarkedPicked = atLeast; nMarkedPicked <= possibleMarkedCardsVisibleLimit; ++nMarkedPicked) {
 		// we calculate how many possible ways we can pull a valid number of marked cards from the deck
 		//   by dividing the cards into a pool of
-		//    * marked cards (and calculating how many ways we can pull the valid nMarkedPicked cards from the pool of markedCount marked cards),  nCr(markedCount, nMarkedPicked)
-		//    * unmarked cards (and calculating how many ways we can pull the remaining possibleMarkedCardsVisibleLimit-nMarkedPicked non-marked cards from the pool of deck-markedCount unmarked cards), ncr(deck-markedCount, possibleMarkedCardsVisibleLimit-nMarkedPicked)
+		//	* marked cards (and calculating how many ways we can pull the valid nMarkedPicked cards from the pool of markedCount marked cards),  nCr(markedCount, nMarkedPicked)
+		//	* unmarked cards (and calculating how many ways we can pull the remaining possibleMarkedCardsVisibleLimit-nMarkedPicked non-marked cards from the pool of deck-markedCount unmarked cards), ncr(deck-markedCount, possibleMarkedCardsVisibleLimit-nMarkedPicked)
 		//   and then we multiply the mutually exclusive combinations to get all possible combinations (cross-joins) of the two (since for each way we can pull (say) 1 marked card, there's the second number of ways we can pull the remaining non marked ones)
 		const markedPoolWays = nCr(markedCount, nMarkedPicked);
-		const unmarkedPoolWays = nCr(
-			deckCount - markedCount,
-			possibleMarkedCardsVisibleLimit - nMarkedPicked
-		);
+		const unmarkedPoolWays = nCr(deckCount - markedCount, possibleMarkedCardsVisibleLimit - nMarkedPicked);
 		const totalWays = markedPoolWays * unmarkedPoolWays;
 		favorableEvents += totalWays;
 		// log(`One marked card can be picked from MARKED=1 cards in 1c1 = 1 ways, and the remaining three (which are not marked) can be picked from DECK=5-MARKED=1 = 4 cards in 4c3 = 4 ways.
 		log(
 			`${nMarkedPicked} marked cards can be picked from MARKED=${markedCount} cards in ${markedCount}c${nMarkedPicked} = ${markedPoolWays} ways,` +
-				`and the remaining ${
+				`and the remaining ${deckCount - markedCount} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${
 					deckCount - markedCount
-				} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${
-					deckCount - markedCount
-				} cards in ${deckCount - markedCount}c${
-					possibleMarkedCardsVisibleLimit - nMarkedPicked
-				} = ${unmarkedPoolWays} ways.\n` +
+				} cards in ${deckCount - markedCount}c${possibleMarkedCardsVisibleLimit - nMarkedPicked} = ${unmarkedPoolWays} ways.\n` +
 				`${markedPoolWays}*${unmarkedPoolWays} = ${totalWays} ways.`
 		);
 	}
@@ -579,7 +547,7 @@ function shuffle(o) {
 	for (
 		let j, x, i = o.length;
 		i;
-		j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x
+		j = parseInt(State.random() * i), x = o[--i], o[i] = o[j], o[j] = x
 	);
 	return o;
 }
@@ -593,51 +561,14 @@ function updateAskColour() {
 }
 DefineMacroS("updateAskColour", updateAskColour);
 
-function generateBabyName(name, gender, usedNames) {
-	let result = "";
-	if (name != null && name !== "") {
-		result = name.replace(/[^a-zA-Z ]+/g, "");
-		return result.substring(0, 30);
-	} else {
-		let names = [];
-		switch (gender) {
-			case "m":
-				// eslint-disable-next-line prettier/prettier
-				names = ['Addison','Algernon','Allan','Alpha','Anton','Axel','Bazza','Benton','Bernard','Brand','Brett','Cale','Calvin','Carol','Chuck','Chucky','Clay','Cornelius','Crofton','Darden','Dax','Den','Deven','Digby','Don','Douglas','Driscoll','Duane','Duke','Edmund','Elsdon','Freeman','Gabby','Garland','George','Godfrey','Graeme','Grier','Hammond','Harlan','Hendrix','Herman','Hewie','Hugh','Indiana','Ingram','Jackie','Jasper','Jaxon','Jaycob','Jere','Kamden','Kelcey','Kendall','Kevin','Kian','Kieran','Kirby','Lanny','Lawson','Laz','Leland','Levi','Lindon','Linton','Lionel','Lonny','Lucas','Manley','Maverick','Merlyn','Michael','Monty','Murphy','Nate','Ned','Nowell','Odell','Ollie','Osbert','Otto','Paget','Pip','Quintin','Raymund','Ricky','Robert','Ross','Rudolph','Sammy','Scotty','Stacey','Thad','Theodore','Tommy','Trey','Tyson','Val','Vernon','Willis','Wilmer','Winton','Wisdom'];
-				break;
-			case "f":
-				// eslint-disable-next-line prettier/prettier
-				names = ['Adelyn','Alene','Alexa','Aliah','Alyson','Angelica','Annalise','Annora','Azaria','Bessie','Betsy','Bettie','Biddy','Brianne','Camellia','Camille','Camryn','Caroline','Chastity','Chelsea','Chelsey','Cindy','Clematis','Darla','Deb','Debby','Dortha','Eleanora','Eliana','Elsabeth','Elyse','Emerson','Emmeline','Erica','Ettie','Eustacia','Evelyn','Gabrielle','Georgiana','Harper','Harrietta','Haylie','Haze','Hunter','Hyacinth','Indiana','Indie','Jacquetta','Janie','Jannine','Jonquil','Kaelyn','Kam','Khloe','Kolleen','Korrine','Kourtney','Krystine','Lavena','Leeann','Lela','Lesleigh','Lindsie','Lorena','Lucile','Luvinia','Lyn','Lyssa','Madeleine','Marian','Maudie','Maureen','Maxine','Melody','Milani','Misti','Nat','Noelle','Ottoline','Paige','Pauline','Payton','Pearl','Perlie','Petronel','Phebe','Posie','Praise','Rexana','Serena','Sharalyn','Sharla','Shauna','Sky','Sybella','Tracy','Tresha','Trudi','Wallis','Wilda','Wren','Yvette'];
-				break;
-		}
-		// eslint-disable-next-line prettier/prettier
-		names.pushUnique('Aaren','Addison','Alex','Alpha','Andie','Arden','Ariel','Artie','Ashton','Aston','Aubrey','Beau','Bernie','Bertie','Beverly','Bobbie','Brooklyn','Caelan','Cameron','Carol','Cary','Casey','Channing','Charley','Cherokee','Cheyenne','Coby','Codie','Collyn','Cyan','Dale','Dallas','Dana','Darby','Dee','Derby','Devan','Devin','Emmerson','Emory','Finley','Flannery','Florence','Gabby','Garnet','Garnett','Gray','Hadyn','Harlow','Hollis','Jackie','Jade','Jae','Jaiden','Johnnie','Joyce','Justice','Kam','Kelcey','Kelsey','Leslie','Lindsey','Lorin','Lyric','Maitland','Marley','McKinley','Merlyn','Murphy','Nicky','Oakley','Odell','Pacey','Paget','Peyton','Presley','Rain','Raleigh','Reagan','Regan','Reilly','Remington','Robbie','Rory','Royale','Sage','Sam','Schuyler','Selby','Shae','Shaye','Shelly','Skylar','Sloan','Stacey','Stacy','Tayler','Tommie','Tracey','Tristen','Tristin','Val');
-		names.delete(usedNames);
-		result = names[random(0, names.length - 1)];
-		return result;
-	}
-}
-window.generateBabyName = generateBabyName;
-DefineMacroS("generateBabyName", generateBabyName);
-
 function bulkProduceValue(plant, quantity = 250) {
 	if (plant != null) {
 		const baseCost = (plant.plant_cost * quantity) / 2;
-		const seasonBoost = !plant.season.includes(V.season) ? 1.1 : 1;
+		const seasonBoost = !plant.season.includes(Time.season) ? 1.1 : 1;
 		return Math.floor(baseCost * seasonBoost);
 	}
 }
 window.bulkProduceValue = bulkProduceValue;
-
-function pregnancyBellyVisible() {
-	const size = State.variables.sexStats.vagina.pregnancy.bellySize;
-	if (size <= 7) return false;
-	if (size <= 11 && State.variables.worn.upper.name !== "naked" && State.variables.worn.upper.type.includes("bellyShow")) return false;
-	if (size <= 17 && State.variables.worn.upper.type.includes("bellyHide")) return false;
-
-	return true;
-}
-window.pregnancyBellyVisible = pregnancyBellyVisible;
 
 function toTitleCase(str) {
 	return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -652,18 +583,23 @@ window.numbersBetween = numbersBetween;
 function getRobinLocation() {
 	if (C.npc.Robin.init !== 1) {
 		return;
-	} else if (V.robinlocationoverride && V.robinlocationoverride.during.includes(V.hour)) {
+	} else if (V.robinlocationoverride && V.robinlocationoverride.during.includes(Time.hour)) {
 		T.robin_location = V.robinlocationoverride.location;
 	} else if (["docks", "landfill", "dinner", "pillory"].includes(V.robinmissing)) {
 		T.robin_location = V.robinmissing;
-	} else if (!between(V.hour, 7, 20)){ //if hour is 6 or lower, or 21 or higher
+	} else if (!between(Time.hour, 7, 20)) {
+		// if hour is 6 or lower, or 21 or higher.
 		T.robin_location = "sleep";
-	} else if (V.schoolday === 1 && between(V.hour, 8, 15)) {
+	} else if (Time.schoolDay && between(Time.hour, 8, 15)) {
 		T.robin_location = "school";
-	} else if (V.halloween === 1 && between(V.hour, 16, 18) && V.monthday === 31) {
+	} else if (Time.hour === 16 && between(Time.minute, 31, 59) && !V.daily.robin.bath) {
+		T.robin_location = "bath";
+	} else if (V.halloween === 1 && between(Time.hour, 16, 18) && Time.monthDay === 31) {
 		T.robin_location = "halloween";
-	} else if ((V.weekday === 7 || V.weekday === 1) && between(V.hour, 9, 16) && C.npc.Robin.trauma < 80) {
-		T.robin_location = (V.season === "winter" ? "park" : "beach");
+	} else if ((Time.isWeekEnd()) && between(Time.hour, 9, 16) && C.npc.Robin.trauma < 80) {
+		T.robin_location = Time.season === "winter" ? "park" : "beach";
+	} else if (V.englishPlay === "ongoing" && V.englishPlayDays === 0 && Time.hour >= 17 && Time.hour < 21) {
+		T.robin_location = "englishPlay";
 	} else {
 		T.robin_location = "orphanage";
 	}
@@ -715,6 +651,30 @@ function getRobinCrossdressingStatus(crossdressLevel) {
 }
 window.getRobinCrossdressingStatus = getRobinCrossdressingStatus;
 
+/* 
+	TEMPORARY - remove once obsolete
+	Temporary function until location framework is in place - to detect if a NPC is in the park
+	Uses same checks as other Park NPC checks
+ */
+function isInPark(name) {
+	switch(name.toLowerCase()) {
+		case "kylar":
+			return V.NPCName[V.NPCNameList.indexOf("Kylar")].state === "active" 
+				&& !["rain", "snow"].includes(V.weather) 
+				&& Time.dayState === "day" && V.kylarwatched !== 1;
+		case "robin":
+			return getRobinLocation() === "park";
+		case "whitney":
+			return ["active", "rescued"].includes(V.NPCName[V.NPCNameList.indexOf("Whitney")].state)
+				&& V.NPCName[V.NPCNameList.indexOf("Whitney")].init === 1 && ["snow", "rain"].includes(V.weather)
+				&& Time.dayState === "day" && !Time.schoolTime
+				&& V.daily.whitney.park === undefined && V.pillory_tenant.special.name !== "Whitney";
+		default:
+			return false;
+	}
+}
+window.isInPark = isInPark;
+
 window.DefaultActions = {
 	create(isMinimal = false, preload = false) {
 		let storage = {};
@@ -748,7 +708,7 @@ window.DefaultActions = {
 		if (storage === undefined) {
 			return;
 		}
-		if (storage["consensual"] === undefined || storage["rape"] === undefined) {
+		if (storage.consensual === undefined || storage.rape === undefined) {
 			storage = this.create(true, true);
 		}
 		return storage;
@@ -837,15 +797,16 @@ window.DefaultActions = {
 		to.value[type][person][part].pushUnique(action);
 	},
 	addMany(type, person, part, actions, to = { value: V.actionDefaults }) {
-		const filteredActions = actions.map(action => {
-			if (part === "regrab") {
-				return action ? 1 : 0;
-			}
-			if (action !== "rest") {
-				return action;
-			}
-		});
-		if (filteredActions.length <= 0) {
+		// This function should take a list of actions, for a given type (rape/consensual)
+		// and a given person (submissive, defiant, tentacles?)
+		// and a given part (leftaction, rightaction, etc.. down to regrab?)
+		// and add them to the actionDefaults.
+
+		// This filters actions down to any actions that aren't "rest",
+		// or where part is regrab -> truthy/falsy value of each action.
+		const filteredActions = part === "regrab" ? actions.map(action => !!action) : actions.filter(action => action !== "rest");
+
+		if (!filteredActions.length) {
 			return;
 		}
 		if (to.value[type][person] === undefined) {
@@ -859,11 +820,7 @@ window.DefaultActions = {
 		});
 	},
 	get(type, person, part, from = V.actionDefaults, defaultValue = "rest") {
-		if (
-			from[type] === undefined ||
-			from[type][person] === undefined ||
-			from[type][person][part] === undefined
-		) {
+		if (from[type] === undefined || from[type][person] === undefined || from[type][person][part] === undefined) {
 			return [defaultValue];
 		}
 		return from[type][person][part];
@@ -905,7 +862,7 @@ window.DefaultActions = {
 };
 
 function selectWardrobe(targetLocation = V.wardrobe_location) {
-	return ((!targetLocation || targetLocation === "wardrobe" || !V.wardrobes[targetLocation]) ? V.wardrobe : V.wardrobes[targetLocation]);
+	return (!targetLocation || targetLocation === "wardrobe" || !V.wardrobes[targetLocation]) ? V.wardrobe : V.wardrobes[targetLocation];
 }
 window.selectWardrobe = selectWardrobe;
 
@@ -975,36 +932,46 @@ function clothesDataTrimmerLoop() {
 }
 window.clothesDataTrimmerLoop = clothesDataTrimmerLoop;
 
+/*
+	Be aware, the shop is excluded from this, clothing items in every other situation requires one of the below methods
+	Setup example - setup.clothes.upper[clothesIndex('upper',$worn.upper)].name_cap
+	clothingData example - clothingData(_slot, $worn[_slot], "integrity_max")
+
+	The `clothingData example`, allows you to add the variable back to override the setup varient, for example, if you want to increase `integrity_max`
+
+	If any use the `Setup example` and you want to override variables like the `clothingData example`, every instance needs to be converted first, please update the comment below if you do
+*/
 function clothesDataTrimmer(item) {
 	if (!item) return;
 	const toDelete = [
-		"name_cap",
-		"iconFile",
-		"accIcon",
-		"notuck",
-		"skirt",
-		"description",
-		"colour_options",
-		"accessory_colour_options",
-		"fabric_strength",
-		"integrity_max",
-		"bustresize",
-		"sleeve_img",
-		"breast_img",
-		"exposed_base",
-		"vagina_exposed_base",
-		"anus_exposed_base",
-		"state_top_base",
-		"state_base",
-		"word",
-		"femininity",
-		"strap",
-		"cost",
-		"shop",
-		"short",
+		"name_cap", // use `Setup example`
+		"iconFile", // use `Setup example`
+		"accIcon", // use `Setup example`
+		"notuck", // use `Setup example`
+		"skirt", // use `Setup example`
+		"description", // use `Setup example`
+		"colour_options", // use `Setup example`
+		"accessory_colour_options", // use `Setup example`
+		"fabric_strength", // use `clothingData example`
+		"integrity_max", // use `clothingData example`
+		"bustresize", // use `clothingData example`
+		"sleeve_img", // use `Setup example`
+		"breast_img", // use `Setup example`
+		"exposed_base", // use `Setup example`
+		"vagina_exposed_base", // use `Setup example`
+		"anus_exposed_base", // use `Setup example`
+		"state_top_base", // use `Setup example`
+		"state_base", // use `Setup example`
+		"word", // use `Setup example`
+		"femininity", // use `Setup example`
+		"strap", // use `Setup example`
+		"cost", // use `Setup example`
+		"shop", // use `Setup example`, should never be added back on to clothing items due to being in `trimmerVersion`
+		"short", // use `Setup example`, should never be added back on to clothing items due to being in `trimmerVersion`
+		"oldVariable", // use `Setup example`, should never be added back on to clothing items due to being in `trimmerVersion`
 	];
 	// To prevent it from running on variables multiple times, when updating toDelete, the last of the new additions should be added here
-	const trimmerVersion = ["shop", "short"];
+	const trimmerVersion = ["shop", "short", "oldVariable"];
 	let version = 0;
 	let indexToUpdateVersion = toDelete.indexOf(trimmerVersion[version]);
 	toDelete.forEach((v, index) => {
@@ -1073,7 +1040,7 @@ function clothingInStorage(loc) {
 	for (const slot of setup.clothingLayer.all) {
 		const item = V.store[slot].find(item => item.location === loc);
 		if (item && !item.outfitSecondary) {
-			item["slot"] = slot;
+			item.slot = slot;
 			clothing.push(item);
 		}
 	}
@@ -1108,7 +1075,10 @@ function isConnectedToHood(slot) {
 	if (V.worn[slot].outfitSecondary && V.worn[slot].outfitSecondary[1] !== "broken") {
 		slot = V.worn[slot].outfitSecondary[0];
 	}
-	if (V.worn[slot].hoodposition && (V.worn[slot].hoodposition === "down" || (V.worn[slot].hoodposition === "up" && V.worn[slot].outfitPrimary.head !== "broken" && V.worn.head.hood === 1))){
+	if (
+		V.worn[slot].hoodposition &&
+		(V.worn[slot].hoodposition === "down" || (V.worn[slot].hoodposition === "up" && V.worn[slot].outfitPrimary.head !== "broken" && V.worn.head.hood === 1))
+	) {
 		return true;
 	}
 	return false;
@@ -1126,21 +1096,41 @@ function clothesIndex(slot, itemToIndex) {
 		});
 		return 0;
 	}
-	let index = setup.clothes[slot].findIndex(
-		item => item.variable === itemToIndex.variable && item.modder === itemToIndex.modder
-	);
+	const index = setup.clothes[slot].findIndex(item => item.variable === itemToIndex.variable && item.modder === itemToIndex.modder);
 	if (index === -1) {
-		console.log(
-			`clothesIndex - ${slot} clothing item index not found for the '${itemToIndex.name}' with the modder set to '${itemToIndex.modder}'`
-		);
+		console.log(`clothesIndex - ${slot} clothing item index not found for the '${itemToIndex.name}' with the modder set to '${itemToIndex.modder}'`);
 		/* try and correct .modder mismatches */
-		const matches = setup.clothes[slot].filter(item => item.variable === itemToIndex.variable);
+		let oldVariable = false;
+		let matches = setup.clothes[slot].filter(item => item.variable === itemToIndex.variable);
+		if (matches.length === 0) {
+			/* try to find and item that had its variable changed */
+			matches = setup.clothes[slot].filter(item => Array.isArray(item.oldVariable) && item.oldVariable.find(oldVariableItem => oldVariableItem.name === itemToIndex.name && oldVariableItem.variable === itemToIndex.variable));
+			oldVariable = true;
+		}
 		if (matches.length === 1) {
-			const recovery = setup.clothes[slot].find(item => item.variable === itemToIndex.variable);
+			const recovery = matches[0];
+			itemToIndex.index = recovery.index;
 			itemToIndex.modder = recovery.modder;
-			index = recovery.index;
-			console.log(`attempting to recover the mismatch, new modder is '${recovery.modder}'`);
-			return index;
+			if (oldVariable) {
+				itemToIndex.name = recovery.name;
+				itemToIndex.name_cap = recovery.name_cap;
+				itemToIndex.variable = recovery.variable;
+				itemToIndex.set = recovery.set;
+				itemToIndex.iconFile = recovery.iconFile;
+				if(recovery.outfitPrimary) {
+					Object.entries(recovery.outfitPrimary).forEach(([key, value]) => {
+						if(itemToIndex.outfitPrimary && itemToIndex.outfitPrimary[key] === "broken"){
+							// Do Nothing
+						} else {
+							itemToIndex.outfitPrimary[key] = value;
+						}
+					})
+					itemToIndex.outfitPrimary = recovery.outfitPrimary;
+				}
+				if(recovery.outfitSecondary && itemToIndex.outfitSecondary[1] !== "broken") itemToIndex.outfitSecondary[1] = recovery.outfitSecondary[1];
+			}
+			console.log(`attempting to recover the mismatch, new index is '${recovery.index}'`);
+			return recovery.index;
 		} else {
 			console.log("recovery failed, matches: " + matches);
 			return 0;
@@ -1162,52 +1152,41 @@ function currentSkillValue(skill) {
 	}
 	if (
 		[
-			"skulduggery",
-			"physique",
-			"danceskill",
-			"swimmingskill",
-			"athletics",
-			"willpower",
-			"tending",
-			"science",
-			"maths",
-			"english",
-			"history",
+			"skulduggery", "physique", "danceskill", "swimmingskill", "athletics", "willpower", "tending", "science", "maths", "english", "history",
 		].includes(skill) &&
 		V.moorLuck > 0
 	) {
 		result = Math.floor(result * (1 + V.moorLuck / 100));
 	}
-	if (
-		["physique", "danceskill", "swimmingskill", "athletics"].includes(skill) &&
-		V.sexStats.vagina.pregnancy.bellySize >= 10
-	) {
-		switch (V.pregnancyStats.mother) {
+	if (["physique", "danceskill", "swimmingskill", "athletics"].includes(skill) && playerBellySize() >= 10 && playerNormalPregnancyTotal() < 50) {
+		switch (playerNormalPregnancyTotal()) {
 			case 0:
-				T.pregnancyModifier = 30;
+				T.pregnancyModifier = 36;
 				break;
 			case 1:
-				T.pregnancyModifier = 40;
+				T.pregnancyModifier = 48;
 				break;
 			case 2:
-				T.pregnancyModifier = 50;
+				T.pregnancyModifier = 60;
 				break;
-			case 3:
-				T.pregnancyModifier = 65;
+			case 3: case 4: case 5:
+				T.pregnancyModifier = 78;
 				break;
-			case 4:
-				T.pregnancyModifier = 100;
+			case 6: case 7:
+				T.pregnancyModifier = 96;
+				break;
+			default:
+				T.pregnancyModifier = 120;
 				break;
 		}
-		result = Math.floor(
-			result * (1 - V.sexStats.vagina.pregnancy.bellySize / T.pregnancyModifier)
-		);
+		result = Math.floor(result * (1 - playerBellySize() / T.pregnancyModifier));
 	}
 	let modifier = 1;
 	switch (skill) {
 		case "skulduggery":
 			if (V.worn.hands.type.includes("sticky_fingers")) modifier += 0.05;
-			if (V.harpy >= 2 || V.cat >= 2) modifier += 0.05;
+			if (V.transformationParts.traits.sharpEyes !== "disabled") modifier += 0.05;
+			if (V.fox >= 6) modifier += 0.10;
 			result = Math.floor(result * modifier);
 			break;
 		case "physique":
@@ -1265,7 +1244,7 @@ function currentSkillValue(skill) {
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
 			break;
 		case "willpower":
-			if (V.parasite.left_ear.name === V.parasite.right_ear.name === "slime") {
+			if (V.parasite.left_ear.name === V.parasite.right_ear.name && V.parasite.left_ear.name === "slime") {
 				result = Math.floor(result * 0.9);
 			}
 			break;
@@ -1280,26 +1259,25 @@ function currentSkillValue(skill) {
 window.currentSkillValue = currentSkillValue;
 
 function playerIsPenetrated() {
-	return [V.mouthstate, V.vaginastate, V.anusstate].some(s =>
-		["penetrated", "doublepenetrated", "tentacle", "tentacledeep"].includes(s)
-	);
+	return [V.mouthstate, V.vaginastate, V.anusstate].some(s => ["penetrated", "doublepenetrated", "tentacle", "tentacledeep"].includes(s));
 }
 window.playerIsPenetrated = playerIsPenetrated;
 
-function getTimeString(minutes = 0) {
-	if (minutes < 0) {
-		// come on don't try negative numbers, that's silly
-		return "0:00";
-	}
-	if (minutes < 10) {
-		return "0:0" + minutes;
-	} else if (minutes < 60) {
-		return "0:" + minutes;
-	} else {
-		const hours = Math.trunc(minutes / 60);
-		minutes = ("" + (minutes % 60)).padStart(2, "0");
-		return hours + ":" + minutes;
-	}
+/**
+ * Overloads:
+ * 	 (minutes)
+ * 	getTimeString(hours, minutes)
+ * Examples:
+ * 	getTimeString(20) returns "0:20"
+ * 	getTimeString(1,5) returns "1:05".
+ *
+ * @param {...any} args
+ */
+function getTimeString(...args) {
+	if(args[0] == null) return;
+	const hours = args[1] != null ? args[0] : 0;
+	const minutes = Math.max(args[1] != null ? args[1] : args[0], 0) + (hours * 60);
+	return Math.clamp(Math.trunc(minutes / 60), 0, 23) + ":" + ("0" + Math.trunc(minutes % 60)).slice(-2);
 }
 window.getTimeString = getTimeString;
 
@@ -1345,9 +1323,7 @@ function npcSpecifiedClothes(npc, name) {
 	if (clothingItem.length > 0) {
 		npcEquipSet(npc, clothingItem[0]);
 	} else {
-		console.log(
-			`npcSpecifiedClothes - unable to find a clothing item with the name '${name}' for '${npc.fullDescription}'`
-		);
+		console.log(`npcSpecifiedClothes - unable to find a clothing item with the name '${name}' for '${npc.fullDescription}'`);
 	}
 }
 window.npcSpecifiedClothes = npcSpecifiedClothes;
@@ -1363,9 +1339,7 @@ function npcClothes(npc, type) {
 
 	if (crossdressing < 2) gender.push(npc.pronoun);
 	if (crossdressing > 0) gender.push(npc.pronoun === "m" ? "f" : "m");
-	let clothingOptions = setup.npcClothesSets.filter(
-		set => (set.type === type || !type) && gender.includes(set.gender)
-	);
+	let clothingOptions = setup.npcClothesSets.filter(set => (set.type === type || !type) && gender.includes(set.gender));
 
 	if (npc.outfits) {
 		const namedNpcClothing = clothingOptions.filter(set => npc.outfits.includes(set.name));
@@ -1379,25 +1353,13 @@ function npcClothes(npc, type) {
 		// Allows you to record the clothing set selected
 		return clothesSet.name;
 	} else {
-		console.log(
-			`npcClothes - unable to find a clothing set with the options for '${npc.fullDescription}' with type '${type}'`
-		);
+		console.log(`npcClothes - unable to find a clothing set with the options for '${npc.fullDescription}' with type '${type}'`);
 	}
 }
 window.npcClothes = npcClothes;
 
-function getWeekDay(day) {
-	// NOTE: This function takes an argument from 1 to 7. Avoid off-by-1 errors! It is NOT 0-6.
-	if (day && day >= 1 && day <= 7) {
-		return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][day - 1];
-	} else {
-		throw new Error("INVALID DAY, day index: [" + day + "]");
-	}
-}
-window.getWeekDay = getWeekDay;
-
 function waterproofCheck(clothing) {
-	return clothing.type.includes("swim") || clothing.type.includes("stealthy");
+	return clothing.type.includesAny("swim", "stealthy", "rainproof");
 }
 window.waterproofCheck = waterproofCheck;
 
@@ -1407,34 +1369,38 @@ function isLoveInterest(name) {
 }
 window.isLoveInterest = isLoveInterest;
 
-function getMoonState() {
-	const nightstate = T.nightstate;
-	let moonstate = V.moonstate;
-
-	if (nightstate === "evening") {
-		if (V.monthday === getLastDayOfMonth()) { // blood moon happens on the last night of the month
-			moonstate = "evening";
-		} else {
-			moonstate = 0; // moonstate will stay "morning" until the night after the blood moon
-		}
-	} else if (nightstate === "morning") {
-		if (V.monthday === 1) { // blood moon happens on the first morning of the month
-			moonstate = "morning";
-		} else {
-			moonstate = 0;
-		}
+/** This function will determine if the date is right for a blood moon, and which part of the night it will happen in. */
+function getTodaysMoonState() {
+	const todaysMoonState = 0;
+	if (Time.monthDay === Time.lastDayOfMonth) {
+		// blood moon happens on the last night of the month
+		T.todaysMoonState = "evening";
+	} else if (Time.monthDay === 1) {
+		// blood moon happens on the first morning of the month
+		T.todaysMoonState = "morning";
 	}
-	return V.moonstate = moonstate;
+	return todaysMoonState;
+}
+
+function getMoonState() {
+	let moonstate = 0;
+	T.todaysMoonState = getTodaysMoonState();
+
+	if (Time.nightState === T.todaysMoonState) { // if the current time of night matches the time a blood moon will happen, set moonstate
+		moonstate = T.todaysMoonState;
+	}
+	// V.moonstate = moonstate; //commenting this out to make sure this function doesn't modify save variables
+	return moonstate;
 }
 window.getMoonState = getMoonState;
 
 function isBloodmoon() {
-	return (V.daystate === "night" && getMoonState() === T.nightstate); // it's only a blood moon if it's night, and the current moon state matches the current night state
+	return Time.dayState === "night" && V.moonstate === Time.nightState; // it's only a blood moon if it's night, and the current moon state matches the current night state
 }
 window.isBloodmoon = isBloodmoon;
 
 function wraithCanHunt() {
-	return isBloodmoon() && V.hour !== 5; // wraith events can't start at 5 AM.
+	return isBloodmoon() && Time.hour !== 5; // wraith events can't start at 5 AM.
 }
 window.wraithCanHunt = wraithCanHunt;
 
@@ -1461,10 +1427,13 @@ window.fameSum = fameSum;
 
 function checkTFparts() {
 	const tfParts = {};
-	Object.entries(V.transformationParts).forEach(([tfName,tf]) => /* Iterate over each transformation */
-		Object.entries(tf).forEach(([pName, pStatus]) => { /* Iterate over each part of each transformation */
-			if (pStatus !== "disabled" && pStatus !== "hidden"){ /* Filter out the parts that the player doesn't have or is suppressing */
-				tfParts[tfName+pName.toUpperFirst()] = true; /* Assign properties with camelCase names for each tf part that is visible */
+	// Iterate over each transformation
+	Object.entries(V.transformationParts).forEach(([tfName, tf]) =>
+		Object.entries(tf).forEach(([pName, pStatus]) => {
+			/* Iterate over each part of each transformation */
+			if (pStatus !== "disabled" && pStatus !== "hidden") {
+				/* Filter out the parts that the player doesn't have or is suppressing */
+				tfParts[tfName + pName.toUpperFirst()] = true; /* Assign properties with camelCase names for each tf part that is visible */
 			}
 		})
 	);
@@ -1487,11 +1456,16 @@ function getSexesFromRandomGroup() {
 }
 window.getSexesFromRandomGroup = getSexesFromRandomGroup;
 
+/**
+ * Pick the right colour to use when colouring various things.  Primarily sidebar stats.
+ * When using this function, try to keep in mind what value of your input variable you want "red" to be at.
+ *
+ * Example: $drugged goes higher than 500, but we want the bar to become red at 500, so we call this function as getColourClassFromPercentage($drugged / 5).
+ *
+ * @param {number} percentage The percentage of the desired bar colour.
+ * @returns {string} Colour name to use.
+ */
 function getColourClassFromPercentage(percentage) {
-	/* This function is for picking the right color to use when coloring various things, primarily the sidebar stats. */
-	/* When using this function, try to keep in mind what value of your input variable you want "red" to be at.
-	 * Example: $drugged goes higher than 500, but we want the bar to become red at 500, so we call this function as getColourClassFromPercentage($drugged / 5).
-	*/
 	if (percentage <= 0) return "green";
 	if (percentage < 20) return "teal";
 	if (percentage < 40) return "lblue";
@@ -1501,17 +1475,6 @@ function getColourClassFromPercentage(percentage) {
 	return "red";
 }
 window.getColourClassFromPercentage = getColourClassFromPercentage;
-
-function playerCanBreedWith(npc) {
-	/* This function can accept either a named NPC's name, or an NPC object from either NPCList or NPCName.
-	 * Examples: playerCanBreedWith("Kylar"), or playerCanBreedWith($NPCList[0]) or playerCanBreedWith($NPCName[$NPCNameList.indexOf("Kylar")])
-	 * Returns true or false. If you give it garbage, like a totally wrong name, it'll return false, so be careful about silent failures like that.
-	 */
-	if (typeof npc === "string") npc = V.NPCName[V.NPCNameList.indexOf(npc)];
-
-	return (V.player.vaginaExist && npc.penis !== "none") || (V.player.penisExist && npc.vagina !== "none");
-}
-window.playerCanBreedWith = playerCanBreedWith;
 
 function outfitHoodPosition(outfit) {
 	/* This function is used to determine whether a hoodie in a given outfit set should have its hood up or down.
@@ -1523,7 +1486,11 @@ function outfitHoodPosition(outfit) {
 	if (outfit.head !== hoodie.outfitPrimary.head) return "down";
 	if (!outfit.colors) return "up";
 	if (outfit.colors.head[0] !== outfit.colors.upper[0] || outfit.colors.head[1] !== outfit.colors.upper[1]) return "down";
-	if ((outfit.colors.headcustom && outfit.colors.headcustom[0] !== outfit.colors.uppercustom[0]) || (outfit.colors.headcustom && outfit.colors.headcustom[1] !== outfit.colors.uppercustom[1])) return "down";
+	if (
+		(outfit.colors.headcustom && outfit.colors.headcustom[0] !== outfit.colors.uppercustom[0]) ||
+		(outfit.colors.headcustom && outfit.colors.headcustom[1] !== outfit.colors.uppercustom[1])
+	)
+		return "down";
 	return "up";
 }
 window.outfitHoodPosition = outfitHoodPosition;
@@ -1534,20 +1501,36 @@ function combatCharacterShadow() {
 	const mainDiv = ".char_combat";
 
 	$(() => {
-		$(mainDiv).find('img').filter((i, n) => n.className.match(new RegExp("layer-(" + setup.shadowImage[V.position === "doggy" ? "doggy" : "missionary"].join("|") + ")( |$)", 'i')))
-		.clone(true).removeClass((i, n) => (n.match(/(^|\s)(colour|layer)-\S+/g) || []).join(' '))
-		.addClass(targetClass).removeAttr('style').appendTo($(mainDiv).last());
+		$(mainDiv)
+			.find("img")
+			.filter((i, n) =>
+				n.className.match(new RegExp("layer-(" + setup.shadowImage[V.position === "doggy" ? "doggy" : "missionary"].join("|") + ")( |$)", "i"))
+			)
+			.clone(true)
+			.removeClass((i, n) => (n.match(/(^|\s)(colour|layer)-\S+/g) || []).join(" "))
+			.addClass(targetClass)
+			.removeAttr("style")
+			.appendTo($(mainDiv).last());
 	});
 }
 window.combatCharacterShadow = combatCharacterShadow;
 
 /**
- * For usage with tears calculation, converts pain stat [0..200] to 0..4 range (maxes out at pain = 80)
+ * For usage with tears calculation, converts pain stat [0..200] to 0..4 range (maxes out at pain = 80).
+ *
+ * @param {number} pain Pain value.
+ * @returns {number} 0-4 range of tears amount.
  */
-const painToTearsLvl = (pain) => Math.floor(Math.clamp((pain || V.pain), 0, 99) / 20);
+const painToTearsLvl = pain => Math.floor(Math.clamp(pain || V.pain, 0, 99) / 20);
 window.painToTearsLvl = painToTearsLvl;
 
-const mascaraNameToCSS = (name) => nullable(setup.colours.mascara.find(x => x.variable === name)).csstext;
+/**
+ * Get the CSS Name for a mascara colour name.
+ *
+ * @param {string} name Name of the mascara colour.
+ * @returns {string} CSS Name "csstext" of the given colour.
+ */
+const mascaraNameToCSS = name => nullable(setup.colours.mascara.find(x => x.variable === name)).csstext;
 window.mascaraNameToCSS = mascaraNameToCSS;
 
 function isPubfameTaskAccepted(task, status) {
@@ -1555,20 +1538,16 @@ function isPubfameTaskAccepted(task, status) {
 }
 window.isPubfameTaskAccepted = isPubfameTaskAccepted;
 
-window.msToTime = (s) => {
-	function pad(n, z) {
-		z = z || 2;
-		return ('00' + n).slice(-z);
-	}
-	var ms = s % 1000;
-	s = (s - ms) / 1000;
-	var secs = s % 60;
-	s = (s - secs) / 60;
-	var mins = s % 60;
-	var hrs = (s - mins) / 60;
+function msToTime(s) {
+	s = Math.floor(s / 1000);
+	const secs = (s % 60).toString().padStart(2, "0");
+	s = Math.floor(s / 60);
+	const mins = (s % 60).toString().padStart(2, "0");
+	const hrs = Math.floor(s / 60);
 
-	return (hrs ? hrs : 0) + ':' + pad(mins) + ':' + pad(secs);
+	return (hrs || 0) + ":" + mins + ":" + secs;
 }
+window.msToTime = msToTime;
 
 function getHalloweenCostume() {
 	const upper = V.worn.upper;
@@ -1616,7 +1595,9 @@ function getHalloweenCostume() {
 		return "sailor";
 	} else if (upper.name === "skeleton outfit" && lower.name === "skeleton bottoms") {
 		return "skeleton";
-	
+	} else if (upper.name === "futuristic bodysuit" && lower.name === "futuristic bodysuit pants") {
+		return "futuresuit";
+
 	/* Transformations */
 	} else if (T.tf.angelHalo && T.tf.angelWings) {
 		return "angel TF";
@@ -1632,9 +1613,16 @@ function getHalloweenCostume() {
 		return "cow TF";
 	} else if (T.tf.birdWings && T.tf.birdEyes) {
 		return "harpy TF";
-	
+	} else if (T.tf.foxEars && T.tf.foxTail) {
+		return "fox TF";
+
 	/* Misc outcomes */
-	} else if (V.worn.upper.type.includes("costume") || V.worn.lower.type.includes("costume") || (V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("costume")) || (V.worn.lower.type.includes("naked") && V.worn.under_lower.type.includes("costume"))) {
+	} else if (
+		V.worn.upper.type.includes("costume") ||
+		V.worn.lower.type.includes("costume") ||
+		(V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("costume")) ||
+		(V.worn.lower.type.includes("naked") && V.worn.under_lower.type.includes("costume"))
+	) {
 		return "mixed";
 	} else if (V.exposed >= 2) {
 		return "fully naked";
@@ -1824,13 +1812,13 @@ function dailyConvert() {
 			// eslint-disable-next-line prettier/prettier
 			/* whitney */ "bullygate", "whitney_toilet_check", "whitney_park", "whitney_text_trigger", "whitneyFlirt", "whitneyChat", "whitneyAsk","whitney_text", "whitney_text_trigger", "whitneyDaily",
 			// eslint-disable-next-line prettier/prettier
-			/* robin */ "robinwalk", "robinhugcry", "robinhugcomplain", "robinblame", "robinpersecute", "robinpolicebody", "robinpolicepay", "robin_tending", "robinDaily", "robinbeachpolice", "robinparksnow", "robinDebtAsk", 
+			/* robin */ "robinwalk", "robinhugcry", "robinhugcomplain", "robinblame", "robinpersecute", "robinpolicebody", "robinpolicepay", "robin_tending", "robinDaily", "robinbeachpolice", "robinparksnow", "robinDebtAsk",
 			// eslint-disable-next-line prettier/prettier
 			/* kylar */ "kylarDaily",
 			// eslint-disable-next-line prettier/prettier
 			/* morgan */ "sewerssex", "sewersfeeding", "sewersDaily",
 			// eslint-disable-next-line prettier/prettier
-			/* eden */ "edenbreakfastlust", "edenbreakfast", "edenbath", "edenwalk", "edenbath", "edenchoplust", "edenhunting", "edenlunch", "edendinner", "edendistract", "edenasylumdisarm", "eden_asylum_rescue", "eden_sew", "eden_supplies", "eden_sweep", "eden_salve", "eden_soap", "eden_search", "edenexposed", "edenspringjoin", "salveuse", "edenmassage", "edenhuntcaught", "edenfarmrescue", 
+			/* eden */ "edenbreakfastlust", "edenbreakfast", "edenbath", "edenwalk", "edenbath", "edenchoplust", "edenhunting", "edenlunch", "edendinner", "edendistract", "edenasylumdisarm", "eden_asylum_rescue", "eden_sew", "eden_supplies", "eden_sweep", "eden_salve", "eden_soap", "eden_search", "edenexposed", "edenspringjoin", "salveuse", "edenmassage", "edenhuntcaught", "edenfarmrescue",
 			// eslint-disable-next-line prettier/prettier
 			/* alex */ "alexDaily",
 			// eslint-disable-next-line prettier/prettier
@@ -1845,3 +1833,64 @@ function dailyConvert() {
 	}
 }
 window.dailyConvert = dailyConvert;
+
+function convertHairLengthToStage(hair, length){
+	if (!hair || !length)
+		throw new Error(`Hair AND Length must be provided to be converted: ${hair} / ${length}`);
+	if (hair === "fringe") {
+		if (length >= 900)
+			return "feet";
+		else if (length >= 700)
+			return "thighs";
+		else if (length >= 600)
+			return "navel";
+		else if (length >= 400)
+			return "chest";
+		else if (length >= 200)
+			return "shoulder";
+		else
+			return "short";
+	}
+	else if (hair === "sides") {
+		if (length >= 900)
+			return "feet";
+		else if (length >= 700)
+			return "thighs";
+		else if (length >= 600)
+			return "navel";
+		else if (length >= 400)
+			return "chest";
+		else if (length >= 200)
+			return "shoulder";
+		else
+			return "short";
+	}
+}
+
+window.convertHairLengthToStage = convertHairLengthToStage;
+
+function calculateSemenReleased(){
+	let released = 30;
+
+	released += (V.semen_volume / 30);
+
+	if(V.femaleclimax === 1) released /= 30;
+	if(V.orgasmtrait >= 1) released *= 2.5;
+	if(V.cow >= 6) released *= 2;
+
+	/* if the player doesn't have enough semen, set $_semen_released to whatever they have left */
+	if(V.semen_amount < released) released = V.semen_amount;
+	if(parseFloat(released.toFixed(1)) === 0 && V.semen_amount < 0.1) V.semen_amount = 0; // Prevents really low floating numbers
+
+	return parseFloat(released.toFixed(1));
+}
+window.calculateSemenReleased = calculateSemenReleased;
+
+function npcSemenMod(penisSize){
+	switch(penisSize) {
+		case 4: return "large";
+		case 1: return "tiny";
+		default: return "";
+	}
+}
+window.npcSemenMod = npcSemenMod;

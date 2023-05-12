@@ -4,9 +4,9 @@
 You are in your cell in the barn. There's a bucket of what looks like clean water to drink, and a pile of straw to sleep on.
 <br><br>
 
-<<if $hour gte 6 and $hour lt 18>>
+<<if Time.hour gte 6 and Time.hour lt 18>>
 	The barn's occupants are being herded outside, overseen by Remy.
-<<elseif $hour gte 18 and $hour lt 21>>
+<<elseif Time.hour gte 18 and Time.hour lt 21>>
 	<!-- Modified for Monster People -->
 	<<if ($monsterchance gte 1 and $hallucinations gte 1) or ($monsterchance gte 1 and $monsterhallucinations is "f")>>
 		<<livestock_cows "cap">> line up at the edge of their cells as farmhands affix milking machines to their bodies.
@@ -19,13 +19,15 @@ You are in your cell in the barn. There's a bucket of what looks like clean wate
 <<if $uncomfortable.nude is true>><<covered>><</if>>
 <br><br>
 
-<<if $stress gte $stressmax>>
+<<if isPlayerNonparasitePregnancyEnding()>>
+	<<pregnancyWatersBrokenPassout "remy">>
+<<elseif $stress gte $stressmax>>
 	<<passoutremy>>
-	<<if $hour gte 5 and $hour lt 18>>
+	<<if Time.hour gte 5 and Time.hour lt 18>>
 		<<hunger 1000>>
 		<<set $livestock_noise to false>>
 	<</if>>
-<<elseif $hour gte 6 and $hour lt 18>>
+<<elseif Time.hour gte 6 and Time.hour lt 18>>
 	<<set $livestock_noise to false>>
 	Remy and the farmhands circle the barn, opening cells and releasing their occupants. One of them opens yours.
 	<br><br>
@@ -34,9 +36,9 @@ You are in your cell in the barn. There's a bucket of what looks like clean wate
 	<br>
 	<<link [[Refuse to leave|Livestock Cell Refuse]]>><<livestock_obey -1>><<pain 6>><</link>><<lobey>><<gpain>>
 	<br>
-<<elseif $hour gte 18 and $hour lt 21>>
+<<elseif Time.hour gte 18 and Time.hour lt 21>>
 	/* once every 4 days after pc's been missing for more than they have permissions for, when eden cares strongly enough to leave the forest and go all the way to the farmlands. if you think it's too easy, remember that grinding enough swimming to escape is easier than grinding eden's love, so see Figure 1. looking at you, fangi. */
-	<<if !($days % 4) and $daily.eden.farmRescue isnot 1 and C.npc.Eden.love gte 120 and ($edenfreedom is 1 and $edendays gte 4 or $edenfreedom gte 2 and $edendays gte 9)>>
+	<<if !(Time.days % 4) and $daily.eden.farmRescue isnot 1 and C.npc.Eden.love gte 120 and ($edenfreedom is 1 and $edendays gte 4 or $edenfreedom gte 2 and $edendays gte 9)>>
 		<<npc Eden>><<person1>>You feel a draft as Remy opens the gate and enters your cell. A hat drifts to your feet. Before you know what to do, something else <<if 150 - $submissive / 20 lt C.npc.Eden.dom>>commands<<else>>draws<</if>> your attention.
 		<br><br>
 		<span class="green">You hear Eden's voice,</span> arguing with someone near the front of the barn.
@@ -147,7 +149,7 @@ Remy lands in the dirt. Eden helps you find your footing, and together you escap
 	<<physique 6>>
 	<br><br>
 
-	<<if $hour lte 5>>
+	<<if Time.hour lte 5>>
 		<<link [[Keep working out (1:00)|Livestock Workout]]>><</link>><<gtiredness>>
 		<br>
 	<</if>>
@@ -204,13 +206,30 @@ It isn't long before the door to the barn opens, and the lights flicker on. Remy
 <<else>>
 	Your cell door opens, and the farmhands rush in to restrain your arms. Remy walks in, unfolding <<his>> whip.
 	<<if $submissive gte 1150>>
-		Terrified, you <<if $cow gte 6>>moo<<else>>beg<</if>> for mercy<<if $worn.face.type.includes("gag")>> through your $worn.face.name<</if>>, but your cries become interrupted as the whip meets your belly.
+		Terrified, you <<if $cow gte 6>>moo<<else>>beg<</if>> for mercy<<if $worn.face.type.includes("gag")>> through your $worn.face.name<</if>>, but your cries become interrupted as the whip meets your
+		<<if playerBellySize(true) gte 8>>
+			bottom. <<He>> takes special care avoiding your <<bellyDescription "pc">>.
+		<<else>>
+			belly.
+		<</if>>
 		You <<if $cow gte 6>>moo<<else>>gasp<</if>> in pain as Remy punishes you with all <<his>> fury. You hang your head in resignation and sob, every strike unleashing a fresh stream of tears.
 	<<elseif $submissive lte 850>>
-		You thrash wildly, but it's no use. Your struggle is interrupted as Remy's whip meets your belly. It stings, and you scream out in pain and redouble your efforts to break free, to no avail.
+		You thrash wildly, but it's no use. Your struggle is interrupted as Remy's whip meets your
+		<<if playerBellySize(true) gte 8>>
+			bottom. <<He>> takes special care avoiding your <<bellyDescription "pc">>.
+		<<else>>
+			belly.
+		<</if>>
+		It stings, and you scream out in pain and redouble your efforts to break free, to no avail.
 		All you can do is grit your teeth and wince every time the whip connects with your bare skin, your struggles growing weaker with each lash. You try to maintain a brave face, but you can't stop the tears.
 	<<else>>
-		You hardly have time to react before Remy's whip snaps against your belly. You cry out<<if $worn.face.type.includes("gag")>> into your $worn.face.name<</if>>, but you know that's not the end of it.
+		You hardly have time to react before Remy's whip snaps against your
+		<<if playerBellySize(true) gte 8>>
+			bottom. <<He>> takes special care avoiding your <<bellyDescription "pc">>.
+		<<else>>
+			belly.
+		<</if>>
+		You cry out<<if $worn.face.type.includes("gag")>> into your $worn.face.name<</if>>, but you know that's not the end of it.
 		You shut your eyes tight and brace yourself for more pain, and Remy delivers, each lash more agonising than the last. Tears stream down your eyes as you <<if $cow gte 6>>gasp<<else>>writhe<</if>> at every strike.
 	<</if>>
 	<<gggpain>><<pain 50>>
@@ -232,7 +251,12 @@ It isn't long before the door to the barn opens, and the lights flicker on. Remy
 		<br><br>
 		"Good. Put it to bed," Remy instructs the farmhands.
 	<</if>>
-	Grunting in pain, you're soon dragged towards a pile of hay and tossed onto it. You curl up and rub your stinging tummy.
+	Grunting in pain, you're soon dragged towards a pile of hay and tossed onto it. You curl up and rub your stinging
+	<<if playerBellySize(true) gte 8>>
+		bottom.
+	<<else>>
+		tummy.
+	<</if>>
 	<br><br>
 	<<endevent>>
 	<<link [[Next|Livestock Cell]]>><</link>>
@@ -313,7 +337,7 @@ You flinch as <<his>> cold hands touch your <<breasts>>. <<He>> kneads and cares
 <<He>> withdraws <<his>> hands, leaving your chest tingling.
 <br><br>
 
-<<if $player.penisExist and (!$worn.genitals.type.includes("hidden") or $genderknown.includes("Remy"))>>
+<<if $player.penisExist and (!playerChastity("hidden") or $genderknown.includes("Remy"))>>
 	<<link [[Next|Livestock Penis]]>><</link>>
 	<br>
 <<else>>
@@ -324,134 +348,156 @@ You flinch as <<his>> cold hands touch your <<breasts>>. <<He>> kneads and cares
 :: Livestock Penis
 <<effects>>
 Remy kneels, <<his>> eyes level with your <<penis>>.
-<<if $worn.genitals.type.includes("chastity")>>
+<<if playerChastity("penis")>>
 	<<set _penisComment to true>>
-	<<if $player.penissize gte 4>>
-		"You've nothing to be ashamed of down there," <<he>> says, eyes transfixed. "You'd put any bull to shame." <<He>> tugs your $worn.genitals.name. "We'll strap you in once we can get this off." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
-		<<insecurity "penis_big" 1>><<ginsecurity "penis_big">>
-		<br><br>
-	<<elseif $player.penissize gte 3>>
-		"You've nothing to be ashamed of down here," <<he>> says, admiring your genitals. "Though there's room for improvement." <<He>> tugs your $worn.genitals.name. "We'll help you there once we can get this off." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
-		<br><br>
-	<<elseif $player.penissize gte 2>>
-		"I bet your cum is tasty," <<he>> says in a low voice, almost a whisper. "I'd almost drink it straight from the source." <<He>> tugs your $worn.genitals.name. "Once we get this thing off, I just might." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
-		<br><br>
-	<<elseif $player.penissize gte 1>>
-		"It's a little on the small side," <<he>> says. "I'm sure that'll change with the right attention." <<He>> tugs your $worn.genitals.name. "Once we get this off." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
-		<<insecurity "penis_small" 1>><<ginsecurity "penis_small">>
-		<br><br>
-	<<elseif $player.penissize gte 0>>
-		<<He>> stifles a laugh. "So cute," <<he>> says. "But unfitting for a bull." <<He>> tugs your $worn.genitals.name. "We'll help you once we get this off." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
-		<<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
-		<br><br>
-	<<else>>
-		<<He>> frowns. "There's barely anything here at all," <<he>> says. "No no. This won't do at all." <<He>> tugs your $worn.genitals.name. "We'll help you once we get this off." <<He>> pulls out a small pot from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
-		<<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
-		<br><br>
-	<</if>>
-	<<set $worn.genitals.integrity -= 100>>
-	<<if $worn.genitals.integrity gt 0>>
-		Remy frowns while looking at the $worn.genitals.name, "Looks like we will have to leave it in place for now."
-		<br><br>
-	<<else>>
-		Upon the $worn.genitals.name breaking, Remy smiles at you. "There we go, you're all free now."
-		<br><br>
-		<<set $worn.genitals.type.push("broken")>>
-		<<genitalsruined>>
-		<<set _continue to true>>
+	<<switch $player.penissize>>
+		<<case 4>>
+			"You've nothing to be ashamed of down there," <<he>> says, eyes transfixed. "You'd put any bull to shame." <<He>> tugs your $worn.genitals.name. "We'll strap you in once we can get this off." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
+			<<insecurity "penis_big" 1>><<ginsecurity "penis_big">>
+		<<case 3>>
+			"You've nothing to be ashamed of down here," <<he>> says, admiring your genitals. "Though there's room for improvement." <<He>> tugs your $worn.genitals.name. "We'll help you there once we can get this off." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
+		<<case 2>>
+			"I bet your cum is tasty," <<he>> says in a low voice, almost a whisper. "I'd almost drink it straight from the source." <<He>> tugs your $worn.genitals.name. "Once we get this thing off, I just might." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
+		<<case 1>>
+			"It's a little on the small side," <<he>> says. "I'm sure that'll change with the right attention." <<He>> tugs your $worn.genitals.name. "Once we get this off." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
+			<<insecurity "penis_small" 1>><<ginsecurity "penis_small">>
+		<<case 0>>
+			<<He>> stifles a laugh. "So cute," <<he>> says. "But unfitting for a bull." <<He>> tugs your $worn.genitals.name. "We'll help you once we get this off." <<He>> pulls out a small container from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
+			<<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
+		<<case -1>>
+			<<He>> frowns. "There's barely anything here at all," <<he>> says. "No no. This won't do at all." <<He>> tugs your $worn.genitals.name. "We'll help you once we get this off." <<He>> pulls out a small pot from <<his>> pocket and applies some grey paste to the $worn.genitals.name.
+			<<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
+		<<case -2>>
+			<<He>> pauses, squinting at it. "Oh. Oh, that's not a clit." <<He>> purses <<his>> lips. "I don't think I can fix this. Seems like you'd make a better cow than bull anyway." <<He>> glances at your $worn.genitals.name but leaves it alone.
+			<<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
+	<</switch>>
+	<br><br>
+	<<if $player.penissize gt -2>>
+		<<set $worn.genitals.integrity -= 100>>
+		<<if $worn.genitals.integrity gt 0>>
+			Remy frowns while looking at the $worn.genitals.name, "Looks like we will have to leave it in place for now."
+			<br><br>
+		<<else>>
+			Upon the $worn.genitals.name breaking, Remy smiles at you. "There we go, you're all free now."
+			<br><br>
+			<<set $worn.genitals.type.push("broken")>>
+			<<genitalsruined>>
+			<<set _continue to true>>
+		<</if>>
 	<</if>>
 <<else>>
 	<<set _continue to true>>
 <</if>>
 <<if _continue is true>>
-	<<semenvolume 20>><<set $penisgrowthtimer -= 150>>
-	<<if $player.penissize gte 4>>
-		<<if _penisComment isnot true>>
-			"You've nothing to be ashamed of down there," <<he>> says, eyes transfixed. "You'd put any bull to shame." <<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands.
-			<<insecurity "penis_big" 1>><<ginsecurity "penis_big">>
+	<<if $player.penissize gt -2>><<semenvolume 20>><<set $penisgrowthtimer -= 150>><</if>>
+	<<switch $player.penissize>>
+		<<case 4>>
+			<<if _penisComment isnot true>>
+				"You've nothing to be ashamed of down there," <<he>> says, eyes transfixed. "You'd put any bull to shame." <<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands.
+				<<insecurity "penis_big" 1>><<ginsecurity "penis_big">>
+				<br><br>
+			<</if>>
+			Still transfixed, <<he>> reaches forward and takes your cock in <<his>> gloved hand. <<He>> hefts it, feeling the weight. <<He>> brings up <<his>> other hand, and curls <<his>> fingers around your shaft. You can feel <<his>> breath.
+			<<garousal>><<arousal 1800 "genitals">>
 			<br><br>
-		<</if>>
-		Still transfixed, <<he>> reaches forward and takes your cock in <<his>> gloved hand. <<He>> hefts it, feeling the weight. <<He>> brings up <<his>> other hand, and curls <<his>> fingers around your shaft. You can feel <<his>> breath.
-		<<garousal>><<arousal 1800 "genitals">>
-		<br><br>
-		<<if $arousal gte $arousalmax>>
-			<<orgasm>> It gets all over <<his>> face, which snaps <<him>> out of <<his>> stupor. <<He>> pulls a handkerchief from <<his>> jacket and dabs <<his>> face, a hint of a blush spreading on <<his>> cheeks.
+			<<if $arousal gte $arousalmax>>
+				<<orgasm>> It gets all over <<his>> face, which snaps <<him>> out of <<his>> stupor. <<He>> pulls a handkerchief from <<his>> jacket and dabs <<his>> face, a hint of a blush spreading on <<his>> cheeks.
+				<br><br>
+			<<else>>
+				<<He>> snaps out of it, and glances around the barn as if afraid someone is watching. <<He>> stands up. "Examination concluded," <<he>> says, stepping towards the gate.
+				<br><br>
+			<</if>>
+		<<case 3>>
+			<<if _penisComment isnot true>>
+				"You've nothing to be ashamed of down here," <<he>> says, admiring your genitals. "Though there's room for improvement."
+				<br><br>
+			<</if>>
+			<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and grasps your cock. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
 			<br><br>
-		<<else>>
-			<<He>> snaps out of it, and glances around the barn as if afraid someone is watching. <<He>> stands up. "Examination concluded," <<he>> says, stepping towards the gate.
+			<<if $arousal gte $arousalmax>>
+				<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
+				<br><br>
+			<<else>>
+				<<He>> stands up, and walks towards the gate.
+				<br><br>
+			<</if>>
+		<<case 2>>
+			<<if _penisComment isnot true>>
+				"I bet your cum is tasty," <<he>> says in a low voice, almost a whisper. "I'd almost drink it straight from the source."
+				<br><br>
+			<</if>>
+			<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and grasps your cock. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
 			<br><br>
-		<</if>>
-	<<elseif $player.penissize gte 3>>
-		<<if _penisComment isnot true>>
-			"You've nothing to be ashamed of down here," <<he>> says, admiring your genitals. "Though there's room for improvement."
+			<<if $arousal gte $arousalmax>>
+				<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
+				<br><br>
+			<<else>>
+				<<He>> stands up, and walks towards the gate.
+				<br><br>
+			<</if>>
+		<<case 1>>
+			<<if _penisComment isnot true>>
+				"It's a little on the small side," <<he>> says. "I'm sure that'll change with the right attention." <<insecurity "penis_small" 1>><<ginsecurity "penis_small">>
+				<br><br>
+			<</if>>
+			<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and grasps your cock. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
 			<br><br>
-		<</if>>
-		<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and grasps your cock. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
-		<br><br>
-		<<if $arousal gte $arousalmax>>
-			<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
+			<<if $arousal gte $arousalmax>>
+				<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
+				<br><br>
+			<<else>>
+				<<He>> stands up, and walks towards the gate.
+				<br><br>
+			<</if>>
+		<<case 0>>
+			<<if _penisComment isnot true>>
+				<<He>> stifles a laugh. "So cute," <<he>> says. "But unfitting for a bull." <<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
+				<br><br>
+			<</if>>
+			<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and between thumb and forefinger. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
 			<br><br>
-		<<else>>
-			<<He>> stands up, and walks towards the gate.
+			<<if $arousal gte $arousalmax>>
+				<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
+				<br><br>
+			<<else>>
+				<<He>> stands up, and walks towards the gate.
+				<br><br>
+			<</if>>
+		<<case -1>>
+			<<if _penisComment isnot true>>
+				<<He>> frowns. "There's barely anything here at all," <<he>> says. "No no. This won't do." <<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
+				<br><br>
+			<</if>>
+			<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and between thumb and forefinger. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
 			<br><br>
-		<</if>>
-	<<elseif $player.penissize gte 2>>
-		<<if _penisComment isnot true>>
-			"I bet your cum is tasty," <<he>> says in a low voice, almost a whisper. "I'd almost drink it straight from the source."
+			<<if $arousal gte $arousalmax>>
+				<<orgasm>>
+				<<if $femaleclimax>>
+					<<He>> shifts aside as you climax, anticipating spillage, and frowns when you don't release any cum. <<He>> stands up as your spasms subside. "Not a good sign," he says, stepping towards the gate.
+				<<else>>
+					<<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
+				<</if>>
+				<br><br>
+			<<else>>
+				<<He>> stands up, and walks towards the gate.
+				<br><br>
+			<</if>>
+		<<case -2>>
+			<<if _penisComment isnot true>>
+			<<He>> pauses, squinting at it. "Oh. Oh, that's not a clit." <<He>> purses <<his>> lips. "I don't think I can fix this. Seems like you'd make a better cow than bull anyway." <<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
+				<br><br>
+			<</if>>
+			<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and between thumb and forefinger. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
 			<br><br>
-		<</if>>
-		<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and grasps your cock. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
-		<br><br>
-		<<if $arousal gte $arousalmax>>
-			<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
-			<br><br>
-		<<else>>
-			<<He>> stands up, and walks towards the gate.
-			<br><br>
-		<</if>>
-	<<elseif $player.penissize gte 1>>
-		<<if _penisComment isnot true>>
-			"It's a little on the small side," <<he>> says. "I'm sure that'll change with the right attention." <<insecurity "penis_small" 1>><<ginsecurity "penis_small">>
-			<br><br>
-		<</if>>
-		<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and grasps your cock. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
-		<br><br>
-		<<if $arousal gte $arousalmax>>
-			<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
-			<br><br>
-		<<else>>
-			<<He>> stands up, and walks towards the gate.
-			<br><br>
-		<</if>>
-	<<elseif $player.penissize gte 0>>
-		<<if _penisComment isnot true>>
-			<<He>> stifles a laugh. "So cute," <<he>> says. "But unfitting for a bull." <<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
-			<br><br>
-		<</if>>
-		<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and between thumb and forefinger. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
-		<br><br>
-		<<if $arousal gte $arousalmax>>
-			<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
-			<br><br>
-		<<else>>
-			<<He>> stands up, and walks towards the gate.
-			<br><br>
-		<</if>>
-	<<else>>
-		<<if _penisComment isnot true>>
-			<<He>> frowns. "There's barely anything here at all," <<he>> says. "No no. This won't do." <<insecurity "penis_tiny" 1>><<ginsecurity "penis_tiny">>
-			<br><br>
-		<</if>>
-		<<He>> retrieves a small pot of purple gel from <<his>> jacket pocket, and rubs it into <<his>> hands. <<He>> reaches forward and between thumb and forefinger. With gentle strokes, <<he>> rubs the gel into your skin. A warmth spreads through your pelvis, and your cock grows more sensitive as <<he>> works.
-		<br><br>
-		<<if $arousal gte $arousalmax>>
-			<<orgasm>> <<He>> shifts aside as you cum, as if expecting it and wanting to stay clean of any spillage. <<He>> stands up as your spasms subside. "A sign of good health," <<he>> says, stepping towards the gate.
-			<br><br>
-		<<else>>
-			<<He>> stands up, and walks towards the gate.
-			<br><br>
-		<</if>>
-	<</if>>
+			<<if $arousal gte $arousalmax>>
+				<<orgasm>>
+				<<He>> shifts aside as you climax, anticipating spillage, and frowns when you don't release any cum. <<He>> stands up as your spasms subside, and gives you a pat on the head. "That's a good cow," <<he>> says, stepping towards the gate.
+				<br><br>
+			<<else>>
+				<<He>> stands up, and walks towards the gate.
+				<br><br>
+			<</if>>
+	<</switch>>
 <</if>>
 
 <<link [[Next|Livestock Lactate]]>><</link>>
@@ -461,7 +507,7 @@ Remy kneels, <<his>> eyes level with your <<penis>>.
 <<effects>>
 
 <<if $breastfeedingdisable is "f">>
-	<<if $player.penisExist and !$worn.genitals.type.includes("chastity")>>
+	<<if $player.penisExist and !playerChastity("penis")>>
 		Remy retrieves a few glass pumps from just outside your cage. It's attached to a tube leading to a much larger machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees, <<girl>>."
 		<br><br>
 
@@ -487,7 +533,7 @@ Remy kneels, <<his>> eyes level with your <<penis>>.
 		<br>
 	<</if>>
 <<else>>
-	<<if $player.penisExist and !$worn.genitals.type.includes("chastity")>>
+	<<if $player.penisExist and !playerChastity("penis")>>
 		Remy retrieves a glass pump from just outside your cage. It's attached to a tube leading to a much larger machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees, <<girl>>."
 		<br><br>
 
@@ -559,7 +605,7 @@ They tie your arms to an iron bar several feet above the ground, and your collar
 <<effects>>
 
 <<if $breastfeedingdisable is "f">>
-	<<if $player.penisExist and !$worn.genitals.type.includes("chastity")>>
+	<<if $player.penisExist and !playerChastity()>>
 		<<if $player.penissize gte 4>>
 		Remy leans beneath your body, the glass pump still in hand. You feel the tube press against the tip of your <<penis>>, cold and hard. Remy reappears, a frown on <<his>> face. "Hey," <<he>> calls to a passing farmhand. "Pass me a larger one."
 		<br><br>
@@ -617,7 +663,7 @@ They tie your arms to an iron bar several feet above the ground, and your collar
 		<br>
 	<</if>>
 <<else>>
-	<<if $player.penisExist and !$worn.genitals.type.includes("chastity")>>
+	<<if $player.penisExist and !playerChastity()>>
 		<<if $player.penissize gte 4>>
 			Remy leans beneath your body, the glass pump still in hand. You feel the tube press against the tip of your <<penis>>, cold and hard. Remy reappears, a frown on <<his>> face. "Hey," <<he>> calls to a passing farmhand. "Pass me a larger one."
 			<br><br>
@@ -648,7 +694,7 @@ They tie your arms to an iron bar several feet above the ground, and your collar
 		<<link [[Resist (3:00)|Livestock Penis Resist]]>><<def 1>><</link>><<willpowerdifficulty 1 1000>>
 		<br>
 	<<else>>
-		<<if $worn.genitals.type.includes("chastity")>>
+		<<if playerChastity()>>
 			Remy leans beneath your body. <<He>> slips the pink object into your chastity belt, where it rests against your <<genitals 1>>.
 		<<else>>
 			Remy leans beneath your body. <<He>> presses the pink object against your <<genitals 1>>. It's sticky.
@@ -1314,17 +1360,17 @@ The farmhands push past Remy in a panicked scramble for the exit. Remy lingers a
 <<livestock_sleep>>
 
 <<if $phase is 0>>
-	<<if $cow gte 6 or $wolfgirl gte 6 or $cat gte 6>>
+	<<if $cow gte 6 or $wolfgirl gte 6 or $cat gte 6 or $fox gte 6>>
 		You curl up on the soft straw, wondering how you ever slept in any other way. You fall asleep within moments.
-	<<elseif $cow gte 5 or $wolfgirl gte 5 or $cat gte 5>>
+	<<elseif $cow gte 5 or $wolfgirl gte 5 or $cat gte 5 or $fox gte 5>>
 		You curl up on the soft straw, and fall asleep within moments.
-	<<elseif $cow gte 4 or $wolfgirl gte 4 or $cat gte 4>>
+	<<elseif $cow gte 4 or $wolfgirl gte 4 or $cat gte 4 or $fox gte 4>>
 		You curl up on the straw. This isn't so bad. You're awoken by a heavy rattling.
-	<<elseif $cow gte 3 or $wolfgirl gte 3 or $cat gte 3>>
+	<<elseif $cow gte 3 or $wolfgirl gte 3 or $cat gte 3 or $fox gte 3>>
 		You curl up on the straw and try to make the best of it. You're awoken by a heavy rattling.
-	<<elseif $cow gte 2 or $wolfgirl gte 2 or $cat gte 2>>
+	<<elseif $cow gte 2 or $wolfgirl gte 2 or $cat gte 2 or $fox gte 2>>
 		You gather more straw to make your bed softer. It helps, a little. Your sleep is broken by a heavy rattling.
-	<<elseif $cow gte 1 or $wolfgirl gte 1 or $cat gte 1>>
+	<<elseif $cow gte 1 or $wolfgirl gte 1 or $cat gte 1 or $fox gte 1>>
 		You lie down on the straw. It's little better than just sleeping on the floor. You don't think you'll ever be able to sleep here, but the next thing you know you're being woken by a heavy rattling.
 	<<else>>
 		You sit and lean against the wall, ignoring the pile of straw. You're not an animal. It takes a while to fall asleep. You're awoken by a heavy rattling.
@@ -2708,4 +2754,26 @@ The farmhands form a circle around you. They struggle to hold back the dogs. Rem
 	<br>
 
 <</if>>
+
+:: Pregnancy Birth Livestock
+<!-- Placeholder. In the future, the player will not be released after giving birth. -->
+<<set $outside to 0>><<effects>>
+<<npc "Remy">><<person1>>
+<<livestockescape>>
+<<set $livestockEscape to "birth">>
+
+You fade in and out of consciousness. A large blanket has been draped over you. You hear a <<if $harperintro is 1>>familair<</if>> voice.
+<br><br>
+
+"This one should be transported to the hospital immediately." Someone pats your knee, right before you feel a sting in your arm. All the pain in your body starts to fade almost immediately.
+<br><br>
+
+You hear another voice raise in protest. It's Remy. <<He>> gets into an argument that you're too distracted to pay attention to. You lose focus as the minutes tick by, recognising that you are being carried at some point.
+<br><br>
+
+"Don't worry. Everything will be fine." The words ring through your ears as the ambulance doors close.
+<br><br>
+
+<<link [[Next (1:00)|Pregnancy Birth Hospital]]>><<endevent>><<pass 1 hour>><<set $phase to 1>><</link>>
+
 

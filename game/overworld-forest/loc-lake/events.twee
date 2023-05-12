@@ -3,7 +3,8 @@
 <<set $forest to 40>><<set $bus to "lakewaterfall">>
 
 <<if $phase is 1>>
-You take a stroll around the Lake.
+	<<set $phase to 0>>
+	You take a stroll around the Lake.
 
 	<<if $weather is "rain">>
 		The water is alive with motion as rain breaks its surface.
@@ -13,7 +14,7 @@ You take a stroll around the Lake.
 
 	<<if $laketeenspresent is 1>>
 		You hear students playing in the waterfall and sitting in the pond above.
-	<<elseif $daystate is "night">>
+	<<elseif Time.dayState is "night">>
 		Moonlight reveals the area around you and turns the falling water into a curtain of silver.
 	<<else>>
 		A calming wind gently caresses you.
@@ -583,6 +584,44 @@ You snuggle up to them and they cuddle back. You lie there for a while, feeling 
 	<</if>>
 <</if>>
 
+:: Lake Journey Road
+<<set $outside to 1>><<set $location to "lake">><<effects>><<lakeeffects>>
+<<if $cool gte 160>>
+	They're eager to have you along. They form around you and vie for your attention. You stick to the road, safe from the dangers of the forest.
+	<<status 1>><<gcool>>
+	<br><br>
+	You arrive at the lake without a problem.
+	<br><br>
+	<<link [[Dare them to take a wild path|Lake Journey Road Dare]]>><<status 1>><</link>><<gcool>>
+	<br>
+	<<link [[Stick to the road|Lake Shore]]>><</link>>
+	<br>
+<<elseif $cool gte 40>>
+	They're happy to have you along. You chat as you travel, making sure to stay close. You stick to the road, safe from the dangers of the forest.
+	<<status 1>><<gcool>>
+	<br><br>
+	<<link [[Dare them to take a wild path|Lake Journey Road Dare]]>><<status 1>><</link>><<gcool>>
+	<br>
+	<<link [[Stick to the road|Lake Shore]]>><</link>>
+	<br>
+<<else>>
+	They look at each other and smirk at your request, but they don't turn you down. You stick to the road, safe from the dangers of the forest.
+	<<status 1>><<gcool>>
+	<br><br>
+	You're nearing the lake when someone shoves you from behind. You fall to the ground. The group laughs, and leaves you alone in the forest.
+	<<gtrauma>><<gstress>><<trauma 3>><<stress 3>>
+	<br><br>
+	<<link [[Next|Forest]]>><<set $forest to 15>><</link>>
+	<br>
+<</if>>
+
+:: Lake Journey Road Dare
+<<effects>>
+
+You goad the students into leaving the safety of the road. It's easy to do, no one wants to be seen as a coward.
+<br><br>
+<<lakejourney>>
+
 :: Lake Wolf Run
 
 <<set $outside to 1>><<set $location to "lake">><<effects>><<lakeeffects>>
@@ -687,7 +726,7 @@ You join the others in sprinting the rest of the way to the lake. You don't know
 	<</if>>
 <</if>>
 <<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
-<<if $hour is 20>>
+<<if Time.hour is 20>>
 	It's getting late, and the shadows of the forest are lengthening. People are preparing to return to town. No one wants to be left to travel alone.
 	<br><br>
 	<<if $exposed lte 0>>
@@ -859,7 +898,7 @@ You join the others and enter the darkening forest. People don't talk much, unti
 You wave at the <<person>>. <<He>> waves back. <<Hes>> a distance away, but you think <<hes>> smiling.
 <br><br>
 <<if _wraithEvent>>
-	<<if $wraith.state is "haunt">>
+	<<if ["haunt", "despair"].includes($wraith.state)>>
 		<<His>> head tilts to the side, and <<his>> smile falters as <<he>> turns pale. For a brief moment, you see <<him>> clutching at <<his>> neck and reaching for you. You blink, and <<hes>> gone. <<trauma 6>><<gtrauma>>
 	<<else>>
 		Upon closer inspection, you see a necklace of ivory wrapped around <<his>> neck. You blink, and <<hes>> suddenly gone. <<trauma 3>><<gtrauma>>
@@ -973,7 +1012,7 @@ You awaken naked on a stone slab with your arms tied down. All around you loom <
 	<<if isLoveInterest("Eden") and !$edenCagedEscape and (random(1, 2) is 2 or $eden_rescue isnot 1)>>
 		<<enable_rescue>>
 		<<set $phase2 to 1>>
-	<<elseif $wraith.state and $hallucinations gte 2>>
+	<<elseif $wraith.state and $wraithIntro and $hallucinations gte 2>>
 		<<enable_rescue>>
 		<<set $phase2 to 2>>
 	<</if>>
@@ -1087,7 +1126,7 @@ You quicken your pace.
 <<set $outside to 1>><<effects>><<lakeeffects>>
 You stand your ground. The <<beasttype>> doesn't consider long before charging you.
 <<if $rng gte 51>>
-	<<if $season is "winter">>
+	<<if Time.season is "winter">>
 		Before <<bhe>> reaches you however, <<bhe>> runs in a semicircle and back towards the forest. You hear the lake ice crack behind you, but when you turn there's nothing there.
 	<<else>>
 		Before <<bhe>> reaches you however, <<bhe>> runs in a semicircle and back towards the forest. You hear a splash in the lake behind you, but when you turn there's nothing there.
@@ -1205,15 +1244,17 @@ You sprint away from the <<beasttype>>. You hear <<bhis>> paws breaking the dirt
 <</if>>
 <<masturbationeffects>>
 <<masturbationactions>>
-<<link [[Continue|Lake Masturbation]]>><</link>><<nexttext>>
-<br>
-<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
-	<<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>>
-<<elseif $corruptionMasturbation isnot true>>
-	<<link [[Stop|Lake Masturbation Finish]]>><<set $finish to 1>><</link>>
-<<else>>
-	The slime in your ear will not allow you to stop.
-<</if>>
+
+<div id="masturbationButtons">
+	<div><<link [[Continue|Lake Masturbation]]>><</link>><<nexttext>></div>
+	<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
+		<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
+	<<elseif $corruptionMasturbation isnot true>>
+		<div><<link [[Stop|Lake Masturbation Finish]]>><<set $finish to 1>><</link>></div>
+	<<else>>
+		<div class="red">The slime in your ear will not allow you to stop.</div>
+	<</if>>
+</div>
 <br>
 
 :: Lake Masturbation Finish
@@ -1286,7 +1327,11 @@ You don't want to look,
 :: Lake Ice Careful
 <<effects>>
 
-You lie on your belly and spread out your weight. You shuffle to a safer part of the lake.
+<<if playerIsPregnant() and playerAwareTheyArePregnant()>>
+	You lie on your belly as best as you can, given your <<bellyDescription "pc">>, and spread out your weight. You shuffle to a safer part of the lake.
+<<else>>
+	You lie on your belly and spread out your weight. You shuffle to a safer part of the lake.
+<</if>>
 <br><br>
 
 <<destination_lake_ice>>

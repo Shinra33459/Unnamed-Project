@@ -7,7 +7,7 @@
 	<<neutral 1>>
 	<<molested>>
 	<<maninit>><<npcstrip>>
-	<<if $daystate isnot "night">>
+	<<if Time.dayState isnot "night">>
 		<<enable_rescue>>
 	<</if>>
 <</if>>
@@ -68,7 +68,7 @@
 :: Beach Day Molestation Escape
 
 <<effects>>
-<<if $daystate isnot "night">>
+<<if Time.dayState isnot "night">>
 	<<He>> recoils in pain, giving you the chance you need. <<tearful>> you escape.
 	<br><br>
 <<else>>
@@ -91,62 +91,73 @@ With your clothes bundled in <<his>> arms, the <<person>> gives you a mocking lo
 <<link [[Next|Beach]]>><<set $eventskip to 1>><</link>>
 
 :: Beach Day Encounter
-
 <<location "beach">><<effects>>
 
 <<if $phase is 0>>
-
-You walk over to the <<person>> who pretends not to notice you until you stop in front of <<him>>. <<He>> looks at you but doesn't speak.
-<br><br>
-
-<<link [[Friendly chat (0:10)|Beach Day Encounter]]>><<set $phase to 1>><<pass 10>><<stress -2>><<trauma -1>><</link>><<lstress>><<ltrauma>>
-<br>
-
-<<link [[Flirt (0:05)|Beach Day Encounter]]>><<pass 5>><<set $phase to 2>><</link>><<promiscuous1>>
-<br>
-
-<<link [[Leave|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
-
-<<elseif $phase is 1>>
-You try to bring <<him>> out of <<his>> shell by talking about innocuous things. <<He>> responds politely but you do most of the talking. You catch <<him>> eyeing you up when <<he>> thinks you're not looking.
-<br><br>
-
-<<link [[Say goodbye|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
-<br>
-
-<<link [[Flirt (0:05)|Beach Day Encounter]]>><<pass 5>><<set $phase to 2>><</link>><<promiscuous1>>
-<br>
-
-<<elseif $phase is 2>>
-You sit on the towel beside <<him>> and lean close. You tell <<him>> <<he>> is a terrific parent but that <<he>> must be in need of stress relief every now and then.
-	<<if $NPCList[0].penis is "clothed">>
-	<<He>> shifts <<his>> legs as if to conceal something.
+	You walk over to the <<person>> who pretends not to notice you until you stop in front of <<him>>.
+	<<if pregnancyBellyVisible()>>
+		<<He>> notices your pregnant belly once you've gotten close enough. "My my!" <<he>> exclaims with glee. "Ready to be a mom already?"
 	<<else>>
-	<<He>> blushes with increasing intensity as you continue.
+		<<He>> looks at you but doesn't speak.
 	<</if>>
-<<promiscuity1>>
+	<br><br>
 
-<<link [[Stop|Beach Day Encounter]]>><<set $phase to 3>><</link>>
-<br>
-<<if $promiscuity gte 15>>
-<<link [[Seduce|Beach Day Encounter]]>><<set $phase to 4>><</link>> <<seductiondifficulty>><<promiscuous2>>
-<</if>>
+	<<link [[Friendly chat (0:10)|Beach Day Encounter]]>><<set $phase to 1>><<pass 10>><<stress -2>><<trauma -1>><</link>><<lstress>><<ltrauma>>
+	<br>
+	<<link [[Flirt (0:05)|Beach Day Encounter]]>><<pass 5>><<set $phase to 2>><</link>><<promiscuous1>>
+	<br>
+	<<link [[Leave|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<<elseif $phase is 1>>
+	<<if pregnancyBellyVisible()>>
+		You manage to strike an engaging conversation with <<him>>. It becomes clear to you that the stress of parenthood is really getting to <<him>>. "Kid's got a father too, I imagine?"
+		<br><br>
 
+		<<link [[Say you are single|Beach Day Encounter Pregnancy Talk]]>><<set $phase to 0>><</link>>
+		<br>
+		<<link [[Say you know the father|Beach Day Encounter Pregnancy Talk]]>><<set $phase to 1>><</link>>
+		<br>		
+	<<else>>
+		You try to bring <<him>> out of <<his>> shell by talking about innocuous things. <<He>> responds politely but you do most of the talking. You catch <<him>> eyeing you up when <<he>> thinks you're not looking.
+		<br><br>
+
+		<<link [[Say goodbye|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<br>
+		<<link [[Flirt (0:05)|Beach Day Encounter]]>><<pass 5>><<set $phase to 2>><</link>><<promiscuous1>>
+		<br>
+	<</if>>
+<<elseif $phase is 2>>
+	You sit on the towel beside <<him>> and lean close. You tell <<him>> <<he>> is a terrific parent but that <<he>> must be in need of stress relief every now and then.
+	<<if $NPCList[0].penis is "clothed">>
+		<<He>> shifts <<his>> legs as if to conceal something.
+	<<else>>
+		<<He>> blushes with increasing intensity as you continue.
+	<</if>>
+	<<promiscuity1>>
+
+	<<link [[Stop|Beach Day Encounter]]>><<set $phase to 3>><</link>>
+	<br>
+	<<if $promiscuity gte 15>>
+		<<link [[Seduce|Beach Day Encounter]]>><<set $phase to 4>><</link>> <<seductiondifficulty>><<promiscuous2>>
+		<br>
+	<</if>>
 <<elseif $phase is 3>>
-Satisfied with the effect you stand and take your leave.
-<br><br>
-<<link [[Next|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
-
+	Satisfied with the effect you stand and take your leave.
+	<br><br>
+	
+	<<link [[Next|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
 <<elseif $phase is 4>><<if $seductionskill lt 1000>><span class="gold">You feel more confident in your powers of seduction.</span><</if>><<seductionskilluse>><<promiscuity2>>
 	<<if 1000 - ($rng * 10) - $seductionskill - ($attractiveness / 10) lte -100>>
-Gazing into <<his>> eyes, you press your body against <<hers>> and make it absolutely clear what your intentions are. <<He>> glances at <<his>> kids. Satisfied that they're distracted, <<he>> turns and embraces you, <<his>> heart beating furiously.
-<br><br>
-<<link [[Next|Beach Day Encounter Sex]]>><<set $sexstart to 1>><</link>>
-	<<else>>
-Gazing into <<his>> eyes, you press your body against <<hers>> and make it absolutely clear what your intentions are. Stammering excuses, <<he>> recoils from your advance and leaves to check on <<his>> children.
-<br><br>
+		Gazing into <<his>> eyes, you press your body against <<hers>> and make it absolutely clear what your intentions are. <<He>> glances at <<his>> kids. Satisfied that they're distracted, <<he>> turns and embraces you, <<his>> heart beating furiously.
+		<br><br>
 
-<<link [[Nevermind|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<<link [[Next|Beach Day Encounter Sex]]>><<set $sexstart to 1>><</link>>
+	<<else>>
+		Gazing into <<his>> eyes, you press your body against <<hers>> and make it absolutely clear what your intentions are. Stammering excuses, <<he>> recoils from your advance and leaves to check on <<his>> children.
+		<br><br>
+
+		<<link [[Nevermind|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
 	<</if>>
 <</if>>
 
@@ -218,7 +229,7 @@ Looking like <<he>> just awoke from a dream, <<he>> looks at <<his>> kids while 
 :: Beach Day Encounter Sex Escape
 <<effects>>
 
-<<if $daystate isnot "night">>
+<<if Time.dayState isnot "night">>
 <<He>> recoils in pain, giving you the chance you need. <<tearful>> you escape into the darkness.
 <br><br>
 <<else>>
@@ -362,7 +373,7 @@ The <<beasttype>> whimpers and flees into the darkness. <<tearful>> you rise to 
 :: Beach Night Molestation Escape
 
 <<effects>>
-<<if $daystate isnot "night">>
+<<if Time.dayState isnot "night">>
 <<He>> recoils in pain, giving you the chance you need. <<tearful>> you escape into the darkness.
 <br><br>
 <<else>>
@@ -583,7 +594,7 @@ You wrap a towel around your nether regions, creating a makeshift skirt.
 :: Beach Exhibit Molestation Escape
 <<effects>><<person1>>
 
-<<if $daystate isnot "night">>
+<<if Time.dayState isnot "night">>
 <<He>> recoils in pain, giving you the chance you need. <<tearful>> you escape into the crowds.
 <br><br>
 <<else>>
@@ -623,8 +634,7 @@ You wrap a towel around your nether regions, creating a makeshift skirt.
 <<link [[Next|Beach]]>><</link>>
 
 :: Passout Beach
-/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
-<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+<<if isPlayerNonparasitePregnancyEnding()>>
 	<<pregnancyWatersBrokenPassout "beach">>
 <<else>>
 	You've pushed yourself too much.
@@ -656,7 +666,7 @@ You wrap a towel around your nether regions, creating a makeshift skirt.
 "You must be a huge slut, to be wandering around like that. Though I do feel bad about leaving you in such a state. There are some nasty people around."
 <br><br>
 
-<<person2>>The <<person>> interjects, "I know! We'll lend you some towels," <<he>> produces some thin cables from <<his>> coat pocket "if you let us dress you first."
+<<person2>>The <<person>> interjects, "I know! We'll lend you some towels," <<he>> produces some thin cables from <<his>> coat pocket, "if you let us dress you first."
 <br><br>
 
 <<person1>> The <<person>> seems taken with the idea, "It's your choice. If you don't want to play along, we'll leave you to be raped. You'd probably get off from it anyway."
@@ -667,7 +677,7 @@ You wrap a towel around your nether regions, creating a makeshift skirt.
 You see your <<if $upperoff isnot 0>>$upperoff <<elseif $loweroff isnot 0>>$loweroff <<elseif $underupperoff isnot 0>>$underupperoff <<else>>$underloweroff <</if>>in <<his>> hand. <<He>> twirls it playfully, "Finders keepers. Though I do feel bad about leaving you in such a state. There are some nasty people around."
 <br><br>
 
-<<person2>>The <<person>> interjects, "I know! We'll give the clothes back," <<he>> produces some thin cables from <<his>> coat pocket "if you let us dress you first."
+<<person2>>The <<person>> interjects, "I know! We'll give the clothes back," <<he>> produces some thin cables from <<his>> coat pocket, "if you let us dress you first."
 <br><br>
 
 <<person1>> The <<person>> seems taken with the idea, "It's your choice. If you don't want to play along, we'll be keeping your clothes to do with as we please." <<He>> slowly starts tearing the fabric.
@@ -767,7 +777,7 @@ Satisfied, the <<person1>><<person>> unties the cables binding your arms<<if $fe
 :: Beach Abduction Molestation Escape
 
 <<effects>>
-<<if $daystate isnot "night">>
+<<if Time.dayState isnot "night">>
 	They recoil in pain, giving you the chance you need. <<tearful>> you flee naked into the dunes.
 	<br><br>
 <<else>>
@@ -834,7 +844,7 @@ Having come this far, you submit to the collar being placed round your neck. You
 	<<else>>
 		<<generatey3>><<generatey4>><<generatey5>><<generatey6>>You come to a relatively flat area, surrounded by dunes on all sides, shielding it from view. Four students sit smoking in the centre. Your feelings of humiliation reach a new height as the new pairs of eyes see you in your shameful situation. Their initial shock quickly subsides, leaving a bare and primal lust.
 		<br><br>
-		The <<person2>><<person>> leads you into the middle of the group, their eyes feasting on every inch of your body. "We found this piece of trash near the beach. Can't believe anyone would just leave it lying around, no respect at all," the <<person1>><<person>> <<if $worn.genitals.type.includes("chastity")>>attempts to break<<else>>starts fondling<<set $worn.genitals.integrity -= 50>><</if>> your <<genitals>> in front of everyone, causing your breath to catch in your chest. The rest of the group take the cue. Arms reach out from all around you, each wanting their share.
+		The <<person2>><<person>> leads you into the middle of the group, their eyes feasting on every inch of your body. "We found this piece of trash near the beach. Can't believe anyone would just leave it lying around, no respect at all," the <<person1>><<person>> <<if playerChastity()>>attempts to break<<else>>starts fondling<<set $worn.genitals.integrity -= 50>><</if>> your <<genitals>> in front of everyone, causing your breath to catch in your chest. The rest of the group take the cue. Arms reach out from all around you, each wanting their share.
 		<br><br>
 		<<link [[Next|Beach Abduction Molestation]]>><<set $molestationstart to 1>><</link>>
 	<</if>>
@@ -983,4 +993,20 @@ You hold your shaking arms by your side and let your skirt billow in the wind. T
 	<<exhibitionism4>>
 <</if>>
 <<link [[Next|Beach]]>><<set $eventskip to 1>><</link>>
+
+:: Beach Day Encounter Pregnancy Talk
+<<effects>>
+<<if $phase is 0>>
+	You tell the <<person>> that the father left you. <<He>> pats your shoulder to comfort you.
+	"You should just focus on your studies for now," <<he>> says. "After that, try to find a good job, something to keep you afloat. You can pull through on your own, you'll see." <<He>> keeps on giving you advice, and asks you to remain strong for your child. <<His>> words fill you with relief. <<stress -5>><<lstress>>
+<<else>>
+	You nod, telling <<him>> that you do keep in touch. "Want some advice?" <<he>> asks. "Get out of this place. This town, this is no place to raise a kid. You're better off leaving now that you're still young and have the means." <<He>> keeps on talking about the degeneracy in the town, and you feel a very clear sense of bitterness in <<his>> words as <<he>> elaborates.
+<</if>>
+<br><br>
+
+<<He>> notices one of <<his>> kids causing a scene off in the distance, <<he>> calls out to them. You decide it's best to leave <<him>> alone for now.
+<br><br>
+
+<<link [[Next|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
+<br>
 
