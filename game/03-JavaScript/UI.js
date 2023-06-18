@@ -449,6 +449,77 @@ function settingsNamedNpcBreastSize(id, persist) {
 }
 window.settingsNamedNpcBreastSize = settingsNamedNpcBreastSize;
 
+function settingsBeastGenders() {
+	const updateText = () => {
+		let val = V.beastmalechance;
+		let text = null;
+		switch (val) {
+			case 100:
+				text = "<span class='gold inline-colour'>All</span> beasts will be <span class='blue inline-colour'>male</span>.";
+				break;
+			case 75:
+				text = "<span class='gold inline-colour'>75%</span> of beasts will be <span class='blue inline-colour'>male.</span>";
+				break;
+			case 50:
+				text = "Beasts will be <span class='gold inline-colour'>evenly</span> split between <span class='blue inline-colour'>male</span> and <span class='pink inline-colour'>female</span> genders.";
+				break;
+			case 25:
+				text = "<span class='gold inline-colour'>75%</span> of beasts will be <span class='pink inline-colour'>female.</span>";
+				break;
+			case 0:
+				text = "<span class='gold inline-colour'>All</span> beasts will be <span class='pink inline-colour'>female.</span>";
+				break;
+			default:
+				text = "<span class='gold inline-colour'>" + V.beastmalechance + "%</span> of beasts will be <span class='blue inline-colour'>male.</span>";
+				break;		}
+		jQuery("#numberslider-value-beastmalechance").text("").append(text).addClass("small-description");
+	};
+
+	$(() => {
+		updateText();
+		$("#numberslider-input-beastmalechance").on("input change", function (e) {
+			updateText();
+		});
+	});
+}
+window.settingsBeastGenders = settingsBeastGenders;
+
+function settingsNpcGenders() {
+	const updateText = () => {
+		let val = V.malechance;
+		let text = null;
+		switch (val) {
+			case 100:
+				text = "<span class='gold inline-colour'>All</span> NPCs will be <span class='blue inline-colour'>male</span>.";
+				break;
+			case 75:
+				text = "<span class='gold inline-colour'>75%</span> of NPCs will be <span class='blue inline-colour'>male.</span>";
+				break;
+			case 50:
+				text = "NPCs will be <span class='gold inline-colour'>evenly</span> split between <span class='blue inline-colour'>male</span> and <span class='pink inline-colour'>female</span> genders.";
+				break;
+			case 25:
+				text = "<span class='gold inline-colour'>75%</span> of NPCs will be <span class='pink inline-colour'>female.</span>";
+				break;
+			case 0:
+				text = "<span class='gold inline-colour'>All</span> NPCs will be <span class='pink inline-colour'>female.</span>";
+				break;
+			default:
+				text = "<span class='gold inline-colour'>" + V.malechance + "%</span> of NPCs will be <span class='blue inline-colour'>male.</span>";
+				break;
+		}
+		jQuery("#numberslider-value-malechance").text("").append(text).addClass("small-description");
+	};
+
+	$(() => {
+		updateText();
+		$("#numberslider-input-malechance").on("input change", function (e) {
+			updateText();
+		});
+	});
+}
+window.settingsNpcGenders = settingsNpcGenders;
+
 // Checks current settings page for data attributes
 // Run only when settings tab is changed (probably in "displaySettings" widget)
 // data-target is the target element that needs to be clicked for the value to be updated
@@ -503,51 +574,19 @@ function closeOverlay() {
 window.closeOverlay = closeOverlay;
 
 function updatehistorycontrols() {
-	if (V.options.maxStates === undefined || V.options.maxStates > 20) {
-		/* initiate new variable based on engine config and limit it to 20 */
-		V.options.maxStates = Math.clamp(1, 20, Config.history.maxStates);
-	}
-	if (V.options.maxStates === 1) {
-		/* when disabled, irreversibly delete history controls the way sugarcube intended */
-		Config.history.maxStates = 1;
-		jQuery("#ui-bar-history").remove();
-	} else {
-		/* set actual maxStates in accordance with our new variable */
-		Config.history.maxStates = V.options.maxStates;
-		/* ensure that controls are enabled so sugarcube won't destroy them on reload */
+	// if undefined, initiate new variable based on engine config
+	if (V.options.maxStates === undefined) V.options.maxStates = Config.history.maxStates;
+	else Config.history.maxStates = V.options.maxStates; // update engine config
+
+	// option to only save active state into sessionStorage, for better performance
+	if (V.options.sessionHistory === undefined) V.options.sessionHistory = true; // todo: delete this line in 0.4.2.x
+	if (V.options.sessionHistory) Config.history.maxSessionStates = V.options.maxStates;
+	else Config.history.maxSessionStates = 1;
+
+	if (V.options.maxStates === 1) jQuery("#ui-bar-history").hide(); // hide nav panel when it's useless
+	else {
+		// or unhide it otherwise
 		Config.history.controls = true;
-		/* if irreversibly deleted, restore #ui-bar-history from oblivion and pop it after #ui-bar-toggle */
-		if (jQuery("#ui-bar-history").length === 0) {
-			jQuery("#ui-bar-toggle").after(`
-				<div id="ui-bar-history">
-					<button id="history-backward" tabindex="0" title="'+t+'" aria-label="'+t+'">\uE821</button>
-					<button id="history-forward" tabindex="0" title="'+n+'" aria-label="'+n+'">\uE822</button>
-				</div>`);
-			/* make buttons active/inactive based on the available history states */
-			jQuery(document).on(
-				":historyupdate.ui-bar",
-				(($backward, $forward) => () => {
-					$backward.ariaDisabled(State.length < 2);
-					$forward.ariaDisabled(State.length === State.size);
-				})(jQuery("#history-backward"), jQuery("#history-forward"))
-			);
-			jQuery("#history-backward")
-				.ariaDisabled(State.length < 2)
-				.ariaClick(
-					{
-						label: L10n.get("uiBarBackward"),
-					},
-					() => Engine.backward()
-				);
-			jQuery("#history-forward")
-				.ariaDisabled(State.length === State.size)
-				.ariaClick(
-					{
-						label: L10n.get("uiBarForward"),
-					},
-					() => Engine.forward()
-				);
-		}
 		jQuery("#ui-bar-history").show();
 	}
 }
@@ -565,7 +604,7 @@ function updateOptions() {
 		const tmpButtons = T.buttons;
 		const tmpKey = T.key;
 
-		State.restore();
+		if (!State.restore()) return; // don't do anything if state couldn't be restored
 		V.options = optionsData;
 		tanned(0, "ignoreCoverage");
 		State.show();

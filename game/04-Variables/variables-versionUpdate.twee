@@ -891,7 +891,7 @@
 	<</if>>
 
 	<<if $brothelshowdata is undefined>>
-		<<set $brothelshowdata to { counts:{ agreed:0, done:0 }, type:"none", intro:false, done:false, missed:false }>>
+		<<set $brothelshowdata to { counts:{ agreed:0, done:0 }, type:"none", intro:0, done:false, missed:false }>>
 		<<if $brothelshow isnot undefined>>
 			<<set $brothelshowdata.type to $brothelshow>>
 			<<unset $brothelshow>>
@@ -3589,14 +3589,18 @@
 	/* Code that should not be moved into a check like above */
 	<<set $runWardrobeSanityChecker to true>>
 
-	<<if $objectVersion.updateClothes lt 38 or $objectVersion.updateClothes is undefined>>
+	<<if $objectVersion.updateClothes lt 40 or $objectVersion.updateClothes is undefined>>
 		<<updateClothes>>
 		<<if $objectVersion.updateClothes lt 38>>
 			<!-- V0.4.0.7 return items stuck in $store without proper .location -->
 			<<run for (const slot in V.store) V.store[slot].forEach(i => { if (i.location === 0) i.location = "getBack" })>>
 			<<storeon "getBack" "return">>
 		<</if>>
-		<<set $objectVersion.updateClothes to 38>>
+		<<if $objectVersion.updateClothes lt 40>>
+			<!--Should'nt need to re-run that often-->
+			<<run clothesDataTrimmerLoop()>>
+		<</if>>
+		<<set $objectVersion.updateClothes to 40>>
 		<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 		Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
 	<</if>>
@@ -3607,10 +3611,10 @@
 		<<set $objectVersion.specialClothes to 13>>
 	<</if>>
 
-	<<if $objectVersion.museumAntiques lt 12 or $objectVersion.museumAntiques is undefined>>
+	<<if $objectVersion.museumAntiques lt 13 or $objectVersion.museumAntiques is undefined>>
 		/*Moved undefined checks for new antiques to the widget below*/
 		<<updateMuseumAntiques>>
-		<<set $objectVersion.museumAntiques to 12>>
+		<<set $objectVersion.museumAntiques to 13>>
 	<</if>>
 
 	<<pregnancyVar>>
@@ -4423,6 +4427,19 @@
 					<<set $transformationParts.fox.tail to "default">>
 				<</if>>
 			<</if>>
+			
+			<!-- V0.4.0.5 Stop any saves in the above situation from being broken upon leaving -->
+			<<if $real_transformationParts and !$real_transformationParts.fox>>
+				<<set $real_transformationParts.fox to {ears:"disabled", tail:"disabled", cheeks:"disabled"}>>
+				<<if $real_transformationParts.traits.mateForLife is undefined or $real_transformationParts.traits.flaunting is undefined>>
+					<<if $fox gte 3 or $harpy gte 3>>
+						<<set $real_transformationParts.traits.mateForLife to "default">>
+					<<else>>
+						<<set $real_transformationParts.traits.mateForLife to "disabled">>
+					<</if>>
+					<<set $real_transformationParts.traits.flaunting to "disabled">>
+				<</if>>
+			<</if>>
 		<</if>>
 
 		<<if $tfFIX is undefined or $tfFIX is 1>>
@@ -4447,19 +4464,6 @@
 		<</if>>
 
 		<<set $tfFIX to 2>>
-	<</if>>
-
-	<!-- V0.4.0.5 Stop any saves in the above situation from being broke upon leaving -->
-	<<if $real_transformationParts and !$real_transformationParts.fox>>
-		<<set $real_transformationParts.fox to {ears:"disabled", tail:"disabled", cheeks:"disabled"}>>
-		<<if $real_transformationParts.traits.mateForLife is undefined or $real_transformationParts.traits.flaunting is undefined>>
-			<<if $fox gte 3 or $harpy gte 3>>
-				<<set $real_transformationParts.traits.mateForLife to "default">>
-			<<else>>
-				<<set $real_transformationParts.traits.mateForLife to "disabled">>
-			<</if>>
-			<<set $real_transformationParts.traits.flaunting to "disabled">>
-		<</if>>
 	<</if>>
 	
 	<!-- V0.4.0.5 Old saves with untyped named NPCs -->
@@ -4497,4 +4501,31 @@
 		<<set $objectVersion.wardForceUnlock to 1>>
 	<</if>>
 
+	<<if $maleChanceMale is undefined>>
+		<<set $maleChanceMale to $malechance>>
+		<<set $maleChanceFemale to $malechance>>
+		<<set $maleChanceSplit to "f">>
+		<<set $beastMaleChanceMale to $beastmalechance>>
+		<<set $beastMaleChanceFemale to $beastmalechance>>
+		<<set $beastMaleChanceSplit to "f">>
+	<</if>>
+
+	<<if $forcedcrossdressingdisable is undefined>>
+		<<set $forcedcrossdressingdisable to "f">>
+	<</if>>
+
+	<!-- V0.4.0.9 $currentFurnishing should not be a story variable, and no story variables should be (or include) functions -->
+	<<if $currentFurnishing>>
+		<<unset $currentFurnishing>>
+		<<run State.history.forEach(s => delete s.variables.currentFurnishing)>>
+	<</if>>
+
+	<!-- V0.4.1.1 Fixed for some wolves having "human" sperm -->
+	<<if !$objectVersion.pregnancyFix>>
+		<<physicalAdjustmentsInit>>
+	<</if>>
+
+	<<if $speech_attitude is undefined>>
+		<<set $speech_attitude to "neutral">>
+	<</if>>
 <</widget>>

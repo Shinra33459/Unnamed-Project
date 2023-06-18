@@ -830,9 +830,9 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "people">><<silently>>
-	<<if $malechance is 100>>
+	<<if maleChance() is 100>>
 		<<set _text_output to "men">>
-	<<elseif $malechance is 0>>
+	<<elseif maleChance() is 0>>
 		<<set _text_output to "women">>
 	<<else>>
 		<<set _text_output to "men and women">>
@@ -840,9 +840,9 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "peopley">><<silently>>
-	<<if $malechance is 100>>
+	<<if maleChance() is 100>>
 		<<set _text_output to "boys">>
-	<<elseif $malechance is 0>>
+	<<elseif maleChance() is 0>>
 		<<set _text_output to "girls">>
 	<<else>>
 		<<set _text_output to "boys and girls">>
@@ -851,7 +851,7 @@
 
 <<widget "persony">><<silently>>
 	<<rng>>
-	<<set _text_output to ($rng lte $malechance? "boy" : "girl")>>
+	<<set _text_output to ($rng lte maleChance()? "boy" : "girl")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "group">><<silently>>
@@ -1366,6 +1366,10 @@
 	<</if>>
 <</silently>><<print _text_output>><</widget>>
 
+<<widget "personname">><<silently>>
+	<<set _text_output to $NPCList[$index].name>>
+<</silently>><<print _text_output>><</widget>>
+
 <<widget "person">><<silently>>
 	<<set _text_output to $description + " ">>
 	<<if ($NPCList[$index].type and $NPCList[$index].type isnot "human") and _args[0] isnot "normal">>
@@ -1501,7 +1505,7 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "spouse">><<silently>>
-	<<if random(1,100) lte $homochance>>
+	<<if maleChance($pronoun) gte random(1,100)>>
 		<<set _text_output to ($pronoun is "m" ? "husband" : "wife")>>
 	<<else>>
 		<<set _text_output to ($pronoun is "m" ? "wife" : "husband")>>
@@ -2524,6 +2528,10 @@
 	<<if _args[0] is undefined or $housekeeping lt _args[0]>>
 		<<if $statdisable is "f">> |
 			<span class="green">+ Housekeeping</span>
+		<</if>>
+	<<elseif $housekeeping gte _args[0]>>
+		<<if $statdisable is "f">>
+			<span class="blue">You're too skilled for this to improve your housekeeping.</span>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -6044,9 +6052,9 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "monks_and_nuns">><<silently>>
-	<<if $malechance is 100>>
+	<<if maleChance() is 100>>
 		<<set _text_output to "monks">>
-	<<elseif $malechance is 0>>
+	<<elseif maleChance() is 0>>
 		<<set _text_output to "nuns">>
 	<<else>>
 		<<set _text_output to "monks and nuns">>
@@ -6717,9 +6725,9 @@
 	<!-- Unused widget -->
 	<<if _monster_passage is undefined>>
 		<<if ($monsterchance gte 1 and $hallucinations gte 1) or ($monsterchance gte 1 and $monsterhallucinations is "f")>>
-			<<if $malechance gte 100>>
+			<<if maleChance() gte 100>>
 				<<set _monster_passage to "m">>
-			<<elseif $malechance lte 0>>
+			<<elseif maleChance() lte 0>>
 				<<set _monster_passage to "f">>
 			<<else>>
 				<<set _monster_passage to "b">>
@@ -7351,9 +7359,9 @@ Argument 2, where appropriate, determines whether it's the player undressing the
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "npcRevealText">><<silently>>
-	<<set $_npc to _args[0]>><<set _foo0 to _args[0]>>
-	<<set $_part to _args[1]>><<set _foo1 to _args[0]>> /* can be "upper" or "lower" */
-	<<set $_mod to _args[2]>><<set _foo2 to _args[0]>>
+	<<set $_npc to _args[0]>>
+	<<set $_part to _args[1]>> /* can be "upper" or "lower" */
+	<<set $_mod to _args[2]>>
 	<<set _text_output to "revealing ">>
 	<<if $_mod is "name">>
 		<<if $NPCNameList.includes($_npc.fullDescription)>>
@@ -7373,7 +7381,8 @@ Argument 2, where appropriate, determines whether it's the player undressing the
 		<<set _text_output += "<<his>> ">>
 	<</if>>
 	<<if $_part is "both">>
-		<<set _text_output += "$_npc.breastsdesc and ">>
+		<<set $_chest to ($_npc.pronoun is "m" || $_npc.breastsize is 0 ? "chest" : $_npc.breastsdesc)>>
+		<<set _text_output += "$_chest and ">>
 	<</if>>
 	<<if ["both","lower"].includes($_part)>>
 		<<if $_npc.penis isnot "none" and $_npc.vagina isnot "none">>
@@ -7400,7 +7409,8 @@ Argument 2, where appropriate, determines whether it's the player undressing the
 			<</if>>
 		<</if>>
 	<<else>>
-		<<set _text_output += "$_npc.breastsdesc">>
+		<<set $_chest to ($_npc.pronoun is "m" || $_npc.breastsize is 0 ? "chest" : $_npc.breastsdesc)>>
+		<<set _text_output += "$_chest">>
 	<</if>>
 	<!-- intentionally omitting a period, for flexibility; do not forget to add one after you use this widget -->
 <</silently>>_text_output<</widget>>

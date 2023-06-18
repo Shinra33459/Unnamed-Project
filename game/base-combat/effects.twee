@@ -132,9 +132,9 @@
 				<<set $leftarm to "handheld">><<set $leftactiondefault to "lefthandholdkeep">>
 				<<submission 1>>
 				<<if isLoveInterest($NPCList[$lefttarget].fullDescription)>>
-					<<takeHandholdingVirginity $NPCList[$lefttarget].fullDescription "romantic">>
+					<<takeHandholdingVirginity $NPCList[$lefttarget] "romantic">>
 				<<else>>
-					<<takeHandholdingVirginity $NPCList[$lefttarget].fullDescription>>
+					<<takeHandholdingVirginity $NPCList[$lefttarget]>>
 				<</if>>
 			<<else>>
 				You reach for <<someones $lefttarget>> left hand, but <<he>> moves away.
@@ -168,9 +168,9 @@
 				<<set $rightarm to "handheld">><<set $leftactiondefault to "righthandholdkeep">>
 				<<submission 1>>
 				<<if isLoveInterest($NPCList[$righttarget].fullDescription)>>
-					<<takeHandholdingVirginity $NPCList[$righttarget].fullDescription "romantic">>
+					<<takeHandholdingVirginity $NPCList[$righttarget] "romantic">>
 				<<else>>
-					<<takeHandholdingVirginity $NPCList[$righttarget].fullDescription>>
+					<<takeHandholdingVirginity $NPCList[$righttarget]>>
 				<</if>>
 			<<else>>
 				You reach for <<someones $righttarget>> but <<he>> moves away.
@@ -3764,7 +3764,7 @@
 
 		<<if $mouthaction is "peniskiss">>
 			<<set $mouthaction to 0>><<set $mouthactiondefault to "peniskiss">>
-			<<actionspeniskiss $mouthtarget>>
+			<<actionspeniskiss `($chestuse is "penis" ? $chesttarget : $mouthtarget)`>>
 			<<submission 3>><<oralskilluse>>
 		<</if>>
 
@@ -4332,10 +4332,17 @@
 			<<else>>
 				<<set $mouthactiondefault to "rest">><<sub 2>>
 				<<if $NPCList[$mouthtarget].condom and $NPCList[$mouthtarget].condom.willUse is true>><<set $_checkSkip to true>><</if>>
+				<<if $consensual is 0>>
+					<<set $_condomAskBaseDifficulty to 2000 + 10 * (100 - $NPCList[$mouthtarget].pregnancyAvoidance)>>
+					<<set $_condomAskDifficultyMultiplier to 200>>
+				<<else>>
+					<<set $_condomAskBaseDifficulty to 1500 + 5 * (100 - $NPCList[$mouthtarget].pregnancyAvoidance)>>
+					<<set $_condomAskDifficultyMultiplier to 100>>
+				<</if>>
 				<<if !$gloryhole and $gamemode isnot "soft" and !$npcrow.includes($mouthtarget) and !$_checkSkip>><<seductionskillusecombat>><</if>>
 				<<set $NPCList[$mouthtarget].condomAsk to true>>
 				You ask <<combatperson>> to use a condom.
-				<<if combatSkillCheck("seduction", $mouthtarget) or $gamemode is "soft" or $gloryhole or $npcrow.includes($mouthtarget) or $_checkSkip>>
+				<<if combatSkillCheck("seduction", $mouthtarget, $_condomAskBaseDifficulty, $_condomAskDifficultyMultiplier) or $gamemode is "soft" or $gloryhole or $npcrow.includes($mouthtarget) or $_checkSkip>>
 					<<if !$npcrow.includes($mouthtarget)>>
 						<<if $condomLvl is 1 or !$NPCList[$mouthtarget].condom>>
 							<<set $NPCList[$mouthtarget].condomCanGive to true>>
@@ -4566,7 +4573,7 @@
 									<<case "acceptHas">>
 										<<He_Short>> nods. "<span class="teal">I was planning on using one anyways.</span>"
 									<<case "reject">>
-										<span class="red"<<He_Short>> refuses!</span>
+										<span class="red"><<He_Short>> refuses!</span>
 								<</switch>>
 						<</switch>>
 					<</if>>
@@ -4889,13 +4896,18 @@
 			<<else>>
 				<<set $pullOutAsk to true>>
 				<<set $_npcn to $npc[$npcrow.indexOf($mouthtarget)]>>
+				<<if $consensual is 0>>
+					<<set $_pullOutAskBaseDifficulty to 1500 + 10 * (100 - $NPCList[$mouthtarget].pregnancyAvoidance)>>
+				<<else>>
+					<<set $_pullOutAskBaseDifficulty to 1000 + 5 * (100 - $NPCList[$mouthtarget].pregnancyAvoidance)>>
+				<</if>>
 				<<if $NPCList[$mouthtarget].pregnancyAvoidance gte 90 or $_npcn is "Kylar">><<set $_checkSkip to true>><</if>>
 				<<set $mouthactiondefault to "rest">><<if !$gloryhole and $gamemode isnot "soft" and !$_checkSkip>><<seductionskillusecombat>><</if>>
 				<<brat `Math.floor((100 - $NPCList[$mouthtarget].pregnancyAvoidance) / 20)`>>
 				You ask <<combatperson>> to pull out and finish outside.
 				<<if $npc[$npcrow.indexOf($mouthtarget)] is "Kylar">>
 					<<He_Short>> freezes for a moment. <span class="red">"No, my love."</span>
-				<<elseif combatSkillCheck("seduction", $mouthtarget) or $gamemode is "soft" or $gloryhole or $_checkSkip>>
+				<<elseif combatSkillCheck("seduction", $mouthtarget, $_pullOutAskBaseDifficulty) or $gamemode is "soft" or $gloryhole or $_checkSkip>>
 					<<set $pullOut to true>>
 					<<if $consensual is 0>>
 						<<He_Short>> pauses a moment before responding.
@@ -4935,18 +4947,18 @@
 			<<set $mouthaction to 0>><<set $mouthactiondefault to "rest">>
 			<<if $money gte $rentmoney + ($babyRent or 0)>>
 				<<set $speechpay to 1>>
-				<<if $submissive gte 1150>>
+				<<if $speech_attitude is "meek">>
 					"S-stop!" you shout. "I'll pay you, so... j-just let Robin go."
-				<<elseif $submissive lte 850>>
+				<<elseif $speech_attitude is "bratty">>
 					"I'll pay you," you say through gritted teeth. "So get your hands off <<nnpc_him "Robin">>."
 				<<else>>
 					"Let go of <<nnpc_him "Robin">>!" you shout. "I have your money. I'll pay."
 				<</if>>
 			<<else>>
 				<<set $speechpay to -1>>
-				<<if $submissive gte 1150>>
+				<<if $speech_attitude is "meek">>
 					"S-stop!" you shout. "I don't have enough, b-but... just let <<nnpc_him "Robin">> go, please!"
-				<<elseif $submissive lte 850>>
+				<<elseif $speech_attitude is "bratty">>
 					"I don't have enough," you say through gritted teeth. "So get your hands off <<nnpc_him "Robin">>."
 				<<else>>
 					"Let go of <<nnpc_him "Robin">>!" you shout. "I don't have your money. I can't pay."
