@@ -3611,10 +3611,13 @@
 		<<set $objectVersion.specialClothes to 13>>
 	<</if>>
 
-	<<if $objectVersion.museumAntiques lt 13 or $objectVersion.museumAntiques is undefined>>
+	<<if $objectVersion.museumAntiques lte 13 and $museumAntiques.antiques.antiquewhitescrystal isnot undefined>>
+		<<run delete $museumAntiques.antiques.antiquewhitescrystal>>
+	<</if>>
+	<<if $objectVersion.museumAntiques lt 14 or $objectVersion.museumAntiques is undefined>>
 		/*Moved undefined checks for new antiques to the widget below*/
 		<<updateMuseumAntiques>>
-		<<set $objectVersion.museumAntiques to 13>>
+		<<set $objectVersion.museumAntiques to 14>>
 	<</if>>
 
 	<<pregnancyVar>>
@@ -4270,7 +4273,7 @@
 		<<script>>
 			/* Tries to set the date to the same as the previous version's date.
 			If weekday is different from the real date, well shit, we're faking it. */
-			const month = DateTime.monthNames.map(month => month.toLowerCase()).indexOf(V.month) + 1;
+			const month = Time.monthNames.map(month => month.toLowerCase()).indexOf(V.month) + 1;
 			const date = new DateTime(V.year, month, V.monthday, Math.min(V.hour, 23), Math.min(V.minute, 59), V.seconds);
 			const startDate = new DateTime(date);
 			T.passMinutes = (V.hour > 23 ? (V.hour - 23) * 60 : 0) + (V.minute > 59 ? V.minute - 59 : 0);
