@@ -870,6 +870,8 @@
 		<</for>>
 	<</if>>
 
+	<<set $initialGenderAppearance to $player.gender_appearance>>
+
 	<<set $newlyWritten to []>>
 
 	<<if _genderknownbeforehand or _genderexposed>>
@@ -1006,6 +1008,22 @@
 			<<schoolrep_naked>>
 		<</if>>
 		<<if $genitalReactionDisable>>
+			<<set _noReaction to true>>
+		<<elseif $player.penisExist and $player.vaginaExist>>
+			<<if $initialGenderAppearance is "m" ? $mhermchance gte 50 : $fhermchance gte 50>>
+				<<set _noReaction to true>>
+			<</if>>
+		<<elseif $player.penisExist>>
+			<<if $initialGenderAppearance is "m" ? $mregularchance gte 50 : $dgchance gte 50>>
+				<<set _noReaction to true>>
+			<</if>>
+		<<elseif $player.vaginaExist>>
+			<<if $initialGenderAppearance is "m" ? $cbchance gte 50 : $fregularchance gte 50>>
+				<<set _noReaction to true>>
+			<</if>>
+		<</if>>
+
+		<<if _noReaction>>
 			<!-- No reaction -->
 		<<elseif $crossdressing is 2>> <!-- Herm PC -->
 			<<if $npc.length is 1 and (["Kylar","Sydney"].includes($npc[0]))>>
@@ -1126,7 +1144,9 @@
 			<</if>>
 		<</if>>
 		<<set $crossdressing to 0>>
-		<br><br>
+		<<if !_noReaction>>
+			<br><br>
+		<</if>>
 
 	<</if>>
 
