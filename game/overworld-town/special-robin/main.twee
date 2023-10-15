@@ -350,7 +350,7 @@ You wait for a few seconds, but Robin doesn't say anything else. You say your go
 			<br><br>
 
 		<</if>>
-		
+
 	<</if>>
 
 <<else>>
@@ -399,7 +399,7 @@ You wait for a few seconds, but Robin doesn't say anything else. You say your go
 	<<if $NPCName[$NPCNameList.indexOf("Robin")].dom lte 50>>
 		Robin seems unsure of what to say. <<He>> doesn't look at you for very long, even though <<hes>> seen you naked before.
 		<br><br>
-		
+
 		Finally <<he>> says, "I guess that's fine, if it makes you comfortable."
 		<br><br>
 
@@ -498,15 +498,20 @@ You wait for a few seconds, but Robin doesn't say anything else. You say your go
 	<<else>>
 		Robin returns your embrace.
 
-		<<if $exposed gte 2 or ($worn.lower.type.includes("naked") and $worn.under_lower.type.includes("naked"))>>
+		<<if $worn.lower.type.includes("naked") and $worn.under_lower.type.includes("naked")>>
 			You feel <<his>> hands slide down your back until <<hes>> groping your bare ass
-			<br><br>
 
 		<<else>>
-			You feel <<his>> hand slip beneath the waistband of your $worn.under_lower.name to cup one of your cheeks.
-			<br><br>
+			You feel <<his>> hand slip beneath the waistband of your
+			<<if $worn.under_lower.type.includes('naked')>>
+				$worn.lower.name
+			<<else>>
+				$worn.under_lower.name
+			<</if>>
+			to cup one of your cheeks.
 
 		<</if>>
+		<br><br>
 
 		A warm flush rises in you. Robin whispers in your ear. "You're cute like this. I think I might like it when you show up without clothes on..." <<He>> giggles.
 		<br><br>
@@ -525,7 +530,9 @@ You wait for a few seconds, but Robin doesn't say anything else. You say your go
 			<<He>> plants a kiss on your lips, long and deep, before giving you a parting squeeze. You separate and sit down on the bed together.
 			<br><br>
 
-			<<link [[Next|Robin's Room Entrance]]>><<set $robin_naked_room to 1>><<endevent>><</link>>
+			<<set $robin_naked_room to 1>>
+
+			<<robinoptions>>
 
 		<</if>>
 
@@ -731,7 +738,7 @@ Robin throws you a towel and you quickly wrap it around yourself. You enter the 
 			<<link [[Give Robin a strip tease|Robin Room Naked Tease]]>><</link>><<glust>><<npcincr Robin lust 1>>
 			<br>
 			<<link [[Just take off your clothes|Robin Room Naked Take]]>><</link>>
-			
+
 			<<set $robin_naked_room to 1>>
 
 		<<else>>
@@ -787,7 +794,7 @@ Robin throws you a towel and you quickly wrap it around yourself. You enter the 
 			"If...if you want," <<he>> says.
 			<br><br>
 
-			<<strip>> You stand up and quickly strip until you're naked in front of Robin. Robin doesn't look at you as you sit down, but you catch <<him>> stealing glances out of the corner of your eye.<<if $daily.robin_naked_lust isnot 1>><<set $daily.robin_naked_lust to 1>><<gglust>><<npcincr Robin lust 2>><</if>>
+			<<undress "Robin's Room">><<set $robin_naked_room_clothes to 1>><<exposure>> You stand up and quickly strip until you're naked in front of Robin. Robin doesn't look at you as you sit down, but you catch <<him>> stealing glances out of the corner of your eye.<<if $daily.robin_naked_lust isnot 1>><<set $daily.robin_naked_lust to 1>><<gglust>><<npcincr Robin lust 2>><</if>>
 			<br><br>
 		<<else>>
 			<<undress "Robin's Room">><<set $robin_naked_room_clothes to 1>><<exposure>>
@@ -2034,6 +2041,18 @@ Bailey shoves Robin into the back seat, and drives away.
 
 :: Bailey's Office
 <<set $outside to 0>><<set $location to "home">><<effects>>
+
+<<if Object.values($children).find(child => child.mother === "Alex" && child.location === "home") or Object.values($children).find(child => child.father === "Alex" && child.location === "home")>>
+
+	<<if Object.values($children).find(child => child.mother === "Alex" && child.location === "home")>>
+		<<set _alexMother to Object.values($children).find(child => child.mother === "Alex" && child.location === "home")>>
+
+	<<elseif Object.values($children).find(child => child.father === "Alex" && child.location === "home")>>
+		<<set _alexFather to Object.values($children).find(child => child.father === "Alex" && child.location === "home")>>
+	<</if>>
+
+<</if>>
+
 <<npc Bailey>><<person1>>
 
 <<if Time.hour lte 6 or Time.hour gte 10>>
@@ -2091,6 +2110,11 @@ Bailey shoves Robin into the back seat, and drives away.
 	<<set $daily.baileyVisit++>>
 <</if>>
 <br><br>
+
+<<if C.npc.Alex.pregnancy.fee isnot true and C.npc.Alex.pregnancy.nursery is true and (_alexMother or _alexFather) and (Time.hour gte 7 and Time.hour lte 9)>>
+	<<link [[Take your children to the farm|Bailey Office Alex Children Fee]]>><</link>>
+	<br>
+<</if>>
 
 <<if _options is 1>>
 	<<if $pub_hack_job is 3 and !$hacker_tasks.includes("bailey")>>
@@ -2368,6 +2392,41 @@ You take the plushie back to your room and nestle it atop your wardrobe. It shou
 <<endevent>>
 <<link [[Next|Orphanage]]>><</link>>
 <br>
+
+:: Bailey Office Alex Children Fee
+<<effects>>
+
+<<set _babies_fee to childrenCountBetweenParents("pc", "Alex")*1000>>
+
+"<<printmoney 100000>>, each. and you're only taking the ones you had with that stupid farmer," <<he>> says before returning to what <<he>> was doing.
+<br><br>
+
+<<if $money gte _babies_fee>>
+    <<link [['Pay the fee (£' + _babies_fee  + ')'|Bailey Office Alex Children Fee 2]]>><<set $money -= _babies_fee*10>><</link>>
+
+<<else>>
+    <i>You cannot afford the fee.</i>
+<</if>>
+<br>
+
+<<link [[Leave|Orphanage]]>><<endevent>><</link>>
+
+:: Bailey Office Alex Children Fee 2
+<<effects>><<set C.npc.Alex.pregnancy.fee to true>>
+
+You place the money on <<his>> desk and <<he>> takes it.
+<br><br>
+
+"Good," <<he>> says counting the money. "You can come by and take them whenever you want to, I don't care."
+<br><br>
+
+"Now, leave!" <<he>> says.
+<br><br>
+
+<span class="gold">You can now take your children to the farm, you should speak with Alex.</span>
+<br><br>
+
+<<link [[Next|Orphanage]]>><<endevent>><</link>>
 
 :: Docks_Robin Swap 2
 "So," the <<person1>><<person>> slurs. "If we did use <<phim>> as bait, I bet we'd catch a whale."
@@ -3094,7 +3153,7 @@ Robin leans on to you, panting, beads of sweat dripping down <<his>> naked body.
 		<<He>> gets down on <<his>> knees, and pushes <<himself>> between your legs.
 		<br><br>
 
-		<<if $player.gender is "h">>
+		<<if $player.penisExist and $player.vaginaExist>>
 			<<He>> kisses the tip of your <<penis>>, and runs <<his>> tongue along your length.
 			Meanwhile, <<he>> plunges a finger into your quim, and begins pumping in and out. <<He>> gazes up at you.
 		<<elseif $player.penisExist>>
@@ -4969,7 +5028,7 @@ You get into bed next to <<him>>, and turn off the lamp.
 
 :: Robin Trauma Visit Sleep
 <<set _autosavehere to true>>
-<<sleep>><<effects>>
+<<sleep true>><<effects>>
 <<sleepeffects>>
 <<if $wraith.nightmare is 2 and isBloodmoon()>>
 	You dream of a beautiful figure, cloaked in white, standing under the red moon. It has its arms spread out to you in a welcoming gesture. You can feel its gaze boring into your mind as you step closer.
@@ -6326,7 +6385,7 @@ You try to come up with a way to distract the crowd from Robin.
 	<br>
 <</if>>
 <<if !$robinPillory.distractions.includes("crime")>>
-	<<link [[Create a disturbance (1:00)|Robin Pillory Crime]]>><<pass 60>><<crimeup 100>><</link>><<gcrime>>
+	<<link [[Create a disturbance (1:00)|Robin Pillory Crime]]>><<pass 60>><<crimeUp 100 "destruction">><</link>><<gcrime "destruction">>
 	<br>
 <</if>>
 <<if $money gte 2000 and !$robinPillory.distractions.includes("flower")>>
@@ -6938,30 +6997,11 @@ You decide not to bother Robin. You close the door and return to the main hall.
 <</if>>
 <<masturbationeffects>>
 <<masturbationactions>>
-
-<div id="masturbationButtons">
-	<<if $orgasmcurrent gte 1>>
-		<div><<link [[Stop|Robin Mischief Masturbation Finish]]>><<set $finish to 1>><</link>></div>
-	<<else>>
-		<<if $timer lte 0>>
-			<div id="next"><<link [[Continue|Robin Mischief Masturbation Finish]]>><</link>><<nexttext>></div>
-		<<else>>
-			<div id="next"><<link [[Continue|Robin Mischief Masturbation]]>><</link>><<nexttext>></div>
-		<</if>>
-
-		<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
-			<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
-		<<elseif $corruptionMasturbation isnot true>>
-			<div><<link [[Stop|Robin Mischief Masturbation Finish]]>><<set $finish to 1>><</link>></div>
-		<<else>>
-			<div class="red">The slime in your ear will not allow you to stop.</div>
-		<</if>>
-	<</if>>
-</div>
+<<masturbationControls "orgasmcurrent|timer">>
 
 :: Robin Mischief Masturbation Finish
 <<effects>>
-<<if $masturbationorgasm gte 1>>
+<<if $orgasmcurrent gte 1>>
 	You clamp a hand over your mouth to avoid being exposed. Almost simultaneously,
 <<else>>
 	Before you can bring yourself to climax,
@@ -7229,17 +7269,17 @@ You help Robin get up from the bathtub and reach for a towel. "I-I'll be fine," 
 		As <<he>> washes you, <<his>> hands move to your <<breasts>> and <<genitals>>. You feel <<his>> scrubbing turn to groping.
 		<br><br>
 
-		<<link [[Insist on just washing|Robin Bath Out]]>><<set $phase to 1>><<trauma -6>><<stress -6>><<npcincr Robin dom -1>><</link>><<lstress>><<ltrauma>><<ldom>>
+		<<ind>><<link [[Insist on just washing|Robin Bath Out]]>><<set $phase to 1>><<trauma -6>><<stress -6>><<npcincr Robin dom -1>><</link>><<lstress>><<ltrauma>><<ldom>>
 		<br>
-		<<link [[Embrace|Robin Bath Sex]]>><<set $phase to 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<gdom>>
+		<<ind>><<link [[Embrace|Robin Bath Sex]]>><<set $phase to 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<gdom>>
 	<<else>>
 		You scrub and rinse each other until the both of you are squeaky clean.
 		<br><br>
 
-		<<link [[Get out|Robin Bath Out]]>><<set $phase to 0>><</link>>
+		<<getouticon>><<link [[Get out|Robin Bath Out]]>><<set $phase to 0>><</link>>
 		<<if $promiscuity gte 15>>
 			<br>
-			<<link [[Ask to go further|Robin Bath Sex]]>><<set $phase to 0>><<npcincr Robin love 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<glove>><<gdom>>
+			<<ind>><<link [[Ask to go further|Robin Bath Sex]]>><<set $phase to 0>><<npcincr Robin love 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<glove>><<gdom>>
 		<</if>>
 	<</if>>
 <<else>>
@@ -7483,9 +7523,9 @@ The tub isn't built for two, so you need to squeeze against one side to make roo
 After that, Robin gently helps scrub you clean of dirt and grime, and you do the same for <<him>>. You scrub and rinse each other until you're both squeaky clean.
 <br><br>
 
-<<link [[Get out|Robin Bath Out]]>><</link>>
+<<ind>><<link [[Get out|Robin Bath Out]]>><</link>>
 <br>
-<<link [[Ask to go further|Robin Bath Sex]]>><<npcincr Robin love 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<glove>><<gdom>>
+<<getouticon>><<link [[Ask to go further|Robin Bath Sex]]>><<npcincr Robin love 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<glove>><<gdom>>
 
 :: Bath Robin Join 2
 <<effects>>
@@ -7505,17 +7545,17 @@ After that, Robin gently helps scrub you clean of dirt and grime, and you do the
 		As <<he>> washes you, <<his>> hands move to your <<breasts>> and <<genitals>>. You feel <<his>> scrubbing turn to groping.
 		<br><br>
 
-		<<link [[Insist on just washing|Robin Bath Out]]>><<set $phase to 1>><<trauma -6>><<stress -6>><<npcincr Robin dom -1>><</link>><<lstress>><<ltrauma>><<ldom>>
+		<<ind>><<link [[Insist on just washing|Robin Bath Out]]>><<set $phase to 1>><<trauma -6>><<stress -6>><<npcincr Robin dom -1>><</link>><<lstress>><<ltrauma>><<ldom>>
 		<br>
-		<<link [[Embrace|Robin Bath Sex]]>><<set $phase to 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<gdom>>
+		<<ind>><<link [[Embrace|Robin Bath Sex]]>><<set $phase to 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<gdom>>
 	<<else>>
 		You scrub and rinse each other until the both of you are squeaky clean.
 		<br><br>
 
-		<<link [[Get out|Robin Bath Out]]>><<set $phase to 0>><</link>>
+		<<getouticon>><<link [[Get out|Robin Bath Out]]>><<set $phase to 0>><</link>>
 		<<if $promiscuity gte 15>>
 			<br>
-			<<link [[Ask to go further|Robin Bath Sex]]>><<set $phase to 0>><<npcincr Robin love 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<glove>><<gdom>>
+			<<ind>><<link [[Ask to go further|Robin Bath Sex]]>><<set $phase to 0>><<npcincr Robin love 1>><<npcincr Robin dom 1>><<set $sexstart to 1>><</link>><<glove>><<gdom>>
 		<</if>>
 	<</if>>
 <</if>>

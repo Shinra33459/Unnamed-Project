@@ -736,7 +736,7 @@
 	<</if>>
 
 	<<if $avery_penis_size isnot undefined>>
-		<<for _npc range ["avery", "bailey", "charlie", "darryl", "doren", "eden", "gwylan", "harper", "jordan", "kylar", "landry", "leighton", "mason", "morgan", "river", "robin", "sam", "sirris", "whitney", "winter"]>>
+		<<for _npc range ["avery", "bailey", "charlie", "darryl", "doren", "eden", "gwylan", "harper", "jordan", "kylar", "landry", "leighton", "mason", "morgan", "river", "robin", "sam", "sirris", "whitney", "winter", "zephyr"]>>
 			<<run delete V[_npc + "_penis_size"]>>
 		<</for>>
 	<</if>>
@@ -925,10 +925,6 @@
 
 	<<if $NPCName[$NPCNameList.indexOf("Kylar")].init is 1 and $NPCName[$NPCNameList.indexOf("Kylar")].state is "">>
 		<<set $NPCName[$NPCNameList.indexOf("Kylar")].init to 0>>
-	<</if>>
-
-	<<if $corruption_slime is undefined>>
-		<<set $corruption_slime to 0>>
 	<</if>>
 
 	<<if $chestuse is undefined>>
@@ -3589,7 +3585,7 @@
 	/* Code that should not be moved into a check like above */
 	<<set $runWardrobeSanityChecker to true>>
 
-	<<if $objectVersion.updateClothes lt 40 or $objectVersion.updateClothes is undefined>>
+	<<if $objectVersion.updateClothes lt 41 or $objectVersion.updateClothes is undefined>>
 		<<updateClothes>>
 		<<if $objectVersion.updateClothes lt 38>>
 			<!-- V0.4.0.7 return items stuck in $store without proper .location -->
@@ -3600,24 +3596,24 @@
 			<!--Should'nt need to re-run that often-->
 			<<run clothesDataTrimmerLoop()>>
 		<</if>>
-		<<set $objectVersion.updateClothes to 40>>
+		<<set $objectVersion.updateClothes to 41>>
 		<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 		Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
 	<</if>>
 
-	<<if $objectVersion.specialClothes lt 13 or $objectVersion.specialClothes is undefined>>
+	<<if $objectVersion.specialClothes lt 14 or $objectVersion.specialClothes is undefined>>
 		<<specialClothesSetup>>
 		<<specialClothesUpdate>>
-		<<set $objectVersion.specialClothes to 13>>
+		<<set $objectVersion.specialClothes to 14>>
 	<</if>>
 
-	<<if $objectVersion.museumAntiques lte 13 and $museumAntiques.antiques.antiquewhitescrystal isnot undefined>>
+	<<if $objectVersion.museumAntiques lte 14 and $museumAntiques.antiques.antiquewhitescrystal isnot undefined>>
 		<<run delete $museumAntiques.antiques.antiquewhitescrystal>>
 	<</if>>
-	<<if $objectVersion.museumAntiques lt 14 or $objectVersion.museumAntiques is undefined>>
+	<<if $objectVersion.museumAntiques lt 16 or $objectVersion.museumAntiques is undefined>>
 		/*Moved undefined checks for new antiques to the widget below*/
 		<<updateMuseumAntiques>>
-		<<set $objectVersion.museumAntiques to 14>>
+		<<set $objectVersion.museumAntiques to 15>>
 	<</if>>
 
 	<<pregnancyVar>>
@@ -3736,21 +3732,6 @@
 	<<if $templePromised isnot "" and $player.virginity.vaginal is true and $player.virginity.penile is true>>
 		<<set $virginityProtected to true>>
 	<</if>>
-
-	<!-- v0.3.8.6: give existing clothing (school shirt) a default accessory colour. (Light blue) -->
-	<<script>>
-		const itemChanger = item => {
-			if (item.index === 5) {
-				/* We found our school shirt. */
-				if (item.accessory_colour === 0) {
-					item.accessory_colour = "light blue";
-					item.accessory_colour_combat = "light blue";
-				}
-			}
-		};
-		V.wardrobe.upper.forEach(itemChanger);
-		itemChanger(V.worn.upper);
-	<</script>>
 
 	<!-- <= v0.3.8.6: fame object -->
 	<<if !$objectVersion.fame>>
@@ -4249,13 +4230,13 @@
 		<<unset $adultShopWhitney>>
 	<</if>>
 
-	<!-- 
+	<!--
 	v0.4.0.6 change (87f8e633085bb4be8f4f0d099012b1e0b077242a) that I've moved up here.
-	the reason is - this variable is used in the edge-case handled below 
-	  (the <<pass _passMinutes>> macro that the v0.4 Time refactor sometimes calls ends up reading schoolLessonsMissed.science, 
+	the reason is - this variable is used in the edge-case handled below
+	  (the <<pass _passMinutes>> macro that the v0.4 Time refactor sometimes calls ends up reading schoolLessonsMissed.science,
 	  which obviously breaks if this initialization doesn't happen at this point.
-	
-	If you add any calls to <<pass>> before this line in backComp - it will also break 
+
+	If you add any calls to <<pass>> before this line in backComp - it will also break
 	  for any players whose save doesn't have the schoolLessonsMissed paramm yet.
 	-->
 	<<if $sciencemissed isnot undefined>>
@@ -4430,7 +4411,7 @@
 					<<set $transformationParts.fox.tail to "default">>
 				<</if>>
 			<</if>>
-			
+
 			<!-- V0.4.0.5 Stop any saves in the above situation from being broken upon leaving -->
 			<<if $real_transformationParts and !$real_transformationParts.fox>>
 				<<set $real_transformationParts.fox to {ears:"disabled", tail:"disabled", cheeks:"disabled"}>>
@@ -4468,7 +4449,7 @@
 
 		<<set $tfFIX to 2>>
 	<</if>>
-	
+
 	<!-- V0.4.0.5 Old saves with untyped named NPCs -->
 	<<if $NPCName[0].type is undefined>>
 		<<set $_WHY to ["human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "human", "wolf", "human", "human", "human", "human", "hawk", "human", "human", "human"]>>
@@ -4530,5 +4511,123 @@
 
 	<<if $speech_attitude is undefined>>
 		<<set $speech_attitude to "neutral">>
+	<</if>>
+
+	<!-- V0.4.1.7 Set V.options.confirmDialogUponTabClose for the new confirm dialog box prompting when user closes/refresh tab -->
+	<<if $options.confirmDialogUponTabClose is undefined>>
+		<<if $ironmanmode is true>>
+			<<set $options.confirmDialogUponTabClose to true>>
+		<<else>>
+			<<set $options.confirmDialogUponTabClose to false>>
+		<</if>>
+	<</if>>
+
+	<!-- V0.4.x.x Ear Slime Extension -->
+	<<if $earSlime is undefined>>
+		<<resetEarSlime>>
+		<<set $earSlime.corruption to $corruption_slime or 0>>
+		<<set $earSlime.event to $slimeEvent or "">>
+		<<set $earSlime.eventTimer to $slimeSleepEvent or 0>>
+		<<set $earSlime.eventLength to $slimeEventLength or 0>>
+		<<set $earSlime.defyCooldown to  $slimeDefyCooldown or 0>>
+		<<set $masturbationRuinedOrgasm to 0>>
+		<<set $ruinedOrgasmStat to 0>>
+
+		<<if ["go running or swimming for an hour", "steal something", "go running or swimming naked for an hour"].includes($earSlime.event)>>
+			<<set $earSlime.noSleep to true>>
+		<</if>>
+
+		<<unset $corruption_slime>>
+		<<unset $slimeEvent>>
+		<<unset $slimeSleepEvent>>
+		<<unset $slimeDefyCooldown>>
+		<<set $ruinedorgasmdisable to "f">>
+	<</if>>
+	<<if !$parasite.types.includes("parasite")>>
+		<<run $parasite.types.push("parasite")>>
+		<<run $parasite.parasite to []>>
+		<<run $parasite.breasts to {}>>
+	<</if>>
+
+	<!-- V0.4.2.0 Give leotards a default colour of black after making them recolourable-->
+	<<script>>
+		let underUpperChanger = item => {
+			if (item.index === 3 || item.index === 4 || item.index === 5 || item.index === 8) {
+				if (item.colour === 0) {
+					item.colour = "black";
+					item.colour_combat = "black";
+				}
+			}
+		};
+		V.wardrobe.under_upper.forEach(underUpperChanger);
+		underUpperChanger(V.worn.under_upper);
+
+		const underLowerChanger = item => {
+			if (item.index === 8 || item.index === 9 || item.index === 10 || item.index === 13) {
+				if (item.colour === 0) {
+					item.colour = "black";
+					item.colour_combat = "black";
+				}
+			}
+		};
+		V.wardrobe.under_lower.forEach(underLowerChanger);
+		underLowerChanger(V.worn.under_lower);
+	<</script>>
+
+	<!-- V0.4.2.0 Crime Overhaul -->
+	<<if !$objectVersion.crime>>
+		<<set _oldCrime to parseInt($crime) || 0>>
+		<<set _oldCrimeHistory to parseInt($crimehistory) || 0>>
+		<<unset $crime>><<unset $crimehistory>>
+		<<set $crime to {
+			assault: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			coercion: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			destruction: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			exposure: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			obstruction: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			prostitution: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			resisting: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			thievery: {current: _oldCrime, history: _oldCrimeHistory, daily: 0, count: 0, countHistory: 0},
+			petty: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			trespassing: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			events: {},
+		}>>
+		<<if $crime.thievery.current gte 1>>
+			<<set $crime.thievery.count to 1>><<set $crime.thievery.countHistory to 1>>
+			<<set C.crime.logEvent(_oldCrime, "thievery", "legacy", 0)>>
+		<</if>>
+		<<set $objectVersion.crime to 1>>
+	<</if>>
+
+	<!-- V0.4.2.0 Temple rank prep -->
+	<<if $world_corruption_soft is undefined>>
+		<<set $world_corruption_soft to 0>>
+		<<set $world_corruption_hard to 2>>
+		<<set $world_corruption_reduced to 0>>
+		<<if $stat_aphrodisiacs_sold gte 1>>
+			<<world_corruption "soft" $stat_aphrodisiacs_sold>>
+		<</if>>
+		<<if $sydneySeen>>
+			<<if $sydneySeen.includes("corruptroom")>>
+				<<world_corruption "hard" 1>>
+			<</if>>
+		<</if>>
+		<<if $museumAntiques.antiques.antiquebell is "stolen">>
+			<<world_corruption "hard" 2>>
+		<</if>>
+		<<if $museumAntiques.antiques.antiqueivorynecklace is "talk" or $museumAntiques.antiques.antiqueivorynecklace is "museum">>
+			<<world_corruption "hard" 2>>
+		<</if>>
+		<<if $templePromised is "Sydney">>
+			<<world_corruption "hard" -1>>
+		<</if>>
+	<</if>>
+
+	<!-- V0.4.2.3 Fixes existing saves affected by Moderate Start "f" bug -->
+	<<if $malechance is "f">>
+		<<set $malechance to 0>>
+	<</if>>
+	<<if $beastmalechance is "f">>
+		<<set $beastmalechance to 0>>
 	<</if>>
 <</widget>>

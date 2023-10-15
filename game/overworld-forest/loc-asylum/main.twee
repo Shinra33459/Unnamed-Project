@@ -86,7 +86,7 @@
 	<br><br>
 	<<roomoptions>>
 	<<if Time.hour isnot 6>>
-		<<link [[Bed|Asylum Bed]]>><</link>>
+		<<asylumicon  "bed">><<link [[Bed|Asylum Bed]]>><</link>>
 		<br><br>
 	<<else>>
 		You can't sleep until the alarm turns off.
@@ -95,7 +95,7 @@
 	<<if $eden_asylum_window is 1 and Time.hour gte 22>>
 		Eden should be watching. You could throw a towel up to your window to signal your location.
 		<br>
-		<<link [[Throw towel|Eden Towel Throw]]>><</link>>
+		<<towelicon>><<link [[Throw towel|Eden Towel Throw]]>><</link>>
 		<br>
 	<</if>>
 	<<if $leftarm is "bound" and $rightarm is "bound">>
@@ -104,12 +104,12 @@
 	<<else>>
 		A padded cupboard containing your clothes protrudes from the wall.
 		<br>
-		<<wardrobeicon>><<link [[Open|Asylum Wardrobe]]>><</link>>
+		<<asylumicon "wardrobe">><<link [[Open|Asylum Wardrobe]]>><</link>>
 		<br>
 	<</if>>
 	<br>
 	<<if $asylumstate isnot "sleep">>
-		<<link [[Leave|Asylum]]>><</link>>
+		<<getouticon>><<link [[Leave|Asylum]]>><</link>>
 		<br>
 	<</if>>
 	<br>
@@ -127,7 +127,7 @@
 	<br><br>
 	<<roomoptions>>
 	<<if Time.hour isnot 6>>
-		<<bedicon>><<link [[Bed|Asylum Bed]]>><</link>>
+		<<asylumicon  "bed">><<link [[Bed|Asylum Bed]]>><</link>>
 		<br><br>
 	<<else>>
 		You can't sleep until the alarm turns off.
@@ -136,7 +136,7 @@
 	<<if $eden_asylum_window is 1 and Time.hour gte 22>>
 		Eden should be watching. You could throw a towel up to your window to signal your location.
 		<br>
-		<<link [[Throw towel|Eden Towel Throw]]>><</link>>
+		<<towelicon>><<link [[Throw towel|Eden Towel Throw]]>><</link>>
 		<br>
 	<</if>>
 	<<if $leftarm is "bound" and $rightarm is "bound">>
@@ -145,12 +145,12 @@
 	<<else>>
 		A padded cupboard containing your clothes protrudes from the wall.
 		<br>
-		<<wardrobeicon>><<link [[Open|Asylum Wardrobe]]>><</link>>
+		<<asylumicon  "wardrobe">><<link [[Open|Asylum Wardrobe]]>><</link>>
 		<br>
 	<</if>>
 	<br>
 	<<if $asylumstate isnot "sleep">>
-		<<link [[Leave|Asylum]]>><</link>>
+		<<getouticon>><<link [[Leave|Asylum]]>><</link>>
 		<br>
 	<</if>>
 	<br>
@@ -168,7 +168,7 @@
 	<br><br>
 	<<roomoptions>>
 	<<if Time.hour isnot 6>>
-		<<bedicon>><<link [[Bed|Asylum Bed]]>><</link>>
+		<<asylumicon  "bed">><<link [[Bed|Asylum Bed]]>><</link>>
 		<br><br>
 	<<else>>
 		You can't sleep until the alarm turns off.
@@ -177,7 +177,7 @@
 	<<if $eden_asylum_window is 1 and Time.hour gte 22>>
 		Eden should be watching. You could throw a towel up to your window to signal your location.
 		<br>
-		<<link [[Throw towel|Eden Towel Throw]]>><</link>>
+		<<towelicon>><<link [[Throw towel|Eden Towel Throw]]>><</link>>
 		<br>
 	<</if>>
 	<<if $leftarm is "bound" and $rightarm is "bound">>
@@ -186,12 +186,12 @@
 	<<else>>
 		A padded cupboard containing your clothes protrudes from the wall.
 		<br>
-		<<wardrobeicon>><<link [[Open|Asylum Wardrobe]]>><</link>>
+		<<asylumicon  "wardrobe">><<link [[Open|Asylum Wardrobe]]>><</link>>
 		<br>
 	<</if>>
 	<br>
 	<<if $asylumstate isnot "sleep">>
-		<<link [[Leave|Asylum]]>><</link>>
+		<<getouticon>><<link [[Leave|Asylum]]>><</link>>
 		<br>
 	<</if>>
 	<br>
@@ -282,111 +282,121 @@ You snuggle under the covers.
 
 :: Asylum Sleep
 <<set _autosavehere to true>>
-<<sleep>><<effects>>
-<<wakingEffects $sleepHoursTotal>>
-<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
-	You slept soundly, but now feel a little rough.
-	<br><br>
-<<elseif $nightmares gte 1 and $controlled is 0>>
-	You <<if _wakingEffect>>dreamed of<<else>>dream you are<</if>> being hunted by something <<if ["haunt", "despair"].includes($wraith.state) and $rng lte 25>>pale<<else>>dark<</if>> and terrible.
+<<sleep>>
+<<if _dreaming>>
+	/* <<earSlimeFocusChoice>> or similar widgets are running */
 <<else>>
-	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
-		Your sleep <<if _wakingEffect>>was<<else>>is<</if>> plagued by dirty dreams.
-		<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
-		<<arousal `100 * $sleepHoursTotal`>>
-		<<if $arousal gte $arousalmax>>
-			They push you over the edge.
-			<<orgasm>>
+	<<effects>>
+	<<if _slimeWakeMasturbation is 1>>
+		<<set _masturbationExit to "Asylum Sleep">>
+		<<slimeWakeMasturbation>>
+	<<else>>
+		<<wakingEffects $sleepHoursTotal>>
+		<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+			You slept soundly, but now feel a little rough.
+			<br><br>
+		<<elseif $nightmares gte 1 and $controlled is 0>>
+			You <<if _wakingEffect>>dreamed of<<else>>dream you are<</if>> being hunted by something <<if ["haunt", "despair"].includes($wraith.state) and $rng lte 25>>pale<<else>>dark<</if>> and terrible.
+		<<else>>
+			<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
+				Your sleep <<if _wakingEffect>>was<<else>>is<</if>> plagued by dirty dreams.
+				<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+				<<arousal `100 * $sleepHoursTotal`>>
+				<<if $arousal gte $arousalmax>>
+					They push you over the edge.
+					<<orgasm>>
+				<<else>>
+					<br><br>
+				<</if>>
+			<<elseif !_wakingEffect>>
+				You sleep soundly.
+				<br><br>
+			<<else>>
+				<br><br>
+			<</if>>
+		<</if>>
+		<<sleepeffects>>
+		<<if isPlayerNonparasitePregnancyEnding()>>
+			<<asylumeffects>>
+			<<pregnancyWatersBrokenPassout "asylum">>
+		<<elseif _sleepinterrupt>>
+			<<asylumeffects>>
+			<<if $rapewake is 1>>
+				<<set $rapewake to 0>>
+				<<generate1>><<generate2>><<person1>>
+				<<if _wakingEffect is "dryheaving">>
+					A <<person>> rubs your back. "Feeling better now?" <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+				<<else>>
+					A <<person>> shakes you awake. "Wakey wakey," <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+				<</if>>
+				<br><br>
+				<<link [[Next|Asylum Cell Rape]]>><<set $molestationstart to 1>><</link>>
+				<br>
+			<<elseif $asylumstate is "firsttreatment" and $daily.asylumTreatment1 isnot 1>>
+				<<set $daily.asylumTreatment1 to 1>>
+				<<generate1>><<person1>>
+				<<if _wakingEffect is "dryheaving">>
+					A <<person>> rubs your back. <<Hes>> a nurse.
+					<br><br>
+				<<else>>
+					A <<person>> shakes you awake. <<Hes>> a nurse.
+					<br><br>
+				<</if>>
+				<<asylumoptions>>
+				"Doctor says it's time for your treatment," <<he>> says. "Come with me."
+				<br><br>
+				<<endevent>>
+				<<asylumtreatments>>
+			<<elseif $asylumstate is "secondtreatment" and $daily.asylumTreatment2 isnot 1>>
+				<<set $daily.asylumTreatment2 to 1>>
+				<<generate1>><<person1>>
+				<<if _wakingEffect is "dryheaving">>
+					A <<person>> rubs your back. <<Hes>> a nurse.
+					<br><br>
+				<<else>>
+					A <<person>> shakes you awake. <<Hes>> a nurse.
+					<br><br>
+				<</if>>
+				<<asylumoptions>>
+				"Doctor says it's time for your treatment," <<he>> says. "Come with me."
+				<br><br>
+				<<endevent>>
+				<<asylumtreatments>>
+			<<elseif $asylumstate is "assessment" and $daily.asylumAssessment isnot 1>>
+				<<set $daily.asylumAssessment to 1>>
+				<<generate1>><<person1>>
+				<<if _wakingEffect is "dryheaving">>
+					A <<person>> rubs your back. <<Hes>> a nurse.
+					<br><br>
+				<<else>>
+					A <<person>> shakes you awake. <<Hes>> a nurse.
+					<br><br>
+				<</if>>
+				<<asylumoptions>>
+				"Doctor says it's time for your assessment," <<he>> says. "Come with me."
+				<br><br>
+				<<endevent>>
+				<<asylumassessment>>
+			<<else>>
+				<<if _wakingEffect is "dryheaving">>
+					A loud buzzing continues in the background.
+					<br><br>
+				<<else>>
+					A loud buzzing wakes you.
+					<br><br>
+				<</if>>
+				<br><br>
+				<<getouticon>><<link [[Get out of bed|Asylum Cell]]>><</link>>
+				<br><br>
+			<</if>>
 		<<else>>
 			<br><br>
+			<<getouticon>><<link [[Get out of bed|Asylum Cell]]>><</link>>
+			<br><br>
 		<</if>>
-	<<elseif !_wakingEffect>>
-		You sleep soundly.
-		<br><br>
-	<<else>>
-		<br><br>
+		<<set $phase to 0>>
 	<</if>>
 <</if>>
-<<sleepeffects>>
-<<if isPlayerNonparasitePregnancyEnding()>>
-	<<asylumeffects>>
-	<<pregnancyWatersBrokenPassout "asylum">>
-<<elseif _sleepinterrupt>>
-	<<asylumeffects>>
-	<<if $rapewake is 1>>
-		<<set $rapewake to 0>>
-		<<generate1>><<generate2>><<person1>>
-		<<if _wakingEffect is "dryheaving">>
-			A <<person>> rubs your back. "Feeling better now?" <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
-		<<else>>
-			A <<person>> shakes you awake. "Wakey wakey," <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
-		<</if>>
-		<br><br>
-		<<link [[Next|Asylum Cell Rape]]>><<set $molestationstart to 1>><</link>>
-		<br>
-	<<elseif $asylumstate is "firsttreatment" and $daily.asylumTreatment1 isnot 1>>
-		<<set $daily.asylumTreatment1 to 1>>
-		<<generate1>><<person1>>
-		<<if _wakingEffect is "dryheaving">>
-			A <<person>> rubs your back. <<Hes>> a nurse.
-			<br><br>
-		<<else>>
-			A <<person>> shakes you awake. <<Hes>> a nurse.
-			<br><br>
-		<</if>>
-		<<asylumoptions>>
-		"Doctor says it's time for your treatment," <<he>> says. "Come with me."
-		<br><br>
-		<<endevent>>
-		<<asylumtreatments>>
-	<<elseif $asylumstate is "secondtreatment" and $daily.asylumTreatment2 isnot 1>>
-		<<set $daily.asylumTreatment2 to 1>>
-		<<generate1>><<person1>>
-		<<if _wakingEffect is "dryheaving">>
-			A <<person>> rubs your back. <<Hes>> a nurse.
-			<br><br>
-		<<else>>
-			A <<person>> shakes you awake. <<Hes>> a nurse.
-			<br><br>
-		<</if>>
-		<<asylumoptions>>
-		"Doctor says it's time for your treatment," <<he>> says. "Come with me."
-		<br><br>
-		<<endevent>>
-		<<asylumtreatments>>
-	<<elseif $asylumstate is "assessment" and $daily.asylumAssessment isnot 1>>
-		<<set $daily.asylumAssessment to 1>>
-		<<generate1>><<person1>>
-		<<if _wakingEffect is "dryheaving">>
-			A <<person>> rubs your back. <<Hes>> a nurse.
-			<br><br>
-		<<else>>
-			A <<person>> shakes you awake. <<Hes>> a nurse.
-			<br><br>
-		<</if>>
-		<<asylumoptions>>
-		"Doctor says it's time for your assessment," <<he>> says. "Come with me."
-		<br><br>
-		<<endevent>>
-		<<asylumassessment>>
-	<<else>>
-		<<if _wakingEffect is "dryheaving">>
-			A loud buzzing continues in the background.
-			<br><br>
-		<<else>>
-			A loud buzzing wakes you.
-			<br><br>
-		<</if>>
-		<br><br>
-		<<link [[Get out of bed|Asylum Cell]]>><</link>>
-		<br><br>
-	<</if>>
-<<else>>
-	<br><br>
-	<<link [[Get out of bed|Asylum Cell]]>><</link>>
-	<br><br>
-<</if>>
-<<set $phase to 0>>
 
 :: Asylum Settings [exitCheckBypass]
 <<set $settingsExitPassage to "Asylum Cell">>
@@ -472,74 +482,74 @@ You are in the asylum, deep in the forest. The building is over a century old, a
 <<elseif Time.hour is 22>>
 	<<generateDoctor 1>><<person1>>"Bed time," a nurse announces. "Everyone get back in your cells."
 	<br><br>
-	<<link [[Go to cell (0:02)|Asylum Cell]]>><<pass 2>><<endevent>><</link>>
+	<<asylumicon  "cell">><<link [[Go to cell (0:02)|Asylum Cell]]>><<pass 2>><<endevent>><</link>>
 	<br>
-	<<link [[Hide (1:00)|Asylum Hide]]>><<pass 60>><</link>>
+	<<refuseicon>><<link [[Hide (1:00)|Asylum Hide]]>><<pass 60>><</link>>
 	<br>
 <<elseif $asylumstate is "sleep">>
-	<<link [[Staff door|Asylum Staff]]>><</link>>
+	<<asylumicon "door">><<link [[Staff door|Asylum Staff]]>><</link>>
 	<br>
-	<<link [[Cell|Asylum Cell]]>><</link>>
+	<<asylumicon  "cell">><<link [[Cell|Asylum Cell]]>><</link>>
 	<br>
 <<else>>
 	<<if $exposed gte 1>>
-		<<link [[Ask for clothes|Asylum Towels]]>><<trauma 6>><<stress 3>><<suspicion 1>><</link>><<gsuspicion>><<gtrauma>><<gstress>>
+		<<dressasyouwereicon>><<link [[Ask for clothes|Asylum Towels]]>><<trauma 6>><<stress 3>><<suspicion 1>><</link>><<gsuspicion>><<gtrauma>><<gstress>>
 		<br>
 	<</if>>
 	<<if $daily.eden.distract is 1>>
-		<<link [[Search for a breaker room|Asylum Breaker]]>><</link>>
+		<<investigateicon>><<link [[Search for a breaker room|Asylum Breaker]]>><</link>>
 		<br>
 	<</if>>
 	<<if $daily.eden.asylumDisarm is 1>>
-		<<link [[Search for an alarm system|Asylum Alarm]]>><</link>>
+		<<investigateicon>><<link [[Search for an alarm system|Asylum Alarm]]>><</link>>
 		<br>
 	<</if>>
 	<<if $exposed gte 2 and $exhibitionism gte 75>>
 		<<if Time.hour is 6>>
-			<<link [[Breakfast (1:00)|Asylum Breakfast]]>><<asylumstatus 1>><<awareness -10>><<trauma -3>><<stress -6>><<pass 60>><</link>><<exhibitionist5>><<gcool>><<llawareness>><<ltrauma>><<lstress>>
+			<<foodicon "pancakes">><<link [[Breakfast (1:00)|Asylum Breakfast]]>><<asylumstatus 1>><<awareness -10>><<trauma -3>><<stress -6>><<pass 60>><</link>><<exhibitionist5>><<gcool>><<llawareness>><<ltrauma>><<lstress>>
 			<br>
 		<</if>>
-		<<link [[Exercise outside (0:30)|Asylum Exercise]]>><<tiredness 3>><<stress -6>><<pass 30>><</link>><<exhibitionist5>><<gtiredness>><<lstress>><<gathletics>>
+		<<exerciseicon>><<link [[Exercise outside (0:30)|Asylum Exercise]]>><<tiredness 3>><<stress -6>><<pass 30>><</link>><<exhibitionist5>><<gtiredness>><<lstress>><<gathletics>>
 		<br>
-		<<link [[Socialise (0:30)|Asylum Socialise]]>><<asylumstatus 1>><<trauma -3>><<stress -6>><<pass 30>><</link>><<exhibitionist5>><<gcool>><<ltrauma>><<lstress>>
+		<<socialiseicon>><<link [[Socialise (0:30)|Asylum Socialise]]>><<asylumstatus 1>><<trauma -3>><<stress -6>><<pass 30>><</link>><<exhibitionist5>><<gcool>><<ltrauma>><<lstress>>
 		<br>
-		<<link [[Study (0:50)|Asylum Study]]>><<pass 50>><<schoolskill>><</link>><<exhibitionist5>><<gschool>>
+		<<libraryicon>><<link [[Study (0:50)|Asylum Study]]>><<pass 50>><<schoolskill>><</link>><<exhibitionist5>><<gschool>>
 		<br>
-		<<link [[Garden (0:02)|Asylum Garden]]>><<pass 2>><</link>>
+		<<gardenicon>><<link [[Garden (0:02)|Asylum Garden]]>><<pass 2>><</link>>
 		<br>
 	<<elseif $exposed gte 1 and $exhibitionism gte 35>>
 		<<if Time.hour is 6>>
-			<<link [[Breakfast (1:00)|Asylum Breakfast]]>><<asylumstatus 1>><<awareness -10>><<trauma -3>><<stress -6>><<pass 60>><</link>><<exhibitionist3>><<gcool>><<llawareness>><<ltrauma>><<lstress>>
+			<<foodicon "pancakes">><<link [[Breakfast (1:00)|Asylum Breakfast]]>><<asylumstatus 1>><<awareness -10>><<trauma -3>><<stress -6>><<pass 60>><</link>><<exhibitionist3>><<gcool>><<llawareness>><<ltrauma>><<lstress>>
 			<br>
 		<</if>>
-		<<link [[Exercise outside (0:30)|Asylum Exercise]]>><<tiredness 3>><<stress -6>><<pass 30>><</link>><<exhibitionist3>><<gtiredness>><<lstress>><<gathletics>>
+		<<exerciseicon>><<link [[Exercise outside (0:30)|Asylum Exercise]]>><<tiredness 3>><<stress -6>><<pass 30>><</link>><<exhibitionist3>><<gtiredness>><<lstress>><<gathletics>>
 		<br>
-		<<link [[Socialise (0:30)|Asylum Socialise]]>><<asylumstatus 1>><<trauma -3>><<stress -6>><<pass 30>><</link>><<exhibitionist3>><<gcool>><<ltrauma>><<lstress>>
+		<<socialiseicon>><<link [[Socialise (0:30)|Asylum Socialise]]>><<asylumstatus 1>><<trauma -3>><<stress -6>><<pass 30>><</link>><<exhibitionist3>><<gcool>><<ltrauma>><<lstress>>
 		<br>
-		<<link [[Study (0:50)|Asylum Study]]>><<pass 50>><<schoolskill>><</link>><<exhibitionist3>><<gschool>>
+		<<libraryicon>><<link [[Study (0:50)|Asylum Study]]>><<pass 50>><<schoolskill>><</link>><<exhibitionist3>><<gschool>>
 		<br>
-		<<link [[Garden (0:02)|Asylum Garden]]>><<pass 2>><</link>>
+		<<gardenicon>><<link [[Garden (0:02)|Asylum Garden]]>><<pass 2>><</link>>
 		<br>
 	<<elseif $exposed is 0>>
 		<<if Time.hour is 6>>
-			<<link [[Breakfast (1:00)|Asylum Breakfast]]>><<asylumstatus 1>><<awareness -10>><<trauma -3>><<stress -6>><<pass 60>><</link>><<gcool>><<llawareness>><<ltrauma>><<lstress>>
+			<<foodicon "pancakes">><<link [[Breakfast (1:00)|Asylum Breakfast]]>><<asylumstatus 1>><<awareness -10>><<trauma -3>><<stress -6>><<pass 60>><</link>><<gcool>><<llawareness>><<ltrauma>><<lstress>>
 			<br>
 		<</if>>
-		<<link [[Exercise outside (0:30)|Asylum Exercise]]>><<tiredness 3>><<stress -6>><<pass 30>><</link>><<gtiredness>><<lstress>><<gathletics>>
+		<<exerciseicon>><<link [[Exercise outside (0:30)|Asylum Exercise]]>><<tiredness 3>><<stress -6>><<pass 30>><</link>><<gtiredness>><<lstress>><<gathletics>>
 		<br>
-		<<link [[Socialise (0:30)|Asylum Socialise]]>><<asylumstatus 1>><<trauma -3>><<stress -6>><<pass 30>><</link>><<gcool>><<ltrauma>><<lstress>>
+		<<socialiseicon>><<link [[Socialise (0:30)|Asylum Socialise]]>><<asylumstatus 1>><<trauma -3>><<stress -6>><<pass 30>><</link>><<gcool>><<ltrauma>><<lstress>>
 		<br>
-		<<link [[Study (0:50)|Asylum Study]]>><<pass 50>><<schoolskill>><</link>><<gschool>>
+		<<libraryicon>><<link [[Study (0:50)|Asylum Study]]>><<pass 50>><<schoolskill>><</link>><<gschool>>
 		<br>
-		<<link [[Garden (0:02)|Asylum Garden]]>><<pass 2>><</link>>
+		<<gardenicon>><<link [[Garden (0:02)|Asylum Garden]]>><<pass 2>><</link>>
 		<br>
 	<</if>>
 	<<if $asylumstatus gte 80 and $asylumdistracted isnot 1>>
-		<<link [[Ask the patients to distract the orderlies|Asylum Distract]]>><<set $asylumdistracted to 1>><<asylumstatus -30>><</link>><<lllcool>>
+		<<askicon>><<link [[Ask the patients to distract the orderlies|Asylum Distract]]>><<set $asylumdistracted to 1>><<asylumstatus -30>><</link>><<lllcool>>
 		<br>
 	<</if>>
 	<br>
-	<<link [[Cell (0:02)|Asylum Cell]]>><<pass 2>><</link>>
+	<<asylumicon  "cell">><<link [[Cell (0:02)|Asylum Cell]]>><<pass 2>><</link>>
 	<br>
 <</if>>
 
@@ -675,9 +685,9 @@ You sneak to a nurse. "Excuse me," you say.
 	<<He>> reaches through the bars and takes your hands. "I'm going to make a distraction," <<he>> says. "In a few minutes you'll hear an explosion on the other side of the building. Climb over the fence, and I'll lead you back to the cabin with me. Got it?"<<takeHandholdingVirginity "Eden" "romantic">>
 	<br><br>
 
-	<<link [[Agree|Eden Distraction Plan]]>><</link>>
+	<<getinicon>><<link [[Agree|Eden Distraction Plan]]>><</link>>
 	<br>
-	<<link [[Refuse|Eden Distraction Refuse]]>><</link>>
+	<<refuseicon>><<link [[Refuse|Eden Distraction Refuse]]>><</link>>
 	<br>
 <<elseif $exposed is 2>>
 	<<flaunting>> you run around the asylum grounds. Security keeps a close eye on you, and warn you off when you jog too close to the perimeter fence.
@@ -2606,7 +2616,7 @@ is an important part of your assessment so you need to be on your best behaviour
 	<<set _rand to random(1,9)>>
 	<<if _rand lte 6>>
 		<<if _rand is 1>>
-			Two orderlies manage to simultaneously cum in your face.
+			Two orderlies manage to simultaneously cum on your face.
 			<<faceejacstat>><<ejacstat>><<faceejacstat>><<ejacstat>><<set $hygiene += 500>><<bodyliquid "face" _goo>>
 		<<elseif _rand is 2>>
 			One orderly shoves a hand between your legs and roughly gropes your <<genitals>>.
@@ -2798,7 +2808,7 @@ The midwife places a mask over your face. You feel your consciousness fade. Seve
 <<endevent>>
 <<generate1>><<person1>>
 <<set $litter_size to getPregnancyObject().fetus.length>>
-You awaken in another room. A smiling midwife stands beside your bed, 
+You awaken in another room. A smiling midwife stands beside your bed,
 <<if $litter_size is 1>>
 	holding a bundled baby in <<his>> arms.
 	<br><br>
@@ -2850,7 +2860,7 @@ You awaken in another room. A smiling midwife stands beside your bed,
 	<<if $first_birth>>
 		<<He>> teaches you how to change <<childname>>'s nappy, and how to bathe <<childhim>>.
 	<<else>>
-		<<He>> assists you with changing <<childname>>'s nappy, and bathing <<childhim>>. 
+		<<He>> assists you with changing <<childname>>'s nappy, and bathing <<childhim>>.
 	<</if>>
 	"Let me know when you're feeling sleepy," <<he>> says. "You need your rest as well, and we can take care of your baby in the meantime."
 	<br><br>
@@ -2864,7 +2874,7 @@ You awaken in another room. A smiling midwife stands beside your bed,
 	<<if $first_birth>>
 		<<He>> teaches you how to change their nappies and how to bathe them.
 	<<else>>
-		<<He>> assists you with changing their nappies, and with bathing them. 
+		<<He>> assists you with changing their nappies, and with bathing them.
 	<</if>>
 	"Let me know when you're feeling sleepy," <<he>> says. "You need your rest as well, and we can take care of your babies in the meantime."
 	<br><br>
@@ -2878,7 +2888,7 @@ You awaken in another room. A smiling midwife stands beside your bed,
 	<<if $first_birth>>
 		<<He>> teaches you how to change their nappies, and how to bathe them.
 	<<else>>
-		<<He>> assists you with changing their nappies, and with bathing them. 
+		<<He>> assists you with changing their nappies, and with bathing them.
 	<</if>>
 	"Let me know when you're feeling sleepy," <<he>> says. "You need your rest as well, and we can take care of your babies in the meantime."
 	<br><br>
@@ -3008,7 +3018,7 @@ The engine comes to life.
 <<generate1>><<person1>>
 <<set $litter_size to getPregnancyObject().fetus.length>>
 <<set _baby_type to getPregnancyObject().fetus[0].type>>
-You awaken in another room. You hear faint whimpering. A smiling midwife stands beside your bed, 
+You awaken in another room. You hear faint whimpering. A smiling midwife stands beside your bed,
 <<if $litter_size is 1>>
 	holding a bundled _baby_type pup in <<his>> arms.
 	<br><br>

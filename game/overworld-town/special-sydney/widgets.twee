@@ -6,9 +6,15 @@
 		You hardly even notice the <<personsimple>> quickly taking a seat next to you, until you hear <<his>> exasperated breathing. It seems <<he>> was late.
 		<br><br>
 		<<His>> eyes meet yours, and <<he>> gives you a gentle smile. It's Sydney, a student from the local school known for <<his>> innocent nature, and for being overworked. A pair of reading glasses accents amber eyes, and <<npcHairColour "Sydney">> hair worn in a ponytail. A holy pendant hangs from <<his>> neck.
-		<<if $temple_rank isnot undefined and $temple_rank is "initiate">>
+		<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">>
 			<<set $sydneySeen.pushUnique("initiate")>>
-			"G-good morning. Haven't seen you here before, but I think I've seen you around at school. You're an initiate, right? I am, too!"
+			<<if $temple_rank is "initiate">>
+				"G-good morning. Haven't seen you here before, but I think I've seen you around at school. You're an initiate, right? I was an initiate not too long ago, too!"
+			<<elseif $temple_rank is "priest">>
+				"G-good morning. Please forgive my tardiness, honored one."
+			<<else>>
+				"G-good morning. Haven't seen you here before, but I think I've seen you around at school. You're a <<temple_rank>>, right?"
+			<</if>>
 		<<else>>
 			"G-good morning. Haven't seen you here before, but I think I've seen you around at school. I'd ask if this was your first time attending mass, but here I am, being the late one."
 		<</if>>
@@ -46,9 +52,14 @@
 		You almost fail to notice the <<personsimple>> taking a seat next to you, until you hear <<his>> exasperated breathing. It's Sydney. It seems <<he>> was late.
 		<br><br>
 		<<His>> eyes meet yours, and <<he>> gives you a surprised smile.
-		<<if $temple_rank isnot undefined and $temple_rank is "initiate">>
+		<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">>
 			<<set $sydneySeen.pushUnique("initiate")>>
-			"Oh, hi!<<if $sydneyFirstSeen.includes("Rescue") and $sydneyRescueMessage isnot 1>><<set $sydneyRescueMessage to 1>> I hope you're doing alright after what happened.<</if>> It didn't occur to me until now, but you're an initiate here too, aren't you?"
+			"Oh, hi!<<if $sydneyFirstSeen.includes("Rescue") and $sydneyRescueMessage isnot 1>><<set $sydneyRescueMessage to 1>> I hope you're doing alright after what happened.<</if>>
+			<<if $temple_rank is "initiate">>
+				It didn't occur to me until now, but you're an initiate here, aren't you? I was still an initiate myself, not too long ago."
+			<<else>>
+				It didn't occur to me until now, but you're a <<temple_rank>> here, aren't you?"
+			<</if>>
 		<<else>>
 			"Oh, hi!<<if $sydneyFirstSeen.includes("Rescue") and $sydneyRescueMessage isnot 1>><<set $sydneyRescueMessage to 1>> I hope you're doing alright after what happened.<</if>> I'm really happy to see you here. I'd ask if this was your first time attending mass, but here I am, being the late one."
 		<</if>>
@@ -179,7 +190,7 @@
 				<<switch $englishPlayRoles.Sydney>>
 					<<case "Sterling">>
 						<<set _playPronoun to (C.npc.Sydney.pronoun is "m" ? "Mr" : "Mrs")>>
-						Looks like I get to be the villain, that rich kid's sibling!" <<He>> stops for a moment, opening the booklet and quickly shuffling through the pages. "No, that's not right... the parent, _playPronoun Sterling!" <<He>> gives you a nervous smile. "I... need to give it a few more reads..."				
+						Looks like I get to be the villain, that rich kid's sibling!" <<He>> stops for a moment, opening the booklet and quickly shuffling through the pages. "No, that's not right... the parent, _playPronoun Sterling!" <<He>> gives you a nervous smile. "I... need to give it a few more reads..."
 					<<default>>
 						I'll be playing that poor little beggar kid, Jazz... or, Jake?" <<He>> opens <<his>> booklet and takes a quick glance at it. "Cass! That's it!" <<He>> tries to laugh it off. "I won't mess it up, promise."
 				<</switch>>
@@ -265,9 +276,9 @@
 					<br>
 					You can purchase any school-sanctioned clothing here.
 					<br>
-					<<link [[Buy clothes|School Library Shop]]>><</link>>
-					<br>
-					<<link [[Leave|School Library]]>><<endevent>><<set $eventskip to 1>><</link>>
+					<<clothingshopicon>><<link [[Buy clothes|School Library Shop]]>><</link>>
+					<br><br>
+					<<getouticon>><<link [[Leave|School Library]]>><<endevent>><<set $eventskip to 1>><</link>>
 					<br>
 				<</if>>
 			<<case "science">>
@@ -474,7 +485,7 @@
 				<<else>>
 					Sydney stretches and stands. "It's time for me to go perform at the stage play. Would you like to come watch?"
 					<br><br>
-					
+
 					<<link [[Walk with Sydney (0:15)|English Play Attend]]>><<endevent>><<pass 15>><</link>>
 					<br>
 					<<link [[Leave|Temple]]>><<endevent>><<set $eventskip to 1>><</link>>
@@ -510,7 +521,7 @@
 				<<else>>
 					Sydney stretches and stands. "It's time for me to go perform at the stage play. Would you like to come watch?"
 					<br><br>
-					
+
 					<<link [[Walk with Sydney (0:15)|English Play Attend]]>><<endevent>><<pass 15>><</link>>
 					<br>
 					<<link [[Leave|Adult Shop]]>><<endevent>><<set $eventskip to 1>><</link>>
@@ -621,35 +632,35 @@
 
 	<<if $location is "school">>
 		<<if $sydneyChastityRemoveIntro is 1>>
-			<<link [[Chat (0:15)|Sydney Chastity Remove Intro]]>><<set $sydneyChastityRemoveIntro to 2>><<pass 15>><</link>>
+			<<socialiseicon>><<link [[Chat (0:15)|Sydney Chastity Remove Intro]]>><<set $sydneyChastityRemoveIntro to 2>><<pass 15>><</link>>
 			<br>
 		<<else>>
-			<<link [[Chat (0:15)|Sydney Chat]]>><<pass 15>><<npcincr Sydney love 1>><<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 20>><<stress -3>><<trauma -3>><<else>><<stress -2>><</if>><</link>><<lstress>><<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 20>><<ltrauma>><</if>><<glove>>
+			<<socialiseicon>><<link [[Chat (0:15)|Sydney Chat]]>><<pass 15>><<npcincr Sydney love 1>><<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 20>><<stress -3>><<trauma -3>><<else>><<stress -2>><</if>><</link>><<lstress>><<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 20>><<ltrauma>><</if>><<glove>>
 			<br>
 		<</if>>
 		<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 10 and ($sydneyFlirt is 1 or $sydneyromance is 1)>>
 			<<if $sydneyChastityRemoveIntro is 1>>
-				<<link [[Flirt (0:15)|Sydney Chastity Remove Intro]]>><<set $sydneyChastityRemoveIntro to 2>><<pass 15>><</link>>
+				<<brothelicon>><<link [[Flirt (0:15)|Sydney Chastity Remove Intro]]>><<set $sydneyChastityRemoveIntro to 2>><<pass 15>><</link>>
 				<br>
 			<<else>>
-				<<link [[Flirt (0:15)|Sydney Flirt]]>><<pass 15>><<npcincr Sydney purity -1>><<stress -2>><</link>><<promiscuous1>><<lstress>><<lspurity>>
+				<<brothelicon>><<link [[Flirt (0:15)|Sydney Flirt]]>><<pass 15>><<npcincr Sydney purity -1>><<stress -2>><</link>><<promiscuous1>><<lstress>><<lspurity>>
 				<br>
 			<</if>>
 		<</if>>
 		<<if $sydneyChastityKnown and $sydneyromance is 1 and checkSextoysGift("Sydney") and checkIfNPCHasCategorySextoy("Sydney","strap-on").length <= 5>>
-			<<link [[Gift Sydney a strap-on|Gift Strap-on Sydney Counter]]>><</link>>
+			<<sextoysicon "strap-on">><<link [[Gift Sydney a strap-on|Gift Strap-on Sydney Counter]]>><</link>>
 			<br>
 		<</if>>
 		<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 10 and $milkshake gte 2>>
-			<<link [[Offer milkshake (0:15)|Sydney Give Milkshake]]>><<pass 15>><<set $milkshake -= 2>><<npcincr Sydney love 1>><<stress -5>><</link>><<lstress>><<glove>>
+			<<foodicon "milkshake">><<link [[Offer milkshake (0:15)|Sydney Give Milkshake]]>><<pass 15>><<set $milkshake -= 2>><<npcincr Sydney love 1>><<stress -5>><</link>><<lstress>><<glove>>
 			<br>
 		<</if>>
 		<<if $sydneyromance is 1 and $milkshake gte 1>>
-			<<link [[Share milkshake (0:15)|Sydney Share Milkshake]]>><<pass 15>><<set $milkshake -= 1>><<npcincr Sydney love 2>><<stress -10>><</link>><<lstress>><<gglove>>
+			<<foodicon "milkshake">><<link [[Share milkshake (0:15)|Sydney Share Milkshake]]>><<pass 15>><<set $milkshake -= 1>><<npcincr Sydney love 2>><<stress -10>><</link>><<lstress>><<gglove>>
 			<br>
 		<</if>>
 		<<if $promiscuity gte 55 and $sydneyromance is 1 and !$daily.sydney.crawl>>
-			<<link [[Crawl under the counter|Sydney Crawl]]>><<set $daily.sydney.crawl to true>><</link>><<promiscuous4>><<llspurity>><<sydneyWarning corrupt>>
+			<<libraryicon "desk">><<link [[Crawl under the counter|Sydney Crawl]]>><<set $daily.sydney.crawl to true>><</link>><<promiscuous4>><<llspurity>><<sydneyWarning corrupt>>
 			<br>
 		<</if>>
 	<</if>>
@@ -657,32 +668,32 @@
 		<<highicon>><<link [["Offer to replace " + $NPCList[0].pronouns.his + " glasses (£15 0:30)"|Sydney Walk]]>><<npcincr Sydney love 3>><</link>><<gglove>>
 		<br>
 	<<elseif ($sydney.glasses isnot "broken" and $sydney.glasses isnot "playerbroken") and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 30 and !$daily.sydney.walk>>
-		<<link [[Ask to go somewhere together|Sydney Walk]]>><</link>>
+		<<walkicon>><<link [[Ask to go somewhere together|Sydney Walk]]>><</link>>
 		<br>
 	<</if>>
 	<<if _sydneyRomanceConfront>>
-		<<link [["Ask " + $NPCList[0].pronouns.him + " what's wrong"|Sydney Romance]]>><</link>>
+		<<askicon>><<link [["Ask " + $NPCList[0].pronouns.him + " what's wrong"|Sydney Romance]]>><</link>>
 		<br>
 	<<elseif $sydneyFriendZoned>>
-		<<link [["Ask Sydney to be your " + $NPCList[0].pronouns.boy + "friend"|Sydney Romance Accept]]>><</link>>
+		<<loveicon>><<link [["Ask Sydney to be your " + $NPCList[0].pronouns.boy + "friend"|Sydney Romance Accept]]>><</link>>
 		<br>
 	<</if>>
 	<<if $location is "temple" and $sydneyChastityRemoveIntro>>
 		<<if $sydneyChastityRemoveIntro is 1>>
-			<<link [["Ask " + $NPCList[0].pronouns.him + " about removing " + $NPCList[0].pronouns.his + " belt (0:15)"|Sydney Chastity Remove Intro]]>><<set $sydneyChastityRemoveIntro to 2>><<pass 15>><</link>>
+			<<templeicon "chastity release">><<link [["Ask " + $NPCList[0].pronouns.him + " about removing " + $NPCList[0].pronouns.his + " belt (0:15)"|Sydney Chastity Remove Intro]]>><<set $sydneyChastityRemoveIntro to 2>><<pass 15>><</link>>
 			<br>
 		<<elseif $sydneyChastityRemoveCorrupt and !$sydneySeen.includes("corruptroom")>>
-			<<link [[Ask about Sydney's plan|Sydney Temple Corrupt]]>><</link>>
+			<<askicon>><<link [[Ask about Sydney's plan|Sydney Temple Corrupt]]>><</link>>
 			<br>
 		<<elseif $sydneyChastityRemovePure and $templePromised isnot "Sydney" and !$temple_evaluation>>
-			<<link [[Ask about being promised|Sydney Temple Pure]]>><</link>>
+			<<askicon>><<link [[Ask about being promised|Sydney Temple Pure]]>><</link>>
 			<br>
 		<<else>>
 			/* Do Nothing */
 		<</if>>
 	<</if>>
 	<<if $bus is "schoollibrary" and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 50 and $trauma gte ($traumamax / 7) * 3 and !$daily.sydney.breakdown>>
-		<<link [[Break down (0:25)|Sydney Library Break]]>><<pass 25>><<stress -24>><<trauma -12>><<set $daily.sydney.breakdown to true>><</link>><<llstress>><<lltrauma>>
+		<<ind>><<link [[Break down (0:25)|Sydney Library Break]]>><<pass 25>><<stress -24>><<trauma -12>><<set $daily.sydney.breakdown to true>><</link>><<llstress>><<lltrauma>>
 		<br>
 	<</if>>
 <</widget>>
@@ -1160,9 +1171,9 @@
 		<<if playerChastity()>>
 			<<He>> looks down at your $worn.genitals.name.
 			<<if _sydneyStatus.includes("corrupt")>>
-				"You didn't cum. I'm not sure how much I can do with your $worn.genitals.name in the way<<if $sydneyChastityKnown>>, I'm not used to working around it. That's what I <<if _sydneyChastity>>have<<else>>had<</if>> you for, after all! Sorry, though<</if>>."
+				"You didn't cum. I'm not sure how much I can do with your<<if $worn.genitals.name is "chastity parasite">>... device<<else>> $worn.genitals.name<</if>> in the way<<if $sydneyChastityKnown>>, I'm not used to working around it. That's what I <<if _sydneyChastity>>have<<else>>had<</if>> you for, after all! Sorry, though<</if>>."
 			<<else>>
-				"You... did it feel good? I don't know if I can do anything with your $worn.genitals.name in the way, I'm not as good at this as you are..."
+				"You... did it feel good? I don't know if I can do anything with your<<if $worn.genitals.name is "chastity parasite">>... device<<else>> $worn.genitals.name<</if>> in the way, I'm not as good at this as you are..."
 			<</if>>
 			You nod at <<him>> and tell <<him>> that it's okay.
 		<<else>>
@@ -1569,73 +1580,73 @@
 <</widget>>
 
 <<widget "gspain">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="red">+ Sydney's Pain</span>
 	<</if>>
 <</widget>>
 
 <<widget "ggspain">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="red">+ + Sydney's Pain</span>
 	<</if>>
 <</widget>>
 
 <<widget "gggspain">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="red">+ + + Sydney's Pain</span>
 	<</if>>
 <</widget>>
 
 <<widget "lspain">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="green">- Sydney's Pain</span>
 	<</if>>
 <</widget>>
 
 <<widget "llspain">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="green">- - Sydney's Pain</span>
 	<</if>>
 <</widget>>
 
 <<widget "lllspain">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="green">- - - Sydney's Pain</span>
 	<</if>>
 <</widget>>
 
 <<widget "gsarousal">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="red">+ Sydney's Arousal</span>
 	<</if>>
 <</widget>>
 
 <<widget "ggsarousal">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="red">+ + Sydney's Arousal</span>
 	<</if>>
 <</widget>>
 
 <<widget "gggsarousal">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="red">+ + + Sydney's Arousal</span>
 	<</if>>
 <</widget>>
 
 <<widget "lsarousal">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="green">- Sydney's Arousal</span>
 	<</if>>
 <</widget>>
 
 <<widget "llsarousal">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="green">- - Sydney's Arousal</span>
 	<</if>>
 <</widget>>
 
 <<widget "lllsarousal">>
-	<<if $statdisable is "f">>
+	<<if $statdisable is "f">> |
 		<span class="green">- - - Sydney's Arousal</span>
 	<</if>>
 <</widget>>

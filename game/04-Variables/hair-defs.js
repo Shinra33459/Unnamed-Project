@@ -1,3 +1,4 @@
+/*Add new hairstyles here to indicate how styles will be ruffled*/
 setup.hair = {
 	hairtype: [
 		{
@@ -15,17 +16,19 @@ setup.hair = {
 				"ruffled",
 				"sidecut",
 				"space buns",
+				"all down",
+				"half-up"
 			],
 			devolve: ["ruffled"],
 		},
 		{
 			name: "single tail",
-			list: ["flat ponytail", "ponytail", "side tail left", "side tail right", "fluffy ponytail", "side thicktail"],
+			list: ["flat ponytail", "ponytail", "side tail left", "side tail right", "fluffy ponytail", "side thicktail", "thick ponytail"],
 			devolve: ["ponytail"],
 		},
 		{
 			name: "double tail",
-			list: ["pigtails", "twintails", "curly pigtails", "sailor buns", "loop braid", "thick twintails", "drill ringlets"],
+			list: ["pigtails", "twintails", "curly pigtails", "sailor buns", "loop braid", "thick twintails", "drill ringlets", "low tails"],
 			devolve: ["twintails"],
 		},
 		{
@@ -40,8 +43,13 @@ setup.hair = {
 		},
 		{
 			name: "short",
-			list: ["messy", "short", "short spiky"],
+			list: ["messy", "short", "short spiky", "layered bob", "french bob"],
 			devolve: ["messy", "short spiky"],
+		},
+		{
+			name: "fro",
+			list: ["fro", "afro puffs", "afro pouf"],
+			devolve: ["fro"],
 		},
 		{
 			/* immune to being ruined (because devolve list is empty) */
@@ -64,6 +72,7 @@ setup.hair = {
 				"ringlets",
 				"split",
 				"straight",
+				"side braid",
 				"swept left",
 				"back",
 				"parted",
@@ -78,9 +87,23 @@ setup.hair = {
 				"drill ringlets",
 				"front braids",
 				"blunt sidelocks",
+				"short air vents",
+				"side-pinned",
+				"left fishtail braid",
 				"ruffled",
+				"sectioned",
+				"bowl",
+				"emo",
+				"emo left",
+				"emo right",
 			],
 			devolve: ["messy", "trident", "thin flaps", "ruffled"],
+		},
+		{
+			/* immune to being ruined (because devolve list is empty) */
+			name: "special",
+			list: ["fro", "dreads", "dread bun"],
+			devolve: [],
 		},
 	],
 };

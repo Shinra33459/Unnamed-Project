@@ -80,7 +80,6 @@ IMPORTANT:
 		<div class="settingsToggle">
 			<label><<checkbox "$options.showCaptionText" false true autocheck>> Show Caption Text in Sidebar</label>
 		</div>
-
 		<!-- Old renderer should stop being supported very soon.
 		Sidebar character renderer:
 		<label><<radiovar "$options.sidebarRenderer" "img">><<updatesidebarimg>><</radiovar>> Old</label> |
@@ -100,6 +99,13 @@ IMPORTANT:
 				<<option "Compact (dots)" "compact">>
 				<<option "None" "none">>
 			<</listbox>>
+		</div>
+		<div class="settingsToggle">
+			<<if !$options.genderBody>><<set $options.genderBody to "default">><</if>>
+			<label><<radiobutton "$options.genderBody" "default" autocheck>> Default</label> |
+			<label><<radiobutton "$options.genderBody" "m" autocheck>> Masculine</label> |
+			<label><<radiobutton "$options.genderBody" "a" autocheck>> Androgynous</label> |
+			<label><<radiobutton "$options.genderBody" "f" autocheck>> Feminine</label>
 		</div>
 		<div class="settingsToggle">
 			<label><<checkbox "$options.tipdisable" "t" "f" autocheck>> Enable sidebar hints and tips</label>
@@ -295,24 +301,26 @@ IMPORTANT:
 
 	<span class="gold">Font Style</span>
 	<br>
-	<label><<radiobutton "$options.font" "" `$options.font is undefined ? 'checked' : 'autocheck'`>> Default</label> |
+	<label><<radiobutton "$options.font" "" `$options.font is undefined ? 'checked' : 'autocheck'`>> Use system default</label>
 	<br>
 	Sans-serif:
 	<label class="Arial"><<radiobutton "$options.font" "Arial" autocheck>> Arial</label> |
-	<label class="Verdana"><<radiobutton "$options.font" "Verdana" autocheck>> Verdana</label> |
+	<label class="Verdana"><<radiobutton "$options.font" "Verdana" autocheck>> Verdana</label>
 	<br>
 	Serif:
 	<label class="TimesNewRoman"><<radiobutton "$options.font" "TimesNewRoman" autocheck>> Times New Roman</label> |
 	<label class="Georgia"><<radiobutton "$options.font" "Georgia" autocheck>> Georgia</label> |
-	<label class="Garamond"><<radiobutton "$options.font" "Garamond" autocheck>> Garamond</label> |
+	<label class="Garamond"><<radiobutton "$options.font" "Garamond" autocheck>> Garamond</label>
 	<br>
 	Monospace:
 	<label class="CourierNew"><<radiobutton "$options.font" "CourierNew" autocheck>> Courier New</label> |
 	<label class="LucidaConsole"><<radiobutton "$options.font" "LucidaConsole" autocheck>> Lucida Console</label> |
-	<label class="Monaco"><<radiobutton "$options.font" "Monaco" autocheck>> Monaco</label> |
+	<label class="Monaco"><<radiobutton "$options.font" "Monaco" autocheck>> Monaco</label>
 	<br>
-	Cursive:
-	<label class="ComicSans"><<radiobutton "$options.font" "ComicSans" autocheck>> Comic Sans</label> |
+	Accessibility:
+	<label class="OpenDyslexicMono"><<radiobutton "$options.font" "OpenDyslexicMono" autocheck>> OpenDyslexic Mono</label> |
+	<label class="ComicSans"><<radiobutton "$options.font" "ComicSans" autocheck>> Comic Sans</label>
+
 
 	<br><br>
 <</widget>>
@@ -486,6 +494,12 @@ IMPORTANT:
 					.prependTo("#idbToggle"))>> Enable indexedDB
 			</label>
 		</div>
+		<div class="settingsToggle">
+			<label onclick="setTimeout(() => {toggleConfirmDialogUponTabClose();}, 100)">
+				<<checkbox "$options.confirmDialogUponTabClose" false true autocheck>>
+				Prompt confirmation dialog upon closing tab
+			</label>
+		</div>
 		<div style="clear:both;">/*Keep at end of toggles*/</div>
 	</div>
 	<br>
@@ -563,5 +577,6 @@ IMPORTANT:
 	<<removeclass "html" "LucidaConsole">>
 	<<removeclass "html" "Monaco">>
 	<<removeclass "html" "ComicSans">>
+	<<removeclass "html" "OpenDyslexicMono">>
 	<<if $options.font>><<addclass "html" $options.font>><</if>> <!--Adding to the body would remove it on changing passage-->
 <</widget>>

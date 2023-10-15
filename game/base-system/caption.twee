@@ -30,6 +30,7 @@
 		</div>
 	<</if>>
 	<div id="storyCaptionContent">
+		
 		<<if $options.numpad is true>>
 			<style>
 				.mob-btn-group{
@@ -94,8 +95,8 @@
 				<span class="pink">You missed $lessonmissedtext lessons yesterday.</span>
 			<</if>>
 			<<if $lessonmissed gte 25>>
-				<span class="red">You've missed many lessons. The police have been informed.</span>
-				<<crimeup 25>>
+				<span class="red">You've missed many lessons. Your reputation has taken a hit.</span>
+				<<detention 50>><<gggdelinquency>><<status -5>><<lcool>>
 			<</if>>
 			<<set $lessonmissedtext to 0>>
 			<br>
@@ -172,7 +173,7 @@
 
 		<<if $parasite.left_ear.name and $parasite.left_ear.name eq $parasite.right_ear.name>>
 			<<if $parasite.left_ear.name is "slime">>
-				<span class="lewd">The $parasite.left_ear.name in each ear influences your thoughts.</span>
+				<span class="lewd">The $parasite.left_ear.name in each ear influences your thoughts<<if $earSlime.growth gte 100>> and actions<</if>>.</span>
 				<br>
 			<</if>>
 		<<else>>
@@ -431,6 +432,8 @@
 	<<if $makeup.lipstick != 0>><<set $allure += 100>><</if>>
 	<<if $makeup.eyeshadow != 0>><<set $allure += 100>><</if>>
 	<<if $makeup.mascara != 0>><<set $allure += 100>><</if>>
+
+	<<if $earSlime.growth gt 50>><<set $allure += ($earSlime.growth - 50) * 10>><</if>>
 
 	<<set $allure += ($fame.sex / 10)>>
 	<<set $allure += ($fame.prostitution / 10)>>
@@ -940,8 +943,10 @@
 			<<set _breastSize to 3>>
 		<<case 3>>
 			<<set _breastSize to 2>>
-		<<case 0 1 2>>
+		<<case 1 2>>
 			<<set _breastSize to 1>>
+		<<default>>
+			<<set _breastSize to 0>>
 		<</switch>>
 		<<if $player.gender is "m" or $player.gender is "h">>
 			<<set _penisSize to $player.penissize>>
@@ -956,6 +961,7 @@
 		<<if $options.sidebarRenderer isnot 'img'>>
 			<<selectmodel "main" "sidebar">> <!-- reuse sidebar cache slot -->
 			<<twinescript>>
+				_modeloptions.body_type = $player.gender_body;
 				_modeloptions.breast_size = _breastSize;
 				_modeloptions.breasts = (!_showUnderwear && !_showClothes) ? "default" : "cleavage";
 				if (_penisSize isnot undefined) {

@@ -43,12 +43,13 @@ replace (?<!["'\w])_(?=\w) with T.
  * "crotch_exposed":boolean - render crotch layers above clothes (unzipped)
  * "penis":""|"default"|"virgin" - has penis
  * "penis_size":number - penis size tier -1..5
- * "penis_parasite":""|"urchin"|"slime" - from $parasite.penis.name
+ * "penis_parasite":""|"urchin"|"slime"|"parasite" - from $parasite.penis.name
  * "penis_condom": ""|"plain" - from $player.condom.type
  * "condom_colour": "" - from $player.condom.colour
  * "balls":boolean - has balls
  * "nipples_parasite":""|"urchin"|"slime" - from $parasite.nipples.name
- * "clit_parasite":""|"urchin"|"slime" - from $parasite.clit.name
+ * "chest_parasite":""|"parasite" - from $parasite.breasts.name
+ * "clit_parasite":""|"urchin"|"slime"|"parasite" - from $parasite.clit.name
  * "arm_left":"none"|"idle"|"cover" - left arm position ("cover" = covering breasts)
  * "arm_right":"none"|"idle"|"cover" - right arm position ("cover" = covering crotch)
  *
@@ -111,35 +112,47 @@ replace (?<!["'\w])_(?=\w) with T.
  * "angel_wings_type": "disabled"|"hidden"|"default"
  * "angel_wing_right": "idle"|"cover"
  * "angel_wing_left": "idle"|"cover"
+ * "angel_wings_layer": "front"|"back",
  * "angel_halo_type": "disabled"|"hidden"|"default"
  * "fallen_wings_type": "disabled"|"hidden"|"default"
  * "fallen_wing_right": "idle"|"cover"
  * "fallen_wing_left": "idle"|"cover"
+ * "fallen_wings_layer": "front"|"back",
  * "fallen_halo_type": "disabled"|"hidden"|"default"
  * "demon_wings_type": "disabled"|"hidden"|"default"
  * "demon_wings_state": "idle"|"cover"|"flaunt"
+ * "demon_wings_layer": "front"|"back",
  * "demon_tail_type": "disabled"|"hidden"|"default"|"classic"
  * "demon_tail_state": "idle"|"cover"|"flaunt"
+ * "demon_tail_layer": "front"|"back"
  * "demon_horns_type": "disabled"|"hidden"|"default"|"classic"
+ * "demon_horns_layer": "front"|"back"
  * "wolf_tail_type": "disabled"|"hidden"|"default"|"feral"
+ * "wolf_tail_layer": "front"|"back"
  * "wolf_ears_type": "disabled"|"hidden"|"default"|"feral"
  * "wolf_pits_type": "disabled"|"hidden"|"default"
  * "wolf_pubes_type": "disabled"|"hidden"|"default"
  * "wolf_cheeks_type": "disabled"|"hidden"|"feral"
  * "cat_tail_type": "disabled"|"hidden"|"default"
+ * "cat_tail_layer": "front"|"back"
  * "cat_ears_type": "disabled"|"hidden"|"default"
  * "cow_horns_type": "disabled"|"hidden"|"default"
+ * "cow_horns_layer": "front"|"back"
  * "cow_tail_type": "disabled"|"hidden"|"default"
+ * "cow_tail_layer": "front"|"back"
  * "cow_ears_type": "disabled"|"hidden"|"default"
  * "bird_wings_type": "disabled"|"hidden"|"default"
  * "bird_wing_right": "idle"|"cover"
  * "bird_wing_left": "idle"|"cover"
+ * "bird_wings_layer": "front"|"back",
  * "bird_tail_type": "disabled"|"hidden"|"default"
+ * "bird_tail_layer": "front"|"back"
  * "bird_eyes_type": "disabled"|"hidden"|"default"
  * "bird_malar_type": "disabled"|"hidden"|"default"
  * "bird_plumage_type": "disabled"|"hidden"|"default"
  * "bird_pubes_type": "disabled"|"hidden"|"default"
  * "fox_tail_type": "disabled"|"hidden"|"default"|
+ * "fox_tail_layer": "front"|"back"
  * "fox_ears_type": "disabled"|"hidden"|"default"|
  * "fox_cheeks_type": "disabled"|"hidden"|
  *
@@ -169,6 +182,7 @@ replace (?<!["'\w])_(?=\w) with T.
  * -------------
  * "upper_tucked":boolean - $worn.upper tucked in $worn.lower
  * "hood_down":boolean - hood is pulled down
+ * "alt_position":boolean - sprite has alternate position (e.g. cardigan tied around waist)
  *
  * GENERATED OPTIONS (temp variables configured by the model itself in preprocess())
  * ------------------
@@ -255,9 +269,11 @@ Renderer.CanvasModels["main"] = {
 			"condom_colour": "",
 			"balls": false,
 			"nipples_parasite": "",
+			"chest_parasite": "",
 			"clit_parasite": "",
 			"arm_left": "idle",
 			"arm_right": "idle",
+			"body_type": "m",
 			// Skin & tan
 			"skin_type": "light",
 			"skin_tone": 0,
@@ -287,12 +303,14 @@ Renderer.CanvasModels["main"] = {
 			"hair_fringe_type": "default",
 			"hair_fringe_length": "short",
 			"brows_colour": "",
+			"brows_position": "front",
 			"pbhair_colour": "",
 			"pbhair_level": 0,
 			"pbhair_strip": 0,
 			"pbhair_balls": 0,
 			// Face
 			"facestyle": "default",
+			"ears_position": "back",
 			"freckles": false,
 			"trauma": false,
 			"blink": true,
@@ -313,36 +331,48 @@ Renderer.CanvasModels["main"] = {
 			"angel_wings_type": "disabled",
 			"angel_wing_right": "idle",
 			"angel_wing_left": "idle",
+			"angel_wings_layer": "front",
 			"angel_halo_type": "disabled",
 			"fallen_wings_type": "disabled",
 			"fallen_wing_right": "idle",
 			"fallen_wing_left": "idle",
+			"fallen_wings_layer": "front",
 			"fallen_halo_type": "disabled",
 			"demon_wings_type": "disabled",
 			"demon_wings_state": "idle",
+			"demon_wings_layer": "front",
 			"demon_tail_type": "disabled",
 			"demon_tail_state": "idle",
+			"demon_tail_layer": "front",
 			"demon_horns_type": "disabled",
+			"demon_horns_layer": "back",
 			"wolf_tail_type": "disabled",
+			"wolf_tail_layer": "front",
 			"wolf_ears_type": "disabled",
 			"wolf_pits_type": "disabled",
 			"wolf_pubes_type": "disabled",
 			"wolf_cheeks_type": "disabled",
 			"cat_tail_type": "disabled",
 			"cat_tail_state": "idle",
+			"cat_tail_layer": "front",
 			"cat_ears_type": "disabled",
 			"cow_horns_type": "disabled",
+			"cow_horns_layer": "back",
 			"cow_tail_type": "disabled",
+			"cow_tail_layer": "front",
 			"cow_ears_type": "disabled",
 			"bird_wings_type": "disabled",
 			"bird_wing_right": "idle",
 			"bird_wing_left": "idle",
+			"bird_wings_layer": "front",
 			"bird_tail_type": "disabled",
+			"bird_tail_layer": "front",
 			"bird_eyes_type": "disabled",
 			"bird_malar_type": "disabled",
 			"bird_plumage_type": "disabled",
 			"bird_pubes_type": "disabled",
 			"fox_tail_type": "disabled",
+			"fox_tail_layer": "front",
 			"fox_ears_type": "disabled",
 			"fox_cheeks_type": "disabled",
 			// body writings
@@ -456,6 +486,9 @@ Renderer.CanvasModels["main"] = {
 			"genitals_chastity": false, // generated option
 			"upper_tucked": false,
 			"hood_down": false,
+			"alt_position": false,
+			"alt_position_neck":false,
+			"acc_layer_under": false,
 			"head_mask_src": "", // generated option
 			"belly_mask_src": "", // generated option
 			"blink_animation": "", // generated option
@@ -613,7 +646,17 @@ Renderer.CanvasModels["main"] = {
 			options.filters.mascara = Renderer.emptyLayerFilter();
 		}
 		if (options.condom_colour) options.filters.condom = lookupColour(setup.colours.condom_map, options.condom_colour, "condom", "condom_custom", "condom");
-		
+
+		if (options.breasts_parasite === "parasite") {
+			options.filters.breasts_parasite = lookupColour(setup.colours.clothes_map, "red", "breasts_parasite");
+		}
+		if (options.clit_parasite === "parasite") {
+			options.filters.clit_parasite = lookupColour(setup.colours.clothes_map, "red", "breasts_parasite");
+		}
+		if (options.penis_parasite === "parasite") {
+			options.filters.penis_parasite = lookupColour(setup.colours.clothes_map, "red", "breasts_parasite");
+		}
+
 		// Clothing filters and options
 		for (let slot of setup.clothes_all_slots) {
 			let index = options["worn_" + slot];
@@ -702,7 +745,7 @@ Renderer.CanvasModels["main"] = {
 			options.head_mask_src = "img/clothes/head/" + options.worn_over_head_setup.variable + "/mask.png";
 		} else if (options.worn_head_setup.mask_img === 1 &&
 			!(options.hood_down && options.worn_head_setup.hood && options.worn_head_setup.outfitSecondary !== undefined)) {
-			if (options.worn_head_setup.mask_img_ponytail === 1 && ["curly pigtails", "fluffy ponytail", "side thicktail", "thick twintails"].includes(options.hair_sides_type)) {
+			if (options.worn_head_setup.mask_img_ponytail === 1 && ["curly pigtails", "fluffy ponytail", "side thicktail", "thick twintails", "thick ponytail"].includes(options.hair_sides_type)) {
 				options.head_mask_src = "img/clothes/head/" + options.worn_head_setup.variable + "/mask_ponytail.png";
 			} else {
 				options.head_mask_src = "img/clothes/head/" + options.worn_head_setup.variable + "/mask.png";
@@ -724,7 +767,7 @@ Renderer.CanvasModels["main"] = {
 			} else {
 				options.belly_mask_src = "img/clothes/belly/mask_" + options.belly + ".png";
 			}
-			if (V.worn.upper.outfitPrimary == undefined) {
+			if (V.worn.upper.outfitPrimary == undefined && options.worn_lower_setup.pregType != "cover") {
 				if (options.belly >= 19) {
 					options.belly_hides_lower = true;
 					options.belly_mask_clip_src = "img/clothes/belly/mask_clip_" + options.belly + ".png";
@@ -763,7 +806,7 @@ Renderer.CanvasModels["main"] = {
 		"base": {
 			srcfn(options) {
 				if (options.mannequin) return "img/body/mannequin/basenoarms.png"
-				return "img/body/basenoarms.png"
+				else return `img/body/basenoarms-${options.body_type}.png`
 			},
 			show: true,
 			filters: ["body"],
@@ -787,6 +830,7 @@ Renderer.CanvasModels["main"] = {
 						(options.breast_size - 1) +
 						(options.breasts === "cleavage" && options.breast_size >= 4 ? "_clothed" : "") + ".png"
 				} else {
+					if (options.breast_size <= 0) return "";
 					let fn = "breasts" + options.breast_size + (options.breasts === "cleavage" && options.breast_size >= 3 ? "_clothed" : "") + ".png";
 					if (fn === "breasts5_clothed.png") fn = "breasts6_clothed.png";
 					return "img/body/breasts/" + fn;
@@ -827,6 +871,22 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return !!options.nipples_parasite;
 			},
+			z: ZIndices.breastsparasite + 0.1,
+			animation: "idle"
+		},
+		"breasts_parasite": {
+			srcfn(options) {
+				switch (options.breasts_parasite) {
+					case "parasite":
+						return 'img/body/breasts/breastsparasite' + options.breast_size + '.png'
+					default:
+						return "";
+				}
+			},
+			showfn(options) {
+				return !!options.breasts_parasite;
+			},
+			filters: ["breasts_parasite"],
 			z: ZIndices.breastsparasite,
 			animation: "idle"
 		},
@@ -837,7 +897,7 @@ Renderer.CanvasModels["main"] = {
 				} else if (options.arm_left === "cover") {
 					return "img/body/leftarm.png"
 				} else {
-					return "img/body/leftarmidle.png"
+					return `img/body/leftarmidle-${options.body_type}.png`
 				}
 			},
 			showfn(options) {
@@ -857,7 +917,7 @@ Renderer.CanvasModels["main"] = {
 				} else if (options.arm_right === "cover") {
 					return "img/body/rightarm.png"
 				} else {
-					return "img/body/rightarmidle.png"
+					return `img/body/rightarmidle-${options.body_type}.png`
 				}
 			},
 			showfn(options) {
@@ -977,6 +1037,16 @@ Renderer.CanvasModels["main"] = {
 			filters: ["body"],
 			z: ZIndices.freckles
 		},
+		"ears": {
+			srcfn(options) {
+				return 'img/face/' + options.facestyle + '/ears.png'
+			},
+			showfn(options) {
+				return options.show_face && options.ears_position === "front";
+			},
+			filters: ["body"],
+			z: ZIndices.ears
+		},
 		"eyes": {
 			srcfn(options) {
 				return 'img/face/' + options.facestyle + '/eyes.png'
@@ -1067,6 +1137,13 @@ Renderer.CanvasModels["main"] = {
 		"brows": {
 			srcfn(options) {
 				return 'img/face/' + options.facestyle + '/brow' + options.brows + '.png'
+			},
+			zfn(options) {
+				if (options.brows_position === "back") {
+					return ZIndices.backbrow
+				} else {
+					return ZIndices.brow
+				}
 			},
 			showfn(options) {
 				return options.show_face && options.brows !== "none"
@@ -1183,10 +1260,12 @@ Renderer.CanvasModels["main"] = {
 		},
 		"hair_extra": { // Extra layer for thighs+ long hair for certain styles
 			srcfn(options) {
-				if (options.hair_sides_length === "feet" && ["default", "loose", "straight", "curl", "defined curl", "neat", "dreads", "ruffled"].includes(options.hair_sides_type)) {
+				if (options.hair_sides_length === "feet" && ["default", "loose", "straight", "curl", "defined curl", "neat", "dreads", "afro pouf", "thick ponytail"].includes(options.hair_sides_type)) {
 					return "img/hair/back/" + options.hair_sides_type + '/' + "feet.png"
-				} else if (options.hair_sides_length === "thighs" && ["default", "loose", "curl", "defined curl", "neat", "dreads"].includes(options.hair_sides_type)) {
+				} else if (options.hair_sides_length === "thighs" && ["default", "loose", "curl", "defined curl", "neat", "dreads", "afro pouf", "thick_ponytail"].includes(options.hair_sides_type)) {
 					return "img/hair/back/" + options.hair_sides_type + '/' + "thighs.png"
+				} else if (["ruffled"].includes(options.hair_sides_type)) {
+					return "img/hair/back/" + options.hair_sides_type + '/' + options.hair_sides_length + ".png"
 				} else {
 					return ""
 				}
@@ -1270,7 +1349,7 @@ Renderer.CanvasModels["main"] = {
 				}
 			},
 			showfn(options) {
-				return options.crotch_visible && !!options.penis
+				return options.crotch_visible && !!options.penis && options.worn_genitals_setup.variable !== "slimechastitycage";
 			},
 			filters: ["penis"],
 			zfn(options) {
@@ -1292,18 +1371,20 @@ Renderer.CanvasModels["main"] = {
 					if (!options.worn_genitals_setup.name.includes("cage")) return "";
 					switch (options.penis_parasite) {
 						case "urchin":
-							return 'img/clothes/genitals/' + options.worn_genitals_setup.variable + '/urchin.png'
+							return 'img/clothes/genitals/' + options.worn_genitals_setup.variable + '/urchin.png';
 						case "slime":
-							return 'img/clothes/genitals/' + options.worn_genitals_setup.variable + '/slime.png'
+							return 'img/clothes/genitals/' + options.worn_genitals_setup.variable + '/slime.png';
 						default:
-							return "";
+							break;
 					}
 				}
 				switch (options.penis_parasite) {
 					case "urchin":
-						return 'img/body/penis/penisparasite' + options.penis_size + '.png'
+						return 'img/body/penis/penisurchin' + options.penis_size + '.png';
 					case "slime":
-						return 'img/body/penis/penisslime' + options.penis_size + '.png'
+						return 'img/body/penis/penisslime' + options.penis_size + '.png';
+					case "parasite":
+						return 'img/body/penis/penisparasite' + options.penis_size + '.png';
 					default:
 						return "";
 				}
@@ -1324,29 +1405,38 @@ Renderer.CanvasModels["main"] = {
 					return ZIndices.underParasite;
 				}
 			},
+			filters: ["penis_parasite"],
 			animation: "idle"
 		},
 		"clit_parasite": {
 			srcfn(options) {
 				switch (options.clit_parasite) {
 					case "urchin":
-						return 'img/body/clitparasite.png'
+						return 'img/body/cliturchin.png';
 					case "slime":
-						return 'img/body/clitslime.png'
+						return 'img/body/clitslime.png';
+					case "parasite":
+						return 'img/body/baseparasite.png';
 					default:
 						return "";
 				}
 			},
 			showfn(options) {
+				if (options.clit_parasite === "parasite") {
+					return !options.belly_hides_under_lower;
+				}
 				return options.crotch_visible && !!options.clit_parasite && !options.chastity;
 			},
 			zfn(options) {
-				if (options.crotch_exposed) {
-					return ZIndices.parasite
+				if (options.crotch_visible && !!options.penis && options.clit_parasite === "parasite") {
+					return ZIndices.penis - 0.1;
+				} else if (options.crotch_exposed) {
+					return ZIndices.parasite;
 				} else {
-					return ZIndices.underParasite
+					return ZIndices.underParasite;
 				}
 			},
+			filters: ["clit_parasite"],
 			animation: "idle"
 		},
 		"penis_condom": {
@@ -1370,7 +1460,7 @@ Renderer.CanvasModels["main"] = {
 					return ZIndices.underParasite
 				}
 			},
-			animation: "idle"		
+			animation: "idle"
 		},
 		/***
 		 *    ████████ ███████ ███████
@@ -1398,7 +1488,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.angel_wings_type) && options.angel_wing_right === "idle";
 			},
-			z: ZIndices.backhair,
+			zfn(options) {
+				if (options.angel_wings_layer === "back") {
+					return ZIndices.head_back
+				} else {
+					return ZIndices.backhair
+				}
+			},
 			animation: "idle"
 		},
 		"angel_wings_rightcover": {
@@ -1418,7 +1514,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.angel_wings_type) && options.angel_wing_left === "idle";
 			},
-			z: ZIndices.backhair,
+			zfn(options) {
+				if (options.angel_wings_layer === "back") {
+					return ZIndices.head_back
+				} else {
+					return ZIndices.backhair
+				}
+			},
 			animation: "idle"
 		},
 		"angel_wings_leftcover": {
@@ -1468,7 +1570,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.fallen_wings_type) && options.fallen_wing_right === "idle";
 			},
-			z: ZIndices.backhair,
+			zfn(options) {
+				if (options.fallen_wings_layer === "back") {
+					return ZIndices.head_back
+				} else {
+					return ZIndices.backhair
+				}
+			},
 			animation: "idle"
 		},
 		"fallen_wings_rightcover": {
@@ -1488,7 +1596,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.fallen_wings_type) && options.fallen_wing_left === "idle";
 			},
-			z: ZIndices.backhair,
+			zfn(options) {
+				if (options.fallen_wings_layer === "back") {
+					return ZIndices.head_back
+				} else {
+					return ZIndices.backhair
+				}
+			},
 			animation: "idle"
 		},
 		"fallen_wings_leftcover": {
@@ -1538,6 +1652,15 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.demon_wings_type) && !isPartEnabled(options.bird_wings_type) && options.demon_wings_state === "idle";
 			},
+			zfn(options) {
+				if (options.demon_wings_layer === "back") {
+					return ZIndices.head_back
+				} else if (options.demon_wings_layer === "cover") {
+					return ZIndices.tailPenisCover
+				} else {
+					return ZIndices.backhair
+				}
+			},
 			z: ZIndices.backhair,
 			filters: ["demon_wings"],
 			animation: "idle"
@@ -1572,7 +1695,13 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.demon_tail_type) && options.demon_tail_state === "idle"
 			},
 			zfn(options) {
-				return options.demon_tail_index;
+				if (options.demon_tail_layer === "back") {
+					return ZIndices.tail
+				} else if (options.demon_tail_layer === "cover") {
+					return ZIndices.tailPenisCoverOverlay
+				} else {
+					return ZIndices.back_lower
+				}
 			},
 			filters: ["demon_tail"],
 			animation: "idle"
@@ -1606,6 +1735,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.demon_horns_type);
 			},
+			zfn(options) {
+				if (options.demon_horns_layer === "front") {
+					return ZIndices.over_head
+				} else {
+					return ZIndices.horns
+				}
+			},
 			z: ZIndices.horns,
 			filters: ["demon_horns"],
 			animation: "idle"
@@ -1627,7 +1763,13 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.wolf_tail_type);
 			},
 			filters: ["hair"],
-			z: ZIndices.tail,
+			zfn(options) {
+				if (options.wolf_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
 			animation: "idle"
 		},
 		"wolf_ears": {
@@ -1697,7 +1839,13 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.cat_tail_type) && options.cat_tail_state === "idle";
 			},
 			filters: ["hair"],
-			z: ZIndices.tail,
+			zfn(options) {
+				if (options.cat_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
 			animation: "idle"
 		},
 		"cat_tail_flaunt": {
@@ -1752,7 +1900,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.cow_horns_type);
 			},
-			z: ZIndices.horns,
+			zfn(options) {
+				if (options.cow_horns_layer === "front") {
+					return ZIndices.over_head
+				} else {
+					return ZIndices.horns
+				}
+			},
 			animation: "idle"
 		},
 		"cow_ears": {
@@ -1785,7 +1939,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.cow_tail_type);
 			},
-			z: ZIndices.tail,
+			zfn(options) {
+				if (options.cow_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
 			animation: "idle"
 		},
 		/***
@@ -1806,7 +1966,13 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.bird_wings_type) && options.bird_wing_right === "idle";
 			},
 			filters: ["hair"],
-			z: ZIndices.backhair,
+			zfn(options) {
+				if (options.bird_wings_layer === "back") {
+					return ZIndices.head_back
+				} else {
+					return ZIndices.backhair
+				}
+			},
 			animation: "idle"
 		},
 		"bird_wings_rightcover": {
@@ -1828,7 +1994,13 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.bird_wings_type) && options.bird_wing_left === "idle";
 			},
 			filters: ["hair"],
-			z: ZIndices.backhair,
+			zfn(options) {
+				if (options.bird_wings_layer === "back") {
+					return ZIndices.head_back
+				} else {
+					return ZIndices.backhair
+				}
+			},
 			animation: "idle"
 		},
 		"bird_wings_leftcover": {
@@ -1850,7 +2022,13 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.bird_tail_type);
 			},
 			filters: ["hair"],
-			z: ZIndices.tail,
+			zfn(options) {
+				if (options.bird_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
 			animation: "idle"
 		},
 		"bird_eyes": {
@@ -1890,7 +2068,7 @@ Renderer.CanvasModels["main"] = {
 				return `img/transformations/bird/pubes/${options.bird_pubes_type}.png`;
 			},
 			showfn(options) {
-				return options.show_tf 
+				return options.show_tf
 				&& isPartEnabled(options.bird_pubes_type)
 				&& !options.belly_hides_under_lower;
 			},
@@ -1899,13 +2077,13 @@ Renderer.CanvasModels["main"] = {
 			animation: "idle"
 		},
 		/***
-		 *    ███████  ██████  ██   ██ 
-		 *    ██      ██    ██  ██ ██  
-		 *    █████   ██    ██   ███   
-		 *    ██      ██    ██  ██ ██  
-		 *    ██       ██████  ██   ██ 
-		 *                             
-		 *                             
+		 *    ███████  ██████  ██   ██
+		 *    ██      ██    ██  ██ ██
+		 *    █████   ██    ██   ███
+		 *    ██      ██    ██  ██ ██
+		 *    ██       ██████  ██   ██
+		 *
+		 *
 		 */
 		"fox_tail": {
 			srcfn(options) {
@@ -1915,7 +2093,13 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.fox_tail_type);
 			},
 			filters: ["hair"],
-			z: ZIndices.tail,
+			zfn(options) {
+				if (options.fox_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
 			animation: "idle"
 		},
 		"fox_ears": {
@@ -2169,8 +2353,8 @@ Renderer.CanvasModels["main"] = {
 		 *    ██   ██ ██████  ██ ██████  ███████
 		 *    ██   ██ ██   ██ ██ ██           ██
 		 *    ██████  ██   ██ ██ ██      ███████
-		 * 
-		 * 
+		 *
+		 *
 		 */
 
 		"drip_vaginal": {
@@ -2362,8 +2546,12 @@ Renderer.CanvasModels["main"] = {
 		}),
 		"upper_breasts": genlayer_clothing_breasts("upper", {
 			zfn(options) {
-				return options.zupper
-			}
+				if (options.acc_layer_under) {
+					return ZIndices.upper + 1;
+				}else {
+					return options.zupper
+				}
+		}
 		}),
 		"upper_acc": genlayer_clothing_accessory("upper", {
 			zfn(options) {
@@ -2398,6 +2586,10 @@ Renderer.CanvasModels["main"] = {
 				return options.zupperleft
 			}
 		}),
+		"upper_back": genlayer_clothing_back_img('upper', {
+			z: ZIndices.back_lower
+		}),
+
 		/***
 		 *     ██████  ██    ██ ███████ ██████  ██    ██ ██████  ██████  ███████ ██████
 		 *    ██    ██ ██    ██ ██      ██   ██ ██    ██ ██   ██ ██   ██ ██      ██   ██
@@ -2432,12 +2624,13 @@ Renderer.CanvasModels["main"] = {
 
 		"genitals": genlayer_clothing_main('genitals', {
 			srcfn(options) {
-				return 'img/clothes/genitals/' + options.worn_genitals_setup.variable + '/' + options.worn_genitals_integrity + '.png';
+				return 'img/clothes/genitals/' + options.worn_genitals_setup.variable + '/' + options.worn_genitals_integrity + (options.worn_genitals_setup.penisSize ? options.penis_size / 2 : '') + '.png';
 			},
 			showfn(options) {
 				return options.worn_genitals > 0 &&
 					options.worn_genitals_setup.mainImage !== 0 &&
-					!options.worn_genitals_setup.hideUnderLower.includes(options.worn_under_lower_setup.name)
+					!options.worn_genitals_setup.hideUnderLower.includes(options.worn_under_lower_setup.name) &&
+					!options.belly_hides_under_lower;
 			},
 			zfn(options) {
 				if (options.crotch_exposed) {
@@ -2497,9 +2690,22 @@ Renderer.CanvasModels["main"] = {
 			}
 		}),
 		"lower_acc": genlayer_clothing_accessory("lower", {
-			masksrcfn(options) {
-				return options.belly_mask_clip_src;
-			}
+			srcfn(options) {
+				let path = 'img/clothes/lower/' +
+					options.worn_lower_setup.variable + '/' +
+					(options.worn_lower_setup.accessory_integrity_img ? 'acc_' + options.worn_lower_integrity : options.worn_upper_setup.name === "school blouse" && ["school pinafore", "plaid school pinafore"].includes(options.worn_lower_setup.name) ? 'acc_under' : 'acc') + '.png';
+					if (["school pinafore", "plaid school pinafore"].includes(options.worn_lower_setup.name)) {
+						return gray_suffix(path, options.filters['worn_lower_acc'])
+					}else {
+						return gray_suffix(path, options.filters['worn_lower_acc'])
+					}
+				},
+				zfn(options) {
+					return options.worn_lower_setup.high_img ? ZIndices.lower_high : ZIndices.lower;
+				},
+				masksrcfn(options) {
+					return options.belly_mask_clip_src;
+			},
 		}),
 		"lower_penis": {
 			srcfn(options) {
@@ -2823,8 +3029,22 @@ Renderer.CanvasModels["main"] = {
 		 *
 		 *
 		 */
-		"head": genlayer_clothing_main('head'),
-		"head_acc": genlayer_clothing_accessory('head'),
+		"head": genlayer_clothing_main('head', {
+			srcfn(options) {
+				let path = 'img/clothes/head/' +
+					options.worn_head_setup.variable + '/' +
+					(options.worn_head_setup.name === "cat hoodie hood" && options.worn_upper_setup.name === "cat hoodie" ? options.worn_upper_integrity : options.worn_head_integrity) + '.png';
+				return gray_suffix(path, options.filters['worn_head']);
+			},
+		}),
+		"head_acc": genlayer_clothing_accessory('head', {
+			srcfn(options) {
+				let path = 'img/clothes/head/' +
+					options.worn_head_setup.variable + '/' +
+					(options.worn_head_setup.name === "cat hoodie hood" && options.worn_upper_setup.name === "cat hoodie" ? 'acc_' + options.worn_upper_integrity : 'acc') + '.png';
+				return gray_suffix(path, options.filters['worn_head_acc']);
+			},
+		}),
 		"head_back": genlayer_clothing_back_img('head'),
 		/***
 		 *     ██████  ██    ██ ███████ ██████          ██   ██ ███████  █████  ██████
@@ -2847,9 +3067,27 @@ Renderer.CanvasModels["main"] = {
 		 *
 		 *
 		 */
-		"face": genlayer_clothing_main('face'),
-		"face_acc": genlayer_clothing_accessory('face'),
+
+		"face": genlayer_clothing_main('face', {
+			zfn(options) {
+				if (options.acc_layer_under) {
+					return ZIndices.face - 12.5;
+				}else {
+					return ZIndices.face;
+				}
+			},
+		}),
+		"face_acc": genlayer_clothing_accessory('face', {
+			zfn(options) {
+				if (options.acc_layer_under) {
+					return ZIndices.face - 12.5;
+				}else {
+					return ZIndices.face;
+				}
+			},
+		}),
 		"face_back": genlayer_clothing_back_img('face'),
+
 		/***
 		 *    ███    ██ ███████  ██████ ██   ██
 		 *    ████   ██ ██      ██      ██  ██
@@ -2861,9 +3099,11 @@ Renderer.CanvasModels["main"] = {
 		 */
 		"neck": genlayer_clothing_main('neck', {
 			srcfn(options) {
+				let isAltPosition = options.alt_position_neck &&
+				options.worn_neck_setup.altposition !== undefined;
 				let path = 'img/clothes/neck/' +
 					options.worn_neck_setup.variable + '/' +
-					options.worn_neck_integrity + (options.worn_neck_setup.name === "necktie" && options.worn_upper_setup.has_collar === 1 ? '_nocollar' : '') + '.png';
+					options.worn_neck_integrity + (options.worn_neck_setup.name === "necktie" && options.worn_upper_setup.has_collar === 1 ? '_nocollar' : options.worn_neck_setup.name === "sailor ribbon" && options.worn_upper_setup.name === "serafuku" ? '_serafuku' :'') +  (isAltPosition ? '_alt' : '') + '.png';
 				return gray_suffix(path, options.filters['worn_neck']);
 			},
 			zfn(options) {
@@ -2873,6 +3113,16 @@ Renderer.CanvasModels["main"] = {
 			},
 		}),
 		"neck_acc": genlayer_clothing_accessory('neck', {
+			srcfn(options) {
+				let isAltPosition = options.alt_position_neck &&
+				options.worn_neck_setup.altposition !== undefined;
+				let path = 'img/clothes/neck/' +
+				options.worn_neck_setup.variable + '/' +
+				'acc' +
+				(setup.accessory_integrity_img ? '_' + options["worn_" + slot + "_integrity"] : '') +
+				(isAltPosition ? '_alt' : '') + '.png';
+				return gray_suffix(path, options.filters['worn_neck']);
+			},
 			zfn(options) {
 				return (options.worn_head_setup.mask_img === 1 &&
 				!(options.hood_down && options.worn_head_setup.hood && options.worn_head_setup.outfitSecondary !== undefined))
@@ -2967,10 +3217,13 @@ function genlayer_clothing_main(slot, overrideOptions) {
 			let isHoodDown = options.hood_down &&
 				options["worn_" + slot + "_setup"].hoodposition !== undefined &&
 				options["worn_" + slot + "_setup"].outfitPrimary.head !== undefined;
+			let isAltPosition = options.alt_position &&
+				options["worn_" + slot + "_setup"].altposition !== undefined;
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
-				options["worn_" + slot + "_integrity"] + (isHoodDown ? '_down' : '') + '.png';
+				(options["worn_" + slot + "_integrity"]) +
+				(isHoodDown ? '_down' : isAltPosition ? '_alt' : '') + '.png';
 			return gray_suffix(path, options.filters['worn_' + slot]);
 		},
 		showfn(options) {
@@ -2993,12 +3246,14 @@ function genlayer_clothing_accessory(slot, overrideOptions) {
 			let isHoodDown = options.hood_down &&
 				setup.hoodposition !== undefined &&
 				setup.outfitPrimary.head !== undefined;
+			let isAltPosition = options.alt_position &&
+				setup.altposition !== undefined;
 			let path = 'img/clothes/' +
 				slot + '/' +
 				setup.variable + '/' +
 				'acc' +
 				(setup.accessory_integrity_img ? '_' + options["worn_" + slot + "_integrity"] : '') +
-				(isHoodDown ? '_down' : '') + '.png';
+				(isHoodDown ? '_down' : isAltPosition ? '_alt' : '') + '.png';
 			return gray_suffix(path, options.filters['worn_' + slot + '_acc']);
 		},
 		showfn(options) {
@@ -3252,12 +3507,14 @@ function genlayer_clothing_belly_acc(slot, overrideOptions) {
 			let isHoodDown = options.hood_down &&
 				setup.hoodposition !== undefined &&
 				setup.outfitPrimary.head !== undefined;
+			let isAltPosition = options.alt_position &&
+				setup.altposition !== undefined;
 			let path = 'img/clothes/' +
 				slot + '/' +
 				setup.variable + '/' +
 				'acc' +
 				(setup.accessory_integrity_img ? '_' + options["worn_" + slot + "_integrity"] : '') +
-				(isHoodDown ? '_down' : '') + '.png';
+				(isHoodDown ? '_down' : isAltPosition ? '_alt' : '') + '.png';
 			return gray_suffix(path, options.filters['worn_' + slot + '_acc']);
 		},
 		showfn(options) {
@@ -3272,7 +3529,7 @@ function genlayer_clothing_belly_acc(slot, overrideOptions) {
 				&& options.show_clothes
 				&& options.worn_upper_setup.pregType != "min"
 				&& options["worn_" + slot] > 0
-				&& options["worn_" + slot + "_setup"].accessory === 1				
+				&& options["worn_" + slot + "_setup"].accessory === 1
 			} else {
 			return options.belly > 7
 				&& options.show_clothes
@@ -3328,10 +3585,12 @@ function genlayer_clothing_breasts_acc(slot, overrideOptions) {
 function genlayer_clothing_back_img(slot, overrideOptions) {
 	return Object.assign({
 		srcfn(options) {
+			let isAltPosition = options.alt_position &&
+			options["worn_" + slot + "_setup"].altposition !== undefined;
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
-				'back.png';
+				(isAltPosition ? 'back_alt' : 'back') + '.png';
 			return gray_suffix(path, options.filters[this.filtersfn(options)[0]]);
 		},
 		showfn(options) {

@@ -44,33 +44,33 @@
 			<br><br>
 			<<if $debug is 1>>
 				<<clothingcategoryicon "overoutfit">>
-				<<link "View over outfits">><<replace "#clothingShop-div">><<OverOutfitShop>><</replace>><</link>>
+				<<link "View Over Outfits">><<replace "#clothingShop-div">><<OverOutfitShop>><</replace>><</link>>
 				<br>
 				<<clothingcategoryicon "overoutfit">>
-				<<link "View over tops">><<replace "#clothingShop-div">><<OverTopShop>><</replace>><</link>>
+				<<link "View Over Tops">><<replace "#clothingShop-div">><<OverTopShop>><</replace>><</link>>
 				<br><br>
 			<</if>>
 			<<clothingcategoryicon "outfit">>
-			<<link "View outfits">><<replace "#clothingShop-div">><<OutfitShop>><</replace>><</link>>
+			<<link "View Outfits">><<replace "#clothingShop-div">><<OutfitShop>><</replace>><</link>>
 			<br>
 			<<clothingcategoryicon "upper">>
-			<<link "View tops">><<replace "#clothingShop-div">><<TopShop>><</replace>><</link>>
+			<<link "View Tops">><<replace "#clothingShop-div">><<TopShop>><</replace>><</link>>
 			<br>
 			<<clothingcategoryicon "lower">>
-			<<link "View bottoms">><<replace "#clothingShop-div">><<BottomShop>><</replace>><</link>>
+			<<link "View Bottoms">><<replace "#clothingShop-div">><<BottomShop>><</replace>><</link>>
 			<br><br>
 			<<clothingcategoryicon "underoutfit">>
-			<<link "View under outfits">><<replace "#clothingShop-div">><<UnderOutfitShop>><</replace>><</link>>
+			<<link "View Under Outfits">><<replace "#clothingShop-div">><<UnderOutfitShop>><</replace>><</link>>
 			<br>
 			<<clothingcategoryicon "underupper">>
-			<<link "View under tops">><<replace "#clothingShop-div">><<UnderTopShop>><</replace>><</link>>
+			<<link "View Under Tops">><<replace "#clothingShop-div">><<UnderTopShop>><</replace>><</link>>
 			<br>
 			<<clothingcategoryicon "underlower">>
-			<<link "View under bottoms">><<replace "#clothingShop-div">><<UnderBottomShop>><</replace>><</link>>
+			<<link "View Under Bottoms">><<replace "#clothingShop-div">><<UnderBottomShop>><</replace>><</link>>
 			/* Left here for future expansion */
 			/*<br>
 			<<clothingcategoryicon "genitals">>
-			<<link "View Genital wear">><<replace "#clothingShop-div">><<GenitalShop>><</replace>><</link>>*/
+			<<link "View Genital Wear">><<replace "#clothingShop-div">><<GenitalShop>><</replace>><</link>>*/
 			<br><br>
 			<<clothingcategoryicon "head">>
 			<<link "View Head Accessories">><<replace "#clothingShop-div">><<HeadShop>><</replace>><</link>>
@@ -114,7 +114,7 @@
 						<<ShowUnderEquip "normal">>
 						<<ShowUnderEquip "over">>
 						<<set $tryOn.autoReset to true>>
-						<<crimeup `$tryOn.value / 100`>>
+						<<crimeUp `$tryOn.value / 100` "thievery">>
 						<<set $adultshopstate to "closed">>
 					<</link>>
 				<<else>>
@@ -123,12 +123,12 @@
 						<<ShowUnderEquip "normal">>
 						<<ShowUnderEquip "over">>
 						<<set $tryOn.autoReset to true>>
-						<<crimeup `$tryOn.value / 100`>>
+						<<crimeUp `$tryOn.value / 100` "thievery">>
 						<<set $adultshopstate to "closed">>
 					<</link>>
 				<</if>>
 				<<if $tryOn.value gt 0>>
-					<<crime>>
+					<<crime "thievery">>
 				<</if>>
 				<br><br>
 			<<elseif $tryOn.value gt 0>>
@@ -176,8 +176,8 @@
 	<<clothingReset>>
 <<else>>
 	<<rng>>
-	<<if $crime gte 50000 or ($crime gte 40000 and $rng * 20 gte currentSkillValue('skulduggery')) or ($crime gte 25000 and $rng * 10 gte $skulduggery)
-	or ($crime gte 10000 and $rng * 5 gte currentSkillValue('skulduggery'))>>
+	<<if crimeSumCurrent("thievery","petty") gte 50000 or (crimeSumCurrent("thievery","petty") gte 40000 and $rng * 20 gte currentSkillValue('skulduggery')) or (crimeSumCurrent("thievery","petty") gte 25000 and $rng * 10 gte currentSkillValue('skulduggery'))
+	or (crimeSumCurrent("thievery","petty") gte 10000 and $rng * 5 gte currentSkillValue('skulduggery'))>>
 		<<generate1>><<person1>>
 		Sirris watches the entrance out of the corner of <<nnpc_his "Sirris">> eye, and as you try to stroll past, <<he>> stops you.
 		<br><br>
@@ -190,14 +190,14 @@
 		<<else>>
 			<<set $adultShop.ban to 14>>
 		<</if>>
-		<<crime>>
+		<<crime "thievery">>
 		<<set $adultShop.banCount++>>
 	<<else>>
 		Sirris watches the entrance out of the corner of <<nnpc_his "Sirris">> eye, but you leave without arousing suspicion.
-		<<crime>>
+		<<crime "thievery">>
 	<</if>>
 	<<set _crime to ($tryOn.value / 100)>>
-	<<crimeup _crime>>
+	<<crimeUp _crime "thievery">>
 <</if>>
 <br><br>
 <<link [[Next|Elk Street]]>><<set $tryOn.autoReset to true>><<adultShopClear>><</link>>
@@ -344,7 +344,7 @@ A standard cash register sits on a counter. It's locked tight.
 <<if currentSkillValue('skulduggery') gte $lock>>
 	<span class="green">The lock looks easy to pick.</span>
 	<br><br>
-	<<lockpickicon>><<link [[Pick it (0:10)|Adult Shop Register Sneak]]>><<pass 10>><<crimeup 1>><</link>><<crime>>
+	<<lockpickicon>><<link [[Pick it (0:10)|Adult Shop Register Sneak]]>><<pass 10>><<crimeUp 1 "thievery">><</link>><<crime "thievery">>
 	<br>
 <<else>>
 	<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
@@ -370,7 +370,7 @@ There's <<printmoney $tip>>.
 <<if $rng gte 86>>
 	<<skulshopevents>>
 <<else>>
-	<<link [[Take it|Adult Shop]]>><<set $money += $tip>><<crimeup `$tip / 100`>><</link>><<crime>>
+	<<link [[Take it|Adult Shop]]>><<set $money += $tip>><<crimeUp `$tip / 100` "thievery">><</link>><<crime "thievery">>
 	<br>
 	<<link [[Leave it|Adult Shop]]>><</link>>
 	<br>

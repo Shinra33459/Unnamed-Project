@@ -267,7 +267,7 @@ const idb = (() => {
 		if (lock) return;
 		const saveObj = State.marshalForSave();
 		window.onSave({ state: saveObj }); // run onSave handlers
-		if (saveObj != null) return setItem(slot, State.marshalForSave());
+		if (saveObj != null) return setItem(slot, saveObj);
 		return false;
 	}
 
@@ -302,9 +302,6 @@ const idb = (() => {
 	let listPage; // same with the current page
 	const listLengthMax = 20; // maximum number of rows
 	const listPageMax = 20; // maximum number of pages
-	let requireConfirmDelete = true; // require confirmation on deleting saves from the list menu
-	let requireConfirmSave = false; // require confirmation when saving. even when false, overwriting saves with different saveId will prompt confirmation
-	let requireConfirmLoad = false; // require confirmation before loading
 	let latestSave = { slot: 1, date: 0 }; // keep track of the most recent save, separately from autosave on slot 0
 
 	/**
@@ -498,9 +495,9 @@ const idb = (() => {
 		} else {
 			deleteButton.disabled = true;
 		}
-		group.appendChild(deleteButton);
 
 		row.appendChild(group);
+		row.appendChild(deleteButton);
 
 		return row;
 	}
@@ -548,6 +545,16 @@ const idb = (() => {
 				list.appendChild(document.createElement("p"));
 				list.lastChild.innerText =
 					"Saves here will be lost if your browser cache is cleared. Exporting is recommended to prevent the loss of saves from occurring.";
+
+				const lostSaves = document.createElement("p");
+				lostSaves.innerHTML = '<i class="description"><u>Where are my saves?</u></i> ';
+				const lostSavesTooltip = document.createElement("mouse");
+				lostSavesTooltip.classList.add("tooltip", "linkBlue");
+				lostSavesTooltip.innerText = "(?)";
+				lostSavesTooltip.appendChild(document.createElement("span"));
+				lostSavesTooltip.lastChild.innerText = `If you can't find your saves, it's possible you saved them using a different storage method. Try toggling the "Enable IndexedDB" option below the list of saves.`;
+				lostSaves.appendChild(lostSavesTooltip);
+				list.appendChild(lostSaves);
 
 				// THE SAVES LIST
 				list.appendChild(showSavesList());
@@ -641,8 +648,8 @@ const idb = (() => {
 				const reqSave = document.createElement("input");
 				Object.assign(reqSave, {
 					type: "checkbox",
-					checked: requireConfirmSave,
-					onchange: () => (requireConfirmSave = reqSave.checked),
+					checked: V.confirmSave,
+					onchange: () => (V.confirmSave = reqSave.checked),
 				});
 				list.appendChild(document.createElement("label"));
 				list.lastChild.append(reqSave);
@@ -652,8 +659,8 @@ const idb = (() => {
 				const reqLoad = document.createElement("input");
 				Object.assign(reqLoad, {
 					type: "checkbox",
-					checked: requireConfirmLoad,
-					onchange: () => (requireConfirmLoad = reqLoad.checked),
+					checked: V.confirmLoad,
+					onchange: () => (V.confirmLoad = reqLoad.checked),
 				});
 				list.appendChild(document.createElement("label"));
 				list.lastChild.append(reqLoad);
@@ -663,8 +670,8 @@ const idb = (() => {
 				const reqDelete = document.createElement("input");
 				Object.assign(reqDelete, {
 					type: "checkbox",
-					checked: requireConfirmDelete,
-					onchange: () => (requireConfirmDelete = reqDelete.checked),
+					checked: V.confirmDelete,
+					onchange: () => (V.confirmDelete = reqDelete.checked),
 				});
 				list.appendChild(document.createElement("label"));
 				list.lastChild.append(reqDelete);
@@ -697,7 +704,7 @@ const idb = (() => {
 			}
 			case "confirm save": {
 				// skip confirmation if the slot is empty, but do not skip on saveId mismatch, even if confirmation not required
-				if (!details.date || (!requireConfirmSave && details.metadata.saveId === V.saveId)) return saveState(details.slot).then(window.closeOverlay());
+				if (!details.date || (!V.confirmSave && details.metadata.saveId === V.saveId)) return saveState(details.slot).then(window.closeOverlay());
 				const confirmSave = document.createElement("div");
 				confirmSave.className = "saveBorder";
 				confirmSave.appendChild(document.createElement("h3"));
@@ -734,7 +741,7 @@ const idb = (() => {
 			}
 			case "confirm delete": {
 				// skip confirmation if corresponding toggle is off
-				if (!requireConfirmDelete) return deleteItem(details.slot).then(() => saveList());
+				if (!V.confirmDelete) return deleteItem(details.slot).then(() => saveList());
 				const confirmDelete = document.createElement("div");
 				confirmDelete.className = "saveBorder";
 				confirmDelete.appendChild(document.createElement("h3"));
@@ -762,7 +769,7 @@ const idb = (() => {
 			}
 			case "confirm load": {
 				// skip confirmation if corresponding toggle is off
-				if (!requireConfirmLoad) return loadState(details.slot);
+				if (!V.confirmLoad) return loadState(details.slot);
 				const confirmLoad = document.createElement("div");
 				confirmLoad.className = "saveBorder";
 				confirmLoad.appendChild(document.createElement("h3"));
@@ -847,24 +854,6 @@ const idb = (() => {
 		},
 		set listPage(val) {
 			listPage = val;
-		},
-		get requireConfirmLoad() {
-			return requireConfirmLoad;
-		},
-		set requireConfirmLoad(val) {
-			requireConfirmLoad = val;
-		},
-		get requireConfirmSave() {
-			return requireConfirmSave;
-		},
-		set requireConfirmSave(val) {
-			requireConfirmSave = val;
-		},
-		get requireConfirmDelete() {
-			return requireConfirmDelete;
-		},
-		set requireConfirmDelete(val) {
-			requireConfirmDelete = val;
 		},
 		getItem,
 		setItem,

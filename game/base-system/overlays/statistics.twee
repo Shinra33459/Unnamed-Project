@@ -104,6 +104,10 @@
 		<span class="gold">Sex</span>
 		Number of orgasms you've experienced: $orgasmstat
 		<br>
+		<<if $ruinedOrgasmStat>>
+			Number of ruined orgasms you've experienced: $ruinedOrgasmStat
+			<br>
+		<</if>>
 		<<if $asphyxiaLvl gte 2>>
 			Orgasms while being choked: $chokeorgasm
 			<br>
@@ -405,8 +409,6 @@
 		<br>
 		Passed out: $passoutstat
 		<br>
-		Crime History: $crimehistory
-		<br>
 		Distinctions won: $distinction_stat
 		<br>
 		Hours slept: $sleepStat
@@ -547,8 +549,12 @@
 			<br>
 			Deviancy: <<print Math.trunc($deviancy)>>
 			<br>
-			Corruption: <<print Math.trunc($corruption_slime)>>
+			Corruption: <<print Math.trunc($earSlime.corruption)>>
 			<br>
+			<<if $earSlime.growth>>
+				Growth: <<print Math.trunc($earSlime.growth)>>
+				<br>
+			<</if>>
 			<<if $temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest">>
 				Grace: <<print Math.trunc($grace)>>
 				<br>
@@ -566,6 +572,14 @@
 				0
 			<</if>>
 			<br><br>
+			Sensitivities:
+			<mouse class="tooltip linkBlue">(?)<span>These are arousal multipliers applied when that part of the body is stimulated.</span></mouse>
+			<ul style="margin-top:0px;margin-left:-5px;">
+				<li>Mouth: <<print $mouthsensitivity.toFixed(2)>></li>
+				<li>Breast: <<print $breastsensitivity.toFixed(2)>></li>
+				<li>Genital: <<print $genitalsensitivity.toFixed(2)>></li>
+				<li>Bottom: <<print $bottomsensitivity.toFixed(2)>></li>
+			</ul>
 			Breast Growth: <<print Math.trunc(100 - ($breastgrowthtimer / 10))>>%
 			<mouse class="tooltip linkBlue">(?)<span>Reach 100% or above to grow, 0% or below to shrink.</span></mouse>
 			<br>
@@ -612,7 +626,7 @@
 				<<if $sexStats && $sexStats.pills>>
 					Penis can grow: <<print $player.penissize lt $penissizemax and ($player.penissize gte -1 or $sexStats.pills["pills"]["penis growth"].overdose - $sexStats.pills["pills"]["penis reduction"].overdose gte 20)>>
 					<<if $player.penissize is -2 and $sexStats.pills["pills"]["penis growth"].overdose - $sexStats.pills["pills"]["penis reduction"].overdose lt 20>>
-						<mouse class="tooltip linkBlue">(?)<span>Need to overdose on gorwing pills or use a urchin penis parasite.</span></mouse>
+						<mouse class="tooltip linkBlue">(?)<span>Need to overdose on growing pills or use a urchin penis parasite.</span></mouse>
 					<<elseif $player.penissize is $penissizemax>>
 						<mouse class="tooltip linkBlue">(?)<span>At max size.</span></mouse>
 					<</if>>
@@ -643,7 +657,7 @@
 			<<if $player.bottomsize is $bottomsizemin>>
 				<mouse class="tooltip linkBlue">(?)<span>At min size.</span></mouse>
 			<</if>>
-			<br>
+			<br><br>
 		<</foldout>>
 
 		<<foldout false "_clothesFoldout">>
@@ -687,7 +701,7 @@
 			<br>
 			Detention: <<print Math.trunc($detention)>>
 			<br>
-			Crime: <<print Math.trunc($crime)>>
+			Crime: <<print Math.trunc(crimeSumCurrent())>>
 			<br>
 			Orphanage hope: <<print Math.trunc($orphan_hope)>>
 			<br>
@@ -724,7 +738,46 @@
 			Socialite fame: <<print Math.trunc($fame.social)>>
 			<br>
 			Model fame: <<print Math.trunc($fame.model)>>
+			<br>
+			Islander language: <<print Math.trunc($islander_language)>>
 			<br><br>
+		<</foldout>>
+
+		<<foldout false "_crimeFoldout">>
+			<span class="gold">Crime</span>
+			<<for $_cr range Object.keys(setup.crimeNames)>>
+				<<foldout false $_cr>>
+					<span class="gold"><<print toTitleCase(setup.crimeNames[$_cr]) + ":">></span>
+					<<print "Current: " + Math.trunc($crime[$_cr].current)>>
+					<br>
+					<<print "History: " + Math.trunc($crime[$_cr].history)>>
+					<br>
+					<<print "Daily: " + Math.trunc($crime[$_cr].daily)>>
+					<br>
+					<<print "Count: " + Math.trunc($crime[$_cr].count)>>
+					<br>
+					<<print "Count History: " + Math.trunc($crime[$_cr].countHistory)>>
+					<br>
+				<</foldout>>
+			<</for>>
+			<<foldout false "_crimeTotalsFoldout">>
+				<span class="gold">Totals:</span>
+				<<print "Current: " + crimeSumCurrent()>>
+				<br>
+				<<print "History: " + crimeSumHistory()>>
+				<br>
+				<<print "Daily: " + crimeSumDaily()>>
+				<br>
+				<<print "Count: " + crimeSumCount()>>
+				<br>
+				<<print "Count History: " + crimeSumCountHistory()>>
+				<br>
+			<</foldout>>
+			<<foldout false "_crimeEventsFoldout">>
+				<span class="gold">Crime Events:</span>
+				<span id="statscrimeevents"><<listCrimeCheats>></span>
+				<br>
+			<</foldout>>
 		<</foldout>>
 
 		<<foldout false "_transformationFoldout">>

@@ -48,10 +48,10 @@
 			<</if>>
 		<<elseif $whitney_toilet is 1 and C.npc.Whitney.state is "active" and $rng gte 51 and $daily.whitney.toiletCheck isnot 1>>
 			<<set $daily.whitney.toiletCheck to 1>>
-			<<if $player.gender is "h">>
+			<<if $player.penisExist and $player.vaginaExist>>
 				<<set _correctBathroom to ($NPCName[$NPCNameList.indexOf("Whitney")].pronoun is "m" ? "boys" : "girls")>>
 			<</if>>
-			<<if $changingRoomGender is "boys" and $player.gender is "m" or $changingRoomGender is "girls" and $player.gender is "f" or $player.gender is "h" and $changingRoomGender isnot _correctBathroom>>
+			<<if $changingRoomGender is "boys" and $player.gender is "m" or $changingRoomGender is "girls" and $player.gender is "f" or ($player.penisExist and $player.vaginaExist) and $changingRoomGender isnot _correctBathroom>>
 				<<if $player.gender is $NPCName[$NPCNameList.indexOf("Whitney")].pronoun>>
 					<<npc Whitney>><<person1>>
 					You bump into Whitney. <<His>> expression darkens. "What did I say about showing your face in here?" <<he>> says. "I guess I'll have to beat it into you."
@@ -308,7 +308,7 @@
 		<br>
 		<<link [[Copy|Maths Drugged Copy]]>><<set $mathsinfo += 1>><</link>><<note "+ Mathematical Insight" "green">>
 		<br>
-		<<link [[Rob|Maths Drugged Rob]]>><<detention 6>><<set $mathsstim += 1>><</link>><<gdelinquency>><<note "+ Stimulant" "green">>
+		<<link [[Rob|Maths Drugged Rob]]>><<detention 6>><<set $mathsstim += 1>><</link>><<ggdelinquency>><<note "+ Stimulant" "green">>
 		<br>
 
 	<<elseif $halloween is 1 and !$halloween_lake>>
@@ -561,7 +561,7 @@
 					<<else>>
 						"That must be it," a <<person3>><<person>> adds. "What a freak!"
 					<</if>>
-					<<schoolrep crossdress -1>>
+					<<schoolrep crossdress -3>>
 				<</if>>
 			<<else>>
 				<<if !playerBellyVisible()>>
@@ -600,7 +600,7 @@
 					<<else>>
 						"Either way," a <<person3>><<person>> replies. "you'd have to be totally shameless to still come to school like that."
 					<</if>>
-					<<schoolrep crossdress -1>>
+					<<schoolrep crossdress -3>>
 				<</if>>
 			<</if>>
 		<<else>>
@@ -914,13 +914,13 @@
 	<</if>>
 	"Oops," <<he>> says with a sly grin on <<his>> face before walking off.
 	<br><br>
-	<<set $lock to 50>>
+	<<set $lock to 100>>
 	<<lockereventpassages>>
 <</widget>>
 
 <<widget "lockereventpassages">>
 	<<if currentSkillValue('skulduggery') gte $lock>>
-		<<link [[Try to pick the lock (0:05)|Hallways Pick Locker Attempt]]>><<pass 5>><<crimeup 30>><<stress 5>><</link>><<crime>><<gstress>>
+		<<link [[Try to pick the lock (0:05)|Hallways Pick Locker Attempt]]>><<pass 5>><<crimeUp 30 "petty">><<stress 5>><</link>><<crime "petty">><<gstress>>
 		<br>
 	<<else>>
 		<span class="red">The lock is beyond your ability to pick.</span><<skulduggeryrequired>>
@@ -955,7 +955,7 @@
 	<</if>>
 	<br><br>
 	<<endevent>>
-	<<link [[Next|Hallways]]>><</link>>
+	<<link [[Next|Hallways]]>><<set $eventskip to 1>><</link>>
 <</widget>>
 
 <<widget "eventscourtyard">>
@@ -1342,7 +1342,7 @@
 					"You sure about that," a <<person2>><<person>> asks, looking at your belly. "She looks like a pregnant girl to me. Let's just leave her be; she wouldn't be able to crossdress right now anyway."
 					<br><br>
 					They all look at your belly one more time before walking away.
-					<<schoolrep crossdress -1>>
+					<<schoolrep crossdress -3>>
 					<br><br>
 					<<endevent>>
 					<<courtyard>>
@@ -1709,12 +1709,12 @@
 				"A new rule, slut," <<he>> says. "You're a failure of a <<print ($player.gender is "m" ? "boy" : "girl")>>. You don't deserve to use the same toilets as me."
 				<<He>> pushes you closer.
 			<<else>>
-				<!-- includes player.gender is "h" -->
+				<!-- includes when player has both genitals -->
 				<<He>> tries to push you into the <<nnpc_gendery "Whitney">>s' toilets.
 				<br><br>
 				<!-- dev note: This scene is weird for herm PCs that normally choose the same toilets as Whitney. They aren't hiding from Whitney. How should Whitney's rule apply to herms? -->
 				<!-- dev note: This is ALSO weird for crossdresser PCs, because gender_appearance is what dictates getting thrown out of bathrooms, not gender, so they're ALSO already using the bathroom Whitney wants. -->
-				"A new rule, slut," <<he>> says. "No more hiding from me in the bathroom. You may be a <<if $player.gender is "m">>boy<<elseif $player.gender is "h">>freak<<else>>girl<</if>>, but you're also mine. I want you nearby in case I feel like using you. That means you're using the <<nnpc_gendery "Whitney">>s' toilets from now on."
+				"A new rule, slut," <<he>> says. "No more hiding from me in the bathroom. You may be a <<if $player.gender is "m">>boy<<elseif $player.penisExist and $player.vaginaExist>>freak<<else>>girl<</if>>, but you're also mine. I want you nearby in case I feel like using you. That means you're using the <<nnpc_gendery "Whitney">>s' toilets from now on."
 				<br><br>
 				<<He>> pushes you closer.
 			<</if>>
@@ -1811,18 +1811,25 @@
 		<br>
 	<<elseif $bullyevent is 15>>
 		<<set $bullyevent += 1>>
-		<<if $whitneypantiescheck is 2 and !$whitneyskirtcheck and $forcedcrossdressingdisable is "f" and _whitney.dom gte 18>>
-			Whitney rounds the corner ahead, flanked by <<his>> friends. <<He>> grins, and forces other students to move as <<he>> strides in a straight line towards you. You notice that <<he>> seems to be holding a skirt in <<his>> hand.
-			<br><br>
-			"So I've been thinking slut," <<he>> says, looking at your $worn.lower.name.
+		<<if !($whitneypantiescheck is 2 and $forcedcrossdressingdisable is "f" and _whitney.dom gte 18)>>
+			<<WhitneyPantyCheck>>
+		<<elseif !$whitneyskirtcheck>>
+			Whitney rounds the corner ahead, flanked by <<his>> friends. <<He>> grins, and forces other students to move as <<he>> strides in a straight line towards you. 
 			<<if setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 and $worn.lower.reveal gt 200>>
-				"New rule, you're wearing a skirt from now on. Makes it easier for me to check that you're wearing your panties. Glad to see you're already following it."
+				<<set $whitneyskirtcheck to 1>>
+				<br><br>
+
+				<<He>> looks down at your $worn.lower.name. "You look good in that. I think we should make it permanent. From now on, you're only wearing skirts." <<His>> friends laugh as they pass you by.
 				<<npcincr Whitney lust 5>><<glust>>
 				<br><br>
 
 				<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
+				<br>
 			<<else>>
-				"New rule, you're wearing a skirt from now on. Makes it easier for me to check that you're wearing your panties.
+				<<He>> seems to be holding a skirt in <<his>> hand.
+				<br><br>
+
+				"I've been thinking about a new rule," <<he>> says, looking at your $worn.lower.name. "You're wearing a skirt from now on. Makes it easier for me to check that you're wearing your panties.
 				<<if setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
 					I've even gone ahead and got you a shorter one to change into right here. Aren't I nice?"
 				<<else>>
@@ -1835,13 +1842,11 @@
 				<<link [[Fight|Bully Fight]]>><<set $fightstart to 1>><<def 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
 				<br>
 			<</if>>
-		<<elseif $whitneypantiescheck is 2 and $whitneyskirtcheck and $forcedcrossdressingdisable is "f" and _whitney.dom gte 18 and $worn.genitals.name is "naked">>
-			A pair of hands grabs you from behind and shoves you into an empty classroom. You hear a click as the door is locked by Whitney.
+		<<elseif $worn.genitals.name is "naked">>
+			A pair of hands grab you from behind and shove you into an empty classroom. You hear a click as the door is locked, and Whitney backs you into the corner.
 			<br><br>
 			<<if $whitneychastity is 1>>
-				Hey slut, strip," <<he>> looks to your groin, "Why is my chastity cage not being worn, did you break out of it because you were that horny. Need me to put a new one on for you?"
-				<br><br>
-				<<strip>>
+				<<He>> roughly places a hand on your groin, feeling for something. "Where's your cage, <<bitch>>? Need a new one?" <<arousal 10>><<garousal>>
 				<br><br>
 				<<link [[Say yes|Bully Chastity]]>>
 					<<if $player.penissize is -2>>
@@ -1857,24 +1862,32 @@
 				<br>
 				<<link [[Say no|Bully Chastity]]>><<set $whitneychastity to 2>><<set $phase to 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
 			<<else>>
-				Hey slut, strip," <<he>> looks to your groin,
+				<<He>> roughly places a hand on your groin. <<arousal 10>><<garousal>>
+				<br><br>
 				<<if $whitneychastity is 2>>
-					"Still don't want to wear a chastity cage? I don't like how you're able to get others pregnant without my permission."
+					<<if $pregnancyspeechdisable is "f">>
+						"Still don't want to wear a cage? I don't want you knocking some poor slut up without my permission."
+					<<else>>
+						"Still don't want to wear a cage? I don't want you fucking anyone else without my permission."
+					<</if>>
 				<<else>>
-					"I don't like how you're able to get others pregnant without my permission. I'm giving you the option to fix it."
+					<<if $pregnancyspeechdisable is "f">>
+						"I don't want you knocking some poor slut up without my permission. Lucky for you, I've got the perfect solution right here."
+					<<else>>
+						"I don't want you fucking anyone else without my permission. Lucky for you, I've got the perfect solution right here."
+					<</if>>
 				<</if>>
 				<br><br>
-				<<strip>>
 				<<if $player.penissize is -2>>
-					<<He>> holds a flat and very pink chastity cage in <<his>> hands. "You're penis is so small that I doubt... Will you wear it for me?"
+					<<He>> holds a flat pink chastity cage in <<his>> hands. "Your cock is so tiny that I doubt we'll have any trouble putting this on. Will you wear it for me?"
 					<<set _cageIndex to 7>>
 					<<set _cageColor to "pink">>
 				<<elseif $player.penissize lte 0>>
-					<<He>> holds a small and pink chastity cage in <<his>> hands. "With how small your penis is, I doubt we'll have any issues putting this on you. Will you wear it for me?"
+					<<He>> holds a small and pink chastity cage in <<his>> hands. "With how small your cock is, I doubt we'll have any issues putting this on. Will you wear it for me?"
 					<<set _cageIndex to 6>>
 					<<set _cageColor to "pink">>
 				<<else>>
-					<<He>> holds a chastity cage in <<his>> hands. "I doubt we'll have any issues putting this on you. Will you wear it for me?"
+					<<He>> holds a chastity cage in <<his>> hands. "With this, I can make sure you behave. Will you wear it for me?"
 					<<set _cageIndex to 2>>
 				<</if>>
 				<br><br>
@@ -1978,7 +1991,10 @@
 		<<if !$player.vaginaExist and !$player.penisExist>>
 			<<eventwhitneyparasitenogenitalspresent>>
 		<<else>>
-			<<if $player.penisExist and !$parasite.penis.name>>
+			<<if $parasite.penis.name is "parasite" or $parasite.clit.name is "parasite">>
+				With your <<genitals>> exposed and helpless you can do nothing to stop a smirking Whitney as they bring the urchin directly in front of your vulnerable place, where it immediately falls to the floor.
+				"Oh, I see it doesn't want to share with what you already have."
+			<<elseif $player.penisExist and !$parasite.penis.name>>
 				With your <<genitals>> exposed and helpless you can do nothing to stop a smirking Whitney as they bring the urchin directly in front of your vulnerable place, where it immediately latches onto you. The squelching sounds it makes are as lewd as they are disgusting.
 				<<parasite penis urchin>>
 				<br><br>
@@ -1996,7 +2012,10 @@
 		<<if !$player.vaginaExist and !$player.penisExist>>
 			<<eventwhitneyparasitenogenitalspresent>>
 		<<else>>
-			<<if $player.penisExist and !$parasite.penis.name>>
+			<<if $parasite.penis.name is "parasite" or $parasite.clit.name is "parasite">>
+				With your <<genitals>> exposed and helpless you can do nothing to stop a smirking Whitney as they bring the slime directly in front of your vulnerable place, where it immediately falls to the floor.
+				"Oh, I see it doesn't want to share with what you already have."
+			<<elseif $player.penisExist and !$parasite.penis.name>>
 				With your <<genitals>> exposed and helpless you can do nothing to stop a smirking Whitney as they bring the slime directly in front of your vulnerable place, where it immediately latches onto you. The squelching sounds it makes are as lewd as they are disgusting.
 				<<parasite penis slime>><<arousal 5 "genitals">><<garousal>>
 				<br><br>
@@ -2516,7 +2535,7 @@
 <</widget>>
 
 <<widget "WhitneyPantyCheck">>
-	<<if $whitneypantiescheck is 0 and _whitney.dom gte 18>>
+	<<if $whitneypantiescheck is 0 and C.npc.Whitney.dom gte 18>>
 		Whitney and <<his>> friends surround you. They shove you against the lockers. "New rule, slut." <<He>> grabs your $worn.lower.name. "No underwear."
 		<br><br>
 
@@ -2552,7 +2571,7 @@
 				<br><br>
 			<</if>>
 			"Good <<girl>>," <<he>> says.
-			<<if $player.gender is "m" and !playerChastity("hidden") and ($player.penissize lte 0 or playerChastity("cage")) and $forcedcrossdressingdisable is "f" and _whitney.dom gte 18>>
+			<<if $forcedcrossdressingdisable is "f" and $player.gender is "m" and C.npc.Whitney.dom gte 18 and !playerChastity("hidden") and ($player.penissize lte 0 or playerChastity("cage"))>>
 				<<if $whitneypantiesoffered>>
 					"You know, my offer still stands, you could just wear panties."
 				<<elseif playerChastity("cage")>>
@@ -2565,7 +2584,7 @@
 				<br><br>
 				<<link [[Agree to wear panties|Bully Panties 2]]>><<unset $whitneypantiesoffered>><<set $whitneypantiescheck to 2>><<set $phase to 0>><</link>> <i><small class="red">This may give Whitney other ideas</small></i>
 				<br>
-				<<link [[Disagree|Bully Panties 2]]>><<set $phase to 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
+				<<link [[Refuse|Bully Panties 2]]>><<set $phase to 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
 			<<else>>
 				"I'll check again later."
 				<br><br>
@@ -2583,50 +2602,46 @@
 			<br>
 		<</if>>
 	<<elseif $whitneypantiescheck is 2>>
-		<<if $whitneyskirtcheck is 1 and setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt isnot 1 and $forcedcrossdressingdisable is "f">>
-			Whitney and <<his>> friends surround you. <<He>> frowns when <<he>> notices your $worn.lower.name. "Thought I asked you to wear a skirt. Bad <<girl>>," Whitney chides. "I'll have to take everything now."
+		<<set _skirt to clothingData('lower', $worn.lower, "skirt") is 1>>
+		<<if $forcedcrossdressingdisable is "f" and $whitneyskirtcheck is 1 and (!_skirt or $worn.lower.reveal lte 200)>> 
+			Whitney and <<his>> friends surround you. <<He>> frowns when <<he>> notices your $worn.lower.name.
+			"Thought I asked you to wear a <<print (_skirt ? "shorter " : "")>> skirt. Bad <<girl>>," Whitney chides. "I'll have to take everything now."
 			<br><br>
-			<<set _skirtCheckFailed to true>>
-		<<elseif $whitneyskirtcheck is 1 and setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 and $worn.lower.reveal lte 200 and $forcedcrossdressingdisable is "f">>
-			Whitney and <<his>> friends surround you. <<He>> frowns when <<he>> notices your $worn.lower.name. "Thought I asked you to wear a shorter skirt. Bad <<girl>>," Whitney chides. "I'll have to take everything now."
-			<br><br>
-			<<set _skirtCheckFailed to true>>
+
+			<<link [[Let it happen|Bully Panties]]>><<trauma 6>><<stress 3>><<sub 1>><<npcincr Whitney dom 1>><</link>><<gtrauma>><<gstress>><<garousal>><<gdom>>
+			<br>
+			<<link [[Fight|Bully Fight]]>><<set $fightstart to 1>><<def 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
+			<br>
 		<<else>>
 			Whitney and <<his>> friends surround you. "Time for an inspection," <<he>> says, smiling as <<he>> feels beneath your $worn.lower.name.
-			<br><br>
-		<</if>>
-		<<if _skirtCheckFailed>>
-			<<link [[Let it happen|Bully Panties]]>><<trauma 6>><<stress 3>><<sub 1>><<npcincr Whitney dom 1>><</link>><<gtrauma>><<gstress>><<garousal>><<gdom>>
-			<br>
-			<<link [[Fight|Bully Fight]]>><<set $fightstart to 1>><<def 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
-			<br>
-		<<elseif $worn.under_lower.type.includes("naked")>>
-			<<if playerHasButtPlug()>>
-				<<His>> eyes widen as <<he>> feels the butt plug. "Well, that's a fun surprise." <<He>> grins.
+
+			<<if $worn.under_lower.type.includes("naked")>>
+				<<if playerHasButtPlug()>>
+					<<His>> eyes widen as <<he>> feels the butt plug. "Well, that's a fun surprise." <<He>> grins.
+					<br><br>
+				<</if>>
+				<<WhitneyChastityCheck>>
+
+				"Thought I told you to wear some feminine underwear. Commando is still fine though, good <<girl>>," <<he>> says. "I'll check again later."
 				<br><br>
+
+				<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
+				<br>
+			<<elseif $worn.under_lower.gender is "f">>
+				"Good <<girl>>. Hope the $worn.under_lower.name_simple <<if $worn.under_lower.plural is 1>>are<<else>>is<</if>> nice and tight," <<he>> says. "I'll check again later."
+				<br><br>
+				<<WhitneyChastityCheck>>
+				<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
+				<br>
+			<<else>>
+				"Bad <<girl>>," Whitney chides, smiling. "I'll have to take everything now."
+				<br><br>
+
+				<<link [[Let it happen|Bully Panties]]>><<trauma 6>><<stress 3>><<sub 1>><<npcincr Whitney dom 1>><</link>><<gtrauma>><<gstress>><<garousal>><<gdom>>
+				<br>
+				<<link [[Fight|Bully Fight]]>><<set $fightstart to 1>><<def 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
+				<br>
 			<</if>>
-			<<WhitneyChastityCheck>>
-
-			"Thought I told you to wear some feminine underwear. Commando is still fine though, good <<girl>>," <<he>> says. "I'll check again later."
-			<br><br>
-
-			<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
-			<br>
-		<<elseif $worn.under_lower.gender is "f">>
-			<<set $worn.under_lower.name_simple to setup.clothes.under_lower[clothesIndex('under_lower', $worn.under_lower)].name_simple>>
-			"Good <<girl>>. Hope the $worn.under_lower.name_simple <<if $worn.under_lower.plural is 1>>are<<else>>is<</if>>  nice and tight," <<he>> says. "I'll check again later."
-			<br><br>
-			<<WhitneyChastityCheck>>
-			<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
-			<br>
-		<<else>>
-			"Bad <<girl>>," Whitney chides, smiling. "I'll have to take everything now."
-			<br><br>
-
-			<<link [[Let it happen|Bully Panties]]>><<trauma 6>><<stress 3>><<sub 1>><<npcincr Whitney dom 1>><</link>><<gtrauma>><<gstress>><<garousal>><<gdom>>
-			<br>
-			<<link [[Fight|Bully Fight]]>><<set $fightstart to 1>><<def 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
-			<br>
 		<</if>>
 		<br><br>
 	<<else>>
@@ -2648,7 +2663,7 @@
 			<<set $worn.genitals.type.push("broken")>>
 			<<genitalsruined>>
 			<<if $player.penissize is -2>>
-				<<He>> unlocks the cage and replaces it with a flat and very pink chastity cage before you're able to say anything. "All sorted."
+				<<He>> unlocks the cage and replaces it with a flat pink chastity cage before you're able to say anything. "All sorted."
 				<<genitalswear 7 "pink">>
 			<<else>>
 				<<He>> unlocks the cage and replaces it with a small pink chastity cage before you're able to say anything. "All sorted."
@@ -2656,13 +2671,13 @@
 			<</if>>
 		<<elseif $worn.genitals.integrity lte setup.clothes.genitals[clothesIndex('genitals',$worn.genitals)].integrity_max * 0.75>>
 			<<if $weekly.whitneyChastityReplace>>
-				<<He>> inspects the $worn.genitals.name. "Looking a little worn, huh? These cages don't grow on trees, I can't replace them every time you fuck them up them."
+				<<He>> inspects the $worn.genitals.name. "Looking a little worn, huh? These cages don't grow on trees, I can't replace them every time you fuck them up."
 				<br><br>
 			<<else>>
 				<<set $weekly.whitneyChastityReplace to 1>>
 				<<He>> inspects the $worn.genitals.name. "Looking a little worn, huh? Better replace it for you."
 				<br><br>
-				<<He>> unlocks the cage and replaces it before your able to say anything. "All sorted."
+				<<He>> unlocks the cage and replaces it before you're able to say anything. "All sorted."
 				<<set $worn.genitals.integrity to setup.clothes.genitals[clothesIndex('genitals',$worn.genitals)].integrity_max>>
 			<</if>>
 		<<else>>

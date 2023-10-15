@@ -40,7 +40,7 @@
 	Go deeper into the forest
 	<br>
 	<<if $worn.feet.type.includes("heels") and !$possessed>>
-		<<walkicon>><<link [[Hobble in heels (0:30)|Forest]]>><<set $forestmod to 3>><<set $forest += 5>><<pass 30>><<set $forestmove to "hobble">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<gharass>>
+		<<heelsicon "hobble">><<link [[Hobble in heels (0:30)|Forest]]>><<set $forestmod to 3>><<set $forest += 5>><<pass 30>><<set $forestmove to "hobble">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<gharass>>
 		<<if $town_projects.road gte 4 and $forest lte 24>>
 			<br>
 			<<forestroaddeepicon>><<link [[Follow road (0:10)|Forest]]>><<set $forestmod to 1>><<set $forest += 5>><<set $forestmove to "road">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><<set $eventskip to 1>><</link>><<noharass>>
@@ -80,7 +80,7 @@
 	Go towards town
 	<br>
 	<<if $worn.feet.type.includes("heels") and !$possessed>>
-		<<walkicon>><<link [[Hobble in heels (0:30)|Forest]]>><<set $forestmod to 3>><<set $forest -= 5>><<pass 30>><<set $forestmove to "hobble">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<gharass>>
+		<<heelsicon "hobble">><<link [[Hobble in heels (0:30)|Forest]]>><<set $forestmod to 3>><<set $forest -= 5>><<pass 30>><<set $forestmove to "hobble">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<gharass>>
 		<<if $town_projects.road gte 4 and $forest lte 25 and $forest gte 1>>
 			<br>
 			<<forestroadtownicon>><<link [[Follow road (0:10)|Forest]]>><<set $forestmod to 1>><<set $forest -= 5>><<set $forestmove to "road">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><<set $eventskip to 1>><</link>><<noharass>>
@@ -256,6 +256,7 @@
 		<<wHunt "forest">>
 	<<else>>
 		<<cleareventpool>>
+		<<outfitChecks>>
 		<<if $foresthunt lte 0>>
 			<<addinlineevent "forest_hunted" 0.5>>
 				A chill runs up your spine, a warning from some primal instinct. <span class="red">Something is hunting you.</span>
@@ -277,7 +278,9 @@
 		<</if>>
 		<<addevent "forestwolfspy" 0.25>>
 		<<addevent "forestboar" 0.20>>
-		<<addevent "ForestBullies" 0.20>>
+		<<if _bottomless is false>>
+			<<addevent "ForestBullies" 0.20>>
+		<</if>>
 		<<addinlineevent "forest_wolf" 0.33>>
 			<<beastNEWinit 1 wolf>>
 			<!-- Modified for monster people -->
@@ -861,7 +864,7 @@
 				<<if $monster is 1>>
 					"<<pPackbrother>> still with human cub!" <<bhe>> barks. "Leave, now!"
 				<<else>>
-					<<bHe>> growls at you. You think <<bhe>> wants you to leave his territory.
+					<<bHe>> growls at you. You think <<bhe>> wants you to leave <<bhis>> territory.
 				<</if>>
 			<</if>>
 			<<link [[Continue|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
@@ -965,7 +968,7 @@
 			<<rng>>
 			<<if Time.dayState isnot "night">>
 				<<if $rng gte 51>>
-					<<if $feetskill gte 800>>
+					<<if currentSkillValue("feetskill") gte 800>>
 						<<npc Eden>><<person1>>
 						You step on a branch. You're almost caught off guard as a rope starts to coil around your legs. <span class="green">You jump out of the way.</span> A half-second later and you'd be left dangling from a tree.
 						<br><br>
@@ -1112,36 +1115,36 @@
 
 	<<if _forest_shrooms is 2>>
 		<<if currentSkillValue('science') gte 200>>
-			You remember from school that they're called <<icon "tending/wolfshroom.png">> wolfshrooms, and were prized by warriors in ancient times.
+			You remember from school that they're called <<tendingicon "wolfshrooms">> wolfshrooms, and were prized by warriors in ancient times.
 			<br><br>
 		<</if>>
 	<</if>>
 
 	<<if _forest_shrooms is 1>>
 		<<if $scienceshroomheart lt 5>>
-			<<link [[Take for science project (0:02)|Forest Science Shroom]]>><<pass 2>><<set $phase to 0>><</link>>
+			<<tendingicon "mushrooms">><<link [[Take for science project (0:02)|Forest Science Shroom]]>><<pass 2>><<set $phase to 0>><</link>>
 			<br>
 		<</if>>
-		<<link [[Search for saleable specimens (0:20)|Forest Mushrooms Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
+		<<tendingicon "mushrooms">><<link [[Search for saleable specimens (0:20)|Forest Mushrooms Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
 		<br>
-		<<link [[Eat one (0:01)|Forest Mushrooms]]>><<stress 3>><<pass 1>><<tiredness -6>><</link>><<gstress>><<ltiredness>>
+		<<tendingicon "mushrooms">><<link [[Eat one (0:01)|Forest Mushrooms]]>><<stress 3>><<pass 1>><<tiredness -6>><</link>><<gstress>><<ltiredness>>
 	<<else>>
 		<<if $scienceshroomwolf lt 5>>
-			<<link [[Take for science project (0:02)|Forest Science Shroom]]>><<pass 2>><<set $phase to 1>><</link>>
+			<<tendingicon "wolfshrooms">><<link [[Take for science project (0:02)|Forest Science Shroom]]>><<pass 2>><<set $phase to 1>><</link>>
 			<br>
 		<</if>>
 		<<if currentSkillValue('tending') gte 300>>
-			<<link [[Search for saleable specimens (0:20)|Forest Mushrooms2 Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
+			<<tendingicon "wolfshrooms">><<link [[Search for saleable specimens (0:20)|Forest Mushrooms2 Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
 			<br>
 		<<else>>
 			<span class="blue">You need a higher tending skill to pick saleable mushrooms.</span>
 			<br>
 		<</if>>
-		<<link [[Eat one (0:01)|Forest Mushrooms2]]>><<pass 1>><<alcohol 60>><<arousal 3000>><<trauma -3>><<transform wolf 3>><</link>><<garousal>><<ltrauma>>
+		<<tendingicon "wolfshrooms">><<link [[Eat one (0:01)|Forest Mushrooms2]]>><<pass 1>><<alcohol 60>><<arousal 3000>><<trauma -3>><<transform wolf 3>><</link>><<garousal>><<ltrauma>>
 		<br>
 	<</if>>
 	<br>
-	<<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
+	<<getouticon>><<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
 	<br>
 <</widget>>
 
@@ -1180,10 +1183,10 @@
 		<<link [[Sneak up|Forest Fox Nest Sneak]]>><</link>><<skulduggerydifficulty>>
 		<br>
 		<<if $fox gte 6>>
-			<<link [[Chase!|Forest Fox Nest Chase]]>><<set $phase2 to 1>><<stress -6>><<transform fox 1>><</link>><<llstress>><<fox>> | <span class="red">No eggs</span>
+			<<link [[Chase!|Forest Fox Nest Chase]]>><<set $phase2 to 1>><<stress -6>><<transform fox 1>><</link>><<llstress>><<fox>><<note "No eggs" "red">>
 			<br>
 		<<else>>
-			<<link [[Chase|Forest Fox Nest Chase]]>><<set $phase2 to 1>><<tiredness 6>><</link>><<gtiredness>><<athleticsdifficulty 1 300>> | <span class="red">No eggs</span>
+			<<link [[Chase|Forest Fox Nest Chase]]>><<set $phase2 to 1>><<tiredness 6>><</link>><<gtiredness>><<athleticsdifficulty 1 300>><<note "No eggs" "red">>
 			<br>
 		<</if>>
 	<<else>>
@@ -1316,14 +1319,14 @@
 	or $worn.upper.exposed gte 2 and $underupperwetstage gte 3
 	or $upperwetstage gte 3 and $worn.under_upper.exposed gte 1
 	or $upperwetstage gte 3 and $underupperwetstage gte 3>>
-		<<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
+		<<foresticon "bush">><<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
 		<br>
 	<</if>>
 	<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1
 	or $worn.lower.exposed gte 2 and $underlowerwetstage gte 3
 	or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1
 	or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
-		<<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
+		<<foresticon "bush">><<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
 		<br>
 	<</if>>
 
@@ -1411,7 +1414,7 @@
 		<</if>>
 	<</if>>
 
-	<<link [[Continue|Forest]]>><<set $eventskip to 1>><</link>>
+	<<foresticon>><<link [[Continue|Forest]]>><<set $eventskip to 1>><</link>>
 	<br>
 <</widget>>
 
@@ -1599,4 +1602,13 @@
 	<<else>>
 		<span class="red">There's no intact eggs left.</span>
 	<</if>>
+<</widget>>
+
+<<widget "forestBullyLeaves">>
+	<br><br>
+	After they leave, you try looking for a way to escape. You could try climbing the ropes to the branches, but the canopy is a long way up. It doesn’t seem like there is any other way out without help, but drawing attention to yourself might make the situation worse.
+	<br><br>
+	<<link[[Climb|Forest Bully Climb]]>><</link>><<athleticsdifficulty 0 1055>>
+	<br>
+	<<link[[Call for Help|Forest Bully Help]]>><</link>>
 <</widget>>

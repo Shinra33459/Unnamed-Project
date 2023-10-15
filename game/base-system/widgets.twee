@@ -296,13 +296,11 @@
 <!--_args[0] is the base value, _args[1] is the skill-->
 <<widget "sexControl">>
 	<<if _args[0] and _args[1] gte 800>>
-		<<if _args[1] gte 1000>>
-			<<set _loss to 5 * _args[0]>>
-		<<elseif between(_args[1], 900, 1000)>>
-			<<set _loss to 4 * _args[0]>>
-		<<else>>
-			<<set _loss to 3 * _args[0]>>
+		<<set _loss to _args[1] / 180 * _args[0]>>
+		<<if _args[1] gte 1200>>
+			<<set _loss += 1>>
 		<</if>>
+
 		<<if $enemyarousal gte $enemyarousalmax * 0.7>>
 			<<set _loss *= 2>>
 		<</if>>
@@ -311,9 +309,9 @@
 		<</if>>
 		<<set _loss *= $enemyArousalLossReduction>>
 		<<if $enemyArousalLossReduction gt 0.2>>
-			<<set $enemyArousalLossReduction -= 0.04>>
+			<<set $enemyArousalLossReduction -= (_args[1] gte 1200 ? 0.03 : 0.04)>>
 		<</if>>
-		<<set $enemyarousal -= Math.round(_loss)>>
+		<<set $enemyarousal to Math.clamp($enemyarousal - Math.round(_loss), Math.min($enemyarousal, $enemyarousalmax / 5), $enemyarousalmax)>>
 	<</if>>
 <</widget>>
 
@@ -497,13 +495,26 @@
 	<</if>>
 <</widget>>
 
-<<widget "crimeup">><<silently>>
+<<widget "crimeUp">><<silently>>
 	<<if $statFreeze isnot true>>
-		<<if _args[0]>>
-			<<set $_crimemod to _args[0]>>
-			<<if _args[0] gte 1>>
-				<!-- Our crime value is positive, adjust by stealth factor -->
-				<<set $_crimefactor to 1>>
+		<<if _args[0] eq null>>
+			<<set _crimeError to `No input found for crimeUp widget!`>>
+		<<elseif isNaN(_args[0])>>
+			<<set _crimeError to `NaN input found for crimeUp widget: '${_args[0]}'`>>
+		<<elseif _args[0] lt 0>>
+			<<set _crimeError to `Negative input found for crimeUp widget: '${_args[0]}'`>>
+		<<elseif _args[0] gt 0>>
+			<<set _crimeType to _args[1] || "thievery">>
+			<<if !setup.crimeNames[_crimeType]>>
+				<<run Errors.report("Extra-Illegal crime committed of type; " + _crimeType + " defaulted to thievery")>>
+				<<set _crimeType to "thievery">>
+			<</if>>
+			<<set $_crimemod to Number(_args[0])>>
+			<<set $_crimeMult to 1>>
+
+			<<if !["coercion", "resisting"].includes(_crimeType)>>
+				<!-- ignore stealth (or concealed identity) for crimes where it is irrelevant; -->
+				<!-- resisting arrest where the player's identity is explicitly known, and coercion where the player's force of personality is needed -->
 				/* The following commented code contains experimental factors for calculating stealth */
 				/*
 					<<set $_crime1 to Math.clamp($crime, C.crime.min, C.crime.max / 10)>>
@@ -516,32 +527,249 @@
 					<<set $_stealthReduce1 to expCurve($_normcrime1, 3.0)>>
 					<!-- First 5k of crime at a curve to 5000 -->
 				*/
-				<<set $_stealthfactor to ( 0.15 * ( 1 - normalise($crime, C.crime.max / 5 ) ) )>>
+				<<set $_stealthfactor to ( 0.15 * ( 1 - normalise($crime[_crimeType].current, C.crime.max / 5 ) ) )>>
 				<!-- Stealth gives 15%, but reduced by existing crime stat down to 0 at C.crime.max / 5 -->
-				<!-- At 10k crime, stealth equipment is effectively useless - too much evidence -->
+				<!-- At 10k crime of the current type, stealthy equipment is effectively useless - too much evidence -->
 
-				<!-- Filter to all items with type "stealthy" and count them... -->
+				<!-- Filter to all items with type "stealthy" and count them -->
 				<<set $_stealthMult to Object.values($worn).filter(item => item.type.includes("stealthy")).length>>
-				<<set $_crimefactor -= $_stealthfactor * $_stealthMult>>
+				<<set $_crimeMult -= $_stealthfactor * $_stealthMult>>
 
-				<<set $_crimemod to Math.ceil($_crimemod * $_crimefactor)>>
-				<!-- Add to crime history and Avery crimetracker-->
-				<<set $crimehistory += $_crimemod>>
+				<!-- Filter to all items with type "unstealthy" and count them -->
+				<<set $_unstealthMult to Object.values($worn).filter(item => item.type.includes("unstealthy")).length>>
+				<<set $_crimeMult += 0.15 * $_unstealthMult>>
+
+				<<if ["thievery", "petty", "trespassing"].includes(_crimeType)>>
+					<!-- For stealthy crimes, player skulduggery skill gives further reduction up to another 15%. 1000 is max skulduggery clamp, replace as needed -->
+					<<set $_skillMult to ( 0.15 * normalise($skulduggery, 1000) )>>
+					<<set $_crimeMult -= $_skillMult>>
+				<</if>>
+
+				<<set $_crimemod to Math.ceil($_crimemod * $_crimeMult)>>
+				<<if ["petty"].includes(_crimeType) and $skulduggery gte 500>>
+					<!-- Petty thievery has extra flat reduction if skulduggery skill above 500 (C+), possibly negating the crime gain entirely -->
+					<<set $_crimemod -= Math.floor($skulduggery / 10)>>
+				<</if>>
+			<</if>>
+
+			<<set $_crimemod to Math.clamp($_crimemod, 0, C.crime.max)>>
+
+			<<if $_crimemod gt 0>>
+				<!-- If crime gain is still greater than 0, add to crime daily, history, count, and Avery crimetracker-->
+				<!-- crimemod lte 0 represents a crime the player completely got away with, so nothing is recorded-->
+				<<set C.crime[_crimeType] += $_crimemod>>
+				<<set C.crime[_crimeType + "History"] += $_crimemod>>
+				<<set C.crime[_crimeType + "Daily"] += $_crimemod>>
+				<<set C.crime[_crimeType + "Count"] += 1>>
+				<<set C.crime[_crimeType + "CountHistory"] += 1>>
 				<<if $averyCrimeTracker neq null>>
 					<<set $averyCrimeTracker += $_crimemod>>
 				<</if>>
+
+				<<if ["thievery", "petty"].includes(_crimeType) and
+				$foxbuild gte 1 and 
+				Math.max($wolfbuild, $catbuild, $cowbuild, $birdbuild, $foxbuild) is $foxbuild>>
+					<!-- If the player steals enough, and fox is their highest beast TF (and above 0), apply fox TF pressure -->
+					<<if !$foxCrimeProgress>>
+						<!-- Resets daily at 6AM, in dawnCheck, time.js -->
+						<<set $foxCrimeProgress to 0>>
+					<</if>>
+					<<set $foxCrimeProgress += $_crimemod>>
+					<<set $_foxCrimeRequired = Math.floor(50 * (1 + $foxbuild))>>
+					<<if $foxCrimeProgress gte $_foxCrimeRequired>>
+						<<transform fox 1>>
+						<<set $foxCrimeMessage to true>>
+						<<set $foxCrimeProgress to Math.clamp($foxCrimeProgress, 0, ($foxCrimeProgress - $_foxCrimeRequired))>>
+					<</if>>
+				<</if>>
+
+				<<if _args[2]>>
+					<!-- Optional argument to record more specific crimes with description. Does not work yet, unused.-->
+					<<set _description to _args[2]>>
+					<<if !setup.crimeDescs[_description]>>
+						<<run Errors.report("Extra-Illegal crime committed of description; " + _description + " crime event not logged")>>
+					<<else>>
+						<<run C.crime.logEvent($_crimemod, _crimeType, _description)>>
+					<</if>>
+				<</if>>
 			<</if>>
-			<<set $crime += $_crimemod>> <!-- This works for negative values as well! -->
-			<<set $crime to Math.clamp($crime, C.crime.min, C.crime.max)>> <!-- Auto-clamp crime -->
-		<</if>>
-		<<if $slimeEvent is "steal something">>
-			<<unset $slimeEvent>>
+
+			<<if $earSlime.event is "steal something" and ["thievery", "petty"].includes(_crimeType)>>
+				<<set $earSlime.event to "">><<set $earSlime.noSleep to false>>
+			<</if>>
 		<</if>>
 	<</if>>
-<</silently>><</widget>>
+<</silently>><<if _crimeError>><<error {message:T.crimeError}>><</if>><</widget>>
+
+<<widget "crimeUpFlat">><<silently>>
+	<!-- stripped down widget with no extra effects, modifiers, or optional arguments, ideally used for cheats and debugging -->
+	<<if $statFreeze isnot true>>
+		<<if _args[0] eq null>>
+			<<set _crimeError to `No input found for crimeUpFlat widget!`>>
+		<<elseif isNaN(_args[0])>>
+			<<set _crimeError to `NaN input found for crimeUpFlat widget: '${_args[0]}'`>>
+		<<elseif _args[0] lt 0>>
+			<<set _crimeError to `Negative input found for crimeUpFlat widget: '${_args[0]}'`>>
+		<<elseif _args[0] gt 0>>
+			<<set _crimeType to _args[1] || "thievery">>
+			<<if !setup.crimeNames[_crimeType]>>
+				<<run Errors.report("Extra-Illegal crime (flat) committed of type; " + _crimeType + " defaulted to thievery")>>
+				<<set _crimeType to "thievery">>
+			<</if>>
+			<<set $_crimemod to Number(_args[0])>>
+			<<if _args[0] gt 0>>
+				<<set C.crime[_crimeType] += $_crimemod>>
+				<<set C.crime[_crimeType + "History"] += $_crimemod>>
+				<<set C.crime[_crimeType + "Daily"] += $_crimemod>>
+				<<set C.crime[_crimeType + "Count"] += 1>>
+				<<set C.crime[_crimeType + "CountHistory"] += 1>>
+			<</if>>
+		<</if>>
+	<</if>>
+<</silently>><<if _crimeError>><<error {message:T.crimeError}>><</if>><</widget>>
+
+<<widget "crimeDown">><<silently>>
+	<<if $statFreeze isnot true>>
+		<<if _args[0] eq null>>
+			<<set _crimeError to `No input found for crimeDown widget!`>>
+		<<elseif isNaN(_args[0])>>
+			<<set _crimeError to `NaN input found for crimeDown widget: '${_args[0]}'`>>
+		<<elseif _args[0] lt 0>>
+			<<set _crimeError to `Negative input found for crimeDown widget: '${_args[0]}'`>>
+		<<elseif _args[0] gt 0>>
+			<<set _crimeDown to _args[0]>>
+			<<if _args[1] and _args[1] isnot "all">>
+				<<set _crimeType to _args[1]>>
+				<<if !setup.crimeNames[_crimeType]>>
+					<<run Errors.report("Extra-Illegal crime reduced of type; " + _crimeType + " defaulted to thievery")>>
+					<<set _crimeType to "thievery">>
+				<</if>>
+				<<if C.crime[_crimeType] gt 0>>
+					<<if _crimeDown lte 1>>
+						<!-- Reduce crime by percent -->
+						<<set C.crime[_crimeType] to Math.ceil(C.crime[_crimeType] * _crimeDown)>>
+						<<set C.crime[_crimeType + "Daily"] to Math.ceil(C.crime[_crimeType + "Daily"] * _crimeDown)>>
+						<<set C.crime[_crimeType + "Count"] to Math.ceil(C.crime[_crimeType + "Count"] * _crimeDown)>>
+					<<else>>
+						<!-- Reduce crime by value -->
+						<<set $_crimeDiv to normalise(C.crime[_crimeType] - _crimeDown, C.crime[_crimeType], C.crime.min)>>
+						<<set C.crime[_crimeType] -= _crimeDown>>
+						<<set C.crime[_crimeType + "Daily"] -= _crimeDown>>
+						<!-- Reduce crime type count by same percentile as total crime loss-->
+						<<set C.crime[_crimeType + "Count"] to Math.ceil(C.crime[_crimeType + "Count"] * $_crimeDiv)>>
+					<</if>>
+				<</if>>
+			<<else>>
+				<!-- If no crime type specified, apply to all -->
+				<<for _crimeType range Object.keys(setup.crimeNames)>>
+					<<if C.crime[_crimeType] gt 0>>
+						<<if _crimeDown lte 1>>
+							<!-- Reduce crime by percent -->
+							<<set C.crime[_crimeType] to Math.ceil(C.crime[_crimeType] * _crimeDown)>>
+							<<set C.crime[_crimeType + "Daily"] to Math.ceil(C.crime[_crimeType + "Daily"] * _crimeDown)>>
+							<<set C.crime[_crimeType + "Count"] to Math.ceil(C.crime[_crimeType + "Count"] * _crimeDown)>>
+						<<else>>
+							<<set $_crimeDiv to normalise(C.crime[_crimeType] - _crimeDown, C.crime[_crimeType], C.crime.min)>>
+							<<set C.crime[_crimeType] -= _crimeDown>>
+							<<set C.crime[_crimeType + "Daily"] -= _crimeDown>>
+							<<set C.crime[_crimeType + "Count"] to Math.ceil(C.crime[_crimeType + "Count"] * $_crimeDiv)>>
+							<<unset $_crimeDiv>>
+						<</if>>
+					<</if>>
+				<</for>>
+			<</if>>
+		<</if>>
+	<</if>>
+<</silently>><<if _crimeError>><<error {message:T.crimeError}>><</if>><</widget>>
+
+<<widget "crimeClear">>
+	<<if $statFreeze isnot true>>
+		<<if _args[0] and _args[0] isnot "all">>
+			<<set _crimeClearType to _args[0]>>
+			<<if !setup.crimeNames[_crimeClearType]>>
+				<<run Errors.report("Extra-Illegal crime cleared of type; " + _crimeClearType)>>
+			<<else>>
+				<<set C.crime[_crimeClearType] = 0>>
+				<<set C.crime[_crimeClearType + "Count"] = 0>>
+				<<set C.crime[_crimeClearType + "Daily"] = 0>>
+				<<run C.crime.clearEvents(_crimeClearType)>>
+			<</if>>
+		<<else>>
+			<!-- If no crime type specified, zero all categories -->
+			<<for _crimeClearType range Object.keys(setup.crimeNames)>>
+				<<set C.crime[_crimeClearType] = 0>>
+				<<set C.crime[_crimeClearType + "Count"] = 0>>
+				<<set C.crime[_crimeClearType + "Daily"] = 0>>
+				<<run C.crime.clearEvents()>>
+			<</for>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "crimeClearEvent">>
+	<<if $statFreeze isnot true>>
+		<<if _args[0] and _args[0] isnot "all">>
+			<<set _crimeClearEvent to _args[0]>>
+			<<if !setup.crimeDescs[_crimeClearEvent]>>
+				<<run Errors.report("Extra-Illegal crime event cleared of description; " + _crimeClearEvent)>>
+			<<else>>
+				<<run C.crime.clearEvents(null, _crimeClearEvent)>>
+			<</if>>
+		<<else>>
+			<<run C.crime.clearEvents()>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "listCrimeCheats">>
+	<<if Object.keys(V.crime.events).length isnot 0>>
+		<<for $_ce range Object.keys(V.crime.events)>>
+			<<print $_ce + ": " + setup.crimeDescs[$_ce].toUpperFirst() + ", " + $crime.events[$_ce].length + " count(s)">>
+			<br>
+		<</for>>
+	<<else>>
+		<span class="red">No unique crime events</span>
+		<br>
+	<</if>>
+<</widget>>
+
+<<widget "crimeParade">>
+	<<for $_crimeType range Object.keys(setup.crimeNames)>>
+		<<if C.crime[$_crimeType + "Count"] gte 1>>
+			<<set $_crimes_output to "">>
+			<<number `C.crime[$_crimeType + "Count"]` "silent">>
+			<<set $_crimes_output += "- " + _text_output.toLocaleUpperFirst() + " count">>
+			<<if C.crime[$_crimeType + "Count"] isnot 1>>
+				<<set $_crimes_output += "s">>
+			<</if>>
+			<<set $_crimes_output += " of " + toTitleCase(setup.crimeNames[$_crimeType])>>
+			<<unset _text_output>>
+			<<set $_crimes_event_list to []>>
+			<<for $_ce range Object.keys($crime.events)>>
+				<<set $_crDescLen to $crime.events[$_ce].filter(e => e.type is $_crimeType).length>>
+				<<if $_crDescLen gte 1>>
+					<<number $_crDescLen "silent">>
+					<<set $_crDescStr to _text_output + " count">>
+					<<if $_crDescLen gt 1>>
+						<<set $_crDescStr += "s">>
+					<</if>>
+					<<set $_crDescStr += " of " + setup.crimeDescs[$_ce]>>
+					<<unset _text_output>>
+					<<set $_crimes_event_list.push($_crDescStr)>>
+				<</if>>
+			<</for>>
+			<<if $_crimes_event_list.length isnot 0>>
+				<<set $_crimes_output += ", including ">>
+				<<set $_crimes_output += formatList($_crimes_event_list, "and", true)>>
+			<</if>>
+			<<set $_crimes_output += ".">><span class="red"><<print $_crimes_output>></span>
+			<br>
+		<</if>>
+	<</for>>
+<</widget>>
 
 <<widget "seductionskilluse">>
-	<<set $enemyarousal += ($seductionskill / 100)>><<seductionskill 5>>
+	<<set $enemyarousal += (currentSkillValue("seductionskill") / 100)>><<seductionskill 5>>
 <</widget>>
 
 <<widget "seductionskilluptext">>
@@ -552,43 +780,43 @@
 <</widget>>
 
 <<widget "seductionskillusecombat">>
-	<<set $enemyarousal += ($seductionskill / 100)>><<seductionskill 5>><<set $seductionskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("seductionskill") / 100)>><<seductionskill 5>><<set $seductionskillup to 1>>
 <</widget>>
 
 <<widget "oralskilluse">>
-	<<set $enemyarousal += ($oralskill / 100)>><<oralskill 5>><<set $oralskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("oralskill") / 100)>><<oralskill 5>><<set $oralskillup to 1>>
 <</widget>>
 
 <<widget "vaginalskilluse">>
-	<<set $enemyarousal += ($vaginalskill / 100)>><<vaginalskill 5>><<set $vaginalskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("vaginalskill") / 100)>><<vaginalskill 5>><<set $vaginalskillup to 1>>
 <</widget>>
 
 <<widget "analskilluse">>
-	<<set $enemyarousal += ($analskill / 100)>><<analskill 5>><<set $analskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("analskill") / 100)>><<analskill 5>><<set $analskillup to 1>>
 <</widget>>
 
 <<widget "handskilluse">>
-	<<set $enemyarousal += ($handskill / 100)>><<handskill 5>><<set $handskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("handskill") / 100)>><<handskill 5>><<set $handskillup to 1>>
 <</widget>>
 
 <<widget "feetskilluse">>
-	<<set $enemyarousal += ($feetskill / 100)>><<feetskill 5>><<set $feetskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("feetskill") / 100)>><<feetskill 5>><<set $feetskillup to 1>>
 <</widget>>
 
 <<widget "bottomskilluse">>
-	<<set $enemyarousal += ($bottomskill / 100)>><<bottomskill 5>><<set $bottomskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("bottomskill") / 100)>><<bottomskill 5>><<set $bottomskillup to 1>>
 <</widget>>
 
 <<widget "thighskilluse">>
-	<<set $enemyarousal += ($thighskill / 100)>><<thighskill 5>><<set $thighskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("thighskill") / 100)>><<thighskill 5>><<set $thighskillup to 1>>
 <</widget>>
 
 <<widget "chestskilluse">>
-	<<set $enemyarousal += ($chestskill / 100)>><<chestskill 5>><<set $chestskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("chestskill") / 100)>><<chestskill 5>><<set $chestskillup to 1>>
 <</widget>>
 
 <<widget "penileskilluse">>
-	<<set $enemyarousal += ($penileskill / 100)>><<penileskill 5>><<set $penileskillup to 1>>
+	<<set $enemyarousal += (currentSkillValue("penileskill") / 100)>><<penileskill 5>><<set $penileskillup to 1>>
 <</widget>>
 
 <<widget "skulduggeryskilluse">>
@@ -1319,7 +1547,7 @@
 		<div id="druggedcaption">
 			<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
 				<<if $options.showCaptionText is true>>
-					<span class="pink">A lewd warmth fills you</span>
+					<span class="pink">A lewd warmth fills you.</span>
 				<<else>>
 					Drugged:
 				<</if>>
@@ -1567,6 +1795,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/pubday.png'">
 				<<case "forest">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/forestday.gif'">
+				<<case "churchyard">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/churchyard_day.png'">
+				<<case "sepulchre">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/sepulchre_day.png'">
 				<<case "lake">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/lakeday.gif'">
 				<<case "asylum">>
@@ -1593,6 +1825,8 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/poolday.gif'">
 				<<case "landfill">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/landfillday.png'">
+				<<case "dilapidated_shop">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/dilapidated_shop_day.png'">
 				<<case "adult_shop">>
 					<<getadultshopstate>>
 					<<if $adultshopstate is "closed">>
@@ -1638,6 +1872,8 @@
 					<</if>>
 				<<case "arcade">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/arcade_day.png'">
+				<<case "meadow">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/meadow_day.gif'">
 				<<case "farm">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/farm_day.png'">
 				<<case "alex_farm">>
@@ -1696,6 +1932,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/canal_day.gif'">
 				<<case "mines">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/undergroundday.png'">
+				<<case "seapirates">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/boat_day.gif'">
+				<<case "island">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/island_day.gif'">
 			<</switch>>
 		<<elseif Time.dayState is "night">>
 			<!-- if bloodmoon -->
@@ -1735,6 +1975,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/pubnight.png'">
 				<<case "forest">>
 					<img id="location" @src="'img/misc/' + _weather_display + (_bloodmoon ? '/forestbloodmoon.gif' : '/forestnight.png')">
+				<<case "churchyard">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/churchyard_night.png'">
+				<<case "sepulchre">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/sepulchre_night.png'">
 				<<case "lake">>
 					<img id="location" @src="'img/misc/' + _weather_display + (_bloodmoon ? '/lakebloodmoon.gif' : '/lakenight.gif')">
 				<<case "asylum">>
@@ -1759,8 +2003,10 @@
 					<</if>>
 				<<case "pool">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/poolnight.gif'">
+				<<case "dilapidated_shop">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/dilapidated_shop_night.png'">
 				<<case adult_shop>>
-				<img id="location" @src="'img/misc/' + _weather_display + '/sex_shop_night.gif'">
+					<img id="location" @src="'img/misc/' + _weather_display + '/sex_shop_night.gif'">
 				<<case "landfill">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/landfillnight.png'">
 				<<case "temple">>
@@ -1801,6 +2047,8 @@
 					<</if>>
 				<<case "arcade">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/arcade_night.png'">
+				<<case "meadow">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/meadow_night.gif'">
 				<<case "farm">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/farm_night.png'">
 				<<case "alex_farm">>
@@ -1859,6 +2107,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/canal_night.gif'">
 				<<case "mines">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/undergroundnight.png'">
+				<<case "seapirates">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/boat_night.gif'">
+				<<case "island">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/island_night.gif'">
 			<</switch>>
 		<<elseif Time.dayState is "dawn">>
 			<<if $location is "tentworld">>
@@ -1895,6 +2147,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/pubdawn.png'">
 				<<case "forest">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/forestdawn.png'">
+				<<case "churchyard">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/churchyard_dawn.png'">
+				<<case "sepulchre">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/sepulchre_dawn.png'">
 				<<case "lake">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/lakedawn.gif'">
 				<<case "asylum">>
@@ -1921,8 +2177,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/pooldawn.gif'">
 				<<case "landfill">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/landfilldawn.png'">
-				<<case adult_shop>>
-				<img id="location" @src="'img/misc/' + _weather_display + '/sex_shop_dawn.png'">
+				<<case "dilapidated_shop">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/dilapidated_shop_dawn.png'">
+				<<case "adult_shop">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/sex_shop_dawn.png'">
 				<<case "temple">>
 					<<if Time.year is 361>>
 						<img id="location" @src="'img/misc/' + _weather_display + '/templedawn_old.png'">
@@ -1957,6 +2215,8 @@
 					<</if>>
 				<<case "arcade">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/arcade_dawn.png'">
+				<<case "meadow">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/meadow_dawn.gif'">
 				<<case "farm">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/farm_dawn.png'">
 				<<case "alex_farm">>
@@ -2015,6 +2275,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/canal_dawn.gif'">
 				<<case "mines">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/undergrounddawn.png'">
+				<<case "seapirates">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/boat_dawn.gif'">
+				<<case "island">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/island_dawn.gif'">
 			<</switch>>
 		<<elseif Time.dayState is "dusk">>
 			<<if $location is "tentworld">>
@@ -2051,6 +2315,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/pubdusk.png'">
 				<<case "forest">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/forestdusk.gif'">
+				<<case "churchyard">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/churchyard_dusk.png'">
+				<<case "sepulchre">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/sepulchre_dusk.png'">
 				<<case "lake">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/lakedusk.gif'">
 				<<case "asylum">>
@@ -2077,8 +2345,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/pooldusk.gif'">
 				<<case "landfill">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/landfilldusk.png'">
-				<<case adult_shop>>
-				<img id="location" @src="'img/misc/' + _weather_display + '/sex_shop_dusk.gif'">
+				<<case "dilapidated_shop">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/dilapidated_shop_dusk.png'">
+				<<case "adult_shop">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/sex_shop_dusk.gif'">
 				<<case "temple">>
 					<<if Time.year is 361>>
 						<img id="location" @src="'img/misc/' + _weather_display + '/templedusk_old.png'">
@@ -2117,6 +2387,8 @@
 					<</if>>
 				<<case "arcade">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/arcade_dusk.png'">
+				<<case "meadow">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/meadow_dusk.gif'">
 				<<case "farm">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/farm_dusk.png'">
 				<<case "alex_farm">>
@@ -2175,6 +2447,10 @@
 					<img id="location" @src="'img/misc/' + _weather_display + '/canal_dusk.gif'">
 				<<case "mines">>
 					<img id="location" @src="'img/misc/' + _weather_display + '/undergrounddusk.png'">
+				<<case "seapirates">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/boat_dusk.gif'">
+				<<case "island">>
+					<img id="location" @src="'img/misc/' + _weather_display + '/island_dusk.gif'">
 			<</switch>>
 		<</if>>
 	<<else>>
@@ -2368,13 +2644,14 @@
 	<<set $exposed to 0>>
 	<<if $worn.upper.exposed gte 1 and $worn.over_upper.exposed gte 1>>
 		<<if $player.gender_appearance is "m">>
-		<<elseif $libertine gte 1 or $possessed>>
+		<<elseif $libertine gte 1 or $possessed or ["plaid school pinafore","school pinafore"].includes($worn.lower.name)>>
 		<<else>>
 			<<set $exposed to 1>>
 		<</if>>
 	<</if>>
 	<<if $worn.upper.exposed gte 2 and $worn.over_upper.exposed gte 2 and $player.gender_appearance isnot "m">>
 		<<if $possessed>>
+		<<elseif ["plaid school pinafore","school pinafore"].includes($worn.lower.name)>>
 		<<elseif $libertine is 1>>
 			<<set $topless to 1>>
 		<<else>>
@@ -2746,7 +3023,7 @@
 		<</if>>
 		<<switch Math.clamp(setup.bodyliquid.combined("anus"), 1, 5)>>
 			<<case 5>>
-				<span class="red">Your bowels overflows with _liquid.</span>
+				<span class="red">Your bowels overflow with _liquid.</span>
 				<br>
 			<<case 4>>
 				<span class="pink">Your <<bottom>> overflows with _liquid.</span>
@@ -3228,26 +3505,26 @@
 	<<if $christmas_wrap is 1>>
 		<<switch $christmas_gift_robin>>
 			<<case "shirt_unwrapped">>
-				<<link [[Wrap Robin's shirt and shorts (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "shirt">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "shirt">><<link [[Wrap Robin's shirt and shorts (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "shirt">><<set $christmas_gift_robin_wrapped to 1>><</link>>
 				<br>
 			<<case "sundress_unwrapped">>
-				<<link [[Wrap Robin's sundress (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "sundress">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "sundress">><<link [[Wrap Robin's sundress (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "sundress">><<set $christmas_gift_robin_wrapped to 1>><</link>>
 				<br>
 			<<case "kimono_unwrapped">>
-				<<link [[Wrap Robin's kimono (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "kimono">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "kimono">><<link [[Wrap Robin's kimono (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "kimono">><<set $christmas_gift_robin_wrapped to 1>><</link>>
 				<br>
 			<<case "tuxedo_set_unwrapped">>
-				<<link [[Wrap Robin's tuxedo (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "tuxedo">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "tuxedo">><<link [[Wrap Robin's tuxedo (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "tuxedo">><<set $christmas_gift_robin_wrapped to 1>><</link>>
 				<br>
 			<<case "gothic_gown_unwrapped">>
-				<<link [[Wrap Robin's gothic gown (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "gothic gown">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "gothic">><<link [[Wrap Robin's gothic gown (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "gothic gown">><<set $christmas_gift_robin_wrapped to 1>><</link>>
 				<br>
 			<<case "christmas_unwrapped">>
-				<<link [[Wrap Robin's Christmas outfit (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "christmas">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "christmas hat">><<link [[Wrap Robin's Christmas outfit (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "christmas">><<set $christmas_gift_robin_wrapped to 1>><</link>>
 				<br>
 		<</switch>>
 		<<if $christmas_gift is "clothes_unwrapped">>
-			<<link [[Wrap the orphans' gifts (3:00)|Bedroom Orphans Clothes Wrap]]>><<pass 180>><<set $christmas_gift to "clothes">><</link>>
+			<<gifticon "christmas">><<link [[Wrap the orphans' gifts (3:00)|Bedroom Orphans Clothes Wrap]]>><<pass 180>><<set $christmas_gift to "clothes">><</link>>
 			<br>
 		<</if>>
 	<</if>>
@@ -3264,7 +3541,7 @@
 		<<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
 	<<elseif isPubfameTaskAccepted("hospital") and $pubfame.hospital.active is 1>>
 		<<pubfameComplete "hospital" "steal">>
-		<<crimeup 20>><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
+		<<crimeUp 20 "petty">><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
 	<<elseif $location is "prison">>
 		<<set _teeth to random(3,10)>>
 		You steal a handful of white, translucent gems.
@@ -3272,14 +3549,14 @@
 	<<elseif $rng gte 96 and $spray lt $spraymax>>
 		<<spray 1>>
 		<span class="green">You steal a charge for your pepper spray.</span>
-		<<crimeup 50>><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
+		<<crimeUp 50 "petty">><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
 	<<elseif $rng gte 90 and !$compoundcard>>
 		<<set $compoundcard to 1>>
 		You steal a strange card. There's an address on it, for a location on <span class="gold">Elk Street.</span>
 	<<else>>
 		<<rng 5 100>>
 		You steal <<moneyGain $rng>>.
-		<<crimeup $rng>><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
+		<<crimeUp $rng "petty">><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
 	<</if>>
 <</widget>>
 
@@ -3568,13 +3845,13 @@
 		</div>
 		<div class="relation-description">
 			The wolves
-			<<if $wolfpackleader gte 1>>view you as <span class="green">the leader of the pack.</span>
-				<<elseif $syndromewolves gte 1>>view you as <span class="green">their <<ppackbrother>>.</span>
-				<<elseif $wolfpacktrust gte 12>><span class="green">trust you.</span>
-				<<elseif $wolfpacktrust gte 6>>are<span class="teal">starting to accept you.</span>
-				<<elseif $wolfpackfear gte 12>><span class="red">fear you.</span>
-				<<elseif $wolfpackfear gte 6>>are <span class="purple">starting to fear you.</span>
-				<<else>><span class="pink">view you as prey.</span>
+			<<if $wolfpackleader gte 1>> view you as <span class="green">the leader of the pack.</span>
+				<<elseif $syndromewolves gte 1>> view you as <span class="green">their <<ppackbrother>>.</span>
+				<<elseif $wolfpacktrust gte 12>> <span class="green">trust you.</span>
+				<<elseif $wolfpacktrust gte 6>> are <span class="teal">starting to accept you.</span>
+				<<elseif $wolfpackfear gte 12>> <span class="red">fear you.</span>
+				<<elseif $wolfpackfear gte 6>> are <span class="purple">starting to fear you.</span>
+				<<else>><span class="pink"> view you as prey.</span>
 			<</if>>
 		</div>
 	</div>
@@ -3869,6 +4146,7 @@
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
 	<<set _i to $NPCNameList.indexOf("Mason")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -50, 50)>>
+	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, -50, 50)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
 	<<set _i to $NPCNameList.indexOf("Sam")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -50, 50)>>
@@ -3916,6 +4194,9 @@
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
 	<<set _i to $NPCNameList.indexOf("Remy")>>
+	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
+	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
+	<<set _i to $NPCNameList.indexOf("Zephyr")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
 
@@ -4740,11 +5021,11 @@
 <<set _desk to Furniture.get('desk')>>
 <<set _chair to Furniture.get('chair')>>
 <<set _projectOptions to [$scienceproject, $mathsproject].includes("ongoing")>>
-<<set _bookOptions to [$studyBooks.stolen, $studyBooks.rented].includesAny("Raul and Janet","Pinch")>>
+<<set _bookOptions to ($studyBooks.stolen is 'Raul and Janet' or $studyBooks.rented is 'Raul and Janet' or $studyBooks.stolen is 'Pinch' or $studyBooks.rented is 'Pinch')>>
 <<set _wardrobe to Furniture.get('wardrobe')>>
 <<set _playOptions to ($englishPlay is 'ongoing' and $englishPlayRoles.Player isnot 'none')>>
 
-<<if _projectOptions || _playOptions || _bookOptions || $christmas_gift is "clothes_unwrapped" || ($christmas_gift_robin and $christmas_gift_robin_wrapped isnot 1)>>
+<<if _projectOptions || _playOptions || _bookOptions || ($christmas_wrap is 1 && $christmas_gift_robin_wrapped isnot 1) || ($christmas_wrap is 1 && $christmas_gift is "clothes_unwrapped")>>
 	<<if _args[0] is "noicon">>
 		Your _desk.name and <<if _chair.name isnot "chair">>_chair.article <</if>>_chair.nameSolo are wedged next to your wardrobe.
 		<br>
@@ -4914,7 +5195,9 @@
 				<<elseif $schoolrep.crossdress gte 1 and _args[1] gte 1>>
 					<<set $school_crossdress_message to $schoolrep.crossdress>>
 				<</if>>
-				<<set $schoolrep.crossdress = Math.clamp($schoolrep.crossdress, 0, 5)>>
+				<<set $schoolrep.crossdress to Math.clamp($schoolrep.crossdress, 0, 5)>>
+				<<if _args[1] gt 0>><<set $weekly.crossdressingFameReduction to true>><</if>>
+				<<set $schoolrep.herm to 0>> /* Reset for females that lose a "penis" */
 			<<elseif _args[0] is "herm" and ($daily.school.herm is undefined or _args[1] lt 0)>>
 				<<set $daily.school.herm to 1>>
 				<<set $schoolrep[_args[0]] += _args[1]>>
@@ -4932,7 +5215,8 @@
 				<<elseif $schoolrep.herm gte 1 and _args[1] gte 1>>
 					<<set $school_herm_message to $schoolrep.herm>>
 				<</if>>
-				<<set $schoolrep.herm = Math.clamp($schoolrep.herm, 0, 5)>>
+				<<set $schoolrep.herm to Math.clamp($schoolrep.herm, 0, 5)>>
+				<<set $schoolrep.crossdress to 0>> /* Reset for females that gain a "penis" */
 			<</if>>
 		<</if>>
 	<</if>>
@@ -4940,10 +5224,13 @@
 
 <<widget "schoolrep_naked">>
 	<<if !playerChastity("hidden")>>
-		<<if $player.gender is "h">>
+		<<if $player.penisExist and $player.vaginaExist>>
 			<<schoolrep herm 1>>
 		<<elseif $player.gender isnot $player.gender_appearance>>
 			<<schoolrep crossdress 1>>
+		<<elseif $player.gender is $player.gender_appearance and $schoolrep.crossdress gt 0 and !$daily.crossdressingFameReduction and !$weekly.crossdressingFameReduction and random(0,100) gte 100 - ($schoolrep.crossdress * 3)>>
+			<<schoolrep crossdress -1>>
+			<<set $daily.crossdressingFameReduction to true>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -5039,14 +5326,14 @@
 	<</if>>
 	<<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
 	<<if _args[2]>>
-		<<crimeup `_money_gain / 100`>>
+		<<crimeUp `_money_gain / 100` "thievery">>
 	<</if>>
 	<<set $money += _money_gain>>
 <</silently>><<printmoney _money_gain>><</widget>>
 
 /*
 	Used like above, but only shows the money amount, doesn't add money or crime.
-	Use <<crimeup `_money_gain / 100`>> and <<set $money += _money_gain>> where necessary in links, etc.
+	Use <<crimeUp `_money_gain / 100`>> and <<set $money += _money_gain>> where necessary in links, etc.
 */
 <<widget "moneyGainDisplay">><<silently>>
 	<<if _args[0]>>

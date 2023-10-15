@@ -61,7 +61,7 @@ window.StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.4.1.7",
+	version: "0.4.2.7",
 	versionName: "",
 	sneaky: false,
 };
@@ -445,7 +445,14 @@ Config.navigation.override = function (dest) {
 			case "Trash Compare Penis Secret":
 			case "Trash Compare Breast Secret":
 				return "Trash Compare Secret";
-
+			case "Garden Voyeurism Masturbate End":
+				return "Garden Voyeurism Masturbate Finish";
+			case "Danube Challenge Masturbate End":
+				return "Danube Challenge Masturbate Finish";
+			case "Chalets Work One Rape":
+				return "Chalets Work One Sex";
+			case "Chalets Work One Rape Finish":
+				return "Chalets Work One Sex Finish";
 			default:
 				return false;
 		}

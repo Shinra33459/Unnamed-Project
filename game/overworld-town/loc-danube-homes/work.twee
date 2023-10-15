@@ -14,13 +14,22 @@ You walk up to one of the mansions and knock on the door.
 	<br>
 	<<link [[Stop|Danube Street]]>><</link>>
 	<br>
-<<elseif $danube_housekeeping is undefined>>
-	<<generate1>><<person1>>A <<person>> answers the door. "You're not one of the guests I'm expecting," <<he>> says. "What can I do for you?"
-	<br><br>
-	<<link [[Ask for work|Danube House Intro]]>><</link>>
-	<br>
-	<<link [[Say you've got the wrong address and leave|Danube Street]]>><<endevent>><</link>>
-	<br>
+
+<<elseif $unlocked is true>>
+	/*To return this housekeeping check? 
+	- Remove `$unlocked is true` and place 
+	- Add `danube_housekeeping is undefined`*/
+
+	<<if $danube_housekeeping is undefined>>
+		<<generate1>><<person1>>A <<person>> answers the door. "You're not one of the guests I'm expecting," <<he>> says. "What can I do for you?"
+		<br><br>
+		<<link [[Ask for work|Danube House Intro]]>><</link>>
+		<br>
+		<<link [[Say you've got the wrong address and leave|Danube Street]]>><<endevent>><</link>>
+		<br>
+	
+	<</if>>
+
 <<else>>
 	<<cleareventpool>>
 
@@ -401,9 +410,14 @@ You lean toward <<his>> other breast, and suckle. <<He>> laughs, and inches <<hi
 
 <<if playerChastity("hidden")>>
 	"Trying to stay pure?" <<he>> questions while withdrawing <<his>> hand.
+	<<set _arousal to "low">>
 <<elseif $player.penisExist>>
-	<<if playerChastity("cage")>>
+	<<if $worn.genitals.name is "chastity parasite">>
+		"Odd, what is this?" <<he>> asks. <<He>> while massaging and squeezing your chastity parasite as you suckle.
+		<<set _arousal to "high">>
+	<<elseif playerChastity("cage")>>
 		"Cute," <<he>> says. <<He>> while <<if $player.ballsExist>>massaging your balls<<else>>withdrawing <<his>> hand<</if>> as you suckle.
+		<<set _arousal to "low">>
 	<<elseif $player.penissize gte 4>>
 		"Ah!" <<He>> withdraws <<his>> hand and stares at your crotch. <<He>> looks startled.
 		"How are you so big? Sorry, I don't mean to be rude." <<He>> returns <<his>> hand and continues to stroke as you suckle.
@@ -422,7 +436,13 @@ You lean toward <<his>> other breast, and suckle. <<He>> laughs, and inches <<hi
 <<else>>
 	<<He>> strokes your clit as you suckle.
 <</if>>
-<<arousal 1200 "genitals">><<ggarousal>>
+<<if _arousal is "high">>
+	<<arousal 2000 "genitals">><<gggarousal>>
+<<elseif _arousal is "low">>
+	<<arousal 600 "genitals">><<garousal>>
+<<else>>
+	<<arousal 1200 "genitals">><<ggarousal>>
+<</if>>
 /* Note: Add some dialog describing the player orgasming from this if it puts them at max arousal? */
 <br><br>
 

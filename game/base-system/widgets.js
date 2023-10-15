@@ -47,6 +47,7 @@ const hairStyleCap = {
 		pigtails: 300,
 		ponytail: 300,
 		short: 100,
+		"shaved": 100,
 	},
 	fringetype: {
 		default: 100,
@@ -68,6 +69,8 @@ const hairStyleCap = {
 		"ringlet curl": 300,
 		curtain: 200,
 		trident: 200,
+		"buzzcut": 100,
+		"mohawk": 100,
 	},
 };
 
@@ -155,7 +158,7 @@ function genderappearancecheck() {
 	addfemininityfromfactor(V.makeup.mascara ? 50 : 0, "Mascara");
 	/* Body structure */
 	setfemininitymultiplierfromgender(V.player.gender_body);
-	addfemininityfromfactor(T.femininity_multiplier * 200, "Natural features");
+	addfemininityfromfactor(T.femininity_multiplier * 200, "Body type");
 	addfemininityfromfactor(Math.trunc(((V.physique + V.physiquesize / 2) / V.physiquesize) * -100), "Toned muscles");
 	/* Behaviour */
 	setfemininitymultiplierfromgender(V.player.gender_posture);
@@ -251,7 +254,7 @@ function genderappearancecheck() {
 		if (V.worn.under_upper.exposed >= 1) {
 			/* Exposed breasts */
 			T.breast_indicator = 1;
-			addfemininityfromfactor((V.player.perceived_breastsize - 0.5) * 100, "Exposed breasts");
+			addfemininityfromfactor((V.player.perceived_breastsize - 0.5) * 100, (V.player.perceived_breastsize > 0 ? "Exposed breasts" : "Exposed flat chest"));
 		} else {
 			/* Breasts covered by only underwear */
 			addfemininityfromfactor(Math.clamp((V.player.perceived_breastsize - 2) * 100, 0, Infinity), "Breast size visible through underwear");
@@ -265,6 +268,11 @@ function genderappearancecheck() {
 	/* Pregnant Belly */
 	if (V.sexStats === undefined || !playerBellyVisible()) {
 		// do glorious nothing
+	} else if (V.NudeGenderDC <= 1) {
+		addfemininityfromfactor(
+			Math.clamp((playerBellySize() - 7) * (V.NudeGenderDC === 1 ? 90 : 70), 0, Infinity),
+			playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly"
+		);
 	} else if (playerBellySize() >= 18) {
 		addfemininityfromfactor(Math.clamp(10000, 0, Infinity), playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly");
 	} else if (playerBellySize() >= 8) {
@@ -323,7 +331,7 @@ function genderAppearanceHermTiebreak() {
 	// We rely on as many manually-chosen details as possible to break the tie in a way that favours the player's preference.
 
 	if (["m", "f"].includes(V.player.gender_body)) {
-		return V.player.gender_body; // break the tie with natural features, if player has masculine or feminine features.
+		return V.player.gender_body; // break the tie with body type, if player has masculine or feminine features.
 	} else if (["m", "f"].includes(V.player.gender_posture)) {
 		return V.player.gender_posture; // break the tie with gender posture, if gender posture is "m" or "f"
 	} else {
@@ -342,8 +350,10 @@ function apparentbreastsizecheck() {
 	if (clothingData("over_upper", V.worn.over_upper, "bustresize") != null) {
 		T.tempbreast += clothingData("over_upper", V.worn.over_upper, "bustresize");
 	}
-	V.player.perceived_breastsize = Math.clamp(V.breastsizemin, T.tempbreast, V.breastsizemax);
+	// using the default values of $breastsizemin and $breastsizemax, to avoid issues with the values changing during the game
+	V.player.perceived_breastsize = Math.clamp(T.tempbreast, 0, setup.breastsizes.length - 1);
 }
+window.apparentbreastsizecheck = apparentbreastsizecheck;
 
 function apparentbottomsizecheck() {
 	T.tempbutt = V.player.bottomsize;
@@ -356,7 +366,8 @@ function apparentbottomsizecheck() {
 	if (V.worn.lower.rearresize != null) {
 		T.tempbutt += V.worn.over_lower.rearresize;
 	}
-	V.player.perceived_bottomsize = Math.clamp(V.bottomsizemin, T.tempbutt, V.bottomsizemax);
+	// using the default values of $bottomsizemin and $bottomsizemax, to avoid issues with the values changing during the game
+	V.player.perceived_bottomsize = Math.clamp(T.tempbutt, 0, 8);
 }
 
 function exposedcheck(alwaysRun) {

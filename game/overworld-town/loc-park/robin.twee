@@ -3,7 +3,7 @@
 <<widget "robinChocolateOfferHelp">>
 	<!-- Note: Don't try to move the <<endevent>> outside these links, that would make this widget less portable. -->
 	<<if $money gte 200>>
-		<<hotchocicon>><<link [[Buy hot chocolate (0:15)|Robin Chocolate Purchase]]>><<stress -6>><<trauma -1>><<pass 15>><</link>><<lstress>><<ltrauma>>
+		<<foodicon "hot cocoa">><<link [[Buy hot chocolate (0:15)|Robin Chocolate Purchase]]>><<stress -6>><<trauma -1>><<pass 15>><</link>><<lstress>><<ltrauma>>
 		<br>
 	<</if>>
 	<<ind>><<link [[Offer help (0:30)|Robin Chocolate Help]]>><<endevent>><<npcincr Robin love 1>><<npcincr Robin trauma -1>><<pass 30>><</link>><<glove>><<lrtrauma>>
@@ -216,7 +216,7 @@ You take your time with the mug, letting it warm your hands as you sip away at t
 		<<link [[Buy the milk|Robin Milk Buy]]>><</link>>
 		<br>
 		<<set $skulduggerydifficulty to 400>>
-		<<link [[Steal the milk|Robin Milk Steal]]>><<crimeup 5>><</link>><<skulduggerydifficulty>><<crime>>
+		<<link [[Steal the milk|Robin Milk Steal]]>><<crimeUp 5 "petty">><</link>><<skulduggerydifficulty>><<crime "petty">>
 		<br>
 		<<if $promiscuity gte 15>>
 			<<link [[Flirt for cheaper milk|Robin Milk Seduction]]>><</link>><<promiscuous2>>
@@ -477,21 +477,18 @@ Robin smiles when you return to <<him>>.
 <<masturbationbowl>>
 <br><br>
 
+<<if $corruptionMasturbation>>
+	<span class="red">The slime in your ear will not allow you to stop.</span>
+<</if>>
 <div id="masturbationButtons">
-	<<if $timer lte 1 or $masturbation_fluid gte 500>>
-		<div id="next"><<link [[Continue|Robin Milk Masturbation Finish]]>><</link>><<nexttext>></div>
-		<div><<link [[Stop|Robin Milk Masturbation Finish]]>><<set $finish to 1>><</link>></div>
+	<<if $timer lte 0 or $masturbation_fluid gte 500>>
+		<div id="next"><<link [[Continue|$passage + " Finish"]]>><<set $finish to 1>><</link>><<nexttext>></div>
 	<<else>>
-		<div id="next"><<link [[Continue|Robin Milk Masturbation]]>><</link>><<nexttext>></div>
-		<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
-			<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
-		<<elseif $corruptionMasturbation isnot true>>
-			<div><<link [[Stop|Robin Milk Masturbation Finish]]>><<set $finish to 1>><</link>></div>
-		<<else>>
-			<div class="red">The slime in your ear will not allow you to stop.</div>
-		<</if>>
+		<div id="next"><<link [[Continue|$passage]]>><</link>><<nexttext>></div>
 	<</if>>
+	<<masturbationStopControls>>
 </div>
+<br><br><br><br><br>
 
 :: Robin Milk Masturbation Finish
 
@@ -683,7 +680,7 @@ There are four of them, each armed with a snowball. They're about to pelt you wh
 They hold fire as a <<person2>><<person>> steps forward. "You don't know what you're in for," <<he>> says. "On the count of three." <<He>> scans the ground as <<he>> speaks. "One... Two... "
 <br><br>
 
-<<link [[Attack as fast as possible|Robin Chocolate Challenge Attack]]>><</link>><<skill_difficulty "$handskill" "Hand Skill" 1 800>>
+<<link [[Attack as fast as possible|Robin Chocolate Challenge Attack]]>><</link>><<skill_difficulty `currentSkillValue("handskill")` "Hand Skill" 1 800>>
 <br>
 <<link [[Bide your time|Robin Chocolate Challenge Bide]]>><</link>><<dancedifficulty 1 800>>
 <br>
@@ -716,7 +713,7 @@ You crouch and gather snow, aware that the <<person>> is doing the same. Robin w
 
 You finish first. You hurl the snowball at your opponent. <<He>> flinches, covering <<his>> face with <<his>> hands,
 
-<<if $handskill gte random(1, 800)>>
+<<if currentSkillValue("handskill") gte random(1, 800)>>
 	<span class="green">but the snowball thuds into <<his>> chest.</span> <<He>> loses <<his>> footing, and slips on the ice.<<ltrauma>><<trauma -6>>
 	<br><br>
 	Robin gasps. Your opponent's friends laugh. You return to a grateful Robin's side, the honour of the hot chocolate stand defended.<<person1>><<npcincr Robin love 1>><<glove>>
@@ -781,7 +778,7 @@ How do you fight?
 
 <<generatey2>><<generatey3>><<generatey4>><!--<<generatey5>>-->
 <<set _handMaxDifficulty to ($phase is 2 ? 2000 : 1200)>>
-<<link [[Audaciously|Robin Chocolate Audacious]]>><</link>><<skill_difficulty "$handskill" "Hand Skill" 1 _handMaxDifficulty>>
+<<link [[Audaciously|Robin Chocolate Audacious]]>><</link>><<skill_difficulty `currentSkillValue("handskill")` "Hand Skill" 1 _handMaxDifficulty>>
 <br>
 <<link [[Patiently|Robin Chocolate Patient]]>><</link>><<dancedifficulty 1 1200>>
 <br>
@@ -795,7 +792,7 @@ How do you fight?
 The delinquents are surprised by your sally. They're stood together in the open. A <<person2>><<person>> is the first to go down, slipping on the ice as the snowball smashes into <<his>> face. <<His>> friends scatter.
 <br><br>
 <<set _handMaxDifficulty to ($phase is 2 ? 2000 : 1200)>>
-<<if $handskill gte random(1, _handMaxDifficulty)>>
+<<if currentSkillValue("handskill") gte random(1, _handMaxDifficulty)>>
 	<<if $phase is 2>>
 		You don't have much ammunition, <span class="green">but you make every shot count.</span>
 	<<else>>

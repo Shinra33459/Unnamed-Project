@@ -34,6 +34,18 @@
 		<li>Bailey wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
 	<</if>>
 
+	<<if $earSlime.event and !_tempEventHide>>
+		<<switch $earSlime.event>>
+			<<case "get sperm into your anus" "get sperm into your vagina" "get sperm into your anus completed" "get sperm into your vagina completed">>
+				<li class="lewd">The slime in your head commanded you to get sperm into your <<print $player.vaginaExist ? "vagina" : "anus">>.</li>
+			<<case "get your own sperm into your anus" "get your own sperm into your vagina" "get your own sperm into your anus completed" "get your own sperm into your vagina completed">>
+				<li class="lewd">The slime in your head commanded you to get your own sperm into your <<print $player.vaginaExist ? "vagina" : "anus">>.</li>
+			<<case "only sleep naked from now on" "only wear feminine clothes for a while" "only wear masculine clothes for a while">> /* Show nothing */
+			<<default>>
+				<li class="lewd">The slime in your head commanded you to <<print $earSlime.event>><<if $earSlime.noSleep>> before it allows you to sleep<</if>>.</li>
+		<</switch>>
+	<</if>>
+
 	<<if $psych is 1>>
 		<li>You have an appointment with Doctor Harper on Friday.</li>
 	<</if>>
@@ -63,9 +75,16 @@
 	<</if>>
 
 	<<if $brothel_escortjob isnot undefined>>
-		<<if $brothel_escortjob.accept is true and ($brothel_escortjob.done is undefined or $brothel_escortjob.escape is undefined)>>
+		<<if ($brothel_escortjob.done is undefined or $brothel_escortjob.escape is undefined) and $brothel_escortjob.accept is true and $brothel_escortjob.missed isnot true>>
 			<<set _date to new DateTime($brothel_escortjob.date)>>
-			<li>You're expected to be in front of the brothel on <span class="gold">_date.weekDayName</span> at <span class="gold"><<ampm _date.hour>></span>.</li>
+			<li>You're expected to be in front of the brothel
+			<<if Time.monthDay is _date.day>>
+				<span class="gold">today</span> at <span class="gold"><<ampm _date.hour>>.</span>
+			<<elseif _date.addDays(-7).day gte Time.monthDay>>
+				next <span class="gold">_date.weekDayName</span> at <span class="gold"><<ampm _date.hour>>.</span>
+			<<else>>
+				on <span class="gold">_date.weekDayName</span> at <span class="gold"><<ampm _date.hour>>.</span>
+			<</if>></li>
 		<</if>>
 	<</if>>
 
@@ -215,7 +234,7 @@
 				You can buy sweets for Eden to celebrate Halloween.
 			<</if>>
 			<<if $halloween_lake is 1>>
-				Students are throwing a party at the lake from <<ampm 15 00>> until midnight.
+				Students are throwing a party at the lake from <<ampm 18 00>> until midnight.
 				<<if $halloweenWolves>>
 					One of the members of the wolf pack was injured at it.
 				<</if>>
@@ -263,8 +282,13 @@
 
 	<<if $temple_rank is "prospective">>
 		<li>Jordan has offered you a place at the temple, but you must first pass the trial of purity.</li>
-	<<elseif $temple_rank is "initiate">>
-		<li>You are an initiate at the temple.
+	<<elseif $temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest">>
+		<li>You are
+			<<if $temple_rank is "initiate">>
+				an initiate at the temple.
+			<<else>>
+				a <<temple_rank>> of the temple.
+			<</if>>
 			<<if $temple_chastity_timer lte 0>>
 				<span class="pink">You have a chastity exam due.</span>
 			<<elseif $temple_chastity_timer is 1>>
@@ -416,6 +440,8 @@
 					The coop is being expanded.
 				<<case "irrigation">>
 					Irrigation is being installed in a field.
+				<<case "nursery">>
+					A nursery is being built in the cottage.
 			<</switch>>
 			<<if $farm.build_timer is 1>>
 				It'll be finished <span class="gold">tomorrow.</span>

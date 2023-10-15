@@ -77,7 +77,7 @@
 			<<set $storeLocation to "bed">>
 	<</switch>>
 	<<wardrobeSelection true>>
-	<<if $alwaysSleepNaked isnot true>>
+	<<if $earSlime.alwaysSleepNaked is false>>
 		<<for _index, $_outfit range $outfit>>
 			<<if $_outfit.type.includes("sleep")>>
 				<<if _passage is "Bed">>
@@ -264,18 +264,65 @@
 					<</if>>
 				<<else>>
 					<<set _foundEquip to null>><<set _lastResort to null>>
+					<<unset _randomColour>>
+					<<unset _randomColourAcc>>
 					<<for $_equipIndex, $_wardrobeItem range _selectedWardrobe[$_slot]>>
 						<<if $_incomingItemName isnot $_wardrobeItem.name>>
 							<<continue>>
 						<</if>>
-						/*Check for saved colors in clothing set*/
+						/* Check for saved colors in clothing set */
 						<<set $_outfitColors to $outfit[$wear_outfit].colors>>
 						<<if $_outfitColors>>
-							<<if $_outfitColors[$_slot][0] isnot $_wardrobeItem.colour or $_outfitColors[$_slot][1] isnot $_wardrobeItem.accessory_colour>>
+							/* Start of checking for random colours */
+							<<set _randomColourListItem to $_wardrobeItem.name>>
+							<<if $_outfitColors[$_slot][0] is "random" or $_outfitColors[$_slot][1] is "random">>
+								<<set $_randomColourItems to _selectedWardrobe[$_slot].filter(item => item.name === T.randomColourListItem)>>
+
+								/* Ensures that non-random colours are accounted for*/
+								<<if $_outfitColors[$_slot][0] and $_outfitColors[$_slot][0] isnot "random">>
+									<<set _tempColour to $_outfitColors[$_slot][0]>>
+									<<set $_randomColourItems to $_randomColourItems.filter(item => item.colour === T.tempColour)>>
+									<<unset _tempColour>>
+								<</if>>
+								<<if $_outfitColors[$_slot][1] and $_outfitColors[$_slot][1] isnot "random">>
+									<<set _tempColour to $_outfitColors[$_slot][1]>>
+									<<set $_randomColourItems to $_randomColourItems.filter(item => item.accessory_colour === T.tempColour)>>
+									<<unset _tempColour>>
+								<</if>>
+							<</if>>
+
+							/* Picks the random colours*/
+							<<if $_outfitColors[$_slot][0] is "random" and !_randomColour>>
+								<<set _randomColourList to []>>
+								<<if $_randomColourItems and $_randomColourItems.length>>
+									<<run $_randomColourItems.forEach(item => T.randomColourList.pushUnique(item.colour))>>
+								<</if>>
+								<<if _randomColourList.length>>
+									<<set _randomColour to _randomColourList[random(0, _randomColourList.length - 1)]>>
+									<<set $_randomColourItems to $_randomColourItems.filter(item => item.colour === T.randomColour)>>
+								<</if>>
+							<</if>>
+							<<if $_outfitColors[$_slot][1] is "random" and !_randomColourAcc>>
+								<<set _randomColourAccList to []>>
+								<<if $_randomColourItems and $_randomColourItems.length>>
+									<<run $_randomColourItems.forEach(item => T.randomColourAccList.pushUnique(item.accessory_colour))>>
+								<</if>>
+								<<if _randomColourAccList.length>>
+									<<set _randomColourAcc to _randomColourAccList[random(0, _randomColourAccList.length - 1)]>>
+								<</if>>
+							<</if>>
+							<<unset _randomColourListItem>>
+
+							/* Skips over items that do not match the random colours */
+							<<if (!_randomColour or _randomColour isnot $_wardrobeItem.colour) and $_outfitColors[$_slot][0] isnot $_wardrobeItem.colour>>
 								<<continue>>
 							<</if>>
-							<<set $_outfitCustomColors to $_outfitColors[$_slot+"custom"] || [undefined, undefined]>>
+							<<if (!_randomColourAcc or _randomColourAcc isnot $_wardrobeItem.accessory_colour) and $_outfitColors[$_slot][1] isnot $_wardrobeItem.accessory_colour>>
+								<<continue>>
+							<</if>>
+							/* End of checking for random colours */
 
+							<<set $_outfitCustomColors to $_outfitColors[$_slot+"custom"] || [undefined, undefined]>>
 							<<if $_wardrobeItem.colour is "custom" and $_wardrobeItem.colourCustom isnot undefined and $_wardrobeItem.colourCustom isnot $_outfitCustomColors[0]>>
 								/* this item is not a match, move on to the next item */
 								<<continue>>
@@ -294,9 +341,18 @@
 							<<break>>
 						<</if>>
 						/*Check for slime corruption*/
-						<<if _corruptionEquipSkip.includes($_slot)>>
-							<<if $corruption_slime gte 80 and currentSkillValue('willpower') lt 800 and $_wardrobeItem.reveal lt 500 and !$_wardrobeItem.type.includesAny("school", "event")>>
+						<<if _corruptionEquipSkip.includes($_slot) and $earSlime.corruption gte 10>>
+							<<if $daily.corruptionSlimeClothes is undefined>>
+								<<set $daily.corruptionSlimeClothes to random($earSlime.corruption * 5, $earSlime.corruption * 15) - currentSkillValue('willpower')>>
+							<</if>>
+							<<if $earSlime.event is "go commando" and $_slot is "under_lower">>
+								<<set _notEquipped[$_slot] to {"name": $_incomingItemName, "reason": "corruption_slime_deny_commando"}>>
+								<<break>>
+							<<elseif ((["prison", "asylum"].includes($location) and $_wardrobeItem.reveal lt Math.clamp($daily.corruptionSlimeClothes, 0, 1000)) or ($_wardrobeItem.reveal lt Math.clamp($daily.corruptionSlimeClothes, 0, 500)) and !($_wardrobeItem.type.includesAny("school")) and Time.schoolDay) and !$_wardrobeItem.type.includesAny("event")>>
 								<<set _notEquipped[$_slot] to {"name": $_incomingItemName, "reason": "corruption_slime_deny"}>>
+								<<break>>
+							<<elseif $earSlime.forcedDressing and $_wardrobeItem.gender isnot $earSlime.forcedDressing.type and $_wardrobeItem.gender isnot "n" and !$_wardrobeItem.type.includesAny("event")>>
+								<<set _notEquipped[$_slot] to {"name": $_incomingItemName, "reason": "corruption_slime_deny_forcedDressing"}>>
 								<<break>>
 							<</if>>
 						<</if>>
@@ -324,6 +380,7 @@
 						<<if _damage is 0>>
 							<<set _foundEquip to {}>>
 							<<set _foundEquip[$_slot] to clone($_equipIndex)>>
+							<<break>>
 						<</if>>
 					<</for>>
 
@@ -503,6 +560,30 @@
 							}
 						}
 						_resultStrings.corruption_slime_deny.names.push(notEquippedItem.name);
+						break;
+					case "corruption_slime_deny_commando":
+						if (_resultStrings.corruption_slime_deny_commando === undefined) {
+							_resultStrings.corruption_slime_deny_commando = {
+								"start": "You were unable to equip your ",
+								"joiner": "and",
+								"end": " as the slime in your ear is forcing you to go commando.",
+								"names": [],
+								"color": "red"
+							}
+						}
+						_resultStrings.corruption_slime_deny_commando.names.push(notEquippedItem.name);
+						break;
+					case "corruption_slime_deny_forcedDressing":
+						if (_resultStrings.corruption_slime_deny_forcedDressing === undefined) {
+							_resultStrings.corruption_slime_deny_forcedDressing = {
+								"start": "You were unable to equip your ",
+								"joiner": "and",
+								"end": ` as the slime in your ear is is only permitting more ${$earSlime.forcedDressing.type is "f" ? "feminine" : "masculine"} clothing.`,
+								"names": [],
+								"color": "red"
+							}
+						}
+						_resultStrings.corruption_slime_deny_forcedDressing.names.push(notEquippedItem.name);
 						break;
 					case "cursed slot":
 						if (_resultStrings.cursed === undefined) {
@@ -905,12 +986,14 @@
 						<<set $_colour_options to "$outfit["+_args[0]+"].colors['"+$_label+"'][0]">>
 						<<listbox `$_colour_options` autoselect>>
 							<<optionsfrom $_item.colour_options>>
+							<<option "random">>
 						<</listbox>>
 					<</if>>
 					<<if $_item.accessory_colour_options.length gt 0>>
 						<<set $_accessory_colour_options to "$outfit["+_args[0]+"].colors['"+$_label+"'][1]">>
 						<<listbox `$_accessory_colour_options` autoselect>>
 							<<optionsfrom $_item.accessory_colour_options>>
+							<<option "random">>
 						<</listbox>>
 					<</if>>
 					<br>

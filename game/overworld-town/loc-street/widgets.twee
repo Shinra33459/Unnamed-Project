@@ -552,7 +552,7 @@
 	<<generate1>>You hear a <<person1>><<person>> behind you. <<catcall>>
 	<br><br>
 	<<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
-		<<if $corruption_slime gte 80>>
+		<<if $earSlime.corruption gte 80>>
 			<span class="lewd">You feel the slime in your head command you to give yourself to, not just the <<person>>,</span> <span class="red">but everyone on the street. Everyone in the town.</span> It doesn't promise anything now. It imposes its will, and expects to be obeyed.
 			<br><br>
 
@@ -713,42 +713,51 @@
 	<<generate1>><<person1>>A car pulls up alongside you. The driver, a <<person>>, waves a wad of cash at you. "Show me a good time and I'll make it worth your while. Get in."
 	<br><br>
 
-	<<if $promiscuity lte 14 and $uncomfortable.prostituting is true>>
-		You are not promiscuous enough to take up <<his>> offer.
+	<<if $earSlime.growth gt 50 and $earSlime.defyCooldown lt 8>>
+		<span class="lewd">You feel the slime in your head command you to get in the car and give yourself to <<him>>.</span> It promises rewards if you comply, and threatens consequences if you do not.
 		<br><br>
-	<</if>>
 
-	<<if $promiscuity lte 14 and $uncomfortable.prostituting is false>>
-		<<His>> offer repulses you, but you need the money.
-		<br><br>
-	<</if>>
-
-	<<if $promiscuity gte 15>>
-		<<if $rng lte 15 and ($crime gte 1000 or $fame.prostitution gte 400)>>
-			<<link [[Get in|Street Car]]>><<set $phase to 10>><</link>><<promiscuous2>>
-			<br>
-		<<else>>
-			<<link [[Get in|Street Car]]>><<set $phase to 1>><</link>><<promiscuous2>>
-			<br>
+		<<link [[Obey|Street Car Slime Obey]]>><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><<sub 2>><</link>><<gcorruption>><<lpain>><<lltrauma>><<lstress>>
+		<br>
+		<<link [[Defy|Street Car Slime Defy]]>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><<def 1>><</link>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>>
+		<br>
+	<<else>>
+		<<if $promiscuity lte 14>>
+			<<if $uncomfortable.prostituting>>
+				You are not promiscuous enough to take up <<his>> offer.
+			<<else>>
+				<<His>> offer repulses you, but you need the money.
+			<</if>>
+			<br><br>
 		<</if>>
-	<</if>>
 
-	<<if $promiscuity lte 14 and $uncomfortable.prostituting is false>>
-		<<if $rng lte 15 and ($crime gte 1000 or $fame.prostitution gte 400)>>
-			<<link [[Reluctantly get in|Street Car]]>><<set $desperateaction to 1>><<set $phase to 10>><</link>><<promiscuous2>>
-			<br>
-		<<else>>
-			<<link [[Reluctantly get in|Street Car]]>><<set $desperateaction to 1>><<set $phase to 1>><</link>><<promiscuous2>>
-			<br>
+		<<if $promiscuity gte 15>>
+			<<if $rng lte 15 and (crimeSumCurrent() gte 1000 or $fame.prostitution gte 400)>>
+				<<link [[Get in|Street Car]]>><<set $phase to 10>><</link>><<promiscuous2>>
+				<br>
+			<<else>>
+				<<link [[Get in|Street Car]]>><<set $phase to 1>><</link>><<promiscuous2>>
+				<br>
+			<</if>>
 		<</if>>
+
+		<<if $promiscuity lte 14 and $uncomfortable.prostituting is false>>
+			<<if $rng lte 15 and (crimeSumCurrent() gte 1000 or $fame.prostitution gte 400)>>
+				<<link [[Reluctantly get in|Street Car]]>><<set $desperateaction to 1>><<set $phase to 10>><</link>><<promiscuous2>>
+				<br>
+			<<else>>
+				<<link [[Reluctantly get in|Street Car]]>><<set $desperateaction to 1>><<set $phase to 1>><</link>><<promiscuous2>>
+				<br>
+			<</if>>
+		<</if>>
+		<<link [[Refuse|Street Car]]>><<set $phase to 2>><</link>><<gstress>>
 	<</if>>
-	<<link [[Refuse|Street Car]]>><<set $phase to 2>><</link>><<gstress>>
 	<br>
 <</widget>>
 
 <<widget "street6">>
 	<<if setup.clothes.over_lower[clothesIndex('over_lower', $worn.over_lower)].skirt is 1>>
-		Your $worn.over_lower.name snags on a passing car, <<set $worn.over_lower.integrity -= 10>>
+		Your $worn.over_lower.name snag<<if $worn.over_lower.plural isnot 1>>s<</if>> on a passing car, <<set $worn.over_lower.integrity -= 10>>
 		<<if $worn.over_lower.integrity lte 0>>
 			<<overlowerruined>><<clothesruinstat>><<if $worn.lower.exposed gte 1>><<set $loweroff to 0>><</if>>
 			<span class="lewd">and is torn clean from your body</span><<if $worn.lower.exposed gte 1>>, leaving your <<lewdness>> displayed in the middle of the street<</if>>.
@@ -758,7 +767,7 @@
 		<br><br>
 		<<destinationeventend>>
 	<<elseif !$worn.over_upper.type.includes("naked")>>
-		Your $worn.over_upper.name snags on a passing car, <<set $worn.over_upper.integrity -= 10>>
+		Your $worn.over_upper.name snag<<if $worn.over_upper.plural isnot 1>>s<</if>> on a passing car, <<set $worn.over_upper.integrity -= 10>>
 		<<if $worn.over_upper.integrity lte 0>>
 			<<overupperruined>><<clothesruinstat>><<if $worn.upper.exposed gte 1>><<set $upperoff to 0>><</if>>
 			<span class="lewd">and is torn clean from your body</span><<if $worn.upper.exposed gte 1>>, leaving your <<lewdness>> displayed in the middle of the street<</if>>.
@@ -768,7 +777,7 @@
 		<br><br>
 		<<destinationeventend>>
 	<<elseif setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
-		Your $worn.lower.name snags on a passing car, <<set $worn.lower.integrity -= 10>>
+		Your $worn.lower.name snag<<if $worn.lower.plural isnot 1>>s<</if>> on a passing car, <<set $worn.lower.integrity -= 10>>
 		<<if $worn.lower.integrity lte 0>>
 			<<lowerruined>><<clothesruinstat>><<set $loweroff to 0>>
 			<span class="lewd">and is torn clean from your body,</span> leaving your <<lewdness>> displayed in the middle of the street.
@@ -778,7 +787,7 @@
 		<br><br>
 		<<destinationeventend>>
 	<<elseif !$worn.upper.type.includes("naked")>>
-		Your $worn.upper.name snags on a passing car, <<set $worn.upper.integrity -= 10>>
+		Your $worn.upper.name snag<<if $worn.upper.plural isnot 1>>s<</if>> on a passing car, <<set $worn.upper.integrity -= 10>>
 		<<if $worn.upper.integrity lte 0>>
 			<<upperruined>><<clothesruinstat>><<set $upperoff to 0>>
 			<span class="lewd">and is torn clean from your body,</span> leaving your <<lewdness>> displayed in the middle of the street.
@@ -1039,7 +1048,7 @@
 	<<elseif Time.hour lte 4 or Time.hour gte 21>>
 		"It's late. Come back to the cabin with me. You can sleep and be safe for the night."
 		<br><br>
-		<<link [[Agree (1:00)|Street Eden Worried Go To Cabin]]>><<pass 60>><<npcincr Eden dom 1>><</link>>
+		<<link [[Agree (1:00)|Street Eden Worried Go To Cabin]]>><<pass 60>><<set $edendays to 0>><<npcincr Eden dom 1>><</link>>
 		<br>
 		<<link [[Refuse|Street Eden Worried Refuse Cabin]]>><<npcincr Eden love -2>><<npcincr Eden dom -1>><</link>><<llove>>
 		<br>
@@ -1053,7 +1062,7 @@
 	<<else>>
 		"Come back to the cabin with me. You'll be safe and warm there. We should spend some time together."
 		<br><br>
-		<<link [[Agree (1:00)|Street Eden Worried Go To Cabin]]>><<pass 60>><<npcincr Eden dom 1>><</link>>
+		<<link [[Agree (1:00)|Street Eden Worried Go To Cabin]]>><<pass 60>><<set $edendays to 0>><<npcincr Eden dom 1>><</link>>
 		<br>
 		<<link [[Refuse|Street Eden Worried Refuse Cabin]]>><<npcincr Eden love -2>><<npcincr Eden dom -1>><</link>><<llove>>
 		<br>
@@ -1140,7 +1149,7 @@
 
 			Your mind races over every naughty thing you've done. The crimes you've committed.
 
-			<<if $crime gte 1000>>
+			<<if crimeSumCurrent() gte 1000>>
 				Do they know? Are they here to arrest you? You don't say anything, afraid you might confirm their suspicions if you start to speak. Then you look at their faces. Lust burns in their eyes. Lust and power. It's a look you've seen before.
 			<<else>>
 				But that was taken care of. You look at their faces. Lust burns openly in their eyes. Lust and power. It's a look you've seen before.
@@ -1163,7 +1172,7 @@
 			<br><br>
 			<<link [[Let them|Street Police Extreme]]>><<set $phase to 1>><</link>>
 			<br>
-			<<link [[Run|Street Police Run Extreme]]>><<crimeup 100>><</link>><<athleticsdifficulty 1 1200>><<crime>>
+			<<link [[Run|Street Police Run Extreme]]>><<crimeUp 100 "resisting">><</link>><<athleticsdifficulty 1 1200>><<crime "resisting">>
 			<br>
 			<<if $money gte 30000>>
 				<<link [[Bribe (£300)|Street Police Bribe]]>><<set $money -= 30000>><</link>>
@@ -1178,7 +1187,7 @@
 
 			Your mind races over every naughty thing you've done. The crimes you've committed.
 
-			<<if $crime gte 1000>>
+			<<if crimeSumCurrent() gte 1000>>
 				Do they know? Are they here to arrest you? You don't say anything, afraid you might confirm their suspicions if you start to speak. Then you look at their faces. Lust burns in their eyes. Lust and power.
 			<<else>>
 				But that was taken care of. You look at their faces. Lust burns openly in their eyes. Lust and power.
@@ -1200,7 +1209,7 @@
 
 			<<link [[Let them|Street Police Full]]>><<set $phase to 1>><</link>>
 			<br>
-			<<link [[Run|Street Police Run]]>><<crimeup 100>><</link>><<athleticsdifficulty 1 1200>><<crime>>
+			<<link [[Run|Street Police Run]]>><<crimeUp 100 "resisting">><</link>><<athleticsdifficulty 1 1200>><<crime "resisting">>
 			<br>
 			<<if $money gte 30000>>
 				<<link [[Bribe (£300)|Street Police Bribe]]>><<set $money -= 30000>><</link>>
@@ -1215,7 +1224,7 @@
 
 			Your mind races over every naughty thing you've done. The crimes you've committed.
 
-			<<if $crime gte 1000>>
+			<<if crimeSumCurrent() gte 1000>>
 				Do they know? Are they here to arrest you? You don't say anything, afraid you might confirm their suspicions if you start to speak. Then you look at their faces. Lust burns in their eyes.
 			<<else>>
 				But that was taken care of. You look at their faces. They're barely trying to conceal the lust and power burning in their eyes.
@@ -1239,7 +1248,7 @@
 			<br><br>
 			<<link [[Let them|Street Police Mid]]>><<set $phase to 1>><</link>>
 			<br>
-			<<link [[Run|Street Police Run Mid]]>><<crimeup 100>><</link>><<physiquedifficulty 4500 12000>><<crime>>
+			<<link [[Run|Street Police Run Mid]]>><<crimeUp 100 "resisting">><</link>><<physiquedifficulty 4500 12000>><<crime "resisting">>
 			<br>
 			<<if $money gte 30000>>
 				<<link [[Bribe (£300)|Street Police Bribe]]>><<set $money -= 30000>><</link>>
@@ -1269,7 +1278,7 @@
 			<br>
 			"Relax," <<He>> whispers next to your ear quietly. "We know what you've been up to,
 
-			<<if $crime gte 1000>>
+			<<if crimeSumCurrent() gte 1000>>
 				and we can arrest you whenever we feel like. But we're not here for that. Not right now. Be smart and just play along. You might even enjoy it."
 			<<else>>
 				and you know we can't prove it. But we're still cops, and we know who you are. We can make your life difficult. Just be smart and play along."
@@ -1289,7 +1298,7 @@
 			<br><br>
 			<<link [[Assent|Street Police Lite]]>><<set $phase to 1>><</link>>
 			<br>
-			<<link [[Run|Street Police Run Mid]]>><<crimeup 50>><</link>><<physiquedifficulty 4500 12000>><<crime>>
+			<<link [[Run|Street Police Run Mid]]>><<crimeUp 50 "resisting">><</link>><<physiquedifficulty 4500 12000>><<crime "resisting">>
 			<br>
 			<<if $money gte 30000>>
 				<<link [[Bribe (£300)|Street Police Bribe]]>><<set $money -= 30000>><</link>>
@@ -1332,7 +1341,7 @@
 			<br><br>
 			<<link [[Assent|Street Police Search Lewd]]>><<set $phase to 1>><</link>>
 			<br>
-			<<link [[Run|Street Police Run Lite]]>><<crimeup 50>><</link>><<physiquedifficulty 3000 8000>><<crime>>
+			<<link [[Run|Street Police Run Lite]]>><<crimeUp 50 "resisting">><</link>><<physiquedifficulty 3000 8000>><<crime "resisting">>
 			<br>
 			<<if $money gte 30000>>
 				<<link [[Bribe (£300)|Street Police Bribe]]>><<set $money -= 30000>><</link>>
@@ -1360,7 +1369,7 @@
 
 			Your mind races over every naughty thing you've done. The crimes you've committed.
 
-			<<if $crime gte 1000>>
+			<<if crimeSumCurrent() gte 1000>>
 				Do they know? Are they here to arrest you? You don't say anything, afraid you might confirm their suspicions if you start to speak. Then you look at their faces. They look reassuringly bored and official. This is just another ordinary search.
 			<<else>>
 				But that was taken care of. You look at their faces. They look reassuringly official, with a hint of boredom. This is just an ordinary search. Ordinary low level harassment. How they pass the day.
@@ -1382,7 +1391,7 @@
 			<br><br>
 			<<link [[Agree|Street Police Search]]>><<set $phase to 1>><</link>>
 			<br>
-			<<link [[Run|Street Police Run Lite]]>><<crimeup 50>><</link>><<physiquedifficulty 3000 8000>><<crime>>
+			<<link [[Run|Street Police Run Lite]]>><<crimeUp 50 "resisting">><</link>><<physiquedifficulty 3000 8000>><<crime "resisting">>
 			<br>
 			<<if $money gte 30000>>
 				<<link [[Bribe (£300)|Street Police Bribe]]>><<set $money -= 30000>><</link>>
@@ -1499,7 +1508,7 @@
 		<<generate1>><<person1>>You hear a <<person>> behind you. <<catcall>> Before you can respond, a pair of intruding hands grasp you, but only for a moment. <<He>> winces and clutches <<his>> neck. <<He>> pulls out a small dart, looks at it, and collapses.
 		<br><br>
 
-		<<link [[Rob|Street Kylar Rob]]>><</link>><<crime>>
+		<<link [[Rob|Street Kylar Rob]]>><</link>><<crime "petty">>
 		<br>
 		<<link [[Get help (0:10)|Street Kylar Help]]>><<pass 10>><<famegood 2>><</link>>
 		<br>
@@ -1924,7 +1933,7 @@
 
 <<widget "streetexoffer3">>
 
-	<<set $exhibitionismrun to "starfish">>
+	<<set $exhibitionismrun to "starfish">><<set $exhibitionismrunon to 2>>
 
 	You are walking down the street, approaching a corner. A hooded figure rounds the corner and approaches you.
 	<br><br>
@@ -1943,7 +1952,7 @@
 
 <<widget "streetexoffer4">>
 
-	<<set $exhibitionismrun to "cliff">>
+	<<set $exhibitionismrun to "cliff">><<set $exhibitionismrunon to 3>>
 
 	You are walking down the street when a familiar hooded figure turns the corner and starts walking towards you.
 	<br><br>
@@ -2172,8 +2181,12 @@
 			They're initiates from the nearby temple. One of them, a <<person>>, approaches you.
 			<br><br>
 
-			<<if $temple_rank is "initiate" and !$worn.face.type.includes("mask")>>
-				"I thought I recognised you from the temple! We're promoting the benefits of abstinence. Wanna help out?"
+			<<if ($temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest") and !$worn.face.type.includes("mask")>>
+				<<if $temple_rank is "priest">>
+					"You honor us with your presence, revered one. We're promoting the benefits of abstinence. Would you please help us?"
+				<<else>>
+					"I thought I recognised you from the temple! We're promoting the benefits of abstinence. Wanna help out?"
+				<</if>>
 				<<if playerBellyVisible()>>
 					<<He>> looks down at your baby bump. "You'll make a good example!"
 				<</if>>
@@ -2191,12 +2204,12 @@
 			<</if>>
 			<br><br>
 
-			<<if $temple_rank is "initiate" and $worn.face.type.includes("mask")>>
-				<span class="blue"><<He>> doesn't seem to recognise you as an initiate because of your mask.</span>
+			<<if ($temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest") and $worn.face.type.includes("mask")>>
+				<span class="blue"><<He>> doesn't seem to recognise you as <<if $temple_rank is "initiate">>an initiate<<else>>a <<temple_rank>><</if>> because of your mask.</span>
 				<br><br>
 			<</if>>
 
-			<<if $temple_rank is "initiate" and !$worn.face.type.includes("mask")>>
+			<<if ($temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest") and !$worn.face.type.includes("mask")>>
 				<<link [[Help out (0:30)|Street Abstinence Help]]>><<grace 5>><<pass 30>><</link>><<gggrace>>
 				<br>
 				<<link [[Accept the pamphlet, but be on your way|Street Abstinence Accept]]>><<grace -1>><</link>><<lawareness>><<lgrace>>
@@ -2235,7 +2248,7 @@
 				The two groups mostly ignore one another as they distribute their papers. They seem to be focused on doing their job right. One person of each group, a <<person1>><<person>> from the temple and a <<person2>><<person>> from the volunteers, unintentionally approach you at the same time.
 				<br><br>
 
-				<<if $temple_rank is "initiate" and !$worn.face.type.includes("mask")>>
+				<<if ($temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest") and !$worn.face.type.includes("mask")>>
 					<<person1>>Upon recognising you, the initiate picks up the pace and gets to you first.
 					"Hey there, nice to see you. You probably don't need it, but I can offer you a pamphlet if you'd like? It would greatly help our cause."
 					<br><br>
@@ -2258,7 +2271,7 @@
 				The two groups give each other wary stares. Tension seems to be running high. Some of them even sport fresh bruises. One person of each group, a <<person1>><<person>> from the initiates and a <<person2>><<person>> from the volunteers, rush towards you while shoving each other.
 				<br><br>
 
-				<<if $temple_rank is "initiate" and !$worn.face.type.includes("mask")>>
+				<<if ($temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest") and !$worn.face.type.includes("mask")>>
 					<<person1>>Upon recognising you, the initiate aggressively shoves <<his>> opponent and gets to you first.
 					"Don't listen to this sinner. He'll try to throw you off the righteous path. Abstinence is the only way." <<He>> holds out a pamphlet for you.
 					<br><br>
@@ -2283,9 +2296,9 @@
 				The two groups seem to be mingling. You hear them laughing and joking with one another. One person of each group, a <<person1>><<person>> from the initiates and a <<person2>><<person>> from the temple, make a game of reaching you first.
 				<br><br>
 
-				<<if $temple_rank is "initiate" and !$worn.face.type.includes("mask")>>
+				<<if ($temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest") and !$worn.face.type.includes("mask")>>
 					Upon recognising you, the initiate switches instead to a leisurely stroll, sure of <<person1>><<his>> victory. <<He>> shouts to <<his>> rival.
-					"Don't even bother. This one is a fellow initiate!"
+					"Don't even bother. This one is a fellow worshipper!"
 					<br><br>
 
 					The <<person2>><<person>> greets you with an ample, competitive smile. <<He>> winks at you, then speaks up.<br>
@@ -2366,7 +2379,7 @@
 <</widget>>
 
 <<widget "nightingalequick">>
-	<<link [[Nightingale Street|Nightingale Street]]>><</link>>
+	<<nightingaleicon>><<link [[Nightingale Street|Nightingale Street]]>><</link>>
 <</widget>>
 
 <<widget "nightingaleeventend">>
@@ -2383,7 +2396,7 @@
 <</widget>>
 
 <<widget "lakequick">>
-	<<link [[Lake|Lake Bus]]>><</link>>
+	<<lakeicon>><<link [[Lake|Lake Bus]]>><</link>>
 <</widget>>
 
 <<widget "lakeeventend">>
@@ -2401,7 +2414,7 @@
 <</widget>>
 
 <<widget "domusquick">>
-	<<link [[Domus Street|Domus Street]]>><</link>>
+	<<domusicon>><<link [[Domus Street|Domus Street]]>><</link>>
 <</widget>>
 
 <<widget "domuseventend">>
@@ -2419,7 +2432,7 @@
 <</widget>>
 
 <<widget "danubequick">>
-	<<link [[Danube Street|Danube Street]]>><</link>>
+	<<danubeicon>><<link [[Danube Street|Danube Street]]>><</link>>
 <</widget>>
 
 <<widget "danubeeventend">>
@@ -2437,7 +2450,7 @@
 <</widget>>
 
 <<widget "wolfquick">>
-	<<link [[Wolf Street|Wolf Street]]>><</link>>
+	<<wolficon>><<link [[Wolf Street|Wolf Street]]>><</link>>
 <</widget>>
 
 <<widget "wolfeventend">>
@@ -2455,7 +2468,7 @@
 <</widget>>
 
 <<widget "elkquick">>
-	<<link [[Elk Street|Elk Street]]>><</link>>
+	<<elkicon>><<link [[Elk Street|Elk Street]]>><</link>>
 <</widget>>
 
 <<widget "elkeventend">>
@@ -2478,6 +2491,7 @@
 		"Thank you for your cooperation," <<he>> says. "You're not a threat at all, are you?"
 		<<if isPubfameTaskAccepted("compound", "done")>>
 			<<set $pubfame.status to "hiding">><<set $pubfame.timer to 14>>
+			<<world_corruption "soft" 10>>
 			<<He>> jots down a few notes. "I'll let security know about the cameras. We'll also need to keep an eye out for this 'Mickey' character."
 			<br>
 			<<if $pubfame.compound.cameras.length gte 1>>
@@ -2498,6 +2512,7 @@
 		"You're not a threat at all," <<he>> says, sounding disappointed.
 		<<if isPubfameTaskAccepted("compound", "done")>>
 			<<set $pubfame.status to "hiding">><<set $pubfame.timer to 14>>
+			<<world_corruption "soft" 10>>
 			<<He>> jots down a few notes. "I'll let security know about the cameras. We'll also need to keep an eye out for this 'Mickey' character."
 			<br>
 			<<if $pubfame.compound.cameras.length gte 1>>
@@ -2523,6 +2538,7 @@
 
 		<<if isPubfameTaskAccepted("compound", "done")>>
 			<<set $pubfame.status to "hiding">><<set $pubfame.timer to 14>>
+			<<world_corruption "soft" 10>>
 			<<He>> jots down a few notes. "I'll let security know about the cameras. We'll also need to keep an eye out for this 'Mickey' character."
 			<br>
 			<<if $pubfame.compound.cameras.length gte 1>>
@@ -2632,7 +2648,7 @@
 <</widget>>
 
 <<widget "harvestquick">>
-	<<link [[Harvest Street|Harvest Street]]>><</link>>
+	<<harvesticon>><<link [[Harvest Street|Harvest Street]]>><</link>>
 <</widget>>
 
 <<widget "harvesteventend">>
@@ -2650,7 +2666,7 @@
 <</widget>>
 
 <<widget "merquick">>
-	<<link [[Mer Street|Mer Street]]>><</link>>
+	<<mericon>><<link [[Mer Street|Mer Street]]>><</link>>
 <</widget>>
 
 <<widget "mereventend">>
@@ -2668,7 +2684,7 @@
 <</widget>>
 
 <<widget "starfishquick">>
-	<<link [[Starfish Street|Starfish Street]]>><</link>>
+	<<starfishicon>><<link [[Starfish Street|Starfish Street]]>><</link>>
 <</widget>>
 
 <<widget "starfisheventend">>
@@ -2686,7 +2702,7 @@
 <</widget>>
 
 <<widget "cliffquick">>
-	<<link [[Cliff Street|Cliff Street]]>><</link>>
+	<<clifficon>><<link [[Cliff Street|Cliff Street]]>><</link>>
 <</widget>>
 
 <<widget "cliffeventend">>
@@ -2704,7 +2720,7 @@
 <</widget>>
 
 <<widget "barbquick">>
-	<<link [[Barb Street|Barb Street]]>><</link>>
+	<<barbicon>><<link [[Barb Street|Barb Street]]>><</link>>
 <</widget>>
 
 <<widget "barbeventend">>
@@ -2722,7 +2738,7 @@
 <</widget>>
 
 <<widget "connudatusquick">>
-	<<link [[Connudatus Street|Connudatus Street]]>><</link>>
+	<<connudatusicon>><<link [[Connudatus Street|Connudatus Street]]>><</link>>
 <</widget>>
 
 <<widget "connudatuseventend">>
@@ -2738,7 +2754,7 @@
 		You don't find much, just some loose change worth <<moneyGainDisplay 2 true true>>.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<set $money += _money_gain>><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2748,7 +2764,7 @@
 		You don't find much, just some loose change worth <<moneyGainDisplay 3 true true>>.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<set $money += _money_gain>><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2758,7 +2774,7 @@
 		You find <<moneyGainDisplay 8 true true>> hidden in a secret compartment.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<set $money += _money_gain>><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2768,7 +2784,7 @@
 		You find a black credit card.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 8>><<crimeup 8>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 8>><<crimeUp 8 "petty">><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2778,7 +2794,7 @@
 		You find <<moneyGainDisplay 15 true true>> tucked away.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<set $money += _money_gain>><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2788,7 +2804,7 @@
 		You find a silver credit card.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 15>><<crimeup 15>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 15>><<crimeUp 15 "petty">><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2798,7 +2814,7 @@
 		You find <<moneyGainDisplay 25 true true>> tucked away.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<set $money += _money_gain>><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2808,7 +2824,7 @@
 		You find a gold credit card.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 25>><<crimeup 25>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 25>><<crimeUp 25 "petty">><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2818,7 +2834,7 @@
 		You find a platinum credit card.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 50>><<crimeup 50>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 50>><<crimeUp 50 "petty">><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2828,7 +2844,7 @@
 		You find <<moneyGainDisplay 50 true true>> tucked away.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<set $money += _money_gain>><</link>><<crime "petty">>
 		<br>
 		<<link [[Leave it|Connudatus Street]]>><</link>>
 		<br>
@@ -2847,7 +2863,7 @@
 <</widget>>
 
 <<widget "highquick">>
-	<<link [[High Street|High Street]]>><</link>>
+	<<highicon>><<link [[High Street|High Street]]>><</link>>
 <</widget>>
 
 <<widget "higheventend">>
@@ -2865,7 +2881,7 @@
 <</widget>>
 
 <<widget "oxfordquick">>
-	<<link [[Oxford Street|Oxford Street]]>><</link>>
+	<<oxfordicon>><<link [[Oxford Street|Oxford Street]]>><</link>>
 <</widget>>
 
 <<widget "oxfordeventend">>
@@ -3009,7 +3025,7 @@
 					<<eventsstreetnight>>
 				<</if>>
 			<<elseif $dangerevent lte 100>>
-				<<if !$weekly.streetPolice and $crime gte 1000 and !$worn.lower.type.includes("naked")>>
+				<<if !$weekly.streetPolice and crimeSumCurrent() gte 1000 and !$worn.lower.type.includes("naked")>>
 					<<streetpolice>>
 				<<else>>
 					<<eventsstreetnight>>
@@ -3039,7 +3055,7 @@
 					<<eventsstreetnight>>
 				<</if>>
 			<<elseif $dangerevent lte 150>>
-				<<if $crime gte 5000>>
+				<<if crimeSumCurrent() gte 5000>>
 					<<streetwanted>>
 				<<else>>
 					<<eventsstreetnight>>
@@ -3177,7 +3193,7 @@
 					<<eventsstreetday>>
 				<</if>>
 			<<elseif $dangerevent lte 100>>
-				<<if !$weekly.streetPolice and $crime gte 1000 and !$worn.lower.type.includes("naked")>>
+				<<if !$weekly.streetPolice and crimeSumCurrent() gte 1000 and !$worn.lower.type.includes("naked")>>
 					<<streetpolice>>
 				<<else>>
 					<<eventsstreetday>>
@@ -3221,7 +3237,7 @@
 					<<eventsstreetday>>
 				<</if>>
 			<<elseif $dangerevent lte 170>>
-				<<if $crime gte 5000>>
+				<<if crimeSumCurrent() gte 5000>>
 					<<streetwanted>>
 				<<else>>
 					<<eventsstreetday>>
@@ -3291,16 +3307,16 @@
 	You walk along the street when you see the familiar blue flashing lights of the police up ahead.
 	<br><br>
 
-	As you approach, you find the intersection blocked by a car wreck still in the process of being cleaned up. The crosswalk has been closed in the meantime. You could wait for the authorities to finish here, or you could take a detour through <<if $bus isnot "park">>a nearby alley<<else>> the park.<</if>>
+	As you approach, you find the intersection blocked by a car wreck still in the process of being cleaned up. The crosswalk has been closed in the meantime. You could wait for the authorities to finish here, or you could take a detour through <<if $bus isnot "park" or $bus isnot "nightingale">>a nearby alley.<<else>> the park.<</if>>
 	<br><br>
 
-	<<if $bus is "domus" or $bus is "danube" or $bus is "barb">>
+	<<if $bus is "domus" or $bus is "danube" or $bus is "barb" or $bus is "connudatus">>
 		<<link[[Take the detour|Residential alleyways]]>><</link>>
-	<<elseif $bus is "cliff" or $bus is "high" or $bus is "wolf">>
+	<<elseif $bus is "cliff" or $bus is "high" or $bus is "wolf" or $bus is "harvest">>
 		<<link[[Take the detour|Commercial alleyways]]>><</link>>
 	<<elseif $bus is "oxford" or $bus is "mer" or $bus is "elk">>
 		<<link[[Take the detour|Industrial alleyways]]>><</link>>
-	<<elseif $bus is "starfish">>
+	<<elseif $bus is "starfish" or $bus is "nightingale">>
 		<<link[[Take the detour|Park]]>><</link>>
 	<</if>>
 	<br>
@@ -3347,7 +3363,7 @@
 	<<elseif !Time.schoolDay and $bullytimer gte $rng and C.npc.Whitney.init is 1 and !["dungeon", "pillory"].includes(C.npc.Whitney.state) and $bus is "high" and $dangerevent lte 30 and C.npc.Whitney.dom gte 10>>
 		<<set $bullytimer to 0>>
 		<<pantsdownscene>>
-	<<elseif $rng lte 10 and $worn.feet.type.includes("heels") and $feetskill lt $worn.feet.reveal>>
+	<<elseif $rng lte 10 and $worn.feet.type.includes("heels") and currentSkillValue("feetskill") lt $worn.feet.reveal>>
 		<<streetheeltrip>>
 	<<elseif $rng gte 91>>
 		<<street1>>
@@ -3416,7 +3432,7 @@
 	<<if $location is "alley" and !Time.schoolDay and $bullytimer gte $rng and C.npc.Whitney.init is 1 and !["dungeon", "pillory"].includes(C.npc.Whitney.state) and $daily.whitney.park is undefined>>
 		<<set $bullytimer to 0>>
 		<<eventsWhitneyStreet>>
-	<<elseif $rng lte 10 and $worn.feet.type.includes("heels") and $feetskill lt $worn.feet.reveal>>
+	<<elseif $rng lte 10 and $worn.feet.type.includes("heels") and currentSkillValue("feetskill") lt $worn.feet.reveal>>
 		<<streetheeltrip>>
 	<<elseif $rng gte 91>>
 		<<street1>>
