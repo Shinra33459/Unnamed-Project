@@ -1602,6 +1602,9 @@ function dailyFarmEvents() {
 			fragment.append(wikifier("farm_cattle", -1));
 		}
 		fragment.append(wikifier("farm_build_day"));
+		if (V.farm.compostbin >= 1){
+			fragment.append(wikifier("composting"));
+		}
 	}
 	if (V.farm_stage >= 9) {
 		if (V.lurkers_stored >= 1) {
@@ -1620,10 +1623,6 @@ function dailyFarmEvents() {
 		delete V.farm_yield;
 	}
 	if (V.alex_countdown >= 1) V.alex_countdown--;
-
-	if (V.farm.compostbin >= 1){
-		fragment.append(wikifier("composting"));
-	}
 
 	delete V.farm_work;
 	delete V.farm_count;
