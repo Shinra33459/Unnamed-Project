@@ -164,7 +164,7 @@
 				<</switch>>
 		<</switch>>
 	<</if>>
-	<<if $_trait lt 4>>
+	<<if $_trait lt 4 and ($passage is "Science Exam" or $passage is "Maths Exam" or $passage is "English Exam" or $passage is "History Exam")>>
 		However, the next exam will be harder.
 	<</if>>
 <</widget>>
@@ -433,3 +433,114 @@ The bell rings, and you join the throng of students in the hallway.
 
 <<link [[Next|Hallways]]>><<endevent>><</link>>
 <br>
+
+
+:: Swimming Exam
+<<schooleffects>><<effects>>
+
+<<set _time_temp to (57 - Time.minute)>>
+<<pass _time_temp>>
+
+<<npc Mason>><<person1>>
+
+<<set _swimdiff to 0>>
+
+<<switch $phase>>
+	<<case 0>>
+		You focus on the exam, exerting yourself and ignoring the other students.<<set _swimdiff += 100>><<tiredness 4>>
+	<<case 1>>
+		You take a deep breath, and try not to let the pressure get to you.
+	<<case 2>>
+		<<skulduggerycheck>>
+		Mason has many students to watch, and there's some leeway for "accidents".
+
+
+		<<if $skulduggerysuccess is 1>>
+			You wait for your chances. There are moments, here and there, where the teacher's attention is taken. You sneak in a few splashes into the others' faces or sneakily get in their way, <span class="green">and manage to sabotage your competitors.</span>
+			<<set _swimdiff += -200>>
+		<<else>>
+			You take the chance, and try to sabotage your competitors.
+			<br><br>
+			<span class="red">"Stop that!"</span> Mason shouts. You flinch, shrinking under their intense glare.<<gstress>><<stress 6>><<set _swimdiff += 200>><<ggdelinquency>><<detention 5>>
+		<</if>>
+		<br><br>
+
+		<<skulduggeryuse true>>
+<</switch>>
+<br><br>
+
+Mason keeps watch and writes down notes in <<his>> clipboard while the students swim. <<He>> whistles. "Stop!" <<he>> announces.
+<br><br>
+
+You all gather around Mason as <<he>> reads out the results.
+<br><br>
+
+<<set _swimmingdifficultymax to 1000 + _swimdiff>>
+<<swimmingdifficultycheck 900 _swimmingdifficultymax>>
+
+<<if $swimmingSuccess is 1>>
+	You puff your chest out in pride, <span class="green">you're easily the best among your class.</span><<stress -18>><<trauma -18>><<tiredness 4>><<lllstress>><<llltrauma>><<gtiredness>>
+<<else>>
+	<<set _swimmingdifficultymax to 800 + _swimdiff>>
+	<<swimmingdifficultycheck 500 _swimmingdifficultymax>>
+
+	<<if $swimmingSuccess is 1>>
+		You beam in happiness, <span class="green">you're among the best in class.</span><<stress -12>><<trauma -12>><<tiredness 4>><<llstress>><<lltrauma>><<gtiredness>>
+	<<else>>
+		<<set _swimmingdifficultymax to 250 + _swimdiff>>
+		<<swimmingdifficultycheck 100 _swimmingdifficultymax>>
+
+		<<if $swimmingSuccess is 1>>
+			You're in the middle of the pack, not bad.<<stress -6>><<trauma -6>><<tiredness 4>><<lstress>><<ltrauma>><<gtiredness>>
+		<<else>>
+			<span class="red">You're among the worst</span><<stress 6>><<trauma 6>><<tiredness 4>><<gstress>><<gtrauma>><<gtiredness>>
+		<</if>>
+	<</if>>
+<</if>>
+<br><br>
+
+<<if $swimall is 1>>
+	<<if playerBellyVisible()>>
+		The bell rings, signifying the end of the lesson. You climb out of the pool once Mason gives the go ahead, and <<nnpc_he "Mason">> sticks close by to assist you. Despite everyone being naked, no one seems concerned. A <<generatey1>><<person1>><<person>> hands out towels to the other students as they pass, trying to avoid eye contact.<<endevent>>
+	<<else>>
+		The bell rings, signifying the end of the lesson. You climb out of the pool. Despite everyone being naked, no one seems concerned. Mason hands out towels to each student as they pass, trying to avoid eye contact.
+	<</if>>
+	<br><br>
+<<elseif $exposed gte 1>>
+	<<if playerBellyVisible()>>
+		The bell rings, signifying the end of the lesson. You wait as the other students leave, climbing out of the pool once Mason gives the go ahead, and <<nnpc_he "Mason">> sticks close by to assist you. Some students linger, doubtlessly hoping to get a nice view when you climb out, but Mason herds them away, giving you some privacy.
+	<<else>>
+		The bell rings, signifying the end of the lesson. You wait as the other students leave. Some students linger,
+		doubtlessly hoping to get a nice view when you climb out, but Mason herds them away, giving you some privacy.
+	<</if>>
+	<br><br>
+<<elseif $exposed lte 0>>
+	<<if playerBellyVisible()>>
+		The bell rings, signifying the end of the lesson. You climb out of the pool once Mason gives the go ahead, and <<nnpc_he "Mason">> sticks close by to assist you.
+	<<else>>
+		The bell rings, signifying the end of the lesson. You climb out of the pool.
+	<</if>>
+	<br><br>
+<</if>>
+<<if $exposed lte 0>>
+	<<maleicon>><<link [[Boys' changing room|School Boy Changing Room]]>><</link>>
+	<br>
+	<<femaleicon>><<link [[Girls' changing room|School Girl Changing Room]]>><</link>>
+	<br><br>
+<<elseif $exposed gte 1>>
+	<<maleicon>><<link [[Grab some towels and enter the boys' changing room|School Boy Changing Room]]>><<towelupm>><</link>>
+	<br>
+	<<femaleicon>><<link [[Grab some towels and enter the girls' changing room|School Girl Changing Room]]>><<towelup>><</link>>
+	<br><br>
+<</if>>
+<<if Time.minute gte 5 and Time.minute lte 57>>
+<<else>>
+	<<if $player.gender_appearance is "m">>
+		<<loitericon>><<link [[Wait for the girls to leave (0:05)|School Pool]]>><<pass 5>><</link>>
+		<br><br>
+	<</if>>
+	<<if $player.gender_appearance is "f">>
+		<<loitericon>><<link [[Wait for the boys to leave (0:05)|School Pool]]>><<pass 5>><</link>>
+		<br><br>
+	<</if>>
+<</if>>

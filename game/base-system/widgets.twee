@@ -886,6 +886,10 @@
 		<</if>>
 
 		<<set V[$_subject + "_exam"] to Math.clamp(V[$_subject + "_exam"] + ($_gain * _skill_mod), -107, 200)>>
+		<<if V[$_subject + "_exam"] gte 100 and V[$_subject + 'trait'] lt 4>>
+			<<school_skill_up $_subject>>
+			<<school_skill_up_text $_subject>>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -907,6 +911,36 @@
 
 <<widget "passiveStudy">>
 	<<if $statFreeze isnot true>>
+		<<set _chair to Furniture.get('chair')>>
+		<<if _chair is null>>
+			<<set _chair to Furniture.get('chair','chair')>>
+		<</if>>
+		<<if _chair.name is "chair">>
+			<<set _studyGain to 6>>
+		<<elseif _chair.name is "stools">>
+			<<set _studyGain to 7>>
+		<<elseif _chair.name is "wooden chairs">>
+			<<set _studyGain to 8>>
+		<<elseif _chair.name is "swivel chairs">>
+			<<set _studyGain to 9>>
+		<<elseif _chair.name is "shell chairs">>
+			<<set _studyGain to 10>>
+		<<elseif _chair.name is "armchairs">>
+			<<set _studyGain to 11>>
+		<<elseif _chair.name is "egg armchairs">>
+			<<set _studyGain to 12>>
+		<</if>>
+		<<switch $studyBooks.rented>>
+			<<case "science">>
+				<<scienceskill _studyGain "no_star">>
+			<<case "maths">>
+				<<mathsskill _studyGain "no_star">>
+			<<case "English">>
+				<<englishskill _studyGain "no_star">>
+			<<case "history">>
+				<<historyskill _studyGain "no_star">>
+			<<default>>
+		<</switch>>
 		<<switch $studyBooks.rented>>
 			<<case "science">>
 				<<scienceskill 6 "no_star">>
@@ -918,7 +952,7 @@
 				<<historyskill 6 "no_star">>
 			<<default>>
 		<</switch>>
-		<<switch $studyBooks.stolen>>
+		/* <<switch $studyBooks.stolen>>
 			<<case "science">>
 				<<scienceskill 6 "no_star">>
 			<<case "maths">>
@@ -928,7 +962,19 @@
 			<<case "history">>
 				<<historyskill 6 "no_star">>
 			<<default>>
-		<</switch>>
+		<</switch>> */
+		<<if $studyBooks.stolen.science is 1>>
+			<<scienceskill _studyGain "no_star">>
+		<</if>>
+		<<if $studyBooks.stolen.maths is 1>>
+			<<mathsskill _studyGain "no_star">>
+		<</if>>
+		<<if $studyBooks.stolen.english is 1>>
+			<<englishskill _studyGain "no_star">>
+		<</if>>
+		<<if $studyBooks.stolen.history is 1>>
+			<<historyskill _studyGain "no_star">>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -4555,12 +4601,18 @@
 <<if $studyBooks is undefined>>
 	<<set $studyBooks to {}>>
 	<<set $studyBooks.rented to "none">>
-	<<set $studyBooks.stolen to "none">>
+	/* <<set $studyBooks.stolen to "none">> */
+	<<set $studyBooks.stolen.science to 0>>
+	<<set $studyBooks.stolen.maths to 0>>
+	<<set $studyBooks.stolen.english to 0>>
+	<<set $studyBooks.stolen.history to 0>>
+	<<set $studyBooks.stolen.RaulAndJanet to 0>>
+	<<set $studyBooks.stolen.pinch to 0>>
 <</if>>
 <<set _desk to Furniture.get('desk')>>
 <<set _chair to Furniture.get('chair')>>
 <<set _projectOptions to [$scienceproject, $mathsproject].includes("ongoing")>>
-<<set _bookOptions to ($studyBooks.stolen is 'Raul and Janet' or $studyBooks.rented is 'Raul and Janet' or $studyBooks.stolen is 'Pinch' or $studyBooks.rented is 'Pinch')>>
+<<set _bookOptions to ($studyBooks.stolen.RaulAndJanet is 1 or $studyBooks.rented is 'Raul and Janet' or $studyBooks.stolen.pinch is 1 or $studyBooks.rented is 'Pinch')>>
 <<set _wardrobe to Furniture.get('wardrobe')>>
 <<set _playOptions to ($englishPlay is 'ongoing' and $englishPlayRoles.Player isnot 'none')>>
 

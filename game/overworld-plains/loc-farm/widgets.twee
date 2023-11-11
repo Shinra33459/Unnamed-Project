@@ -737,18 +737,18 @@
 		<</if>>
 	<</if>>
 	<<if $farm_stage isnot 12 and $farm_work.alex is "clearing" and ($exposed lt 2 or $exhibitionism gte 75) and Time.dayState isnot "night">>
-		<<farmicon "clear yard">><<link [[Help Alex clear a field (0:20)|Farm Clearing]]>><<farm_count 20>><<pass 20>><<tiredness 2>><<physique 2>><<set $farm.clearing -= 1>><</link>><<gtiredness>><<run _actions++>>
+		<<farmicon "clear yard">><<link [[Help Alex clear a field (0:20)|Farm Clearing]]>><<farm_count 20>><<pass 20>><<tiredness 2>><<physique 2>><<farm_clear>><</link>><<gtiredness>><<run _actions++>>
 		<br>
 	<</if>>
-	<<if $farm_stage isnot 12 and $farm_stage gte 7 and _actions is 0 and $farm_work.alex isnot "clearing" and ($exposed lt 2 or $exhibitionism gte 75)>>
-		<<farmicon "clear yard">><<link [[Clear a field alone (0:40)|Farm Clearing Alone]]>><<farm_count 40>><<pass 40>><<tiredness 4>><<physique 3>><<set $farm.clearing -= 1>><</link>><<ggtiredness>><<run _actions++>>
+	<<if $farm_stage isnot 12 and _actions is 0 and $farm_work.alex isnot "clearing" and ($exposed lt 2 or $exhibitionism gte 75)>>
+		<<farmicon "clear yard">><<link [[Clear a field alone (0:40)|Farm Clearing Alone]]>><<farm_count 40>><<pass 40>><<tiredness 4>><<physique 3>><<farm_clear>><</link>><<ggtiredness>><<run _actions++>>
 		<br>
 	<</if>>
 
 	<<if (_actions lt 2 or $farm_stage lt 7) and ($farm_work.alex isnot "relax" or $exposed gte 0)>>
 		<!-- as worker you can be lazy any time, but as partner you only get that luxury when there's (nearly) nothing else to do.
 			also, if Alex is resting you should join them unless you're too naked for comfort -->
-		<<relaxicon>><<link [[Rest near the stables (0:15)|Farm Stables Rest]]>><<pass 15>><<stress -2>><</link>><<lstress>>
+		<<relaxicon>><<link [[Rest near the stables (0:15)|Farm Stables Rest]]>><<pass 15>><<stress -2>><<tiredness -4>><</link>><<lstress>>
 	<</if>>
 	<br>
 <</widget>>
@@ -2788,6 +2788,10 @@
 				Irrigation is being installed in a field.
 			<<case "nursery">>
 				A nursery is being built in the cottage.
+			<<case "compost bin 1">>
+				A compost bin is being installed.
+			<<case "compost bin 2" "compost bin 3">>
+				The compost bin is being expanded.
 		<</switch>>
 		<<if $farm.build_timer is 1>>
 			It'll be finished tomorrow.
@@ -2882,6 +2886,73 @@
 			<<link [[Expand again|Farm Upgrades Coop 2]]>><</link>>
 		<<else>>
 			<<link [[Expand|Farm Upgrades Coop 1]]>><</link>>
+		<</if>>
+		<br>
+		Tractor:
+		<<if $farm isnot undefined>>
+			<<if $farm.tractor is undefined>>
+				<<set $farm.tractor = 0>>
+			<</if>>
+		<</if>>
+		<<if $farm.tractor gte 3>>
+			<span class="green">As powerful as it can be</span>
+		<<elseif $farm.tractor gte 2>>
+			<<link [[Upgrade|Farm Upgrades Tractor 3]]>><</link>>
+		<<elseif $farm.tractor gte 1>>
+			<<link [[Upgrade|Farm Upgrades Tractor 2]]>><</link>>
+		<<else>>
+			<<link [[Purchase|Farm Upgrades Tractor 1]]>><</link>>
+		<</if>>
+		<br>
+		<<if $farm.tractor gte 1>>
+			Plough Attachment:
+			<<if $farm.tractorplough is true>>
+				<span class="green">Bought.</span>
+			<<else>>
+				<<link [[Purchase|Farm Upgrades Tractor Plough]]>><</link>>
+			<</if>>
+			<br>
+			Seed Drill Attachement:
+			<<if $farm.tractorseeddrill is true>>
+				<span class="green">Bought.</span>
+			<<else>>
+				<<link [[Purchase|Farm Upgrades Tractor Seed Drill]]>><</link>>
+			<</if>>
+			<br>
+			Harvester Attachement:
+			<<if $farm.tractorharvester is true>>
+				<span class="green">Bought.</span>
+			<<else>>
+				<<link [[Purchase|Farm Upgrades Tractor Harvester]]>><</link>>
+			<</if>>
+			<br>
+			Loader Attachement:
+			<<if $farm.tractorloader is true>>
+				<span class="green">Bought.</span>
+			<<else>>
+				<<link [[Purchase|Farm Upgrades Tractor Loader]]>><</link>>
+			<</if>>
+			<br>
+		<</if>>
+		<br>
+		Compost Bin:
+		<<if $farm isnot undefined>>
+			<<if $farm.compostbin is undefined>>
+				<<set $farm.compostbin = 0>>
+			<</if>>
+		<</if>>
+		<<if $farm.compostbin gte 3 or $farm.build is "compost bin 3">>
+			<span class="green">As large as it can be</span>
+			<br>
+		<<elseif $farm.compostbin gte 2>>
+			<<link [[Upgrade|Farm Upgrades Compost Bin 3]]>><</link>>
+			<br>
+		<<elseif $farm.compostbin gte 1>>
+			<<link [[Upgrade|Farm Upgrades Compost Bin 2]]>><</link>>
+			<br>
+		<<else>>
+			<<link [[Purchase|Farm Upgrades Compost Bin 1]]>><</link>>
+			<br>
 		<</if>>
 		<br>
 		Farm Irrigation:
@@ -3166,4 +3237,101 @@
 
 	<<link [[Next|Farm PC Birth]]>><</link>>
 
+<</widget>>
+
+<<widget "farm_clear">>
+	<<if $farm_work.alex is "clearing">>
+		<<set _baseTime = 20>>
+		<<set _baseTiredsness = 2>>
+	<<else>>
+		<<set _baseTime = 40>>
+		<<set _baseTiredsness = 4>>
+	<</if>>
+	<<if $location is "alex_farm">>
+		<<if $farm.tractor gte 1>>
+			<<set _baseTiredsness = Math.round(_baseTiredsness * 0.8)>>
+		<</if>>
+		<<if $farm.tractor gte 3>>
+			<<set _tractor = 0.25>>
+		<<elseif $farm.tractor gte 2>>
+			<<set _tractor = 0.5>>
+		<<elseif $farm.tractor gte 1>>
+			<<set _tractor = 1>>
+		<</if>>
+		<<if $farm.tractorloader is true>>
+			<<set _baseTime = Math.round(_baseTime * (0.5 * _tractor))>>
+			<<set _baseTiredsness = Math.round(_baseTiredsness * (0.5 * _tractor))>>
+		<</if>>
+	<</if>>
+	<<farm_count _baseTime>>
+	<<pass _baseTime>>
+	<<tiredness _baseTiredsness>>
+	<<if $farm.tractor gte 1>>
+		<<set $farm.clearing = Math.round($farm.clearing - (1 + (1 / _tractor)))>>
+	<<else>>
+		<<set $farm.clearing = Math.round($farm.clearing - 1)>>
+	<</if>>
+<</widget>>
+
+<<widget "composting">>
+	<<composting1>>
+	<<composting2>>
+	<<composting3>>
+	<<composting4>>
+<</widget>>
+
+<<widget "composting1">>
+	<<if $farm.compostbin gte 1 and $farm.compostProducing[0] is -1 and $farm.compostWaiting gte 3000>>
+		<<set $farm.compostProducing[0] to random(2, 4)>>
+		<<set $farm.compostWaiting -= 3000>>
+	<<elseif $farm.compostProducing[0] gte 0>>
+		<<set $farm.compostProducing[0] -= 1>>
+		<<if $farm.compostProducing[0] is 0>>
+			<<set $farm.compostReady += 1>>
+			<<set $farm.compostProducing[0] -= 1>>
+			<<composting1>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "composting2">>
+	<<if $farm.compostbin gte 2 and $farm.compostProducing[1] is -1 and $farm.compostWaiting gte 3000>>
+		<<set $farm.compostProducing[1] to random(2, 4)>>
+		<<set $farm.compostWaiting -= 3000>>
+	<<elseif $farm.compostProducing[1] gte 0>>
+		<<set $farm.compostProducing[1] -= 1>>
+		<<if $farm.compostProducing[1] is 0>>
+			<<set $farm.compostReady += 1>>
+			<<set $farm.compostProducing[1] -= 1>>
+			<<composting2>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "composting3">>
+	<<if $farm.compostbin gte 3 and $farm.compostProducing[2] is -1 and $farm.compostWaiting gte 3000>>
+		<<set $farm.compostProducing[2] to random(2, 4)>>
+		<<set $farm.compostWaiting -= 3000>>
+	<<elseif $farm.compostProducing[2] gte 0>>
+		<<set $farm.compostProducing[2] -= 1>>
+		<<if $farm.compostProducing[2] is 0>>
+			<<set $farm.compostReady += 1>>
+			<<set $farm.compostProducing[2] -= 1>>
+			<<composting3>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "composting4">>
+	<<if $farm.compostbin gte 3 and $farm.compostProducing[3] is -1 and $farm.compostWaiting gte 3000>>
+		<<set $farm.compostProducing[3] to random(2, 4)>>
+		<<set $farm.compostWaiting -= 3000>>
+	<<elseif $farm.compostProducing[3] gte 0>>
+		<<set $farm.compostProducing[3] -= 1>>
+		<<if $farm.compostProducing[3] is 0>>
+			<<set $farm.compostReady += 1>>
+			<<set $farm.compostProducing[3] -= 1>>
+			<<composting4>>
+		<</if>>
+	<</if>>
 <</widget>>

@@ -17,6 +17,46 @@
 	Your solution for the maths competition lies on the desk in front of you. You weren't supposed to solve it. You're confident you have. You have a <span class="green">$mathschance%</span> chance of winning the competition.
 <</if>>
 
+<<set _baseTime to 120>>
+
+<<set _chair to Furniture.get('chair')>>
+<<if _chair is null>>
+	<<set _chair to Furniture.set('chair','chair')>>
+<</if>>
+<<if _chair.name is "chair">>
+	<<set _timeMult1 to 1>>
+<<elseif _chair.name is "stools">>
+	<<set _timeMult1 to 0.91>>
+<<elseif _chair.name is "wooden chairs">>
+	<<set _timeMult1 to 0.83>>
+<<elseif _chair.name is "swivel chairs">>
+	<<set _timeMult1 to 0.75>>
+<<elseif _chair.name is "shell chairs">>
+	<<set _timeMult1 to 0.67>>
+<<elseif _chair.name is "armchairs">>
+	<<set _timeMult1 to 0.58>>
+<<elseif _chair.name is "egg armchairs">>
+	<<set _timeMult1 to 0.5>>
+<</if>>
+
+<<set _desk to Furniture.get('desk')>>
+<<if _desk is null>>
+	<<set _desk to Furniture.set('desk','desk')>>
+<</if>>
+<<if _desk.name is "basic desk">>
+	<<set _timeMult2 to 1>>
+<<elseif _desk.name is "glass desk">>
+	<<set _timeMult2 to 0.83>>
+<<elseif _desk.name is "mid-century modern desk">>
+	<<set _timeMult2 to 0.67>>
+<<elseif _desk.name is "antique desk">>
+	<<set _timeMult2 to 0.5>>
+<</if>>
+
+<<set _finalTime to Math.round((_baseTime * _timeMult1) * _timeMult2)>>
+
+<<set _timeString to getTimeString(_finalTime)>>
+
 <br><br>
 You have <span class="gold">$mathsinfo</span> insights.
 <br>
@@ -26,16 +66,16 @@ You have <span class="gold">$mathsinfo</span> insights.
 <</if>>
 <br>
 <<set _chair to Furniture.get('chair')>>
-<<icon "projectMaths.png">><<link [[Work on solution (2:00)|Maths Project Work]]>><<if $location is "home" and _chair.type.includes("comfy")>><<set $mathschance += 5>><<else>><<set $mathschance += 1>><</if>><<mathsskill 2>><<pass 120>><<stress 12>><</link>><<gstress>><<gmaths>>
+<<icon "projectMaths.png">><<link [["Work on solution (" + _timeString + ")"|Maths Project Work]]>><<if $location is "home" and _chair.type.includes("comfy")>><<set $mathschance += 5>><<else>><<set $mathschance += 1>><</if>><<mathsskill 2>><<pass _finalTime>><<stress 12>><</link>><<gstress>><<gmaths>>
 <br>
 <<if $mathsstim gte 1 and playerIsPregnant() and playerAwareTheyArePregnant()>>
 	<span class="blue">You can't bring yourself to take stimulants while you know you're with child.</span>
 <<elseif $mathsstim gte 1>>
-	<<pillicon "stimulant">><<link [[Use stimulant (2:00)|Maths Project Stim]]>><<if $location is "home" and _chair.type.includes("comfy")>><<set $mathschance += 20>><<else>><<set $mathschance += 16>><</if>><<set $mathsstim -= 1>><<set $mathsstimused += 1>><<mathsskill 40>><<pass 120>><</link>><<gggmaths>>
+	<<pillicon "stimulant">><<link [["Use stimulant (" + _timeString + ")"|Maths Project Stim]]>><<if $location is "home" and _chair.type.includes("comfy")>><<set $mathschance += 20>><<else>><<set $mathschance += 16>><</if>><<set $mathsstim -= 1>><<set $mathsstimused += 1>><<mathsskill 40>><<pass _finalTime>><</link>><<gggmaths>>
 	<br>
 <</if>>
 <<if $mathsinfo gte 1>>
-	<<investigateicon>><<link [[Use a mathematical insight (2:00)|Maths Project Work]]>><<set $mathsinfo -= 1>><<if $location is "home" and _chair.type.includes("comfy")>><<set $mathschance += 12>><<else>><<set $mathschance += 8>><</if>><<mathsskill 40>><<pass 120>><</link>><<ggmaths>>
+	<<investigateicon>><<link [["Use a mathematical insight (" + _timeString + ")"|Maths Project Work]]>><<set $mathsinfo -= 1>><<if $location is "home" and _chair.type.includes("comfy")>><<set $mathschance += 12>><<else>><<set $mathschance += 8>><</if>><<mathsskill 40>><<pass _finalTime>><</link>><<ggmaths>>
 	<br>
 <</if>>
 <br>
