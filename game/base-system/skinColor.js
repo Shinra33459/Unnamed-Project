@@ -198,10 +198,12 @@ function tanned(amount, flag) {
 		};
 	}
 	if (V.options.tanImgEnabled) {
-		for (let s = 0; s < setup.skinColor.tanLoc.length; s++) {
-			V.skinColor.current[setup.skinColor.tanLoc[s]] = skinColor(V.options.tanImgEnabled, V.skinColor.tanValues[s], V.skinColor.overwrite);
+		if (!V.location == "farm" && V.umbrella <= 1) {
+			for (let s = 0; s < setup.skinColor.tanLoc.length; s++) {
+				V.skinColor.current[setup.skinColor.tanLoc[s]] = skinColor(V.options.tanImgEnabled, V.skinColor.tanValues[s], V.skinColor.overwrite);
+			}
+			V.skinColor.current.mouth = skinColor(V.options.tanImgEnabled, V.skinColor.tanValues[0], V.skinColor.overwrite);
 		}
-		V.skinColor.current.mouth = skinColor(V.options.tanImgEnabled, V.skinColor.tanValues[0], V.skinColor.overwrite);
 	}
 }
 DefineMacro("tanned", tanned);
