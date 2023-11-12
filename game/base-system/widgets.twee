@@ -847,6 +847,17 @@
 	<</if>>
 <</widget>>
 
+<<widget "lockpickTrainingSetuse">>
+	<<if $statFreeze isnot true>>
+		<<set $skulduggery += _args[0]>>
+		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000)>>
+		<<if $skulduggery lt 1000>>
+			<span class="gold"> You learned a thing or two about skulduggery.</span>
+		<</if>>
+	<</if>>
+	<br><br>
+<</widget>>
+
 <<widget "swimmingskilluse">>
 	<<if $statFreeze isnot true>>
 		<<set $swimmingskill += 9>>
@@ -913,7 +924,7 @@
 	<<if $statFreeze isnot true>>
 		<<set _chair to Furniture.get('chair')>>
 		<<if _chair is null>>
-			<<set _chair to Furniture.get('chair','chair')>>
+			<<set _chair to Furniture.set('chair','chair')>>
 		<</if>>
 		<<if _chair.name is "chair">>
 			<<set _studyGain to 6>>
@@ -5167,5 +5178,28 @@
 	<<if $transformationParts.demon.wings == "disabled">>
 		<<set $transformationParts.bird.wings = "disabled">>
 		<<set $birdFly to 0>>
+	<</if>>
+<</widget>>
+
+<<widget "lockpickTrainingSet">>
+	<<if $lockpickTrainingSet gte 1>>
+		<<if $lockpickTrainingSet is 1>>
+			<<set _LTS to "Basic">>
+			<<set $skulduggerydifficulty to 200>>
+		<<elseif $lockpickTrainingSet is 2>>
+			<<set _LTS to "Intermediate">>
+			<<set $skulduggerydifficulty to 400>>
+		<<elseif $lockpickTrainingSet is 3>>
+			<<set _LTS to "Advanced">>
+			<<set $skulduggerydifficulty to 600>>
+		<<elseif $lockpickTrainingSet is 4>>
+			<<set _LTS to "Master">>
+			<<set $skulduggerydifficulty to 800>>
+		<<elseif $lockpickTrainingSet is 5>>
+			<<set _LTS to "Lockpick Lawyer">>
+			<<set $skulduggerydifficulty to 900>>
+		<</if>>
+
+		<<link [["Train with your " + _LTS + " Lockpick Training Set (0:30)"|$passage]]>><<pass 30>><<stress 6>><<willpower 1>><<set $phase to 1>><</link>><<gstress>><<gwillpower>><<skulduggerydifficulty>>	
 	<</if>>
 <</widget>>
