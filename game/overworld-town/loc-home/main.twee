@@ -42,14 +42,23 @@ You are in your bedroom.
 	Bleak walls protect you from the outside.
 <</if>>
 
-/* Misc Furniture */
-<<set _desk to Furniture.get('desk')>>
-<<if _desk is null>>
-	<<set _desk to Furniture.set('desk','desk')>>
+<<if $furnitureLocation is "orphanage">>
+	<<set _desk to Furniture.get('desk')>>
+	<<set _chair to Furniture.get('chair')>>
+	<<set _deco to Furniture.get('decoration')>>
+	<<set _owlplush to Furniture.get('owlplushie')>>
+	<<set _windowsill to Furniture.get('windowsill')>>
+	<<set _poster to Furniture.get('poster')>>
+	<<set _bed to Furniture.get('bed')>>
+	<<set _wardrobe to Furniture.get('wardrobe')>>
 <</if>>
-<<set _chair to Furniture.get('chair')>>
+
+/* Misc Furniture */
+<<if _desk is null>>
+	<<set _desk to Furniture.get('desk','desk')>>
+<</if>>
 <<if _chair is null>>
-	<<set _chair to Furniture.set('chair','chair')>>
+	<<set _chair to Furniture.get('chair','chair')>>
 <</if>>
 <<deskText "icon">> /* If no desk options (read a book, work on project, etc.) are available, desk and icon appear here */
 <<tableText "icon">> /* If no fish tank is available to be placed on an owned table or chairs, table and chairs appear here */
@@ -60,12 +69,11 @@ You are in your bedroom.
 	You fiddle with your lockpick training set. <<skulduggerycheck>><<skulduggeryuse>>
 <</if>>
 
-<<if $lockpickTrainingSet gte 1>>
+<<if $lockpickTrainingSet gte 1 and $stress lt $stressmax and !$possessed>>
 	<<lockpickTrainingSet>>
 <</if>>
 
 /* Decorations */
-<<set _deco to Furniture.get('decoration')>>
 <<if _deco>>
 	<br>
 	<<switch _deco.name>>
@@ -76,7 +84,6 @@ You are in your bedroom.
 	<</switch>>
 <</if>>
 
-<<set _owlplush to Furniture.get('owlplushie')>>
 <<if _owlplush>>
 	<br>
 	<<switch _owlplush.id>>
@@ -85,7 +92,6 @@ You are in your bedroom.
 	<</switch>>
 <</if>>
 
-<<set _windowsill to Furniture.get('windowsill')>>
 <<if _windowsill>>
 	<br>
 	<<switch _windowsill.name>> /* can be expanded further */
@@ -96,7 +102,6 @@ You are in your bedroom.
 	<</switch>>
 <</if>>
 
-<<set _poster to Furniture.get('poster')>>
 <<if _furniture.poster>>
 	<br>
 	<<switch _furniture.poster.name>>
@@ -194,7 +199,9 @@ You are in your bedroom.
 
 /* Bed */
 Your bed takes up most of the room.
-<<set _bed to Furniture.get('bed')>>
+<<if _bed is undefined>>
+	<<set _bed to Furniture.get("bed", "bed")>>
+<</if>>
 <<if $nextPassageCheck is "Bed">>
 	<br>
 	<<if $robinbed is "yours" or $robinbed is "theirs">>
@@ -225,7 +232,9 @@ Your bed takes up most of the room.
 <<roomoptions>>
 <br>
 /* Wardrobe */
-<<set _wardrobe to Furniture.get('wardrobe')>>
+<<if _wardrobe is undefined>>
+	<<set _wardrobe to Furniture.get("wardrobe", "wardrobe")>>
+<</if>>
 <<if _wardrobe>>
 	Your clothes are kept in the _wardrobe.name.
 <</if>>
@@ -4183,6 +4192,6 @@ The pair blame each other for the mishap, and spend a few moments arguing before
 <br><br>
 
 
-<<link [[Cuddle with the large bear plushie (0:10)|Home Large Bear Plushie Cuddle]]>><<pass 10>><</link>><<ltrauma>><<lstress>>
+<<link [[Cuddle with the large bear plushie (0:10)|$passage]]>><<pass 10>><</link>><<ltrauma>><<lstress>>
 <br>
 <<link [[Next|Bedroom]]>><</link>>

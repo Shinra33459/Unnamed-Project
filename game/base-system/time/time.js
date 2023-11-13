@@ -1605,6 +1605,10 @@ function dailyFarmEvents() {
 		if (V.farm.compostbin >= 1){
 			fragment.append(wikifier("composting"));
 		}
+		if (V.farm.watchtowerDailyAttempt == 1){
+			V.farm.watchtowerDailyAttempt = 0;
+		}
+	
 	}
 	if (V.farm_stage >= 9) {
 		if (V.lurkers_stored >= 1) {
