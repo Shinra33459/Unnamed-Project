@@ -1537,14 +1537,16 @@ function dailyMasochismSadismEffects() {
 		return false;
 	};
 
-	V.masochism *= 0.985;
+	if (V.uncomfortable.sadoMaso) {
+		V.masochism *= 0.985;
+		V.sadism *= 0.985;
+	}
 	const masochism = effects(V.masochism_level, V.masochism);
 	if (masochism) {
 		V.masochism_level = masochism.level;
 		V.masochism_message = masochism.message;
 		V.effectsmessage = 1;
 	}
-	V.sadism *= 0.985;
 	const sadism = effects(V.sadism_level, V.sadism);
 	if (sadism) {
 		V.sadism_level = sadism.level;
