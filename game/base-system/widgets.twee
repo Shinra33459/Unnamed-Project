@@ -967,7 +967,7 @@
 <<widget "passiveStudy">>
 	<<if $statFreeze isnot true>>
 		<<set _chair to Furniture.get('chair')>>
-		<<if _chair is null>>
+		<<if _chair is undefined or _chair is null>>
 			<<set _chair to Furniture.get('chair','chair')>>
 		<</if>>
 		<<if _chair.name is "chair">>
@@ -4668,10 +4668,10 @@
 	<<set _desk to Furniture.get('desk')>>
 	<<set _chair to Furniture.get('chair')>>
 <</if>>
-<<if _desk is null>>
+<<if _desk is undefined or _desk is null>>
 	<<set _desk to Furniture.get('desk','desk')>>
 <</if>>
-<<if _chair is null>>
+<<if _chair is undefined or _chair is null>>
 	<<set _chair to Furniture.get('chair','chair')>>
 <</if>>
 <<set _projectOptions to [$scienceproject, $mathsproject].includes("ongoing")>>
@@ -5287,5 +5287,165 @@
 	<</if>>
 	<<if $foxbuild gte 30 or $fox gte 6>>
 		<<set $foxtf to 1>>
+	<</if>>
+<</widget>>
+
+<<widget "unlockplants">>
+	/*<<set _plant_keys to Object.keys($plants)>>
+	<<for _i to 0; _i lt _plant_keys.length; _i++>>
+		<<set $plants_known.push(setup.plants[_plant_keys[_i]].name)>>
+	<</for>>*/
+	<<set $plants_known.push("red_rose")>>
+	<<set $plants_known.push("white_rose")>>
+	<<set $plants_known.push("orchid")>>
+	<<set $plants_known.push("daisy")>>
+	<<set $plants_known.push("tulip")>>
+	<<set $plants_known.push("lotus")>>
+	<<set $plants_known.push("lily")>>
+	<<set $plants_known.push("poppy")>>
+	<<set $plants_known.push("wild_carrot")>>
+	<<set $plants_known.push("onion")>>
+	<<set $plants_known.push("garlic_bulb")>>
+	<<set $plants_known.push("potato")>>
+	<<set $plants_known.push("strange_flower")>>
+	<<set $plants_known.push("cabbage")>>
+	<<set $plants_known.push("turnip")>>
+	<<set $plants_known.push("broccoli")>>
+	<<set $plants_known.push("green_manure")>>
+<</widget>>
+
+<<widget "unlockspecialclothing">>
+	<<set $specialClothes to {
+		"witchdress":"unlocked",
+		"christmasdress":"unlocked",
+		"serafuku":"unlocked",
+		"vampirejacket":"unlocked",
+		"slutshirt":"unlocked",
+		"christmasshirt":"unlocked",
+		"bellydancer'stop":"unlocked",
+		"christmastrousers":"unlocked",
+		"bellydancer'sbottoms":"unlocked",
+		"loincloth":"unlocked",
+		"witchhat":"unlocked",
+		"christmashat":"unlocked",
+		"chefhat":"unlocked",
+		"fedora":"unlocked",
+		"holypendant":"unlocked",
+		"darkpendant":"unlocked",
+		"stonependant":"unlocked",
+		"christmaslegwarmers":"unlocked",
+		"witchshoes":"unlocked",
+		"mummyfacewrap":"unlocked",
+		"mummytop":"unlocked",
+		"mummyskirt":"unlocked",
+		"cowbell":"unlocked",
+		"featheredhairclip":"unlocked",
+		"catsuit":"unlocked",
+		"holystole":"unlocked",
+		"minisnowman":"unlocked",
+		"cowbra":"unlocked",
+		"cowpanties":"unlocked",
+		"cowsocks":"unlocked",
+		"cowsleeves":"unlocked",
+		"bellydancer'sveil":"unlocked",
+		"rose":"unlocked",
+		"scarecrowshirt":"unlocked",
+		"scarecrowhat":"unlocked",
+		"skeletonmask":"unlocked",
+		"skeletonoutfit":"unlocked",
+		"classyvampirejacket":"unlocked",
+		"bellydancer'sshoes":"unlocked",
+		"futuristicbodysuit":"unlocked",
+		"daisy":"unlocked",
+		"esotericspectacles":"unlocked",
+		"spiritmask":"unlocked",
+		"ragtop":"unlocked",
+		"ragskirt":"unlocked",
+		"minipumpkin":"unlocked",
+		"gakuran":"unlocked",
+		"classicserafuku":"unlocked",
+		"sailorribbon":"unlocked",
+		"islandermask":"unlocked",
+	}>>
+<</widget>>
+
+<<widget "farmincrcheat">>
+	<<if $farm_stage_cheat is 1>>
+		<<set $farm_stage_cheat to 2>>
+		<<set $farm_stage to 4>>
+	<<elseif $farm_stage_cheat is 2>>
+		<<set $farm_stage_cheat to 3>>
+		<<set $farm_stage to 5>>
+	<<elseif $farm_stage_cheat is 3>>
+		<<set $farm_stage_cheat to 4>>
+		<<set $farm_stage to 6>>
+	<<elseif $farm_stage_cheat is 4>>
+		<<set $farm_attack_timer to 30>>
+		<<fields_init>>
+		<<set $farm_fields_intro to 1>>
+		<<farm_stock_init>>
+		<<set $farm_stage_cheat to 5>>
+		<<set $farm_stage to 8>>
+		<<add_plot farm earth 3 large>>
+	<<elseif $farm_stage_cheat gte 5 and $farm_stage_cheat lte 8>>
+		<<set $farm_stage_cheat += 1>>
+		<<set $farm_stage += 1>>
+		<<add_plot farm earth 3 large>>
+	<</if>>
+<</widget>>
+
+<<widget "farmcheatsync">>
+	<<if $farm_stage gte 8>>
+		<<set $farm_stage_cheat to $farm_stage - 3>>
+	<<elseif $farm_stage gte 6>>
+		<<set $farm_stage_cheat to 4>>
+	<<elseif $farm_stage gte 5>>
+		<<set $farm_stage_cheat to 3>>
+	<<elseif $farm_stage gte 4>>
+		<<set $farm_stage_cheat to 2>>
+	<<elseif $farm_stage gte 2>>
+		<<set $farm_stage_cheat to 1>>
+	<</if>>
+<</widget>>
+
+<<widget "umbrellaDurability">>
+	<<if $umbrellaHit isnot undefined>>
+		<<set $umbrellaDurability -= 5 * $umbrellaHit>>
+		<<unset $umbrellaHit>>
+	<<else>>
+		<<set $umbrellaDurability -= 1>>
+	<</if>>
+	<<if $umbrellaDurability lte 0>>
+		<<set $umbrella to 3>>
+	<</if>>
+<</widget>>
+
+<<widget "umbrellacaption">>
+	<<if Number.isFinite($umbrellaDurability)>>
+		<div id="umbrellacaption" @title="'Umbrella: ' + $umbrellaDurability.toFixed(2)">
+			<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
+				Umbrella:
+				<<if $options.showCaptionText is true>>
+					<<if $umbrellaDurability gte 25>>
+						<span class="green">The umbrella is fine and dandy.</span>
+					<<elseif $umbrellaDurability gte (25 / 5) * 4>>
+						<span class="teal">Your umbrella is a little dented.</span>
+					<<elseif $umbrellaDurability gte (25 / 5) * 3>>
+						<span class="lblue">Your umbrella is starting to wiggle a bit.</span>
+					<<elseif $umbrellaDurability gte (25 / 5) * 2>>
+						<span class="blue">One of the ribs are broken.</span>
+					<<elseif $umbrellaDurability gte (25 / 5) * 1>>
+						<span class="purple">You're not sure its gonna last much longer.</span>
+					<<elseif $umbrellaDurability gte 1>>
+						<span class="pink">Its going to break.</span>
+					<<elseif $umbrella is 3>>
+						<span class="red">You broke it.</span>
+					<</if>>
+				<</if>>
+			</div>
+			<<set _showCaptionText to !$options.showCaptionText>>
+			<<statbarinverted $umbrellaDurability 25 _showCaptionText>>
+			<div style="clear:both;"></div>
+		</div>
 	<</if>>
 <</widget>>
