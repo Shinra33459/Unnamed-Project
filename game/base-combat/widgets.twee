@@ -648,3 +648,37 @@
 <<widget "commaButtPlug">><<silently>>
 	<<set _text_output to (playerHasButtPlug() ? ", your $worn.butt_plug.name, " : "")>>
 <</silently>><<print _text_output>><</widget>>
+
+<<widget "combatExtendedDodgeCheck">>
+	<<set _dodgeChance to 0>>
+	<<set _passiveDodgeChance to 0>>
+	<<set _activeDodgeChance to 0>>
+	<<set _danceskill to currentSkillValue('danceskill')>>
+	<<if $combatExtended.passiveDodging is 1>>
+		<<set _dodgeChance = Math.round(_danceskill / 40)>>
+		<<if _dodgeChance gte random(100)>>
+			<<set _passiveDodgeChance to 2>>
+		<<elseif _dodgeChance gte random(80)>>
+			<<set _passiveDodgeChance to 1>>
+		<</if>>
+	<</if>>
+	<<if $combatExtended.activeDodgingActive is 1>>
+		<<set _dodgeChance = Math.round(_danceskill / 20)>>
+		<<if _dodgeChance gte random(100)>>
+			<<set _activeDodgeChance to 2>>
+		<<elseif _dodgeChance gte random(80)>>
+			<<set _activeDodgeChance to 1>>
+		<</if>>
+	<</if>>
+	<<if _passiveDodgeChance gt _activeDodgeChance>>
+		<<set $combatExtended.dodgeSuccess to _passiveDodgeChance>>
+	<<else>>
+		<<set $combatExtended.dodgeSuccess to _activeDodgeChance>>
+	<</if>>
+<</widget>>
+
+<<widget "combatExtendedStability">>
+	<<if $combatExtended.activeDodgingActive is 1>>
+		<<set $combatExtended.stability += _args[0]>>
+	<</if>>
+<</widget>>

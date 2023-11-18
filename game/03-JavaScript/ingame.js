@@ -82,7 +82,7 @@ const combatActionColours = {
 			/* leftaction or rightaction */
 			"steal", "penwhack", "freeface", "leftcovervagina", "leftcoverpenis", "leftcoveranus", "rightcovervagina", "rightcoverpenis", "rightcoveranus", "leftunderpull", "leftskirtpull", "leftlowerpull", "leftupperpull", "rightunderpull", "rightskirtpull", "rightlowerpull", "rightupperpull", "rightUndressOther", "leftUndressOther", "stopchoke", "clench", "shacklewhack", "leftfold", "rightfold", "dildowhack", "hypnosiswhack", "leftstruggleweak", "rightstruggleweak", "handpullpenis", "handpullvagina", "handpullanus", "leftresistW", "rightresistW", "leftstillW", "rightstillW", "penisremovecondom", "npcremovecondom",
 			/* feetaction */
-			"run", "hide", "confront", "feetresistW", "legLock", "legLocked", "feetHold",
+			"run", "hide", "confront", "feetresistW", "legLock", "legLocked", "feetHold", "dodge",
 			/* mouthaction */
 			"pullaway", "ejacspit", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl", "askPullOut",
 			/* penisaction */
@@ -862,7 +862,7 @@ window.DefaultActions = {
 		this.addMany(type, "Defiant", "penisaction", ["escape", "otheranusescape", "othermouthescape"]);
 		this.addMany(type, "Defiant", "vaginaaction", ["escape", "othermouthescape"]);
 		this.addMany(type, "Defiant", "anusaction", ["escape", "othermouthescape"]);
-		this.addMany(type, "Defiant", "feetaction", ["kick"]);
+		this.addMany(type, "Defiant", "feetaction", ["kick", "dodge"]);
 		this.addMany(type, "Tentacles", "regrab", [0]);
 		type = "consensual";
 		this.addMany(type, "Submissive", "leftaction", ["leftchest"]);

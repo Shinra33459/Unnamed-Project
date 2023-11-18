@@ -35,87 +35,60 @@
 <!-- SPECIFIC HAND ACTION WIDGETS -->
 
 <<widget "combat-spank">>
-	<<bruise bottom>><<hitstat>><<set $speechspank to 1>>
-	<<if $spankobject is "paddle">>
-		<<He>> whacks your <<bottom>> with the paddle
-		<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
-			<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
+	<<combatExtendedDodgeCheck>>
+	<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+		<<if $spankobject is "paddle">>
+			<<He>> tries to whack your <<bottom>> with the paddle but you 
+			<<if $combatExtended.dodgeSuccess is 2>>
+				<span class="green">dodge</span>
+				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<else>>
+				<span class="blue">partially dodge</span>
+				<<violence 5>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+			<</if>>.
+		<<elseif getSexToysofType("dildos and whips").includes($spankobject)>>
+			<<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $spankobject but you 
+			<<if $combatExtended.dodgeSuccess is 2>>
+				<span class="green">dodge</span>
+				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<else>>
+				<span class="blue">partially dodge</span>
+				<<violence 3>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+			<</if>>.
+		<<else>>
+			<<He>> tries to spank your <<bottom>> but you 
+			<<if $combatExtended.dodgeSuccess is 2>>
+				<span class="green">dodge</span>
+				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<else>>
+				<span class="blue">partially dodge</span>
+				<<violence 3>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+			<</if>>.
+		<</if>>
+	<<else>>
+		<<bruise bottom>><<hitstat>><<set $speechspank to 1>>
+		<<if $spankobject is "paddle">>
+			<<He>> whacks your <<bottom>> with the paddle
+			<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
+				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
+					through your $worn.under_lower.name,
+				<<else>>
+					reddening your exposed skin and
+				<</if>>
+			<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
+				through your $worn.over_lower.name,
+			<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
+				through your $worn.lower.name,
+			<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
 				through your $worn.under_lower.name,
 			<<else>>
 				reddening your exposed skin and
 			<</if>>
-		<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
-			through your $worn.over_lower.name,
-		<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
-			through your $worn.lower.name,
-		<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
-			through your $worn.under_lower.name,
-		<<else>>
-			reddening your exposed skin and
-		<</if>>
-		sending waves of pain through your whole body.
-		<<bodypart_admire_chance random_bottom>>
-		<<violence 10 1 1 1 _n>>
-	<<elseif getSexToysofType("dildos and whips").includes($spankobject)>>
-		<<He>> <<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<bottom>> with the $spankobject,
-		<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
-			<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
-				through your $worn.under_lower.name.
-			<<else>>
-				reddening your exposed skin.
-			<</if>>
-		<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
-			through your $worn.over_lower.name.
-		<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
-			through your $worn.lower.name.
-		<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
-			through your $worn.under_lower.name.
-		<<else>>
-			reddening your exposed skin.
-		<</if>>
-		<<bodypart_admire_chance random_bottom>>
-		<<violence 5 1 1 1 _n>>
-	<<else>>
-		<<He>> spanks your <<bottom>>
-		<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
-			<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
-				through your $worn.under_lower.name.
-			<<else>>
-				reddening your exposed skin.
-			<</if>>
-		<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
-			through your $worn.over_lower.name.
-		<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
-			through your $worn.lower.name.
-		<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
-			through your $worn.under_lower.name.
-		<<else>>
-			reddening your exposed skin.
-		<</if>>
-		<<bodypart_admire_chance random_bottom>>
-		<<violence 5 1 1 1 _n>>
-	<</if>>
-<</widget>>
-
-<<widget "combat-dildospank">>
-	<<set $_hand to _args[0]>>
-	<<set $_toy to ($_hand is "left" ? $NPCList[_n].lefttool : $NPCList[_n].righttool)>>
-	<<bruise bottom>><<hitstat>><<set $speechspank to 1>>
-	<<if npcHasSexToyOfType(_n,"dildo")>>
-
-		<<if $NPCList[_n].location.genitals is "head" or $mouthuse is "facesit" or $mouthuse is "penis">>
-			<<He>> <<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<breasts>> with the $_toy in <<his>> $_hand hand,
-			<<if $worn.over_upper.name isnot "naked" and $worn.over_lower.state is "waist">>
-				through your $worn.over_upper.name.
-			<<elseif $worn.upper.name isnot "naked" and $worn.lower.state is "waist">>
-				through your $worn.upper.name.
-			<<elseif $worn.under_upper.name isnot "naked" and $worn.under_lower.state is "waist">>
-				through your $worn.under_upper.name.
-			<<else>>
-				reddening your exposed skin.
-			<</if>>
-		<<else>>
-			<<He>> <<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<bottom>> with the $_toy in <<his>> $_hand hand,
+			sending waves of pain through your whole body.
+			<<bodypart_admire_chance random_bottom>>
+			<<violence 10 1 1 1 _n>><<combatExtendedStability -10>>
+		<<elseif getSexToysofType("dildos and whips").includes($spankobject)>>
+			<<He>> <<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<bottom>> with the $spankobject,
 			<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
 					through your $worn.under_lower.name.
@@ -132,23 +105,9 @@
 				reddening your exposed skin.
 			<</if>>
 			<<bodypart_admire_chance random_bottom>>
-		<</if>>
-		<<violence 5 1 1 1 _n>>
-	<<elseif npcHasSexToyOfType(_n,"whip")>>
-		<<if $NPCList[_n].location.genitals is "head" or $mouthuse is "facesit" or $mouthuse is "penis">>
-			<<He>> <<print either("brutally","viciously","deftly","sadistically","maliciously")>>
-			<<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<breasts>> with the $_toy in <<his>> $_hand hand,
-			<<if $worn.over_upper.name isnot "naked" and $worn.over_lower.state is "waist">>
-				through your $worn.over_upper.name.
-			<<elseif $worn.upper.name isnot "naked" and $worn.lower.state is "waist">>
-				through your $worn.upper.name.
-			<<elseif $worn.under_upper.name isnot "naked" and $worn.under_lower.state is "waist">>
-				through your $worn.under_upper.name.
-			<<else>>
-				reddening your exposed skin.
-			<</if>>
+			<<violence 5 1 1 1 _n>><<combatExtendedStability -5>>
 		<<else>>
-			<<He>> <<print either("brutally","viciously","deftly","sadistically","maliciously")>> <<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<bottom>> with the $_toy in <<his>> $_hand hand,
+			<<He>> spanks your <<bottom>>
 			<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
 					through your $worn.under_lower.name.
@@ -164,28 +123,141 @@
 			<<else>>
 				reddening your exposed skin.
 			<</if>>
+			<<bodypart_admire_chance random_bottom>>
+			<<violence 5 1 1 1 _n>><<combatExtendedStability -5>>
 		<</if>>
-		<<bodypart_admire_chance random_bottom>>
-		<<violence 20 1 1 1 _n>>
+	<</if>>
+<</widget>>
+
+<<widget "combat-dildospank">>
+	<<set $_hand to _args[0]>>
+	<<set $_toy to ($_hand is "left" ? $NPCList[_n].lefttool : $NPCList[_n].righttool)>>
+	<<combatExtendedDodgeCheck>>
+	<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+		<<if npcHasSexToyOfType(_n,"dildo")>>
+			<<if $NPCList[_n].location.genitals is "head" or $mouthuse is "facesit" or $mouthuse is "penis">>
+				<<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<breasts>> with the $_toy in <<his>> $_hand hand but you 
+			<<else>>
+				<<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $_toy in <<his>> $_hand hand but you 
+			<</if>>
+			<<if $combatExtended.dodgeSuccess is 2>>
+				<span class="green">dodge</span>
+				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<else>>
+				<span class="blue">partially dodge</span>
+				<<violence 3>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+			<</if>>.
+		<<elseif npcHasSexToyOfType(_n,"whip")>>
+			<<if $NPCList[_n].location.genitals is "head" or $mouthuse is "facesit" or $mouthuse is "penis">>
+				<<He>> tries to <<print either("brutally","viciously","deftly","sadistically","maliciously")>> <<print either("spank","whack","slap","smack","thwack")>> your <<breasts>> with the $_toy in <<his>> $_hand hand but you 
+			<<else>>
+				<<He>> tries to <<print either("brutally","viciously","deftly","sadistically","maliciously")>> <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $_toy in <<his>> $_hand hand but you 
+			<</if>>
+			<<if $combatExtended.dodgeSuccess is 2>>
+				<span class="green">dodge</span>
+				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<else>>
+				<span class="blue">partially dodge</span>
+				<<violence 10>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+			<</if>>.
+		<<else>>
+			<<He>> tries to spank your <<bottom>> but you 
+			<<if $combatExtended.dodgeSuccess is 2>>
+				<span class="green">dodge</span>
+				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<else>>
+				<span class="blue">partially dodge</span>
+				<<violence 1>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -1>>
+			<</if>>.
+		<</if>>
 	<<else>>
-		<<He>> spanks your <<bottom>>
-		<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
-			<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
+		<<bruise bottom>><<hitstat>><<set $speechspank to 1>>
+		<<if npcHasSexToyOfType(_n,"dildo")>>
+
+			<<if $NPCList[_n].location.genitals is "head" or $mouthuse is "facesit" or $mouthuse is "penis">>
+				<<He>> <<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<breasts>> with the $_toy in <<his>> $_hand hand,
+				<<if $worn.over_upper.name isnot "naked" and $worn.over_lower.state is "waist">>
+					through your $worn.over_upper.name.
+				<<elseif $worn.upper.name isnot "naked" and $worn.lower.state is "waist">>
+					through your $worn.upper.name.
+				<<elseif $worn.under_upper.name isnot "naked" and $worn.under_lower.state is "waist">>
+					through your $worn.under_upper.name.
+				<<else>>
+					reddening your exposed skin.
+				<</if>>
+			<<else>>
+				<<He>> <<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<bottom>> with the $_toy in <<his>> $_hand hand,
+				<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
+					<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
+						through your $worn.under_lower.name.
+					<<else>>
+						reddening your exposed skin.
+					<</if>>
+				<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
+					through your $worn.over_lower.name.
+				<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
+					through your $worn.lower.name.
+				<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
+					through your $worn.under_lower.name.
+				<<else>>
+					reddening your exposed skin.
+				<</if>>
+				<<bodypart_admire_chance random_bottom>>
+			<</if>>
+			<<violence 5 1 1 1 _n>><<combatExtendedStability -5>>
+		<<elseif npcHasSexToyOfType(_n,"whip")>>
+			<<if $NPCList[_n].location.genitals is "head" or $mouthuse is "facesit" or $mouthuse is "penis">>
+				<<He>> <<print either("brutally","viciously","deftly","sadistically","maliciously")>>
+				<<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<breasts>> with the $_toy in <<his>> $_hand hand,
+				<<if $worn.over_upper.name isnot "naked" and $worn.over_lower.state is "waist">>
+					through your $worn.over_upper.name.
+				<<elseif $worn.upper.name isnot "naked" and $worn.lower.state is "waist">>
+					through your $worn.upper.name.
+				<<elseif $worn.under_upper.name isnot "naked" and $worn.under_lower.state is "waist">>
+					through your $worn.under_upper.name.
+				<<else>>
+					reddening your exposed skin.
+				<</if>>
+			<<else>>
+				<<He>> <<print either("brutally","viciously","deftly","sadistically","maliciously")>> <<print either("spanks","whacks","slaps","smacks","thwacks")>> your <<bottom>> with the $_toy in <<his>> $_hand hand,
+				<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
+					<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
+						through your $worn.under_lower.name.
+					<<else>>
+						reddening your exposed skin.
+					<</if>>
+				<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
+					through your $worn.over_lower.name.
+				<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
+					through your $worn.lower.name.
+				<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
+					through your $worn.under_lower.name.
+				<<else>>
+					reddening your exposed skin.
+				<</if>>
+			<</if>>
+			<<bodypart_admire_chance random_bottom>>
+			<<violence 20 1 1 1 _n>><<combatExtendedStability -20>>
+		<<else>>
+			<<He>> spanks your <<bottom>>
+			<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
+				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>
+					through your $worn.under_lower.name.
+				<<else>>
+					reddening your exposed skin.
+				<</if>>
+			<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
+				through your $worn.over_lower.name.
+			<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
+				through your $worn.lower.name.
+			<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
 				through your $worn.under_lower.name.
 			<<else>>
 				reddening your exposed skin.
 			<</if>>
-		<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
-			through your $worn.over_lower.name.
-		<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
-			through your $worn.lower.name.
-		<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
-			through your $worn.under_lower.name.
-		<<else>>
-			reddening your exposed skin.
+			<<bodypart_admire_chance random_bottom>>
+			<<violence 2 1 1 1 _n>><<combatExtendedStability -2>>
 		<</if>>
-		<<bodypart_admire_chance random_bottom>>
-		<<violence 2 1 1 1 _n>>
 	<</if>>
 <</widget>>
 
@@ -2369,25 +2441,85 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<else>>
 				<<rng>>
 				<<if $rng gte 81>>
-					<<He>> punches your nose.
-					<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance forehead>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to punch your nose but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> punches your nose.
+						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance forehead>><<combatExtendedStability -20>>
+					<</if>>
 				<<elseif $rng gte 61>>
-					<<He>> punches the back of your neck.
-					<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance back>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to punch the back of your neck but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> punches the back of your neck.
+						<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance back>><<combatExtendedStability -20>>
+					<</if>>
 				<<elseif $rng gte 41>>
-					<<He>> punches your cheek.
-					<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance random_cheek>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to punch your cheek but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> punches your cheek.
+						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance random_cheek>><<combatExtendedStability -20>>
+					<</if>>
 				<<elseif $rng gte 21>>
-					<<He>> punches your jaw.
-					<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance breasts>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to punch your jaw but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> punches your jaw.
+						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance breasts>><<combatExtendedStability -20>>
+					<</if>>
 				<<else>>
-					<<He>> jabs the front of your neck.
-					<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance random_shoulder>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to jab the front of your neck but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> jabs the front of your neck.
+						<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance random_shoulder>><<combatExtendedStability -20>>
+					<</if>>
 				<</if>>
 			<</if>>
 		<<else>>
@@ -2403,25 +2535,85 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<else>>
 				<<rng>>
 				<<if $rng gte 81>>
-					<<He>> scratches the side of your face.
-					<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance random_cheek>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> scratch the side of your face but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> scratches the side of your face.
+						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance random_cheek>><<combatExtendedStability -20>>
+					<</if>>
 				<<elseif $rng gte 61>>
-					<<He>> scratches the back of your neck.
-					<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance back>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to scratch the back of your neck but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> scratches the back of your neck.
+						<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance back>><<combatExtendedStability -20>>
+					<</if>>
 				<<elseif $rng gte 41>>
-					<<He>> scratches your cheek.
-					<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance random_cheek>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to scratch your cheek but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> scratches your cheek.
+						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance random_cheek>><<combatExtendedStability -20>>
+					<</if>>
 				<<elseif $rng gte 21>>
-					<<He>> scratches your jaw.
-					<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance random_shoulder>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to scratch your jaw but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> scratches your jaw.
+						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance random_shoulder>><<combatExtendedStability -20>>
+					<</if>>
 				<<else>>
-					<<He>> scratches the front of your neck.
-					<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
-					<<bodypart_admire_chance back>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<He>> tries to scratch the front of your neck but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 10>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+						<</if>>.
+					<<else>>
+						<<He>> scratches the front of your neck.
+						<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
+						<<bodypart_admire_chance back>><<combatExtendedStability -20>>
+					<</if>>
 				<</if>>
 			<</if>>
 		<</if>>
@@ -5679,14 +5871,38 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<<violence 10>><<hitstat>><<bruise thigh>>
 							<<bodypart_admire random_thigh>>
 						<<elseif $NPCList[_n].location.genitals isnot "head">>
-							<<He>> bites your shoulders.
-							<<violence 10>><<hitstat>><<bruise leftarm>><<bruise rightarm>>
-							<<bodypart_admire_chance random_shoulder>>
+							<<combatExtendedDodgeCheck>>
+							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+								<<He>> tries to bite your shoulders but you 
+								<<if $combatExtended.dodgeSuccess is 2>>
+									<span class="green">dodge</span>
+									<<control 2>><<gcontrol>><<dodgeStat>>
+								<<else>>
+									<span class="blue">partially dodge</span>
+									<<violence 5>><<bruise leftarm>><<bruise rightarm>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+								<</if>>.
+							<<else>>
+								<<He>> bites your shoulders.
+								<<violence 10>><<hitstat>><<bruise leftarm>><<bruise rightarm>>
+								<<bodypart_admire_chance random_shoulder>><<combatExtendedStability -10>>
+							<</if>>
 						<</if>>
 					<<elseif $enemyanger + $rng lte 165 and $NPCList[_n].location.genitals isnot "genitals" and !(playerBellySize(true) gte 8)>>
-						<<He>> bites your tummy.
-						<<violence 10>><<hitstat>><<bruise tummy>>
-						<<bodypart_admire back>>
+						<<combatExtendedDodgeCheck>>
+						<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+							<<He>> tries to bite your tummy but you 
+							<<if $combatExtended.dodgeSuccess is 2>>
+								<span class="green">dodge</span>
+								<<control 2>><<gcontrol>><<dodgeStat>>
+							<<else>>
+								<span class="blue">partially dodge</span>
+								<<violence 5>><<bruise tummy>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+							<</if>>.
+						<<else>>
+							<<He>> bites your tummy.
+							<<violence 10>><<hitstat>><<bruise tummy>>
+							<<bodypart_admire back>><<combatExtendedStability -10>>
+						<</if>>
 					<<elseif $enemyanger + $rng lte 170>>
 						<<if $position is "wall" and $walltype isnot "front" and $NPCList[_n].location.genitals isnot "genitals">>
 							<<He>> bites your hips.
@@ -5696,9 +5912,21 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 							<<neutral 10 _n>>
 						<<elseif $NPCList[_n].location.genitals isnot "head">>
-							<<He>> bites your neck.
-							<<violence 10>><<hitstat>><<bruise neck>>
-							<<bodypart_admire breasts>>
+							<<combatExtendedDodgeCheck>>
+							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+								<<He>> tries to bite your neck but you 
+								<<if $combatExtended.dodgeSuccess is 2>>
+									<span class="green">dodge</span>
+									<<control 2>><<gcontrol>><<dodgeStat>>
+								<<else>>
+									<span class="blue">partially dodge</span>
+									<<violence 5>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+								<</if>>.
+							<<else>>
+								<<He>> bites your neck.
+								<<violence 10>><<hitstat>><<bruise neck>>
+								<<bodypart_admire breasts>><<combatExtendedStability -10>>
+							<</if>>
 						<</if>>
 					<<elseif $enemyanger + $rng lte 180>>
 						<<if $position is "wall" and $walltype isnot "front" and $NPCList[_n].location.genitals isnot "genitals">>
@@ -5709,9 +5937,21 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 							<<neutral 10 _n>>
 						<<elseif $NPCList[_n].location.genitals isnot "head">>
-							<<He>> bites your cheek.
-							<<violence 10>><<hitstat>><<bruise face>>
-							<<bodypart_admire random_cheek>>
+							<<combatExtendedDodgeCheck>>
+							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+								<<He>> tries to bite your cheek but you 
+								<<if $combatExtended.dodgeSuccess is 2>>
+									<span class="green">dodge</span>
+									<<control 2>><<gcontrol>><<dodgeStat>>
+								<<else>>
+									<span class="blue">partially dodge</span>
+									<<violence 5>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+								<</if>>.
+							<<else>>
+								<<He>> bites your cheek.
+								<<violence 10>><<hitstat>><<bruise face>>
+								<<bodypart_admire random_cheek>><<combatExtendedStability -10>>
+							<</if>>
 						<</if>>
 					<<elseif $enemyanger + $rng gte 190>>
 						<<if $position is "wall" and $walltype isnot "front" and $NPCList[_n].location.genitals isnot "genitals">>
@@ -5719,9 +5959,21 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<<violence 10>><<hitstat>><<bruise bottom>>
 							<<bodypart_admire random_bottom>>
 						<<elseif $NPCList[_n].location.genitals isnot "head">>
-							<<He>> bites your <<breasts>>.
-							<<violence 10>><<hitstat>><<bruise chest>><<playWithBreasts>>
-							<<bodypart_admire breasts>>
+							<<combatExtendedDodgeCheck>>
+							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+								<<He>> tries to bite your <<breasts>> but you 
+								<<if $combatExtended.dodgeSuccess is 2>>
+									<span class="green">dodge</span>
+									<<control 2>><<gcontrol>><<dodgeStat>>
+								<<else>>
+									<span class="blue">partially dodge</span>
+									<<violence 5>><<bruise chest>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+								<</if>>.
+							<<else>>
+								<<He>> bites your <<breasts>>.
+								<<violence 10>><<hitstat>><<bruise chest>><<playWithBreasts>>
+								<<bodypart_admire breasts>><<combatExtendedStability -10>>
+							<</if>>
 						<</if>>
 					<</if>>
 				<</if>>
@@ -6324,8 +6576,20 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<He>> kicks you in the <<bottom>>.
 			<<violence 10>><<hitstat>><<bruise bottom>>
 		<<else>>
-			<<He>> kicks you in the stomach.
-			<<violence 10>><<hitstat>><<bruise face>>
+			<<combatExtendedDodgeCheck>>
+			<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+				<<He>> tries to kick you in the stomach but you 
+				<<if $combatExtended.dodgeSuccess is 2>>
+					<span class="green">dodge</span>
+					<<control 2>><<gcontrol>><<dodgeStat>>
+				<<else>>
+					<span class="blue">partially dodge</span>
+					<<violence 5>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+				<</if>>.
+			<<else>>
+				<<He>> kicks you in the stomach.
+				<<violence 10>><<hitstat>><<bruise face>><<combatExtendedStability -10>>
+			<</if>>
 		<</if>>
 	<<elseif $enemyanger + $rng lte 200 and $mouthuse is 0>>
 		<<if $pullaway is 1>>
@@ -6376,8 +6640,20 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 				<<violence 20>><<hitstat>><<bruise vagina>><<set $speechbeat to 1>>
 			<</if>>
 		<<else>>
-			<<He>> kicks you in the face.
-			<<violence 10>><<bruise face>><<set $speechbeat to 1>><<hitstat>>
+			<<combatExtendedDodgeCheck>>
+			<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+				<<He>> tries to kick you in the face but you 
+				<<if $combatExtended.dodgeSuccess is 2>>
+					<span class="green">dodge</span>
+					<<control 2>><<gcontrol>><<dodgeStat>>
+				<<else>>
+					<span class="blue">partially dodge</span>
+					<<violence 5>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+				<</if>>.
+			<<else>>
+				<<He>> kicks you in the face.
+				<<violence 10>><<bruise face>><<set $speechbeat to 1>><<hitstat>><<combatExtendedStability -10>>
+			<</if>>
 		<</if>>
 	<</if>>
 <</widget>>

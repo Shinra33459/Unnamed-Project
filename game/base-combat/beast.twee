@@ -1515,15 +1515,51 @@
 					<<violence 1>>
 				<<else>>
 					<<if $NPCList[_n].penis is 0 or $NPCList[_n].vagina is 0>>
-						<<if $NPCList[_n].claws is "claws">> <!-- Removed $claws -->
-							<<bHe>> bites and claws at your thighs.
+						<<combatExtendedDodgeCheck>>
+						<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+							<<if $NPCList[_n].claws is "claws">> <!-- Removed $claws -->
+								<<bHe>> tries to and claws at your thighs. 
+								<<if $combatExtended.dodgeSuccess is 2>>
+									<span class="green">You dodge.</span>
+									<<control 2>><<gcontrol>><<dodgeStat>>
+								<<else>>
+									<span class="blue">You partially dodge.</span>
+									<<violence 10>><<bruise thigh>><<bruise thigh>><<set $worn.lower.integrity -= 10>><<set $worn.under_lower.integrity -= 10>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+								<</if>>
+							<<else>>
+								<<bHe>> tries to bite your thighs. 
+								<<if $combatExtended.dodgeSuccess is 2>>
+									<span class="green">You dodge.</span>
+									<<control 2>><<gcontrol>><<dodgeStat>>
+								<<else>>
+									<span class="blue">You partially dodge.</span>
+									<<violence 10>><<bruise thigh>><<bruise thigh>><<set $worn.lower.integrity -= 10>><<set $worn.under_lower.integrity -= 10>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+								<</if>>
+							<</if>>
+							<<control 2>><<gcontrol>>
 						<<else>>
-							<<bHe>> bites your thighs.
+							<<if $NPCList[_n].claws is "claws">> <!-- Removed $claws -->
+								<<bHe>> bites and claws at your thighs.
+							<<else>>
+								<<bHe>> bites your thighs.
+							<</if>>
+							<<violence 20>><<bruise thigh>><<bruise thigh>><<set $worn.lower.integrity -= 20>><<set $worn.under_lower.integrity -= 20>><<hitstat>><<set $enemyanger -= 20>><<combatExtendedStability -20>>
 						<</if>>
-						<<violence 20>><<bruise thigh>><<bruise thigh>><<set $worn.lower.integrity -= 20>><<set $worn.under_lower.integrity -= 20>><<hitstat>><<set $enemyanger -= 20>>
 					<<else>>
-						<<bHe>> bites and claws at your <<breasts>>.
-						<<violence 20>><<bruise chest>><<bruise chest>><<set $worn.upper.integrity -= 20>><<hitstat>><<set $enemyanger -= 20>><<playWithBreasts>>
+						<<combatExtendedDodgeCheck>>
+						<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+							<<bHe>> tries to bite and claw at your <<breasts>> but you 
+							<<if $combatExtended.dodgeSuccess is 2>>
+								<span class="green">dodge</span>
+								<<control 2>><<gcontrol>><<dodgeStat>>
+							<<else>>
+								<span class="blue">partially dodge.</span>
+								<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+							<</if>>.
+						<<else>>
+							<<bHe>> bites and claws at your <<breasts>>.
+							<<violence 20>><<bruise chest>><<bruise chest>><<set $worn.upper.integrity -= 20>><<hitstat>><<set $enemyanger -= 20>><<playWithBreasts>><<combatExtendedStability -20>>
+						<</if>>
 					<</if>>
 				<</if>>
 			<</if>>
@@ -1609,17 +1645,65 @@
 					<<bHe>> <<beast_growls_text>> with menacing intent.
 					<<violence 1>>
 				<<elseif ($enemyanger + $rng) lte 140 and $position isnot "wall" and $NPCList[_n].location.head isnot "head">>
-					<<bHe>> bites your face.
-					<<violence 5>><<bruise face>><<hitstat>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<bHe>> tries to bite your face but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge.</span>
+							<<violence 3>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+						<</if>>.
+					<<else>>
+						<<bHe>> bites your face.
+						<<violence 5>><<bruise face>><<hitstat>><<combatExtendedStability -5>>
+					<</if>>
 				<<elseif ($enemyanger + $rng) lte 160 and $position isnot "wall" and $NPCList[_n].location.head isnot "head">>
-					<<bHe>> bites your neck.
-					<<violence 5>><<bruise neck>><<hitstat>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<bHe>> tries to bite your neck but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 3>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+						<</if>>.
+					<<else>>
+						<<bHe>> bites your neck.
+						<<violence 5>><<bruise neck>><<hitstat>><<combatExtendedStability -10>>
+					<</if>>
 				<<elseif $position isnot "wall" and $NPCList[_n].location.head isnot "head">>
-					<<bHe>> grabs your neck in <<bhis>> <<beast_teeth_text>>.
-					<<violence 5>><<bruise neck>><<set $NPCList[_n].mouth to "neck">><<hitstat>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<bHe>> tries to grab your neck in <<bhis>> <<beast_teeth_text>> but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 3>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+						<</if>>.
+					<<else>>
+						<<bHe>> grabs your neck in <<bhis>> <<beast_teeth_text>>.
+						<<violence 5>><<bruise neck>><<set $NPCList[_n].mouth to "neck">><<hitstat>><<combatExtendedStability -5>>
+					<</if>>
 				<<elseif $NPCList[_n].location.head isnot "head">>
-					<<bHe>> bites your waist.
-					<<violence 5>><<bruise tummy>><<hitstat>>
+					<<combatExtendedDodgeCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+						<<bHe>> tries to bite your waist but you 
+						<<if $combatExtended.dodgeSuccess is 2>>
+							<span class="green">dodge</span>
+							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<else>>
+							<span class="blue">partially dodge</span>
+							<<violence 3>><<bruise tummy>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+						<</if>>.
+					<<else>>
+						<<bHe>> bites your waist.
+						<<violence 5>><<bruise tummy>><<hitstat>><<combatExtendedStability -5>>
+					<</if>>
 				<</if>>
 			<</if>>
 			<<if $NPCList[_n].penis is 0>>
