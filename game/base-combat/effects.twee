@@ -493,7 +493,7 @@
 
 		<<if $leftaction is "lefthit" and $rightaction is "righthit" and $lefttarget is $righttarget>>
 			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "lefthit">><<set $rightactiondefault to "righthit">>
-			<<combatExtendedEnemyDodgeCheck>><<actionshit both>>
+			<<combatExtendedEnemyDodgeCheck $lefttarget>><<actionshit both>>
 			<<if $combatExtended.enemyDodgeSuccess gte 1>>
 				<<if $combatExtended.enemyDodgeSuccess is 2>>
 					/* Attack dodged */
@@ -506,7 +506,7 @@
 		<</if>>
 
 		<<if $leftaction is "lefthit">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "lefthit">><<combatExtendedEnemyDodgeCheck>>
+			<<set $leftaction to 0>><<set $leftactiondefault to "lefthit">><<combatExtendedEnemyDodgeCheck $lefttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $lefttarget>><<person>><</if>>
@@ -540,7 +540,7 @@
 		<</if>>
 
 		<<if $rightaction is "righthit">>
-			<<set $rightaction to 0>><<set $rightactiondefault to "righthit">><<personselect $righttarget>><<combatExtendedEnemyDodgeCheck>>
+			<<set $rightaction to 0>><<set $rightactiondefault to "righthit">><<personselect $righttarget>><<combatExtendedEnemyDodgeCheck $righttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<person>><</if>>
@@ -575,7 +575,7 @@
 
 		<<if $leftaction is "leftumbrella" and $rightaction is "rightumbrella" and $lefttarget is $righttarget>>
 			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftumbrella">>
-			<<set $rightactiondefault to "rightumbrella">><<combatExtendedEnemyDodgeCheck>><<actionsumbrella both>>
+			<<set $rightactiondefault to "rightumbrella">><<combatExtendedEnemyDodgeCheck $lefttarget>><<actionsumbrella both>>
 			<<if $combatExtended.enemyDodgeSuccess gte 1>>
 				<<if $combatExtended.enemyDodgeSuccess is 2>>
 					/* Attack dodged */
@@ -588,7 +588,7 @@
 		<</if>>
 
 		<<if $leftaction is "leftumbrella">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "leftumbrella">><<combatExtendedEnemyDodgeCheck>>
+			<<set $leftaction to 0>><<set $leftactiondefault to "leftumbrella">><<combatExtendedEnemyDodgeCheck $lefttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $lefttarget>><<person>><</if>>
@@ -622,7 +622,7 @@
 		<</if>>
 
 		<<if $rightaction is "rightumbrella">>
-			<<set $rightaction to 0>><<set $rightactiondefault to "rightumbrella">><<personselect $righttarget>><<combatExtendedEnemyDodgeCheck>>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rightumbrella">><<personselect $righttarget>><<combatExtendedEnemyDodgeCheck $righttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<person>><</if>>
@@ -2611,7 +2611,7 @@
 		<</if>>
 
 		<<if $feetaction is "kick">>
-			<<set $feetaction to 0>><<set $feetactiondefault to "kick">><<combatExtendedEnemyDodgeCheck>>
+			<<set $feetaction to 0>><<set $feetactiondefault to "kick">><<combatExtendedEnemyDodgeCheck $feettarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to kick the <<if $enemytype is "beast">><<beasttype>>,<<else>><<personselect $feettarget>><<person>>,<</if>>
@@ -2624,7 +2624,7 @@
 						<<if $combatExtended.enemyDodgeSuccess is 2>>
 							/* Attack dodged */
 						<<else>>
-							<<if $combatExtended.standingFights 1 and $combatExtended.stabilityLost is 0>>
+							<<if $combatExtended.standingFights is 1 and $combatExtended.stabilityLost is 0>>
 								<<defiance 5 $feettarget>>
 							<<else>>
 								<<defiance 3 $feettarget>>
@@ -2636,7 +2636,7 @@
 							<</if>>
 						<</if>>
 					<<else>>
-						<<if $combatExtended.standingFights 1 and $combatExtended.stabilityLost is 0>>
+						<<if $combatExtended.standingFights is 1 and $combatExtended.stabilityLost is 0>>
 							<<defiance 10 $feettarget>>
 						<<else>>
 							<<defiance 5 $feettarget>>
@@ -2654,7 +2654,7 @@
 					<<if $combatExtended.enemyDodgeSuccess is 2>>
 						/* Attack dodged */
 					<<else>>
-						<<if $combatExtended.standingFights 1 and $combatExtended.stabilityLost is 0>>
+						<<if $combatExtended.standingFights is 1 and $combatExtended.stabilityLost is 0>>
 							<<defiance 5 $feettarget>>
 						<<else>>
 							<<defiance 3 $feettarget>>
@@ -2666,7 +2666,7 @@
 						<</if>>
 					<</if>>
 				<<else>>
-					<<if $combatExtended.standingFights 1 and $combatExtended.stabilityLost is 0>>
+					<<if $combatExtended.standingFights is 1 and $combatExtended.stabilityLost is 0>>
 						<<defiance 10 $feettarget>>
 					<<else>>
 						<<defiance 5 $feettarget>>
