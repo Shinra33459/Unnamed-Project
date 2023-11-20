@@ -656,10 +656,15 @@
 	<<set _danceskill to currentSkillValue('danceskill')>>
 	<<if $combatExtended.passiveDodging is 1>>
 		<<set _dodgeChance = Math.round(_danceskill / 40)>>
+		<<if $combatExtended.stabilityLost is 1>>
+			<<set _dodgeChance = Math.round(_dodgeChance / 2)>>
+		<</if>>
 		<<if _dodgeChance gte random(100)>>
 			<<set _passiveDodgeChance to 2>>
 		<<elseif _dodgeChance gte random(80)>>
 			<<set _passiveDodgeChance to 1>>
+		<<else>>
+			<<set _passiveDodgeChance to 0>>
 		<</if>>
 	<</if>>
 	<<if $combatExtended.activeDodgingActive is 1>>
@@ -668,6 +673,8 @@
 			<<set _activeDodgeChance to 2>>
 		<<elseif _dodgeChance gte random(80)>>
 			<<set _activeDodgeChance to 1>>
+		<<else>>
+			<<set _activeDodgeChance to 0>>
 		<</if>>
 	<</if>>
 	<<if _passiveDodgeChance gt _activeDodgeChance>>
@@ -681,4 +688,32 @@
 	<<if $combatExtended.activeDodgingActive is 1>>
 		<<set $combatExtended.stability += _args[0]>>
 	<</if>>
+<</widget>>
+
+<<widget "combatExtendedEnemyDodgeCheck">>
+	<<set _dodgeChance to $NPCList[_args[0]].dodgeChance>>
+	<<set _passiveEnemyDodgeChance to 0>>
+	<<set _activeEnemyDodgeChance to 0>>
+	<<if $combatExtended.enemyPassiveDodging is 1>>
+		<<if _dodgeChance gte random(100)>>
+			<<set _passiveEnemyDodgeChance to 2>>
+		<<elseif _dodgeChance gte random(80)>>
+			<<set _passiveEnemyDodgeChance to 1>>
+		<<else>>
+			<<set _passiveEnemyDodgeChance to 0>>
+		<</if>>
+	<</if>>
+	/* <<if $combatExtended.activeDodgingActive is 1>>
+		<<set _dodgeChance = Math.round(_danceskill / 20)>>
+		<<if _dodgeChance gte random(100)>>
+			<<set _activeDodgeChance to 2>>
+		<<elseif _dodgeChance gte random(80)>>
+			<<set _activeDodgeChance to 1>>
+		<</if>>
+	<</if>> */
+	/* <<if _passiveDodgeChance gt _activeDodgeChance>> */
+		<<set $combatExtended.enemyDodgeSuccess to _passiveEnemyDodgeChance>>
+	/* <<else>>
+		<<set $combatExtended.dodgeSuccess to _activeDodgeChance>>
+	<</if>> */
 <</widget>>

@@ -17,7 +17,7 @@
 			<<set $combatExtended.activeDodgingActive to 0>>
 		<</if>>
 
-		<<if $combatExtended.standingFights is 1>>
+		<<if $combatExtended.standingFights is 1 and $consensual is 0>>
 			<<if $combatExtended.standingFightStart is 1 and $position isnot "wall" and $punishmentposition isnot "gloryhole" >>
 				<<set $combatExtended.standingFightStart to 0>>
 				<<set $combatExtended.stability to 100>>
@@ -492,12 +492,21 @@
 		<</if>>
 
 		<<if $leftaction is "lefthit" and $rightaction is "righthit" and $lefttarget is $righttarget>>
-			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "lefthit">>
-			<<set $rightactiondefault to "righthit">><<actionshit both>><<defiance 5 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 2>>
+			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "lefthit">><<set $rightactiondefault to "righthit">>
+			<<combatExtendedEnemyDodgeCheck $lefttarget>><<actionshit both>>
+			<<if $combatExtended.enemyDodgeSuccess gte 1>>
+				<<if $combatExtended.enemyDodgeSuccess is 2>>
+					/* Attack dodged */
+				<<else>>
+					<<defiance 3 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+				<</if>>
+			<<else>>
+				<<defiance 5 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 2>>
+			<</if>>
 		<</if>>
 
 		<<if $leftaction is "lefthit">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "lefthit">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "lefthit">><<combatExtendedEnemyDodgeCheck $lefttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $lefttarget>><<person>><</if>>
@@ -505,15 +514,33 @@
 					<<gwillpower>><<willpower 1>>
 				<<else>>
 					The slime tries to immobilise your left arm, <span class="green">but you wrestle control away from it.</span>
-					<<actionshit $lefttarget>><<defiance 2 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<<actionshit $lefttarget>>
+					<<if $combatExtended.enemyDodgeSuccess gte 1>>
+						<<if $combatExtended.enemyDodgeSuccess is 2>>
+							/* Attack dodged */
+						<<else>>
+							<<defiance 1 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+						<</if>>
+					<<else>>
+						<<defiance 2 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<</if>>
 				<</if>>
 			<<else>>
-				<<actionshit $lefttarget>><<defiance 2 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+				<<actionshit $lefttarget>>
+				<<if $combatExtended.enemyDodgeSuccess gte 1>>
+					<<if $combatExtended.enemyDodgeSuccess is 2>>
+						/* Attack dodged */
+					<<else>>
+						<<defiance 1 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<</if>>
+				<<else>>
+					<<defiance 2 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+				<</if>>
 			<</if>>
 		<</if>>
 
 		<<if $rightaction is "righthit">>
-			<<set $rightaction to 0>><<set $rightactiondefault to "righthit">><<personselect $righttarget>>
+			<<set $rightaction to 0>><<set $rightactiondefault to "righthit">><<personselect $righttarget>><<combatExtendedEnemyDodgeCheck $righttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<person>><</if>>
@@ -521,20 +548,47 @@
 					<<gwillpower>><<willpower 1>>
 				<<else>>
 					The slime tries to immobilise your right arm, <span class="green">but you wrestle control away from it.</span>
-					<<actionshit $righttarget>><<defiance 2 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<<actionshit $righttarget>>
+					<<if $combatExtended.enemyDodgeSuccess gte 1>>
+						<<if $combatExtended.enemyDodgeSuccess is 2>>
+							/* Attack dodged */
+						<<else>>
+							<<defiance 1 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+						<</if>>
+					<<else>>
+						<<defiance 2 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<</if>>
 				<</if>>
 			<<else>>
-				<<actionshit $righttarget>><<set $speechhit to 1>><<defiance 2 $righttarget>><<set $attackstat += 1>>
+				<<actionshit $righttarget>>
+				<<if $combatExtended.enemyDodgeSuccess gte 1>>
+					<<if $combatExtended.enemyDodgeSuccess is 2>>
+						/* Attack dodged */
+					<<else>>
+						<<defiance 1 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<</if>>
+				<<else>>
+					<<defiance 2 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+				<</if>>
 			<</if>>
 		<</if>>
 
 		<<if $leftaction is "leftumbrella" and $rightaction is "rightumbrella" and $lefttarget is $righttarget>>
 			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftumbrella">>
-			<<set $rightactiondefault to "rightumbrella">><<actionsumbrella both>><<defiance 12 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 2>><<set $umbrellaHit to 2>><<umbrellaDurability>>
+			<<set $rightactiondefault to "rightumbrella">><<combatExtendedEnemyDodgeCheck $lefttarget>><<actionsumbrella both>>
+			<<if $combatExtended.enemyDodgeSuccess gte 1>>
+				<<if $combatExtended.enemyDodgeSuccess is 2>>
+					/* Attack dodged */
+				<<else>>
+					<<defiance 6 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 2>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+				<</if>>
+			<<else>>
+				<<defiance 12 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 2>><<set $umbrellaHit to 2>><<umbrellaDurability>>
+			<</if>>
 		<</if>>
 
 		<<if $leftaction is "leftumbrella">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "leftumbrella">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "leftumbrella">><<combatExtendedEnemyDodgeCheck $lefttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $lefttarget>><<person>><</if>>
@@ -542,15 +596,33 @@
 					<<gwillpower>><<willpower 1>>
 				<<else>>
 					The slime tries to immobilise your left arm, <span class="green">but you wrestle control away from it.</span>
-					<<actionsumbrella $lefttarget>><<defiance 5 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+					<<actionsumbrella $lefttarget>>
+					<<if $combatExtended.enemyDodgeSuccess gte 1>>
+						<<if $combatExtended.enemyDodgeSuccess is 2>>
+							/* Attack dodged */
+						<<else>>
+							<<defiance 3 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 0.5>><<umbrellaDurability>>
+						<</if>>
+					<<else>>
+						<<defiance 5 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+					<</if>>
 				<</if>>
 			<<else>>
-				<<actionsumbrella $lefttarget>><<defiance 5 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+				<<actionsumbrella $lefttarget>>
+				<<if $combatExtended.enemyDodgeSuccess gte 1>>
+					<<if $combatExtended.enemyDodgeSuccess is 2>>
+						/* Attack dodged */
+					<<else>>
+						<<defiance 3 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 0.5>><<umbrellaDurability>>
+					<</if>>
+				<<else>>
+					<<defiance 5 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+				<</if>>
 			<</if>>
 		<</if>>
 
 		<<if $rightaction is "rightumbrella">>
-			<<set $rightaction to 0>><<set $rightactiondefault to "rightumbrella">><<personselect $righttarget>>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rightumbrella">><<personselect $righttarget>><<combatExtendedEnemyDodgeCheck $righttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<person>><</if>>
@@ -558,10 +630,28 @@
 					<<gwillpower>><<willpower 1>>
 				<<else>>
 					The slime tries to immobilise your right arm, <span class="green">but you wrestle control away from it.</span>
-					<<actionsumbrella $righttarget>><<defiance 5 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+					<<actionsumbrella $righttarget>>
+					<<if $combatExtended.enemyDodgeSuccess gte 1>>
+						<<if $combatExtended.enemyDodgeSuccess is 2>>
+							/* Attack dodged */
+						<<else>>
+							<<defiance 3 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 0.5>><<umbrellaDurability>>
+						<</if>>
+					<<else>>
+						<<defiance 5 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+					<</if>>
 				<</if>>
 			<<else>>
-				<<actionsumbrella $righttarget>><<set $speechhit to 1>><<defiance 5 $righttarget>><<set $attackstat += 1>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+				<<actionsumbrella $righttarget>>
+				<<if $combatExtended.enemyDodgeSuccess gte 1>>
+					<<if $combatExtended.enemyDodgeSuccess is 2>>
+						/* Attack dodged */
+					<<else>>
+						<<defiance 3 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 0.5>><<umbrellaDurability>>
+					<</if>>
+				<<else>>
+					<<defiance 5 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 1>><<umbrellaDurability>>
+				<</if>>
 			<</if>>
 		<</if>>
 
@@ -2521,7 +2611,7 @@
 		<</if>>
 
 		<<if $feetaction is "kick">>
-			<<set $feetaction to 0>><<set $feetactiondefault to "kick">>
+			<<set $feetaction to 0>><<set $feetactiondefault to "kick">><<combatExtendedEnemyDodgeCheck $feettarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
 					You try to kick the <<if $enemytype is "beast">><<beasttype>>,<<else>><<personselect $feettarget>><<person>>,<</if>>
@@ -2529,17 +2619,63 @@
 					<<gwillpower>><<willpower 1>>
 				<<else>>
 					The slime tries to immobilise your legs, <span class="green">but you wrestle control away from it.</span>
-					<<actionskick $feettarget>><<defiance 5 $feettarget>><<set $attackstat += 1>>
+					<<actionskick $feettarget>>
+					<<if $combatExtended.enemyDodgeSuccess gte 1>>
+						<<if $combatExtended.enemyDodgeSuccess is 2>>
+							/* Attack dodged */
+						<<else>>
+							<<if $combatExtended.standingFights is 1 and $combatExtended.stabilityLost is 0>>
+								<<defiance 5 $feettarget>>
+							<<else>>
+								<<defiance 3 $feettarget>>
+							<</if>>
+							<<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 0.5>><<umbrellaDurability>>
+							<<if $worn.feet.type.includes("heels")>>
+								Your high heels strengthen the blow!
+								<<defiance 1 $feettarget>>
+							<</if>>
+						<</if>>
+					<<else>>
+						<<if $combatExtended.standingFights is 1 and $combatExtended.stabilityLost is 0>>
+							<<defiance 10 $feettarget>>
+						<<else>>
+							<<defiance 5 $feettarget>>
+						<</if>>
+						<<set $attackstat += 1>>
+						<<if $worn.feet.type.includes("heels")>>
+							Your high heels strengthen the blow!
+							<<defiance 1 $feettarget>>
+						<</if>>
+					<</if>>
+				<</if>>
+			<<else>>
+				<<actionskick $feettarget>>
+				<<if $combatExtended.enemyDodgeSuccess gte 1>>
+					<<if $combatExtended.enemyDodgeSuccess is 2>>
+						/* Attack dodged */
+					<<else>>
+						<<if $combatExtended.standingFights is 1 and $combatExtended.stabilityLost is 0>>
+							<<defiance 5 $feettarget>>
+						<<else>>
+							<<defiance 3 $feettarget>>
+						<</if>>
+						<<set $speechhit to 1>><<set $attackstat += 1>><<set $umbrellaHit to 0.5>><<umbrellaDurability>>
+						<<if $worn.feet.type.includes("heels")>>
+							Your high heels strengthen the blow!
+							<<defiance 1 $feettarget>>
+						<</if>>
+					<</if>>
+				<<else>>
+					<<if $combatExtended.standingFights is 1 and $combatExtended.stabilityLost is 0>>
+						<<defiance 10 $feettarget>>
+					<<else>>
+						<<defiance 5 $feettarget>>
+					<</if>>
+					<<set $attackstat += 1>>
 					<<if $worn.feet.type.includes("heels")>>
 						Your high heels strengthen the blow!
 						<<defiance 1 $feettarget>>
 					<</if>>
-				<</if>>
-			<<else>>
-				<<actionskick $feettarget>><<defiance 5 $feettarget>><<set $attackstat += 1>>
-				<<if $worn.feet.type.includes("heels")>>
-					Your high heels strengthen the blow!
-					<<defiance 1 $feettarget>>
 				<</if>>
 			<</if>>
 		<</if>>
