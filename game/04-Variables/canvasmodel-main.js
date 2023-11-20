@@ -1783,7 +1783,7 @@ Renderer.CanvasModels["main"] = {
 				return options.head_mask_src;
 			},
 			filters: ["hair"],
-			z: ZIndices.horns,
+			z: ZIndices.brow,
 			animation: "idle"
 		},
 		"wolf_pits": {
@@ -1881,7 +1881,7 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.cat_ears_type);
 			},
 			filters: ["hair"],
-			z: ZIndices.horns,
+			z: ZIndices.brow,
 			animation: "idle"
 		},
 		/***
@@ -1919,7 +1919,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.cow_ears_type);
 			},
-			z: ZIndices.horns,
+			z: ZIndices.brow,
 			animation: "idle"
 		},
 		"cow_tag": {
@@ -2113,7 +2113,7 @@ Renderer.CanvasModels["main"] = {
 				return options.head_mask_src;
 			},
 			filters: ["hair"],
-			z: ZIndices.horns,
+			z: ZIndices.brow,
 			animation: "idle"
 		},
 		"fox_cheeks": {
