@@ -719,10 +719,17 @@
 <</widget>>
 
 <<widget "healthMultiplier">>
+	<<if $NPCList[0].health isnot undefined and $NPCList[0].health gt $enemyhealth>>
+		<<set $enemyhealth to $NPCList[0].health>>
+	<</if>>
 	<<if $enemytype is "beast">>
 		<<set $enemyhealth to $enemyhealth * $beastHealthMult>>
 	<<else>>
 		<<set $enemyhealth to $enemyhealth * $npcHealthMult>>
+	<</if>>
+	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
+	<<if $combatExtended.enemyHealthDayScaling is 1 and (_buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1)>>
+		<<set $enemyhealth to $enemyhealth * (1 + (_buffAmount * $combatExtended.enemyHealthDayScalingMult))>>
 	<</if>>
 	<<set $enemyhealthmax to $enemyhealth>>
 <</widget>>
