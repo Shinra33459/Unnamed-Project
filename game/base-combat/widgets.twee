@@ -650,12 +650,21 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "combatExtendedDodgeCheck">>
+	<<if $bodysize is 3>>
+		<<set _bodyDodgeChance to -20>>
+	<<elseif $bodysize is 2>>
+		<<set _bodyDodgeChance to 0>>
+	<<elseif $bodysize is 1>>
+		<<set _bodyDodgeChance to 15>>
+	<<else>>
+		<<set _bodyDodgeChance to 30>>
+	<</if>>
 	<<set _dodgeChance to 0>>
 	<<set _passiveDodgeChance to 0>>
 	<<set _activeDodgeChance to 0>>
 	<<set _danceskill to currentSkillValue('danceskill')>>
 	<<if $combatExtended.passiveDodging is 1>>
-		<<set _dodgeChance = Math.round(_danceskill / 40)>>
+		<<set _dodgeChance = Math.round(_danceskill / 40) + _bodyDodgeChance>>
 		<<if $combatExtended.stabilityLost is 1>>
 			<<set _dodgeChance = Math.round(_dodgeChance / 2)>>
 		<</if>>
@@ -668,7 +677,7 @@
 		<</if>>
 	<</if>>
 	<<if $combatExtended.activeDodgingActive is 1>>
-		<<set _dodgeChance = Math.round(_danceskill / 20)>>
+		<<set _dodgeChance = Math.round(_danceskill / 20) + _bodyDodgeChance>>
 		<<if _dodgeChance gte random(100)>>
 			<<set _activeDodgeChance to 2>>
 		<<elseif _dodgeChance gte random(80)>>
