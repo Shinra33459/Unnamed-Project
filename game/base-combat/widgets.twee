@@ -650,6 +650,10 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "combatExtendedDodgeCheck">>
+	<<set _dodgeChance to 0>>
+	<<set _passiveDodgeChance to 0>>
+	<<set _activeDodgeChance to 0>>
+	<<set _dancedodge to Math.round(currentSkillValue('danceskill') / 40)>>
 	<<if $bodysize is 3>>
 		<<set _bodyDodgeChance to -20>>
 	<<elseif $bodysize is 2>>
@@ -659,12 +663,16 @@
 	<<else>>
 		<<set _bodyDodgeChance to 30>>
 	<</if>>
-	<<set _dodgeChance to 0>>
-	<<set _passiveDodgeChance to 0>>
-	<<set _activeDodgeChance to 0>>
-	<<set _danceskill to currentSkillValue('danceskill')>>
+	<<if $combatExtended.brawlingToggle is 1>>
+		<<set _brawlingDodgeChance to Math.clamp(($combatExtended.brawling * $enemyno * ($enemyno / 16)) / 100, 0, 20)>>
+	<<else>>
+		<<set _brawlingDodgeChance to 0>>
+	<</if>>
 	<<if $combatExtended.passiveDodging is 1>>
-		<<set _dodgeChance = Math.round(_danceskill / 40) + _bodyDodgeChance>>
+		<<set _dodgeChance = Math.round(_dancedodge + _bodyDodgeChance + _brawlingDodgeChance)>>
+		<<if $combatExtended.uncappedDodgeChance is 0>>
+			<<set _dodgeChance to Math.clamp(_dodgeChance, 0, $combatExtended.dodgeChanceCap)>>
+		<</if>>
 		<<if $combatExtended.stabilityLost is 1>>
 			<<set _dodgeChance = Math.round(_dodgeChance / 2)>>
 		<</if>>
@@ -677,7 +685,10 @@
 		<</if>>
 	<</if>>
 	<<if $combatExtended.activeDodgingActive is 1>>
-		<<set _dodgeChance = Math.round(_danceskill / 20) + _bodyDodgeChance>>
+		<<set _dodgeChance = Math.round((_dancedodge + _bodyDodgeChance + _brawlingDodgeChance) * 2)>>
+		<<if $combatExtended.uncappedDodgeChance is 0>>
+			<<set _dodgeChance to Math.clamp(_dodgeChance, 0, $combatExtended.dodgeChanceCap)>>
+		<</if>>
 		<<if _dodgeChance gte random(100)>>
 			<<set _activeDodgeChance to 2>>
 		<<elseif _dodgeChance gte random(80)>>
