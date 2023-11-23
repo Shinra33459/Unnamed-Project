@@ -653,6 +653,7 @@
 	<<set _dodgeChance to 0>>
 	<<set _passiveDodgeChance to 0>>
 	<<set _activeDodgeChance to 0>>
+	<<set _counterChance to 0>>
 	<<set _dancedodge to Math.round(currentSkillValue('danceskill') / 40)>>
 	<<if $bodysize is 3>>
 		<<set _bodyDodgeChance to -20>>
@@ -697,7 +698,23 @@
 			<<set _activeDodgeChance to 0>>
 		<</if>>
 	<</if>>
-	<<if _passiveDodgeChance gt _activeDodgeChance>>
+	<<if $combatExtended.countering is 1>>
+		<<set _counterChance to 0>>
+		<<if $combatExtended.counteringActive gte 1>>
+			<<set _counterChance to 100 * ((0.35 * (1 * ($skulduggery / 1000))) * $combatExtended.counteringActive)>>
+			<<if _dodgeChance gte random(100)>>
+				<<set _counterChance to 2>>
+			<<elseif _dodgeChance gte random(80)>>
+				<<set _counterChance to 1>>
+			<<else>>
+				<<set _counterChance to 0>>
+			<</if>>
+			<<set $combatExtended.counteringActive to 0>>
+		<</if>>
+	<</if>>
+	<<if _counterChance gte 1>>
+		<<set $combatExtended.counterSuccess to _counterChance>>
+	<<elseif _passiveDodgeChance gt _activeDodgeChance>>
 		<<set $combatExtended.dodgeSuccess to _passiveDodgeChance>>
 	<<else>>
 		<<set $combatExtended.dodgeSuccess to _activeDodgeChance>>
