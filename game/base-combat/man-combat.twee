@@ -35,35 +35,53 @@
 <!-- SPECIFIC HAND ACTION WIDGETS -->
 
 <<widget "combat-spank">>
-	<<combatExtendedDodgeCheck>>
-	<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+	<<combatExtendedCheck>>
+	<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
 		<<if $spankobject is "paddle">>
-			<<He>> tries to whack your <<bottom>> with the paddle but you 
-			<<if $combatExtended.dodgeSuccess is 2>>
-				<span class="green">dodge</span>
-				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<He>> tries to whack your <<bottom>> with the paddle but 
+			<<if $combatExtended.counterSuccess is 2>>
+				<span class="green">you spin and throw a kick to their side.</span>
+				<<defiance 10>><<control 4>><<ggcontrol>><<counterStat>>
+			<<elseif $combatExtended.dodgeSuccess is 2>>
+				<span class="green">you dodge.</span>
+				<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+			<<elseif $combatExtended.counterSuccess is 1>>
+				<span class="blue">you manage to kick them away.</span>
+				<<defiance 5>><<violence 10>><<bruise bottom>><<hitstat>><<partialCounterStat>><<combatExtendedStability -10>>
 			<<else>>
-				<span class="blue">partially dodge</span>
-				<<violence 5>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
-			<</if>>.
+				<span class="blue">you partially dodge.</span>
+				<<violence 5>><<bruise bottom>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+			<</if>>
 		<<elseif getSexToysofType("dildos and whips").includes($spankobject)>>
-			<<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $spankobject but you 
-			<<if $combatExtended.dodgeSuccess is 2>>
-				<span class="green">dodge</span>
-				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $spankobject but 
+			<<if $combatExtended.counterSuccess is 2>>
+				<span class="green">you spin and throw a kick to their side.</span>
+				<<defiance 5>><<control 4>><<ggcontrol>><<counterStat>>
+			<<elseif $combatExtended.dodgeSuccess is 2>>
+				<span class="green">you dodge.</span>
+				<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+			<<elseif $combatExtended.counterSuccess is 1>>
+				<span class="blue">you manage to kick them away.</span>
+				<<defiance 3>><<violence 5>><<bruise bottom>><<hitstat>><<partialCounterStat>><<combatExtendedStability -5>>
 			<<else>>
-				<span class="blue">partially dodge</span>
-				<<violence 3>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
-			<</if>>.
+				<span class="blue">you partially dodge.</span>
+				<<violence 3>><<bruise bottom>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+			<</if>>
 		<<else>>
-			<<He>> tries to spank your <<bottom>> but you 
-			<<if $combatExtended.dodgeSuccess is 2>>
-				<span class="green">dodge</span>
-				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<He>> tries to spank your <<bottom>> but 
+			<<if $combatExtended.counterSuccess is 2>>
+				<span class="green">you spin and throw a kick to their side.</span>
+				<<defiance 5>><<control 4>><<ggcontrol>><<counterStat>>
+			<<elseif $combatExtended.dodgeSuccess is 2>>
+				<span class="green">you dodge.</span>
+				<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+			<<elseif $combatExtended.counterSuccess is 1>>
+				<span class="blue">you manage to kick them away.</span>
+				<<defiance 3>><<violence 5>><<bruise bottom>><<hitstat>><<partialCounterStat>><<combatExtendedStability -5>>
 			<<else>>
-				<span class="blue">partially dodge</span>
-				<<violence 3>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
-			<</if>>.
+				<span class="blue">you partially dodge.</span>
+				<<violence 3>><<bruise bottom>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+			<</if>>
 		<</if>>
 	<<else>>
 		<<bruise bottom>><<hitstat>><<set $speechspank to 1>>
@@ -132,43 +150,68 @@
 <<widget "combat-dildospank">>
 	<<set $_hand to _args[0]>>
 	<<set $_toy to ($_hand is "left" ? $NPCList[_n].lefttool : $NPCList[_n].righttool)>>
-	<<combatExtendedDodgeCheck>>
-	<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+	<<combatExtendedCheck>>
+	<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
 		<<if npcHasSexToyOfType(_n,"dildo")>>
 			<<if $NPCList[_n].location.genitals is "head" or $mouthuse is "facesit" or $mouthuse is "penis">>
-				<<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<breasts>> with the $_toy in <<his>> $_hand hand but you 
+				/* <<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<breasts>> with the $_toy in <<his>> $_hand hand but  */
+				This should be impossible to trigger, please report if you get it.
 			<<else>>
-				<<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $_toy in <<his>> $_hand hand but you 
+				<<He>> tries to <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $_toy in <<his>> $_hand hand but 
+				<<if $combatExtended.counterSuccess is 2>>
+					<span class="green">you spin and throw a kick to their side.</span>
+					<<defiance 5>><<control 4>><<ggcontrol>><<counterStat>>
+				<<elseif $combatExtended.dodgeSuccess is 2>>
+					<span class="green">you dodge.</span>
+					<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+				<<elseif $combatExtended.counterSuccess is 1>>
+					<span class="blue">you manage to kick them away.</span>
+					<<defiance 3>><<violence 5>><<bruise bottom>><<hitstat>><<partialCounterStat>><<combatExtendedStability -5>>
+				<<else>>
+					<span class="blue">you partially dodge.</span>
+					<<violence 3>><<bruise bottom>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
+				<</if>>
 			<</if>>
-			<<if $combatExtended.dodgeSuccess is 2>>
-				<span class="green">dodge</span>
-				<<control 2>><<gcontrol>><<dodgeStat>>
-			<<else>>
-				<span class="blue">partially dodge</span>
-				<<violence 3>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -3>>
-			<</if>>.
 		<<elseif npcHasSexToyOfType(_n,"whip")>>
 			<<if $NPCList[_n].location.genitals is "head" or $mouthuse is "facesit" or $mouthuse is "penis">>
-				<<He>> tries to <<print either("brutally","viciously","deftly","sadistically","maliciously")>> <<print either("spank","whack","slap","smack","thwack")>> your <<breasts>> with the $_toy in <<his>> $_hand hand but you 
+				/* <<He>> tries to <<print either("brutally","viciously","deftly","sadistically","maliciously")>> <<print either("spank","whack","slap","smack","thwack")>> your <<breasts>> with the $_toy in <<his>> $_hand hand but  */
+				This should be impossible to trigger, please report if you get it.
 			<<else>>
-				<<He>> tries to <<print either("brutally","viciously","deftly","sadistically","maliciously")>> <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $_toy in <<his>> $_hand hand but you 
-			<</if>>
-			<<if $combatExtended.dodgeSuccess is 2>>
-				<span class="green">dodge</span>
-				<<control 2>><<gcontrol>><<dodgeStat>>
-			<<else>>
-				<span class="blue">partially dodge</span>
-				<<violence 10>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-			<</if>>.
+				<<He>> tries to <<print either("brutally","viciously","deftly","sadistically","maliciously")>> <<print either("spank","whack","slap","smack","thwack")>> your <<bottom>> with the $_toy in <<his>> $_hand hand but 
+				<<if $combatExtended.counterSuccess is 2>>
+					<span class="green">you rush into them and kick them in the genitals.</span>
+					<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+				<<elseif $combatExtended.dodgeSuccess is 2>>
+					<span class="green">you dodge.</span>
+					<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+				<<elseif $combatExtended.counterSuccess is 1>>
+					<span class="blue">you manage to painfully catch the whip in your hands and pull them into a haymaker.</span>
+					<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
+					<<if $leftaction is "leftcounter">>
+						<<bruise leftarm>>
+					<<else>>	
+						<<bruise rightarm>>
+					<</if>>
+				<<else>>
+					<span class="blue">you partially dodge.</span>
+					<<violence 10>><<bruise bottom>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
+				<</if>>
+			<</if>> 
 		<<else>>
 			<<He>> tries to spank your <<bottom>> but you 
-			<<if $combatExtended.dodgeSuccess is 2>>
-				<span class="green">dodge</span>
-				<<control 2>><<gcontrol>><<dodgeStat>>
+			<<if $combatExtended.counterSuccess is 2>>
+				<span class="green">you grab their hand and twist it.</span>
+				<<defiance 2>><<control 4>><<ggcontrol>><<counterStat>>
+			<<elseif $combatExtended.dodgeSuccess is 2>>
+				<span class="green">you dodge.</span>
+				<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+			<<elseif $combatExtended.counterSuccess is 1>>
+				<span class="blue">you spank back.</span>
+				<<defiance 1>><<violence 2>><<hitstat>><<partialCounterStat>><<combatExtendedStability -2>>
 			<<else>>
-				<span class="blue">partially dodge</span>
-				<<violence 1>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -1>>
-			<</if>>.
+				<span class="blue">you partially dodge.</span>
+				<<violence 1>><<bruise bottom>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -1>>
+			<</if>>
 		<</if>>
 	<<else>>
 		<<bruise bottom>><<hitstat>><<set $speechspank to 1>>
@@ -2441,80 +2484,110 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<else>>
 				<<rng>>
 				<<if $rng gte 81>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> tries to punch your nose but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> tries to punch your nose but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you duck under and deliver your own punch to their nose.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you punch their nose at the same time.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> punches your nose.
 						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
 						<<bodypart_admire_chance forehead>><<combatExtendedStability -20>>
 					<</if>>
 				<<elseif $rng gte 61>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> tries to punch the back of your neck but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> tries to punch the back of your neck but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you duck under and strike their own neck with an elbow.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you swing around and smack their neck too.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> punches the back of your neck.
 						<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
 						<<bodypart_admire_chance back>><<combatExtendedStability -20>>
 					<</if>>
 				<<elseif $rng gte 41>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> tries to punch your cheek but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> tries to punch your cheek but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you slip left and fire off a hook to their face.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you punch them at the same time.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> punches your cheek.
 						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
 						<<bodypart_admire_chance random_cheek>><<combatExtendedStability -20>>
 					<</if>>
 				<<elseif $rng gte 21>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
 						<<He>> tries to punch your jaw but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you slip right and fire off a hook to their face.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you punch them at the same time.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> punches your jaw.
 						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
 						<<bodypart_admire_chance breasts>><<combatExtendedStability -20>>
 					<</if>>
 				<<else>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> tries to jab the front of your neck but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> tries to jab the front of your neck but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you push the fist aside and throw your own jab onto their neck.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you manage to kick their genitals.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> jabs the front of your neck.
 						<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
@@ -2535,80 +2608,110 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<else>>
 				<<rng>>
 				<<if $rng gte 81>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> scratch the side of your face but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> scratch the side of your face but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you backstep and launch a fade away jab.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you manage to scratch their own.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> scratches the side of your face.
 						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
 						<<bodypart_admire_chance random_cheek>><<combatExtendedStability -20>>
 					<</if>>
 				<<elseif $rng gte 61>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> tries to scratch the back of your neck but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> tries to scratch the back of your neck but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you duck and throw a back kick.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you manage to spin and catch them with your elbow.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> scratches the back of your neck.
 						<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
 						<<bodypart_admire_chance back>><<combatExtendedStability -20>>
 					<</if>>
 				<<elseif $rng gte 41>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> tries to scratch your cheek but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> tries to scratch your cheek but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you backstep and launch a fade away jab.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you manage to scratch their own.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> scratches your cheek.
 						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
 						<<bodypart_admire_chance random_cheek>><<combatExtendedStability -20>>
 					<</if>>
 				<<elseif $rng gte 21>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> tries to scratch your jaw but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> tries to scratch your jaw but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you slap the hand away and slap them REALLY hard.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you manage to scratch back.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<bruise face>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> scratches your jaw.
 						<<violence 20>><<bruise face>><<hitstat>><<set $speechbeat to 1>>
 						<<bodypart_admire_chance random_shoulder>><<combatExtendedStability -20>>
 					<</if>>
 				<<else>>
-					<<combatExtendedDodgeCheck>>
-					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-						<<He>> tries to scratch the front of your neck but you 
-						<<if $combatExtended.dodgeSuccess is 2>>
-							<span class="green">dodge</span>
-							<<control 2>><<gcontrol>><<dodgeStat>>
+					<<combatExtendedCheck>>
+					<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+						<<He>> tries to scratch the front of your neck but 
+						<<if $combatExtended.counterSuccess is 2>>
+							<span class="green">you swat it away and throw a jab into their neck.</span>
+							<<defiance 20>><<control 4>><<ggcontrol>><<counterStat>>
+						<<elseif $combatExtended.dodgeSuccess is 2>>
+							<span class="green">you dodge.</span>
+							<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+						<<elseif $combatExtended.counterSuccess is 1>>
+							<span class="blue">you manage to scratch back.</span>
+							<<defiance 10>><<violence 20>><<hitstat>><<bruise neck>><<partialCounterStat>><<combatExtendedStability -20>>
 						<<else>>
-							<span class="blue">partially dodge</span>
+							<span class="blue">you partially dodge.</span>
 							<<violence 10>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -10>>
-						<</if>>.
+						<</if>>
 					<<else>>
 						<<He>> scratches the front of your neck.
 						<<violence 20>><<bruise neck>><<hitstat>><<set $speechbeat to 1>>
@@ -5871,16 +5974,22 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<<violence 10>><<hitstat>><<bruise thigh>>
 							<<bodypart_admire random_thigh>>
 						<<elseif $NPCList[_n].location.genitals isnot "head">>
-							<<combatExtendedDodgeCheck>>
-							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-								<<He>> tries to bite your shoulders but you 
-								<<if $combatExtended.dodgeSuccess is 2>>
-									<span class="green">dodge</span>
-									<<control 2>><<gcontrol>><<dodgeStat>>
+							<<combatExtendedCheck>>
+							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+								<<He>> tries to bite your shoulders but 
+								<<if $combatExtended.counterSuccess is 2>>
+									<span class="green">you backstep and throw a jab into their face.</span>
+									<<defiance 10>><<control 4>><<ggcontrol>><<counterStat>>
+								<<elseif $combatExtended.dodgeSuccess is 2>>
+									<span class="green">you dodge.</span>
+									<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+								<<elseif $combatExtended.counterSuccess is 1>>
+									<span class="blue">you manage to punch them away.</span>
+									<<defiance 5>><<violence 10>><<hitstat>><<bruise leftarm>><<bruise rightarm>><<partialCounterStat>><<combatExtendedStability -10>>
 								<<else>>
-									<span class="blue">partially dodge</span>
+									<span class="blue">you partially dodge.</span>
 									<<violence 5>><<bruise leftarm>><<bruise rightarm>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
-								<</if>>.
+								<</if>>
 							<<else>>
 								<<He>> bites your shoulders.
 								<<violence 10>><<hitstat>><<bruise leftarm>><<bruise rightarm>>
@@ -5888,16 +5997,22 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<</if>>
 						<</if>>
 					<<elseif $enemyanger + $rng lte 165 and $NPCList[_n].location.genitals isnot "genitals" and !(playerBellySize(true) gte 8)>>
-						<<combatExtendedDodgeCheck>>
-						<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-							<<He>> tries to bite your tummy but you 
-							<<if $combatExtended.dodgeSuccess is 2>>
-								<span class="green">dodge</span>
-								<<control 2>><<gcontrol>><<dodgeStat>>
+						<<combatExtendedCheck>>
+						<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+							<<He>> tries to bite your tummy but 
+							<<if $combatExtended.counterSuccess is 2>>
+								<span class="green">you grab their head and strike their face with your knee.</span>
+								<<defiance 10>><<control 4>><<ggcontrol>><<counterStat>>
+							<<elseif $combatExtended.dodgeSuccess is 2>>
+								<span class="green">you dodge.</span>
+								<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+							<<elseif $combatExtended.counterSuccess is 1>>
+								<span class="blue">you manage to punch them away.</span>
+								<<defiance 5>><<violence 10>><<hitstat>><<bruise tummy>><<partialCounterStat>><<combatExtendedStability -10>>
 							<<else>>
-								<span class="blue">partially dodge</span>
+								<span class="blue">you partially dodge.</span>
 								<<violence 5>><<bruise tummy>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
-							<</if>>.
+							<</if>>
 						<<else>>
 							<<He>> bites your tummy.
 							<<violence 10>><<hitstat>><<bruise tummy>>
@@ -5912,16 +6027,22 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 							<<neutral 10 _n>>
 						<<elseif $NPCList[_n].location.genitals isnot "head">>
-							<<combatExtendedDodgeCheck>>
-							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
+							<<combatExtendedCheck>>
+							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
 								<<He>> tries to bite your neck but you 
-								<<if $combatExtended.dodgeSuccess is 2>>
-									<span class="green">dodge</span>
-									<<control 2>><<gcontrol>><<dodgeStat>>
+								<<if $combatExtended.counterSuccess is 2>>
+									<span class="green">you backstep and deliver a hook.</span>
+									<<defiance 10>><<control 4>><<ggcontrol>><<counterStat>>
+								<<elseif $combatExtended.dodgeSuccess is 2>>
+									<span class="green">you dodge.</span>
+									<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+								<<elseif $combatExtended.counterSuccess is 1>>
+									<span class="blue">you manage to punch them away.</span>
+									<<defiance 5>><<violence 10>><<hitstat>><<bruise neck>><<partialCounterStat>><<combatExtendedStability -10>>
 								<<else>>
-									<span class="blue">partially dodge</span>
+									<span class="blue">you partially dodge.</span>
 									<<violence 5>><<bruise neck>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
-								<</if>>.
+								<</if>>
 							<<else>>
 								<<He>> bites your neck.
 								<<violence 10>><<hitstat>><<bruise neck>>
@@ -5937,16 +6058,22 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 							<<neutral 10 _n>>
 						<<elseif $NPCList[_n].location.genitals isnot "head">>
-							<<combatExtendedDodgeCheck>>
-							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-								<<He>> tries to bite your cheek but you 
-								<<if $combatExtended.dodgeSuccess is 2>>
-									<span class="green">dodge</span>
-									<<control 2>><<gcontrol>><<dodgeStat>>
+							<<combatExtendedCheck>>
+							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+								<<He>> tries to bite your cheek but 
+								<<if $combatExtended.counterSuccess is 2>>
+									<span class="green">you simply jab their face.</span>
+									<<defiance 10>><<control 4>><<ggcontrol>><<counterStat>>
+								<<elseif $combatExtended.dodgeSuccess is 2>>
+									<span class="green">you dodge.</span>
+									<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+								<<elseif $combatExtended.counterSuccess is 1>>
+									<span class="blue">you manage to punch them away.</span>
+									<<defiance 5>><<violence 10>><<hitstat>><<bruise face>><<partialCounterStat>><<combatExtendedStability -10>>
 								<<else>>
-									<span class="blue">partially dodge</span>
+									<span class="blue">you partially dodge.</span>
 									<<violence 5>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
-								<</if>>.
+								<</if>>
 							<<else>>
 								<<He>> bites your cheek.
 								<<violence 10>><<hitstat>><<bruise face>>
@@ -5959,16 +6086,22 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 							<<violence 10>><<hitstat>><<bruise bottom>>
 							<<bodypart_admire random_bottom>>
 						<<elseif $NPCList[_n].location.genitals isnot "head">>
-							<<combatExtendedDodgeCheck>>
-							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-								<<He>> tries to bite your <<breasts>> but you 
-								<<if $combatExtended.dodgeSuccess is 2>>
-									<span class="green">dodge</span>
-									<<control 2>><<gcontrol>><<dodgeStat>>
+							<<combatExtendedCheck>>
+							<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+								<<He>> tries to bite your <<breasts>> but 
+								<<if $combatExtended.counterSuccess is 2>>
+									<span class="green">you backstep and jab their face.</span>
+									<<defiance 10>><<control 4>><<ggcontrol>><<counterStat>>
+								<<elseif $combatExtended.dodgeSuccess is 2>>
+									<span class="green">you dodge.</span>
+									<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+								<<elseif $combatExtended.counterSuccess is 1>>
+									<span class="blue">you manage to punch them away.</span>
+									<<defiance 5>><<violence 10>><<hitstat>><<bruise chest>><<partialCounterStat>><<combatExtendedStability -10>>
 								<<else>>
-									<span class="blue">partially dodge</span>
+									<span class="blue">you partially dodge.</span>
 									<<violence 5>><<bruise chest>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
-								<</if>>.
+								<</if>>
 							<<else>>
 								<<He>> bites your <<breasts>>.
 								<<violence 10>><<hitstat>><<bruise chest>><<playWithBreasts>>
@@ -6576,19 +6709,25 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<He>> kicks you in the <<bottom>>.
 			<<violence 10>><<hitstat>><<bruise bottom>>
 		<<else>>
-			<<combatExtendedDodgeCheck>>
-			<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-				<<He>> tries to kick you in the stomach but you 
-				<<if $combatExtended.dodgeSuccess is 2>>
-					<span class="green">dodge</span>
-					<<control 2>><<gcontrol>><<dodgeStat>>
+			<<combatExtendedCheck>>
+			<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+				<<He>> tries to kick you in the stomach but 
+				<<if $combatExtended.counterSuccess is 2>>
+					<span class="green">you sidestep and gut punch them.</span>
+					<<defiance 10>><<control 4>><<ggcontrol>><<counterStat>>
+				<<elseif $combatExtended.dodgeSuccess is 2>>
+					<span class="green">you dodge.</span>
+					<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+				<<elseif $combatExtended.counterSuccess is 1>>
+					<span class="blue">you catch the leg and punch it.</span>
+					<<defiance 5>><<violence 10>><<hitstat>><<bruise tummy>><<partialCounterStat>><<combatExtendedStability -10>>
 				<<else>>
-					<span class="blue">partially dodge</span>
-					<<violence 5>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
-				<</if>>.
+					<span class="blue">you partially dodge.</span>
+					<<violence 5>><<bruise tummy>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
+				<</if>>
 			<<else>>
 				<<He>> kicks you in the stomach.
-				<<violence 10>><<hitstat>><<bruise face>><<combatExtendedStability -10>>
+				<<violence 10>><<hitstat>><<bruise tummy>><<combatExtendedStability -10>>
 			<</if>>
 		<</if>>
 	<<elseif $enemyanger + $rng lte 200 and $mouthuse is 0>>
@@ -6640,16 +6779,22 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 				<<violence 20>><<hitstat>><<bruise vagina>><<set $speechbeat to 1>>
 			<</if>>
 		<<else>>
-			<<combatExtendedDodgeCheck>>
-			<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1) and $combatExtended.dodgeSuccess gte 1>>
-				<<He>> tries to kick you in the face but you 
-				<<if $combatExtended.dodgeSuccess is 2>>
-					<span class="green">dodge</span>
-					<<control 2>><<gcontrol>><<dodgeStat>>
+			<<combatExtendedCheck>>
+			<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1)>>
+				<<He>> tries to kick you in the face but 
+				<<if $combatExtended.counterSuccess is 2>>
+					<span class="green">you duck and deliver a spinning high kick.</span>
+					<<defiance 10>><<control 4>><<ggcontrol>><<counterStat>>
+				<<elseif $combatExtended.dodgeSuccess is 2>>
+					<span class="green">you dodge.</span>
+					<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+				<<elseif $combatExtended.counterSuccess is 1>>
+					<span class="blue">you still get kicked but use the momentum for your own spinning high kick.</span>
+					<<defiance 5>><<violence 10>><<hitstat>><<bruise face>><<partialCounterStat>><<combatExtendedStability -10>>
 				<<else>>
-					<span class="blue">partially dodge</span>
+					<span class="blue">you partially dodge.</span>
 					<<violence 5>><<bruise face>><<hitstat>><<partialDodgeStat>><<combatExtendedStability -5>>
-				<</if>>.
+				<</if>>
 			<<else>>
 				<<He>> kicks you in the face.
 				<<violence 10>><<bruise face>><<set $speechbeat to 1>><<hitstat>><<combatExtendedStability -10>>
