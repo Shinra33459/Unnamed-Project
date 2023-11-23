@@ -325,6 +325,11 @@
 		<<set _painMod = _args[3] || 1>>
 		<!-- args[4] - indicates NPC id (but is currently unused) -->
 
+		<<if $combatExtended.blockActive gte 1>>
+			<<set _violence to Math.round(_violence - (_violence * ((0.4 * (1 * ($physique / 16000))) * $combatExtended.blockActive)))>>
+			<<set $combatExtended.blockActive to 0>>
+		<</if>>
+
 		<<if _violence gt 0 or _violence lt 0>>
 			<<if $drunk gt 0>>
 				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
@@ -461,7 +466,7 @@
 		<<if $enemyno gte 2>>
 			<<npcdamage _args[1]>>
 		<</if>>
-		<<set $enemyhealth -= _thedamage>>
+		<<set $enemyhealth -= Math.round(_thedamage)>>
 	<</if>>
 <</widget>>
 

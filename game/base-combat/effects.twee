@@ -655,6 +655,160 @@
 			<</if>>
 		<</if>>
 
+		<<if $leftaction is "leftblock" and $rightaction is "rightblock" and $lefttarget is $righttarget>>
+			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftblock">><<set $rightactiondefault to "rightblock">><<actionsguard both>><<set $combatExtended.blockingActive to 2>>
+		<</if>>
+
+		<<if $leftaction is "leftblock">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "leftblock">>
+			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
+					You try to defend yourself 
+					with your left hand, <span class="red">but the slime immobilises your limb.</span>
+					<<gwillpower>><<willpower 1>>
+				<<else>>
+					The slime tries to immobilise your left arm, <span class="green">but you wrestle control away from it.</span>
+					<<actionsguard $lefttarget>><<set $combatExtended.blockingActive to 1>>
+				<</if>>
+			<<else>>
+				<<actionsguard $lefttarget>><<set $combatExtended.blockingActive to 1>>
+			<</if>>
+		<</if>>
+
+		<<if $rightaction is "rightblock">>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rightblock">><<personselect $righttarget>>
+			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
+					You try to defend yourself 
+					with your right hand, <span class="red">but the slime immobilises your limb.</span>
+					<<gwillpower>><<willpower 1>>
+				<<else>>
+					The slime tries to immobilise your right arm, <span class="green">but you wrestle control away from it.</span>
+					<<actionsguard $righttarget>><<set $combatExtended.blockingActive to 1>>
+				<</if>>
+			<<else>>
+				<<actionsguard $righttarget>><<set $combatExtended.blockingActive to 1>>
+			<</if>>
+		<</if>>
+
+		<<if $leftaction is "leftcounter" and $rightaction is "rightcounter" and $lefttarget is $righttarget>>
+			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcounter">><<set $rightactiondefault to "rightcounter">><<actionsguard both>><<set $combatExtended.counteringActive to 2>>
+		<</if>>
+
+		<<if $leftaction is "leftcounter">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "leftcounter">>
+			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
+					You try to defend yourself 
+					with your left hand, <span class="red">but the slime immobilises your limb.</span>
+					<<gwillpower>><<willpower 1>>
+				<<else>>
+					The slime tries to immobilise your left arm, <span class="green">but you wrestle control away from it.</span>
+					<<actionsguard $lefttarget>><<set $combatExtended.counteringActive to 1>>
+				<</if>>
+			<<else>>
+				<<actionsguard $lefttarget>><<set $combatExtended.counteringActive to 1>>
+			<</if>>
+		<</if>>
+
+		<<if $rightaction is "rightcounter">>
+			<<set $rightaction to 0>><<set $rightactiondefault to "rightcounter">><<personselect $righttarget>>
+			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
+					You try to defend yourself 
+					with your right hand, <span class="red">but the slime immobilises your limb.</span>
+					<<gwillpower>><<willpower 1>>
+				<<else>>
+					The slime tries to immobilise your right arm, <span class="green">but you wrestle control away from it.</span>
+					<<actionsguard $righttarget>><<set $combatExtended.counteringActive to 1>>
+				<</if>>
+			<<else>>
+				<<actionsguard $righttarget>><<set $combatExtended.counteringActive to 1>>
+			<</if>>
+		<</if>>
+
+		<<if $leftaction is "leftfeint" and $rightaction is "rightfeint" and $lefttarget is $righttarget>>
+			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftfeint">><<set $rightactiondefault to "rightfeint">>
+			<<set $combatExtended.feintingActive to 2>><<combatExtendedEnemyDodgeCheck $lefttarget>><<actionshit both>>
+			<<if $combatExtended.enemyDodgeSuccess gte 1>>
+				<<if $combatExtended.enemyDodgeSuccess is 2>>
+					/* Attack dodged */
+				<<else>>
+					<<defiance 1 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+				<</if>>
+			<<else>>
+				<<defiance 2 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 2>>
+			<</if>>
+		<</if>>
+
+		<<if $leftaction is "leftfeint">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "leftfeint">><<set $combatExtended.feintingActive to 1>><<combatExtendedEnemyDodgeCheck $lefttarget>>
+			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
+					You try to launch a feint at the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $lefttarget>><<person>><</if>>
+					with your left hand, <span class="red">but the slime immobilises your limb.</span>
+					<<gwillpower>><<willpower 1>>
+				<<else>>
+					The slime tries to immobilise your left arm, <span class="green">but you wrestle control away from it.</span>
+					<<actionsfeint $lefttarget>>
+					<<if $combatExtended.enemyDodgeSuccess gte 1>>
+						<<if $combatExtended.enemyDodgeSuccess is 2>>
+							/* Attack dodged */
+						<<else>>
+							<<defiance 0.5 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+						<</if>>
+					<<else>>
+						<<defiance 1 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<</if>>
+				<</if>>
+			<<else>>
+				<<actionsfeint $lefttarget>>
+				<<if $combatExtended.enemyDodgeSuccess gte 1>>
+					<<if $combatExtended.enemyDodgeSuccess is 2>>
+						/* Attack dodged */
+					<<else>>
+						<<defiance 0.5 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<</if>>
+				<<else>>
+					<<defiance 1 $lefttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
+				<</if>>
+			<</if>>
+		<</if>>
+
+		<<if $rightaction is "rightfeint">>
+			<<set $rightaction to 0>><<set $leftactiondefault to "rightfeint">><<set $combatExtended.feintingActive to 1>><<combatExtendedEnemyDodgeCheck $rightaction>>
+			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
+					You try to launch a feint a the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $rightaction>><<person>><</if>>
+					with your right hand, <span class="red">but the slime immobilises your limb.</span>
+					<<gwillpower>><<willpower 1>>
+				<<else>>
+					The slime tries to immobilise your right arm, <span class="green">but you wrestle control away from it.</span>
+					<<actionsfeint $rightaction>>
+					<<if $combatExtended.enemyDodgeSuccess gte 1>>
+						<<if $combatExtended.enemyDodgeSuccess is 2>>
+							/* Attack dodged */
+						<<else>>
+							<<defiance 0.5 $rightaction>><<set $speechhit to 1>><<set $attackstat += 1>>
+						<</if>>
+					<<else>>
+						<<defiance 1 $rightaction>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<</if>>
+				<</if>>
+			<<else>>
+				<<actionsfeint $rightaction>>
+				<<if $combatExtended.enemyDodgeSuccess gte 1>>
+					<<if $combatExtended.enemyDodgeSuccess is 2>>
+						/* Attack dodged */
+					<<else>>
+						<<defiance 0.5 $rightaction>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<</if>>
+				<<else>>
+					<<defiance 1 $rightaction>><<set $speechhit to 1>><<set $attackstat += 1>>
+				<</if>>
+			<</if>>
+		<</if>>
+
 		<<if $leftaction is "leftcamerapose" and $rightaction is "rightcamerapose">>
 			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcamerapose">><<set $rightactiondefault to "rightcamerapose">>
 			<<neutral 4>>

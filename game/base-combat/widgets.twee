@@ -713,7 +713,16 @@
 <<widget "combatExtendedEnemyDodgeCheck">>
 	<<set _dodgeChance to $NPCList[_args[0]].dodgeChance>>
 	<<set _passiveEnemyDodgeChance to 0>>
-	<<set _activeEnemyDodgeChance to 0>>
+	<<if $combatExtended.feinting is 1>>
+		<<if $combatExtended.feintingActive gte 1>>
+			<<if $combatExtended.feintingActive is 2>>
+				<<set _dodgeChance -= Math.round(($skulduggery / 100) * 3)>>
+			<<else>>
+				<<set _dodgeChance -= Math.round(($skulduggery / 100))>>
+			<</if>>
+			<<set $combatExtended.feintingActive to 0>>
+		<</if>>
+	<</if>>
 	<<if $combatExtended.enemyPassiveDodging is 1>>
 		<<if _dodgeChance gte random(100)>>
 			<<set _passiveEnemyDodgeChance to 2>>
@@ -723,19 +732,7 @@
 			<<set _passiveEnemyDodgeChance to 0>>
 		<</if>>
 	<</if>>
-	/* <<if $combatExtended.activeDodgingActive is 1>>
-		<<set _dodgeChance = Math.round(_danceskill / 20)>>
-		<<if _dodgeChance gte random(100)>>
-			<<set _activeDodgeChance to 2>>
-		<<elseif _dodgeChance gte random(80)>>
-			<<set _activeDodgeChance to 1>>
-		<</if>>
-	<</if>> */
-	/* <<if _passiveDodgeChance gt _activeDodgeChance>> */
-		<<set $combatExtended.enemyDodgeSuccess to _passiveEnemyDodgeChance>>
-	/* <<else>>
-		<<set $combatExtended.dodgeSuccess to _activeDodgeChance>>
-	<</if>> */
+	<<set $combatExtended.enemyDodgeSuccess to _passiveEnemyDodgeChance>>
 <</widget>>
 
 <<widget "healthMultiplier">>
