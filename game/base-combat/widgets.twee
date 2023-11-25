@@ -651,11 +651,16 @@
 
 <<widget "combatExtendedCheck">>
 	<<set _dodgeChance to 0>>
-	<<set _passiveDodgeChance to 0>>
-	<<set _activeDodgeChance to 0>>
+	<<set _passiveDodgeSuccess to 0>>
+	<<set _activeDodgeSuccess to 0>>
 	<<set _counterChance to 0>>
+	<<set _check1 to 100>>
 	<<set $combatExtended.counterSuccess to 0>>
 	<<set $combatExtended.dodgeSuccess to 0>>
+	<<if $combatExtended.enemyFeinting is 1 and random(100) gte 33>>
+		<<set _check1 += 50>>
+	<</if>>
+	<<set _check2 to _check1 * 0.8>>
 	<<set _dancedodge to Math.round(currentSkillValue('danceskill') / 40)>>
 	<<if $bodysize is 3>>
 		<<set _bodyDodgeChance to -20>>
@@ -679,12 +684,12 @@
 		<<if $combatExtended.stabilityLost is 1>>
 			<<set _dodgeChance = Math.round(_dodgeChance / 2)>>
 		<</if>>
-		<<if _dodgeChance gte random(100)>>
-			<<set _passiveDodgeChance to 2>>
-		<<elseif _dodgeChance gte random(80)>>
-			<<set _passiveDodgeChance to 1>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _passiveDodgeSuccess to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _passiveDodgeSuccess to 1>>
 		<<else>>
-			<<set _passiveDodgeChance to 0>>
+			<<set _passiveDodgeSuccess to 0>>
 		<</if>>
 	<</if>>
 	<<if $combatExtended.activeDodgingActive is 1>>
@@ -692,32 +697,31 @@
 		<<if $combatExtended.uncappedDodgeChance is 0>>
 			<<set _dodgeChance to Math.clamp(_dodgeChance, 0, $combatExtended.dodgeChanceCap)>>
 		<</if>>
-		<<if _dodgeChance gte random(100)>>
-			<<set _activeDodgeChance to 2>>
-		<<elseif _dodgeChance gte random(80)>>
-			<<set _activeDodgeChance to 1>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _activeDodgeSuccess to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _activeDodgeSuccess to 1>>
 		<<else>>
-			<<set _activeDodgeChance to 0>>
+			<<set _activeDodgeSuccess to 0>>
 		<</if>>
 	<</if>>
 	<<if $combatExtended.countering is 1>>
-		<<set _counterChance to 0>>
 		<<if $combatExtended.counteringActive gte 1>>
-			<<set _counterChance to 100 * ((0.35 * (1 * ($skulduggery / 1000))) * $combatExtended.counteringActive)>>
-			<<if _counterChance gte random(100)>>
-				<<set _counterChance to 2>>
-			<<elseif _counterChance gte random(80)>>
-				<<set _counterChance to 1>>
+			<<set _counterChance to 100 * ((0.25 * (1 * ($skulduggery / 1000))) * $combatExtended.counteringActive)>>
+			<<if _counterChance gte random(_check1)>>
+				<<set _counterSuccess to 2>>
+			<<elseif _counterChance gte random(_check2)>>
+				<<set _counterSuccess to 1>>
 			<<else>>
-				<<set _counterChance to 0>>
+				<<set _counterSuccess to 0>>
 			<</if>>
 		<</if>>
 	<</if>>
-	<<set $combatExtended.counterSuccess to _counterChance>>
-	<<if _passiveDodgeChance gt _activeDodgeChance>>
-		<<set $combatExtended.dodgeSuccess to _passiveDodgeChance>>
+	<<set $combatExtended.counterSuccess to _counterSuccess>>
+	<<if _passiveDodgeSuccess gt _activeDodgeSuccess>>
+		<<set $combatExtended.dodgeSuccess to _passiveDodgeSuccess>>
 	<<else>>
-		<<set $combatExtended.dodgeSuccess to _activeDodgeChance>>
+		<<set $combatExtended.dodgeSuccess to _activeDodgeSuccess>>
 	<</if>>
 <</widget>>
 
@@ -727,15 +731,46 @@
 	<</if>>
 <</widget>>
 
-<<widget "combatExtendedEnemyDodgeCheck">>
+<<widget "combatExtendedEnemyCheck">>
 	<<set _dodgeChance to $NPCList[_args[0]].dodgeChance>>
-	<<set _passiveEnemyDodgeChance to 0>>
+	<<set _passiveEnemyDodge to 0>>
+	<<set _activeEnemyDodge to 0>>
+	<<set _check1 to 100>>
+	<<set _events to 0>>
+	<<cleareventpool>>
+	<<if $combatExtended.enemyActiveDodging is 1>>
+		<<addinlineevent "enemy_dodging" 1>>
+			<<set _dodgeChance to _dodgeChance * 2>>
+		<</addinlineevent>>
+		<<set _events += 1>>
+	<</if>>
+	<<if $combatExtended.enemyBlocking is 1>>
+		<<addinlineevent "enemy_blocking" 1>>
+			<<set $combatExtended.enemyBlockingActive to 1>>
+		<</addinlineevent>>
+		<<set _events += 1>>
+	<</if>>
+	<<if $combatExtended.enemyCountering is 1>>
+		<<addinlineevent "enemy_countering" 1>>
+			<<set $combatExtended.enemyCounteringActive to 1>>
+		<</addinlineevent>>
+		<<set _events += 1>>
+	<</if>>
+	<<addinlineevent "enemy_none" _events>>
+		/* Nothing */
+	<</addinlineevent>>
+	<<runeventpool>>
+	<<set _check2 to _check1 * 0.8>>
 	<<if $combatExtended.feinting is 1>>
 		<<if $combatExtended.feintingActive gte 1>>
+			<<set _dodgeChanceReduction to Math.round($skulduggery / 100)>>
+			<<if $combatExtended.stabilityLost is 1>>
+				<<set _dodgeChanceReduction to _dodgeChanceReduction / 4>>
+			<</if>>
 			<<if $combatExtended.feintingActive is 2>>
-				<<set _dodgeChance -= Math.round(($skulduggery / 100) * 3)>>
+				<<set _dodgeChance -= _dodgeChanceReduction * 3>>
 			<<else>>
-				<<set _dodgeChance -= Math.round(($skulduggery / 100))>>
+				<<set _dodgeChance -= _dodgeChanceReduction>>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -749,15 +784,40 @@
 		<</if>>
 	<</if>>
 	<<if $combatExtended.enemyPassiveDodging is 1>>
-		<<if _dodgeChance gte random(100)>>
-			<<set _passiveEnemyDodgeChance to 2>>
-		<<elseif _dodgeChance gte random(80)>>
-			<<set _passiveEnemyDodgeChance to 1>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _passiveEnemyDodge to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _passiveEnemyDodge to 1>>
 		<<else>>
-			<<set _passiveEnemyDodgeChance to 0>>
+			<<set _passiveEnemyDodge to 0>>
 		<</if>>
 	<</if>>
-	<<set $combatExtended.enemyDodgeSuccess to _passiveEnemyDodgeChance>>
+	<<if $combatExtended.enemyActiveDodgingActive is 1>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _activeEnemyDodge to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _activeEnemyDodge to 1>>
+		<<else>>
+			<<set _activeEnemyDodge to 0>>
+		<</if>>
+	<</if>>
+	<<if $combatExtended.enemyCounteringActive is 1>>
+		<<set _check1 += 50>>
+		<<set _check2 to _check1 * 0.8>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _enemyCounter to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _enemyCounter to 1>>
+		<<else>>
+			<<set _enemyCounter to 0>>
+		<</if>>
+	<</if>>
+	<<set $combatExtended.enemyCounterSuccess to _enemyCounter>>
+	<<if _activeEnemyDodge gt _activeEnemyDodge>>
+		<<set $combatExtended.enemyDodgeSuccess to _passiveEnemyDodge>>
+	<<else>>
+		<<set $combatExtended.enemyDodgeSuccess to _activeEnemyDodge>>
+	<</if>>
 <</widget>>
 
 <<widget "healthMultiplier">>
