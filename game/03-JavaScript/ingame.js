@@ -94,7 +94,7 @@ const combatActionColours = {
 		],
 		def: [
 			/* leftaction or rightaction */
-			"spray", "lefthit", "righthit", "leftstruggle", "rightstruggle", "stopchokenoncon", "pursuit_grab", "leftumbrella", "rightumbrella", "leftcounter", "rightcounter", "leftfeint", "rightfeint",
+			"spray", "lefthit", "righthit", "leftstruggle", "rightstruggle", "stopchokenoncon", "pursuit_grab", "leftumbrella", "rightumbrella", "leftcounter", "rightcounter", "leftfeint", "rightfeint", "lefthookpunch", "righthookpunch",
 			/* feetaction */
 			"kick",
 			/* mouthaction */
