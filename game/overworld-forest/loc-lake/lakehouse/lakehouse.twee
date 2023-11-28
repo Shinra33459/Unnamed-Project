@@ -1,0 +1,1889 @@
+:: Lake House Outdoor
+<<set $outside to 1>><<set $location to "lakehouse">><<effects>>
+/* <<run Furniture.in($location)>> */
+<<lakehouseinit>>
+<<if $lakehouse.build isnot undefined and $lakehouse.build isnot 0>>
+	<<switch $lakehouse.build>>
+	<<case "wall 1">>
+		<span class="lblue">A foundation is being placed.</span>
+	<<case "wall 2">>
+		<span class="lblue">A modern fence is being built around the lake house.</span>
+	<<case "wall 3">>
+		<span class="lblue">Barbed wire is being affixed atop the fence.</span>
+	<<case "tower 1">>
+		<span class="lblue">A tower is being built by the forest.</span>
+	<<case "tower 2">>
+		<span class="lblue">Searchlights are being affixed atop the watchtower.</span>
+	<<case "guard post">>
+		<span class="lblue">A guard post is being built.</span>
+	<<case "dog training">>
+		<span class="lblue">Training facilities is being built.</span>
+	<<case "traps 1">>
+		<span class="lblue">Traps are being set up around your property.</span>
+	<<case "traps 2">>
+		<span class="lblue">More traps are being set up around your property.</span>
+	<</switch>>
+	<<if Time.hour gte 6>>
+		<span class="blue">Workers traipse across the lakehouse.</span>
+	<</if>>
+	<br><br>
+<</if>>
+<<if $lakehouse.billsphase gte 4>>
+	There's a <span class="red">Repossessed</span> notice on your door.
+	<br><br>
+<<elseif $lakehouse.billsphase gte 2>>
+	There's a <span class="red">Bills Overdue</span> notice on your door.
+	<br><br>
+<</if>>
+
+<<if $stress gte $stressmax and !$possessed>>
+	<<if $lakehouse.wall gte 2>>
+		<<set $previousPassage to $passage>>
+		<<passoutlakehouse>>
+	<<else>>
+		<<passoutlake>>
+	<</if>>
+<<else>>
+	You are at the lake house. 
+	<<if Time.dayState is "night">>
+		<<if $weather is "rain">>
+			Rainwater drips down the roof.
+		<<elseif $weather is "overcast">>
+			You can see little in the darkness.
+		<<elseif $weather is "snow">>
+			Snow covers the path.
+		<<else>>
+			Stars glimmer over the lake.
+		<</if>>
+	<<elseif Time.dayState is "dawn">>
+		<<if $weather is "rain">>
+			Rain sweeps over the lake.
+		<<elseif $weather is "overcast">>
+			A dense fog devours the lake.
+		<<elseif $weather is "snow">>
+			Snow blankets the lake.
+		<<else>>
+			The lake greet the morning sun on the horizon.
+		<</if>>
+	<<elseif Time.dayState is "dusk">>
+		<<if $weather is "rain">>
+			Rain blows in from the ocean beneath an ever-darkening sky.
+		<<elseif $weather is "overcast">>
+			It's already getting hard to see the lake.
+		<<elseif $weather is "snow">>
+			Snow blows over the lake.
+		<<else>>
+			The sun sets over the lake.
+		<</if>>
+	<<else>>
+		<<if $weather is "rain">>
+			Rainwater feeds the lake.
+		<<elseif $weather is "overcast">>
+			Grey skies stretch in all directions.
+		<<elseif $weather is "snow">>
+			Snow covers the lake.
+		<<else>>
+			The sun beams over fertile lake.
+		<</if>>
+	<</if>>
+	<br><br>
+
+	<<if $lakehouse.billsphase lt 4>>
+		<<domusicon>><<link [[Go into the house (0:01)|Lake House]]>><<set $phase to 1>><<pass 1>><</link>>
+		<br>
+	<<else>>
+		/* <<domusicon>><<link [[Go into the house (0:01)|Lake House]]>><<set $phase to 1>><<pass 1>><</link>>
+		<br> */
+	<</if>>
+	<<getouticon>><<link [[Leave|Lake Shore]]>><</link>>
+	<br>
+<</if>>
+
+:: Lake House
+<<set $outside to 0>><<set $location to "lakehouse">><<effects>>
+<<lakehouseinit>>
+<<if ($lakehouse_countdown lte 0 or $lakehouse_countdown is undefined) and ($renttime lte -2 or ($renttime lte 0 and Time.hour gte 4 and Time.hour lte 21))>>
+	<<unset $lakehouse_countdown>><<unset $baileyReunionScene>>
+	<span class="red">You hear a knock at the door.</span>
+	<br><br>
+
+	<<link [[Answer the door|Lake House Bailey]]>><</link>>
+	<br>
+/* <<elseif $lakehouse_attack_timer lte 0 and Time.hour gte 21>> */
+
+<<elseif $lakehouse_bills>>
+	<spawn class="red">You hear a knock at the door.</span>
+	<br><br>
+	
+	<<link [[Answer the door|Lake House Bills]]>><</link>>
+	<br>
+<<elseif $stress gte $stressmax and !$possessed>>
+	<<set $previousPassage to $passage>>
+	<<passoutlakehouse>>
+<<else>>
+	<<set _tv to Furniture.get('tv')>>
+	<<set _gameconsole to Furniture.get('gameconsole')>>
+
+	You enter the living room. 
+	<<if _tv>>
+		You see your TV sitting on the table in the living room
+		<<if _gameconsole>>
+			beside your game console
+		<</if>>
+		. 
+	<</if>>
+	<<if $lakehouse.petBed isnot undefined>>
+		<<if $lakehouse.petBed is 1>>
+			In the corner rests an soft looking pet bed
+			<<if $lakehouse.pet1 isnot undefined>>
+				<<if $lakehouse.pet1.type is "cat">>
+					, your cat lies asleep on it
+				<<elseif $lakehouse.pet1.type is "dog">>
+					, your dog lies asleep on it
+				<</if>>
+			<</if>>
+			. 
+		<<elseif $lakehouse.petBed is 2>>
+			In the corner lie two soft looking pet beds
+			<<if $lakehouse.pet1 isnot undefined>>
+				<<if $lakehouse.pet2 isnot undefined>>
+					<<if $lakehouse.pet1.type is "cat" and $lakehouse.pet2.type is "cat">>
+						, your cats lie asleep in them
+					<<elseif $lakehouse.pet1.type is "dog" and $lakehouse.pet2.type is "dog">>
+						, your dogs lie asleep in them
+					<<elseif ($lakehouse.pet1.type is "cat" and $lakehouse.pet2.type is "dog") or ($lakehouse.pet1.type is "dog" and $lakehouse.pet2.type is "cat")>>
+						, your cat and dog lie asleep in them
+					<</if>>
+				<<else>>
+					<<if $lakehouse.pet1.type is "cat">>
+						, your cat lies alseep in one
+					<<elseif $lakehouse.pet1.type is "dog">>
+						, your dog lies asleep in one
+					<</if>>
+				<</if>>
+			<</if>>
+			. 
+		<</if>>
+	<</if>>
+	<br><br>
+
+	<<bedroomicon>><<link [[Go to bedroom|Lake House Bedroom]]>><</link>>
+	<br>
+	<<bathroomicon>><<link [[Go to bathroom|Lake House Bathroom]]>><</link>>
+	<br>
+	<<gardenicon>><<link [[Go to backyard|Lake House Backyard]]>><</link>>
+	<br>
+	<<if _tv>>
+		<<if $lakehouse.billsphase gte 3>>
+		You can't use your TV without power.
+		<br>
+		<<else>>
+			<<link [[Watch TV|Lake House TV]]>><</link>>
+			<br>
+		<</if>>
+	<</if>>
+	<<if _tv and _gameconsole>>
+		<<if $lakehouse.billsphase gte 3>>
+			You can't use your console without power.
+			<br>
+		<<else>>
+			<<link [[Play console(0:30)|Lake House Console]]>><<trauma -3>><<set $handskill += 1>><</link>><<ghandskill>>
+			<br>
+		<</if>>
+	<</if>>
+	<<if $lakehouse.pet1.type is "cat" and $lakehouse.pet2.type is "cat">>
+		<<link [[Snuggle cat(0:30)|Lake House Snuggle Cats]]>><<pass 30>><<stress -25>><<trauma -25>><</link>><<lllstress>><<llltrauma>>
+		<br>
+	<<elseif $lakehouse.pet1.type is "cat" or $lakehouse.pet2.type is "cat">>
+		<<link [[Snuggle cat(0:30)|Lake House Snuggle Cat]]>><<pass 30>><<stress -10>><<trauma -10>><</link>><<llstress>><<lltrauma>>
+		<br>
+	<</if>>
+	<<if $lakehouse.pet1.type is "dog" and $lakehouse.pet2.type is "dog">>
+		<<link [[Play fetch with Dogs(1:00)|Lake House Fetch Dogs]]>><<pass 60>><<stress -25>><<trauma -25>><<physique 3>><<tiredness 3>><</link>><<lllstress>><<llltrauma>><<gphysique>><<gtiredness>>
+		<br>
+	<<elseif $lakehouse.pet1.type is "dog" or $lakehouse.pet2.type is "dog">>
+		<<link [[Play fetch with Dog(1:00)|Lake House Fetch Dog]]>><<pass 60>><<stress -10>><<trauma -10>><<physique 3>><<tiredness 3>><</link>><<llstress>><<lltrauma>><<gphysique>><<gtiredness>>
+		<br>
+	<</if>>
+	<<if ($lakehouse.pet1.type is "cat" or $lakehouse.pet2.type is "cat") and $deviancy gte 15>>
+		<<link [[Fuck cat|Lake House Fuck Cats]]>><<pass 30>><</link>><<deviant2>>
+		<br>
+	<</if>>
+	<<if ($lakehouse.pet1.type is "cat" and $lakehouse.pet2.type is "cat") and $deviancy gte 35>>
+		<<link [[Fuck cats|Lake House Fuck Cats]]>><<pass 60>><</link>><<deviant3>>
+		<br>
+	<</if>>
+	<<if ($lakehouse.pet1.type is "dog" or $lakehouse.pet2.type is "dog") and $deviancy gte 15>>
+		<<link [[Fuck dog|Lake House Fuck Dog]]>><<pass 30>><</link>><<deviant2>>
+		<br>
+	<</if>>
+	<<if ($lakehouse.pet1.type is "dog" and $lakehouse.pet2.type is "dog") and $deviancy gte 35>>
+		<<link [[Fuck dogs|Lake House Fuck Dogs]]>><<pass 60>><</link>><<deviant3>>
+		<br>
+	<</if>>
+	/* <<link [[Robin options|Lake House Robin Options]]>><</link>>
+	<br> */
+	<<link [[Go to basement|Lake House Basement]]>><</link>>
+	<br>
+	<<getouticon>><<link [[Leave|Lake House Outdoor]]>><</link>>
+	<br>
+<</if>>
+
+:: Lake House Bedroom
+<<lakehouseinit>>
+<<bedclotheson "Lake House Bed">>
+<<set $outside to 0>><<set $location to "lakehouse">><<effects>>
+	<<if $lakehouse.barrier is undefined>>
+		<<getTarget true>>
+	<</if>>
+<<if $stress gte $stressmax and !$possessed>>
+	<<set $previousPassage to $passage>>
+	<<passoutlakehouse>>
+<<else>>
+	You are in your bedroom.
+
+	<<set _furniture to $furniture.bedroom>>
+	<<if _furniture.wallpaper>>
+		<<switch _furniture.wallpaper.name>>
+			<<case "vines">>
+				Lewd green vines writhe on the walls.
+				<<if $backgroundTraits.includes("plantlover")>>
+					Thoughts of sweet nectar wrack your mind.
+				<</if>>
+			<<case "tentacles">>
+				Purple tentacles slither on the walls.
+				<<if $demon gte 6>>
+					Thoughts of pleasure cross your mind.
+				<</if>>
+			<<case "plainwhite">>
+				Plain white wallpapers cover the walls.
+			<<case "wavywhite">>
+				The white wallpapers gradient to black in a wavy pattern. Is there a lewd subtext?
+			<<case "hearts">>
+				Pink hearts cover the walls.
+			<<case "cowgirls">>
+				Cowgirls dance on the walls.
+			<<case "trees">>
+				Green trees bring you a feeling of being in a forest.
+			<<case "crosses">>
+				Golden crosses cover the walls.
+			<<default>> /* Custom */
+				Images of _furniture.wallpaper.name cover the walls.
+				<<if ['dol', 'degrees of lewdity'].some(e => _furniture.wallpaper.name === e)>>
+					Somehow, they look familiar.
+				<<elseif _furniture.wallpaper.name.startsWith('&lt;&lt')>>
+					<span class="black">You feel like you got caught cheating.</span>
+				<</if>>
+		<</switch>>
+	<<else>>
+		Bleak walls protect you from the outside.
+	<</if>>
+
+	<<if $furnitureLocation is "lake house">>
+		<<set _deco to Furniture.get('decoration')>>
+		<<set _owlplush to Furniture.get('owlplushie')>>
+		<<set _windowsill to Furniture.get('windowsill')>>
+		<<set _bed to Furniture.get('bed')>>
+		<<set _wardrobe to Furniture.get('wardrobe')>>
+		<<set _table to Furniture.get('table')>>
+		<<set _chair to Furniture.get('chair')>>
+	<</if>>
+	<<set _mirror to Furniture.get('mirror')>>
+	<<set _bookshelf to Furniture.get('bookshelf')>>
+	<<set _pc to Furniture.get('pc')>>
+
+	<<if _deco>>
+		<br>
+		<<switch _deco.name>>
+			<<case "large bear plushie">>
+				<<furnitureicon _deco.iconFile>>The _deco.name is sitting in a corner.
+			<<default>>
+				<<furnitureicon _deco.iconFile>>The _deco.name is hanging on a wall.
+		<</switch>>
+	<</if>>
+
+	<<if _owlplush>>
+		<br>
+		<<switch _owlplush.id>>
+			<<case "owlplushie">>
+				<<furnitureicon _owlplush.iconFile>>The _owlplush.name stares down from the wardrobe, blending into the gloom.
+		<</switch>>
+	<</if>>
+
+	<<if _windowsill>>
+		<br>
+		<<switch _windowsill.name>> /* can be expanded further */
+			<<case "ominous jar">> /* unused */
+				<<furnitureicon _windowsill.iconFile>>_windowsill.nameCap stands on the windowsill menacingly.
+			<<default>>
+				<<furnitureicon _windowsill.iconFile>> Your _windowsill.name sits on the windowsill.
+		<</switch>>
+	<</if>>
+
+	<<if _furniture.poster>>
+		<br>
+		<<switch _furniture.poster.name>>
+			<<case "cowgirl">>
+				A cowgirl poster hangs on a wall.
+			<<case "cat">>
+				A poster of a cat hangs on a wall. The text below reads, "Hang in there!"
+			<<case "puppy">>
+				A puppy poster hangs on a wall.
+			<<default>> /* Custom */
+				A poster of _furniture.poster.name hangs on a wall.
+				<<if ['dol', 'degrees of lewdity'].some(e => _furniture.poster.name === e)>>
+					You feel an odd sense of familiarity.
+				<<elseif _furniture.poster.name.startsWith('&lt;&lt;')>>
+					<span class="black">You feel like you got caught cheating.</span>
+				<</if>>
+		<</switch>>
+	<</if>>
+
+	<br><br>
+	/* <<if $robinbed is "yours" and Time.hour gte 6 and !$possessed>>
+		<<unset $robinbed>>
+		<<npc Robin>><<person1>>Robin yawns and heads to <<his>> own room.<<endevent>>
+		<<if Time.hour is 6 and Time.minute lte 20>><<run setRobinLocationOverride("orphanage", 6)>><</if>>
+		<br><br>
+	<</if>> */
+	<<if $unbind is 1>>
+		<<unset $unbind>>
+		<<if $possessed>>
+			You stare down at your bindings. You pull, and they fall apart, unable to hold against you. <<unbind>>
+			<br><br>
+		<<else>>
+			You rub your bindings against your desk. It takes some effort, but eventually the material yields, freeing your limbs.
+			<br><br>
+		<</if>>
+	<</if>>
+	<<if $nextPassageCheck is "Lake House Bedroom">>
+		<span class="nextLink"><<link [[Look to the moon.|$passage]]>><</link>></span>
+		<br>
+	<</if>>
+	<<if $stress gte $stressmax and !$possessed>>
+		<<set $previousPassage to $passage>>
+		<<passoutlakehouse>>
+	/* <<elseif $christmas is 1 and Time.monthDay is 25 and $christmas_robin_visit is undefined and $christmas_robin_gift_received is undefined and Time.dayState isnot "night" and $NPCName[$NPCNameList.indexOf("Robin")].init is 1 and !$possessed>>
+		<<set $christmas_robin_visit to true>>
+		<<christmas_robin_visit>> */
+	<<else>>
+		<<if $leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound">>
+			<<link [[Undo your bindings (0:10)|$passage]]>><<set $unbind to 1>><<pass 10>><<unbind>><</link>>
+			<br><br>
+		<</if>>
+		/* <<if $robinpaid is 1 and $robinmissing is 0 and $robinnote isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].lust gte 10 and $NPCName[$NPCNameList.indexOf("Robin")].love gte 60 and $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 10>>
+			<span class="gold">There's a note by the window.</span>
+			<br>
+			<<link [[Read it|Robin Note]]>><<set $robinnote to 1>><</link>>
+			<br><br>
+		<</if>> */
+		<<projectoptions>>
+		<br><br>
+		/* <<christmas_options>> */
+		<<if _deco>>
+			<br>
+			<<if _deco.name is "large bear plushie">>
+				<<furnitureicon _deco.iconFile>><<link [[Cuddle with the large bear plushie (0:10)|Lake House Large Bear Plushie Cuddle]]>><<pass 10>><</link>><<ltrauma>><<lstress>>
+				<br><br>
+			<</if>>
+		<</if>>
+		
+
+		<<if _bed isnot undefined && _bed.type.includes('comfy')>>
+			Your bed takes up most of the room.
+			<<if $nextPassageCheck is "Lake House Bed">>
+				<br>
+				<<listsleepoutfits "Lake House Bed">>
+			<<elseif $slimeEvent is undefined>>
+				<br>
+				<<furnitureicon _bed.iconFile>><<link [[Strip and get in bed|Lake House Bed]]>><<undressSleep "Lake House Bed">><</link>>
+				<br>
+				<<listsleepoutfits "Lake House Bed">>
+
+				<<if !_bed.type.includes("starter")>>
+					<<furnitureicon _bed.iconFile>><<link [[Masturbate in bed|Lake House Masturbation]]>><<set $masturbationstart to 1>><</link>>
+					<br>
+				<</if>>
+			<<else>>
+				<br>
+				<<if $possessed and $lakehouse.barrier is undefined>>
+					<span class="red">The slime in your head is silent.</span>
+				<<else>>
+					<span class="red">The slime wants you to <<print $slimeEvent>> before you can go to bed.</span>
+				<</if>>
+				<br>
+			<</if>>
+		<<else>>
+			You don't have a bed yet. Bailey won't let you take the one in the orphanage.
+			<br>
+		<</if>>
+		<<roomoptions>>
+		<br>
+		
+		<<if _wardrobe isnot undefined && !_wardrobe.type.includes("starter")>>
+			<<if _wardrobe>>
+				Your clothes are kept in the wardrobe.
+			<</if>>
+			<br>
+			<<furnitureicon _wardrobe.iconFile>><<link [[Wardrobe|Lake House Wardrobe]]>><</link>>
+			<br>
+		<<else>>
+			You don't have a wardrobe yet. Bailey won't let you take the one in the orphanage.
+			<br>
+		<</if>>
+		<<if playerHasSexToys()>>
+			<<sextoysicon>><<link [[Sex toys|Sextoys Inventory]]>><<set $sextoyInvReturnLink to $passage>><</link>>
+			<br>
+		<</if>>
+		
+		<<if _mirror>>
+			<<if $nextPassageCheck is "Lake House Mirror">>
+				<span class="nextLink"><<mirroricon>><<link [[Mirror|Lake House Mirror]]>><</link>></span>
+				<br>
+			<<elseif $christmas is 1 and !$christmas_wraith and _wraithEvent>>
+				<br>
+				<span class="purple">You catch a strange glint in your mirror.</span>
+				<br>
+				<<bloodmirroricon>><<link [[Mirror|Christmas Mirror]]>><</link>>
+				<br>
+			<<elseif Time.hour is 3 and $hallucinations gte 2 and $daily.mirrorTentacles isnot 1 and $tentacledisable is "f">>
+				<br>
+				<span class="purple">An eerie light spills from your mirror.</span>
+				<br>
+				<<bloodmirroricon>><<link [[Mirror|Eerie Mirror]]>><<set $daily.mirrorTentacles to 1>><<set $phase to 0>><</link>>
+				<br>
+			<<else>>
+				<<homemirroricon>><<link [[Mirror|Lake House Mirror]]>><</link>>
+				<br>
+			<</if>>
+		<<else>>
+			You don't have a mirror yet. Bailey won't let you take the one in the orphanage.
+			<br>
+		<</if>>
+
+		<<if _table>>
+			<br>
+			Your _table.name <<if _chair>>and a pair of _chair.name are <<else>>is <</if>> situated next to a wall.
+			<br>
+			<!-- <<if $debug>>
+				<<bedroomtablechairicon>><<link [[Table (Debug)|Bedroom Table]]>><</link>>
+				<br><br>
+			<</if>> -->
+		<</if>>
+
+		<<if _bookshelf>>
+			<<link [[Read science material (0:20)|$passage]]>><<pass 20>><<scienceskill>><</link>><<gscience>>
+			<br>
+			<<link [[Read math solutions (0:20)|$passage]]>><<pass 20>><<mathsskill>><</link>><<gmaths>>
+			<br>
+			<<link [[Read historical journals (0:20)|$passage]]>><<pass 20>><<historyskill>><</link>><<ghistory>>
+			<br>
+			<<link [[Read old English manuscripts (0:20)|$passage]]>><<pass 20>><<englishskill>><</link>><<genglish>>
+			<br>
+		<<else>>
+			You don't have a bookshelf yet. You will need one to study at home.
+			<br>
+		<</if>>
+
+		<<if _pc>>
+			<<if $lakehouse.billsphase gte 3>>
+				You can't use your computer without power.
+				<br>
+			<<else>>
+				<<link [[Play on computer (0:30)|Lake House Play Computer]]>><<pass 30>><<stress -3>><<trauma -3>><</link>><<lstress>><<ltrauma>>
+				<br>
+				<<link [[Host a cam show dance (0:30)|Lake House Cam Show Dance]]>><<set $dancelocation to "lakehouse">><</link>><<llstress>><<ggtiredness>>
+				<br>
+			<</if>>
+			/* <<link [[Search for job online (0:10)|Lake House Online Search]]>><<pass 10>><</link>>
+			<br> */
+		<</if>>
+
+		<<if _table or _pc>>
+			There's a desk here. You could work on security projects.
+			<br>
+			<<link [[Sit at the desk|Lake House Upgrades]]>><</link>>
+			<br><br>
+		<<else>>
+			You don't have a table or pc yet. You will need one to manage upgrades.
+			<br>
+		<</if>>
+
+		<<if $pregnancyStats.parasiteDoctorEvents gte 2>>
+			<<if $container.lakehouse is undefined>>
+				<<containersInit>>
+			<</if>>
+			<<fishtankicon>><<containersLink>>
+		<</if>>
+		
+		<<if $lakehouse.terrarium isnot undefined>>
+			<<if $lakehouse.terrarium.smallpets isnot undefined>>
+				<<set _stress to -1 * ( 1 + $lakehouse.terrarium.smallpets)>>
+				<<set _trauma to -1 * ( 1 + $lakehouse.terrarium.smallpets)>>
+				<<link [[Observe Terrarium (0:30)|Lake House Observe Terrarium]]>><<pass 30>><<stress _stress>><<trauma _trauma>><</link>><<lstress>><<ltrauma>>
+				<br>
+			<</if>>
+		<</if>>
+		<br>
+		<br>
+		<<main_hall_icon>><<link [[Living Room (0:01)->Lake House]]>><<pass 1>><</link>>
+		<br>
+		<<link [[Settings]]>><<set $settingsExitPassage to $passage>><</link>>
+		<br>
+		<<attitudesControlCheck>>
+		<<if $attitudesControl.showGoldLink is true>>
+			<span class="goldLink"><<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>> </span><span class="red">!!</span>
+		<<else>>
+			<<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>>
+		<</if>>
+		<br><br>
+	<</if>>
+<</if>>
+
+:: Lake House Passout
+<<pass 1 hour>>
+<<set $stress -= 2000>>
+<<set $trauma +=10>>
+<<passout>>
+You've pushed yourself too much.
+<br><br>
+
+<<if $location isnot "lakehouse basement">>
+	<<link [[Wake up|$previousPassage]]>><</link>>
+<<else>>
+	<<link [[Wake up|Lake House Basement]]>><</link>>
+<</if>>
+:: Lake House Bed
+<<effects>>
+<<wearoutfit>>
+
+You snuggle under the covers.
+<<if $wraith.state and $wraithPrison and ($moonstate is "evening" or $moonstate is _nightstate)>>
+	You feel anxious, and your eyes dart over to the mirror.
+<</if>>
+<br><br>
+
+<<lakehouse_sleep_options>>
+
+:: Lake House Sleep
+<<set _autosavehere to true>>
+<<sleep>><<effects>>
+/* <<if $wraith.nightmare is 2 and isBloodmoon() and $lakehouse.barrier is undefined>>
+	<<sleepeffects>>
+	You dream of a beautiful figure, cloaked in white, standing under the red moon. It has its arms spread out to you in a welcoming gesture. You can feel its gaze boring into your mind as you step closer.
+	<br><br>
+
+	It's surrounded by trees, all bending inwards, and floating above a lake. Everything moves around you, and you find yourself hanging above a large ruin. You can't breathe.
+	<br><br>
+
+	You slowly open your eyes, and sluggishly stand from the bed. Your ears are ringing.
+	<br><br>
+
+	<<wraithPossess "lakehouse">>
+	<<storeon "Lake House Bed" "wardrobe">>
+	<span class="nextLink"><<link [[Walk.|Lake House Bedroom]]>><<rainWraith>><</link>></span>
+	<br>
+<<else>> */
+	<<wakingEffects $sleepHoursTotal>>
+	<<if $nightmares gte 1 and $controlled is 0>>
+		You dream you are being hunted by something <<if ["haunt", "despair"].includes($wraith.state) and $rng lte 25>>pale<<else>>dark<</if>> and terrible.
+	<<else>>
+		<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte 9000>>
+			Your sleep is plagued by dirty dreams.
+			<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+			<<arousal `100 * $sleepHoursTotal`>>
+			<<if $arousal gte $arousalmax>>
+				They push you over the edge.
+				<<orgasm>>
+			<</if>>
+		<<elseif !_wakingEffect>>
+			You sleep soundly.
+			<br><br>
+		<<else>>
+			<br><br>
+		<</if>>
+	<</if>>
+	<<sleepeffects>>
+	/* <<if $baileywake is 1 and $placeholder is 1>>
+		You startle awake hearing commotion outside. <span class="red"><<nnpc_Hes Bailey>> here</span>.
+		<br><br>
+
+		<<lakehouse_assault_intro>>
+		<br><br>
+
+		<<set _bedroom to "Lake House Bed">>
+		<<set $wardrobe_location to "lakehouse">>
+		<<wardrobeSelection true>>
+		<<storeon _bedroom "check">>
+		<<if _store_check is 1>>
+			<<storeon _bedroom>>
+		<</if>>
+		<<link [[Prepare|Lake House Assault Wardrobe]]>><<endevent>><<set $phase to 1>><<unset $baileywake>><</link>>
+		<br> */
+	<<if $lakehouse.billsphase gte 4>>
+		You startle awake hearing commotion outside. <span class="red">They're here to repossess the house</span>.
+		<br><br>
+
+		<<radiooutfits>>
+		<br><br>
+
+		<<link [[Get up|Lake House Repossession]]>><<bedclotheson "Lake House Bed">><</link>>
+		<br>
+	<<elseif $lakehouse.billsphase gte 3>>
+		You wake up and try to turn on the lights but they don’t seem to work. In fact it seems like nothing electronic in the house works. A paper pinned to your front door says “Since you haven’t paid your bills on time your utilities have been shut off. Pay the bills now or your home will be repossessed.”
+		<br><br>
+
+		<<radiooutfits>>
+		<br><br>
+
+		<<link [[Get up|Lake House Repossession]]>><<bedclotheson "Lake House Bed">><</link>>
+		<br>
+	<<else>>
+		<<radiooutfits>>
+		<br><br>
+
+		<<link [[Get up|Lake House Bedroom]]>><<bedclotheson "Lake House Bed">><</link>>
+		<br>
+	<</if>>
+/* <</if>> */
+
+:: Lake House Mirror
+<<effects>>
+
+<<link [[Step away|Lake House Bedroom]]>><<unset $mirrorMenu>><<unset $bodywritingSet>><</link>>
+<br>
+
+<<mirror>>
+<br><br>
+
+:: Lake House Bathroom
+
+<<set $outside to 0>><<set $location to "lakehouse">><<effects>>
+You are in the bathroom.
+<br><br>
+<<if $stress gte $stressmax>>
+	<<set $previousPassage to $passage>>
+	<<passoutlakehouse>>
+<<else>>
+	<<if $lakehouse.billsphase gte 3>>
+		You can't use the bath without water.
+		<br>
+	<<elseif $leftarm is "bound" and $rightarm is "bound">>
+		<<set _clothed = ![V.worn.upper.name, V.worn.lower.name, V.worn.under_upper.name, V.worn.under_lower.name, V.worn.over_upper.name, V.worn.over_lower.name].every(x => x == 'naked')>>
+		<<bathroomicon>><<link [["Have a bath " + (_clothed ? " in clothes " : "") + "(0:30)"->Lake House Bath]]>><<water>><<pass 30>><<stress -6>><<set $hygiene to 0>><</link>><<lstress>>
+	<<else>>
+		<<bathroomicon>><<link [[Have a bath (0:30)->Lake House Bath]]>><<strip>><<pass 30>><<stress -6>><<set $hygiene to 0>><</link>><<lstress>>
+	<</if>>
+	<br>
+	<!-- Check if there's any hair-->
+	<<if $lakehouse.billsphase gte 3>>
+		You can't shave without lights.
+		<br>
+	<<elseif $pbdisable is "f" and ($pblevel gte 2 or $pbstrip gte 1 or $pblevelballs gte 2)>>
+		<<shaveicon>><<link [[Groom pubic hair->Lake House Shave]]>><</link>>
+		<br>
+	<</if>>
+	<<pregnancyTest "Lake House Bedroom">>
+	<br>
+
+	<<main_hall_icon>><<link [[Living Room (0:01)->Lake House]]>><<pass 1>><</link>>
+	<br>
+<</if>>
+
+:: Lake House Bath
+<<effects>><<set $location to "lakehouse">><<set $outside to 0>>
+<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+<<if $danger gte (9900 - $allure / 3) and $hallucinations gte 2 and $slimedisable is "f" and $controlled is 0>>
+	You wash until you're squeaky clean.<<wash>>
+	<br><br>
+
+	As you remove the plug to drain the water, you feel something probe your <<genitals>>. You look between your legs, but you don't see anything abnormal. When you try to stand up however, translucent tendrils rise from the water and force you back down.
+	<br><br>
+
+	<<link [[Next|Bath Slime]]>><<set $molestationstart to 1>><</link>>
+<<else>>
+You wash until you're squeaky clean.<<wash>>
+<br><br>
+
+<<link [[Get out->Lake House Bath Finish]]>><</link>>
+<br>
+<<link [[Masturbate|Lake House Bath Masturbation]]>><<set $masturbationstart to 1>><</link>>
+<br>
+<</if>>
+
+:: Lake House Bath Finish
+<<effects>><<set $location to "lakehouse">><<set $outside to 0>>
+
+<<if $upperwetstage >= 3 or $lowerwetstage >= 3 or $underupperwetstage >= 3 or $underlowerwetstage >= 3 or $overupperwetstage >= 3 or $overlowerwetstage >= 3>>
+	Your clothes are drenched, water drips from you onto the floor.
+<<else>>
+	Your skin is still damp.
+<</if>>
+<br><br>
+<<if $leftarm is "bound" and $rightarm is "bound">>
+	<<link [[Next|Lake House Bathroom]]>><</link>>
+<<else>>
+	<<dressasyouwereicon>><<link [[Dress as you were|Lake House Bathroom]]>><<clotheson>><</link>>
+	<br>
+	<<towelicon>><<link [[Wrap yourself in a towel|Lake House Bathroom]]>>
+		<<if $player.gender == "f" or $player.breastsize > 0>>
+			<<set $wear_upper = "large_towel">>
+		<<else>>
+			<<set $wear_lower = "towel">>
+		<</if>>
+		<<returnCarried>>
+		<<wardrobewear>>
+	<</link>>
+
+	<<if $wardrobe.upper.findIndex(x => x.name == "bathrobe") >= 0 or $carried.upper.name == "bathrobe">>
+		<br>
+		<<bathrobeicon>><<link [[Put on a bathrobe|Lake House Bathroom]]>>
+			<<returnCarried>>
+			<<set $wear_upper = $wardrobe.upper.findIndex(x => x.name == "bathrobe")>>
+			<<wardrobewear>>
+		<</link>>
+	<</if>>
+<</if>>
+
+:: Lake House Bath Masturbation
+
+<<effects>>
+<<if $masturbationstart is 1>>
+	<<set $masturbationstart to 0>>
+	<<set $masturbationstat += 1>>
+	<<masturbationstart>>
+<</if>>
+<<masturbationeffects>>
+<<masturbationactions>>
+<div id="masturbationButtons">
+	<div><<link [[Continue|Lake House Bath Masturbation]]>><</link>></div><<nexttext>>
+	<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt (currentSkillValue('willpower') / 10)>>
+		<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
+	<<elseif $corruptionMasturbation isnot true>>
+		<div><<link [[Stop|Lake House Bath Masturbation Finish]]>><<set $finish to 1>><</link>></div>
+	<<else>>
+		<div class="red">The slime in your ear will not allow you to stop.</div>
+	<</if>>
+</div>
+<br>
+
+:: Lake House Bath Masturbation Finish
+
+<<effects>>
+Doing this here means you can wash away the evidence.<<wash>>
+<br><br>
+
+<<endmasturbation>>
+<<endcombat>>
+
+<<wash>>You climb from the bath.
+<br><br>
+
+<<link [[Next|Lake House Bath Finish]]>><</link>>
+<br>
+
+:: Lake House Masturbation
+<<set $outside to 0>><<set $location to "lakehouse">><<effects>>
+
+<<if $masturbationstart is 1>>
+	<<set $masturbationstart to 0>>
+	<<set $masturbationstat += 1>>
+	<<masturbationstart>>
+
+	You sink into the plush mattress and let your hands roam.
+	<br><br>
+<</if>>
+<<masturbationeffects>>
+<<masturbationactions>>
+
+<div id="masturbationButtons">
+	<div><<link [[Continue|Lake House Masturbation]]>><</link>><<nexttext>></div>
+
+	<<if !$corruptionMasturbation and random(3) gt $orgasmcurrent and $corruption_slime gt ($willpower / 10)>>
+		<div><<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>></div>
+	<<elseif !$corruptionMasturbation>>
+		<div><<link [[Stop|Lake House Masturbation Finish]]>><<set $finish to 1>><</link>></div>
+	<<else>>
+		<div class="red">The slime in your ear will not allow you to stop.</div>
+	<</if>>
+</div>
+<br>
+
+:: Lake House Masturbation Finish
+
+<<effects>>
+There's not much of a thrill doing this here, but at least you feel refreshed.
+<br><br>
+
+<<endmasturbation>>
+<<endcombat>>
+
+<<link [[Next|Lake House Bedroom]]>><<clotheson>><</link>>
+<br>
+
+:: Lake House Wardrobe [exitCheckBypass]
+<<effects>>
+You look through the wardrobe.
+<br><br>
+<<set $wardrobe_location to "lakehouse">>
+<<wardrobeSelection>>
+<div id="wardrobewear"><<wardrobewear>></div>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+
+<<wardrobe>>
+
+:: Lake House Shave
+<<effects>>
+<<dontHideForNow>>
+<<if $leftarm is "bound" and $rightarm is "bound">>
+	<span class="red">Both of your arms are bound</span> and you find it difficult to do anything about your pubes this way.
+	<br>
+	<<link [[Back->Lake House Bathroom]]>><<dontHideRevert>><</link>>
+<<else>>
+	<<shavestrip>>
+	You take off your clothes and look at your <<genitals>>.
+	<br>
+	<<if $worn.genitals.name is "chastity belt" or $worn.genitals.name is "gold chastity belt">>
+	The belt fits snug against your body and it seems that reaching pubes with a razor is almost impossible.
+	<br>
+	<<link [[Dress up->Lake House Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+	<<else>>
+	<<if $worn.genitals.name is "chastity cage">>
+	Your penis is locked inside the cage. Shaving around it will be a bit more tricky, but that's not a big deal.
+	<br>
+	<</if>>
+	<<if $pblevel gte 2 or $pbstrip gte 1 or $pblevelballs gte 2>>
+		<<shavestyleicon 'clean'>><<link [[Shave clean (0:15)->Lake House Shave clean]]>><<pass 15>><<arousal 100>><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pblevelballs to 0>><<set $pbgrowthballs to 0>><<set $pbstrip to 0>><<set $makeup.pbcolour to 0>><</link>>
+		<br>
+	<</if>>
+	<<if $pblevel gte 5 or $pbstrip gte 2 or ($pbstrip is 1 and $pblevel gte 2)>>
+		<<shavestyleicon 'strip'>><<link [[Form a landing strip (0:15)->Lake House Shave strip]]>><<pass 15>><<arousal 100>><<set $pbstripName to "neat landing strip">><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 1>><</link>>
+		<br>
+	<</if>>
+	<<if $pblevel gte 5 or $pbstrip gte 3 or ($pbstrip gte 2 and $pblevel gte 2)>>
+		<<shavestyleicon 'heart'>><<link [[Form a heart (0:15)->Lake House Shave strip]]>><<pass 15>><<arousal 100>><<set $pbstripName to "cute heart shape">><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 2>><</link>>
+		<br>
+	<</if>>
+	<<if $pblevel gte 5 or $pbstrip gte 4 or ($pbstrip gte 3 and $pblevel gte 2)>>
+		<<shavestyleicon 'triangle'>><<link [[Form a triangle (0:15)->Lake House Shave strip]]>><<pass 15>><<arousal 100>><<set $pbstripName to "neat triangle">><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 3>><</link>>
+		<br>
+	<</if>>
+	<<if $player.ballsExist is true>>
+		<<if $pblevel gte 2 or $pbstrip gte 1>>
+			<<shavestyleicon 'clean'>><<link [[Shave only pubis (0:10)->Lake House Shave pubis]]>><<pass 10>><<arousal 50>><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 0>><<if $pblevelballs is 0>><<set $makeup.pbcolour to 0>><</if>><</link>>
+			<br>
+		<</if>>
+		<<if $pblevelballs gte 3>>
+			<<shavestyleicon 'balls'>><<link [[Shave only balls (0:05)->Lake House Shave balls]]>><<pass 5>><<arousal 50>><<set $pblevelballs to 0>><<set $pbgrowthballs to 0>><<if $pblevel is 0 and $pbstrip is 0>><<set $makeup.pbcolour to 0>><</if>><</link>>
+			<br>
+		<</if>>
+	<</if>>
+	<<if $pblevel gt 5 or $pblevelballs gt 5>>
+		<<shavestyleicon 'trim'>><<link [[Trim short (0:10)->Lake House Shave trim]]>><<pass 10>><<arousal 100>>
+			<<if $pblevel gte 5>>
+				<<set $pblevel to 5>><<set $pbgrowth to 7>><<set $pbstrip to 0>>
+			<</if>>
+			<<if $pblevelballs gte 5>>
+				<<set $pblevelballs to 5>><<set $pbgrowthballs to 10>>
+			<</if>>
+		<</link>>
+		<br>
+	<</if>>
+	<<if $worn.genitals.name isnot "chastity belt">>
+		<<dyeicon>><<link [[Dye pubic hair->Lake House Dye pubic hair]]>><</link>>
+		<br>
+	<</if>>
+	<<ind>><<link [[Don't shave anything->Lake House Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+<</if>>
+<</if>>
+
+:: Lake House Shave clean
+<<effects>>
+
+You pick up some shaving cream, a razor and sit down.
+<br>
+You spread your legs and start carefully shaving your pubes. After a few minutes you are done and your <<genitals_are 2>> now smooth and clean.
+<br><br>
+<<link [[Next|Lake House Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+
+:: Lake House Shave pubis
+<<effects>>
+
+You pick up some shaving cream and a razor.
+<br>
+You start carefully shaving hair. After a few minutes you are done and your pubis is now smooth and clean.
+<br><br>
+<<link [[Next|Lake House Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+
+:: Lake House Shave balls
+<<effects>>
+
+You pick up some shaving cream, a razor.
+<br>
+You prop one leg on a bathtub and start carefully shaving your balls. After a few minutes you are done and your testicles are now smooth and clean.
+<br><br>
+<<link [[Next|Lake House Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+
+:: Lake House Shave strip
+<<effects>>
+
+You pick up some shaving cream, a razor and sit down.
+<br>
+You spread your legs and start carefully shaving your pubes. After a few minutes you are done and your <<genitals_are 2>> now smooth and clean with a <<print $pbstripName>> adorning your pubis.
+<br><br>
+<<link [[Next|Lake House Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+
+:: Lake House Shave trim
+<<effects>>
+
+You pick up a comb with scissors and sit down.
+<br>
+You spread your legs and start carefully trimming your pubes. After a few minutes you are done and hair around your <<genitals 2>> is now neatly trimmed.
+<br><br>
+<<link [[Next|Lake House Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+
+:: Lake House Dye pubic hair
+<<effects>>
+
+<<set _ownedColours = $makeup.owned.hairdye.filter(x => x.count > 0)>>
+<<if _ownedColours.length == 0>>
+	You don't own any hair dyes. Maybe you should visit a cosmetics shop to buy some.
+	<br>
+<<else>>
+	What colour will it be?
+	<br>
+	<<set _choice = _ownedColours[0].colour>>
+	<<for _i, _item range _ownedColours>>
+		<label><span class="grey-shadow"><span @class="'hair-' + _item.colour.replace(/ /g, '-')"><span class="colour-hair"><span style="color:#FD6064;"><<hairmapcolourtext _item.colour>></span></span></span></span>&nbsp;<<print '<<radiobutton "_choice" "'+_item.colour+'" ' + (_choice is _item.colour ? "checked" : "") + '>>'>></label>
+		&nbsp;x&nbsp;_item.count |
+	<</for>>
+
+	<br><br>
+	<<link [[Dye pubic hair using selected colour (0:30)|Lake House Dye pubic hair Finish]]>><<pass 30>><<set $makeup.owned.hairdye.find(x => x.colour == _choice).count -= 1>><<set $makeup.pbcolour = _choice>><</link>>
+<</if>>
+<br>
+<<link [[Back|Lake House Shave]]>><</link>>
+
+:: Lake House Dye pubic hair Finish
+<<effects>>
+
+You treat your most sensitive parts with petroleum jelly and then prepare the hair dye.
+<br>
+Using a small brush you carefully apply chemicals to your pubes and wait for them to soak in.
+<br>
+<<arousal 100>>
+<br>
+After several minutes you rinse your private area with water and behold your <<genitals 2>> with <<hairmapcolourtext $makeup.pbcolour>> pubic hair.
+<br><br>
+<<link [[Next|Lake House Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+
+:: Lake House Backyard
+<<set $outside to 1>><<effects>>
+
+<<if $stress gte $stressmax and !$possessed>>
+	<<if $lakehouse.wall gte 2>>
+		<<set $previousPassage to $passage>>
+		<<passoutlakehouse>>
+	<<else>>
+		<<passoutlake>>
+	<</if>>
+<<else>>
+	You step out to your backyard.
+	<br><br>
+
+	<<if $lakehouse.plots lt 3>>
+		<<set _clearing to (25 - $lakehouse.clearing)>>
+		<<set $percent=Math.floor((_clearing/25)*100)>>
+		One of the fields is being cleared,
+		<<if $lakehouse.clearing lte 0>>
+			<span class="green">and is ready for planting!</span>
+			<div class="meter">
+			<<print '<div class="greenbar" style="width:' + $percent + '%"></div>'>>
+			</div>
+		<<elseif $lakehouse.clearing lte 5>>
+			<span class="teal">and is almost ready for planting.</span>
+			<div class="meter">
+			<<print '<div class="tealbar" style="width:' + $percent + '%"></div>'>>
+			</div>
+		<<elseif $lakehouse.clearing lte 10>>
+			<span class="lblue">and is starting to look civilised.</span>
+			<div class="meter">
+			<<print '<div class="lbluebar" style="width:' + $percent + '%"></div>'>>
+			</div>
+		<<elseif $lakehouse.clearing lte 15>>
+			<span class="blue">and soil has been exposed in places.</span>
+			<div class="meter">
+			<<print '<div class="bluebar" style="width:' + $percent + '%"></div>'>>
+			</div>
+		<<elseif $lakehouse.clearing lte 20>>
+			<span class="purple">but the tangle remains defiant.</span>
+			<div class="meter">
+			<<print '<div class="purplebar" style="width:' + $percent + '%"></div>'>>
+			</div>
+		<<elseif $lakehouse.clearing lte 24>>
+			<span class="pink">but little progress has been made.</span>
+			<div class="meter">
+			<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
+			</div>
+		<<else>>
+			<span class="red">but remains a jungle of weeds.</span>
+			<div class="meter">
+			<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
+			</div>
+		<</if>>
+		<br>
+	<</if>>
+
+	<<if $lakehouse.plots lt 3>>
+		<<link [[Clear a plot (0:40)|$passage]]>><<pass 40>><<tiredness 4>><<set $lakehouse.clearing -= 1>><<lakehouseclearplot>><</link>><<gtiredness>>
+		<br>
+	<</if>>
+	<<if $lakehouse.plots is 3 and $lakehouse.wetplot is undefined>>
+		<<link [[Set up a water plot (4:00)|$passage]]>><<pass 4 hour>><<tiredness 24>><<add_plot lakehouse water 3 medium>><<set $lakehouse.wetplot to 1>><</link>>
+		<br>
+	<</if>>
+	<<link [[Go back into the house (0:01)|Lake House]]>><<pass 1>><</link>>
+	<br>
+
+	<<if $lakehouse.plots gte 1>>
+		<<display_plot lakehouse>>
+	<</if>>
+<</if>>
+
+
+:: Lake House Play Computer
+<<effects>>
+You sit in your desk chair before playing some PC games. You have a good time and blow off some stress before returning to real life.
+<br><br>
+
+<<link [[Next|Lake House Bedroom]]>><</link>>
+<br>
+
+:: Lake House Online Search
+<<effects>>
+
+:: Lake House Observe Terrarium
+<<effects>>
+<<set _t to $lakehouse.terrarium>>
+
+You sit and observe your 
+
+<<if _first is undefined>>
+	<<if _t.geckos isnot undefined>>
+		<<set _first to "geckos">>
+	<<elseif _t.crabs isnot undefined>>
+		<<set _first to "crabs">>
+	<<elseif _t.turtles isnot undefined>>
+		<<set _first to "turtles">>
+	<</if>>
+<</if>>
+
+<<if _last is undefined>>
+	<<if _first isnot "geckos" and _t.geckos isnot undefined>>
+		<<set _last to "geckos">>
+	<<elseif _first isnot "crabs" and _t.crabs isnot undefined>>
+		<<set _last to "crabs">>
+	<<elseif _first isnot "turtles" and _t.turtles isnot undefined>>
+		<<set _last to "turtles">>
+	<</if>>
+<</if>>
+
+<<if _t.geckos isnot undefined>>
+	<<if _first is "geckos">>
+		<<if _t.geckos gt 1>>
+			geckos
+		<<else>>
+			gecko
+		<</if>>
+	<<elseif _last is "geckos">>
+		<<if _t.geckos gt 1>>
+			 and geckos
+		<<else>>
+			 and gecko
+		<</if>>
+	<<else>>
+		<<if _t.geckos gt 1>>
+			, geckos
+		<<else>>
+			, gecko
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if _t.crabs isnot undefined>>
+	<<if _first is "crabs">>
+		<<if _t.crabs gt 1>>
+			crabs
+		<<else>>
+			crab
+		<</if>>
+	<<elseif _last is "crabs">>
+		<<if _t.geckos gt 1>>
+			 and crabs
+		<<else>>
+			 and crab
+		<</if>>
+	<<else>>
+		<<if _t.crabs gt 1>>
+			, crabs
+		<<else>>
+			, crab
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if _t.turtles isnot undefined>>
+	<<if _first is "turtles">>
+		<<if _t.turtles gt 1>>
+			turtles
+		<<else>>
+			turtle
+		<</if>>
+	<<elseif _last is "turtles">>
+		<<if _t.turtles gt 1>>
+			 and turtles
+		<<else>>
+			 and turtle
+		<</if>>
+	<<else>>
+		<<if _t.turtles gt 1>>
+			, turtles
+		<<else>>
+			, turtle
+		<</if>>
+	<</if>>
+<</if>>
+. 
+Watching them interact for a while calms you down.
+<br><br>
+
+<<link [[Next|Lake House Bedroom]]>><</link>>
+<br>
+
+:: Lake House TV
+<<link [[Watch History Channel (0:40)|$passage]]>><<pass 40>><<scienceskill>><<stress -3>><</link>><<gscience>><<lstress>>
+<br>
+<<link [[Watch Science Channel (0:40)|$passage]]>><<pass 40>><<mathsskill>><<stress -3>><</link>><<gmaths>><<lstress>>
+<br>
+<<link [[Watch Gardening Channel (0:40)|$passage]]>><<pass 40>><<historyskill>><<stress -3>><</link>><<genglish>><<lstress>>
+<br>
+<<link [[Watch and follow Yoga (0:40)|$passage]]>><<pass 40>><<englishskill>><<stress -3>><</link>><<ghistory>><<lstress>>
+<br>
+
+:: Lake House Console
+<<cleareventpool>>
+<<addinlineevent>>
+	You sit on the couch and play the gaming console. You win a few matches before quitting for now.
+	<br><br>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<</addinlineevent>>
+<<addinlineevent>>
+	You sit on the floor and play the gaming console. You win a few matches before quitting for now.
+	<br><br>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<</addinlineevent>>
+<<addinlineevent>>
+	You sit on the couch and play the gaming console. You play a few matches but can’t manage to win before quitting for now.
+	<br><br>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<</addinlineevent>>
+<<addinlineevent>>
+	You sit on the floor and play the gaming console. You play a few matches but can’t manage to win before quitting for now.
+	<br><br>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<</addinlineevent>>
+<<runeventpool>>
+
+:: Lake House Snuggle Cat
+<<effects>>
+<<if $lakehouse.pet1.type is "cat">>
+	<<beastNEWinit 1 cat $lakehouse.pet1.gender>>
+<<else>>
+	<<beastNEWinit 1 cat $lakehouse.pet2.gender>>
+<</if>>
+You pick up your cat and hold <<him>> close snuggling <<him>>. <<His>> soft fur makes you feel happy and makes you feel slightly better.
+<br><br>
+<<link [[Next|Lake House]]>><</link>>
+<br>
+
+:: Lake House Snuggle Cats
+<<effects>>
+You pick up your cats and hold them close snuggling them. Their soft fur makes you feel happy and makes you feel slightly better.
+<br><br>
+<<link [[Next|Lake House]]>><</link>>
+<br>
+
+:: Lake House Fetch Dog
+<<set $outside to 1>><<effects>>
+You head outside with your dog. You find a large stick and throw it as it chases it and bring it back. You do this for a while until you and your dog are tired and retire indoors.
+<br><br>
+<<link [[Next|Lake House]]>><</link>>
+<br>
+
+:: Lake House Fetch Dogs
+<<set $outside to 1>><<effects>>
+You head outside with your dogs. You find a large stick and throw it as they chase it and bring it back. You do this for a while until you and your dogs are tired and retire indoors.
+<br><br>
+<<link [[Next|Lake House]]>><</link>>
+<br>
+
+:: Lake House Fuck Cat
+<<effects>>
+<<if $lakehouse.pet1.type is "cat">>
+	<<beastNEWinit 1 cat $lakehouse.pet1.gender>>
+<<else>>
+	<<beastNEWinit 1 cat $lakehouse.pet2.gender>>
+<</if>>
+
+You drop to your knees and give your ass a little wiggle. The <<beasttype>> mounts you from behind.
+<<deviancy2>>
+
+<<link [[Next|Lake House Cat Sex]]>><<set $sexstart to 1>><</link>>
+<br>
+
+:: Lake House Cat Sex
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+	<<beastCombatInit>>
+	<<set $NPCList[0].stance to "top">>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<<alarmstate>>
+<<beast $enemyno>>
+<br><br>
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if _combatend>>
+	<span id="next"><<link [[Next|Lake House Cat Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Lake House Cat Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Lake House Cat Sex Finish
+<<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+
+	<<beastejaculation>>
+	<<tearful>> you rise to your feet. "Good <<if $pronoun is "f">>girl<<else>>boy<</if>>," you say.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<<elseif $enemyhealth lte 0>>
+
+	The <<beasttype>> turns and flees.
+	<br><br>
+
+	<<tearful>> you climb to your feet.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<<elseif>>
+	The <<beasttype>> backs away from you. <<tearful>> you climb to your feet.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<</if>>
+
+:: Lake House Fuck Cats
+<<effects>>
+<<generateBEAST 1 cat $lakehouse.pet1.gender>>
+<<generateBEAST 2 cat $lakehouse.pet2.gender>>
+
+You drop to your knees and give your ass a little wiggle. The <<beasttype>> mounts you from behind.
+<<deviancy2>>
+
+<<link [[Next|Lake House Cat Sex]]>><<set $sexstart to 1>><</link>>
+<br>
+
+:: Lake House Cats Sex
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+	<<beastCombatInit>>
+	<<beastTrainGenerate>>
+	<<set $NPCList[0].stance to "top">>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<<alarmstate>>
+<<beast $enemyno>>
+<br><br>
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if _combatend>>
+	<span id="next"><<link [[Next|Lake House Cats Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Lake House Cats Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Lake House Cats Sex Finish
+<<effects>>
+
+<<if $enemyhealth lte 0>>
+	<<beastwound>>
+	<<if $combatTrain.length gt 0>>
+		The <<beasttype>> recoils in pain and fear, but the other is eager for a go.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Lake House Cats Sex]]>><</link>>
+	<<else>>
+		The <<beasttype>> recoils in pain and fear.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Lake House Cats Sex Finish]]>><<set $finish to 1>><</link>>
+	<</if>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+	<<if $combatTrain.length gt 0>>
+		Satisfied, the <<beasttype>> moves and another <<print $combatTrain.beastTypes[1]>> takes its turn.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Lake House Cats Sex]]>><</link>>
+	<<else>>
+		Satisfied, the <<beasttype>> moves away from you.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Lake House Cats Sex Finish]]>><<set $finish to 1>><</link>>
+	<</if>>
+<<else>>
+	The <<beasttype>> backs away from you. <<tearful>> you climb to your feet.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<</if>>
+
+:: Lake House Fuck Dog
+<<effects>>
+<<if $lakehouse.pet1.type is "dog">>
+	<<beastNEWinit 1 dog $lakehouse.pet1.gender>>
+<<else>>
+	<<beastNEWinit 1 dog $lakehouse.pet2.gender>>
+<</if>>
+
+You drop to your knees and give your ass a little wiggle. The <<beasttype>> mounts you from behind.
+<<deviancy2>>
+
+<<link [[Next|Lake House Dog Sex]]>><<set $sexstart to 1>><</link>>
+<br>
+
+:: Lake House Dog Sex
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+	<<beastCombatInit>>
+	<<set $NPCList[0].stance to "top">>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<<alarmstate>>
+<<beast $enemyno>>
+<br><br>
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if _combatend>>
+	<span id="next"><<link [[Next|Lake House Dog Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Lake House Dog Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Lake House Dog Sex Finish
+<<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+
+	<<beastejaculation>>
+	<<tearful>> you rise to your feet. "Good <<if $pronoun is "f">>girl<<else>>boy<</if>>," you say.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<<elseif $enemyhealth lte 0>>
+
+	The <<beasttype>> turns and flees.
+	<br><br>
+
+	<<tearful>> you climb to your feet.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<<else>>
+	The <<beasttype>> backs away from you. <<tearful>> you climb to your feet.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<</if>>
+
+:: Lake House Fuck Dogs
+<<effects>>
+<<generateBEAST 1 dog $lakehouse.pet1.gender>>
+<<generateBEAST 2 dog $lakehouse.pet2.gender>>
+
+You drop to your knees and give your ass a little wiggle. The <<beasttype>> mounts you from behind.
+<<deviancy2>>
+
+<<link [[Next|Lake House Dog Sex]]>><<set $sexstart to 1>><</link>>
+<br>
+
+:: Lake House Dogs Sex
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+	<<beastCombatInit>>
+	<<beastTrainGenerate>>
+	<<set $NPCList[0].stance to "top">>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<<alarmstate>>
+<<beast $enemyno>>
+<br><br>
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if _combatend>>
+	<span id="next"><<link [[Next|Lake House Dogs Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Lake House Dogs Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Lake House Dogs Sex Finish
+<<effects>>
+
+<<if $enemyhealth lte 0>>
+	<<beastwound>>
+	<<if $combatTrain.length gt 0>>
+		The <<beasttype>> recoils in pain and fear, but the other is eager for a go.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Lake House Dogs Sex]]>><</link>>
+	<<else>>
+		The <<beasttype>> recoils in pain and fear.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Lake House Dogs Sex Finish]]>><<set $finish to 1>><</link>>
+	<</if>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+	<<if $combatTrain.length gt 0>>
+		Satisfied, the <<beasttype>> moves and another <<print $combatTrain.beastTypes[1]>> takes its turn.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Lake House Dogs Sex]]>><</link>>
+	<<else>>
+		Satisfied, the <<beasttype>> moves away from you.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Lake House Dogs Sex Finish]]>><<set $finish to 1>><</link>>
+	<</if>>
+<<else>>
+	The <<beasttype>> backs away from you. <<tearful>> you climb to your feet.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Lake House]]>><</link>>
+	<br>
+<</if>>	
+
+:: Lake House Bailey
+<<effects>>
+
+You open the door. <span class="red">It's Bailey.</span>
+<br><br>
+"Time to pay up," <<nnpc_he Bailey>> says.
+<br><br>
+Alex arrives at your side, and glares at Bailey. "I'll support you, whatever you decide," <<he>> whispers.
+<br><br>
+<<lakehouse_bailey_options>>
+
+
+
+<<set $rentday to Time.weekDay>>
+
+:: Lake House Bailey Refuse
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I'm not paying," you say. You can't quite meet Bailey's gaze. "Go away."
+<<elseif $submissive lte 850>>
+	"You're not getting a penny," you say. You glare at Bailey. "You have no power here."
+<<else>>
+	"I won't let you bully me," you say, looking Bailey in the eye. "It's not your money."
+<</if>>
+<br><br>
+
+"Fine," Bailey says. "My friends will be glad of it." <<nnpc_He Bailey>> turns and walks away.
+<br><br>
+
+<<link [[Next|Lake House]]>><</link>>
+<br>
+
+:: Lake House Repossession
+<<effects>>
+
+You hear a knock upon your door. When you open it you see a young man in a suit and tie. He coughs as he pushes open the door further. He stares at you and says “Sorry <<sir>> but since you haven’t paid your bills in a few weeks your home is being repossessed. Please make your way off the premises immediately. If you are found within the property, without first paying the bills that you are due, it will be seen as trespassing and you will be arrested. Have a good day.” The man tips his hat and sees himself out.
+<br><br>
+
+<<link [[Next|Lake House Outdoor]]>><</link>>
+<br>
+
+:: Lake House Cam Show Dance
+<<location "lakehouse">><<effects>>
+<<outfitChecks>>
+<<danceStripActionObject>>
+<<set _campayoutmultiplier to 0>>
+<<if _danceExhibition isnot undefined>>
+	<<if _danceExhibition.overOutfit isnot null and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.overOutfit[1] - 20, 0)>>
+			<<if _campayoutmultiplier lt _danceExhibition.overOutfit[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.overOutfit[0]>>
+			<</if>>
+			<<set $danceaction to "stripOverOutfit">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+	<<if _danceExhibition.over_upper isnot null and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.over_upper[1] - 20, 0)>>
+			<<if _campayoutmultiplier lt _danceExhibition.over_upper[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.over_upper[0]>>
+			<</if>>
+			<<set $danceaction to "stripOverUpper">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+	<<if _danceExhibition.over_lower isnot null and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.over_lower[1] - 20, 0)>>
+			<<if _campayoutmultiplier lt _danceExhibition.over_lower[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.over_lower[0]>>
+			<</if>>
+			<<set $danceaction to "stripOverLower">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+	<<if _danceExhibition.middleOutfit isnot null and $worn.upper.cursed isnot 1 and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.middleOutfit[1] - 20)>>
+			<<if _campayoutmultiplier lt _danceExhibition.middleOutfit[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.middleOutfit[0]>>
+			<</if>>
+			<<set $danceaction to "stripOutfit">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+	<<if _danceExhibition.upper isnot null and $worn.upper.cursed isnot 1 and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.upper[1] - 20, 0)>>
+			<<if _campayoutmultiplier lt _danceExhibition.upper[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.upper[0]>>
+			<</if>>
+			<<set $danceaction to "stripUpper">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+	<<if _danceExhibition.lower isnot null and $worn.lower.cursed isnot 1 and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.lower[1] - 20, 0)>>
+			<<if _campayoutmultiplier lt _danceExhibition.lower[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.lower[0]>>
+			<</if>>
+			<<set $danceaction to "stripLower">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+	<<if _danceExhibition.underOutfit isnot null and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.underOutfit[1] - 20, 0)>>
+			<<if _campayoutmultiplier lt _danceExhibition.underOutfit[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.underOutfit[0]>>
+			<</if>>
+			<<set $danceaction to "stripUnderOutfit">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+	<<if _danceExhibition.under_upper isnot null and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.under_upper[1] - 20, 0)>>
+			<<if _campayoutmultiplier lt _danceExhibition.under_upper[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.under_upper[0]>>
+			<</if>>
+			<<set $danceaction to "stripUnderUpper">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+	<<if _danceExhibition.under_lower isnot null and _camOver is undefined>>
+		<<if $exhibitionism gte Math.floor(_danceExhibition.under_lower[1] - 20, 0)>>
+			<<if _campayoutmultiplier lt _danceExhibition.under_lower[0]>>
+				<<set _campayoutmultiplier to _danceExhibition.under_lower[0]>>
+			<</if>>
+			<<set $danceaction to "stripUnderLower">>
+			<<camdancestripeffects>>
+		<<else>>
+			<<set _camOver to 1>>
+			You're too shy to go further!
+		<</if>>
+	<</if>>
+<</if>>
+<br><br>
+
+<<stress -60>><<tiredness 30>><<dancestat>>
+<<if currentSkillValue('danceskill') lte 200>>
+	You try to dance provocatively. Due to your lack of skill, this amounts to little more than waving your buttocks around.
+<<elseif currentSkillValue('danceskill') lte 400>>
+	You shake your assets, giving a show to anyone who looks.
+<<elseif currentSkillValue('danceskill') lte 600>>
+	You dance flirtatiously, your movements emphasising your lewder parts.
+<<elseif currentSkillValue('danceskill') lte 800>>
+	You dance skilfully and provocatively, your movements emphasising your lewder parts.
+<<elseif currentSkillValue('danceskill') lte 999>>
+	You dance skilfully and provocatively, your entire body advertising a raw sexual energy.
+<<else>>
+	Your moves radiate a primal and intoxicating sexuality.
+<</if>>
+<<danceskilluse>>
+<<pass 30>>
+<<set $dancephysique += 1>>
+<<if $dancephysique gte 10>>
+	<<set $dancephysique -= 10>>
+	<<physique>>
+<</if>>
+
+<<cam1payout _campayoutmultiplier>>
+<<if $campayout is 15000>>
+	The audience absolutely loved you! They tipped <<printmoney $campayout>>!
+<<else>>
+	The audience tipped you <<printmoney $campayout>>.
+<</if>>
+<<set $money += $campayout>>
+<br><br>
+
+<<if $exposed gte 2 and $exhibitionism lte 54>>
+	<<link [[Flee|Lake House Bedroom]]>><<clotheson>><<endevent>><</link>>
+<<elseif $exposed gte 1 and $exhibitionism lte 34>>
+	<<link [[Flee|Lake House Bedroom]]>><<clotheson>><<endevent>><</link>>
+<<else>>
+	<<if $exhibitionism gte 75>>
+		<<link [[Masturbation Show|Lake House Cam Show Masturbate]]>><<endevent>><</link>>
+		<br>
+	<</if>>
+	<<link [[Stop|Lake House Bedroom]]>><<clotheson>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Lake House Cam Show Masturbate
+<<effects>>
+<<cam2payout>>
+<<if $awareness is 1000>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+<<elseif $awareness gte 500>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+<<elseif $awareness gte 400>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+<<elseif $awareness gte 300>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+<<elseif $awareness gte 200>>
+	<<orgasm>>
+	<<orgasm>>
+	<<orgasm>>
+<<elseif $awareness gte 100>>
+	<<orgasm>>
+	<<orgasm>>
+<<elseif $awareness gte 1>>
+	<<orgasm>>
+<<elseif $awareness gte -200>>
+	<<orgasm>>
+<</if>>
+<br>
+<<if $campayout is 30000>>
+	The audience absolutely loved you! They tipped <<printmoney $campayout>>!
+<<else>>
+	The audience tipped you <<printmoney $campayout>>.
+<</if>>
+<<set $money += $campayout>>
+<br><br>
+
+<<link [[Stop|Lake House Bedroom]]>><<unset $campayout>><</link>>
+<br>
+
+:: Lake House Large Bear Plushie Cuddle
+<<effects>>
+<<if $trauma gte ($traumamax / 7) * 3 or $stress gte ($stressmax / 7) * 5>>
+		You desperately cling onto the large bear plushie with your entire body and almost wind up pulling it down onto the ground, whimpering and crying loudly into it.
+	<<elseif $trauma gte ($traumamax / 7) * 2 or $stress gte ($stressmax / 7) * 3>>
+		You cling to the large bear plushie and bury your head in it's back, silently crying into it.
+	<<elseif $trauma gte ($traumamax / 7) * 1 or $stress gte ($stressmax / 7) * 1>>
+		You wrap your arms around the large bear plushie from behind and rest your head against it's shoulder, hugging it quietly.
+	<<else>>
+		You happily take the large bear plushie in your arms.
+	<</if>>
+<br><br>
+
+<<link [[Cuddle with the large bear plushie (0:10)|Lake House Large Bear Plushie Cuddle]]>><<pass 10>><</link>><<ltrauma>><<lstress>>
+<br>
+<<link [[Next|Lake House Bedroom]]>><</link>>
+
+:: Lake House Basement
+<<set $location to "lakehouse basement">>
+<<effects>>
+
+<<if $lakehouse.woodenHorse isnot undefined>>
+	A wooden horse sits in one corner of the room.
+	<br><br>
+
+	<<link [[Use the wooden horse (1:00)|Lake House Wooden Horse]]>><<pass 60>><<set $phase to 0>><</link>><<gpain>>
+	<br>
+<<else>>
+	The basement is empty.
+	<br>
+<</if>>
+
+<<link [[Leave|Lake House]]>><</link>>
+
+:: Lake House Wooden Horse
+<<effects>>
+
+<<if $stress gte $stressmax and !$possessed>>
+	<<set $previousPassage to "Lake House Basement">>
+	<<passoutlakehouse>>
+<<else>>
+	<<if $phase is 0>>
+		<<set $phase to 1>>
+		You attach metal weights onto your leg before climbing atop the wooden horse. You feel it press into your crotch.
+		<<masopain 25>><<arousal 1200 "genitals">>
+		<br><br>
+	<<else>>
+		It digs further into your crotch.
+		<<masopain 20>><<arousal 1000 "genitals">>
+		<br><br>
+	<</if>>
+
+	<<if (currentSkillValue('willpower') / 10) gte (($pain - 100) + random(1, 100))>>
+		<span class="green">You grit your teeth and bear it.</span>
+		<<gwillpower>><<willpower 3>>
+		<br><br>
+
+		<<link [[Endure|$passage]]>><</link>>
+		<br>
+		<<link [[Stop|Lake House Basement]]>><<set $phase to 0>><</link>>
+		<br>
+	<<elseif ((currentSkillValue('physique') / 160) + (currentSkillValue('willpower') / 10)) gte (($pain - 100) + random(1, 100))>>
+		The pain is too much for you and you quickly lift yourself off of the wooden horse.
+		<<ggwillpower>><<willpower 10>>
+		<br><br>
+
+		Despite the pain, you feel a strong catharsis.<<trauma -12>>
+		<br><br>
+
+		<<link [[Next|Lake House Basement]]>><<set $phase to 0>><</link>>
+		<br>
+	<<else>>
+		The pain is too much for you <span class="red">but your arms fail before you could get off the wooden horse.</span>
+		<<ggwillpower>><<willpower 10>><<masopain 25>>
+		
+		<<if $pain gte 200>>
+			<br><br>
+			<span class="red">The pain is overwhelming.</span>
+			<<gggstress>><<stress 50>>
+		<</if>>
+
+		<br><br>
+
+		<<link [[Next|$passage]]>><</link>>
+	<</if>>
+<</if>>

@@ -1,0 +1,630 @@
+:: Widgets Lake House [widget]
+<<widget "passoutlakehouse">>
+	<<if isPlayerNonparasitePregnancyEnding()>>
+		<<pregnancyWatersBrokenPassout>>
+	<<else>>
+		<<link [[Everything fades to black...->Lake House Passout]]>><</link>>
+	<</if>>
+<</widget>>
+
+<<widget "lakehouse_assault_intro">>
+	<<if $lakehouse.pet1.type is "dog" and $lakehouse.pet2.type is "dog" and $lakehouse.dogtraining is true>>
+		<span class="green">Your dogs are trained and ready to defend their master.</span><br>
+	<<elseif $lakehouse.pet1.type is "dog" and lakehouse.pet2.type to "dog" and $lakehouse.dogtraining is false>>
+		<span class="teal">Your dogs are ready to defend the house, but don't have any special training.</span><br>
+	<<elseif $lakehouse.pet1.type is "dog" or lakehouse.pet2.type to "dog" and $lakehouse.dogtraining is true>>
+		<span class="teal">Your dog is trained and ready to defend their master.</span><br>
+	<<elseif $lakehouse.pet1.type is "dog" or lakehouse.pet2.type to "dog" and $lakehouse.dogtraining is false>>
+		<span class="lblue">Your dog is ready to defend the lakehouse, but don't have any special training.</span><br>
+	<</if>>
+	<<if $lakehouse.tower gte 2>>
+		<<if $lakehouse.tower_guard>>
+			<span class="green">The watchtower and searchlight are operated by $lakehouse.tower_guard,</span> with <<guard_skill_text "lakehouse_tower">> security skill.<br>
+		<<else>>
+			<span class="red">The watchtower is empty,</span> but you could use it to get a better view.<br>
+		<</if>>
+	<<elseif $lakehouse.tower gte 1>>
+		<<if $lakehouse.tower_guard>>
+			<span class="teal">The watchtower is operated by $lakehouse.tower_guard,</span> with <<guard_skill_text "lakehouse_tower">> security skill.<br>
+		<<else>>
+			<span class="red">The watchtower is empty,</span> but you could use it to get a better view.<br>
+		<</if>>
+	<</if>>
+	<<if $lakehouse.guardpost gte 1>>
+		<<if $lakehouse.post_guard>>
+			<span class="teal">The guard post is operated by $lakehouse.post_guard,</span> with <<guard_skill_text "lakehouse_post">> security skill.<br>
+		<<else>>
+			<span class="red">The guard post is empty.</span><br>
+		<</if>>
+	<</if>>
+	<<if $lakehouse.wall gte 3>>
+		<span class="green">The barbed metal fence around the lake is unclimbable. Attackers will need to cut their way in, which will take a while.</span>
+	<<elseif $lakehouse.wall gte 2>>
+		<span class="teal">The tall metal fence around the lake will greatly slow attackers.</span>
+	<<elseif $lakehouse.wall gte 1>>
+		<span class="lblue">The foundations are in place but the attackers remain unimpeded.</span>
+	<<else>>
+		<span class="purple">The attackers invade unimpeded.</span>
+	<</if>>
+	<br>
+	<<if $lakehouse.traps gte 2>>
+		<span class="green">8 traps are waiting to spring.</span><br>
+	<<elseif $lakehouse.traps gte 1>>
+		<span class="lblue">4 traps are waiting to spring.</span><br>
+	<</if>>
+	<br><br>
+<</widget>>
+
+<<widget "lakehouse_sleep_options">>
+	<<nightmareCheck "Lake House Sleep">>
+
+	<<if $sleeptrouble is 1 and $controlled is 0>>
+		<<link [[Sleep for 10 hours|Lake House Sleep]]>><<set $sleephour to 10>><<incrementautosave>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
+		<br>
+		<<link [[Sleep for 9 hours|Lake House Sleep]]>><<set $sleephour to 9>><<incrementautosave>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
+		<br>
+	<</if>>
+	<<link [[Sleep for 8 hours|Lake House Sleep]]>><<set $sleephour to 8>><<incrementautosave>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 7 hours|Lake House Sleep]]>><<set $sleephour to 7>><<incrementautosave>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 6 hours|Lake House Sleep]]>><<set $sleephour to 6>><<incrementautosave>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 5 hours|Lake House Sleep]]>><<set $sleephour to 5>><<incrementautosave>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 4 hours|Lake House Sleep]]>><<set $sleephour to 4>><<incrementautosave>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 3 hours|Lake House Sleep]]>><<set $sleephour to 3>><<incrementautosave>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 2 hours|Lake House Sleep]]>><<set $sleephour to 2>><<incrementautosave>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 1 hour|Lake House Sleep]]>><<set $sleephour to 1>><<incrementautosave>><</link>> &#8194;(<<timeAfterXHours 1>>)<<ltiredness>>
+	<br>
+	<<link [[Just sleep|Lake House Sleep]]>><<set $sleephour to -1>><<incrementautosave>><</link>> (??:??)<<ltiredness>>
+	<br><br>
+	<<link [[Climb out of bed|Lake House Bedroom]]>><<storeon "Lake House Bed">><<set $wardrobe_location to "lakehouse">><<loadTempHairStyle>><<wardrobeSelection>><<loadTempHairStyle>><</link>>
+	<br><br>
+<</widget>>
+
+<<widget "lakehouseclearplot">>
+	<<if $lakehouse.clearing lte 0 and $lakehouse.plots is 0>>
+		<<set $lakehouse.clearing to 25>>
+		<<set $lakehouse.plots += 1>>
+		<<plots_init lakehouse 1 earth 3 medium>>
+	<<elseif $lakehouse.clearing lte 0 and $lakehouse.plots lt 3>>
+		<<set $lakehouse.clearing to 25>>
+		<<set $lakehouse.plots += 1>>
+		<<add_plot lakehouse earth 3 medium>>	
+	<</if>>
+<</widget>>
+
+<<widget "lakehouse_upgrades_current">>
+		<<if $lakehouse.build>>
+		<<switch $lakehouse.build>>
+		<<case "wall 1">>
+			<span class="lblue">A foundation is being placed.</span>
+		<<case "wall 2">>
+			<span class="lblue">A modern fence is being built around the lake house.</span>
+		<<case "wall 3">>
+			<span class="lblue">Barbed wire is being affixed atop the fence.</span>
+		<<case "tower 1">>
+			<span class="lblue">A tower is being built by the forest.</span>
+		<<case "tower 2">>
+			<span class="lblue">Searchlights are being affixed atop the watchtower.</span>
+		<<case "guard post">>
+			<span class="lblue">A guard post is being built.</span>
+		<<case "dog training">>
+			<span class="lblue">Training facilities is being built.</span>
+		<<case "traps 1">>
+			<span class="lblue">Traps are being set up around your property.</span>
+		<<case "traps 2">>
+			<span class="lblue">More traps are being set up around your property.</span>
+		<</switch>>
+		<<if $lakehouse.build_timer is 1>>
+			It'll be finished tomorrow.
+		<<else>>
+			It'll be finished in <<number $lakehouse.build_timer>> days.
+		<</if>>
+		<br><br>
+	<</if>>
+<</widget>>
+
+<<widget "lakehouse_upgrades_status">>
+	<<set _upgrade_count to 0>>
+	Wall:
+	<<if $lakehouse.wall gte 3 or $lakehouse.build is "wall 3">>
+		<span class="green">As sturdy as can be</span>
+		<<set _upgrade_count += 1>>
+	<<elseif $lakehouse.wall is 2 or $lakehouse.build is "wall 2">>
+		<<link [[Metal fence|Lake House Upgrades Wall 3]]>><</link>>
+	<<elseif $lakehouse.wall is 1 or $lakehouse.build is "wall 1">>
+		<<link [[Reinforce|Lake House Upgrades Wall 2]]>><</link>>
+	<<else>>
+		<<link [[Full repair|Lake House Upgrades Wall 1]]>><</link>>
+	<</if>>
+	<br>
+	Watchtower:
+	<<if $lakehouse.tower is 2 or $lakehouse.build is "tower 2">>
+		<span class="green">As watchful as can be</span>
+		<<set _upgrade_count += 1>>
+	<<elseif $lakehouse.tower is 1 or $lakehouse.build is "tower 1">>
+		<<link [[Searchlights|Lake House Upgrades Tower 2]]>><</link>>
+	<<else>>
+		<<link [[Watchtower|Lake House Upgrades Tower]]>><</link>>
+	<</if>>
+	<br>
+	Guard Post:
+	<<if $lakehouse.guardpost is 1 or $lakehouse.build is "guard post">>
+		<span class="green">Standing by and ready</span>
+		<<set _upgrade_count += 1>>
+	<<else>>
+		<<link [[Watchtower|Lake House Upgrades Guard Post]]>><</link>>
+	<</if>>
+	<br>
+	Dog Training:
+	<<if $lakehouse.dogtraining is 1 or $lakehouse.build is "dog training">>
+		<span class="green">State of the Art</span>
+		<<set _upgrade_count += 1>>
+	<<else>>
+		<<link [[Hound Training|Lake House Upgrades Dog Training]]>><</link>>
+	<</if>>
+	<br>
+	Traps:
+	<<if $lakehouse.traps is 2 or $lakehouse.build is "traps 2">>
+		<span class="green">A deathtrap</span>
+		<<set _upgrade_count += 1>>
+	<<elseif $lakehouse.traps is 1 or $lakehouse.build is "traps 1">>
+		<<link [[Searchlights|Lake House Upgrades Traps 2]]>><</link>>
+	<<else>>
+		<<link [[Watchtower|Lake House Upgrades Traps 1]]>><</link>>
+	<</if>>
+	<br>
+<</widget>>
+
+<<widget "lakehouse_build_day">>
+	<<if $lakehouse.build_timer gte 1>>
+		<<set $lakehouse.build_timer -= 1>>
+	<</if>>
+	<<if $lakehouse.build_timer lte 0>>
+		<<switch $lakehouse.build>>
+			<<case "wall 1">>
+				<<set $lakehouse.wall to 1>>
+			<<case "wall 2">>
+				<<set $lakehouse.wall to 2>>
+			<<case "wall 3">>
+				<<set $lakehouse.wall to 3>>
+			<<case "tower 1">>
+				<<set $lakehouse.tower to 1>>
+			<<case "tower 2">>
+				<<set $lakehouse.tower to 2>>
+			<<case "guard post">>
+				<<set $lakehouse.guardpost to 1>>
+			<<case "dog training">>
+				<<set $lakehouse.dogtraining to 1>>
+			<<case "traps 1">>
+				<<set $lakehouse.traps to 1>>
+			<<case "traps 2">>
+				<<set $lakehouse.traps to 2>>
+		<</switch>>
+		<<set $lakehouse.build to 0>>
+	<</if>>
+<</widget>>
+
+<<widget "lakehouse_bailey_options">>
+	<<babyRent>>
+	<<if $money gte $rentmoney + ($babyRent or 0)>>
+		<<link [[Pay up|Lake House Bailey Pay]]>><<set $renttime to 7>><</link>>
+		<br>
+		<<link [[Refuse|Lake House Bailey Refuse]]>><<set $renttime to 14>><<set $lakehouse_attack_timer to 7>><<def 1>><</link>>
+		<br>
+	<<else>>
+		<<set $baileypaychain to 0>>
+		<<if $submissive gte 1150>>
+			"I-I don't have the money," you tell Bailey.
+		<<elseif $submissive lte 850>>
+			"I don't have it," you tell Bailey. "And wouldn't give you a penny if I did."
+		<<else>>
+			"I don't have it," you tell Bailey. "You're wasting your time."
+		<</if>>
+		<br><br>
+
+		"Fine," Bailey says. "My friends will be glad of it." <<nnpc_He Bailey>> turns and walks away.
+		<br><br>
+
+		<<link [[Next|Lake House]]>><<set $renttime to 14>><</link>>
+		<br>
+	<</if>>
+<</widget>>
+
+<<widget "lakehouse_assault_init">>
+	<<set $lakehouse_assault to {}>>
+	<<set $lakehouse_assault.no to [0]>>
+	<<if $lakehouse_stage gte 8>>
+		<<set $lakehouse_assault.no.push(4)>>
+	<</if>>
+	<<if $lakehouse_stage gte 9>>
+		<<set $lakehouse_assault.no.push(5)>>
+	<</if>>
+	<<if $lakehouse_stage gte 10>>
+		<<set $lakehouse_assault.no.push(6)>>
+	<</if>>
+	<<if $lakehouse_stage gte 11>>
+		<<set $lakehouse_assault.no.push(7)>>
+	<</if>>
+	<<if $lakehouse_stage gte 12>>
+		<<set $lakehouse_assault.no.push(8)>>
+	<</if>>
+	<<set $lakehouse_assault.teams to {}>>
+
+	<<if $lakehouse_stage gte 12>>
+		<<set $lakehouse_assault.teams.team_1 to {}>>
+		<<set $lakehouse_assault.teams.team_2 to {}>>
+		<<set $lakehouse_assault.teams.team_3 to {}>>
+		<<set $lakehouse_assault.teams.team_4 to {}>>
+		<<set $lakehouse_assault.teams.team_5 to {}>>
+		<<if $bailey_encroach>>
+			<<set $lakehouse_assault.teams.team_6 to {}>>
+			<<set $lakehouse_assault.teams.team_6.type to "bailey">>
+		<</if>>
+	<<elseif $lakehouse_stage gte 10>>
+		<<set $lakehouse_assault.teams.team_1 to {}>>
+		<<set $lakehouse_assault.teams.team_2 to {}>>
+		<<set $lakehouse_assault.teams.team_3 to {}>>
+		<<set $lakehouse_assault.teams.team_4 to {}>>
+		<<if $bailey_encroach>>
+			<<set $lakehouse_assault.teams.team_5 to {}>>
+			<<set $lakehouse_assault.teams.team_5.type to "bailey">>
+		<</if>>
+	<<elseif $lakehouse_stage gte 8>>
+		<<set $lakehouse_assault.teams.team_1 to {}>>
+		<<set $lakehouse_assault.teams.team_2 to {}>>
+		<<set $lakehouse_assault.teams.team_3 to {}>>
+		<<if $bailey_encroach>>
+			<<set $lakehouse_assault.teams.team_4 to {}>>
+			<<set $lakehouse_assault.teams.team_4.type to "bailey">>
+		<</if>>
+	<<else>>
+		<<set $lakehouse_assault.teams.team_1 to {}>>
+		<<set $lakehouse_assault.teams.team_2 to {}>>
+		<<if $bailey_encroach>>
+			<<set $lakehouse_assault.teams.team_3 to {}>>
+			<<set $lakehouse_assault.teams.team_3.type to "bailey">>
+		<</if>>
+	<</if>>
+	<<set _assault_keys to Object.keys($lakehouse_assault.teams)>>
+	<<for _s to 0; _s lt _assault_keys.length; _s++>>
+		<<set $lakehouse_assault.teams[_assault_keys[_s]].location to $lakehouse_assault.no.pluck()>>
+		<<set $lakehouse_assault.teams[_assault_keys[_s]].wall_progress to 0>>
+		<<set $lakehouse_assault.teams[_assault_keys[_s]].field_progress to 0>>
+		<<set $lakehouse_assault.teams[_assault_keys[_s]].number to 3>>
+		<<if $wraith.state is "haunt" and $lakehouse_assault.wraith is undefined and $hallucinations gte 2 and random(1,15-Math.floor(C.npc["Ivory Wraith"].lust/5)) is 1>>
+			<<set $lakehouse_assault.teams[_assault_keys[_s]].type to "wraith">>
+			<<set $lakehouse_assault.teams[_assault_keys[_s]].number to 1>>
+			<<set $lakehouse_assault.teams[_assault_keys[_s]].torched to 0>>
+			<<set $lakehouse_assault.wraith to _s>>
+		<</if>>
+		<<if !$lakehouse_assault.teams[_assault_keys[_s]].type>>
+			<<set $lakehouse_assault.teams[_assault_keys[_s]].type to "remy">>
+		<</if>>
+	<</for>>
+	<<set $fields_damaged to 0>>
+	<<if $lakehouse.kennel gte 1>>
+		<<set $lakehouse_assault.dogs to 2>>
+	<<else>>
+		<<set $lakehouse_assault.dogs to 1>>
+	<</if>>
+	<<set $lakehouse_assault.dogs_state to "guarding">>
+	<<if $lakehouse.tower_guard>>
+		<<set $lakehouse_assault.tower to "manned">>
+	<<else>>
+		<<set $lakehouse_assault.tower to "empty">>
+	<</if>>
+	<<set $lakehouse_assault.alex to "patrol">>
+<</widget>>
+
+<<widget "lakehouseinit">>
+	<<if $lakehouse is undefined>>
+		<<unset $lakehouseinit>>
+	<</if>>
+	<<if $lakehouseinit is undefined>>
+		/* <<set $objectVersion to 4>>
+		<<run Furniture.update()>> */
+		<<set $lakehouse to {}>>
+		<<set $lakehouse.plots to 0>>
+		<<set $lakehouse.clearing to 25>>
+		<<set $lakehouse_countdown to 14>>
+		<<set $lakehouse.wall to 0>>
+		<<set $lakehouse.tower to 0>>
+		<<set $lakehouse.guardpost to 0>>
+		<<set $lakehouse.dogtraining to 0>>
+		<<set $lakehouse.traps to 0>>
+		<<set $lakehouse.bills to 7>>
+		<<set $lakehouse.billsphase to 0>>
+		<<set $lakehouse.robin to 0>>
+		<<set $lakehouse.pet1 to {type:"", gender:""}>>
+		<<set $lakehouse.pet2 to {type:"", gender:""}>>
+		<<set $lakehouseinit to 1>>
+	<</if>>
+<</widget>>
+
+<<widget "camdancestripeffects">>
+	<<switch $danceaction>>
+		<<case "stripOverOutfit">>
+			<<if $worn.upper.name isnot "naked" and $worn.lower.name isnot "naked">>
+				You gracefully remove your $worn.over_upper.name exposing your <<outfit>>. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+				<<arousal 100>><<overupperstrip>><<exhibitionism1>>
+			<<elseif $worn.upper.name isnot "naked">>
+				<<if !$worn.under_lower.type.includes("naked")>>
+					You gracefully remove your $worn.over_upper.name, exposing your $worn.under_lower.name. Being seen in your underwear excites you.
+					<<arousal 300>><<overupperstrip>><<exhibitionism3>>
+				<<else>>
+					You gracefully remove your $worn.over_upper.name, exposing your <<genitals 1>>.
+					<<if $worn.upper.type.includes("naked")>>
+						You shiver with excitement, your body laid totally bare.
+					<<else>>
+						Your <<allTops>> makes your naked lower half feel particularly conspicuous.
+					<</if>>
+					<<arousal 300>><<overupperstrip>><<exhibitionism5>>
+					<<dance_crossdress_reveal>>
+				<</if>>
+			<<elseif $worn.lower.name isnot "naked">>
+				<<if !$worn.under_upper.type.includes("naked")>>
+					You gracefully remove your $worn.over_upper.name, exposing your $worn.under_upper.name. Being seen in your underwear excites you.
+					<<arousal 300>><<overupperstrip>><<exhibitionism3>>
+				<<else>>
+					<<if $player.breastsize gte 3>>
+						You gracefully remove your $worn.over_upper.name, exposing your $worn.lower.name and <<breasts>>. The exhibition of your breasts makes them feel raw and sensitive.
+						<<arousal 300>><<overupperstrip>><<exhibitionism4>>
+					<<elseif $player.gender_appearance isnot "m" and $worn.lower.gender isnot "m">>
+						<<if $player.gender is "m">>
+							You gracefully remove your $worn.over_upper.name, exposing your $worn.lower.name and <<breasts>>. Your feminine countenance makes your revealed chest feel especially lewd.
+						<<else>>
+							You gracefully remove your $worn.over_upper.name, exposing your $worn.lower.name and <<breasts>>. You feel your nipples harden in response to being revealed.
+						<</if>>
+						<<arousal 300>><<overupperstrip>><<exhibitionism4>>
+					<<else>>
+						You gracefully remove your $worn.over_upper.name, exposing your $worn.lower.name and <<breasts>>. You feel your nipples harden in response to being revealed.
+						<<arousal 300>><<overupperstrip>><<exhibitionism3>>
+					<</if>>
+				<</if>>
+			<<else>>
+				<<if !$worn.under_upper.type.includes("naked") and !$worn.under_lower.type.includes("naked")>>
+					You gracefully remove your $worn.over_upper.name, exposing your $worn.under_upper.name and $worn.under_lower.name. Being seen in your underwear excites you.
+					<<arousal 300>><<overupperstrip>><<exhibitionism3>>
+				<<elseif !$worn.under_lower.type.includes("naked")>>
+					<<if $player.breastsize gte 3>>
+						You gracefully remove your $worn.over_upper.name, exposing your $worn.under_lower.name and <<breasts>>. The exhibition of your breasts makes them feel raw and sensitive.
+						<<arousal 300>><<overupperstrip>><<exhibitionism4>>
+					<<elseif $player.gender_appearance isnot "m" and $worn.lower.gender isnot "m">>
+						<<if $player.gender is "m">>
+							You gracefully remove your $worn.over_upper.name, exposing your $worn.under_lower.name and <<breasts>>. Your feminine countenance makes your revealed chest feel especially lewd.
+						<<else>>
+							You gracefully remove your $worn.over_upper.name, exposing your $worn.under_lower.name and <<breasts>>. You feel your nipples harden in response to being revealed.
+						<</if>>
+						<<arousal 300>><<overupperstrip>><<exhibitionism4>>
+					<<else>>
+						You gracefully remove your $worn.over_upper.name, exposing your $worn.under_lower.name and <<breasts>>. You feel your nipples harden in response to being revealed.
+						<<arousal 300>><<overupperstrip>><<exhibitionism3>>
+					<</if>>
+				<<elseif !$worn.under_upper.type.includes("naked")>>
+					You gracefully remove your $worn.over_upper.name, exposing your <<genitals 1>>.
+					<<arousal 300>><<overupperstrip>><<exhibitionism5>>
+					<<dance_crossdress_reveal>>
+				<<else>>
+					You gracefully remove your $worn.over_upper.name, exposing your <<genitals 1>>. You shiver with excitement, your body laid totally bare.
+					<<arousal 300>><<overupperstrip>><<exhibitionism5>>
+					<<dance_crossdress_reveal>>
+				<</if>>
+			<</if>>
+			<<set $danceaction to 0>>
+		<<case "stripOverUpper">>
+			<<if $worn.upper.name isnot "naked">>
+				You gracefully remove your $worn.over_upper.name exposing your $worn.upper.name. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+				<<arousal 100>><<overupperstrip>><<exhibitionism1>>
+			<<elseif !$worn.under_upper.type.includes("naked")>>
+				You gracefully remove your $worn.over_upper.name, exposing your $worn.under_upper.name. Only one garment protects your chest from the hungry eyes surrounding you.
+				<<arousal 100>><<overupperstrip>><<exhibitionism1>>
+			<<else>>
+				<<if $player.breastsize gte 3>>
+					You gracefully remove your $worn.over_upper.name, exposing your <<breasts>>. The exhibition of your breasts makes them feel raw and sensitive.
+					<<arousal 300>><<overupperstrip>><<exhibitionism4>>
+				<<elseif $player.gender_appearance isnot "m" and $worn.lower.gender isnot "m">>
+					<<if $player.gender is "m">>
+						You gracefully remove your $worn.over_upper.name, exposing your <<breasts>>. Your feminine countenance makes your revealed chest feel especially lewd.
+					<<else>>
+						You gracefully remove your $worn.over_upper.name, exposing your <<breasts>>. You feel your nipples harden in response to being revealed.
+					<</if>>
+					<<arousal 300>><<overupperstrip>><<exhibitionism4>>
+				<<else>>
+					You gracefully remove your $worn.over_upper.name, exposing your <<breasts>>. You feel your nipples harden in response to being revealed.
+					<<arousal 300>><<overupperstrip>><<exhibitionism1>>
+				<</if>>
+			<</if>>
+			<<set $danceaction to 0>>
+		<<case "stripOverLower">>
+			<<if $worn.lower.name isnot "naked">>
+				You gracefully remove your $worn.over_lower.name exposing your $worn.lower.name. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+				<<arousal 100>><<overlowerstrip>><<exhibitionism1>>
+			<<elseif !$worn.under_lower.type.includes("naked")>>
+				You gracefully remove your $worn.over_lower.name, exposing your $worn.under_lower.name. Being seen in your underwear excites you.
+				<<arousal 300>><<overlowerstrip>><<exhibitionism3>>
+			<<else>>
+				You gracefully remove your $worn.over_lower.name, exposing your <<genitals 1>>.
+				<<if $worn.upper.type.includes("naked") or $worn.over_upper.type.includes("naked")>>
+					You shiver with excitement, your body laid totally bare.
+				<<else>>
+					Your <<allTops>> makes your naked lower half feel particularly conspicuous.
+				<</if>>
+				<<arousal 300>><<overlowerstrip>><<exhibitionism5>>
+				<<dance_crossdress_reveal>>
+			<</if>>
+			<<set $danceaction to 0>>
+		<<case "stripOutfit">>
+			<<if !$worn.under_upper.type.includes("naked") and !$worn.under_lower.type.includes("naked")>>
+				<<if $player.breastsize gte 3 or $player.gender_appearance isnot "m">>
+					You gracefully remove your $worn.upper.name, exposing your <<upperstrip>><<lowerstrip>><<underoutfit>>. Being seen in your underwear excites you.
+					<<arousal 500>><<exhibitionism4>>
+				<<else>>
+					You gracefully remove your $worn.upper.name, exposing your <<upperstrip>><<lowerstrip>><<underoutfit>>. Being seen in your underwear excites you.
+					<<arousal 300>><<exhibitionism3>>
+				<</if>>
+			<<elseif !$worn.under_lower.type.includes("naked")>>
+				<<if $player.breastsize gte 3>>
+					You gracefully remove your $worn.upper.name, exposing your <<upperstrip>><<lowerstrip>><<underoutfit>>. The exhibition of your breasts makes them feel raw and sensitive.
+					<<arousal 300>><<exhibitionism4>>
+				<<elseif $player.gender_appearance isnot "m" and $worn.lower.gender isnot "m">>
+					<<if $player.gender is "m">>
+						You gracefully remove your $worn.upper.name, exposing your <<upperstrip>><<lowerstrip>><<underoutfit>>. Your feminine countenance makes your revealed chest feel especially lewd.
+					<<else>>
+						You gracefully remove your $worn.upper.name, exposing your <<upperstrip>><<lowerstrip>><<underoutfit>>. You feel your <<nipples>> harden in response to being revealed.
+					<</if>>
+					<<arousal 300>><<exhibitionism4>>
+				<<else>>
+					You gracefully remove your $worn.upper.name, exposing your <<upperstrip>><<lowerstrip>><<underoutfit>>. Being seen in your underwear excites you.
+					<<arousal 300>><<exhibitionism3>>
+				<</if>>
+			<<else>>
+				You gracefully remove your $worn.upper.name, exposing your nude form. You shiver with excitement, your <<genitals 1>> laid totally bare.
+				<<arousal 300>><<upperstrip>><<lowerstrip>><<exhibitionism5>>
+				<<dance_crossdress_reveal>>
+			<</if>>
+			<<set $danceaction to 0>>
+		<<case "stripUpper">>
+			<<if !$worn.under_upper.type.includes("naked")>>
+				<<if $player.breastsize gte 3 or $player.gender_appearance isnot "m">>
+					You gracefully remove your $worn.upper.name, exposing your $worn.under_upper.name. Only one garment protects your chest from the hungry eyes surrounding you.
+					<<arousal 200>><<upperstrip>><<exhibitionism3>>
+				<<else>>
+					You gracefully remove your $worn.upper.name, exposing your $worn.under_upper.name. Only one garment protects your chest from the hungry eyes surrounding you.
+					<<arousal 100>><<upperstrip>><<exhibitionism1>>
+				<</if>>
+			<<else>>
+				<<if $player.breastsize gte 3>>
+					You gracefully remove your $worn.upper.name, exposing your <<breasts>>. The exhibition of your breasts makes them feel raw and sensitive.
+					<<arousal 300>><<upperstrip>><<exhibitionism4>>
+				<<elseif $player.gender_appearance isnot "m" and $worn.lower.gender isnot "m">>
+					<<if $player.gender is "m">>
+						You gracefully remove your $worn.upper.name, exposing your <<breasts>>. Your feminine countenance makes your revealed chest feel especially lewd.
+					<<else>>
+						You gracefully remove your $worn.upper.name, exposing your <<breasts>>. You feel your nipples harden in response to being revealed.
+					<</if>>
+					<<arousal 300>><<upperstrip>><<exhibitionism4>>
+				<<else>>
+					You gracefully remove your $worn.upper.name, exposing your <<breasts>>. You feel your nipples harden in response to being revealed.
+					<<arousal 300>><<upperstrip>><<exhibitionism1>>
+				<</if>>
+			<</if>>
+			<<set $danceaction to 0>>
+		<<case "stripLower">>
+			<<if $worn.over_lower.name isnot "naked">>
+				You gracefully remove your $worn.lower.name from below your $worn.over_lower.name. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+				<<arousal 100>><<lowerstrip>><<exhibitionism1>>
+			<<elseif !$worn.under_lower.type.includes("naked")>>
+				You gracefully remove your $worn.lower.name, exposing your $worn.under_lower.name. Being seen in your underwear excites you.
+				<<arousal 300>><<lowerstrip>><<exhibitionism3>>
+			<<else>>
+				You gracefully remove your $worn.lower.name, exposing your <<genitals 1>>.
+				<<if $worn.upper.type.includes("naked") or $worn.over_upper.type.includes("naked")>>
+					You shiver with excitement, your body laid totally bare.
+				<<else>>
+					Your <<allTops>> makes your naked lower half feel particularly conspicuous.
+				<</if>>
+				<<arousal 300>><<lowerstrip>><<exhibitionism5>>
+				<<dance_crossdress_reveal>>
+			<</if>>
+			<<set $danceaction to 0>>
+		<<case "stripUnderOutfit">>
+			You gracefully remove your $worn.under_upper.name, exposing your <<genitals 1>>. You shiver with excitement, now laid totally bare.
+			<<arousal 300>><<underupperstrip>><<exhibitionism5>>
+			<<dance_crossdress_reveal>>
+			<<set $danceaction to 0>>
+		<<case "stripUnderUpper">>
+			<<if (!$worn.upper.type.includes("naked") and $worn.upper.open is 1) and $worn.over_upper.type.includes("naked")>>
+				You gracefully remove your $worn.under_upper.name from beneath your $worn.upper.name. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+				<<arousal 100>><<underupperstrip>><<exhibitionism1>>
+			<<elseif $player.breastsize gte 3>>
+				You gracefully remove your $worn.under_upper.name, <<if $worn.under_upper.type.includes("naked")>>despite them not concealing your <<breasts>> at all.<<else>>exposing your <<breasts>>. The exhibition of your breasts makes them feel raw and sensitive.<</if>>
+				<<arousal 300>><<underupperstrip>><<exhibitionism4>>
+			<<elseif $player.gender_appearance isnot "m" and $worn.under_lower.gender isnot "m">>
+				<<set $danceaction to 0>>
+				<<if $player.gender is "m">>
+					You gracefully remove your $worn.under_upper.name, <<if $worn.under_upper.type.includes("naked")>>despite them not concealing your <<breasts>> at all, you feel more exposed.<<else>>exposing your <<breasts>>. Your feminine countenance makes your revealed chest feel especially lewd.<</if>>
+				<<else>>
+					You gracefully remove your $worn.under_upper.name, <<if $worn.under_upper.type.includes("naked")>>despite them not concealing your <<breasts>> at all, you feel more exposed.<<else>>exposing your <<breasts>>. You feel your nipples harden in response to being revealed.<</if>>
+				<</if>>
+				<<arousal 300>><<underupperstrip>><<exhibitionism4>>
+			<<else>>
+				You gracefully remove your $worn.under_upper.name, <<if $worn.under_upper.type.includes("naked")>>despite them not concealing your <<breasts>> at all, you feel more exposed.<<else>>exposing your <<breasts>>. You feel your nipples harden in response to being revealed.<</if>>
+				<<arousal 300>><<underupperstrip>><<exhibitionism1>>
+			<</if>>
+			<<set $danceaction to 0>>
+		<<case "stripUnderLower">>
+			<<if $worn.under_lower.type.includes("naked")>>
+				<<if (!$worn.lower.type.includes("naked") or !$worn.over_lower.type.includes("naked"))>>
+					You gracefully remove your $worn.under_lower.name from beneath your <<allBottoms>>. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+				<<else>>
+					You gracefully remove your $worn.under_lower.name, despite having your <<genitals 1>> exposed already.
+				<</if>>
+				<<arousal 300>><<underlowerstrip>><<exhibitionism3>>
+			<<elseif !$worn.lower.type.includes("naked") or !$worn.over_lower.type.includes("naked")>>
+				You gracefully remove your $worn.under_lower.name from beneath your <<allBottoms>>. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+				<<arousal 300>><<underlowerstrip>><<exhibitionism3>>
+			<<else>>
+				You gracefully remove your $worn.under_lower.name, exposing your <<genitals 1>>. You shiver with excitement, your body laid totally bare.
+				<<arousal 300>><<underlowerstrip>><<exhibitionism5>>
+				<<dance_crossdress_reveal>>
+			<</if>>
+			<<set $danceaction to 0>>
+	<</switch>>
+<</widget>>
+
+<<widget "cam1payout">>
+	/* Dance Exhibitionism */
+	<<set _payoutStatMod to _args[0]>>
+
+	<<if _args[1] is undefined>>
+		<<set _payoutDuoMod to 1>>
+	<<else>>
+		<<set _payoutDuoMod to _args[1]>>
+	<</if>>
+
+	/* Total Fame */
+	<<set _fame to ($fame.sex + $fame.prostitution + $fame.rape + $fame.bestiality + $fame.exhibitionism + $fame.pregnancy + $fame.impreg + $fame.scrap + $fame.good + $fame.business + $fame.social + $fame.model)>>
+	
+	/* Base */
+	<<set _payout to 3000>>
+	/* Dance Exhibitionism */
+	<<set _payout += (3000 * Math.clamp(_payoutStatMod / 4, 0, 1))>>
+	/* Dance Skill */
+	<<set _payout += (3000 * Math.clamp(currentSkillValue('danceskill') / 1000, 0, 1))>>
+	/* Allure */
+	<<set _payout += (3000 * Math.clamp($allure / (6000 * $alluremod), 0, 1))>>
+	/* Fame */
+	<<set _payout += (3000 * Math.clamp(_fame / 4000, 0, 1))>>
+	
+	<<set $campayout to (_payout * _payoutDuoMod)>>
+<</widget>>
+
+<<widget "cam2payout">>
+	<<if _args[0] is undefined>>
+		<<set _payoutDuoMod to 1>>
+	<<else>>
+		<<set _payoutDuoMod to _args[0]>>
+	<</if>>
+
+	/* Total Fame */
+	<<set _fame to $fame.sex + $fame.prostitution + $fame.rape + $fame.bestiality + $fame.exhibitionism + $fame.pregnancy + $fame.impreg + $fame.scrap + $fame.good + $fame.business + $fame.social + $fame.model>>
+	
+	/* Base */
+	<<set _payout to 6000>>
+	/* Awareness */
+	<<set _payout += (6000 * ($awareness / 1000))>>
+	/* Seduction Skill */
+	<<set _payout += (6000 * Math.clamp($seductionskill / 1000, 0, 1))>>
+	/* Allure */
+	<<set _payout += (6000 * Math.clamp($allure / (6000 * $alluremod), 0, 1))>>
+	/* Fame */
+	<<set _payout += (6000 * Math.clamp(_fame / 4000, 0, 1))>>
+	
+	<<set $campayout to (_payout * _payoutDuoMod)>>
+<</widget>>
