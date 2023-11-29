@@ -652,6 +652,8 @@ function dayPassed() {
 	fragment.append(wikifier("tending_day"));
 	fragment.append(wikifier("creatureContainersProgressDay"));
 
+	fragment.append(dailyBaileyHQ());
+
 	if (V.pillory_tenant.exists && V.pillory_tenant.endday < Time.days) fragment.append(wikifier("clear_pillory"));
 
 	delete V.daily;
@@ -1856,4 +1858,18 @@ function earSlimeDaily() {
 			if (V.earSlime.forcedDressing.days < 0) delete V.earSlime.forcedDressing;
 		}
 	}
+}
+
+function dailyBaileyHQ() {
+	const fragment = document.createDocumentFragment();
+
+	if (V.baileyHQ.tail === -1) {
+		V.baileyHQ.tail = 0;
+	}
+
+	if (V.baileyHQ.alertness > 0) {
+		V.baileyHQ.alertness -= 1;
+	}
+
+	return fragment;
 }
