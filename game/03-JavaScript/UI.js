@@ -762,3 +762,8 @@ window.loadCharacterViewerDate = () => {
 		textArea.value = "Invalid Import";
 	}
 };
+
+function switchImagePack () {
+	
+}
+window.switchImagePack = switchImagePack;
