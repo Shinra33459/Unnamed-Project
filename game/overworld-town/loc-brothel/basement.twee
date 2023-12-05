@@ -36,13 +36,19 @@
 
 <<set $outside to 0>><<set $location to "brothel">><<effects>>
 
-<<generate1>><<person1>>
 <<if $phase is 1>><<set $phase to 0>>
 
 You enter one of the rooms and close the door behind you. A green light flickers on above.
 
-<<else>>
+<<elseif $phase is 2>>
+	<<consensual>><<set $consensual to 1>><<set $enemyanger to 0>><<set $enemytrust to 200>><<ejaculation>><<set $gloryhole to 0>>
+	<<tearful>> you count the money <<he>> pushes through the hole. You've gained <<printmoney $brothel_basement_price>>.
+	<<set $money += $brothel_basement_price>>
+	<<set $phase to 0>>
+	<<set _test1 to $NPCList[0].vagina>>
+	<<set _test2 to $NPCList[0].penis>>
 <</if>>
+<<generate1>><<person1>>
 
 You wait for several minutes, and the light turns red. A
 <<if $NPCList[0].penis isnot "none">>
@@ -51,6 +57,23 @@ $NPCList[0].penisdesc pokes through the hole.
 pussy appears at the hole.
 <</if>>
 <br><br>
+<<gloryHoleServiceInit "normal">>
+<<link [["Service with your hand (" + getTimeString(_service.hands.time) + ")"|Brothel Gloryhole]]>><<gloryHoleServiceEffects "hand" "normal">><</link>><<ghandskill>><<gtiredness>>
+<br>
+<<link [["Service with your mouth (" + getTimeString(_service.mouth.time) + ")"|Brothel Gloryhole]]>><<gloryHoleServiceEffects "mouth" "normal">><</link>><<goralskill>><<gtiredness>>
+<br>
+<<if ($player.penisExist or $worn.genitals.type.includes("strap-on") or playerHasStrapon()) and !playerChastity("penis")>>
+	<<link [["Service with your penis (" + getTimeString(_service.penis.time) + ")"|Brothel Gloryhole]]>><<gloryHoleServiceEffects "penis" "normal">><</link>><<gpenileskill>><<gtiredness>>
+	<br>
+<</if>>
+<<if $player.vaginaExist and !playerChastity("vagina")>>
+	<<link [["Service with your vagina (" + getTimeString(_service.vagina.time) + ")"|Brothel Gloryhole]]>><<gloryHoleServiceEffects "vagina" "normal">><</link>><<gvaginalskill>><<gtiredness>>
+	<br>
+<</if>>
+<<if $analdisable is "f" and !playerChastity("anus") and $NPCList[0].penis isnot "none">>
+	<<link [["Service with your anus (" + getTimeString(_service.anus.time) + ")"|Brothel Gloryhole]]>><<gloryHoleServiceEffects "anus" "normal">><</link>><<ganalskill>><<gtiredness>>
+	<br>
+<</if>>
 <<link [[Engage|Brothel Basement Sex]]>><<set $sexstart to 1>><<tiredness 3>><</link>><<gtiredness>>
 <br>
 <<link [[Leave|Brothel Basement]]>><<endevent>><<unset $desperateaction>><</link>>
