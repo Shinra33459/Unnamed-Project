@@ -260,19 +260,44 @@
 	<<set _service.mouth.submission to _submission>>
 	<<set _service.mouth.sex to _sex>>
 	<<set _service.mouth.rounds to _rounds>>
-	<<set _testTime2 to _time>>
 	<<set _service.mouth.time to _time + _waitTime>>
+
+	/* Chest */
+	<<set _skill to (currentSkillValue("chestskill") / 100)>>
+	<<set _submission to 3>>
+	<<set _sex to 0>>
+	<<gloryHoleServiceCalc>>
+	<<set _service.chest to {}>>
+	<<set _service.chest.submission to _submission>>
+	<<set _service.chest.sex to _sex>>
+	<<set _service.chest.rounds to _rounds>>
+	<<set _service.chest.time to _time + _waitTime>>
+
+	/* Feet */
+	<<set _skill to (currentSkillValue("feetskill") / 100)>>
+	<<set _submission to 2>>
+	<<set _sex to 0>>
+	<<gloryHoleServiceCalc>>
+	<<set _service.feet to {}>>
+	<<set _service.feet.submission to _submission>>
+	<<set _service.feet.sex to _sex>>
+	<<set _service.feet.rounds to _rounds>>
+	<<set _service.feet.time to _time + _waitTime>>
 
 	/* Penis */
 	<<set _skill to (currentSkillValue("penileskill") / 100)>>
 	<<set _submission to 20>>
 	<<set _sex to 0>>
+	<<if $player.virginity.penile isnot true>>
+		<<set _sex to 30>>
+	<<elseif $player.virginity.penile is true>>
+		<<set _sex to 100>>
+	<</if>>
 	<<gloryHoleServiceCalc>>
 	<<set _service.penis to {}>>
 	<<set _service.penis.submission to _submission>>
 	<<set _service.penis.sex to _sex>>
 	<<set _service.penis.rounds to _rounds>>
-	<<set _testTime3 to _time>>
 	<<set _service.penis.time to _time + _waitTime>>
 
 	/* Vagina */
@@ -289,7 +314,6 @@
 	<<set _service.vagina.submission to _submission>>
 	<<set _service.vagina.sex to _sex>>
 	<<set _service.vagina.rounds to _rounds>>
-	<<set _testTime4 to _time>>
 	<<set _service.vagina.time to _time + _waitTime>>
 
 	/* Anus */
@@ -306,7 +330,6 @@
 	<<set _service.anus.submission to _submission>>
 	<<set _service.anus.sex to _sex>>
 	<<set _service.anus.rounds to _rounds>>
-	<<set _testTime5 to _time>>
 	<<set _service.anus.time to _time + _waitTime>>
 <</widget>>
 
@@ -325,18 +348,46 @@
 				<<else>>
 					<<set $NPCList[0].penis to "rightarm">>
 				<</if>>
+			<<elseif $NPCList[0].vagina isnot "none">>
+				<<if random(100) gt 50>>
+					<<set $NPCList[0].vagina to "leftarm">>
+				<<else>>
+					<<set $NPCList[0].vagina to "rightarm">>
+				<</if>>
 			<</if>>
 		<<case "mouth">>
 			<<set _submission to _service.mouth.submission>>
 			<<set _sex to _service.mouth.sex>>
 			<<set _rounds to _service.mouth.rounds>>
 			<<set _time to _service.mouth.time>>
-			<<if $player.virginity.oral is true>>
-				<<takeVirginity $NPCList[0].fullDescription "oral">>
-			<</if>>
 			<<oralskill _rounds>><<oralstat>><<raped>>
 			<<if $NPCList[0].penis isnot "none">>
 				<<set $NPCList[0].penis to "mouth">>
+				<<if $player.virginity.oral is true>>
+					<<takeVirginity $NPCList[0].fullDescription "oral">>
+				<</if>>
+			<<elseif $NPCList[0].vagina isnot "none">>
+				<<set $NPCList[0].vagina to "mouth">>
+			<</if>>
+		<<case "chest">>
+			<<set _submission to _service.chest.submission>>
+			<<set _sex to _service.chest.sex>>
+			<<set _rounds to _service.chest.rounds>>
+			<<set _time to _service.chest.time>>
+			<<chestskill _rounds>><<cheststat>>
+			<<if $NPCList[0].penis isnot "none">>
+				<<set $NPCList[0].penis to "chest">>
+			<</if>>
+		<<case "feet">>
+			<<set _submission to _service.feet.submission>>
+			<<set _sex to _service.feet.sex>>
+			<<set _rounds to _service.feet.rounds>>
+			<<set _time to _service.feet.time>>
+			<<feetskill _rounds>><<feetstat>>
+			<<if $NPCList[0].penis isnot "none">>
+				<<set $NPCList[0].penis to "feet">>
+			<<elseif $NPCList[0].vagina isnot "none">>
+				<<set $NPCList[0].vagina to "feet">>
 			<</if>>
 		<<case "penis">>
 			<<set _submission to _service.penis.submission>>
@@ -349,7 +400,7 @@
 			<<if random(100) gt 50 and $NPCList[0].vagina isnot "none">>
 				<<set _target to "vaginal">>
 				<<set $NPCList[0].vagina to "penis">>
-			<<elseif>>
+			<<else>>
 				<<set _target to "anal">>
 				<<set $NPCList[0].vagina to "otheranus">>
 			<</if>>
@@ -359,13 +410,13 @@
 			<<set _sex to _service.vagina.sex>>
 			<<set _rounds to _service.vagina.rounds>>
 			<<set _time to _service.vagina.time>>
-			<<if $player.virginity.vaginal is true>>
-				<<bruise vagina>><<takeVirginity $NPCList[0].fullDescription "vaginal">>
-			<</if>>
-			<<vaginalskill _rounds>><<vaginalstat>><<raped>><<vaginaraped>><<takeNPCVirginity 0 "penile">>
+			<<vaginalskill _rounds>><<vaginalstat>><<raped>><<vaginaraped>>
 			<<if $NPCList[0].penis isnot "none">>
-				<<set $NPCList[0].penis to "vagina">>
-			<<else>>
+				<<set $NPCList[0].penis to "vagina">><<takeNPCVirginity 0 "penile">>
+				<<if $player.virginity.vaginal is true>>
+					<<bruise vagina>><<takeVirginity $NPCList[0].fullDescription "vaginal">>
+				<</if>>
+			<<elseif $NPCList[0].vagina isnot "none">>
 				<<set $NPCList[0].vagina to "vagina">>
 			<</if>>
 		<<case "anus">>
@@ -373,12 +424,12 @@
 			<<set _sex to _service.anus.sex>>
 			<<set _rounds to _service.anus.rounds>>
 			<<set _time to _service.anus.time>>
-			<<if $player.virginity.anal is true>>
-				<<takeVirginity $NPCList[0].fullDescription "anal">><<bruise anus>><<violence 30>>
-			<</if>>
-			<<analskill _rounds>><<takeNPCVirginity 0 "penile">><<analstat>><<raped>><<anusraped>>
+			<<analskill _rounds>><<analstat>><<raped>><<anusraped>>
 			<<if $NPCList[0].penis isnot "none">>
-				<<set $NPCList[0].penis to "anus">>
+				<<set $NPCList[0].penis to "anus">><<takeNPCVirginity 0 "penile">>
+				<<if $player.virginity.anal is true>>
+					<<takeVirginity $NPCList[0].fullDescription "anal">><<bruise anus>><<violence 30>>
+				<</if>>
 			<</if>>
 	<</switch>>
 
