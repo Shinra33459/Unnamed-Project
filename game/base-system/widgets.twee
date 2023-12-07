@@ -897,8 +897,8 @@
 
 <<widget "combatskulduggeryskilluse">>
 	<<if $statFreeze isnot true>>
-		<<set $skulduggery += 3>>
-		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000)>>
+		<<set $skulduggery += 3 / $AMCTraits.skulduggery>>
+		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000 * $AMCTraits.skulduggery)>>
 		<<if $skulduggery lt 1000>>
 			<span class="gold"> You learned a thing or two about skulduggery.</span>
 		<</if>>
@@ -907,8 +907,8 @@
 
 <<widget "lockpickTrainingSetuse">>
 	<<if $statFreeze isnot true>>
-		<<set $skulduggery += _args[0]>>
-		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000)>>
+		<<set $skulduggery += _args[0] / $AMCTraits.skulduggery>>
+		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000 * $AMCTraits.skulduggery)>>
 		<<if $skulduggery lt 1000>>
 			<span class="gold"> You learned a thing or two about skulduggery.</span>
 		<</if>>
@@ -918,11 +918,11 @@
 
 <<widget "swimmingskilluse">>
 	<<if $statFreeze isnot true>>
-		<<set $swimmingskill += 9>>
+		<<set $swimmingskill += 9 / $AMCTraits.swimming>>
 		<<if $swimmingskill lt 1000>>
 			<span class="gold"> You've become more confident at swimming.</span>
 		<</if>>
-		<<set $swimmingskill to Math.clamp($swimmingskill, 0, 1000)>>
+		<<set $swimmingskill to Math.clamp($swimmingskill, 0, 1000 * $AMCTraits.swimming)>>
 	<</if>>
 <</widget>>
 
@@ -940,6 +940,12 @@
 		<<set $_subject to _args[0]>>
 		<<set $_gain to _args[1] || 1>>
 
+		<<if ($_subject is "english" and $AMCTraits.english is 2) or ($_subject is "maths" and $AMCTraits.maths is 2) or ($_subject is "science" and $AMCTraits.science is 2) or ($_subject is "history" and $AMCTraits.history is 2)>>
+			<<set _AMCmod to 2>>
+		<<else>>
+			<<set _AMCmod to 1>>
+		<</if>>
+
 		<<set _skill_mod to [2.4, 1.2, 0.6, 0.3][Math.clamp(V[$_subject + "trait"], 0, 3)]>>
 
 		<<if _args[2] isnot "no_star">>
@@ -954,8 +960,8 @@
 			<</if>>
 		<</if>>
 
-		<<set V[$_subject + "_exam"] to Math.clamp(V[$_subject + "_exam"] + ($_gain * _skill_mod), -107, 200)>>
-		<<if V[$_subject + "_exam"] gte 100 and V[$_subject + 'trait'] lt 4>>
+		<<set V[$_subject + "_exam"] to Math.clamp(V[$_subject + "_exam"] + ($_gain * _skill_mod / _AMCmod), -107, 200)>>
+		<<if V[$_subject + "_exam"] gte 100 and V[$_subject + 'trait'] lt 4 * _AMCmod>>
 			<<school_skill_up $_subject>>
 			<<school_skill_up_text $_subject>>
 		<</if>>
@@ -963,18 +969,22 @@
 <</widget>>
 
 <<widget "scienceskill">>
+	<<set _args[0] to _args[0] / $AMCTraits.science>>
 	<<schoolskillgeneral "science" _args[0] _args[1]>>
 <</widget>>
 
 <<widget "mathsskill">>
+	<<set _args[0] to _args[0] / $AMCTraits.maths>>
 	<<schoolskillgeneral "maths" _args[0] _args[1]>>
 <</widget>>
 
 <<widget "englishskill">>
+	<<set _args[0] to _args[0] / $AMCTraits.english>>
 	<<schoolskillgeneral "english" _args[0] _args[1]>>
 <</widget>>
 
 <<widget "historyskill">>
+	<<set _args[0] to _args[0] / $AMCTraits.history>>
 	<<schoolskillgeneral "history" _args[0] _args[1]>>
 <</widget>>
 
@@ -1010,28 +1020,6 @@
 				<<historyskill _studyGain "no_star">>
 			<<default>>
 		<</switch>>
-		<<switch $studyBooks.rented>>
-			<<case "science">>
-				<<scienceskill 6 "no_star">>
-			<<case "maths">>
-				<<mathsskill 6 "no_star">>
-			<<case "English">>
-				<<englishskill 6 "no_star">>
-			<<case "history">>
-				<<historyskill 6 "no_star">>
-			<<default>>
-		<</switch>>
-		/* <<switch $studyBooks.stolen>>
-			<<case "science">>
-				<<scienceskill 6 "no_star">>
-			<<case "maths">>
-				<<mathsskill 6 "no_star">>
-			<<case "English">>
-				<<englishskill 6 "no_star">>
-			<<case "history">>
-				<<historyskill 6 "no_star">>
-			<<default>>
-		<</switch>> */
 		<<if $studyBooks.stolen.science is 1>>
 			<<scienceskill _studyGain "no_star">>
 		<</if>>
@@ -1044,6 +1032,28 @@
 		<<if $studyBooks.stolen.history is 1>>
 			<<historyskill _studyGain "no_star">>
 		<</if>>
+		/* <<switch $studyBooks.rented>>
+			<<case "science">>
+				<<scienceskill 6 "no_star">>
+			<<case "maths">>
+				<<mathsskill 6 "no_star">>
+			<<case "English">>
+				<<englishskill 6 "no_star">>
+			<<case "history">>
+				<<historyskill 6 "no_star">>
+			<<default>>
+		<</switch>>
+		<<switch $studyBooks.stolen>>
+			<<case "science">>
+				<<scienceskill 6 "no_star">>
+			<<case "maths">>
+				<<mathsskill 6 "no_star">>
+			<<case "English">>
+				<<englishskill 6 "no_star">>
+			<<case "history">>
+				<<historyskill 6 "no_star">>
+			<<default>>
+		<</switch>> */
 	<</if>>
 <</widget>>
 
@@ -1069,30 +1079,29 @@
 		<<elseif $exposed is 1>>
 			<<set $athletics += 1>>
 		<</if>>
-		<<set $athletics += Math.trunc(_temp * 1.4)>>
-		<<set $athletics to Math.clamp($athletics, 0, 1000)>>
-		<<set $tending to Math.clamp($tending, 0, 1000)>>
+		<<set $athletics += Math.trunc(_temp * 1.4 / $AMCTraits.athletics)>>
+		<<set $athletics to Math.clamp($athletics, 0, 1000 * $AMCTraits.athletics)>>
 	<</if>>
 <</widget>>
 
 <<widget "tending">>
 	<<if _args[0] and $statFreeze isnot true>>
-		<<set $tending += (_args[0] * 2)>>
-		<<set $tending to Math.clamp($tending, 0, 1000)>>
+		<<set $tending += (_args[0] * 2 / $AMCTraits.tending)>>
+		<<set $tending to Math.clamp($tending, 0, 1000 * $AMCTraits.tending)>>
 	<</if>>
 <</widget>>
 
 <<widget "housekeeping">>
 <<if _args[0] and $statFreeze isnot true and $housekeeping lt _args[1]>>
-	<<set $housekeeping += (_args[0] * 2)>>
-	<<set $housekeeping to Math.clamp($housekeeping, 0, 1000)>>
+	<<set $housekeeping += (_args[0] * 2 / $AMCTraits.housekeeping)>>
+	<<set $housekeeping to Math.clamp($housekeeping, 0, 1000 * $AMCTraits.housekeeping)>>
 <</if>>
 <</widget>>
 
 <<widget "danceskill">>
 	<<if _args[0] and $statFreeze isnot true>>
-		<<set $danceskill += _args[0]>>
-		<<set $danceskill to Math.clamp($danceskill, 0, 1000)>>
+		<<set $danceskill += _args[0] / $AMCTraits.dancing>>
+		<<set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)>>
 	<</if>>
 <</widget>>
 
@@ -1104,7 +1113,7 @@
 		<<elseif $exposed is 1>>
 			<<set _temp *= 1.1>>
 		<</if>>
-		<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>>
+		<<set $physique += 10 * _temp / $AMCTraits.physique>><<set $physiqueuse += _temp>>
 		<<if _args[1]>>
 			<<if _args[1] isnot "noMessage">>
 				<<if ($combat is 1 and _args[1] isnot "workout") or _args[1] is "invig">>
@@ -1118,7 +1127,7 @@
 		<<else>>
 			<span class="gold"> You get a good workout.</span>
 		<</if>>
-		<<set $physique = Math.clamp($physique, 0, $physiquesize)>>
+		<<set $physique = Math.clamp($physique, 0, $physiquesize * $AMCTraits.physique)>>
 	<</if>>
 <</widget>>
 
@@ -4943,7 +4952,15 @@
 <</widget>>
 
 <<widget "adjust_school_traits">>
-	<<if $science gte 1000>>
+	<<if $science gte 2000>>
+		<<set $sciencetrait to 8>>
+	<<elseif $science gte 1750>>
+		<<set $sciencetrait to 7>>
+	<<elseif $science gte 1500>>
+		<<set $sciencetrait to 6>>
+	<<elseif $science gte 1250>>
+		<<set $sciencetrait to 5>>
+	<<elseif $science gte 1000>>
 		<<set $sciencetrait to 4>>
 	<<elseif $science gte 700>>
 		<<set $sciencetrait to 3>>
@@ -4954,7 +4971,15 @@
 	<<else>>
 		<<set $sciencetrait to 0>>
 	<</if>>
-	<<if $maths gte 1000>>
+	<<if $maths gte 2000>>
+		<<set $mathstrait to 8>>
+	<<elseif $maths gte 1750>>
+		<<set $mathstrait to 7>>
+	<<elseif $maths gte 1500>>
+		<<set $mathstrait to 6>>
+	<<elseif $maths gte 1250>>
+		<<set $mathstrait to 5>>
+	<<elseif $maths gte 1000>>
 		<<set $mathstrait to 4>>
 	<<elseif $maths gte 700>>
 		<<set $mathstrait to 3>>
@@ -4965,7 +4990,15 @@
 	<<else>>
 		<<set $mathstrait to 0>>
 	<</if>>
-	<<if $english gte 1000>>
+	<<if $english gte 2000>>
+		<<set $englishtrait to 8>>
+	<<elseif $english gte 1750>>
+		<<set $englishtrait to 7>>
+	<<elseif $english gte 1500>>
+		<<set $englishtrait to 6>>
+	<<elseif $english gte 1250>>
+		<<set $englishtrait to 5>>
+	<<elseif $english gte 1000>>
 		<<set $englishtrait to 4>>
 	<<elseif $english gte 700>>
 		<<set $englishtrait to 3>>
@@ -4976,7 +5009,15 @@
 	<<else>>
 		<<set $englishtrait to 0>>
 	<</if>>
-	<<if $history gte 1000>>
+	<<if $history gte 2000>>
+		<<set $historytrait to 8>>
+	<<elseif $history gte 1750>>
+		<<set $historytrait to 7>>
+	<<elseif $history gte 1500>>
+		<<set $historytrait to 6>>
+	<<elseif $history gte 1250>>
+		<<set $historytrait to 5>>
+	<<elseif $history gte 1000>>
 		<<set $historytrait to 4>>
 	<<elseif $history gte 700>>
 		<<set $historytrait to 3>>
@@ -4987,10 +5028,10 @@
 	<<else>>
 		<<set $historytrait to 0>>
 	<</if>>
-	<<set $english to Math.clamp($english, 0, 1000)>>
-	<<set $maths to Math.clamp($maths, 0, 1000)>>
-	<<set $science to Math.clamp($science, 0, 1000)>>
-	<<set $history to Math.clamp($history, 0, 1000)>>
+	<<set $english to Math.clamp($english, 0, 1000 * $AMCTraits.english)>>
+	<<set $maths to Math.clamp($maths, 0, 1000 * $AMCTraits.maths)>>
+	<<set $science to Math.clamp($science, 0, 1000 * $AMCTraits.science)>>
+	<<set $history to Math.clamp($history, 0, 1000 * $AMCTraits.history)>>
 <</widget>>
 
 /*

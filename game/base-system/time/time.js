@@ -1396,7 +1396,11 @@ function dailySchoolEffects() {
 			V.englishPlay = "missed";
 		}
 	}
-	if (V.schooltrait >= 4) fragment.append(wikifier("trauma", -50));
+	if (V.schooltrait >= 8) fragment.append(wikifier("trauma", -100));
+	else if (V.schooltrait === 7) fragment.append(wikifier("trauma", -80));
+	else if (V.schooltrait === 6) fragment.append(wikifier("trauma", -70));
+	else if (V.schooltrait === 5) fragment.append(wikifier("trauma", -60));
+	else if (V.schooltrait === 4) fragment.append(wikifier("trauma", -50));
 	else if (V.schooltrait === 3) fragment.append(wikifier("trauma", -40));
 	else if (V.schooltrait === 2) fragment.append(wikifier("trauma", -30));
 	else if (V.schooltrait === 1) fragment.append(wikifier("trauma", -20));
@@ -1452,7 +1456,7 @@ function dailySchoolEffects() {
 	}
 
 	V.school = V.science + V.english + V.maths + V.history;
-	V.schooltrait = V.school >= 2800 ? 4 : V.school >= 2000 ? 3 : V.school >= 1600 ? 2 : V.school >= 1200 ? 1 : 0;
+	V.schooltrait = V.school >= 8000 ? 8 : V.school >= 6500 ? 7 : V.school >= 5000 ? 6 : V.school >= 4000 ? 5 : V.school >= 2800 ? 4 : V.school >= 2000 ? 3 : V.school >= 1600 ? 2 : V.school >= 1200 ? 1 : 0;
 
 	if (V.studyBooks) {
 		fragment.append(wikifier("passiveStudy"));
