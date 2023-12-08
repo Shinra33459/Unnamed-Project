@@ -1541,7 +1541,7 @@ function dailyMasochismSadismEffects() {
 		return false;
 	};
 
-	if (V.uncomfortable.sadoMaso) {
+	if (V.uncomfortable.sadoMaso === true) {
 		V.masochism *= 0.985;
 		V.sadism *= 0.985;
 	}
