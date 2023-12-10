@@ -1,4 +1,4 @@
-#!/system/bin/sh  # Adjust this line based on your Android device
+#!/system/bin/sh
 
 mainMenu() {
     echo "Choose an action:"
