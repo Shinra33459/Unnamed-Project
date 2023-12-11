@@ -1406,10 +1406,10 @@ function dailySchoolEffects() {
 			V.englishPlay = "missed";
 		}
 	}
-	if (V.schooltrait >= 8) fragment.append(wikifier("trauma", -100));
-	else if (V.schooltrait === 7) fragment.append(wikifier("trauma", -80));
-	else if (V.schooltrait === 6) fragment.append(wikifier("trauma", -70));
-	else if (V.schooltrait === 5) fragment.append(wikifier("trauma", -60));
+	if (V.schooltrait >= 8) fragment.append(wikifier("trauma", -150));
+	else if (V.schooltrait === 7) fragment.append(wikifier("trauma", -125));
+	else if (V.schooltrait === 6) fragment.append(wikifier("trauma", -100));
+	else if (V.schooltrait === 5) fragment.append(wikifier("trauma", -75));
 	else if (V.schooltrait === 4) fragment.append(wikifier("trauma", -50));
 	else if (V.schooltrait === 3) fragment.append(wikifier("trauma", -40));
 	else if (V.schooltrait === 2) fragment.append(wikifier("trauma", -30));
