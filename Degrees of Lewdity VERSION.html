@@ -472509,7 +472509,16 @@ Everyone is being ushered out of the town hall.
 
 &lt;&lt;widget &quot;school_mark&quot;&gt;&gt;
 	&lt;&lt;set $_trait to V[_args[0] + &#39;trait&#39;]&gt;&gt;
-	&lt;&lt;switch Math.clamp($_trait,-1,4)&gt;&gt;
+	&lt;&lt;if (_args[0] is &quot;english&quot; and $AMCTraits.english is 2) or (_args[0] is &quot;maths&quot; and $AMCTraits.maths is 2) or (_args[0] is &quot;science&quot; and $AMCTraits.science is 2) or (_args[0] is &quot;history&quot; and $AMCTraits.history is 2)&gt;&gt;
+		&lt;&lt;set _AMCmod to 2&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set _AMCmod to 1&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;switch Math.clamp($_trait,-1,4 * _AMCmod)&gt;&gt;
+		&lt;&lt;case 8&gt;&gt; an &lt;span class=&quot;lustful&quot;&gt;SSS&lt;/span&gt;
+		&lt;&lt;case 7&gt;&gt; an &lt;span class=&quot;gold&quot;&gt;SS&lt;/span&gt;
+		&lt;&lt;case 6&gt;&gt; an &lt;span class=&quot;yellow&quot;&gt;S+&lt;/span&gt;
+		&lt;&lt;case 5&gt;&gt; an &lt;span class=&quot;yellow&quot;&gt;S&lt;/span&gt;
 		&lt;&lt;case 4&gt;&gt; an &lt;span class=&quot;green&quot;&gt;A*&lt;/span&gt;
 		&lt;&lt;case 3&gt;&gt; an &lt;span class=&quot;teal&quot;&gt;A&lt;/span&gt;
 		&lt;&lt;case 2&gt;&gt; a &lt;span class=&quot;lblue&quot;&gt;B&lt;/span&gt;
@@ -472533,8 +472542,14 @@ Everyone is being ushered out of the town hall.
 	&lt;&lt;set $_change to _args[1]&gt;&gt;
 	&lt;&lt;set $_trait to  $_skill + &quot;trait&quot;&gt;&gt;
 
-	&lt;&lt;set V[$_trait] to Math.clamp(V[$_trait] + $_change, -1, 4)&gt;&gt;
-	&lt;&lt;set V[$_skill] to [0,100,200,400,700,1000][V[$_trait] + 1]&gt;&gt;
+	&lt;&lt;if ($_skill is &quot;english&quot; and $AMCTraits.english is 2) or ($_skill is &quot;maths&quot; and $AMCTraits.maths is 2) or ($_skill is &quot;science&quot; and $AMCTraits.science is 2) or ($_skill is &quot;history&quot; and $AMCTraits.history is 2)&gt;&gt;
+		&lt;&lt;set _AMCmod to 2&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set _AMCmod to 1&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
+
+	&lt;&lt;set V[$_trait] to Math.clamp(V[$_trait] + $_change, -1, 4 * _AMCmod)&gt;&gt;
+	&lt;&lt;set V[$_skill] to [0,100,200,400,700,1000,1250,1500,1750,2000][V[$_trait] + 1]&gt;&gt;
 	&lt;&lt;set V[$_skill + &#39;_exam&#39;] to 0&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
@@ -472566,14 +472581,18 @@ Everyone is being ushered out of the town hall.
 	&lt;&lt;if $_trait lt 1&gt;&gt;
 		Keep at it, and you&#39;re sure to benefit.
 	&lt;&lt;else&gt;&gt;
-		&lt;&lt;set $_colour to [&quot;&quot;,&quot;blue&quot;, &quot;lblue&quot;, &quot;teal&quot;, &quot;green&quot;][$_trait]&gt;&gt;
-		&lt;&lt;set $_traitname to [&quot;&quot;, &quot;Passable&quot;, &quot;Decent&quot;, &quot;Good&quot;, &quot;Excellent&quot;][$_trait] + &quot; &quot; + $_subject&gt;&gt;
+		&lt;&lt;set $_colour to [&quot;&quot;,&quot;blue&quot;, &quot;lblue&quot;, &quot;teal&quot;, &quot;green&quot;, &quot;yellow&quot;, &quot;yellow&quot;, &quot;gold&quot;, &quot;lustful&quot;][$_trait]&gt;&gt;
+		&lt;&lt;set $_traitname to [&quot;&quot;, &quot;Passable&quot;, &quot;Decent&quot;, &quot;Good&quot;, &quot;Excellent&quot;, &quot;Outstanding&quot;, &quot;Exceptional&quot;, &quot;Exemplary&quot;, &quot;Superlative&quot;][$_trait] + &quot; &quot; + $_subject&gt;&gt;
 		&lt;span class=&quot;gold&quot;&gt;
 			You&#39;ve gained the &lt;span @class=&quot;$_colour&quot;&gt;$_traitname&lt;/span&gt; trait,
 		&lt;/span&gt;
 		&lt;&lt;switch _args[0]&gt;&gt;
 			&lt;&lt;case &quot;science&quot;&gt;&gt;
 				&lt;&lt;switch $_trait&gt;&gt;
+					&lt;&lt;case 8&gt;&gt; making pain almost a non-factor. &lt;!-- Superlative Science --&gt;
+					&lt;&lt;case 7&gt;&gt; making pain incredibly easy to cope with. &lt;!-- Exemplary Science --&gt;
+					&lt;&lt;case 6&gt;&gt; making pain very easy to cope with. &lt;!-- Exceptional Science --&gt;
+					&lt;&lt;case 5&gt;&gt; making pain easy to cope with. &lt;!-- Outstanding Science --&gt;
 					&lt;&lt;case 4&gt;&gt; making pain much easier to cope with. &lt;!-- Excellent Science --&gt;
 					&lt;&lt;case 3&gt;&gt; making pain easier to cope with. &lt;!-- Good Science --&gt;
 					&lt;&lt;case 2&gt;&gt; making pain moderately easier to cope with. &lt;!-- Decent Science --&gt;
@@ -472581,6 +472600,10 @@ Everyone is being ushered out of the town hall.
 				&lt;&lt;/switch&gt;&gt;
 			&lt;&lt;case &quot;maths&quot;&gt;&gt;
 				&lt;&lt;switch $_trait&gt;&gt;
+					&lt;&lt;case 8&gt;&gt; letting you make 200% more from tips and negotiated fees. &lt;!-- Superlative Maths --&gt;
+					&lt;&lt;case 7&gt;&gt; letting you make 175% more from tips and negotiated fees. &lt;!-- Exemplary Maths --&gt;
+					22`	223&lt;&lt;case 6&gt;&gt; letting you make 150% more from tips and negotiated fees. &lt;!-- Exceptional Maths --&gt;
+					&lt;&lt;case 5&gt;&gt; letting you make 125% more from tips and negotiated fees. &lt;!-- Outstanding Maths --&gt;
 					&lt;&lt;case 4&gt;&gt; letting you make 100% more from tips and negotiated fees. &lt;!-- Excellent Maths --&gt;
 					&lt;&lt;case 3&gt;&gt; letting you make 75% more from tips and negotiated fees. &lt;!-- Good Maths --&gt;
 					&lt;&lt;case 2&gt;&gt; letting you make 50% more from tips and negotiated fees. &lt;!-- Decent Maths --&gt;
@@ -472588,6 +472611,10 @@ Everyone is being ushered out of the town hall.
 				&lt;&lt;/switch&gt;&gt;
 			&lt;&lt;case &quot;english&quot;&gt;&gt;
 				&lt;&lt;switch $_trait&gt;&gt;
+					&lt;&lt;case 8&gt;&gt; making speech actions nine times as effective. &lt;!-- Superlative English --&gt;
+					&lt;&lt;case 7&gt;&gt; making speech actions eight times as effective. &lt;!-- Exemplary English --&gt;
+					&lt;&lt;case 6&gt;&gt; making speech actions seven times as effective. &lt;!-- Exceptional English --&gt;
+					&lt;&lt;case 5&gt;&gt; making speech actions six times as effective. &lt;!-- Outstanding English --&gt;
 					&lt;&lt;case 4&gt;&gt; making speech actions five times as effective. &lt;!-- Excellent English --&gt;
 					&lt;&lt;case 3&gt;&gt; making speech actions four times as effective. &lt;!-- Good English --&gt;
 					&lt;&lt;case 2&gt;&gt; making speech actions three times as effective. &lt;!-- Decent English --&gt;
@@ -472595,6 +472622,10 @@ Everyone is being ushered out of the town hall.
 				&lt;&lt;/switch&gt;&gt;
 			&lt;&lt;case &quot;history&quot;&gt;&gt;
 				&lt;&lt;switch $_trait&gt;&gt;
+					&lt;&lt;case 8&gt;&gt; teaching you more secret paths around town. &lt;!-- Superlative History --&gt;
+					&lt;&lt;case 7&gt;&gt; teaching you more secret paths around town. &lt;!-- Exemplary History --&gt;
+					&lt;&lt;case 6&gt;&gt; teaching you more secret paths around town. &lt;!-- Exceptional History --&gt;
+					&lt;&lt;case 5&gt;&gt; teaching you more secret paths around town. &lt;!-- Outstanding History --&gt;
 					&lt;&lt;case 4&gt;&gt; teaching you more secret paths around town. &lt;!-- Excellent History --&gt;
 					&lt;&lt;case 3&gt;&gt; teaching you more secret paths around town. &lt;!-- Good History --&gt;
 					&lt;&lt;case 2&gt;&gt; teaching you more secret paths around town. &lt;!-- Decent History --&gt;
@@ -472602,7 +472633,14 @@ Everyone is being ushered out of the town hall.
 				&lt;&lt;/switch&gt;&gt;
 		&lt;&lt;/switch&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
-	&lt;&lt;if $_trait lt 4 and ($passage is &quot;Science Exam&quot; or $passage is &quot;Maths Exam&quot; or $passage is &quot;English Exam&quot; or $passage is &quot;History Exam&quot;)&gt;&gt;
+
+	&lt;&lt;if ($_subject is &quot;English&quot; and $AMCTraits.english is 2) or ($_subject is &quot;Maths&quot; and $AMCTraits.maths is 2) or ($_subject is &quot;Science&quot; and $AMCTraits.science is 2) or ($_subject is &quot;History&quot; and $AMCTraits.history is 2)&gt;&gt;
+		&lt;&lt;set _AMCmod to 2&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set _AMCmod to 1&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
+
+	&lt;&lt;if $_trait lt 4 * _AMCmod and ($passage is &quot;Science Exam&quot; or $passage is &quot;Maths Exam&quot; or $passage is &quot;English Exam&quot; or $passage is &quot;History Exam&quot;)&gt;&gt;
 		However, the next exam will be harder.
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;</tw-passagedata><tw-passagedata pid="7182" name="Science Exam" tags="" position="225,89850" size="100,100">&lt;&lt;schooleffects&gt;&gt;&lt;&lt;effects&gt;&gt;
@@ -472964,7 +473002,7 @@ You all gather around Mason as &lt;&lt;he&gt;&gt; reads out the results.
 		&lt;&lt;if $swimmingSuccess is 1&gt;&gt;
 			You&#39;re in the middle of the pack, not bad.&lt;&lt;stress -6&gt;&gt;&lt;&lt;trauma -6&gt;&gt;&lt;&lt;tiredness 4&gt;&gt;&lt;&lt;lstress&gt;&gt;&lt;&lt;ltrauma&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
 		&lt;&lt;else&gt;&gt;
-			&lt;span class=&quot;red&quot;&gt;You&#39;re among the worst&lt;/span&gt;&lt;&lt;stress 6&gt;&gt;&lt;&lt;trauma 6&gt;&gt;&lt;&lt;tiredness 4&gt;&gt;&lt;&lt;gstress&gt;&gt;&lt;&lt;gtrauma&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+			&lt;span class=&quot;red&quot;&gt;You&#39;re among the worst.&lt;/span&gt;&lt;&lt;stress 6&gt;&gt;&lt;&lt;trauma 6&gt;&gt;&lt;&lt;tiredness 4&gt;&gt;&lt;&lt;gstress&gt;&gt;&lt;&lt;gtrauma&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/if&gt;&gt;
@@ -491270,13 +491308,13 @@ You deftly open the vending machine and count out the money inside. There&#39;s 
 &lt;&lt;widget &quot;classgrades&quot;&gt;&gt;
 	&lt;&lt;if $schoolstate is &quot;morning&quot; or ($schoolstate is &quot;first&quot; and Time.minute lte 58)&gt;&gt;
 		&lt;&lt;if $sciencetrait gte 8&gt;&gt;
-			Your current science grade is &lt;span class=&quot;green&quot;&gt;SSS&lt;/span&gt;. Why are you here? Just to flex?
+			Your current science grade is &lt;span class=&quot;lustful&quot;&gt;SSS&lt;/span&gt;. Why are you here? Just to flex?
 		&lt;&lt;elseif $sciencetrait gte 7&gt;&gt;
-			Your current science grade is &lt;span class=&quot;green&quot;&gt;SS&lt;/span&gt;. You&#39;d probably rival a professor.
+			Your current science grade is &lt;span class=&quot;gold&quot;&gt;SS&lt;/span&gt;. You&#39;d probably rival a professor.
 		&lt;&lt;elseif $sciencetrait gte 6&gt;&gt;
-			Your current science grade is &lt;span class=&quot;green&quot;&gt;S+&lt;/span&gt;. You&#39;re not sure if the teacher knows more than you.
+			Your current science grade is &lt;span class=&quot;yellow&quot;&gt;S+&lt;/span&gt;. You&#39;re not sure if the teacher knows more than you.
 		&lt;&lt;elseif $sciencetrait gte 5&gt;&gt;
-			Your current science grade is &lt;span class=&quot;green&quot;&gt;S&lt;/span&gt;. You&#39;d probably qualify as a teaching assistant.
+			Your current science grade is &lt;span class=&quot;yellow&quot;&gt;S&lt;/span&gt;. You&#39;d probably qualify as a teaching assistant.
 		&lt;&lt;elseif $sciencetrait gte 4&gt;&gt;
 			Your current science grade is &lt;span class=&quot;green&quot;&gt;A*&lt;/span&gt;. There is nothing more you can learn from this class.
 		&lt;&lt;elseif $sciencetrait gte 3&gt;&gt;
@@ -491292,13 +491330,13 @@ You deftly open the vending machine and count out the money inside. There&#39;s 
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;elseif $schoolstate is &quot;first&quot; or ($schoolstate is &quot;second&quot; and Time.minute lte 58)&gt;&gt;
 		&lt;&lt;if $mathstrait gte 8&gt;&gt;
-			Your current maths grade is &lt;span class=&quot;green&quot;&gt;SSS&lt;/span&gt;. Why are you here? Just to flex?
+			Your current maths grade is &lt;span class=&quot;lustful&quot;&gt;SSS&lt;/span&gt;. Why are you here? Just to flex?
 		&lt;&lt;elseif $mathstrait gte 7&gt;&gt;
-			Your current maths grade is &lt;span class=&quot;green&quot;&gt;SS&lt;/span&gt;. You&#39;d probably rival a professor.
+			Your current maths grade is &lt;span class=&quot;gold&quot;&gt;SS&lt;/span&gt;. You&#39;d probably rival a professor.
 		&lt;&lt;elseif $mathstrait gte 6&gt;&gt;
-			Your current maths grade is &lt;span class=&quot;green&quot;&gt;S+&lt;/span&gt;. You&#39;re not sure if the teacher knows more than you.
+			Your current maths grade is &lt;span class=&quot;yellow&quot;&gt;S+&lt;/span&gt;. You&#39;re not sure if the teacher knows more than you.
 		&lt;&lt;elseif $mathstrait gte 5&gt;&gt;
-			Your current maths grade is &lt;span class=&quot;green&quot;&gt;S&lt;/span&gt;. You&#39;d probably qualify as a teaching assistant.
+			Your current maths grade is &lt;span class=&quot;yellow&quot;&gt;S&lt;/span&gt;. You&#39;d probably qualify as a teaching assistant.
 		&lt;&lt;elseif $mathstrait gte 4&gt;&gt;
 			Your current maths grade is &lt;span class=&quot;green&quot;&gt;A*&lt;/span&gt;. There is nothing more you can learn from this class.
 		&lt;&lt;elseif $mathstrait gte 3&gt;&gt;
@@ -491314,13 +491352,13 @@ You deftly open the vending machine and count out the money inside. There&#39;s 
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;elseif $schoolstate is &quot;second&quot; or ($schoolstate is &quot;third&quot; and Time.minute lte 58)&gt;&gt;
 		&lt;&lt;if $englishtrait gte 8&gt;&gt;
-			Your current english grade is &lt;span class=&quot;green&quot;&gt;SSS&lt;/span&gt;. Why are you here? Just to flex?
+			Your current english grade is &lt;span class=&quot;lustful&quot;&gt;SSS&lt;/span&gt;. Why are you here? Just to flex?
 		&lt;&lt;elseif $englishtrait gte 7&gt;&gt;
-			Your current english grade is &lt;span class=&quot;green&quot;&gt;SS&lt;/span&gt;. You&#39;d probably rival a professor.
+			Your current english grade is &lt;span class=&quot;gold&quot;&gt;SS&lt;/span&gt;. You&#39;d probably rival a professor.
 		&lt;&lt;elseif $englishtrait gte 6&gt;&gt;
-			Your current english grade is &lt;span class=&quot;green&quot;&gt;S+&lt;/span&gt;. You&#39;re not sure if the teacher knows more than you.
+			Your current english grade is &lt;span class=&quot;yellow&quot;&gt;S+&lt;/span&gt;. You&#39;re not sure if the teacher knows more than you.
 		&lt;&lt;elseif $englishtrait gte 5&gt;&gt;
-			Your current english grade is &lt;span class=&quot;green&quot;&gt;S&lt;/span&gt;. You&#39;d probably qualify as a teaching assistant.
+			Your current english grade is &lt;span class=&quot;yellow&quot;&gt;S&lt;/span&gt;. You&#39;d probably qualify as a teaching assistant.
 		&lt;&lt;elseif $englishtrait gte 4&gt;&gt;
 			Your current english grade is &lt;span class=&quot;green&quot;&gt;A*&lt;/span&gt;. There is nothing more you can learn from this class.
 		&lt;&lt;elseif $englishtrait gte 3&gt;&gt;
@@ -491336,13 +491374,13 @@ You deftly open the vending machine and count out the money inside. There&#39;s 
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;elseif $schoolstate is &quot;lunch&quot; or ($schoolstate is &quot;fourth&quot; and Time.minute lte 58)&gt;&gt;
 		&lt;&lt;if $historytrait gte 8&gt;&gt;
-			Your current history grade is &lt;span class=&quot;green&quot;&gt;SSS&lt;/span&gt;. Why are you here? Just to flex?
+			Your current history grade is &lt;span class=&quot;lustful&quot;&gt;SSS&lt;/span&gt;. Why are you here? Just to flex?
 		&lt;&lt;elseif $historytrait gte 7&gt;&gt;
-			Your current history grade is &lt;span class=&quot;green&quot;&gt;SS&lt;/span&gt;. You&#39;d probably rival a professor.
+			Your current history grade is &lt;span class=&quot;gold&quot;&gt;SS&lt;/span&gt;. You&#39;d probably rival a professor.
 		&lt;&lt;elseif $historytrait gte 6&gt;&gt;
-			Your current history grade is &lt;span class=&quot;green&quot;&gt;S+&lt;/span&gt;. You&#39;re not sure if the teacher knows more than you.
+			Your current history grade is &lt;span class=&quot;yellow&quot;&gt;S+&lt;/span&gt;. You&#39;re not sure if the teacher knows more than you.
 		&lt;&lt;elseif $historytrait gte 5&gt;&gt;
-			Your current history grade is &lt;span class=&quot;green&quot;&gt;S&lt;/span&gt;. You&#39;d probably qualify as a teaching assistant.
+			Your current history grade is &lt;span class=&quot;yellow&quot;&gt;S&lt;/span&gt;. You&#39;d probably qualify as a teaching assistant.
 		&lt;&lt;elseif $historytrait gte 4&gt;&gt;
 			Your current history grade is &lt;span class=&quot;green&quot;&gt;A*&lt;/span&gt;. There is nothing more you can learn from this class.
 		&lt;&lt;elseif $historytrait gte 3&gt;&gt;

@@ -291,7 +291,7 @@ function yearPassed() {
 function weekPassed() {
 	const fragment = document.createDocumentFragment();
 
-	if (V.science_exam >= 200 && V.sciencetrait < 4) {
+	if (V.science_exam >= 200 && V.sciencetrait < 4 * V.AMCTraits.science) {
 		V.effectsmessage = 1;
 		V.science_up_message = 1;
 		fragment.append(wikifier("school_skill_up", "science"));
@@ -300,7 +300,7 @@ function weekPassed() {
 		V.science_down_message = 1;
 		fragment.append(wikifier("school_skill_down", "science"));
 	}
-	if (V.maths_exam >= 200 && V.mathstrait < 4) {
+	if (V.maths_exam >= 200 && V.mathstrait < 4 * V.AMCTraits.maths) {
 		V.effectsmessage = 1;
 		V.maths_up_message = 1;
 		fragment.append(wikifier("school_skill_up", "maths"));
@@ -309,7 +309,7 @@ function weekPassed() {
 		V.maths_down_message = 1;
 		fragment.append(wikifier("school_skill_down", "maths"));
 	}
-	if (V.english_exam >= 200 && V.englishtrait < 4) {
+	if (V.english_exam >= 200 && V.englishtrait < 4 * V.AMCTraits.english) {
 		V.effectsmessage = 1;
 		V.english_up_message = 1;
 		fragment.append(wikifier("school_skill_up", "english"));
@@ -318,7 +318,7 @@ function weekPassed() {
 		V.english_down_message = 1;
 		fragment.append(wikifier("school_skill_down", "english"));
 	}
-	if (V.history_exam >= 200 && V.historytrait < 4) {
+	if (V.history_exam >= 200 && V.historytrait < 4 * V.AMCTraits.history) {
 		V.effectsmessage = 1;
 		V.history_up_message = 1;
 		fragment.append(wikifier("school_skill_up", "history"));
