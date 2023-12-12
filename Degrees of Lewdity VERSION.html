@@ -15957,7 +15957,7 @@ window.StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.4.4.3 DoLP 0.5",
+	version: "0.4.4.4 DoLP 0.5",
 	versionName: "",
 	sneaky: false,
 };
@@ -87522,6 +87522,9 @@ If you want to avoid trouble, dress modestly and stick to safe, well-lit areas. 
 	&lt;&lt;if $feats.allSaves.points gt 0&gt;&gt;
 		&lt;&lt;applyFeatsBoost&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
+
+	&lt;&lt;set $school to $science + $english + $maths + $history&gt;&gt;
+	&lt;&lt;set $schooltrait = $school &gt;= 2800 ? 4 : $school &gt;= 2000 ? 3 : $school &gt;= 1600 ? 2 : $school &gt;= 1200 ? 1 : 0&gt;&gt;
 
 	&lt;&lt;if $ironmanmode is true&gt;&gt;
 		&lt;&lt;set $options.confirmDialogUponTabClose to true&gt;&gt;
@@ -195314,7 +195317,7 @@ hue-rotate(45deg) saturate(0.4) brightness(0.5)
 				purity:{cost:20, limit: 100, minCount: 2, count:_purityFeats, exclusive:&quot;impurity&quot;},
 				impurity:{cost:20, limit: 100, minCount: 1, count:_keys.count(&quot;Demon&quot;), exclusive:&quot;purity&quot;},
 				newLife:{cost:20, limit: _newLifeLimit, minCount: 1, count:_newLife, exclusive:&quot;&quot;},
-				aNewBestFriend:{cost:10, limit: 20, minCount: 1, count:_earSlimeFeats, exclusive:&quot;&quot;},
+				aNewBestFriend:{cost:10, limit: 10 * _earSlimeFeats, minCount: 1, count:_earSlimeFeats, exclusive:&quot;&quot;},
 				tattoos:{cost:5, limit: 25, minCount: 2, count:_tattoosFeats, exclusive:&quot;&quot;},
 				defaultMoves:{cost:5, limit: 25, minCount: 1, count:_keys.count(&quot;A New Life&quot;), exclusive:&quot;&quot;},
 				randomClothing:{cost:1, limit: 20, minCount: 0, count:0, exclusive:&quot;&quot;},
@@ -213606,7 +213609,6 @@ Zohar
 						if (dailyPurity + V.featsPurityBoost === 0) return &quot;You are not gaining purity daily.&quot;;
 						return &quot;You are losing purity daily.&quot;;
 					},
-					text: &quot;You are gaining purity daily.&quot;,
 				},
 				{
 					name: &quot;Impurity boost&quot;,
@@ -215956,7 +215958,7 @@ Zohar
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;autoTakePillCheck&quot;&gt;&gt;
-	&lt;&lt;if $sexStats &amp;&amp; $sexStats.pills &amp;&amp; $pillsTakenOn != (Time.monthDay.toString() + Time.month + Time.year.toString())&gt;&gt;
+	&lt;&lt;if !$statFreeze &amp;&amp; $sexStats &amp;&amp; $sexStats.pills &amp;&amp; $pillsTakenOn != (Time.monthDay.toString() + Time.month + Time.year.toString())&gt;&gt;
 		&lt;&lt;set _pills to $sexStats.pills&gt;&gt;
 		&lt;&lt;if $molestationstart isnot 1 and $combat is 0 and ([&quot;home&quot;, &quot;alex_cottage&quot;, &quot;asylum&quot;, &quot;prison&quot;].includes($location) or ($location is &quot;cabin&quot; and $syndromeeden gte 1) or ($location is &quot;temple&quot; and V.wardrobes.temple.unlocked) or ($location is &quot;seapirates&quot; and V.wardrobes.pirate.unlocked))&gt;&gt; &lt;!-- Eden Syndrome is 0 or 1, but could be higher in the future. --&gt;
 			&lt;&lt;set _keys to Object.keys(_pills.lastTaken)&gt;&gt; /* &quot;lastTaken&quot; will induce you in error here, it&#39;s only to retrieve the pills type list*/
@@ -231901,7 +231903,11 @@ You obey the slime&#39;s demand.
 	&lt;&lt;for _plantType range $plants_known&gt;&gt;
 		&lt;br&gt;
 		&lt;&lt;set $_plant to setup.plants[_plantType]&gt;&gt;
-		&lt;&lt;if $_plant.season.includes(Time.season) or (_location is &quot;garden&quot; and $alex_greenhouse gte 3)&gt;&gt;
+		&lt;&lt;if !$_plant&gt;&gt;
+			&lt;span class=&quot;red&quot;&gt;Plant type &#39;&lt;&lt;print _plantType&gt;&gt;&#39; not found.&lt;/span&gt;
+			&lt;br&gt;&lt;br&gt;
+			Please report this.
+		&lt;&lt;elseif $_plant.season.includes(Time.season) or (_location is &quot;garden&quot; and $alex_greenhouse gte 3)&gt;&gt;
 			/* comparing soil types; check if target bed is compatible with the seed&#39;s soil type */
 			&lt;&lt;if $_plant.bed is _plantbed.bed&gt;&gt;
 				&lt;&lt;switch _plantbed.size&gt;&gt;
@@ -270396,13 +270402,18 @@ There&#39;s sharp declines and sharper rocks pointing downstream. Any further wi
 
 &lt;&lt;lakeicon &quot;waterfall&quot;&gt;&gt;&lt;&lt;link [[Go upstream towards the lake (0:30)|Lake Waterfall]]&gt;&gt;&lt;&lt;pass 30&gt;&gt;&lt;&lt;tiredness 6&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
 &lt;br&gt;
-&lt;&lt;if $bogProgress gte 1&gt;&gt;
-	&lt;&lt;foresticon &quot;bog&quot;&gt;&gt;&lt;&lt;link [[Go downstream towards the bog (0:30)|Bog Intro]]&gt;&gt;&lt;&lt;pass 30&gt;&gt;&lt;&lt;tiredness 6&gt;&gt;&lt;&lt;set $forest to 0&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;note &quot;One-way&quot; &quot;red&quot;&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+
+&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot; and $exhibitionism gte 35&gt;&gt;
+	&lt;span class=&quot;red&quot;&gt;The slime in your ear refuses to allow you to leave with swimwear on.&lt;/span&gt;
 &lt;&lt;else&gt;&gt;
-	&lt;&lt;askicon&gt;&gt;&lt;&lt;link [[Explore downstream (0:30)|Bog Intro]]&gt;&gt;&lt;&lt;pass 30&gt;&gt;&lt;&lt;tiredness 6&gt;&gt;&lt;&lt;set $forest to 0&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;note &quot;One-way&quot; &quot;red&quot;&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+	&lt;&lt;if $bogProgress gte 1&gt;&gt;
+		&lt;&lt;foresticon &quot;bog&quot;&gt;&gt;&lt;&lt;link [[Go downstream towards the bog (0:30)|Bog Intro]]&gt;&gt;&lt;&lt;pass 30&gt;&gt;&lt;&lt;tiredness 6&gt;&gt;&lt;&lt;set $forest to 0&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;note &quot;One-way&quot; &quot;red&quot;&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;askicon&gt;&gt;&lt;&lt;link [[Explore downstream (0:30)|Bog Intro]]&gt;&gt;&lt;&lt;pass 30&gt;&gt;&lt;&lt;tiredness 6&gt;&gt;&lt;&lt;set $forest to 0&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;note &quot;One-way&quot; &quot;red&quot;&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;&lt;foresticon&gt;&gt;&lt;&lt;link [[Forest (0:10)|Forest]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;set $forest to 80&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;&lt;/if&gt;&gt;
-&lt;br&gt;&lt;br&gt;
-&lt;&lt;foresticon&gt;&gt;&lt;&lt;link [[Forest (0:10)|Forest]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;set $forest to 80&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="1047" name="Widgets Forest" tags="widget" position="850,13100" size="100,100">&lt;&lt;widget &quot;forestmove&quot;&gt;&gt;
 	&lt;&lt;if $possessed&gt;&gt;
 		You shamble through the forest. You know where you&#39;re going.
@@ -277334,7 +277345,7 @@ Your body is unnaturally warm. &lt;&lt;arousal 600&gt;&gt;&lt;&lt;garousal&gt;&g
 		&lt;&lt;else&gt;&gt;
 			Semen sprays out of your &lt;&lt;penis&gt;&gt; in a fountain, pulsing and throbbing but never slowing down.
 		&lt;&lt;/if&gt;&gt;
-	&lt;&lt;else&gt;&gt;
+	&lt;&lt;elseif $phase.includes(&quot;penis&quot;)&gt;&gt;
 		Your &lt;&lt;penis&gt;&gt; spasms, despite it having nothing to give.
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $phase.includes(&quot;breast&quot;)&gt;&gt;
@@ -279739,7 +279750,8 @@ You swiftly exit, not looking back.
 		&lt;&lt;lakeicon &quot;waterfall&quot;&gt;&gt;&lt;&lt;link [[South to waterfall (0:10)|Lake Waterfall]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;/link&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;br&gt;&lt;br&gt;
-	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot;&gt;&gt;
+	/* Added $exhibitionism due to situations where the player can be soft locked and unsure how best to deal with it */
+	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot; and $exhibitionism gte 35&gt;&gt;
 		&lt;span class=&quot;red&quot;&gt;The slime in your ear refuses to allow you to leave with swimwear on.&lt;/span&gt;
 	&lt;&lt;else&gt;&gt;
 		&lt;&lt;foresticon&gt;&gt;&lt;&lt;link [[Forest (0:10)|Forest]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;/link&gt;&gt;
@@ -279867,7 +279879,7 @@ You ask.
 		&lt;&lt;if _robin_location isnot $robinmissing&gt;&gt;
 			&lt;&lt;npc Robin 5&gt;&gt;&lt;&lt;set $bogTeam.robinKnown to true&gt;&gt;&lt;&lt;set $bogTeam.robinPresent to true&gt;&gt;
 			Two more enter. You first notice Robin shuffling awkwardly and looking downtrodden. &lt;&lt;person5&gt;&gt;&lt;&lt;He&gt;&gt; lightens up upon seeing you. &quot;Hey. Winter said &lt;&lt;person1&gt;&gt;&lt;&lt;he&gt;&gt; needed help, so I volunteered!&quot;
-			Behind &lt;&lt;him&gt;&gt; is a &lt;&lt;person4&gt;&gt;&lt;&lt;personsimple&gt;&gt; with &lt;&lt;if $pronoun is &quot;m&quot;&gt;&gt;short&lt;&lt;else&gt;&gt;shoulder-length&lt;&lt;/if&gt;&gt; hair. There&#39;s a pistol holstered on &lt;&lt;his&gt;&gt; belt.
+			Behind &lt;&lt;person5&gt;&gt;&lt;&lt;him&gt;&gt; is a &lt;&lt;person4&gt;&gt;&lt;&lt;personsimple&gt;&gt; with &lt;&lt;if $pronoun is &quot;m&quot;&gt;&gt;short&lt;&lt;else&gt;&gt;shoulder-length&lt;&lt;/if&gt;&gt; hair. There&#39;s a pistol holstered on &lt;&lt;his&gt;&gt; belt.
 			&lt;&lt;if $wren_seen is &quot;cards&quot; or $wren_seen is &quot;letter&quot; or $wren_seen is &quot;catsuit&quot; or $wren_seen is &quot;prison&quot;&gt;&gt;
 				&lt;span class=&quot;gold&quot;&gt;It&#39;s Wren.&lt;/span&gt;
 				&lt;br&gt;&lt;br&gt;
@@ -280070,7 +280082,7 @@ You are at the bus stop beside the lake. The road from town terminates here, end
 		&lt;br&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;br&gt;
-	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot;&gt;&gt;
+	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot; and $exhibitionism gte 35&gt;&gt;
 		&lt;span class=&quot;red&quot;&gt;The slime in your ear refuses to allow you to leave with swimwear on.&lt;/span&gt;
 	&lt;&lt;else&gt;&gt;
 		&lt;&lt;foresticon&gt;&gt;&lt;&lt;link [[Forest (0:10)|Forest]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;/link&gt;&gt;
@@ -280142,7 +280154,7 @@ You are at the bus stop beside the lake. The road from town terminates here, end
 	&lt;&lt;lakeicon &quot;campfire&quot;&gt;&gt;&lt;&lt;link [[South to campsite (0:20)|Lake Campsite]]&gt;&gt;&lt;&lt;pass 20&gt;&gt;&lt;&lt;/link&gt;&gt;
 	&lt;br&gt;&lt;br&gt;
 
-	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot;&gt;&gt;
+	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot; and $exhibitionism gte 35&gt;&gt;
 		&lt;span class=&quot;red&quot;&gt;The slime in your ear refuses to allow you to leave with swimwear on.&lt;/span&gt;
 	&lt;&lt;else&gt;&gt;
 		&lt;&lt;foresticon&gt;&gt;&lt;&lt;link [[Forest (0:10)|Forest]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;/link&gt;&gt;
@@ -280217,7 +280229,7 @@ You are at the bus stop beside the lake. The road from town terminates here, end
 	&lt;&lt;link [[South to shore (0:10)|Lake Shore]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;/link&gt;&gt;
 	&lt;br&gt;&lt;br&gt;
 
-	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot;&gt;&gt;
+	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot; and $exhibitionism gte 35&gt;&gt;
 		&lt;span class=&quot;red&quot;&gt;The slime in your ear refuses to allow you to leave with swimwear on.&lt;/span&gt;
 	&lt;&lt;else&gt;&gt;
 		&lt;&lt;foresticon&gt;&gt;&lt;&lt;link [[Forest (0:10)|Forest]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;/link&gt;&gt;
@@ -280290,7 +280302,7 @@ You are at the bus stop beside the lake. The road from town terminates here, end
 	&lt;&lt;/if&gt;&gt;
 	&lt;br&gt;&lt;br&gt;
 	
-	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot;&gt;&gt;
+	&lt;&lt;if $earSlime.forcedCommando isnot undefined and $worn.under_lower.name isnot &quot;naked&quot; and $exhibitionism gte 35&gt;&gt;
 		&lt;span class=&quot;red&quot;&gt;The slime in your ear refuses to allow you to leave with swimwear on.&lt;/span&gt;
 	&lt;&lt;else&gt;&gt;
 		&lt;&lt;foresticon&gt;&gt;&lt;&lt;link [[Forest (0:10)|Forest]]&gt;&gt;&lt;&lt;pass 10&gt;&gt;&lt;&lt;/link&gt;&gt;
@@ -353703,7 +353715,7 @@ disapproving expression, &quot;I&#39;ll be informing the owners of this situatio
 &lt;&lt;/if&gt;&gt;
 &lt;br&gt;&lt;br&gt;
 &quot;Now follow me, I&#39;ll be escorting you away from here. You&#39;re lucky that I don&#39;t just take you straight to the pillory.&quot;
-
+&lt;&lt;tryOnReset&gt;&gt;
 &lt;br&gt;&lt;br&gt;
 &lt;&lt;link [[Run|Adult Shop Night Guard Found Run]]&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;athleticsdifficulty 500&gt;&gt;
 &lt;br&gt;
@@ -371033,9 +371045,8 @@ The rest of the shift passes uneventfully. You earn &lt;&lt;moneyGain 5&gt;&gt;.
 &lt;&lt;else&gt;&gt;
 	You try to ignore the command from the slime and continue on. You feel it try, &lt;span class=&quot;green&quot;&gt;but fail,&lt;/span&gt; to force you to buy the $daily.earSlimeOceanBreezeCafeEat.
 	&lt;br&gt;&lt;br&gt;
-	&lt;&lt;stray_happiness_text&gt;&gt;
-	&lt;&lt;unset $slimePoundDefy&gt;&gt;
-	&lt;&lt;unset $slimePoundTask&gt;&gt;
+	&lt;&lt;link [[Next|Ocean Breeze]]&gt;&gt;&lt;&lt;endevent&gt;&gt;&lt;&lt;/link&gt;&gt;
+	&lt;br&gt;
 &lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="3896" name="Cafe Coffee" tags="" position="725,48725" size="100,100">&lt;&lt;endevent&gt;&gt;
 &lt;&lt;set _coffee to [&quot;mocha&quot;, &quot;latte&quot;, &quot;caramel latte&quot;, &quot;white chocolate mocha&quot;, &quot;flat white&quot;, &quot;caramel iced latte&quot;].pluck()&gt;&gt;
 &lt;&lt;if $daily.earSlimeOceanBreezeCafeEat&gt;&gt;
@@ -414326,7 +414337,7 @@ You find a walnut tree, with fresh nuts lying about the base.
 					&lt;span class=&quot;black&quot;&gt;More wood required.&lt;/span&gt; &lt;&lt;wood_required 1&gt;&gt;
 					&lt;br&gt;
 				&lt;&lt;else&gt;&gt;
-					 &lt;&lt;link [[Build (1:00)|Island Build Mask]]&gt;&gt;&lt;&lt;set $islander_mask += 10&gt;&gt;&lt;&lt;set $island.wood -= 1&gt;&gt;&lt;&lt;/link&gt;&gt; &lt;&lt;wood_required 1&gt;&gt;
+					 &lt;&lt;link [[Build (1:00)|Island Build Mask]]&gt;&gt;&lt;&lt;island_pass 60&gt;&gt;&lt;&lt;set $islander_mask += 10&gt;&gt;&lt;&lt;set $island.wood -= 1&gt;&gt;&lt;&lt;/link&gt;&gt; &lt;&lt;wood_required 1&gt;&gt;
 					&lt;br&gt;
 				&lt;&lt;/if&gt;&gt;
 			&lt;&lt;case &quot;raft&quot;&gt;&gt;
@@ -430489,7 +430500,7 @@ You look away from the &lt;&lt;person&gt;&gt;. When you look back, &lt;&lt;hes&g
 &lt;&lt;link [[Flirt|Pirate Socialise Flirt]]&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;promiscuous1&gt;&gt;
 &lt;br&gt;
 &lt;&lt;if $promiscuity gte 35&gt;&gt;
-    &lt;&lt;link [[Seduce|Pirate Socialise Seduce]]&gt;&gt;&lt;&lt;/link&gt;&gt;
+    &lt;&lt;link [[Seduce|Pirate Socialise Seduce]]&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;promiscuous3&gt;&gt;
     &lt;br&gt;
 &lt;&lt;/if&gt;&gt;
 &lt;&lt;link [[Chat|Pirate Socialise Chat]]&gt;&gt;&lt;&lt;stress -6&gt;&gt;&lt;&lt;/link&gt;&gt;
@@ -431099,7 +431110,7 @@ The &lt;&lt;person&gt;&gt; quiets the audience with a gesture, preparing to anno
 &lt;&lt;if currentSkillValue(&#39;danceskill&#39;) gte 1000&gt;&gt;
     &quot;What an astounding performance!&quot; the &lt;&lt;person&gt;&gt; says. &lt;&lt;He&gt;&gt; sounds surprised, even awed.
 &lt;&lt;elseif currentSkillValue(&#39;danceskill&#39;) gte 800&gt;&gt;
-    &quot;A great performance from our little castaway!&quot; the &lt;&lt;pereson&gt;&gt; exclaims.
+    &quot;A great performance from our little castaway!&quot; the &lt;&lt;person&gt;&gt; exclaims.
 &lt;&lt;elseif currentSkillValue(&#39;danceskill&#39;) gte 600&gt;&gt;
     &quot;Who would have known our little castaway would give such a good performance?&quot; the &lt;&lt;person&gt;&gt; says.
 &lt;&lt;elseif currentSkillValue(&#39;danceskill&#39;) gte 400&gt;&gt;
@@ -431453,7 +431464,7 @@ You walk up to the &lt;&lt;person1&gt;&gt;&lt;&lt;person&gt;&gt;. When within ar
 &lt;&lt;if random(1, 2) is 2&gt;&gt;
     You walk on, ignoring the &lt;&lt;person1&gt;&gt;&lt;&lt;person&gt;&gt; and &lt;&lt;his&gt;&gt; friends. &lt;&lt;He&gt;&gt; grumbles something incoherent, but that&#39;s the end of it.
     &lt;br&gt;&lt;br&gt;
-    &lt;&lt;link [[Next|Pirate Deck]]&gt;&gt;&lt;&lt;endevent&gt;&gt;&lt;&lt;set $eventskip to 1&gt;&gt;&lt;&lt;/link&gt;&gt;
+    &lt;&lt;link [[Next|Pirate Cabin]]&gt;&gt;&lt;&lt;endevent&gt;&gt;&lt;&lt;set $eventskip to 1&gt;&gt;&lt;&lt;/link&gt;&gt;
     &lt;br&gt;
 &lt;&lt;else&gt;&gt;
     You walk on, ignoring the &lt;&lt;person1&gt;&gt;&lt;&lt;person&gt;&gt; and &lt;&lt;his&gt;&gt; friends. &quot;Don&#39;t you walk away from me,&quot; the &lt;&lt;person&gt;&gt; says. You hear &lt;&lt;his&gt;&gt; chair grind against the wooden floor as &lt;&lt;he&gt;&gt; stands. &lt;&lt;He&gt;&gt; marches towards you, snatching a bottle of dark liquid off a shelf on &lt;&lt;his&gt;&gt; way over. &quot;Take a swig of this. It&#39;ll brighten you&#39;re mood. Promise.&quot;
@@ -431746,10 +431757,16 @@ The gathering crowd of pirates laughs. The &lt;&lt;person&gt;&gt; laughs too, bu
 &lt;&lt;link [[Next|Pirate Deck]]&gt;&gt;&lt;&lt;endevent&gt;&gt;&lt;&lt;set $eventskip to 1&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="5875" name="Pirate Scum Cabin Shove" tags="" position="600,73475" size="100,100">&lt;&lt;effects&gt;&gt;
 
+You shove the &lt;&lt;person&gt;&gt; against the bulkhead. &lt;&lt;He&gt;&gt; cries out in pain, then retaliates.
+&lt;br&gt;&lt;br&gt;
 
 &lt;&lt;link [[Next|Pirate Scum Cabin Rape]]&gt;&gt;&lt;&lt;set $molestationstart to 1&gt;&gt;&lt;&lt;set $phase to 1&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="5876" name="Pirate Scum Cabin Go" tags="" position="725,73475" size="100,100">&lt;&lt;effects&gt;&gt;
 
+You nod. The &lt;&lt;person&gt;&gt; pushes &lt;&lt;his&gt;&gt; body against yours. &quot;Oh, I&#39;ve been waiting for this since you first stepped aboard.&quot;
+&lt;br&gt;&lt;br&gt;
+The &lt;&lt;person&gt;&gt; leads you through the bulkhead, and shoves you on the bunk.
+&lt;br&gt;&lt;br&gt;
 
 &lt;&lt;link [[Next|Pirate Scum Cabin Rape]]&gt;&gt;&lt;&lt;set $molestationstart to 1&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="5877" name="Pirate Scum Cabin Rape" tags="" position="850,73475" size="100,100">&lt;&lt;if $molestationstart is 1&gt;&gt;
@@ -431760,9 +431777,7 @@ The gathering crowd of pirates laughs. The &lt;&lt;person&gt;&gt; laughs too, bu
 	&lt;&lt;molested&gt;&gt;
 	&lt;&lt;maninit&gt;&gt;
     &lt;&lt;if $phase is 1&gt;&gt;
-        &lt;&lt;defiance 5&gt;&gt;You shove the &lt;&lt;person&gt;&gt; against the bulkhead. &lt;&lt;He&gt;&gt; cries out in pain, then retaliates.
-    &lt;&lt;else&gt;&gt;
-        The &lt;&lt;person&gt;&gt; leads you through the bulkhead, and shoves you on the bunk.
+        &lt;&lt;defiance 5&gt;&gt;
     &lt;&lt;/if&gt;&gt;
 	&lt;&lt;pirate_rescue&gt;&gt;
 &lt;&lt;/if&gt;&gt;
@@ -431854,10 +431869,10 @@ You adjust your top, giving the &lt;&lt;person&gt;&gt; a glimpse of skin.
 &lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="5881" name="Pirate Scum Cabin Bid" tags="" position="100,73600" size="100,100">&lt;&lt;effects&gt;&gt;
 
 &lt;&lt;if !$worn.upper.type.includes(&quot;naked&quot;)&gt;&gt;
-    &lt;&lt;undress upper&gt;&gt;
+    &lt;&lt;upperstrip&gt;&gt;
 &lt;&lt;/if&gt;&gt;
 &lt;&lt;if !$worn.under_upper.type.includes(&quot;naked&quot;)&gt;&gt;
-    &lt;&lt;undress under_upper&gt;&gt;
+    &lt;&lt;underupperstrip&gt;&gt;
 &lt;&lt;/if&gt;&gt;
 
 &lt;&lt;pullupall&gt;&gt; The &lt;&lt;person1&gt;&gt;&lt;&lt;person&gt;&gt; watches with unrestrained lust, then snatches the clothes from your grasp. &lt;&lt;He&gt;&gt; pulls the phone from &lt;&lt;his&gt;&gt; pocket. &lt;&lt;covered&gt;&gt;
@@ -431873,7 +431888,7 @@ You adjust your top, giving the &lt;&lt;person&gt;&gt; a glimpse of skin.
 
 You put your hands behind your back, baring your &lt;&lt;breasts&gt;&gt;. The phone makes a faux clicking noise as &lt;&lt;he&gt;&gt; takes a picture.
 &lt;br&gt;&lt;br&gt;
-&quot;One more,&quot; &lt;&lt;he&gt;&gt; says, lunging with one hand to grope you. You jerk involuntary at the sensation of &lt;&lt;his&gt;&gt; cold fingers. The phone clicks again.
+&quot;One more,&quot; &lt;&lt;he&gt;&gt; says, lunging with one hand to grope you. You jerk involuntarily at the sensation of &lt;&lt;his&gt;&gt; cold fingers. The phone clicks again.
 &lt;br&gt;&lt;br&gt;
 &quot;That&#39;s do,&quot; &lt;&lt;he&gt;&gt; says, throwing your clothes on the floor. You hurry to put them back on.
 &lt;br&gt;&lt;br&gt;
@@ -432303,7 +432318,8 @@ The pirate is on top of you before you can recover.
 
 The &lt;&lt;person&gt;&gt; lunges at you. You dodge to the right, &lt;span class=&quot;green&quot;&gt;avoiding the pirate&lt;/span&gt; and leaving &lt;&lt;him&gt;&gt; to stumble to the deck.
 &lt;br&gt;&lt;br&gt;
-&lt;&lt;endevent&gt;&gt;&lt;&lt;generate2&gt;&gt;&lt;&lt;person2&gt;&gt;
+&lt;&lt;endevent&gt;&gt;
+&lt;&lt;generate1&gt;&gt;&lt;&lt;person1&gt;&gt;
 &quot;Next!&quot; shouts Captain Zephyr. A &lt;&lt;person&gt;&gt; steps forward, and bends &lt;&lt;his&gt;&gt; knees to spring at you.
 &lt;br&gt;&lt;br&gt;
 
@@ -432314,7 +432330,8 @@ The &lt;&lt;person&gt;&gt; lunges at you. You dodge to the right, &lt;span class
 
 You duck as the &lt;&lt;person&gt;&gt; leaps, &lt;span class=&quot;green&quot;&gt;sailing over your head&lt;/span&gt; and colliding with &lt;&lt;his&gt;&gt; crewmates. One of them punches &lt;&lt;him&gt;&gt;, knocking &lt;&lt;him&gt;&gt; to the ground. The others laugh.
 &lt;br&gt;&lt;br&gt;
-&lt;&lt;endevent&gt;&gt;&lt;&lt;generate2&gt;&gt;&lt;&lt;person2&gt;&gt;
+&lt;&lt;endevent&gt;&gt;
+&lt;&lt;generate1&gt;&gt;&lt;&lt;person1&gt;&gt;
 &quot;Next!&quot; shouts captain Zephyr, pointing at a &lt;&lt;person&gt;&gt;. &lt;&lt;He&gt;&gt; flexes &lt;&lt;his&gt;&gt; arms,
 &lt;&lt;if $skulduggery gte 200&gt;&gt;
 	&lt;span class=&quot;green&quot;&gt;your instincts tell you &lt;&lt;hes&gt;&gt; going to throw a punch.&lt;/span&gt;
@@ -432343,6 +432360,7 @@ You brace yourself, &lt;span class=&quot;red&quot;&gt;only for the &lt;&lt;perso
 
 You crouch and hold your arms in front of your face as the &lt;&lt;person&gt;&gt; jumps at you, fist swinging. It thuds painfully into your arm, &lt;span class=&quot;green&quot;&gt;but you remain stable.&lt;/span&gt; The momentum leaves the &lt;&lt;person&gt;&gt; sprawling on the deck.&lt;&lt;gpain&gt;&gt;&lt;&lt;pain 1&gt;&gt;
 &lt;br&gt;&lt;br&gt;
+&lt;&lt;endevent&gt;&gt;
 &lt;&lt;generate1&gt;&gt;&lt;&lt;person1&gt;&gt;
 &quot;Next!&quot; Captain Zephyr shouts, pointing at a &lt;&lt;person&gt;&gt;. &lt;&lt;He&gt;&gt; walks from side to side, watching you, as if waiting for an opening.
 
@@ -432370,7 +432388,8 @@ You glance over your shoulder. There&#39;s nothing amiss. You return your gaze i
 
 You jerk your neck, as if about to turn around. At once, the &lt;&lt;person&gt;&gt; lunges, hoping to catch you off-guard. Instead, &lt;span class=&quot;green&quot;&gt;you easily step aside,&lt;/span&gt; and leave the clumsy pirate sprawled on the deck.
 &lt;br&gt;&lt;br&gt;
-&lt;&lt;endevent&gt;&gt;&lt;&lt;generate1&gt;&gt;&lt;&lt;person1&gt;&gt;
+&lt;&lt;endevent&gt;&gt;
+&lt;&lt;generate1&gt;&gt;&lt;&lt;person1&gt;&gt;
 &quot;Is this what me crew&#39;s made of?&quot; Captain Zephyr shouts. &quot;This landlubber &lt;&lt;girl&gt;&gt; is making fools of ye.&quot; &lt;&lt;He&gt;&gt; points at a &lt;&lt;person&gt;&gt;. &quot;If ye don&#39;t manage it, I&#39;ll demonstrate how it&#39;s done.&quot;
 &lt;br&gt;&lt;br&gt;
 
@@ -433031,12 +433050,13 @@ You approach the captain.
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="5936" name="Pirate Zephyr Return Ask" tags="" position="725,74225" size="100,100">&lt;&lt;effects&gt;&gt;
 
 &lt;&lt;if $pirate_rank gte 1&gt;&gt;
-	
+	&quot;Back to shore?&quot; Zephyr says. &quot;Are the charms of me and me crew not enough for ye? Hah! It&#39;s fine. You&#39;ll be back. I&#39;ll take ye ashore, if that&#39;s what ye want.&quot;
+	&lt;br&gt;&lt;br&gt;
 	&lt;&lt;link [[Return to mainland (3:00)|Pirate Return]]&gt;&gt;&lt;&lt;pass 180&gt;&gt;&lt;&lt;/link&gt;&gt;
 	&lt;br&gt;
 	
 &lt;&lt;else&gt;&gt;
-	&quot;Now why would scum like ye want to back there?&quot; Zephyr asks, returning &lt;&lt;his&gt;&gt; attention to the horizon. &quot;Don&#39;t waste my time.&quot;
+	&quot;Now why would scum like ye want to go back there?&quot; Zephyr asks, returning &lt;&lt;his&gt;&gt; attention to the horizon. &quot;Don&#39;t waste my time.&quot;
 	&lt;br&gt;&lt;br&gt;
 	&lt;i&gt;You&#39;ll need to earn the pirates&#39; respect, or find some other way back to the mainland.&lt;/i&gt;
 	&lt;br&gt;&lt;br&gt;
@@ -433059,7 +433079,7 @@ The pirates sail the ship towards the cliffs to the west of town, rather than to
 Zephyr lowers the rowboat to the sea, and unties the ropes. The boat rocks as &lt;&lt;he&gt;&gt; thumps onto a seat, and takes up both oars. There are only two, and &lt;&lt;he&gt;&gt; seems content to row by &lt;&lt;himself&gt;&gt;.
 &lt;br&gt;&lt;br&gt;
 
-&lt;&lt;He&gt;&gt; pushes the rowboat away from the larger ship, towards the shore.
+&lt;&lt;He&gt;&gt; pushes the small boat away from the larger ship, towards the shore.
 &lt;br&gt;&lt;br&gt;
 
 &lt;&lt;link [[Thank Zephyr for rowing you|Pirate Return Thank]]&gt;&gt;&lt;&lt;npcincr Zephyr love 1&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;glove&gt;&gt;
@@ -433461,7 +433481,7 @@ You are beside your bed, if it could be called that, in the bilge of the pirate 
 &lt;&lt;wearoutfit&gt;&gt;
 
 &lt;&lt;nightmareCheck &quot;Pirate Sleep&quot;&gt;&gt;
-&lt;&lt;if $tiredness gte 4000 or Time.dayState is &quot;night&quot;&gt;&gt;
+&lt;&lt;if $tiredness gte 1000 or Time.dayState is &quot;night&quot;&gt;&gt;
 	&lt;&lt;generateSleepLinks &quot;Pirate Sleep&quot;&gt;&gt;
 &lt;&lt;else&gt;&gt;
 	The groaning of the ship is one thing, but the noisy pirates make falling asleep here difficult. &lt;span class=&quot;blue&quot;&gt;You won&#39;t be able to sleep here until night, or at least until you&#39;re more fatigued.&lt;/span&gt;
@@ -433522,7 +433542,7 @@ You are beside your bed, if it could be called that, in the bilge of the pirate 
 	&lt;&lt;link [[Next|Pirate Deck]]&gt;&gt;&lt;&lt;endevent&gt;&gt;&lt;&lt;set $eventskip to 1&gt;&gt;&lt;&lt;/link&gt;&gt;
 	&lt;br&gt;
 &lt;&lt;else&gt;&gt;
-	&quot;Walking around the deck dressed like that?&quot; Zephyr muses. &lt;/span class=&quot;red&quot;&gt;&quot;I think ye be wanting a lesson.&lt;/span&gt;&quot; &lt;&lt;He&gt;&gt; grasps your arm. &quot;Let&#39;s go for a walk.&quot;
+	&quot;Walking around the deck dressed like that?&quot; Zephyr muses. &lt;span class=&quot;red&quot;&gt;&quot;I think ye be wanting a lesson.&lt;/span&gt;&quot; &lt;&lt;He&gt;&gt; grasps your arm. &quot;Let&#39;s go for a walk.&quot;
 	&lt;br&gt;&lt;br&gt;
 	
 	&lt;&lt;link [[Refuse|Pirate Clothes Refuse]]&gt;&gt;&lt;&lt;def 1&gt;&gt;&lt;&lt;pirate_status 1&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;grespect&gt;&gt;
@@ -433640,7 +433660,7 @@ The &lt;&lt;person&gt;&gt; moves to spank you.
 The &lt;&lt;person&gt;&gt; spanks your &lt;&lt;bottom&gt;&gt; with a resounding smack. Then another. With each blow, the pirates cheer.
 &lt;br&gt;&lt;br&gt;
 
-&lt;&lt;link [[Next|Pirate Clothes Spank]]&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link [[Next|Pirate Clothes Spank]]&gt;&gt;&lt;&lt;set $molestationstart to 1&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="5980" name="Pirate Clothes Kick" tags="" position="1225,74725" size="100,100">&lt;&lt;effects&gt;&gt;
 
 The &lt;&lt;person&gt;&gt; tries to spank you, but you kick &lt;&lt;his&gt;&gt; shin out from under &lt;&lt;him&gt;&gt;, and &lt;&lt;he&gt;&gt; topples to the floor.
@@ -433649,7 +433669,7 @@ The &lt;&lt;person&gt;&gt; tries to spank you, but you kick &lt;&lt;his&gt;&gt; 
 The other pirates find this amusing. Angered, the &lt;&lt;person&gt;&gt; delivers a particularly hard smack to your &lt;&lt;bottom&gt;&gt;.
 &lt;br&gt;&lt;br&gt;
 
-&lt;&lt;link [[Next|Pirate Clothes Spank]]&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link [[Next|Pirate Clothes Spank]]&gt;&gt;&lt;&lt;set $molestationstart to 1&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="5981" name="Pirate Clothes Spank" tags="" position="100,74850" size="100,100">&lt;&lt;if $molestationstart is 1&gt;&gt;
 	&lt;&lt;set $molestationstart to 0&gt;&gt;
 	&lt;&lt;controlloss&gt;&gt;
@@ -501609,7 +501629,7 @@ disapproving expression, &quot;I&#39;ll be informing the owners of this situatio
 &lt;&lt;/if&gt;&gt;
 &lt;br&gt;&lt;br&gt;
 &quot;Now follow me, I&#39;ll be escorting you out of here. You&#39;re lucky that I don&#39;t just take you straight to the pillory.&quot;
-
+&lt;&lt;tryOnReset&gt;&gt;
 &lt;br&gt;&lt;br&gt;
 &lt;&lt;link [[Run|Clothing Shop Night Guard Found Run]]&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;athleticsdifficulty 500&gt;&gt;
 &lt;br&gt;
@@ -518645,7 +518665,7 @@ You shake your head and keep walking.
 	&lt;&lt;/if&gt;&gt;
 	You try to ignore the slime&#39;s request, &lt;span class=&quot;red&quot;&gt;but the slime overpowers your will.&lt;/span&gt; It forces you to
 	&lt;&lt;switch $earSlimeForcedExposure&gt;&gt;
-		&lt;&lt;case &quot;flaunt&quot;&gt;&gt;agree with them to them.
+		&lt;&lt;case &quot;flaunt&quot;&gt;&gt;agree with them.
 		&lt;&lt;case &quot;flashSkirt1&quot; &quot;flashSkirt2&quot; &quot;flashSkirt3&quot;&gt;&gt;flash your skirt to them.
 		&lt;&lt;case &quot;flashBottom1&quot; &quot;flashBottom2&quot; &quot;flashBottom3&quot;&gt;&gt;flash your bottom to them.
 		&lt;&lt;case &quot;flashBreasts1&quot; &quot;flashBreasts2&quot;&gt;&gt;flash your breasts to them.
@@ -523940,6 +523960,16 @@ You pocket the money and walk away.
 		&lt;&lt;/if&gt;&gt;
 		&lt;br&gt;&lt;br&gt;
 		&lt;&lt;destinationeventend&gt;&gt;
+	&lt;&lt;elseif !$worn.under_upper.type.includes(&quot;naked&quot;)&gt;&gt;
+		Your $worn.under_upper.name snag&lt;&lt;if $worn.under_upper.plural isnot 1&gt;&gt;s&lt;&lt;/if&gt;&gt; on a passing car, &lt;&lt;set $worn.under_upper.integrity -= 10&gt;&gt;
+		&lt;&lt;if $worn.under_upper.integrity lte 0&gt;&gt;
+			&lt;&lt;underupperruined&gt;&gt;&lt;&lt;clothesruinstat&gt;&gt;&lt;&lt;set $underupperoff to 0&gt;&gt;
+			&lt;span class=&quot;lewd&quot;&gt;and is torn clean from your body,&lt;/span&gt; leaving your &lt;&lt;lewdness&gt;&gt; displayed in the middle of the street.
+		&lt;&lt;else&gt;&gt;
+			tearing it and leaving it worse for wear.
+		&lt;&lt;/if&gt;&gt;
+		&lt;br&gt;&lt;br&gt;
+		&lt;&lt;destinationeventend&gt;&gt;
 	&lt;&lt;else&gt;&gt;
 		&lt;&lt;generate1&gt;&gt;&lt;&lt;person1&gt;&gt;A &lt;&lt;person&gt;&gt; shouts at you from a passing car while leering at your exposed chest. &quot;Thanks for the show.&quot; You feel self-conscious.
 		&lt;&lt;gtrauma&gt;&gt;&lt;&lt;gstress&gt;&gt;&lt;&lt;garousal&gt;&gt;&lt;&lt;trauma 1&gt;&gt;&lt;&lt;stress 1&gt;&gt;&lt;&lt;arousal 100&gt;&gt;
@@ -524964,7 +524994,7 @@ You pocket the money and walk away.
 		&lt;&lt;set $earSlimeForcedExposure to _avaliableActions.random()&gt;&gt;
 		&lt;span class=&quot;lewd&quot;&gt;You feel the slime in your head command you to
 			&lt;&lt;switch $earSlimeForcedExposure&gt;&gt;
-				&lt;&lt;case &quot;flaunt&quot;&gt;&gt;agree with them to them.
+				&lt;&lt;case &quot;flaunt&quot;&gt;&gt;agree with them.
 				&lt;&lt;case &quot;flashSkirt1&quot; &quot;flashSkirt2&quot; &quot;flashSkirt3&quot;&gt;&gt;flash your skirt to them.
 				&lt;&lt;case &quot;flashBottom1&quot; &quot;flashBottom2&quot; &quot;flashBottom3&quot;&gt;&gt;flash your bottom to them.
 				&lt;&lt;case &quot;flashBreasts1&quot; &quot;flashBreasts2&quot;&gt;&gt;flash your breasts to them.
@@ -530379,9 +530409,14 @@ The hem of &lt;&lt;his&gt;&gt; habit flares as &lt;&lt;he&gt;&gt; turns and depa
     You could spar here, during the day.
     &lt;br&gt;&lt;br&gt;
 &lt;&lt;/if&gt;&gt;
-
 &lt;&lt;if Time.dayState isnot &quot;night&quot;&gt;&gt;
-    &lt;&lt;if $temple_spar is 1&gt;&gt;
+	&lt;&lt;set _bound to []&gt;&gt;
+	&lt;&lt;if $leftarm is &quot;bound&quot; or $rightarm is &quot;bound&quot;&gt;&gt;&lt;&lt;run _bound.push(&quot;arms&quot;)&gt;&gt;&lt;&lt;/if&gt;&gt;
+	&lt;&lt;if $feetuse is &quot;bound&quot; or $worn.feet.type.includes(&quot;shackle&quot;)&gt;&gt;&lt;&lt;run _bound.push(&quot;legs&quot;)&gt;&gt;&lt;&lt;/if&gt;&gt;
+    &lt;&lt;if _bound.length&gt;&gt;
+		&lt;span class=&quot;blue&quot;&gt;You&#39;re unable to spar with your &lt;&lt;print formatList(_bound, &quot;and&quot;)&gt;&gt; bound.&lt;/span&gt;
+		&lt;br&gt;
+    &lt;&lt;elseif $temple_spar is 1&gt;&gt;
         &lt;&lt;link [[Spar|Temple Cloister Spar Fail]]&gt;&gt;&lt;&lt;/link&gt;&gt;
         &lt;br&gt;
     &lt;&lt;else&gt;&gt;
@@ -558742,7 +558777,7 @@ A &lt;&lt;fullGroup&gt;&gt; enter the room, closing the door behind them. &quot;
 	&lt;&lt;violence 1&gt;&gt;
 	&lt;&lt;neutral 1&gt;&gt;
 	&lt;&lt;molested&gt;&gt;
-	&lt;&lt;person2&gt;&gt;&lt;&lt;person3&gt;&gt;&lt;&lt;maninit&gt;&gt;
+	&lt;&lt;maninit&gt;&gt;
 	&lt;&lt;hand_gag 0 left&gt;&gt;
 	&lt;&lt;enable_rescue&gt;&gt;
 &lt;&lt;/if&gt;&gt;
@@ -602044,8 +602079,6 @@ You are in the old sewers. You can&#39;t walk too fast, lest you slip on the alg
 		&lt;br&gt;&lt;br&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/if&gt;&gt;
-&lt;&lt;laddericon&gt;&gt;&lt;&lt;link [[Climb out of the sewers|Residential Drain]]&gt;&gt;&lt;&lt;sewersend&gt;&gt;&lt;&lt;/link&gt;&gt;
-		&lt;br&gt;
 &lt;&lt;if $stress gte $stressmax&gt;&gt;
 	It&#39;s too much for you. You pass out.
 	&lt;br&gt;&lt;br&gt;
@@ -618844,9 +618877,7 @@ You fondle yourself. &lt;&lt;if $phase2 is 1&gt;&gt;They watch&lt;&lt;else&gt;&g
 &lt;&lt;/widget&gt;&gt;</tw-passagedata><tw-passagedata pid="11114" name="Test" tags="" position="475,138975" size="100,100">&lt;&lt;location &quot;seapirates&quot;&gt;&gt;&lt;&lt;set $outside to 0&gt;&gt;&lt;&lt;effects&gt;&gt;
 &lt;&lt;endcombat&gt;&gt;
 &lt;&lt;link [[Test]]&gt;&gt;&lt;&lt;/link&gt;&gt;
-&lt;br&gt;&lt;br&gt;
-
-&lt;&lt;link [[Pub Sell]]&gt;&gt;&lt;&lt;/link&gt;&gt;</tw-passagedata><tw-passagedata pid="11115" name="Robin" tags="" position="600,138975" size="100,100">&lt;&lt;set $NPCName[$NPCNameList.indexOf(&quot;Robin&quot;)].love to 50&gt;&gt;
+&lt;br&gt;&lt;br&gt;</tw-passagedata><tw-passagedata pid="11115" name="Robin" tags="" position="600,138975" size="100,100">&lt;&lt;set $NPCName[$NPCNameList.indexOf(&quot;Robin&quot;)].love to 50&gt;&gt;
 &lt;&lt;if $NPCName[$NPCNameList.indexOf(&quot;Robin&quot;)].love gte 50&gt;&gt;
 &lt;&lt;/if&gt;&gt;
 &lt;&lt;nnpc_he Robin&gt;&gt;
