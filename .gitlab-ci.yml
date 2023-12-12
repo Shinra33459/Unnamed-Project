@@ -1,0 +1,61 @@
+stages:
+  - build
+
+variables:
+    ZIP_NAME_PREFIX: "DoLP"
+    VERSION: ""
+
+before_script:
+  - export VERSION=$(cat VERSION)
+  - mkdir releases/DoLP_Vanilla/img/
+  - mkdir releases/DoLP_BEEESSS/img/
+  - mkdir releases/DoLP_BEEESSS+Hikari_Female/img/
+  - mkdir releases/DoLP_BEEESSS+Hikari_Male/img/
+  - mkdir releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
+
+build:
+    stage: build
+    script:
+    - echo "Building version $VERSION"
+    - chmod +x compile.sh
+    - ./compile.sh $VERSION
+    - cp -r "Degrees of Lewdity VERSION.html" /releases/DoLP_Vanilla
+    - cp -r /vanillaimg/* /releases/DoLP_Vanilla/img/
+    - cp -r /vanillaimg/* /releases/DoLP_BEEESSS/img/
+    - cp -r /vanillaimg/* /releases/DoLP_BEEESSS+Hikari_Female/img/
+    - cp -r /vanillaimg/* /releases/DoLP_BEEESSS+Hikari_Male/img/
+    - cp -r /vanillaimg/* /releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
+    - cp -r "Degrees of Lewdity VERSION.html" /releases/DoLP_BEEESSS
+    - cp -r /beeesssimg/* /releases/DoLP_BEEESSS/img/
+    - cp -r /beeesssimg/* /releases/DoLP_BEEESSS+Hikari_Female/img/
+    - cp -r /beeesssimg/* /releases/DoLP_BEEESSS+Hikari_Male/img/
+    - cp -r /beeesssimg/* /releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
+    - cp -r "Degrees of Lewdity VERSION.html" /releases/DoLP_BEEESSS+Hikari_Female
+    - cp -r /beeessshikarifemaleimg/* /releases/DoLP_BEEESSS+Hikari_Female/img/
+    - cp -r "Degrees of Lewdity VERSION.html" /releases/DoLP_BEEESSS+Hikari_Male
+    - cp -r /beeessshikarimaleimg/* /releases/DoLP_BEEESSS+Hikari_Male/img/
+    - cp -r "Degrees of Lewdity VERSION.html" /releases/DoLP_BEEESSS+Paril+Hairstyle_Extended
+    - cp -r /beeesssparilhairstyleextendedimg/* /releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
+  
+    artifacts:
+        paths:
+            - releases/
+
+after_script:
+    - echo "Finished building."
+
+release:
+    stage: build
+    script:
+        - echo "Creating release ZIP files..."
+        - cd releases
+        - zip -r "${ZIP_NAME_PREFIX}_Vanilla_${VERSION}.zip" ./DoLP_Vanilla
+        - zip -r "${ZIP_NAME_PREFIX}_BEEESSS_${VERSION}.zip" ./DoLP_BEEESSS
+        - zip -r "${ZIP_NAME_PREFIX}_BEEESSS+Hikari_Female_${VERSION}.zip" ./DoLP_BEEESSS+Hikari_Female
+        - zip -r "${ZIP_NAME_PREFIX}_BEEESSS+Hikari_Male_${VERSION}.zip" ./DoLP_BEEESSS+Hikari_Male
+        - zip -r "${ZIP_NAME_PREFIX}_BEEESSS+Paril+Hairstyle_Extended_${VERSION}.zip" ./DoLP_BEEESSS+Paril+Hairstyle_Extended
+    artifacts:
+        paths:
+            - releases/*.zip
+    only:
+        - master
