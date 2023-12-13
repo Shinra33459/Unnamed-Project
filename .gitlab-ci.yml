@@ -7,6 +7,7 @@ variables:
 
 before_script:
     - export VERSION=$(cat version)
+    - SANITIZED_VERSION=$(echo "$VERSION" | tr ' ' _)
     - mkdir -p releases/DoLP_Vanilla/img/
     - mkdir -p releases/DoLP_BEEESSS/img/
     - mkdir -p releases/DoLP_BEEESSS+Hikari_Female/img/
@@ -19,24 +20,17 @@ build_job:
     - echo "Building version $VERSION"
     - sh ./compile.sh
     - cp "Degrees of Lewdity.html" ./releases/DoLP_Vanilla/
-    - cp -r ./vanillaimg/* ./releases/DoLP_Vanilla/img/
-    - cp -r ./vanillaimg/* ./releases/DoLP_BEEESSS/img/
-    - cp -r ./vanillaimg/* ./releases/DoLP_BEEESSS+Hikari_Female/img/
-    - cp -r ./vanillaimg/* ./releases/DoLP_BEEESSS+Hikari_Male/img/
-    - cp -r ./vanillaimg/* ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
+    - cp -r -f ./vanillaimg/* ./releases/DoLP_Vanilla/img/
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS/
-    - cp -r ./beeesssimg/* ./releases/DoLP_BEEESSS/img/
-    - cp -r ./beeesssimg/* ./releases/DoLP_BEEESSS+Hikari_Female/img/
-    - cp -r ./beeesssimg/* ./releases/DoLP_BEEESSS+Hikari_Male/img/
-    - cp -r ./beeesssimg/* ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
+    - cp -r -f ./beeesssimg/* ./releases/DoLP_BEEESSS/img/
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS+Hikari_Female/
-    - cp -r ./beeessshikarifemaleimg/* ./releases/DoLP_BEEESSS+Hikari_Female/img/
+    - cp -r -f ./beeessshikarifemaleimg/* ./releases/DoLP_BEEESSS+Hikari_Female/img/
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS+Hikari_Male/
-    - cp -r ./beeessshikarimaleimg/* ./releases/DoLP_BEEESSS+Hikari_Male/img/
+    - cp -r -f ./beeessshikarimaleimg/* ./releases/DoLP_BEEESSS+Hikari_Male/img/
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/
-    - cp -r ./beeesssparilhairstyleextendedimg/* ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
+    - cp -r -f ./beeesssparilhairstyleextendedimg/* ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
     - apk add curl jq
-    - 'curl -H "PRIVATE-TOKEN: $CI_API_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/changelog?version=$VERSION" | jq -r .notes > release_notes.md'
+    - 'curl -H "PRIVATE-TOKEN: $CI_API_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/changelog?version=$SANITIZED_VERSION" | jq -r .notes > release_notes.md'
 
     artifacts:
         paths:
@@ -56,13 +50,13 @@ release_job:
     script:
         - echo "Creating releases..."
     release:
-        name: 'Release $VERSION'
+        name: 'Release $SANITIZED_VERSION'
         description: release_notes.md
-        tag_name: '$VERSION'
+        tag_name: '$SANITIZED_VERSION'
         ref: '$CI_COMMIT_SHA'
         assets:
             links:
-                - name: '$VERSION'
+                - name: '$SANITIZED_VERSION'
                   url: "https://$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"
     only:
         - master
