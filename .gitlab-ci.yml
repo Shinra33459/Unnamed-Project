@@ -1,6 +1,6 @@
 stages:
-    - build
-    - release
+    - build_job
+    - release_job
 
 variables:
     VERSION: ""
@@ -13,7 +13,7 @@ before_script:
     - mkdir -p releases/DoLP_BEEESSS+Hikari_Male/img/
     - mkdir -p releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
 
-build:
+build_job:
     stage: build
     script:
     - echo "Building version $VERSION"
@@ -41,26 +41,28 @@ build:
     artifacts:
         paths:
             - releases/
+            - release_notes.md
 
 after_script:
     - echo "Finished building."
 
-release:
+release_job:
     stage: release
     image: registry.gitlab.com/gitlab-org/release-cli:latest
     needs:
-        - job: build
-        - artifacts: true
+        - job: build_job
+          artifacts: true
 
     script:
         - echo "Creating releases..."
     release:
-    name: 'Release $VERSION'
-    tag_name: '$VERSION'
-    ref: '$CI_COMMIT_SHA'
-    assets:
-      links:
-        - name: '$VERSION'
-          url: "https://$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"
+        name: 'Release $VERSION'
+        description: release_notes.md
+        tag_name: '$VERSION'
+        ref: '$CI_COMMIT_SHA'
+        assets:
+            links:
+                - name: '$VERSION'
+                  url: "https://$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"
     only:
         - master
