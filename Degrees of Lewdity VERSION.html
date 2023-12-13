@@ -93592,6 +93592,9 @@ If you want to avoid trouble, dress modestly and stick to safe, well-lit areas. 
 	&lt;&lt;if $AMCTraits.housekeeping is undefined&gt;&gt;
 		&lt;&lt;set $AMCTraits.housekeeping to 1&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;if $AMCTraits.brawling is undefined&gt;&gt;
+		&lt;&lt;set $AMCTraits.brawling to 1&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $AMCTraits.science is undefined&gt;&gt;
 		&lt;&lt;set $AMCTraits.science to 1&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
@@ -147476,7 +147479,11 @@ It will cost you
 		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $enemiesDefeatedStat += $enemynomax&gt;&gt;
 		&lt;&lt;if $combatExtended.brawlingToggle is 1 and $enemynomax gte 1&gt;&gt;
-			&lt;&lt;set $combatExtended.brawling += 5 * $enemynomax&gt;&gt;
+			&lt;&lt;if $combatExtended.brawling gt 1000&gt;&gt;
+				&lt;&lt;set $combatExtended.brawling += 5 * $enemynomax / $AMCTraits.brawling&gt;&gt;
+			&lt;&lt;else&gt;&gt;
+				&lt;&lt;set $combatExtended.brawling += 5 * $enemynomax&gt;&gt;
+			&lt;&lt;/if&gt;&gt;
 			&lt;span class=&quot;green&quot;&gt;Your brawling skills improve.&lt;/span&gt;
 			&lt;br&gt;
 		&lt;&lt;/if&gt;&gt;
@@ -192719,7 +192726,7 @@ hue-rotate(45deg) saturate(0.4) brightness(0.5)
 
 	&lt;&lt;set $housekeeping to Math.clamp($housekeeping, 0, 1000 * $AMCTraits.housekeeping)&gt;&gt;
 
-	&lt;&lt;set $combatExtended.brawling to Math.clamp($combatExtended.brawling, 0, 1000)&gt;&gt;
+	&lt;&lt;set $combatExtended.brawling to Math.clamp($combatExtended.brawling, 0, 1000 * $AMCTraits.brawling)&gt;&gt;
 
 	&lt;&lt;if $gamemode is &quot;soft&quot;&gt;&gt;
 		&lt;&lt;set $pain to Math.clamp($pain, 0, 0)&gt;&gt;
@@ -204784,7 +204791,7 @@ Zohar
 				&lt;&lt;set _tendingConfig =		{ name : &quot;Tending&quot;,		displayType : &quot;grade&quot;,	currentValue : $tending,			modifier: 100, modTypes: { good: [], bad: [] },		states : _detailedSkillGrades}&gt;&gt;
 				&lt;&lt;set _housekeepingConfig =	{ name : &quot;Housekeeping&quot;,displayType : &quot;grade&quot;,	currentValue : $housekeeping,		modifier: 100, modTypes: { good: [], bad: [] },		states : _detailedSkillGrades}&gt;&gt;
 				&lt;&lt;if $combatExtended.brawlingToggle is 1&gt;&gt;
-					&lt;&lt;set _brawlingConfig =	{ name : &quot;Brawling&quot;,displayType : &quot;grade&quot;,	currentValue : $combatExtended.brawling,		modifier: 100, modTypes: { good: [], bad: [] },		states : _detailedSkillGrades}&gt;&gt;
+					&lt;&lt;set _brawlingConfig =	{ name : &quot;Brawling&quot;,	displayType : &quot;grade&quot;,	currentValue : $combatExtended.brawling,		modifier: 100, modTypes: { good: [], bad: [] },		states : _detailedSkillGrades}&gt;&gt;
 				&lt;&lt;/if&gt;&gt;
 				&lt;&lt;set _bellySize to playerBellySize()&gt;&gt;
 				&lt;&lt;if _bellySize gte 10 and playerNormalPregnancyTotal() lt 50&gt;&gt;
@@ -206493,6 +206500,16 @@ Zohar
 	&lt;&lt;set $AMCTraits.housekeeping to 1&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;replace &quot;#statstemperedhousekeeping&quot;&gt;&gt;&lt;&lt;print $AMCTraits.housekeeping - 1&gt;&gt;&lt;&lt;/replace&gt;&gt;
+	&lt;&lt;/link&gt;&gt;
+	&lt;br&gt;
+
+	Tempered Brawling: &lt;span id=&quot;statstemperedbrawling&quot;&gt;&lt;&lt;print $AMCTraits.brawling - 1&gt;&gt;&lt;/span&gt; |
+	&lt;&lt;link &quot;Change&quot;&gt;&gt;
+	&lt;&lt;set $AMCTraits.brawling += 1&gt;&gt;
+	&lt;&lt;if $AMCTraits.brawling gte 3&gt;&gt;
+	&lt;&lt;set $AMCTraits.brawling to 1&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;replace &quot;#statstemperedbrawling&quot;&gt;&gt;&lt;&lt;print $AMCTraits.brawling - 1&gt;&gt;&lt;&lt;/replace&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
 	&lt;br&gt;
 
@@ -214219,134 +214236,140 @@ Zohar
 				{
 					name: &quot;Tempered Physique&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.physique is 2,
-					text: &quot;Your body develops slower but your potential is much higher.&quot;,
+					has: $AMCTraits.physique is 2 and $physique gte $physiquesize,
+					text: &quot;Your body has reached the human limits... But you can go further.&quot;
 				},
 				{
 					name: &quot;Tempered Willpower&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.willpower is 2,
-					text: &quot;Your mental fortitude develops slower but your potential is much higher.&quot;,
+					has: $AMCTraits.willpower is 2 and $willpower gte 1000,
+					text: &quot;Your mental fortitude has reached its peak... But you can push beyond.&quot;
 				},
 				{
 					name: &quot;Tempered Skulduggery&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.skulduggery is 2,
-					text: &quot;Your cunning and deceitfulness develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.skulduggery is 2 and $skulduggery gte 1000,
+					text: &quot;Your cunning and deceitfulness have reached a plateau... But you can surpass it.&quot;
 				},
 				{
 					name: &quot;Tempered Dancing&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.dancing is 2,
-					text: &quot;Your dancing skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.dancing is 2 and $danceskill gte 1000,
+					text: &quot;Your dancing skills have hit a ceiling... But you can break through.&quot;
 				},
 				{
 					name: &quot;Tempered Swimming&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.swimming is 2,
-					text: &quot;Your swimming abilities develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.swimming is 2 and $swimmingskill gte 1000,
+					text: &quot;Your swimming abilities have maxed out... But you can strive for more.&quot;
 				},
 				{
 					name: &quot;Tempered Athletics&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.athletics is 2,
-					text: &quot;Your athleticism develops slower but your potential is much higher.&quot;,
+					has: $AMCTraits.athletics is 2 and $athletics gte 1000,
+					text: &quot;Your athleticism has reached its zenith... But there&#39;s still room for improvement.&quot;
 				},
 				{
 					name: &quot;Tempered Tending&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.tending is 2,
-					text: &quot;Your ability to tend to plants and animals develops slower but your potential is much higher.&quot;,
+					has: $AMCTraits.tending is 2 and $tending gte 1000,
+					text: &quot;Your ability to tend to plants and animals has peaked... But there&#39;s more to achieve.&quot;
 				},
 				{
 					name: &quot;Tempered Housekeeping&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.housekeeping is 2,
-					text: &quot;Your housekeeping and crafting skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.housekeeping is 2 and $housekeeping gte 1000,
+					text: &quot;Your housekeeping and crafting skills have hit a wall... But you can break through.&quot;
+				},
+				{
+					name: &quot;Tempered Brawling&quot;,
+					colour: &quot;green&quot;,
+					has: $AMCTraits.brawling is 2 and $combatExtended.brawling gte 1000,
+					text: &quot;Your brawling skills has peaked... But you can gain more experience.&quot;
 				},
 				{
 					name: &quot;Tempered Science&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.science is 2,
-					text: &quot;Your scientific knowledge develops slower but your potential is much higher.&quot;,
+					has: $AMCTraits.science is 2 and $science gte 1000,
+					text: &quot;Your scientific knowledge has stagnated... But there&#39;s more to discover.&quot;
 				},
 				{
 					name: &quot;Tempered Maths&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.maths is 2,
-					text: &quot;Your mathematical skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.maths is 2 and $maths gte 1000,
+					text: &quot;Your mathematical skills have reached their limits... But you can go further.&quot;
 				},
 				{
 					name: &quot;Tempered English&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.english is 2,
-					text: &quot;Your linguistic skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.english is 2 and $english gte 1000,
+					text: &quot;Your linguistic skills have hit a ceiling... But you can strive for mastery.&quot;
 				},
 				{
 					name: &quot;Tempered History&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.history is 2,
-					text: &quot;Your knowledge of history develops slower but your potential is much higher.&quot;,
+					has: $AMCTraits.history is 2 and $history gte 1000,
+					text: &quot;Your knowledge of history has maxed out... But there&#39;s still more to learn.&quot;
 				},
 				{
 					name: &quot;Tempered Seduction Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.seduction is 2,
-					text: &quot;Your seduction skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.seduction is 2 and $seductionskill gte 1000,
+					text: &quot;Your seduction skills have plateaued... But there&#39;s room for refinement.&quot;
 				},
 				{
 					name: &quot;Tempered Oral Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.oral is 2,
-					text: &quot;Your oral sex skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.oral is 2 and $oralskill gte 1000,
+					text: &quot;Your oral sex skills have hit a plateau... But you can push beyond.&quot;
 				},
 				{
 					name: &quot;Tempered Chest Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.chest is 2,
-					text: &quot;Your chest-related skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.chest is 2 and $chestskill gte 1000,
+					text: &quot;Your chest-related skills have reached their limits... But you can strive for more.&quot;
 				},
 				{
 					name: &quot;Tempered Hands Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.hands is 2,
-					text: &quot;Your hand-related skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.hands is 2 and $handskill gte 1000,
+					text: &quot;Your hand-related skills have hit a ceiling... But you can break through.&quot;
 				},
 				{
 					name: &quot;Tempered Buttocks Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.buttocks is 2,
-					text: &quot;Your buttocks-related skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.buttocks is 2 and $bottomskill gte 1000,
+					text: &quot;Your buttocks-related skills have maxed out... But there&#39;s still room for improvement.&quot;
 				},
 				{
 					name: &quot;Tempered Penile Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.penile is 2,
-					text: &quot;Your penile-related skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.penile is 2 and $penileskill gte 1000,
+					text: &quot;Your penile-related skills have reached their limits... But you can go further.&quot;
 				},
 				{
 					name: &quot;Tempered Vaginal Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.vaginal is 2,
-					text: &quot;Your vaginal-related skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.vaginal is 2 and $vaginalskill gte 1000,
+					text: &quot;Your vaginal-related skills have stagnated... But there&#39;s more to achieve.&quot;
 				},
 				{
 					name: &quot;Tempered Anal Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.anal is 2,
-					text: &quot;Your anal-related skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.anal is 2 and $analskill gte 1000,
+					text: &quot;Your anal-related skills have hit a wall... But you can break through.&quot;
 				},
 				{
 					name: &quot;Tempered Thighs Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.thighs is 2,
-					text: &quot;Your thigh-related skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.thighs is 2 and $thighskill gte 1000,
+					text: &quot;Your thigh-related skills have maxed out... But there&#39;s still room for improvement.&quot;
 				},
 				{
 					name: &quot;Tempered Feet Skill&quot;,
 					colour: &quot;green&quot;,
-					has: $AMCTraits.feet is 2,
-					text: &quot;Your feet-related skills develop slower but your potential is much higher.&quot;,
+					has: $AMCTraits.feet is 2 and $feetskill gte 1000,
+					text: &quot;Your feet-related skills have reached their limits... But you can strive for more.&quot;
 				}
 			],
 		},
@@ -226287,6 +226310,7 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 		&lt;&lt;case &quot;pregnancySettings&quot;&gt;&gt;&lt;&lt;set _subsection to &quot;pregnancy&quot;&gt;&gt;&lt;&lt;replace #subsectionDiv&gt;&gt;&lt;&lt;pregnancySettings&gt;&gt;&lt;&lt;/replace&gt;&gt;
 		&lt;&lt;case &quot;sizeLimitsSettings&quot;&gt;&gt;&lt;&lt;set _subsection to &quot;sizeLimits&quot;&gt;&gt;&lt;&lt;replace #subsectionDiv&gt;&gt;&lt;div class=&quot;solidBorderContainer settings-container&quot;&gt;&lt;&lt;sizeLimitsSettings&gt;&gt;&lt;/div&gt;&lt;&lt;/replace&gt;&gt;
 		&lt;&lt;case &quot;combatExtendedSettings&quot;&gt;&gt;&lt;&lt;set _subsection to &quot;combat&quot;&gt;&gt;&lt;&lt;replace #subsectionDiv&gt;&gt;&lt;&lt;combatExtendedSettings&gt;&gt;&lt;&lt;/replace&gt;&gt;
+		&lt;&lt;case &quot;amcTraitsSettings&quot;&gt;&gt;&lt;&lt;set _subsection to &quot;amcTraits&quot;&gt;&gt;&lt;&lt;replace #subsectionDiv&gt;&gt;&lt;&lt;amcTraitsSettings&gt;&gt;&lt;&lt;/replace&gt;&gt;
 		&lt;&lt;default&gt;&gt;&lt;&lt;set _subsection to &quot;human&quot;&gt;&gt;&lt;&lt;replace #subsectionDiv&gt;&gt;&lt;&lt;humanSettings&gt;&gt;&lt;&lt;/replace&gt;&gt;
 	&lt;&lt;/switch&gt;&gt;
 	&lt;&lt;run settingsDisableElement()&gt;&gt;
@@ -227292,32 +227316,6 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 			&lt;label&gt;Random &lt;&lt;radiobutton &quot;$background&quot; &quot;random&quot; autocheck&gt;&gt;&lt;/label&gt;
 			&lt;br&gt;*/
 		&lt;/div&gt;
-		&lt;div class=&quot;settingsToggleItemWide&quot;&gt;
-			&lt;span class=&quot;gold&quot;&gt;Anime Main Character Traits:&lt;/span&gt;&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;These traits will halve your gains of the corresponding stat but will double the cap.&lt;/span&gt;&lt;/mouse&gt;&lt;br&gt;
-			
-			&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Physique&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.physique&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Willpower&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.willpower&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Skulduggery&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.skulduggery&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Dancing&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.dancing&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Swimming&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.swimming&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Athletics&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.athletics&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Tending&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.tending&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Housekeeping&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.housekeeping&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;teal&quot;&gt;Tempered Science&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.science&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;teal&quot;&gt;Tempered Maths&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.maths&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;teal&quot;&gt;Tempered English&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.english&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;teal&quot;&gt;Tempered History&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.history&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Seduction Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.seduction&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Oral Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.oral&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Chest Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.chest&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Hands Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.hands&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Buttocks Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.buttocks&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Penile Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.penile&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Vaginal Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.vaginal&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Anal Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.anal&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Thighs Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.thighs&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-			&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Feet Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.feet&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
-		&lt;/div&gt;
 	&lt;/div&gt;
 
 	&lt;hr&gt;
@@ -227619,15 +227617,17 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 		&lt;div id=&quot;settingsPregnancy&quot;&gt;
 			&lt;&lt;subsectionSettingsTabButton &quot;Pregnancy Settings&quot; &quot;pregnancy&quot;&gt;&gt;
 		&lt;/div&gt;
-
-		&lt;div id=&quot;settingsCombatExtended&quot;&gt;
-			&lt;&lt;subsectionSettingsTabButton &quot;Combat Extended Settings&quot; &quot;combatExtended&quot;&gt;&gt;
-		&lt;/div&gt;
 		&lt;&lt;if $passage isnot &quot;Start&quot;&gt;&gt;
 			&lt;div id=&quot;settingsSizeLimits&quot;&gt;
 				&lt;&lt;subsectionSettingsTabButton &quot;Body Part Size Limits&quot; &quot;sizeLimits&quot;&gt;&gt;
 			&lt;/div&gt;
 		&lt;&lt;/if&gt;&gt;
+		&lt;div id=&quot;settingsCombatExtended&quot;&gt;
+			&lt;&lt;subsectionSettingsTabButton &quot;Combat Extended Settings&quot; &quot;combatExtended&quot;&gt;&gt;
+		&lt;/div&gt;
+		&lt;div id=&quot;settingsAMCTraits&quot;&gt;
+			&lt;&lt;subsectionSettingsTabButton &quot;AMC Traits Settings&quot; &quot;amcTraits&quot;&gt;&gt;
+		&lt;/div&gt;
 	&lt;/div&gt;
 &lt;&lt;/widget&gt;&gt;
 
@@ -229157,6 +229157,40 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 					&lt;/span&gt;
 					&lt;&lt;numberslider &quot;$combatExtended.enemyDefeatScalingLimit&quot; $combatExtended.enemyDefeatScalingLimit 1 20 1&gt;&gt;
 				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+&lt;&lt;/widget&gt;&gt;
+
+&lt;&lt;widget &quot;amcTraitsSettings&quot;&gt;&gt;
+	&lt;div class=&quot;solidBorderContainer settings-container&quot;&gt;
+		&lt;div class=&quot;settingsGrid&quot;&gt;
+			&lt;div class=&quot;settingsToggleItemWide&quot;&gt;
+				&lt;span class=&quot;gold&quot;&gt;Anime Main Character Traits:&lt;/span&gt;&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;These traits will halve your gains of the corresponding stat but will double the cap.&lt;/span&gt;&lt;/mouse&gt;&lt;br&gt;
+				
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Physique&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.physique&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Willpower&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.willpower&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Skulduggery&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.skulduggery&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Dancing&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.dancing&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Swimming&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.swimming&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Athletics&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.athletics&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Tending&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.tending&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Housekeeping&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.housekeeping&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Brawling&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.brawling&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;teal&quot;&gt;Tempered Science&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.science&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;teal&quot;&gt;Tempered Maths&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.maths&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;teal&quot;&gt;Tempered English&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.english&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;teal&quot;&gt;Tempered History&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.history&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Seduction Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.seduction&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Oral Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.oral&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Chest Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.chest&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Hands Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.hands&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Buttocks Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.buttocks&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Penile Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.penile&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Vaginal Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.vaginal&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Anal Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.anal&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Thighs Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.thighs&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
+				&lt;label&gt;&lt;span class=&quot;blue&quot;&gt;Tempered Feet Skill&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.feet&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
 			&lt;/div&gt;
 		&lt;/div&gt;
 	&lt;/div&gt;
@@ -231375,7 +231409,11 @@ You obey the slime&#39;s demand.
 
 &lt;&lt;widget &quot;willpower&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $willpower += (_args[0] * 2 / $AMCTraits.willpower)&gt;&gt;
+		&lt;&lt;if $willpower gt 1000&gt;&gt;
+			&lt;&lt;set $willpower += (_args[0] * 2 / $AMCTraits.willpower)&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $willpower += (_args[0] * 2)&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;set $willpower = Math.clamp($willpower, 0, $willpowermax * $AMCTraits.willpower)&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
@@ -231449,63 +231487,99 @@ You obey the slime&#39;s demand.
 
 &lt;&lt;widget &quot;oralskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $oralskill += _args[0] / $AMCTraits.oral&gt;&gt;
+		&lt;&lt;if $oralskill gt 1000&gt;&gt;
+			&lt;&lt;set $oralskill += _args[0] / $AMCTraits.oral&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $oralskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $oralskill = Math.clamp($oralskill, 0, 1000 * $AMCTraits.oral)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;vaginalskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $vaginalskill += _args[0] / $AMCTraits.vaginal&gt;&gt;
+		&lt;&lt;if $vaginalskill gt 1000&gt;&gt;
+			&lt;&lt;set $vaginalskill += _args[0] / $AMCTraits.vaginal&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $vaginalskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $vaginalskill = Math.clamp($vaginalskill, 0, 1000 * $AMCTraits.vaginal)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;penileskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and ($player.penisExist or playerHasStrapon()) and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $penileskill += _args[0] / $AMCTraits.penile&gt;&gt;
+		&lt;&lt;if $penileskill gt 1000&gt;&gt;
+			&lt;&lt;set $penileskill += _args[0] / $AMCTraits.penile&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $penileskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $penileskill = Math.clamp($penileskill, 0, 1000 * $AMCTraits.penile)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;handskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $handskill += _args[0] / $AMCTraits.hands&gt;&gt;
+		&lt;&lt;if $handskill gt 1000&gt;&gt;
+			&lt;&lt;set $handskill += _args[0] / $AMCTraits.hands&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $handskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $handskill = Math.clamp($handskill, 0, 1000 * $AMCTraits.hands)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;analskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $analskill += _args[0] / $AMCTraits.anal&gt;&gt;
+		&lt;&lt;if $analskill gt 1000&gt;&gt;
+			&lt;&lt;set $analskill += _args[0] / $AMCTraits.anal&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $analskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $analskill = Math.clamp($analskill, 0, 1000 * $AMCTraits.anal)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;feetskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $feetskill += _args[0] / $AMCTraits.feet&gt;&gt;
+		&lt;&lt;if $feetskill gt 1000&gt;&gt;
+			&lt;&lt;set $feetskill += _args[0] / $AMCTraits.feet&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $feetskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $feetskill = Math.clamp($feetskill, 0, 1000 * $AMCTraits.feet)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;bottomskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $bottomskill += _args[0] / $AMCTraits.buttocks&gt;&gt;
+		&lt;&lt;if $bottomskill gt 1000&gt;&gt;
+			&lt;&lt;set $bottomskill += _args[0] / $AMCTraits.buttocks&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $bottomskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $bottomskill = Math.clamp($bottomskill, 0, 1000 * $AMCTraits.buttocks)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;thighskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $thighskill += _args[0] / $AMCTraits.thighs&gt;&gt;
+		&lt;&lt;if $thighskill gt 1000&gt;&gt;
+			&lt;&lt;set $thighskill += _args[0] / $AMCTraits.thighs&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $thighskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $thighskill = Math.clamp($thighskill, 0, 1000 * $AMCTraits.thighs)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;chestskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $chestskill += _args[0] / $AMCTraits.chest&gt;&gt;
+		&lt;&lt;if $chestskill gt 1000&gt;&gt;
+			&lt;&lt;set $chestskill += _args[0] / $AMCTraits.chest&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $chestskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $chestskill = Math.clamp($chestskill, 0, 1000 * $AMCTraits.chest)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
@@ -231519,14 +231593,22 @@ You obey the slime&#39;s demand.
 
 &lt;&lt;widget &quot;seductionskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0]&gt;&gt;
-		&lt;&lt;set $seductionskill += _args[0] / $AMCTraits.seduction&gt;&gt;
+		&lt;&lt;if $seductionskill gt 1000&gt;&gt;
+			&lt;&lt;set $seductionskill += _args[0] / $AMCTraits.seduction&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $seductionskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $seductionskill = Math.clamp($seductionskill, 0, 1000 * $AMCTraits.seduction)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;skulduggery&quot;&gt;&gt;
 	&lt;&lt;if _args[0]&gt;&gt;
-		&lt;&lt;set $skulduggery += _args[0] / $AMCTraits.skulduggery&gt;&gt;
+		&lt;&lt;if $skulduggery gt 1000&gt;&gt;
+			&lt;&lt;set $skulduggery += _args[0] / $AMCTraits.skulduggery&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $skulduggery += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $skulduggery to Math.clamp($skulduggery, 0, 1000 * $AMCTraits.skulduggery)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
@@ -242893,9 +242975,13 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 
 &lt;&lt;widget &quot;combatskulduggeryskilluse&quot;&gt;&gt;
 	&lt;&lt;if $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $skulduggery += 3 / $AMCTraits.skulduggery&gt;&gt;
+		&lt;&lt;if $skulduggery gte 1000&gt;&gt;
+			&lt;&lt;set $skulduggery += 3 / $AMCTraits.skulduggery&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $skulduggery += 3&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $skulduggery to Math.clamp($skulduggery, 0, 1000 * $AMCTraits.skulduggery)&gt;&gt;
-		&lt;&lt;if $skulduggery lt 1000&gt;&gt;
+		&lt;&lt;if $skulduggery lt 1000 * $AMCTraits.skulduggery&gt;&gt;
 			&lt;span class=&quot;gold&quot;&gt; You learned a thing or two about skulduggery.&lt;/span&gt;
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
@@ -242903,9 +242989,13 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 
 &lt;&lt;widget &quot;lockpickTrainingSetuse&quot;&gt;&gt;
 	&lt;&lt;if $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $skulduggery += _args[0] / $AMCTraits.skulduggery&gt;&gt;
+		&lt;&lt;if $skulduggery gte 1000&gt;&gt;
+			&lt;&lt;set $skulduggery += _args[0] / $AMCTraits.skulduggery&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $skulduggery += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $skulduggery to Math.clamp($skulduggery, 0, 1000 * $AMCTraits.skulduggery)&gt;&gt;
-		&lt;&lt;if $skulduggery lt 1000&gt;&gt;
+		&lt;&lt;if $skulduggery lt 1000 * $AMCTraits.skulduggery&gt;&gt;
 			&lt;span class=&quot;gold&quot;&gt; You learned a thing or two about skulduggery.&lt;/span&gt;
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
@@ -242914,8 +243004,12 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 
 &lt;&lt;widget &quot;swimmingskilluse&quot;&gt;&gt;
 	&lt;&lt;if $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $swimmingskill += 9 / $AMCTraits.swimming&gt;&gt;
-		&lt;&lt;if $swimmingskill lt 1000&gt;&gt;
+		&lt;&lt;if $swimmingskill gte 1000&gt;&gt;
+			&lt;&lt;set $swimmingskill += 9 / $AMCTraits.swimming&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $swimmingskill += 9&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
+		&lt;&lt;if $swimmingskill lt 1000 * $AMCTraits.swimming&gt;&gt;
 			&lt;span class=&quot;gold&quot;&gt; You&#39;ve become more confident at swimming.&lt;/span&gt;
 		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $swimmingskill to Math.clamp($swimmingskill, 0, 1000 * $AMCTraits.swimming)&gt;&gt;
@@ -242925,7 +243019,7 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 &lt;&lt;widget &quot;danceskilluse&quot;&gt;&gt;
 	&lt;&lt;if $statFreeze isnot true&gt;&gt;
 		&lt;&lt;danceskill 1&gt;&gt;
-		&lt;&lt;if $danceskill lt 1000&gt;&gt;
+		&lt;&lt;if $danceskill lt 1000 * $AMCTraits.swimming&gt;&gt;
 			&lt;span class=&quot;gold&quot;&gt; You feel more confident in your dancing abilities.&lt;/span&gt;
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
@@ -242956,7 +243050,11 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 			&lt;&lt;/if&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
 
-		&lt;&lt;set V[$_subject + &quot;_exam&quot;] to Math.clamp(V[$_subject + &quot;_exam&quot;] + ($_gain * _skill_mod / _AMCmod), -107, 200)&gt;&gt;
+		&lt;&lt;if _AMCmod is 2 and V[$subject] gte 1000&gt;&gt;
+			&lt;&lt;set V[$_subject + &quot;_exam&quot;] to Math.clamp(V[$_subject + &quot;_exam&quot;] + ($_gain * _skill_mod / _AMCmod), -107, 200)&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set V[$_subject + &quot;_exam&quot;] to Math.clamp(V[$_subject + &quot;_exam&quot;] + ($_gain * _skill_mod), -107, 200)&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;if V[$_subject + &quot;_exam&quot;] gte 100 and V[$_subject + &#39;trait&#39;] lt 4 * _AMCmod&gt;&gt;
 			&lt;&lt;school_skill_up $_subject&gt;&gt;
 			&lt;&lt;school_skill_up_text $_subject&gt;&gt;
@@ -242965,22 +243063,38 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;scienceskill&quot;&gt;&gt;
-	&lt;&lt;set _args[0] to _args[0] / $AMCTraits.science&gt;&gt;
+	&lt;&lt;if $science gte 1000&gt;&gt;
+		&lt;&lt;set _args[0] to _args[0] / $AMCTraits.science&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set _args[0] to _args[0]&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;schoolskillgeneral &quot;science&quot; _args[0] _args[1]&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;mathsskill&quot;&gt;&gt;
-	&lt;&lt;set _args[0] to _args[0] / $AMCTraits.maths&gt;&gt;
+	&lt;&lt;if $maths gte 1000&gt;&gt;
+		&lt;&lt;set _args[0] to _args[0] / $AMCTraits.maths&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set _args[0] to _args[0]&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;schoolskillgeneral &quot;maths&quot; _args[0] _args[1]&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;englishskill&quot;&gt;&gt;
-	&lt;&lt;set _args[0] to _args[0] / $AMCTraits.english&gt;&gt;
+	&lt;&lt;if $english gte 1000&gt;&gt;
+		&lt;&lt;set _args[0] to _args[0] / $AMCTraits.english&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set _args[0] to _args[0]&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;schoolskillgeneral &quot;english&quot; _args[0] _args[1]&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;historyskill&quot;&gt;&gt;
-	&lt;&lt;set _args[0] to _args[0] / $AMCTraits.history&gt;&gt;
+	&lt;&lt;if $history gte 1000&gt;&gt;
+		&lt;&lt;set _args[0] to _args[0] / $AMCTraits.history&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set _args[0] to _args[0]&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;schoolskillgeneral &quot;history&quot; _args[0] _args[1]&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
@@ -243075,28 +243189,44 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 		&lt;&lt;elseif $exposed is 1&gt;&gt;
 			&lt;&lt;set $athletics += 1&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
-		&lt;&lt;set $athletics += Math.trunc(_temp * 1.4 / $AMCTraits.athletics)&gt;&gt;
+		&lt;&lt;if $athletics gte 1000&gt;&gt;
+			&lt;&lt;set $athletics += Math.trunc(_temp * 1.4 / $AMCTraits.athletics)&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $athletics += Math.trunc(_temp * 1.4)&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $athletics to Math.clamp($athletics, 0, 1000 * $AMCTraits.athletics)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;tending&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $tending += (_args[0] * 2 / $AMCTraits.tending)&gt;&gt;
+		&lt;&lt;if $tending gte 1000&gt;&gt;
+			&lt;&lt;set $tending += (_args[0] * 2 / $AMCTraits.tending)&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $tending += (_args[0] * 2)&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $tending to Math.clamp($tending, 0, 1000 * $AMCTraits.tending)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;housekeeping&quot;&gt;&gt;
 &lt;&lt;if _args[0] and $statFreeze isnot true and $housekeeping lt _args[1]&gt;&gt;
-	&lt;&lt;set $housekeeping += (_args[0] * 2 / $AMCTraits.housekeeping)&gt;&gt;
+	&lt;&lt;if $housekeeping gte 1000&gt;&gt;
+		&lt;&lt;set $housekeeping += (_args[0] * 2 / $AMCTraits.housekeeping)&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set $housekeeping += (_args[0] * 2)&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;set $housekeeping to Math.clamp($housekeeping, 0, 1000 * $AMCTraits.housekeeping)&gt;&gt;
 &lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;danceskill&quot;&gt;&gt;
 	&lt;&lt;if _args[0] and $statFreeze isnot true&gt;&gt;
-		&lt;&lt;set $danceskill += _args[0] / $AMCTraits.dancing&gt;&gt;
+		&lt;&lt;if $danceskill gte 1000&gt;&gt;
+			&lt;&lt;set $danceskill += _args[0] / $AMCTraits.dancing&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $danceskill += _args[0]&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
@@ -243109,7 +243239,12 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 		&lt;&lt;elseif $exposed is 1&gt;&gt;
 			&lt;&lt;set _temp *= 1.1&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
-		&lt;&lt;set $physique += 10 * _temp / $AMCTraits.physique&gt;&gt;&lt;&lt;set $physiqueuse += _temp&gt;&gt;
+		&lt;&lt;if $physique gte $physiquesize&gt;&gt;
+			&lt;&lt;set $physique += 10 * _temp / $AMCTraits.physique&gt;&gt;
+		&lt;&lt;else&gt;&gt;
+			&lt;&lt;set $physique += 10 * _temp&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
+		&lt;&lt;set $physiqueuse += _temp&gt;&gt;
 		&lt;&lt;if _args[1]&gt;&gt;
 			&lt;&lt;if _args[1] isnot &quot;noMessage&quot;&gt;&gt;
 				&lt;&lt;if ($combat is 1 and _args[1] isnot &quot;workout&quot;) or _args[1] is &quot;invig&quot;&gt;&gt;
