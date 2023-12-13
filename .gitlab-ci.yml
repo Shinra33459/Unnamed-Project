@@ -8,6 +8,8 @@ variables:
 before_script:
     - export VERSION=$(cat version)
     - SANITIZED_VERSION=$(echo "$VERSION" | tr ' ' _)
+    - sudo apt-get update
+    - sudo apt-get install -y zip unzip
     - mkdir -p releases/DoLP_Vanilla/img/
     - mkdir -p releases/DoLP_BEEESSS/img/
     - mkdir -p releases/DoLP_BEEESSS+Hikari_Female/img/
@@ -21,17 +23,39 @@ build_job:
     - sh ./compile.sh
     - cp "Degrees of Lewdity.html" ./releases/DoLP_Vanilla/
     - cp -r -f ./vanillaimg/* ./releases/DoLP_Vanilla/img/
+    - zip -r -f ./releases/DoLP_Vanilla/
+    - 'curl 
+        --header "JOB-TOKEN: $CI_JOB_TOKEN"
+        --upload-file DoLP_Vanilla.zip
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Vanilla.zip"'
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS/
     - cp -r -f ./beeesssimg/* ./releases/DoLP_BEEESSS/img/
+    - zip -r -f ./releases/DoLP_BEEESSS/
+    - 'curl 
+        --header "JOB-TOKEN: $CI_JOB_TOKEN"
+        --upload-file DoLP_BEEESSS.zip
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS.zip"'
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS+Hikari_Female/
     - cp -r -f ./beeessshikarifemaleimg/* ./releases/DoLP_BEEESSS+Hikari_Female/img/
+    - zip -r -f ./releases/DoLP_BEEESSS+Hikari_Female/
+    - 'curl 
+        --header "JOB-TOKEN: $CI_JOB_TOKEN"
+        --upload-file DoLP_BEEESSS+Hikari_Female.zip
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Female.zip"'
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS+Hikari_Male/
     - cp -r -f ./beeessshikarimaleimg/* ./releases/DoLP_BEEESSS+Hikari_Male/img/
+    - zip -r -f ./releases/DoLP_BEEESSS+Hikari_Male/
+    - 'curl 
+        --header "JOB-TOKEN: $CI_JOB_TOKEN"
+        --upload-file DoLP_BEEESSS+Hikari_Male.zip
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Male.zip"'
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/
     - cp -r -f ./beeesssparilhairstyleextendedimg/* ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
-    artifacts:
-        paths:
-            - releases/
+    - zip -r -f ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/
+    - 'curl 
+        --header "JOB-TOKEN: $CI_JOB_TOKEN"
+        --upload-file DoLP_BEEESSS+Paril+Hairstyle_Extended.zip
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Paril+Hairstyle_Extended.zip"'
     only:
     - master
 
@@ -57,12 +81,12 @@ release_job:
         assets:
             links:
                 - name: 'DoLP_Vanilla'
-                  url: "./releases/DoLP_Vanilla/"
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Vanilla.zip"
                 - name: 'DoLP_BEEESSS'
-                  url: "./releases/DoLP_BEEESSS/"
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS.zip"
                 - name: 'DoLP_BEEESSS+Hikari_Female'
-                  url: "./releases/DoLP_BEEESSS+Hikari_Female/"
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Female.zip"
                 - name: 'DoLP_BEEESSS+Hikari_Male'
-                  url: "./releases/DoLP_BEEESSS+Hikari_Male/"
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Male.zip"
                 - name: 'DoLP_BEEESSS+Paril+Hairstyle_Extended'
-                  url: "./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/"
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Paril+Hairstyle_Extended.zip"
