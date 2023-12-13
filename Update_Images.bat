@@ -20,22 +20,15 @@ if "%choice%"=="1" (
 	xcopy /E /Y vanillaimg\* "%destinationFolder%\"
 ) else if "%choice%"=="2" (
     echo You chose BEEESSS.
-	xcopy /E /Y vanillaimg\* "%destinationFolder%\"
 	xcopy /E /Y beeesssimg\* "%destinationFolder%\"
 ) else if "%choice%"=="3" (
     echo You chose BEEESSS + Hikari Female.
-	xcopy /E /Y vanillaimg\* "%destinationFolder%\"
-	xcopy /E /Y beeesssimg\* "%destinationFolder%\"
 	xcopy /E /Y beeessshikarifemaleimg\* "%destinationFolder%\"
 ) else if "%choice%"=="4" (
     echo You chose BEEESSS + Hikari Male.
-	xcopy /E /Y vanillaimg\* "%destinationFolder%\"
-	xcopy /E /Y beeesssimg\* "%destinationFolder%\"
 	xcopy /E /Y beeessshikarimaleimg\* "%destinationFolder%\"
 ) else if "%choice%"=="5" (
     echo You chose BEEESSS + Paril + Hairstyle Extended.
-	xcopy /E /Y vanillaimg\* "%destinationFolder%\"
-	xcopy /E /Y beeesssimg\* "%destinationFolder%\"
 	xcopy /E /Y beeesssparilhairstyleextendedimg\* "%destinationFolder%\"
 ) else (
     echo Invalid choice. Please enter a number from the list.
