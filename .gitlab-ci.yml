@@ -1,6 +1,6 @@
 stages:
     - build
-	- release
+    - release
 
 variables:
     VERSION: ""
@@ -35,10 +35,10 @@ build:
     - cp -r ./beeessshikarimaleimg/* ./releases/DoLP_BEEESSS+Hikari_Male/img/
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/
     - cp -r ./beeesssparilhairstyleextendedimg/* ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
-	- apk add curl jq
+    - apk add curl jq
     - 'curl -H "PRIVATE-TOKEN: $CI_API_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/changelog?version=$VERSION | jq -r .notes > release_notes.md'
-	
-	artifacts:
+
+    artifacts:
         paths:
             - releases/
 
@@ -47,9 +47,11 @@ after_script:
 
 release:
     stage: release
-	image: registry.gitlab.com/gitlab-org/release-cli:latest
-	needs:
-    	- job: build
+    image: registry.gitlab.com/gitlab-org/release-cli:latest
+    needs:
+        - job: build
+        - artifacts: true
+
     script:
         - echo "Creating releases..."
     release:
