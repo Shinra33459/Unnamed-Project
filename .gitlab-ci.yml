@@ -1,5 +1,6 @@
 stages:
     - build
+	- release
 
 variables:
     VERSION: ""
@@ -34,8 +35,10 @@ build:
     - cp -r ./beeessshikarimaleimg/* ./releases/DoLP_BEEESSS+Hikari_Male/img/
     - cp "Degrees of Lewdity.html" ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/
     - cp -r ./beeesssparilhairstyleextendedimg/* ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/img/
-  
-    artifacts:
+	- apk add curl jq
+    - 'curl -H "PRIVATE-TOKEN: $CI_API_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/changelog?version=$VERSION | jq -r .notes > release_notes.md'
+	
+	artifacts:
         paths:
             - releases/
 
@@ -43,17 +46,19 @@ after_script:
     - echo "Finished building."
 
 release:
-    stage: build
+    stage: release
+	image: registry.gitlab.com/gitlab-org/release-cli:latest
+	needs:
+    	- job: build
     script:
-        - echo "Creating release ZIP files..."
-        - cd releases
-        - zip -r "DoLP_Vanilla_${VERSION}.zip" ./DoLP_Vanilla
-        - zip -r "DoLP_BEEESSS_${VERSION}.zip" ./DoLP_BEEESSS
-        - zip -r "DoLP_BEEESSS+Hikari_Female_${VERSION}.zip" ./DoLP_BEEESSS+Hikari_Female
-        - zip -r "DoLP_BEEESSS+Hikari_Male_${VERSION}.zip" ./DoLP_BEEESSS+Hikari_Male
-        - zip -r "DoLP_BEEESSS+Paril+Hairstyle_Extended_${VERSION}.zip" ./DoLP_BEEESSS+Paril+Hairstyle_Extended
-    artifacts:
-        paths:
-            - releases/*.zip
+        - echo "Creating releases..."
+    release:
+    name: 'Release $VERSION'
+    tag_name: '$VERSION'
+    ref: '$CI_COMMIT_SHA'
+    assets:
+      links:
+        - name: 'Container Image $CI_COMMIT_TAG'
+          url: "https://$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"
     only:
         - master
