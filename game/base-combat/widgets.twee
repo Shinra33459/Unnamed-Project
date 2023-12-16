@@ -813,7 +813,7 @@
 		<<set _check1 += 50>>
 		<<set _check2 to _check1 * 0.8>>
 		<<if _dodgeChance gte random(_check1)>>
-			<<set _enemyCounter to 2>>
+			<<set _enemyCounter to 2>>multiplier
 		<<elseif _dodgeChance gte random(_check2)>>
 			<<set _enemyCounter to 1>>
 		<<else>>
@@ -832,19 +832,21 @@
 	<<if $NPCList[0].health isnot undefined and $NPCList[0].health gt $enemyhealth>>
 		<<set $enemyhealth to $NPCList[0].health>>
 	<</if>>
+	<<set _buff to 0>>
 	<<if $enemytype is "beast">>
-		<<set $enemyhealth to $enemyhealth * $beastHealthMult>>
+		<<set $enemyhealth to Math.round($enemyhealth * $beastHealthMult)>>
 	<<else>>
-		<<set $enemyhealth to $enemyhealth * $npcHealthMult>>
+		<<set $enemyhealth to Math.round($enemyhealth * $npcHealthMult)>>
 	<</if>>
 	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
 	<<if $combatExtended.enemyHealthDayScaling is 1 and (_buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1)>>
-		<<set $enemyhealth to $enemyhealth * (1 + (_buffAmount * $combatExtended.enemyHealthDayScalingMult))>>
+		<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
 	<</if>>
 	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
 	<<if $combatExtended.enemyHealthDefeatScaling is 1 and (_buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1)>>
-		<<set $enemyhealth to $enemyhealth * (1 + (_buffAmount * $combatExtended.enemyHealthDefeatScalingMult))>>
+		<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
 	<</if>>
+	<<set $enemyhealth to  Math.round($enemyhealth * (1 + (_buff / 100)))>>
 	<<set $enemyhealthmax to $enemyhealth>>
 	<<set $permenemyhealthmax to $enemyhealthmax>>
 <</widget>>

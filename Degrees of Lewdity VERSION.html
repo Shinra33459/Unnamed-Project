@@ -95763,16 +95763,16 @@ If you want to avoid trouble, dress modestly and stick to safe, well-lit areas. 
 		&lt;&lt;set $furnitureMovePrice = []&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $npcHealthMult is undefined&gt;&gt;
-		&lt;&lt;set $npcHealthMult to 1&gt;&gt;
+		&lt;&lt;set $npcHealthMult to 100&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $npcArousalMult is undefined&gt;&gt;
-		&lt;&lt;set $npcArousalMult to 1&gt;&gt;
+		&lt;&lt;set $npcArousalMult to 100&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $beastHealthMult is undefined&gt;&gt;
-		&lt;&lt;set $beastHealthMult to 1&gt;&gt;
+		&lt;&lt;set $beastHealthMult to 100&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $beastArousalMult is undefined&gt;&gt;
-		&lt;&lt;set $beastArousalMult to 1&gt;&gt;
+		&lt;&lt;set $beastArousalMult to 100&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;set setup.majorAreas to [
 		&quot;Orphanage&quot;, &quot;Bedroom&quot;, &quot;Barb Street&quot;, &quot;Cliff Street&quot;, &quot;Connudatus Street&quot;, &quot;Danube Street&quot;, &quot;Domus Street&quot;, &quot;Elk Street&quot;,
@@ -95830,7 +95830,7 @@ If you want to avoid trouble, dress modestly and stick to safe, well-lit areas. 
 		&lt;&lt;set $combatExtended.enemyHealthDayScaling to 0&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $combatExtended.enemyHealthDayScalingMult is undefined&gt;&gt;
-		&lt;&lt;set $combatExtended.enemyHealthDayScalingMult to 0.05&gt;&gt;
+		&lt;&lt;set $combatExtended.enemyHealthDayScalingMult to 5&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $combatExtended.standingFights is undefined&gt;&gt;
 		&lt;&lt;set $combatExtended.standingFights to 0&gt;&gt;
@@ -183331,7 +183331,7 @@ You take &lt;&lt;his&gt;&gt; arm and &lt;&lt;he&gt;&gt; helps lift you to your f
 		&lt;&lt;set _check1 += 50&gt;&gt;
 		&lt;&lt;set _check2 to _check1 * 0.8&gt;&gt;
 		&lt;&lt;if _dodgeChance gte random(_check1)&gt;&gt;
-			&lt;&lt;set _enemyCounter to 2&gt;&gt;
+			&lt;&lt;set _enemyCounter to 2&gt;&gt;multiplier
 		&lt;&lt;elseif _dodgeChance gte random(_check2)&gt;&gt;
 			&lt;&lt;set _enemyCounter to 1&gt;&gt;
 		&lt;&lt;else&gt;&gt;
@@ -183350,19 +183350,21 @@ You take &lt;&lt;his&gt;&gt; arm and &lt;&lt;he&gt;&gt; helps lift you to your f
 	&lt;&lt;if $NPCList[0].health isnot undefined and $NPCList[0].health gt $enemyhealth&gt;&gt;
 		&lt;&lt;set $enemyhealth to $NPCList[0].health&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;set _buff to 0&gt;&gt;
 	&lt;&lt;if $enemytype is &quot;beast&quot;&gt;&gt;
-		&lt;&lt;set $enemyhealth to $enemyhealth * $beastHealthMult&gt;&gt;
+		&lt;&lt;set $enemyhealth to Math.round($enemyhealth * $beastHealthMult)&gt;&gt;
 	&lt;&lt;else&gt;&gt;
-		&lt;&lt;set $enemyhealth to $enemyhealth * $npcHealthMult&gt;&gt;
+		&lt;&lt;set $enemyhealth to Math.round($enemyhealth * $npcHealthMult)&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)&gt;&gt;
 	&lt;&lt;if $combatExtended.enemyHealthDayScaling is 1 and (_buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1)&gt;&gt;
-		&lt;&lt;set $enemyhealth to $enemyhealth * (1 + (_buffAmount * $combatExtended.enemyHealthDayScalingMult))&gt;&gt;
+		&lt;&lt;set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)&gt;&gt;
 	&lt;&lt;if $combatExtended.enemyHealthDefeatScaling is 1 and (_buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1)&gt;&gt;
-		&lt;&lt;set $enemyhealth to $enemyhealth * (1 + (_buffAmount * $combatExtended.enemyHealthDefeatScalingMult))&gt;&gt;
+		&lt;&lt;set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;set $enemyhealth to  Math.round($enemyhealth * (1 + (_buff / 100)))&gt;&gt;
 	&lt;&lt;set $enemyhealthmax to $enemyhealth&gt;&gt;
 	&lt;&lt;set $permenemyhealthmax to $enemyhealthmax&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
@@ -195353,6 +195355,8 @@ hue-rotate(45deg) saturate(0.4) brightness(0.5)
 	&lt;br&gt;
 	&lt;img class=&quot;icon&quot; width=&quot;24px&quot; height=&quot;24px&quot; src=&quot;img/ui/CopperCoin.gif&quot;&gt; kejjae
 	&lt;br&gt;
+	&lt;img class=&quot;icon&quot; width=&quot;24px&quot; height=&quot;24px&quot; src=&quot;img/ui/CopperCoin.gif&quot;&gt; SoggySoup
+	&lt;br&gt;
 	&lt;img class=&quot;icon&quot; width=&quot;24px&quot; height=&quot;24px&quot; src=&quot;img/ui/collar.png&quot;&gt; Osnaris Rodriguez
 	&lt;br&gt;
 	&lt;img class=&quot;icon&quot; width=&quot;24px&quot; height=&quot;24px&quot; src=&quot;img/ui/collar.png&quot;&gt; Tsumiki Aihikari
@@ -198385,7 +198389,7 @@ hue-rotate(45deg) saturate(0.4) brightness(0.5)
 		&lt;&lt;if $tending gte 2000&gt;&gt;
 			&lt;&lt;earnFeat &quot;Grass Toucher&quot;&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
-		&lt;&lt;if $housekeeping gte 8&gt;&gt;
+		&lt;&lt;if $housekeeping gte 2000&gt;&gt;
 			&lt;&lt;earnFeat &quot;Demolisher of Filth&quot;&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;if $sciencetrait gte 8&gt;&gt;
@@ -198403,7 +198407,7 @@ hue-rotate(45deg) saturate(0.4) brightness(0.5)
 		&lt;&lt;if $schooltrait gte 8&gt;&gt;
 			&lt;&lt;earnFeat &quot;Return to Monke&quot;&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
-		&lt;&lt;if $seductionskill gte 8&gt;&gt;
+		&lt;&lt;if $seductionskill gte 2000&gt;&gt;
 			&lt;&lt;earnFeat &quot;Irresistible&quot;&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;if (!$player.vaginaExist or $vaginalskill gte 2000) and (!$player.penisExist or $penileskill gte 2000) and $oralskill gte 2000 and ($analskill gte 2000 or $analdisable is &quot;t&quot;) and $handskill gte 2000 and $feetskill gte 2000 and $bottomskill gte 2000 and $thighskill gte 2000 and $chestskill gte 2000&gt;&gt;
@@ -229330,6 +229334,18 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 &lt;&lt;/widget&gt;&gt;
 
 &lt;&lt;widget &quot;settingsExitFunction&quot;&gt;&gt;
+	&lt;&lt;set $npcHealthMult to Math.clamp($npcHealthMult, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $npcArousalMult to Math.clamp($npcArousalMult, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $beastHealthMult to Math.clamp($beastHealthMult, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $beastArousalMult to Math.clamp($beastArousalMult, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $combatExtended.enemyLevelDayScalingMult to Math.clamp($combatExtended.enemyLevelDayScalingMult, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $combatExtended.enemyHealthDayScalingMult to Math.clamp($combatExtended.enemyHealthDayScalingMult, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $combatExtended.enemyDayScaling to Math.clamp($combatExtended.enemyDayScaling, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $combatExtended.enemyDayScalingLimit to Math.clamp($combatExtended.enemyDayScalingLimit, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $combatExtended.enemyLevelDefeatScalingMult to Math.clamp($combatExtended.enemyLevelDefeatScalingMult, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $combatExtended.enemyHealthDefeatScalingMult to Math.clamp($combatExtended.enemyHealthDefeatScalingMult, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $combatExtended.enemyDefeatScaling to Math.clamp($combatExtended.enemyDefeatScaling, 1, 1000000)&gt;&gt;
+	&lt;&lt;set $combatExtended.enemyDefeatScalingLimit to Math.clamp($combatExtended.enemyDefeatScalingLimit, 1, 1000000)&gt;&gt;
 	&lt;&lt;if $settingsExitPassage is &quot;Start2&quot;&gt;&gt;
 		&lt;&lt;setSkinColorBase&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
@@ -230286,23 +230302,23 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 				NPC DoL Plus Settings
 			&lt;/div&gt;
 			&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-				&lt;span class=&quot;gold&quot;&gt;NPC Health Max Multiplier
-				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Multiplies the health max of human enemies.&lt;/span&gt;&lt;/mouse&gt;
+				&lt;span class=&quot;gold&quot;&gt;NPC Health Max Multiplier (%)
+				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Multiplies the health max of human enemies. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/span&gt;
-				&lt;&lt;numberslider &quot;$npcHealthMult&quot; $npcHealthMult 1 10 1&gt;&gt;
+				&lt;&lt;numberbox &quot;$npcHealthMult&quot; $npcHealthMult&gt;&gt;
 			&lt;/div&gt;
 			&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-				&lt;span class=&quot;gold&quot;&gt;NPC Arousal Max Multiplier
-				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Multiplies the arousal max of human enemies.&lt;/span&gt;&lt;/mouse&gt;
+				&lt;span class=&quot;gold&quot;&gt;NPC Arousal Max Multiplier (%)
+				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Multiplies the arousal max of human enemies. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/span&gt;
-				&lt;&lt;numberslider &quot;$npcArousalMult&quot; $npcArousalMult 1 10 1&gt;&gt;
+				&lt;&lt;numberbox &quot;$npcArousalMult&quot; $npcArousalMult&gt;&gt;
 			&lt;/div&gt;
 			&lt;label&gt;
 				&lt;&lt;checkbox &quot;$npcStealMoneyToggle&quot; 0 1 autocheck&gt;&gt; Enable NPCs stealing your money.
-				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Will only happen if the NPC is angery.&lt;/span&gt;&lt;/mouse&gt;
+				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Will only happen if the NPC is angry.&lt;/span&gt;&lt;/mouse&gt;
 			&lt;/label&gt;
 			&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-				&lt;span class=&quot;gold&quot;&gt;NPC Stolen Money Percentage
+				&lt;span class=&quot;gold&quot;&gt;NPC Stolen Money Percentage (%)
 				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The percentage of your money NPCs will steal.&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/span&gt;
 				&lt;&lt;numberslider &quot;$npcStealMoneyPercentage&quot; $npcStealMoneyPercentage 1 100 1&gt;&gt;
@@ -230336,16 +230352,16 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 				Beast Preferences
 			&lt;/div&gt;
 			&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-				&lt;span class=&quot;gold&quot;&gt;Beast Health Max Multiplier
-				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Multiplies the health max of beast enemies.&lt;/span&gt;&lt;/mouse&gt;
+				&lt;span class=&quot;gold&quot;&gt;Beast Health Max Multiplier (%)
+				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Multiplies the health max of beast enemies. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/span&gt;
-				&lt;&lt;numberslider &quot;$beastHealthMult&quot; $beastHealthMult 1 20 1&gt;&gt;
+				&lt;&lt;numberbox &quot;$beastHealthMult&quot; $beastHealthMult&gt;&gt;
 			&lt;/div&gt;
 			&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-				&lt;span class=&quot;gold&quot;&gt;Beast Arousal Max Multiplier
-				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Multiplies the arousal max of beast enemies.&lt;/span&gt;&lt;/mouse&gt;
+				&lt;span class=&quot;gold&quot;&gt;Beast Arousal Max Multiplier (%)
+				&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Multiplies the arousal max of beast enemies. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/span&gt;
-				&lt;&lt;numberslider &quot;$beastArousalMult&quot; $beastArousalMult 1 20 1&gt;&gt;
+				&lt;&lt;numberbox &quot;$beastArousalMult&quot; $beastArousalMult&gt;&gt;
 			&lt;/div&gt;
 			&lt;div class=&quot;settingsToggleItem&quot;&gt;
 				&lt;&lt;beastAttractionSettings&gt;&gt;
@@ -231619,36 +231635,36 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Every scaling buff increases all generic NPC&#39;s level .&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/label&gt;
 				&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-					&lt;span class=&quot;gold&quot;&gt;Level Buff Scaling
-					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The level increase each scaling buff gives. 1 is a +1 modifier to the enemy&#39;s level each time the buff is applied.&lt;/span&gt;&lt;/mouse&gt;
+					&lt;span class=&quot;gold&quot;&gt;Level Buff Scaling (levels)
+					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The level increase each scaling buff gives. 1 is a +1 modifier to the enemy&#39;s level each time the buff is applied. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 					&lt;/span&gt;
-					&lt;&lt;numberslider &quot;$combatExtended.enemyLevelDayScalingMult&quot; $combatExtended.enemyLevelDayScalingMult 1 20 1&gt;&gt;
+					&lt;&lt;numberbox &quot;$combatExtended.enemyLevelDayScalingMult&quot; $combatExtended.enemyLevelDayScalingMult&gt;&gt;
 				&lt;/div&gt;
 				&lt;label&gt;
 					&lt;&lt;checkbox &quot;$combatExtended.enemyHealthDayScaling&quot; 0 1 autocheck&gt;&gt; Enable Enemy Health Scaling with ingame days
 					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Every scaling buff increases every NPC and Beast&#39;s health on top of the Health Multiplier.&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/label&gt;
 				&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-					&lt;span class=&quot;gold&quot;&gt;Health Percentage Buff Scaling
-					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The health percentage buff each scaling trigger gives. 0.05 is a +5% health modifier each time the buff is applied.&lt;/span&gt;&lt;/mouse&gt;
+					&lt;span class=&quot;gold&quot;&gt;Health Percentage Buff Scaling (%)
+					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The health percentage buff each scaling trigger gives. 5 is a +5% health modifier each time the buff is applied. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 					&lt;/span&gt;
-					&lt;&lt;numberslider &quot;$combatExtended.enemyHealthDayScalingMult&quot; $combatExtended.enemyHealthDayScalingMult 0.05 1 0.05&gt;&gt;
+					&lt;&lt;numberbox &quot;$combatExtended.enemyHealthDayScalingMult&quot; $combatExtended.enemyHealthDayScalingMult&gt;&gt;
 				&lt;/div&gt;
 				&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-					&lt;span class=&quot;gold&quot;&gt;Scaling Interval
-					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The interval of days the scaling buff gets triggered.&lt;/span&gt;&lt;/mouse&gt;
+					&lt;span class=&quot;gold&quot;&gt;Scaling Interval (days)
+					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The interval of days the scaling buff gets triggered. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 					&lt;/span&gt;
-					&lt;&lt;numberslider &quot;$combatExtended.enemyDayScaling&quot; $combatExtended.enemyDayScaling 1 28 1&gt;&gt;
+					&lt;&lt;numberbox &quot;$combatExtended.enemyDayScaling&quot; $combatExtended.enemyDayScaling&gt;&gt;
 				&lt;/div&gt;
 				&lt;label&gt;
 					&lt;&lt;checkbox &quot;$combatExtended.enemyInfiniteDayScaling&quot; 0 1 autocheck&gt;&gt; Enable Infinite Buffs
 					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;No limits on amount of times the scaling buff can be applied.&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/label&gt;
 				&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-					&lt;span class=&quot;gold&quot;&gt;Scaling Limit
-					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The limit for amount of times the scaling buff can be applied.&lt;/span&gt;&lt;/mouse&gt;
+					&lt;span class=&quot;gold&quot;&gt;Scaling Limit (buffs)
+					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The limit for amount of times the scaling buff can be applied. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 					&lt;/span&gt;
-					&lt;&lt;numberslider &quot;$combatExtended.enemyDayScalingLimit&quot; $combatExtended.enemyDayScalingLimit 1 20 1&gt;&gt;
+					&lt;&lt;numberbox &quot;$combatExtended.enemyDayScalingLimit&quot; $combatExtended.enemyDayScalingLimit&gt;&gt;
 				&lt;/div&gt;
 			&lt;/div&gt;
 			&lt;div class=&quot;settingsToggleItem&quot; role=&quot;group&quot; aria-labelledby=&quot;settingsScaling&quot;&gt;
@@ -231659,36 +231675,36 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Every defeated enemy increases all generic NPC&#39;s level .&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/label&gt;
 				&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-					&lt;span class=&quot;gold&quot;&gt;Level Buff Scaling
-					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;How many enemy defeats until a level buff is applied. 1 is a +1 modifier to the enemy&#39;s level each time the buff is applied.&lt;/span&gt;&lt;/mouse&gt;
+					&lt;span class=&quot;gold&quot;&gt;Level Buff Scaling (levels)
+					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;How many enemy defeats until a level buff is applied. 1 is a +1 modifier to the enemy&#39;s level each time the buff is applied. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 					&lt;/span&gt;
-					&lt;&lt;numberslider &quot;$combatExtended.enemyLevelDefeatScalingMult&quot; $combatExtended.enemyLevelDefeatScalingMult 1 20 1&gt;&gt;
+					&lt;&lt;numberbox &quot;$combatExtended.enemyLevelDefeatScalingMult&quot; $combatExtended.enemyLevelDefeatScalingMult&gt;&gt;
 				&lt;/div&gt;
 				&lt;label&gt;
 					&lt;&lt;checkbox &quot;$combatExtended.enemyHealthDefeatScaling&quot; 0 1 autocheck&gt;&gt; Enable Enemy Health Scaling with defeats
 					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;Every scaling buff increases every NPC and Beast&#39;s health on top of the Health Multiplier.&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/label&gt;
 				&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-					&lt;span class=&quot;gold&quot;&gt;Health Percentage Buff Scaling
-					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The health percentage buff each scaling trigger gives. 0.05 is a +5% health modifier each time the buff is applied.&lt;/span&gt;&lt;/mouse&gt;
+					&lt;span class=&quot;gold&quot;&gt;Health Percentage Buff Scaling (%)
+					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The health percentage buff each scaling trigger gives. 0.05 is a +5% health modifier each time the buff is applied. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 					&lt;/span&gt;
-					&lt;&lt;numberslider &quot;$combatExtended.enemyHealthDefeatScalingMult&quot; $combatExtended.enemyHealthDefeatScalingMult 0.05 1 0.05&gt;&gt;
+					&lt;&lt;numberbox &quot;$combatExtended.enemyHealthDefeatScalingMult&quot; $combatExtended.enemyHealthDefeatScalingMult&gt;&gt;
 				&lt;/div&gt;
 				&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-					&lt;span class=&quot;gold&quot;&gt;Enemy Defeats Scaling Threshold
-					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The threshold of defeated enemies until the buff is applied.&lt;/span&gt;&lt;/mouse&gt;
+					&lt;span class=&quot;gold&quot;&gt;Enemy Defeats Scaling Threshold (enemies)
+					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The threshold of defeated enemies until the buff is applied. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 					&lt;/span&gt;
-					&lt;&lt;numberslider &quot;$combatExtended.enemyDefeatScaling&quot; $combatExtended.enemyDefeatScaling 1 50 1&gt;&gt;
+					&lt;&lt;numberbox &quot;$combatExtended.enemyDefeatScaling&quot; $combatExtended.enemyDefeatScaling&gt;&gt;
 				&lt;/div&gt;
 				&lt;label&gt;
 					&lt;&lt;checkbox &quot;$combatExtended.enemyInfiniteDefeatScaling&quot; 0 1 autocheck&gt;&gt; Enable Infinite Buffs
 					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;No limits on amount of times the scaling buff can be applied.&lt;/span&gt;&lt;/mouse&gt;
 				&lt;/label&gt;
 				&lt;div class=&quot;settingsToggleItem numberslider-inline&quot;&gt;
-					&lt;span class=&quot;gold&quot;&gt;Scaling Limit
-					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The limit for amount of times the scaling buff can be applied.&lt;/span&gt;&lt;/mouse&gt;
+					&lt;span class=&quot;gold&quot;&gt;Scaling Limit (buffs)
+					&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;The limit for amount of times the scaling buff can be applied. Range 1 - 1000000&lt;/span&gt;&lt;/mouse&gt;
 					&lt;/span&gt;
-					&lt;&lt;numberslider &quot;$combatExtended.enemyDefeatScalingLimit&quot; $combatExtended.enemyDefeatScalingLimit 1 20 1&gt;&gt;
+					&lt;&lt;numberbox &quot;$combatExtended.enemyDefeatScalingLimit&quot; $combatExtended.enemyDefeatScalingLimit&gt;&gt;
 				&lt;/div&gt;
 			&lt;/div&gt;
 		&lt;/div&gt;
@@ -231701,6 +231717,32 @@ Alex helps you leave the vehicle and take your &lt;&lt;print $litter_size &gt; 1
 			&lt;div class=&quot;settingsToggleItemWide&quot;&gt;
 				&lt;span class=&quot;gold&quot;&gt;Anime Main Character Traits:&lt;/span&gt;&lt;mouse class=&quot;tooltip linkBlue&quot;&gt;(?)&lt;span&gt;These traits will halve your gains of the corresponding stat but will double the cap.&lt;/span&gt;&lt;/mouse&gt;&lt;br&gt;
 				
+				&lt;&lt;link &quot;Toggle All&quot;&gt;&gt;
+					&lt;&lt;set $AMCTraits.physique to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.willpower to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.skulduggery to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.dancing to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.swimming to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.athletics to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.tending to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.housekeeping to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.brawling to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.science to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.maths to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.english to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.history to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.seduction to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.oral to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.chest to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.hands to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.buttocks to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.penile to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.vaginal to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.anal to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.thighs to 2&gt;&gt;
+					&lt;&lt;set $AMCTraits.feet to 2&gt;&gt;
+					&lt;&lt;set _subsection to &quot;amcTraits&quot;&gt;&gt;&lt;&lt;replace #subsectionDiv&gt;&gt;&lt;&lt;amcTraitsSettings&gt;&gt;&lt;&lt;/replace&gt;&gt;
+				&lt;&lt;/link&gt;&gt;&lt;br&gt;
 				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Physique&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.physique&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
 				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Willpower&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.willpower&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
 				&lt;label&gt;&lt;span class=&quot;green&quot;&gt;Tempered Skulduggery&lt;/span&gt; &lt;&lt;checkbox &quot;$AMCTraits.skulduggery&quot; 1 2 autocheck&gt;&gt;&lt;/label&gt;&lt;br&gt;
