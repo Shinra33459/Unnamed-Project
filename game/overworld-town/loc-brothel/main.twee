@@ -86,6 +86,9 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 <<elseif $brotheljob is 1 and $fame.prostitution gte 200 and $brothelshowdata.intro is 1>>
 	<<generate1>><<person1>>The <<person>> guarding the door rests a hand on your shoulder. <span class="gold">"Boss wants to see you again."</span><<endevent>>
 	<br><br>
+<<elseif $brotheljob is 1 and $gloryholestat gte 100 and $brothelExclusiveGloryholeIntro is 0>>
+	<<generate1>><<person1>>The <<person>> guarding the door rests a hand on your shoulder. <span class="gold">"Boss wants to see you."</span><<endevent>>
+	<br><br>
 <</if>>
 
 <<if $brotheljob is 1>>
@@ -180,7 +183,7 @@ You are in the brothel's dressing room. There are a few mirrors, currently occup
 			<</if>>
 			<<if $brothelVending.products gte 2>>
 				<<if $brothelVending.lube lte 1>>
-					The lube bottles dispenser is empty. You can get them at the adult shop.
+					The lube bottles dispenser is <span class="red">empty.</span> You can get them at the adult shop.
 					<br><br>
 				<<else>>
 					<<if $brothelVending.lube gte 200>>
@@ -496,18 +499,35 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 	<br>
 	<<link [[Stand|Brothel Escort Job Intro]]>><<set $phase to 2>><</link>>
 
+<<elseif $brotheljob is 1 and $gloryholestat gte 100 and $brothelExclusiveGloryholeIntro is 0>>
+	<<set $brothelExclusiveGloryholeIntro to 1>>
+	Briar is sprawled on the sofa, holding a glass of wine. <<He>> smiles as you enter. "Well well well, if it isn't everybody's favorite hole."
+	<br><br>
+
+	You raise an eyebrow at the new nickname and Briar laughs "What? Did you think we wouldn't notice eventually? You've pleased quite a few customers..."
+	<br><br>
+
+	"Don't worry, you're not in trouble. I'm here to give you good news, actually. I've set up an exclusive gloryhole for you, that way people who've been asking for you will come running. Downside is... Well, people will know it's you."
+	<br><br>
+
+	"You can set your own prices... Though of course, you can't set it at ridiculous prices if you're not famous, even those horndogs' wallets have a limit. Anyway, it's in the basement if you'd like to use it. Go on now." Briar says, waving you away as <<he>> takes a sip of <<his>> wine.
+	<br><br>
+	<<endevent>>
+	<<link [[Next|Brothel]]>><</link>>
+	<br>
+
 <<elseif $brotheljob isnot 1>>
 
 	Briar sprawls on the sofa, holding a glass of wine. <<He>> looks up as you enter. "Have you reconsidered my offer?"
 	<br><br>
 
-	<<link [[Yes|"Briar's Office"]]>><<endevent>><<set $brotheljob to 1>><<set $phase to 1>><<set $wardrobes.brothel.unlocked to true>><</link>>
+	<<ind>><<link [[Yes|"Briar's Office"]]>><<endevent>><<set $brotheljob to 1>><<set $phase to 1>><<set $wardrobes.brothel.unlocked to true>><</link>>
 	<br>
 	<<if $id is 0>>
-		<<link [[Inquire about ID card|"Briar's Office ID"]]>><</link>>
+		<<askicon>><<link [[Inquire about ID card|"Briar's Office ID"]]>><</link>>
 		<br>
 	<</if>>
-	<<link [[Leave|Brothel]]>><<endevent>><</link>>
+	<<getouticon>><<link [[Leave|Brothel]]>><<endevent>><</link>>
 	<br>
 
 <<else>>
@@ -524,21 +544,21 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 		<<else>>
 			<span class="pink">no distraction set</span>,
 		<</if>>
-		<<if $pubfame.briar.distract is 2 and ($pubfame.briar.escape is 2 or $cat gte 6) or $pubfame.briar.distract isnot 2 and $pubfame.briar.escape isnot 2 and $cat lt 6>>
+		<<if $pubfame.briar.distract is 2 and ($pubfame.briar.escape is 2 or ($cat gte 6 or $transformationParts.cat.tail is "default")) or $pubfame.briar.distract isnot 2 and $pubfame.briar.escape isnot 2 and $cat lt 6>>
 			and
 		<<else>>
 			but
 		<</if>>
 		<<if $pubfame.briar.escape is 2>>
 			<span class="green">an escape route planned</span>.
-		<<elseif $cat gte 6>>
+		<<elseif ($cat gte 6 or $transformationParts.cat.tail is "default")>>
 			you could easily escape through the window. <span class="green">Cats always land on their feet.</span>
 		<<else>>
 			<span class="pink">no escape route planned</span>.
 		<</if>>
 		<<if !$pubfame.briar.notice and $pubfame.briar.distract isnot 2>>
 			<<set $pubfame.briar.notice to true>>
-			<<if $cat gte 6>>
+			<<if ($cat gte 6 or $transformationParts.cat.tail is "default")>>
 				You could probably find a distraction by looking around the brothel.
 			<<else>>
 				You could probably find a distraction, and an escape route, by looking around the brothel.
@@ -642,7 +662,7 @@ Briar walks across the room and leans beside the window, looking over the buildi
 	<<link [[Drop it|Brothel]]>><<endevent>><</link>>
 	<br>
 <<else>>
-	<<link [[Leave|Brothel]]>><<endevent>><</link>>
+	<<link [[Brothel]]>><<endevent>><</link>>
 	<br>
 <</if>>
 
@@ -1252,7 +1272,7 @@ You are led down a dim corridor. You can hear music playing somewhere above. The
 		<<set $enemyhealthmax to 10>><<set $enemyhealth to 10>>
 		<<set $enemyarousal to $enemyarousalmax - 100>>
 		<<healthMultiplier>>
-		<<set $enemyarousalmax to $enemyarousalmax * $npcArousalMult>>
+		<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
 		<<set $NPCList[0].lefthand to "none">>
 		<<set $position to "doggy">>
 		<<set $NPCList[0].righthand to "none">>
@@ -2271,7 +2291,7 @@ You wait until you're sure Briar is gone, then rush to the laptop. You plug the 
 		<<pubfameComplete "briar">>
 
 		<<link [[Next|Harvest Street]]>><<endevent>><</link>>
-	<<elseif $cat gte 6>>
+	<<elseif ($cat gte 6 or $transformationParts.cat.tail is "default")>>
 		<<set $pubfame.detail to "briarWindow">>
 		You make your way over to the window and slip out. You grab onto the handle and let it slide shut, before dropping to the ground. Briar won't know you did a thing.
 		<br><br>
@@ -2317,7 +2337,7 @@ You wait until you're sure Briar is gone, then rush to the laptop. You plug the 
 		<<pubfameComplete "briar" "punish">>
 
 		<<link [[Next|Harvest Street]]>><<endevent>><</link>>
-	<<elseif $cat gte 6>>
+	<<elseif ($cat gte 6 or $transformationParts.cat.tail is "default")>>
 		<<set $briarPunishment to 5>><<set $pubfame.detail to "briarWindow">>
 		The guards advance on you, and you run to the window. "That's a two storey drop," <<he>> laughs. "Go ahead, though. It might still be better than what I've in mind."
 		<br><br>
@@ -2330,7 +2350,7 @@ You wait until you're sure Briar is gone, then rush to the laptop. You plug the 
 		<<link [[Next|Harvest Street]]>><<endevent>><</link>>
 	<<else>>
 		The guards advance on you, and you run to the window. "That's a two storey drop," <<he>> laughs. "Go ahead, though. It might still be better than what I've in mind."
-		<<if $harpy gte 6 or $angel gte 6 or $demon gte 6 or $fallenangel gte 2>>
+		<<if ($harpy gte 6 or $transformationParts.bird.wings is "default") or ($angel gte 6 or $transformationParts.angel.wings is "default") or ($demon gte 6 or $transformationParts.demon.wings is "default" or $transformationParts.demon.wings is "succubus") or ($fallenangel gte 2 or $transformationParts.fallenAngel.wings is "default")>>
 			The ground is far, but still too close for your wings to slow your descent enough to give you a safe landing.
 		<</if>>
 		<br><br>
@@ -2378,6 +2398,7 @@ You ask Briar if <<he>> has already checked your vending machine's stock and col
 	<br><br>
 	<<set $money += 100000>>
 	<<set $brothelVending.status to "sold">>
+	<<set $brothelVending.weeksEmpty to 0>>
 	<<if $brothelVending.condomsSold + $brothelVending.lubeSold>>
 		Briar pauses. "You never collected on your last sales before it was emptied.
 	<</if>>
@@ -2457,7 +2478,7 @@ You accept Briar's conditions and tell <<him>> you will buy the vending machine 
 <<effects>>
 You tell Briar you are not interested in <<his>> conditions.
 <br><br>
-"Suit yourself. I'm not going to change my mind,” <<he>> returns to sipping <<his>> wine.
+"Suit yourself. I'm not going to change my mind," <<he>> returns to sipping <<his>> wine.
 <br><br>
 <<link [[Next|"Briar's Office"]]>><</link>>
 
@@ -2619,6 +2640,7 @@ It doesn't take long until you are bound and unable to move. They hook up the ch
 
 :: Brothel Escort Job
 <<effects>>
+<<set $brothel_escortjob.sub to 0>>
 
 You are bound and suspended, unable to move or see. Laughter and lively chatter are heard from the hallway, coming closer. The partying guests come in and gather around you. Conversations are calming down and a sense of suspense hangs in the air.
 <br><br>
@@ -2630,7 +2652,7 @@ You are bound and suspended, unable to move or see. Laughter and lively chatter 
 <br>
 
 <<if $submissive gte 1150>>
-    <<link [[Be obedient|Brothel Escort Job 2]]>><<set $phase to 2>><<set $brothel_escortjob.sub to 1>><<endevent "phaseless">><</link>><<submissivetext>>
+    <<link [[Be obedient|Brothel Escort Job 2]]>><<set $phase to 2>><<set $brothel_escortjob.sub += 1>><<endevent "phaseless">><</link>><<submissivetext>>
 <<elseif $submissive lte 850>>
     <<link [[Be defiant|Brothel Escort Job 2]]>><<set $phase to 3>><<endevent "phaseless">><</link>><<defianttext>>
 <</if>>
@@ -2796,7 +2818,7 @@ The <<person1>><<person>> grabs you by the chin and lifts your head to get a goo
 	You meet <<his>> gaze head on. Your determination seems to unsettle <<him>>.
 	<br><br>
 
-	"I had a lot of fun," <<he>> says, avoiding your look. "Thank you."<<llstress>><<stress - 12>>
+	"I had a lot of fun," <<he>> says, avoiding your look. "Thank you."<<llstress>><<stress -12>>
 	<br><br>
 
 	<<He>> turns and leaves the room.
@@ -2898,11 +2920,11 @@ With a smile <<he>> hands you another <<moneyGain 200>>.
 	You leave <<him>> be and move on.
 	<br><br>
 
-	<<set $money -= 200>>
+	<<set $money -= 20000>>
 
 <</if>>
 
-<<link [[Next|Danube Street]]>><<endevent>><<set $weekly.escortjob to 1>><<endcombat>><<unset $brothel_escortjob>><<stress -200>><<pass 60>><</link>>
+<<link [[Next|Danube Street]]>><<endevent>><<set $weekly.escortjob to 1>><<endcombat>><<unset $brothel_escortjob>><<pass 60>><</link>>
 
 :: Brothel Escort Job Escape
 <<effects>>

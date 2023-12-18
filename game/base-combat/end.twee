@@ -12,10 +12,52 @@
 			<<famescrap _fame>>
 		<</if>>
 		<<set $enemiesDefeatedStat += $enemynomax>>
-		<<if $combatExtended.brawlingToggle is 1>>
-			<<set $combatExtended.brawling += 5 * $enemynomax>>
-			<span class="green">Your brawling skills improve.</span>
-			<br>
+		<<if $enemynomax gte 1>>
+			<<if $combatExtended.brawlingToggle is 1>>
+				<<if $combatExtended.brawling gt 1000>>
+					<<set $combatExtended.brawling += 5 * $enemynomax / $AMCTraits.brawling>>
+				<<else>>
+					<<set $combatExtended.brawling += 5 * $enemynomax>>
+				<</if>>
+				<span class="green">Your brawling skills improve.</span>
+				<br>
+			<</if>>
+			<<if $permenemyhealthmax gte 600>>
+				<<earnFeat "Starting Point">>
+			<</if>>
+			<<if $permenemyhealthmax gte 1200>>
+				<<earnFeat "One Step">>
+			<</if>>
+			<<if $permenemyhealthmax gte 2500>>
+				<<earnFeat "One Leap">>
+			<</if>>
+			<<if $permenemyhealthmax gte 5000>>
+				<<earnFeat "Five Thousand">>
+			<</if>>
+			<<if $permenemyhealthmax gte 10000>>
+				<<earnFeat "Ten Thousand">>
+			<</if>>
+			<<if $permenemyhealthmax gte 50000>>
+				<<earnFeat "Fifty Thousand">>
+			<</if>>
+			<<if $permenemyhealthmax gte 100000>>
+				<<earnFeat "One Hundred Thousand">>
+			<</if>>
+			<<if $permenemyhealthmax gte 200000>>
+				<<earnFeat "Two Hundred Thousand">>
+			<</if>>
+			<<if $permenemyhealthmax gte 500000>>
+				<<earnFeat "Five Hundred Thousand">>
+			<</if>>
+			<<if $permenemyhealthmax gte 1000000>>
+				<<earnFeat "One Million">>
+			<</if>>
+			<<if $encounterHit is undefined>>
+				<<earnFeat "Hitless">>
+			<</if>>
+			<<if $wraith.type is "man">>
+				<<earnFeat "Ghost Buster">>
+			<</if>>
 		<</if>>
 	<</if>>
 
@@ -133,29 +175,20 @@
 	<<unset $hypnosis_deviancy_check>>
 	<<unset $animOverride>>
 
-	<<switch $player.gender>>
-	<<case "f">>
-		/*state*/
-		<<set $vaginastate to 0>>
+	<<if $player.penisExist>>
+		<<set $penisstate to 0>>
+		<<set $penisuse to 0>>
+	<<else>>
 		<<set $penisstate to "none">>
-		/*use*/
-		<<set $vaginause to 0>>
 		<<set $penisuse to "none">>
-	<<case "m">>
-		/*state*/
-		<<set $vaginastate to "none">>
-		<<set $penisstate to 0>>
-		/*use*/
-		<<set $penisuse to 0>>
-		<<set $vaginause to "none">>
-	<<case "h">>
-		/*state*/
+	<</if>>
+	<<if $player.vaginaExist>>
 		<<set $vaginastate to 0>>
-		<<set $penisstate to 0>>
-		/*use*/
 		<<set $vaginause to 0>>
-		<<set $penisuse to 0>>
-	<</switch>>
+	<<else>>
+		<<set $vaginastate to "none">>
+		<<set $vaginause to "none">>
+	<</if>>
 	<<if playerHasStrapon()>>
 		<<set $penisstate to 0>>
 		<<set $penisuse to 0>>
@@ -512,6 +545,7 @@
 	<<set $combatExtended.enemyDodgeSuccess to 0>>
 	<<set $combatExtended.reverseRapeEnd to 0>>
 	<<set $combatExtended.reverseRapeStart to 0>>
+	<<unset $encounterHit>>
 <</widget>>
 
 :: Widgets Clear NPC [widget]

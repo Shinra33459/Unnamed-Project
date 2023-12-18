@@ -1,5 +1,8 @@
 :: Traits [widget]
 <<widget "traits">>
+	<<if $sexStats and $sexStats.pills>>
+		<<set _pills to $sexStats.pills.pills>>
+	<</if>>
 	<<set _traitLists to [
 		{
 			title: "General Traits",
@@ -46,7 +49,6 @@
 						if (dailyPurity + V.featsPurityBoost === 0) return "You are not gaining purity daily.";
 						return "You are losing purity daily.";
 					},
-					text: "You are gaining purity daily.",
 				},
 				{
 					name: "Impurity boost",
@@ -96,6 +98,38 @@
 					colour: "red",
 					has: $backgroundTraits.includes("plantlover"),
 					text: "You're more vulnerable to aphrodisiacs and alcohol. You draw nourishment from nectar. Drinking it invigorates your body, improving physique and reducing stress. Failing to consume nectar for an extended period will take its toll on your body, and eventually cause this trait and the <<if $submissive lte 850>><span class='lewd'>Dendrophile</span><<else>><span class='lewd'>Plant Lover</span><</if>> trait to disappear.<span class='hidden'></span>",
+				},
+				{
+					name: () => {
+						return "Ear slime focus: " + $earSlime.focus;
+					},
+					colour: "lewd",
+					has: $earSlime.focus and $earSlime.focus isnot "none",
+					text: () => {
+						let result;
+						switch ($earSlime.focus) {
+							case "pregnancy":
+								result = "You chose the path of pregnancy, causing the ear slime to amplify traits related to becoming pregnant, while weakening other traits.";
+								break;
+							case "mixed":
+								result = "You chose to walk the path between pregnancy and impregnation, causing the ear slime to amplify traits related to both, to a lesser degree.";
+								break;
+							case "impregnation":
+								result = "You chose the path of impregnation, causing the ear slime to amplify traits related to impregnating others, while weakening other traits.";
+								break;
+						}
+						let parasites = [];
+						if ($parasite.breasts and $parasite.breasts.name is "parasite") {
+							if ($player.breastsize gte 1) {
+								parasites.push("breasts");
+							} else {
+								parasites.push("chest");
+							}
+						}
+						if (($parasite.clit and $parasite.clit.name is "parasite") or ($parasite.penis and $parasite.penis.name is "parasite")) parasites.push("genitals");
+						if (parasites.length) result += ` Its parasites cover your ${formatList(parasites, "and", true)} like clothing.`;
+						return result;
+					}
 				},
                 {
                     name: "Pregnant",
@@ -172,13 +206,13 @@
 				{
 					name: "Wolf <<girl>>",
 					colour: "grey",
-					has: $wolfgirl gte 6,
+					has: ($wolfgirl gte 6 or $transformationParts.wolf.tail is "default" or $transformationParts.wolf.tail is "feral"),
 					text: "The spirit of the wild lives within you, making you more defiant over time. Your ears and tail make you more conspicuous.",
 				},
 				{
 					name: "Cat <<girl>>",
 					colour: "grey",
-					has: $cat gte 6,
+					has: ($cat gte 6 or $transformationParts.cat.tail is "default"),
 					text: 'You have an urge to lap up cream. Unlocks the "groom" action while dancing with lewd fluid on your person. Your ears and tail make you more conspicuous.',
 				},
 				{
@@ -196,13 +230,13 @@
 						}
 					},
 					colour: "brat",
-					has: $cow gte 6,
+					has: ($cow gte 6 or $transformationParts.cow.tail is "default" or $transformationParts.cow.tail is "black"),
 					text: "You yearn to be milked. Milk and semen volume is increased. Certain body parts might grow. Your horns, ears and tail make you more conspicuous.",
 				},
 				{
 					name: () => V.hallucinations gte 2 || V.bestialitydisable is "t" ? "Harpy" : "Bird <<girl>>",
 					colour: "grey",
-					has: $harpy gte 6,
+					has: ($harpy gte 6 or $transformationParts.bird.wings is "default"),
 					text: "The skies call.",
 				},
 				{
@@ -221,7 +255,7 @@
 					},
 					colour: "",
 					style: `background: linear-gradient(to right,#fe9000 0%, #ffffff 100%);-webkit-background-clip: text;-webkit-text-fill-color: transparent;`,
-					has: $fox gte 6,
+					has: ($fox gte 6 or $transformationParts.fox.tail is "default"),
 					text: "You have the urge to keep what's not yours. Improves skulduggery. Your ears and tail make you more alluring and attractive.",
 				},
 				{
@@ -246,7 +280,7 @@
 				{
 					name: "Sturdy Horns",
 					colour: "def",
-					has: $cow gte 2 and $demon lt 2,
+					has: ($cow gte 2 or $transformationParts.cow.horns is "default") and $demon lt 2,
 					text: "Headbutts no longer hurt you.",
 				},
 				{
@@ -260,7 +294,7 @@
 					name: "Fallen angel",
 					colour: "black",
 					has: $fallenangel gte 3,
-					text: "The world is so cruel. Though you feel less pure by the day, you will not relinquish yourself.",
+					text: 'The world is so cruel. Though you feel less pure by the day, you will not relinquish yourself. Unlocks the "disparage" action.',
 				},
 				{
 					name: "Fallen angel",
@@ -271,7 +305,7 @@
 				{
 					name: "Angel",
 					colour: "gold",
-					has: $angel gte 6,
+					has: ($angel gte 6 or $transformationParts.angel.wings is "default"),
 					text: 'You radiate purity. Unlocks the "forgive" action once per encounter, removing any trauma gained so far. Beware, losing your virginity will remove this trait and leave you broken.',
 				},
 				{
@@ -289,37 +323,37 @@
 						}
 					},
 					colour: "red",
-					has: $demon gte 6,
+					has: ($demon gte 6 or $transformationParts.demon.wings is "default" or $transformationParts.demon.wings is "succubus"),
 					text: "You're devoid of purity. You lose trauma when something cums inside you, or you cum inside something else. Tentacles reduce stress and pain instead of trauma. Beware, ending a day with anything but minimum purity will be very stressful.",
 				},
 				{
 					name: "Radiant",
 					colour: "gold",
-					has: between($angel,4,5),
+					has: $angel gte 4,
 					text: 'You are pure. Unlocks the "banish" action a number of times per day based on your angelicness, dealing heavy damage to a tentacle. Its strength is greatly increased while at maximum purity. Uses remaining today: ($angelBanish / $angelBanishMax)',
 				},
 				{
 					name: "Dark Horns",
 					colour: "def",
-					has: $cow lt 2 and $demon gte 2,
+					has: $cow lt 2 and ($demon gte 2 or $transformationParts.demon.horns is "default"),
 					text: "Headbutts deal twice as much damage.",
 				},
 				{
 					name: "Compound Horns",
 					colour: "def",
-					has: $cow gte 2 and $demon gte 2,
+					has: ($cow gte 2 or $transformationParts.cow.horns is "default") and ($demon gte 2 or $transformationParts.demon.horns is "default"),
 					text: "Your headbutts are vicious. Headbutts are four times as powerful, and no longer hurt you.",
 				},
 				{
 					name: "Strong wings",
 					colour: "gold",
-					has: $harpy gte 6 and $birdFly gte 1,
+					has: ($harpy gte 6 or $transformationParts.bird.wings is "default") and $birdFly gte 1,
 					text: "Can glide from high locations. Can fly where the wind is willing.",
 				},
 				{
 					name: "Wings",
 					colour: "grey",
-					has: !($harpy gte 6 and $birdFly gte 1) and ($angel gte 6 or $fallenangel gte 2 or $demon gte 6 or $harpy gte 6),
+					has: !(($harpy gte 6 or $transformationParts.bird.wings is "default") and $birdFly gte 1) and (($angel gte 6 or $transformationParts.angel.wings is "default") or ($fallenangel gte 2 or $transformationParts.fallenAngel.wings is "default") or ($demon gte 6 or $transformationParts.demon.wings is "default" or $transformationParts.demon.wings is "succubus") or ($harpy gte 6 or $transformationParts.bird.wings is "default")),
 					text: "Can glide from high locations.",
 				},
 				{
@@ -421,6 +455,149 @@
 			],
 		},
 		{
+			title: "Medicinal Traits",
+			traits: [
+				{
+					name: "Anti-Parasite Cream",
+					colour: "green",
+					has: _pills and _pills["Anti-Parasite Cream"] and _pills["Anti-Parasite Cream"].doseTaken,
+					text: () => {
+						return `A parasite-repelling cream, preventing further internal parasite impregnation. ${_pills["Anti-Parasite Cream"].doseTaken} day${_pills["Anti-Parasite Cream"].doseTaken is 1 ? "" : "s"} remaining.`;
+					}
+				},
+				{
+					name: "Fertility booster",
+					colour: "lewd",
+					has: _pills and _pills["fertility booster"] and _pills["fertility booster"].doseTaken,
+					text: () => {
+						let result = `You have ${_pills["fertility booster"].doseTaken gte 2 ? "overdosed on pills" : "taken a pill"} that `;
+						let multiple = false;
+						let hasEffect = false;
+						if ((!playerIsPregnant() or !playerAwareTheyArePregnant()) and playerAwareTheyCanBePregnant()) {
+							multiple = true;
+							hasEffect = true;
+							result += "makes it easier for you to get pregnant with more children";
+						}
+						if ($player.penisExist and $player.penissize gte -1) {
+							hasEffect = true;
+							if (multiple) result += " and ";
+							result += "makes your sperm more virile";
+						}
+						if (!hasEffect) {
+							result += "currently has no effect on you";
+						}
+						result += `. ${_pills["fertility booster"].doseTaken} day${_pills["fertility booster"].doseTaken is 1 ? "" : "s"} remaining.`;
+
+						return result;
+					}
+				},
+				{
+					name: "Contraceptive",
+					colour: "lblue",
+					has: _pills and _pills["contraceptive"] and _pills["contraceptive"].doseTaken,
+					text: () => {
+						let result = `You have ${_pills["contraceptive"].doseTaken gte 2 ? "overdosed on pills" : "taken a pill"} that `;
+						let multiple = false;
+						let hasEffect = false;
+						if (!playerAwareTheyCanBePregnant() or !playerAwareTheyArePregnant()) {
+							multiple = true;
+							hasEffect = true;
+							result += "makes it harder for you to get pregnant";
+						}
+						if ($player.penisExist and $player.penissize gte -1) {
+							hasEffect = true;
+							if (multiple) result += " and ";
+							result += "makes your sperm less virile";
+						}
+						if (!hasEffect) {
+							result += "currently has no effect on you";
+						}
+						result += `. ${_pills["contraceptive"].doseTaken} day${_pills["contraceptive"].doseTaken is 1 ? "" : "s"} remaining.`;
+
+						return result;
+					}
+				},
+				{
+					name: "Penis blocker pills",
+					colour: "green",
+					has: _pills and _pills["penis blocker"] and _pills["penis blocker"].doseTaken,
+					text: () => {
+						let result = `You have taken a pill that`;
+						if ($player.penisExist) {
+							result += " prevents the re-sizing of your penis.";
+						} else {
+							result += " has no effect on you.";
+						}
+						return result;
+					}
+				},
+				{
+					name: "Penis growth pills",
+					colour: "green",
+					has: _pills and _pills["penis growth"] and _pills["penis growth"].doseTaken,
+					text: () => {
+						let result = `You have ${_pills["penis growth"].doseTaken gte 2 ? "overdosed on" : "taken"} pills that `;
+						if ($player.penisExist) {
+							result += " encourages the growth of your penis.";
+						} else {
+							result += " that has no effect on you.";
+						}
+						return result;
+					}
+				},
+				{
+					name: "Penis reduction pills",
+					colour: "green",
+					has: _pills and _pills["penis reduction"] and _pills["penis reduction"].doseTaken,
+					text: () => {
+						let result = `You have ${_pills["penis reduction"].doseTaken gte 2 ? "overdosed on" : "taken"} pills that `;
+						if ($player.penisExist) {
+							result += " encourages the shrinking of your penis.";
+						} else {
+							result += " that has no effect on you.";
+						}
+						return result;
+					}
+				},
+				{
+					name: "Breast blocker pills",
+					colour: "green",
+					has: _pills and _pills["breast blocker"] and _pills["breast blocker"].doseTaken,
+					text: "You have taken a pill that prevents the re-sizing of your breasts.",
+				},
+				{
+					name: "Breast growth pills",
+					colour: "green",
+					has: _pills and _pills["breast growth"] and _pills["breast growth"].doseTaken,
+					text: `You have ${_pills and _pills["breast growth"].doseTaken gte 2 ? "overdosed on" : "taken"} a pill that encourages the growth of your breasts.`,
+				},
+				{
+					name: "Breast reduction pills",
+					colour: "green",
+					has: _pills and _pills["breast reduction"] and _pills["breast reduction"].doseTaken,
+					text: `You have ${_pills and _pills["breast reduction"].doseTaken gte 2 ? "overdosed on" : "taken"} a pill that encourages the shrinking of your breasts.`,
+				},
+				{
+					name: "Bottom blocker pills",
+					colour: "green",
+					has: _pills and _pills["bottom blocker"] and _pills["bottom blocker"].doseTaken,
+					text: "You have taken a pill that prevents the re-sizing of your bottom.",
+				},
+				{
+					name: "Bottom growth pills",
+					colour: "green",
+					has: _pills and _pills["bottom growth"] and _pills["bottom growth"].doseTaken,
+					text: `You have ${_pills and _pills["bottom growth"].doseTaken gte 2 ? "overdosed on" : "taken"} a pill that encourages the growth of your bottom.`,
+				},
+				{
+					name: "Bottom reduction pills",
+					colour: "green",
+					has: _pills and _pills["bottom reduction"] and _pills["bottom reduction"].doseTaken,
+					text: `You have ${_pills and _pills["bottom reduction"].doseTaken gte 2 ? "overdosed on" : "taken"} a pill that encourages the shrinking of your bottom.`,
+				},
+			]
+		},
+		{
 			title: "Special Traits",
 			traits: [
 				{
@@ -477,6 +654,144 @@
 					has: $milkdranktrait gte 1,
 					text: "You take full advantage of the nutrition in fresh breast milk. Drinking it invigorates your body, improving physique.",
 				},
+				{
+					name: "Tempered Physique",
+					colour: "green",
+					has: $AMCTraits.physique is 2 and $physique gte $physiquesize,
+					text: "Your body has reached the human limits... But you can go further."
+				},
+				{
+					name: "Tempered Willpower",
+					colour: "green",
+					has: $AMCTraits.willpower is 2 and $willpower gte 1000,
+					text: "Your mental fortitude has reached its peak... But you can push beyond."
+				},
+				{
+					name: "Tempered Skulduggery",
+					colour: "green",
+					has: $AMCTraits.skulduggery is 2 and $skulduggery gte 1000,
+					text: "Your cunning and deceitfulness have reached a plateau... But you can surpass it."
+				},
+				{
+					name: "Tempered Dancing",
+					colour: "green",
+					has: $AMCTraits.dancing is 2 and $danceskill gte 1000,
+					text: "Your dancing skills have hit a ceiling... But you can break through."
+				},
+				{
+					name: "Tempered Swimming",
+					colour: "green",
+					has: $AMCTraits.swimming is 2 and $swimmingskill gte 1000,
+					text: "Your swimming abilities have maxed out... But you can strive for more."
+				},
+				{
+					name: "Tempered Athletics",
+					colour: "green",
+					has: $AMCTraits.athletics is 2 and $athletics gte 1000,
+					text: "Your athleticism has reached its zenith... But there's still room for improvement."
+				},
+				{
+					name: "Tempered Tending",
+					colour: "green",
+					has: $AMCTraits.tending is 2 and $tending gte 1000,
+					text: "Your ability to tend to plants and animals has peaked... But there's more to achieve."
+				},
+				{
+					name: "Tempered Housekeeping",
+					colour: "green",
+					has: $AMCTraits.housekeeping is 2 and $housekeeping gte 1000,
+					text: "Your housekeeping and crafting skills have hit a wall... But you can break through."
+				},
+				{
+					name: "Tempered Brawling",
+					colour: "green",
+					has: $AMCTraits.brawling is 2 and $combatExtended.brawling gte 1000,
+					text: "Your brawling skills has peaked... But you can gain more experience."
+				},
+				{
+					name: "Tempered Science",
+					colour: "green",
+					has: $AMCTraits.science is 2 and $science gte 1000,
+					text: "Your scientific knowledge has stagnated... But there's more to discover."
+				},
+				{
+					name: "Tempered Maths",
+					colour: "green",
+					has: $AMCTraits.maths is 2 and $maths gte 1000,
+					text: "Your mathematical skills have reached their limits... But you can go further."
+				},
+				{
+					name: "Tempered English",
+					colour: "green",
+					has: $AMCTraits.english is 2 and $english gte 1000,
+					text: "Your linguistic skills have hit a ceiling... But you can strive for mastery."
+				},
+				{
+					name: "Tempered History",
+					colour: "green",
+					has: $AMCTraits.history is 2 and $history gte 1000,
+					text: "Your knowledge of history has maxed out... But there's still more to learn."
+				},
+				{
+					name: "Tempered Seduction Skill",
+					colour: "green",
+					has: $AMCTraits.seduction is 2 and $seductionskill gte 1000,
+					text: "Your seduction skills have plateaued... But there's room for refinement."
+				},
+				{
+					name: "Tempered Oral Skill",
+					colour: "green",
+					has: $AMCTraits.oral is 2 and $oralskill gte 1000,
+					text: "Your oral sex skills have hit a plateau... But you can push beyond."
+				},
+				{
+					name: "Tempered Chest Skill",
+					colour: "green",
+					has: $AMCTraits.chest is 2 and $chestskill gte 1000,
+					text: "Your chest-related skills have reached their limits... But you can strive for more."
+				},
+				{
+					name: "Tempered Hands Skill",
+					colour: "green",
+					has: $AMCTraits.hands is 2 and $handskill gte 1000,
+					text: "Your hand-related skills have hit a ceiling... But you can break through."
+				},
+				{
+					name: "Tempered Buttocks Skill",
+					colour: "green",
+					has: $AMCTraits.buttocks is 2 and $bottomskill gte 1000,
+					text: "Your buttocks-related skills have maxed out... But there's still room for improvement."
+				},
+				{
+					name: "Tempered Penile Skill",
+					colour: "green",
+					has: $AMCTraits.penile is 2 and $penileskill gte 1000,
+					text: "Your penile-related skills have reached their limits... But you can go further."
+				},
+				{
+					name: "Tempered Vaginal Skill",
+					colour: "green",
+					has: $AMCTraits.vaginal is 2 and $vaginalskill gte 1000,
+					text: "Your vaginal-related skills have stagnated... But there's more to achieve."
+				},
+				{
+					name: "Tempered Anal Skill",
+					colour: "green",
+					has: $AMCTraits.anal is 2 and $analskill gte 1000,
+					text: "Your anal-related skills have hit a wall... But you can break through."
+				},
+				{
+					name: "Tempered Thighs Skill",
+					colour: "green",
+					has: $AMCTraits.thighs is 2 and $thighskill gte 1000,
+					text: "Your thigh-related skills have maxed out... But there's still room for improvement."
+				},
+				{
+					name: "Tempered Feet Skill",
+					colour: "green",
+					has: $AMCTraits.feet is 2 and $feetskill gte 1000,
+					text: "Your feet-related skills have reached their limits... But you can strive for more."
+				}
 			],
 		},
 		{
@@ -507,6 +822,30 @@
 					text: "Pain is much easier to cope with.",
 				},
 				{
+					name: "Outstanding Science",
+					colour: "green",
+					has: $sciencetrait is 5,
+					text: "Pain is easy to cope with.",
+				},
+				{
+					name: "Exceptional Science",
+					colour: "green",
+					has: $sciencetrait is 6,
+					text: "Pain is very easy to cope with.",
+				},
+				{
+					name: "Exemplary Science",
+					colour: "green",
+					has: $sciencetrait is 7,
+					text: "Pain is incredibly easy to cope with.",
+				},
+				{
+					name: "Superlative Science",
+					colour: "green",
+					has: $sciencetrait is 8,
+					text: "Pain is almost a non-factor.",
+				},
+				{
 					name: "Passable Maths",
 					colour: "blue",
 					has: $mathstrait is 1,
@@ -529,6 +868,30 @@
 					colour: "green",
 					has: $mathstrait is 4,
 					text: "You make 100% more from tips and negotiated fees.",
+				},
+				{
+					name: "Outstanding Maths",
+					colour: "green",
+					has: $mathstrait is 5,
+					text: "You make 125% more from tips and negotiated fees.",
+				},
+				{
+					name: "Exceptional Maths",
+					colour: "green",
+					has: $mathstrait is 6,
+					text: "You make 150% more from tips and negotiated fees.",
+				},
+				{
+					name: "Exemplary Maths",
+					colour: "green",
+					has: $mathstrait is 7,
+					text: "You make 175% more from tips and negotiated fees.",
+				},
+				{
+					name: "Superlative Maths",
+					colour: "green",
+					has: $mathstrait is 8,
+					text: "You make 200% more from tips and negotiated fees.",
 				},
 				{
 					name: "Passable English",
@@ -555,6 +918,30 @@
 					text: "Speech actions (plead, moan, demand, apologise, mock, tease, ask to be more rough) are five times as effective.",
 				},
 				{
+					name: "Outstanding English",
+					colour: "green",
+					has: $englishtrait is 5,
+					text: "Speech actions (plead, moan, demand, apologise, mock, tease, ask to be more rough) are six times as effective.",
+				},
+				{
+					name: "Exceptional English",
+					colour: "green",
+					has: $englishtrait is 6,
+					text: "Speech actions (plead, moan, demand, apologise, mock, tease, ask to be more rough) are seven times as effective.",
+				},
+				{
+					name: "Exemplary English",
+					colour: "green",
+					has: $englishtrait is 7,
+					text: "Speech actions (plead, moan, demand, apologise, mock, tease, ask to be more rough) are eight times as effective.",
+				},
+				{
+					name: "Superlative English",
+					colour: "green",
+					has: $englishtrait is 8,
+					text: "Speech actions (plead, moan, demand, apologise, mock, tease, ask to be more rough) are nine times as effective.",
+				},
+				{
 					name: "Passable History",
 					colour: "blue",
 					has: $historytrait is 1,
@@ -579,6 +966,30 @@
 					text: "You know of many secret paths around town.",
 				},
 				{
+					name: "Outstanding History",
+					colour: "green",
+					has: $historytrait is 5,
+					text: "You're sure you know more about the town than the mayor.",
+				},
+				{
+					name: "Exceptional History",
+					colour: "green",
+					has: $historytrait is 6,
+					text: "You're sure you can give Winter a run for their money.",
+				},
+				{
+					name: "Exemplary History",
+					colour: "green",
+					has: $historytrait is 7,
+					text: "You are a walking encyclopedia.",
+				},
+				{
+					name: "Superlative History",
+					colour: "green",
+					has: $historytrait is 8,
+					text: "You are a living, breathing Google, for history.",
+				},
+				{
 					name: "Okay at school",
 					colour: "blue",
 					has: $schooltrait is 1,
@@ -601,6 +1012,30 @@
 					colour: "green",
 					has: $schooltrait is 4,
 					text: "Your performance at school has improved your self-esteem, greatly increasing your daily trauma decay.",
+				},
+				{
+					name: "Excellent Scholar",
+					colour: "green",
+					has: $schooltrait is 5,
+					text: "Your enhanced academic performance has positively impacted your self-esteem, contributing to a notable increase in your daily trauma decay.",
+				},
+				{
+					name: "Outstanding Scholar",
+					colour: "green",
+					has: $schooltrait is 6,
+					text: "Excelling in your studies has significantly boosted your self-esteem, leading to a substantial improvement in your daily trauma decay rate.",
+				},
+				{
+					name: "Distinguished Scholar",
+					colour: "green",
+					has: $schooltrait is 7,
+					text: "Outstanding achievements in school have greatly elevated your self-esteem, resulting in a remarkable acceleration of your daily trauma decay.",
+				},
+				{
+					name: "Exceptional Scholar",
+					colour: "green",
+					has: $schooltrait is 8,
+					text: "Your exceptional academic success has propelled your self-esteem to new heights, causing a phenomenal surge in your daily trauma decay, fostering resilience and well-being.",
 				},
 				{
 					name: "Science Fair Winner",
@@ -732,7 +1167,7 @@
 					textColour: "red",
 				},
 				{
-					name: () => V.hallucinations >= 2 || V.bestialitydisable === "t" ? "Stockholm Syndrome: Harpy" : "Stockholm Syndrome: Great Hawk",
+					name: () => V.greathawkmonster === 2 || V.bestialitydisable === "t" ? "Stockholm Syndrome: Harpy" : "Stockholm Syndrome: Great Hawk",
 					colour: "white",
 					has: $syndromebird gte 1,
 					text: "It only wants a mate.",

@@ -237,7 +237,11 @@
 <</widget>>
 
 <<widget "enemyarousal">>
-	<<set $enemyarousal += _args[0]>>
+	<<if $demonseduce is 1>>
+		<<set $enemyarousal += _args[0] * 2>>
+	<<else>>
+		<<set $enemyarousal += _args[0]>>
+	<</if>>
 <</widget>>
 
 <<widget "sex">>
@@ -345,7 +349,7 @@
 				<<set _possessMod to 1>>
 			<</if>>
 			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
-			<<combattrauma _violence * _traumaMod>>
+			<<combattrauma `_violence * _traumaMod`>>
 			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>
 			<<set _arousal to (_violence * (0 + ($masochism / 18)))>>
 			<<arousal _arousal/_possessMod "maso">>
@@ -369,6 +373,7 @@
 			<</if>>
 			<<set $enemyarousal += 1>>
 			<<painclamp>>
+			<<set $encounterHit to 1>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -389,7 +394,7 @@
 				<<set _drunkMod to 10>>
 			<</if>>
 			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
-			<<trauma _violence * _traumaMod>>
+			<<trauma `_violence * _traumaMod`>>
 			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))>>
 			<<set _arousal to (_violence * _arousalMod * (0 + ($masochism / 18)))>>
 			<<arousal _arousal "maso">>
@@ -457,7 +462,7 @@
 		<</if>>
 		<<set _thedamage to (2 * _defiance * ($physique / 4000))>>
 		<<if $combatExtended.brawlingToggle is 1>>
-			<<set _thedamage to _thedamage * Math.clamp(1 + (($combatExtended.brawling * $enemyno * (1 + ($enemyno / 2))) / 10000), 1, 2)>>
+			<<set _thedamage to _thedamage * (1 + (($combatExtended.brawling * $enemyno * (1 + ($enemyno / 2))) / 10000))>>
 		<</if>>
 		<<if $fallenangelretribution is 1>>
 			<<set _thedamage to _thedamage * 2>>
@@ -790,7 +795,7 @@
 	<<if $demonseduce is 1>>
 		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100)>><<seductionskill 5>>
+		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100)>><<seductionskill 5>><<set $seductionskillup to 1>>
 	<</if>>
 <</widget>>
 
@@ -811,7 +816,7 @@
 
 <<widget "oralskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("oralskill") / 100) * 2>><<oralskill 5>><<set $oralskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("oralskill") / 100)>><<oralskill 5>><<set $oralskillup to 1>>
 	<</if>>
@@ -819,7 +824,7 @@
 
 <<widget "vaginalskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("vaginalskill") / 100) * 2>><<vaginalskill 5>><<set $vaginalskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("vaginalskill") / 100)>><<vaginalskill 5>><<set $vaginalskillup to 1>>
 	<</if>>
@@ -827,7 +832,7 @@
 
 <<widget "analskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("analskill") / 100) * 2>><<analskill 5>><<set $analskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("analskill") / 100)>><<analskill 5>><<set $analskillup to 1>>
 	<</if>>
@@ -835,7 +840,7 @@
 
 <<widget "handskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("handskill") / 100) * 2>><<handskill 5>><<set $handskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("handskill") / 100)>><<handskill 5>><<set $handskillup to 1>>
 	<</if>>
@@ -843,7 +848,7 @@
 
 <<widget "feetskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("feetskill") / 100) * 2>><<feetskill 5>><<set $feetskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("feetskill") / 100)>><<feetskill 5>><<set $feetskillup to 1>>
 	<</if>>
@@ -851,7 +856,7 @@
 
 <<widget "bottomskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("bottomskill") / 100) * 2>><<bottomskill 5>><<set $bottomskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("bottomskill") / 100)>><<bottomskill 5>><<set $bottomskillup to 1>>
 	<</if>>
@@ -859,7 +864,7 @@
 
 <<widget "thighskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("thighskill") / 100) * 2>><<thighskill 5>><<set $thighskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("thighskill") / 100)>><<thighskill 5>><<set $thighskillup to 1>>
 	<</if>>
@@ -867,7 +872,7 @@
 
 <<widget "chestskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("chestskill") / 100) * 2>><<chestskill 5>><<set $chestskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("chestskill") / 100)>><<chestskill 5>><<set $chestskillup to 1>>
 	<</if>>
@@ -875,7 +880,7 @@
 
 <<widget "penileskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("penileskill") / 100) * 2>><<penileskill 5>><<set $penileskillup to 1>>
 	<<else>>
 		<<set $enemyarousal += (currentSkillValue("penileskill") / 100)>><<penileskill 5>><<set $penileskillup to 1>>
 	<</if>>
@@ -893,9 +898,13 @@
 
 <<widget "combatskulduggeryskilluse">>
 	<<if $statFreeze isnot true>>
-		<<set $skulduggery += 3>>
-		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000)>>
-		<<if $skulduggery lt 1000>>
+		<<if $skulduggery gt 1000>>
+			<<set $skulduggery += 3 / $AMCTraits.skulduggery>>
+		<<else>>
+			<<set $skulduggery += 3>>
+		<</if>>
+		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000 * $AMCTraits.skulduggery)>>
+		<<if $skulduggery lt 1000 * $AMCTraits.skulduggery>>
 			<span class="gold"> You learned a thing or two about skulduggery.</span>
 		<</if>>
 	<</if>>
@@ -903,9 +912,13 @@
 
 <<widget "lockpickTrainingSetuse">>
 	<<if $statFreeze isnot true>>
-		<<set $skulduggery += _args[0]>>
-		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000)>>
-		<<if $skulduggery lt 1000>>
+		<<if $skulduggery gt 1000>>
+			<<set $skulduggery += _args[0] / $AMCTraits.skulduggery>>
+		<<else>>
+			<<set $skulduggery += _args[0]>>
+		<</if>>
+		<<set $skulduggery to Math.clamp($skulduggery, 0, 1000 * $AMCTraits.skulduggery)>>
+		<<if $skulduggery lt 1000 * $AMCTraits.skulduggery>>
 			<span class="gold"> You learned a thing or two about skulduggery.</span>
 		<</if>>
 	<</if>>
@@ -914,18 +927,22 @@
 
 <<widget "swimmingskilluse">>
 	<<if $statFreeze isnot true>>
-		<<set $swimmingskill += 9>>
-		<<if $swimmingskill lt 1000>>
+		<<if $swimmingskill gt 1000>>
+			<<set $swimmingskill += 9 / $AMCTraits.swimming>>
+		<<else>>
+			<<set $swimmingskill += 9>>
+		<</if>>
+		<<if $swimmingskill lt 1000 * $AMCTraits.swimming>>
 			<span class="gold"> You've become more confident at swimming.</span>
 		<</if>>
-		<<set $swimmingskill to Math.clamp($swimmingskill, 0, 1000)>>
+		<<set $swimmingskill to Math.clamp($swimmingskill, 0, 1000 * $AMCTraits.swimming)>>
 	<</if>>
 <</widget>>
 
 <<widget "danceskilluse">>
 	<<if $statFreeze isnot true>>
 		<<danceskill 1>>
-		<<if $danceskill lt 1000>>
+		<<if $danceskill lt 1000 * $AMCTraits.swimming>>
 			<span class="gold"> You feel more confident in your dancing abilities.</span>
 		<</if>>
 	<</if>>
@@ -935,6 +952,12 @@
 	<<if $statFreeze isnot true>>
 		<<set $_subject to _args[0]>>
 		<<set $_gain to _args[1] || 1>>
+
+		<<if ($_subject is "english" and $AMCTraits.english is 2) or ($_subject is "maths" and $AMCTraits.maths is 2) or ($_subject is "science" and $AMCTraits.science is 2) or ($_subject is "history" and $AMCTraits.history is 2)>>
+			<<set _AMCmod to 2>>
+		<<else>>
+			<<set _AMCmod to 1>>
+		<</if>>
 
 		<<set _skill_mod to [2.4, 1.2, 0.6, 0.3][Math.clamp(V[$_subject + "trait"], 0, 3)]>>
 
@@ -950,8 +973,12 @@
 			<</if>>
 		<</if>>
 
-		<<set V[$_subject + "_exam"] to Math.clamp(V[$_subject + "_exam"] + ($_gain * _skill_mod), -107, 200)>>
-		<<if V[$_subject + "_exam"] gte 100 and V[$_subject + 'trait'] lt 4>>
+		<<if _AMCmod is 2 and V[$subject] gt 1000>>
+			<<set V[$_subject + "_exam"] to Math.clamp(V[$_subject + "_exam"] + ($_gain * _skill_mod / _AMCmod), -107, 200)>>
+		<<else>>
+			<<set V[$_subject + "_exam"] to Math.clamp(V[$_subject + "_exam"] + ($_gain * _skill_mod), -107, 200)>>
+		<</if>>
+		<<if V[$_subject + "_exam"] gte 100 and V[$_subject + 'trait'] lt 4 * _AMCmod>>
 			<<school_skill_up $_subject>>
 			<<school_skill_up_text $_subject>>
 		<</if>>
@@ -959,18 +986,38 @@
 <</widget>>
 
 <<widget "scienceskill">>
+	<<if $science gt 1000>>
+		<<set _args[0] to _args[0] / $AMCTraits.science>>
+	<<else>>
+		<<set _args[0] to _args[0]>>
+	<</if>>
 	<<schoolskillgeneral "science" _args[0] _args[1]>>
 <</widget>>
 
 <<widget "mathsskill">>
+	<<if $maths gt 1000>>
+		<<set _args[0] to _args[0] / $AMCTraits.maths>>
+	<<else>>
+		<<set _args[0] to _args[0]>>
+	<</if>>
 	<<schoolskillgeneral "maths" _args[0] _args[1]>>
 <</widget>>
 
 <<widget "englishskill">>
+	<<if $english gt 1000>>
+		<<set _args[0] to _args[0] / $AMCTraits.english>>
+	<<else>>
+		<<set _args[0] to _args[0]>>
+	<</if>>
 	<<schoolskillgeneral "english" _args[0] _args[1]>>
 <</widget>>
 
 <<widget "historyskill">>
+	<<if $history gt 1000>>
+		<<set _args[0] to _args[0] / $AMCTraits.history>>
+	<<else>>
+		<<set _args[0] to _args[0]>>
+	<</if>>
 	<<schoolskillgeneral "history" _args[0] _args[1]>>
 <</widget>>
 
@@ -1006,28 +1053,6 @@
 				<<historyskill _studyGain "no_star">>
 			<<default>>
 		<</switch>>
-		<<switch $studyBooks.rented>>
-			<<case "science">>
-				<<scienceskill 6 "no_star">>
-			<<case "maths">>
-				<<mathsskill 6 "no_star">>
-			<<case "English">>
-				<<englishskill 6 "no_star">>
-			<<case "history">>
-				<<historyskill 6 "no_star">>
-			<<default>>
-		<</switch>>
-		/* <<switch $studyBooks.stolen>>
-			<<case "science">>
-				<<scienceskill 6 "no_star">>
-			<<case "maths">>
-				<<mathsskill 6 "no_star">>
-			<<case "English">>
-				<<englishskill 6 "no_star">>
-			<<case "history">>
-				<<historyskill 6 "no_star">>
-			<<default>>
-		<</switch>> */
 		<<if $studyBooks.stolen.science is 1>>
 			<<scienceskill _studyGain "no_star">>
 		<</if>>
@@ -1040,6 +1065,28 @@
 		<<if $studyBooks.stolen.history is 1>>
 			<<historyskill _studyGain "no_star">>
 		<</if>>
+		/* <<switch $studyBooks.rented>>
+			<<case "science">>
+				<<scienceskill 6 "no_star">>
+			<<case "maths">>
+				<<mathsskill 6 "no_star">>
+			<<case "English">>
+				<<englishskill 6 "no_star">>
+			<<case "history">>
+				<<historyskill 6 "no_star">>
+			<<default>>
+		<</switch>>
+		<<switch $studyBooks.stolen>>
+			<<case "science">>
+				<<scienceskill 6 "no_star">>
+			<<case "maths">>
+				<<mathsskill 6 "no_star">>
+			<<case "English">>
+				<<englishskill 6 "no_star">>
+			<<case "history">>
+				<<historyskill 6 "no_star">>
+			<<default>>
+		<</switch>> */
 	<</if>>
 <</widget>>
 
@@ -1065,30 +1112,45 @@
 		<<elseif $exposed is 1>>
 			<<set $athletics += 1>>
 		<</if>>
-		<<set $athletics += Math.trunc(_temp * 1.4)>>
-		<<set $athletics to Math.clamp($athletics, 0, 1000)>>
-		<<set $tending to Math.clamp($tending, 0, 1000)>>
+		<<if $athletics gt 1000>>
+			<<set $athletics += Math.trunc(_temp * 1.4 / $AMCTraits.athletics)>>
+		<<else>>
+			<<set $athletics += Math.trunc(_temp * 1.4)>>
+		<</if>>
+		<<set $athletics to Math.clamp($athletics, 0, 1000 * $AMCTraits.athletics)>>
 	<</if>>
 <</widget>>
 
 <<widget "tending">>
 	<<if _args[0] and $statFreeze isnot true>>
-		<<set $tending += (_args[0] * 2)>>
-		<<set $tending to Math.clamp($tending, 0, 1000)>>
+		<<if $tending gt 1000>>
+			<<set $tending += (_args[0] * 2 / $AMCTraits.tending)>>
+		<<else>>
+			<<set $tending += (_args[0] * 2)>>
+		<</if>>
+		<<set $tending to Math.clamp($tending, 0, 1000 * $AMCTraits.tending)>>
 	<</if>>
 <</widget>>
 
 <<widget "housekeeping">>
 <<if _args[0] and $statFreeze isnot true and $housekeeping lt _args[1]>>
-	<<set $housekeeping += (_args[0] * 2)>>
-	<<set $housekeeping to Math.clamp($housekeeping, 0, 1000)>>
+	<<if $housekeeping gt 1000>>
+		<<set $housekeeping += (_args[0] * 2 / $AMCTraits.housekeeping)>>
+	<<else>>
+		<<set $housekeeping += (_args[0] * 2)>>
+	<</if>>
+	<<set $housekeeping to Math.clamp($housekeeping, 0, 1000 * $AMCTraits.housekeeping)>>
 <</if>>
 <</widget>>
 
 <<widget "danceskill">>
 	<<if _args[0] and $statFreeze isnot true>>
-		<<set $danceskill += _args[0]>>
-		<<set $danceskill to Math.clamp($danceskill, 0, 1000)>>
+		<<if $danceskill gt 1000>>
+			<<set $danceskill += _args[0] / $AMCTraits.dancing>>
+		<<else>>
+			<<set $danceskill += _args[0]>>
+		<</if>>
+		<<set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)>>
 	<</if>>
 <</widget>>
 
@@ -1100,7 +1162,12 @@
 		<<elseif $exposed is 1>>
 			<<set _temp *= 1.1>>
 		<</if>>
-		<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>>
+		<<if $physique gt $physiquesize>>
+			<<set $physique += 10 * _temp / $AMCTraits.physique>>
+		<<else>>
+			<<set $physique += 10 * _temp>>
+		<</if>>
+		<<set $physiqueuse += _temp>>
 		<<if _args[1]>>
 			<<if _args[1] isnot "noMessage">>
 				<<if ($combat is 1 and _args[1] isnot "workout") or _args[1] is "invig">>
@@ -1114,7 +1181,7 @@
 		<<else>>
 			<span class="gold"> You get a good workout.</span>
 		<</if>>
-		<<set $physique = Math.clamp($physique, 0, $physiquesize)>>
+		<<set $physique = Math.clamp($physique, 0, $physiquesize * $AMCTraits.physique)>>
 	<</if>>
 <</widget>>
 
@@ -1899,6 +1966,7 @@
 <</widget>>
 
 <<widget "weatherdisplay">>
+	<<set _season to (Time.season == "winter" ? "_winter" : "")>>
 	<<set _weather_display to (Time.season == "winter" ? "winter" : "normal")>>
 	<<if $options.images is 1>>
 		<<if Time.dayState is "night" and (isBloodmoon() or $forcedBloodmoon)>>
@@ -1909,25 +1977,31 @@
 		<<set _dayState to "_"+Time.dayState>>
 
 		<<set _imgLoc to 'img/misc/'>>
-		<<set _imgSky to 'img/misc/'>>
-		<<set _imgWeather to 'img/misc/'>>
+		<<set _imgSky to 'img/misc/sky/'>>
 
 		/* sky (upmost part) */
-		<<if $location is "tentworld">>
-			<img id="daystate" @src="_imgSky+'tentsky'+_dayState+'.png'">
+		<<if $skyHidden is true>>
+			<<set _skybox to "skybox_blank">>
+		<<elseif $location is "tentworld">>
+			<<set _skybox to "skybox" + _dayState + "_tentacle">>
 		<<else>>
-			<img id="daystate" @src="_imgSky+'sky'+_dayStateWithBloodMoon+'.png'">
+			<<set _skybox to "skybox" + _dayStateWithBloodMoon>>
+			<<if $location is "bog">><<set _skybox += "_haze">><</if>>
+			<img id="daystate" @src="_imgSky + 'sun' + _dayState + '.png'">
+			<img id="daystate" @src="_imgSky + 'moon' + _dayStateWithBloodMoon + '.png'">
 		<</if>>
 
+		<div @class="_skybox">
+		</div>
+
 		/* weather (middle part) */
-		<<if $location is "tentworld">>
-			<img id="weather" @src="_imgWeather+'tentsky'+_dayState+'.png'">
+		<<if $location is "tentworld" or $skyHidden is true>>
 		<<else>>
 			<<switch $weather>>
-				<<case "clear">>	<img id="weather" @src="_imgWeather+'clear'+_dayState+'.png'">
-				<<case "overcast">> <img id="weather" @src="_imgWeather+_weather_display + '/overcast'+_dayState+'.png'">
-				<<case "rain">>		<img id="weather" @src="_imgWeather+'rain'+_dayState+'.gif'">
-				<<case "snow">>		<img id="weather" @src="_imgWeather+'winter/snow'+_dayState+'.gif'">
+				<<case "clear">>
+				<<case "overcast">> <img id="weather" @src="_imgSky + 'overcast' + _dayState + _season + '.png'">
+				<<case "rain">>		<img id="weather" @src="_imgSky + 'rain' + _dayState + '.gif'">
+				<<case "snow">>		<img id="weather" @src="_imgSky + 'snow' + _dayState + '.gif'">
 			<</switch>>
 		<</if>>
 
@@ -1946,11 +2020,7 @@
 				<img id="location" @src="_imgLoc + _weather_display + '/alex_cottage'+_dayState+'.png'">
 			<<case "alex_farm">>
 				<<if $bus is "woodland">>
-					<<if Time.dayState is "night" or Time.dayState is "dawn">>
-						<img id="location" @src="_imgLoc + _weather_display + '/forest'+_dayState+'.png'">
-					<<else>>
-						<img id="location" @src="_imgLoc + _weather_display + '/forest'+_dayStateWithBloodMoon+'.gif'">
-					<</if>>
+					<img id="location" @src="_imgLoc + _weather_display + '/forest'+_dayStateWithBloodMoon+'.gif'">
 				<<else>>
 					<img id="location" @src="_imgLoc + _weather_display + '/alex_farm'+_dayState+'.png'">
 				<</if>>
@@ -1972,14 +2042,12 @@
 				<</if>>
 			<<case "beach" "chalets">>
 				<img id="location" @src="_imgLoc + _weather_display + '/beach'+_dayState+'.gif'">
+			<<case "bog">>
+				<img id="location" @src="_imgLoc + _weather_display + '/bog'+_dayStateWithBloodMoon+'.gif'">
 			<<case "brothel">>
 				<img id="location" @src="_imgLoc + _weather_display + '/brothel'+_dayState+'.png'">
 			<<case "cabin">>
-				<<if Time.season is "winter">>
-					<img id="location" @src="_imgLoc + _weather_display + '/cabin'+_dayState+'.png'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/cabin'+_dayState+'.gif'">
-				<</if>>
+				<img id="location" @src="_imgLoc + _weather_display + '/cabin'+_dayState+'.png'">
 			<<case "cafe">>
 				<<if $chef_state gte 9>>
 					<img id="location" @src="_imgLoc + _weather_display + '/cafe_renovated'+_dayState+'.png'">
@@ -2015,11 +2083,7 @@
 			<<case "flats">>
 				<img id="location" @src="_imgLoc + _weather_display + '/flats'+_dayState+'.png'">
 			<<case "forest">>
-				<<if Time.dayState is "night" or Time.dayState is "dawn">>
-					<img id="location" @src="_imgLoc + _weather_display + '/forest'+_dayState+'.png'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/forest'+_dayStateWithBloodMoon+'.gif'">
-				<</if>>
+				<img id="location" @src="_imgLoc + _weather_display + '/forest'+_dayStateWithBloodMoon+'.gif'">
 			<<case "forest_shop">>
 				<img id="location" @src="_imgLoc + _weather_display + '/forest_shop'+_dayState+'.png'">
 			<<case "home">>
@@ -2057,11 +2121,7 @@
 			<<case "police_station">>
 				<img id="location" @src="_imgLoc + _weather_display + '/police_station'+_dayState+'.png'">
 			<<case "pound">>
-				<<if Time.dayState is "night">>
-					<img id="location" @src="_imgLoc + _weather_display + '/dog_pound'+_dayState+'.png'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/dog_pound'+_dayState+'.gif'">
-				<</if>>
+				<img id="location" @src="_imgLoc + _weather_display + '/dog_pound'+_dayState+'.gif'">
 			<<case "pool">>
 				<img id="location" @src="_imgLoc + _weather_display + '/pool'+_dayState+'.gif'">
 			<<case "prison">>
@@ -2099,11 +2159,7 @@
 			<<case "tower" "castle">>
 				<img id="location" @src="_imgLoc + _weather_display + '/tower'+_dayStateWithBloodMoon+'.gif'">
 			<<case "town">>
-				<<if Time.dayState is "dusk">>
-					<img id="location" @src="_imgLoc + _weather_display + '/town'+_dayState+'.png'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/town'+_dayState+'.gif'">
-				<</if>>
+				<img id="location" @src="_imgLoc + _weather_display + '/town'+_dayState+'.gif'">
 			<<case "underground">>
 				<img id="location" @src="_imgLoc + _weather_display + '/underground'+_dayState+'.png'">
 			<<case "wolf_cave">>
@@ -2301,14 +2357,14 @@
 	<<set $exposed to 0>>
 	<<if $worn.upper.exposed gte 1 and $worn.over_upper.exposed gte 1>>
 		<<if $player.gender_appearance is "m">>
-		<<elseif $libertine gte 1 or $possessed or ["plaid school pinafore","school pinafore"].includes($worn.lower.name)>>
+		<<elseif $libertine gte 1 or $possessed or ["plaid school pinafore","school pinafore","shortalls"].includes($worn.lower.name)>>
 		<<else>>
 			<<set $exposed to 1>>
 		<</if>>
 	<</if>>
 	<<if $worn.upper.exposed gte 2 and $worn.over_upper.exposed gte 2 and $player.gender_appearance isnot "m">>
 		<<if $possessed>>
-		<<elseif ["plaid school pinafore","school pinafore"].includes($worn.lower.name)>>
+		<<elseif ["plaid school pinafore","school pinafore","shortalls"].includes($worn.lower.name)>>
 		<<elseif $libertine is 1>>
 			<<set $topless to 1>>
 		<<else>>
@@ -3012,7 +3068,7 @@
 <</widget>>
 
 <<widget "internalejac">>
-	<<if $demon gte 6>>
+	<<if ($demon gte 6 or $transformationParts.demon.wings is "default" or $transformationParts.demon.wings is "succubus")>>
 		<<set $demonabsorb += 1>>
 	<</if>>
 <</widget>>
@@ -3207,7 +3263,7 @@
 		/* Steal a specific antique like a wooden carving? */
 		<<if currentSkillValue("skulduggery") gte 800 and $rng gte 95>>
 			<span class="green">You find a stick.</span><<set $island.wood += 1>>
-		<<elseif (currentSkillValue("skulduggery") gte 800 and $rng gte 85) or $rng gte 90>>
+		<<elseif (currentSkillValue("skulduggery") gte 800 and $rng gte 80) or $rng gte 90>>
 			<span class="green">You find a handful of walnuts.</span><<set $island.walnut += 1>>
 		<<else>>
 			<span class="red">You find nothing to steal.</span>
@@ -3374,6 +3430,11 @@
 
 	<<set _config.barWidth = Math.clamp(_config.percent, 0, 100)>>
 
+	<<if _config.secondValue>>
+		<<set _config.secondPercent= Math.floor(_config.secondValue)>>
+		<<set _config.secondBarWidth= Math.clamp(_config.secondPercent, 0, 100)>>
+	<</if>>
+
 	<div class="characteristic-box">
 		<div class="characteristic-top-line">
 			<<if $options.images is 1 and _config.icon>>
@@ -3405,6 +3466,9 @@
 		<</if>>
 		<div class="meter">
 			<div @class="(_config.meterColor ? _config.meterColor + 'bar' : 'goldbar')" @style="'width:' + _config.barWidth + '%'"></div>
+			<<if _config.secondBarWidth>>
+				<div @class="(_config.secondMeterColor ? _config.secondMeterColor + 'bar' : 'goldbar')" @style="'width:' + _config.secondBarWidth + '%'"></div>
+			<</if>>
 		</div>
 	</div>
 <</widget>>
@@ -4028,7 +4092,7 @@
 <</widget>>
 
 <<widget "setup_pillory">>
-	<<set $pillory_tenant to {person : clone($baseNPC), exists : 0, duration : 0, served : 0, startday: 0, starthour : 0, endday : 0, endhour : 0,
+	<<set $pillory_tenant to {person : clone($baseNPC), exists : 0, duration : 0, served : 0, startday: 0, starthour : 0, endDate : 0, endhour : 0,
 								crowd : 0, wet : 0, upperexposed : 0 , lowerexposed : 0, fruit : 0, fruitstock: 0, face : 0, ass : 0, genital : 0, broken : 0,
 								lastviewed : { day : 0, hour: 0}, special : {name : "", desc : ""}}>>
 <</widget>>
@@ -4045,13 +4109,9 @@
 	<<set $pillory_tenant.duration to random(4,27)>>
 	<<set $pillory_tenant.startday to Time.days>>
 	<<set $pillory_tenant.starthour to (Time.hour - _already_served)>>
-	<<set _endhour to ($pillory_tenant.starthour + $pillory_tenant.duration)>>
-	<<set $pillory_tenant.endday to Time.days>>
-	<<if _endhour gte 24>><<set $pillory_tenant.endday += 1>><<set _endhour -= 24>><</if>>
-	/*Repeat incase $duration is gte 24hrs and starting time gte 21. E.g. worst case: Time.hour = 23 and duration=27hrs, end time should be 0200 @ +2days.
-	So 23 + 27 = 50; add 1 to end-day and minus 24hrs gives 26; add 1 to end-day and minus 24 gives hr 2.*/
-	<<if _endhour gte 24>><<set $pillory_tenant.endday += 1>><<set _endhour -= 24>><</if>>
-	<<set $pillory_tenant.endhour to _endhour>>
+	/*set $endDate to timestamp and compare to $timeStamp*/
+	<<set $pillory_tenant.endDate to ($pillory_tenant.startday * Time.secondsPerDay + ($pillory_tenant.starthour + $pillory_tenant.duration - 7) * Time.secondsPerHour)>>
+	<<set $pillory_tenant.endhour to (($pillory_tenant.endDate % Time.secondsPerDay) / Time.secondsPerHour)>>
 	<<set $pillory_tenant.crowd to 1>>
 	<<set $pillory_tenant.wet to 0>>
 	<<set $pillory_tenant.upperexposed to 0>>
@@ -4598,14 +4658,14 @@
 <<widget "npc_pillory_release_schedule">>
 	<<get_pillory_npc>>
 	<br>
-	<<if Time.days is $pillory_tenant.endday>>
-	<<set _a_few to ($pillory_tenant.endhour - Time.hour)>>
+	<<if ($pillory_tenant.endDate - $timeStamp) lte Time.secondsPerDay>>
+	<<set _a_few to Math.floor(($pillory_tenant.endDate - $timeStamp) / Time.secondsPerHour)>>
 		<<He>> will be released
 		<<if _a_few gt 0>>in _a_few hours.
 		<<else>>imminently.
 		<</if>>
 	<<else>>
-		<<set _days_left to ($pillory_tenant.endday - Time.days)>>
+		<<set _days_left to Math.floor(($pillory_tenant.endDate - $timeStamp) / Time.secondsPerDay)>>
 		<<He>> is scheduled for release <<if _days_left is 1>>tomorrow<<else>>in two days<</if>> at
 		<<switch $pillory_tenant.endhour>>
 			<<case 0>>midnight.
@@ -4708,7 +4768,7 @@
 	<<set _chair to Furniture.get('chair','chair')>>
 <</if>>
 <<set _projectOptions to [$scienceproject, $mathsproject].includes("ongoing")>>
-<<set _bookOptions to ($studyBooks.stolen.RaulAndJanet is 1 or $studyBooks.rented is 'Raul and Janet' or $studyBooks.stolen.pinch is 1 or $studyBooks.rented is 'Pinch')>>
+<<set _bookOptions to ($studyBooks.stolen.science is 1 or $studyBooks.rented is 'science' or $studyBooks.stolen.maths is 1 or $studyBooks.rented is 'maths' or $studyBooks.stolen.english is 1 or $studyBooks.rented is 'english' or $studyBooks.stolen.history is 1 or $studyBooks.rented is 'history' or $studyBooks.stolen.RaulAndJanet is 1 or $studyBooks.rented is 'Raul and Janet' or $studyBooks.stolen.pinch is 1 or $studyBooks.rented is 'Pinch')>>
 <<set _wardrobe to Furniture.get('wardrobe')>>
 <<set _playOptions to ($englishPlay is 'ongoing' and $englishPlayRoles.Player isnot 'none')>>
 
@@ -4829,7 +4889,7 @@
 			<span class="blue">That was too easy. You didn't learn anything.</span>
 		<</if>>
 	<<else>>
-		<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+		<<if $skulduggery lte ($skulduggerydifficulty + 100) or $lockpickTrainingSet is 5>>
 			<<skulduggeryskilluse>>
 		<<else>>
 			<span class="blue">That was too easy. You didn't learn anything.</span>
@@ -4939,7 +4999,15 @@
 <</widget>>
 
 <<widget "adjust_school_traits">>
-	<<if $science gte 1000>>
+	<<if $science gte 2000>>
+		<<set $sciencetrait to 8>>
+	<<elseif $science gte 1750>>
+		<<set $sciencetrait to 7>>
+	<<elseif $science gte 1500>>
+		<<set $sciencetrait to 6>>
+	<<elseif $science gte 1250>>
+		<<set $sciencetrait to 5>>
+	<<elseif $science gte 1000>>
 		<<set $sciencetrait to 4>>
 	<<elseif $science gte 700>>
 		<<set $sciencetrait to 3>>
@@ -4950,7 +5018,15 @@
 	<<else>>
 		<<set $sciencetrait to 0>>
 	<</if>>
-	<<if $maths gte 1000>>
+	<<if $maths gte 2000>>
+		<<set $mathstrait to 8>>
+	<<elseif $maths gte 1750>>
+		<<set $mathstrait to 7>>
+	<<elseif $maths gte 1500>>
+		<<set $mathstrait to 6>>
+	<<elseif $maths gte 1250>>
+		<<set $mathstrait to 5>>
+	<<elseif $maths gte 1000>>
 		<<set $mathstrait to 4>>
 	<<elseif $maths gte 700>>
 		<<set $mathstrait to 3>>
@@ -4961,7 +5037,15 @@
 	<<else>>
 		<<set $mathstrait to 0>>
 	<</if>>
-	<<if $english gte 1000>>
+	<<if $english gte 2000>>
+		<<set $englishtrait to 8>>
+	<<elseif $english gte 1750>>
+		<<set $englishtrait to 7>>
+	<<elseif $english gte 1500>>
+		<<set $englishtrait to 6>>
+	<<elseif $english gte 1250>>
+		<<set $englishtrait to 5>>
+	<<elseif $english gte 1000>>
 		<<set $englishtrait to 4>>
 	<<elseif $english gte 700>>
 		<<set $englishtrait to 3>>
@@ -4972,7 +5056,15 @@
 	<<else>>
 		<<set $englishtrait to 0>>
 	<</if>>
-	<<if $history gte 1000>>
+	<<if $history gte 2000>>
+		<<set $historytrait to 8>>
+	<<elseif $history gte 1750>>
+		<<set $historytrait to 7>>
+	<<elseif $history gte 1500>>
+		<<set $historytrait to 6>>
+	<<elseif $history gte 1250>>
+		<<set $historytrait to 5>>
+	<<elseif $history gte 1000>>
 		<<set $historytrait to 4>>
 	<<elseif $history gte 700>>
 		<<set $historytrait to 3>>
@@ -4983,10 +5075,10 @@
 	<<else>>
 		<<set $historytrait to 0>>
 	<</if>>
-	<<set $english to Math.clamp($english, 0, 1000)>>
-	<<set $maths to Math.clamp($maths, 0, 1000)>>
-	<<set $science to Math.clamp($science, 0, 1000)>>
-	<<set $history to Math.clamp($history, 0, 1000)>>
+	<<set $english to Math.clamp($english, 0, 1000 * $AMCTraits.english)>>
+	<<set $maths to Math.clamp($maths, 0, 1000 * $AMCTraits.maths)>>
+	<<set $science to Math.clamp($science, 0, 1000 * $AMCTraits.science)>>
+	<<set $history to Math.clamp($history, 0, 1000 * $AMCTraits.history)>>
 <</widget>>
 
 /*
@@ -5129,7 +5221,7 @@
 			<</if>>
 		<!--/case -->
 	<</switch>>
-	<<if !$_fail>>
+	<<if !$_fail and (!$_clear or _args.last() lte -5)>>
 		<<if !V.player.penisExist>>
 			<<run $_bodypart.delete("penis")>>
 		<</if>>
@@ -5294,31 +5386,31 @@
 <</widget>>
 
 <<widget "tfcheck">>
-	<<if $fallenangel gte 2>>
+	<<if ($fallenangel gte 2 or $transformationParts.fallenAngel.wings is "default")>>
 		<<set $fallenangeltf to 1>>
 	<</if>>
-	<<if $fallenangel gte 4 or $fallenangelbuild gte 30>>
+	<<if ($fallenangel gte 4 or $transformationParts.fallenAngel.wings is "fallenplus") or $fallenangelbuild gte 30>>
 		<<set $fallenangelplustf to 1>>
 	<</if>>
-	<<if $$demonbuild gte 30 or $demon gte 6>>
+	<<if $$demonbuild gte 30 or ($demon gte 6 or $transformationParts.demon.wings is "default" or $transformationParts.demon.wings is "succubus")>>
 		<<set $demontf to 1>>
 	<</if>>
-	<<if $$angelbuild gte 50 or $angel gte 6>>
+	<<if $$angelbuild gte 50 or ($angel gte 6 or $transformationParts.angel.wings is "default")>>
 		<<set $angeltf to 1>>
 	<</if>>
-	<<if $wolfbuild gte 30 or $wolfgirl gte 6>>
+	<<if $wolfbuild gte 30 or ($wolfgirl gte 6 or $transformationParts.wolf.tail is "default" or $transformationParts.wolf.tail is "feral")>>
 		<<set $wolftf to 1>>
 	<</if>>
-	<<if $catbuild gte 50 or $cat gte 6>>
+	<<if $catbuild gte 50 or ($cat gte 6 or $transformationParts.cat.tail is "default")>>
 		<<set $cattf to 1>>
 	<</if>>
-	<<if $cowbuild gte 30 or $cow gte 6>>
+	<<if $cowbuild gte 30 or ($cow gte 6 or $transformationParts.cow.tail is "default" or $transformationParts.cow.tail is "black")>>
 		<<set $cowtf to 1>>
 	<</if>>
-	<<if $birdbuild gte 30 or $harpy gte 6>>
+	<<if $birdbuild gte 30 or ($harpy gte 6 or $transformationParts.bird.wings is "default")>>
 		<<set $harpytf to 1>>
 	<</if>>
-	<<if $foxbuild gte 30 or $fox gte 6>>
+	<<if $foxbuild gte 30 or ($fox gte 6 or $transformationParts.fox.tail is "default")>>
 		<<set $foxtf to 1>>
 	<</if>>
 <</widget>>

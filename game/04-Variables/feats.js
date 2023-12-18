@@ -743,7 +743,6 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Pregnancy"],
 		hint: "Hint: The Magic that helps creates that what should not be.",
-		hidden: true,
 	},
 	"Diversity of Life": {
 		title: "Diversity of Life",
@@ -1569,7 +1568,7 @@ setup.feats = {
 		hint: "Hint: Practise vain wilderness woodwork.",
 		softLockable: true,
 	},
-	"Naturalised": {
+	Naturalised: {
 		title: "Naturalised",
 		desc: "Infiltrated the islander castle, without being captured.",
 		difficulty: 3,
@@ -1603,6 +1602,15 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Discoveries"],
 		hint: "Hint: Through confession, revelation.",
+		softLockable: true,
+	},
+	"Lost Heirloom": {
+		title: "Lost Heirloom",
+		desc: "Retrieved the gold compass.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Discoveries"],
+		hint: "Hint: Stolen abroad.",
 		softLockable: true,
 	},
 	"Max Those Shots": {
@@ -1653,7 +1661,6 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Special"],
 		hint: "Hint: Given time and love to bloom.",
-		hidden: true,
 	},
 	"The Path to Redemption": {
 		title: "The Path to Redemption",
@@ -1672,7 +1679,7 @@ setup.feats = {
 		filter: ["All", "Special"],
 		hint: "Hint: Starting off fast.",
 	},
-	"Negotiator": {
+	Negotiator: {
 		title: "Negotiator",
 		desc: "Made over £500 from a single tip.",
 		difficulty: 3,
@@ -1705,4 +1712,425 @@ setup.feats = {
 		filter: ["All", "Special"],
 		hint: "Hint: Time and effort.",
 	},
+	"Unstoppable Force": {
+		title: "Unstoppable Force",
+		desc: "Nobody can rival the sheer power your body holds.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max physique with large body and tempered physique.",
+	},
+	"Immovable Object": {
+		title: "Immovable Object",
+		desc: "Nobody will be able to manipulate your mind again.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max willpower with tempered willpower.",
+	},
+	"Agent 47": {
+		title: "Agent 47",
+		desc: "Hiding in plain sight.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max skulduggery with tempered skulduggery.",
+	},
+	"Can't Touch This": {
+		title: "Can't Touch This",
+		desc: "Nobody can hit you; your reflexes are quite frankly instant.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max dancing with tempered dancing.",
+	},
+	"Atlantean": {
+		title: "Atlantean",
+		desc: "You are fishier than any fish can fish to fish.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max swimming with tempered swimming.",
+	},
+	"Ludicrous Speed": {
+		title: "Ludicrous Speed",
+		desc: "Light speed is too slow!",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max athletics with tempered athletics.",
+	},
+	"Grass Toucher": {
+		title: "Grass Toucher",
+		desc: "You touch grass better than anyone else.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max tending with tempered tending.",
+	},
+	"Demolisher of Filth": {
+		title: "Demolisher of Filth",
+		desc: "Nobody can rival your ability to keep a place clean, not even the most fabled maids.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max housekeeping with tempered housekeeping.",
+	},
+	"Smarter than Einstein": {
+		title: "Smarter than Einstein",
+		desc: "You can create E=MC Cubed in your sleep.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max science with tempered science.",
+	},
+	"Human Calculator": {
+		title: "Human Calculator",
+		desc: "You are even more asian than asians.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max maths with tempered maths.",
+	},
+	"Voice of All Things": {
+		title: "Voice of All Things",
+		desc: "ONE PIECE IS REAL!!!",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max english with tempered english.",
+	},
+	"Errm, ackshually": {
+		title: "Errm, ackshually",
+		desc: "It's illegal to think differently than me.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max history with tempered history.",
+	},
+	"Return to Monke": {
+		title: "Return to Monke",
+		desc: "You have reached the pinnacle of humanity, now you ascend by returning to monke.",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max school skills with all tempered school skills.",
+	},
+	"Irresistible": {
+		title: "Irresistible",
+		desc: "Nobody can resist your sheer ability to seduce, not even Frost.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max seduction with tempered seduction.",
+	},
+	"God of Lust": {
+		title: "God of Lust",
+		desc: "Nobody, and I mean NOBODY could last 5 seconds with you; you have simply become a god of lust.",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max sex skills with tempered sex skills.",
+	},
+	"Many Punch Man": {
+		title: "Many Punch Man",
+		desc: "Two? Four? Six? Doesn't matter, come at me all at once.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max brawling with tempered brawling.",
+	},
+	"Starting Point": {
+		title: "Starting Point",
+		desc: "You've beaten the peak of vanilla single combat, but that's it.",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 600 health.",
+	},
+	"One Step": {
+		title: "One Step",
+		desc: "You've beaten the peak of vanilla group combat, not bad.",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 1200 health.",
+	},
+	"One Leap": {
+		title: "One Leap",
+		desc: "That's pretty good mate.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 2500 health.",
+	},
+	"Five Thousand": {
+		title: "Five Thousand",
+		desc: "Five thousand!",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 5000 health.",
+	},
+	"Ten Thousand": {
+		title: "Ten Thousand",
+		desc: "Ten Thousand!",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 10000 health.",
+	},
+	"Twenty Thousand": {
+		title: "Twenty Thousand",
+		desc: "Twenty Thousand!",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 20000 health.",
+	},
+	"Fifty Thousand": {
+		title: "Fifty Thousand",
+		desc: "Fifty Thousand!",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 50000 health.",
+	},
+	"One Hundred Thousand": {
+		title: "One Hundred Thousand",
+		desc: "One Hundred Thousand!",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 100000 health.",
+	},
+	"Two Hundred Thousand": {
+		title: "Two Hundred Thousand",
+		desc: "Two Hundred Thousand!",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 200000 health.",
+	},
+	"Five Hundred Thousand": {
+		title: "Five Hundred Thousand",
+		desc: "Five Hundred Thousand!",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 500000 health.",
+	},
+	"One Million": {
+		title: "One Million",
+		desc: "One Million!",
+		difficulty: 5,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 1000000 health.",
+	},
+	"Hitless": {
+		title: "Hitless",
+		desc: "They didn't even put so much as a scratch on you.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win a fight and take no damage.",
+	},
+	"Brawler": {
+		title: "Brawler",
+		desc: "Nobody sane dares to mess with you; your frightening blows speak loud enough.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+	},
+	"Ghost Buster": {
+		title: "Ghost Buster",
+		desc: "Defeat the Ivory Wraith.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Special"],
+		softLockable: true,
+		hint: "Hint: Win against the Ivory Wraith.",
+	},
 };
+
+async function featsMergePre() {
+	// Replace getting the count with a better method that gets included with the sugarcube format
+	T.saveDataImportCount = 0;
+	const localStorageSaves = DoLSave.getSaves();
+
+	const result = () => {
+		if (!T.saveDataImportCount) {
+			$("#featsBeginText").html(`0 saves detected, did you make a local save before trying this?`);
+		} else if ((T.saveDataImportCount >= 10 && Browser.isMobile.any()) || T.saveDataImportCount >= 25) {
+			$("#featsBeginText").html(`${T.saveDataImportCount} saves detected, this might take some time on a slower device.`);
+		} else {
+			$("#featsBeginText").html(`Only ${T.saveDataImportCount} saves detected, this shouldn't take too long.`);
+		}
+		$("#featsBeginLoadingText").addClass("hidden");
+		$("#featsBeginButton").removeClass("hidden");
+	};
+
+	// Count the local storage saves
+	if (localStorageSaves.autosave) T.saveDataImportCount++;
+	if (localStorageSaves.slots) {
+		localStorageSaves.slots.forEach(slot => {
+			if (slot) T.saveDataImportCount++;
+		});
+	}
+
+	// Count the index db saves
+	try {
+		// eslint-disable-next-line no-undef
+		idb.getSaveDetails()
+			.then(saveDataDetails => {
+				T.saveDataImportCount += saveDataDetails.length;
+			})
+			.finally(() => {
+				result();
+			});
+	} catch {
+		result();
+	}
+}
+DefineMacro("featsMergePre", featsMergePre);
+
+function featsMerge() {
+	if (window.featsMerge) return;
+	window.featsMerge = true;
+
+	const savesToLoad = T.saveDataImportCount;
+	const loadingBar = $("#featsLoadingMeter .greenbar");
+	const loadingText = $("#featsLoadingText");
+	let featData = localStorage.getItem("dolFeats");
+	if (featData) {
+		featData = JSON.parse(featData);
+	} else {
+		featData = {};
+	}
+
+	const loadFeats = (data = {}) => {
+		Object.entries(data).forEach(([key, date]) => {
+			if (!featData[key] || new Date(date).getTime() < new Date(featData[key]).getTime()) {
+				featData[key] = date;
+			}
+		});
+	};
+
+	const result = () => {
+		let points = 0;
+		Object.keys(featData).forEach(key => {
+			if (setup.feats[key]) points += setup.feats[key].difficulty;
+		});
+		featData.points = points;
+
+		V.feats.allSaves = featData;
+		localStorage.setItem("dolFeats", JSON.stringify(featData));
+
+		loadingBar.css("width", "100%");
+		loadingText.html("All feat data imported.");
+		$("#featsFinishButton").removeClass("hidden");
+
+		delete window.featsMerge;
+	};
+
+	// Read the local storage saves
+	let localSavesChecked = 0;
+	const localStorageSaves = clone(DoLSave.getSaves());
+	if (localStorageSaves) {
+		if (localStorageSaves.autosave) {
+			localStorageSaves.autosave.state.history = State.deltaDecode(localStorageSaves.autosave.state.delta);
+			DoLSave.decompressIfNeeded(localStorageSaves.autosave);
+
+			if (
+				localStorageSaves.autosave.state.history &&
+				localStorageSaves.autosave.state.history[0] &&
+				localStorageSaves.autosave.state.history[0].variables
+			) {
+				const variables = localStorageSaves.autosave.state.history[0].variables;
+				if (variables.feats) {
+					loadFeats(variables.feats.allSaves);
+					loadFeats(variables.feats.currentSave);
+				}
+			}
+			localSavesChecked++;
+			loadingBar.css("width", `${(localSavesChecked / savesToLoad) * 100}%`);
+		}
+		if (localStorageSaves.slots) {
+			localStorageSaves.slots.forEach(slot => {
+				if (slot) {
+					slot.state.history = State.deltaDecode(slot.state.delta);
+					DoLSave.decompressIfNeeded(slot);
+					if (
+						localStorageSaves.autosave.state.history &&
+						localStorageSaves.autosave.state.history[0] &&
+						localStorageSaves.autosave.state.history[0].variables
+					) {
+						const variables = localStorageSaves.autosave.state.history[0].variables;
+						if (variables.feats) {
+							loadFeats(variables.feats.allSaves);
+							loadFeats(variables.feats.currentSave);
+						}
+					}
+					localSavesChecked++;
+					loadingBar.css("width", `${(localSavesChecked / savesToLoad) * 100}%`);
+				}
+			});
+		}
+	}
+
+	// Read the index db saves
+	try {
+		// eslint-disable-next-line no-undef
+		idb.getAllSaves()
+			.then(saves =>
+				saves.forEach((slot, index) => {
+					if (slot.data && Array.isArray(slot.data.history)) {
+						slot.data.history.forEach(saveData => {
+							if (saveData.variables && saveData.variables.feats) {
+								loadFeats(saveData.variables.feats.allSaves);
+								loadFeats(saveData.variables.feats.currentSave);
+							}
+						});
+					}
+					loadingBar.css("width", `${((localSavesChecked + index + 1) / savesToLoad) * 100}%`);
+					loadingText.html(`${index + 1} out of ${savesToLoad} saves checked.`);
+				})
+			)
+			.finally(() => {
+				result();
+			});
+	} catch {
+		result();
+	}
+}
+DefineMacro("featsMerge", featsMerge);

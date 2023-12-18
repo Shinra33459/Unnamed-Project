@@ -27,7 +27,7 @@
 			<<if $player.virginity[_type] is true>>
 				<<set $player.virginity[_type] to (_virginity[_type] is true ? false : _virginity[_type])>><<set $player.virginity.temple to false>>
 			<<else>>
-				<<set $player.virginity[_type] to true>>
+				<<set $player.virginity[_type] to true>><<set $player.virginity.temple to true>>
 			<</if>>
 			<<run $(`#${_id}link .link-internal`).html($player.virginity[_type] is true ? "Take" : "Restore")>>
 			<<run $(`#${_id}`).html($player.virginity[_type] is true ? "Present" : "Taken by " + ($player.virginity[_type] is false ? "unknown" : $player.virginity[_type]))>>
@@ -39,8 +39,11 @@
 	<<set _bodypart to _args[0]>>
 	<<set _id to `stats${_bodypart}parasite`>>
 	<<capture _bodypart _id>>
-		<<set $_currentType to $parasite[_bodypart].name or "none">>
-		<<print _bodypart.toUpperFirst().replace("_", " ")>> parasite: <span @id="_id" class="gold"><<print $_currentType>></span> |
+		<<print _bodypart.toUpperFirst().replace("_", " ")>> parasite: <span @id="_id" class="gold"><<print $_currentType>></span>
+		<<if ["left_ear", "right_ear"].includes(_bodypart) and !$player.vaginaExist and ["pregnancy", "mixed"].includes($earSlime.focus) and playerIsPregnant()>>
+			<span class="red">Unable to change while a pregnant male</span>
+			<<exit>>
+		<</if>>
 
 		<<set T["parasiteType"+_bodypart] to $_currentType>>
 		<<set _optionName to "_parasiteType"+_bodypart>>
@@ -129,9 +132,10 @@
 
 	<span class="gold">Player Body</span>
 	<br>
-	<<if ["Wardrobe","Changing Room","Eden Wardrobe","Asylum Wardrobe","Strip Club Dressing Room","Brothel Dressing Room","School Boy Wardrobe","School Girl Wardrobe"].includes($passage)>>
+	<<if _inWardrobe>>
 		/*passage change is intentional to allow the players to quickly see the visual differences*/
 		Current Gender: <<gender>>
+		<mouse class="tooltip linkBlue">(?)<span>This has other effects such as washing the player to prevent issues from occuring.</span></mouse>
 		<br>
 		<<if $earSlime.growth gt 50>>
 			Ear Slime current growth currently preventing gender changing. Remove the ear slime to enable these cheats again.
@@ -139,6 +143,7 @@
 			Change to:
 			<<if $player.gender isnot "m">>
 				<<link [[Become boy|$passage]]>>
+					<<wash>>
 					<<set $vaginause to "none">>
 					<<set $vaginastate to "none">>
 					<<set $penisuse to 0>>
@@ -153,6 +158,7 @@
 			<</if>>
 			<<if $player.gender isnot "f">>
 				<<link [[Become girl|$passage]]>>
+					<<wash>>
 					<<set $vaginause to 0>>
 					<<set $vaginastate to 0>>
 					<<set $penisuse to "none">>
@@ -167,6 +173,7 @@
 			<</if>>
 			<<if $player.gender isnot "h">>
 				<<link [[Become hermaphrodite|$passage]]>>
+					<<wash>>
 					<<set $vaginause to 0>>
 					<<set $vaginastate to 0>>
 					<<set $penisuse to 0>>
@@ -445,7 +452,7 @@
 	| <<link ">>>">><<set $deviancy += 100>><<clamp>><<replace "#statsdeviancy">><<print Math.trunc($deviancy)>><</replace>> <<updatesidebarimg>><</link>>
 	<br>
 
-	<<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
+	<<if numberOfEarSlime()>>
 
 	<<link "<<<">><<set $earSlime.corruption -= 100>><<clamp>><<replace "#statscorruption_slime">><<print Math.trunc($earSlime.corruption)>><</replace>> <<updatesidebarimg>><</link>> |
 	<<link "<<">><<set $earSlime.corruption -= 10>><<clamp>><<replace "#statscorruption_slime">><<print Math.trunc($earSlime.corruption)>><</replace>> <<updatesidebarimg>><</link>> |
@@ -676,7 +683,10 @@
 		<br>
 	<</if>>
 
-	<<set _cl_slots to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "face", "genitals"]>>
+	<<set _cl_slots to ["upper", "lower", "under_upper", "under_lower", "over_upper", "over_lower", "genitals"]>>
+	<<if $worn.face.type.includesAny("covered", "gag", "mask")>>
+		<<run _cl_slots.push("face")>>
+	<</if>>
 	<<link "Fix all">>
 		<<for _cl range _cl_slots>>
 			<<if $worn[_cl].name isnot 'naked'>>
@@ -704,7 +714,7 @@
 	<</link>> |
 	<<link "Dry all">>
 		<<dry_full>>
-		<<for _cl range _cl_slots.slice(2, -2)>>
+		<<for _cl range _cl_slots.slice(0, 4)>>
 			<<if $worn[_cl].name isnot 'naked'>>
 				<<set _cl_wet to _cl.replace('_','') + "wet">>
 				<<replace `'#stats' + _cl_wet`>><<print Math.trunc(V[_cl_wet])>><</replace>>
@@ -715,7 +725,7 @@
 		<<updatesidebarimg>>
 	<</link>> |
 	<<link "Drench all">>
-		<<for _cl range _cl_slots.slice(2, -2)>>
+		<<for _cl range _cl_slots.slice(0, 4)>>
 			<<if $worn[_cl].name isnot 'naked'>>
 				<<set _cl_wet to _cl.replace('_','') + "wet">>
 				<<set V[_cl_wet] to 200>>
@@ -741,13 +751,13 @@
 	| <<link ">>>">><<set $skulduggery += 1000>><<set $skulduggeryday to $skulduggery>><<clamp>><<replace "#statsskulduggery">><<print Math.trunc($skulduggery)>><</replace>> <<updatesidebarimg>><</link>>
 	<br>
 
-	<<link "<<<">><<set $danceskill -= 1000>><<set $danceskill to Math.clamp($danceskill, 0, 1000)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>> |
-	<<link "<<">><<set $danceskill -= 100>><<set $danceskill to Math.clamp($danceskill, 0, 1000)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>> |
-	<<link "<">><<set $danceskill -= 10>><<set $danceskill to Math.clamp($danceskill, 0, 1000)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>> |
+	<<link "<<<">><<set $danceskill -= 1000>><<set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>> |
+	<<link "<<">><<set $danceskill -= 100>><<set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>> |
+	<<link "<">><<set $danceskill -= 10>><<set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>> |
 	Dancing: <span id="statsdanceskill"><<print Math.trunc($danceskill)>></span>
-	| <<link ">">><<set $danceskill += 10>><<set $danceskill to Math.clamp($danceskill, 0, 1000)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>>
-	| <<link ">>">><<set $danceskill += 100>><<set $danceskill to Math.clamp($danceskill, 0, 1000)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>>
-	| <<link ">>>">><<set $danceskill += 1000>><<set $danceskill to Math.clamp($danceskill, 0, 1000)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>>
+	| <<link ">">><<set $danceskill += 10>><<set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>>
+	| <<link ">>">><<set $danceskill += 100>><<set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>>
+	| <<link ">>>">><<set $danceskill += 1000>><<set $danceskill to Math.clamp($danceskill, 0, 1000 * $AMCTraits.dancing)>><<replace "#statsdanceskill">><<print Math.trunc($danceskill)>><</replace>> <<updatesidebarimg>><</link>>
 	<br>
 
 	<<link "<<<">><<set $swimmingskill -= 1000>><<clamp>><<replace "#statsswimmingskill">><<print Math.trunc($swimmingskill)>><</replace>> <<updatesidebarimg>><</link>> |
@@ -1064,6 +1074,240 @@
 			<<set $nectar_timer to 0>>
 		<</if>>
 		<<replace "#statsplantlover">><<print $backgroundTraits.includes("plantlover")>><</replace>>
+	<</link>>
+	<br><br>
+
+	<span class="gold">AMC Traits</span>
+	<br>
+	<span class="description">0 = Off, 1 = On, -1 = Disabled</span>
+	<br>
+	Tempered Physique: <span id="statstemperedphysique"><<print $AMCTraits.physique - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.physique += 1>>
+	<<if $AMCTraits.physique gte 3>>
+	<<set $AMCTraits.physique to 1>>
+	<</if>>
+	<<replace "#statstemperedphysique">><<print $AMCTraits.physique - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Willpower: <span id="statstemperedwillpower"><<print $AMCTraits.willpower - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.willpower += 1>>
+	<<if $AMCTraits.willpower gte 3>>
+	<<set $AMCTraits.willpower to 1>>
+	<</if>>
+	<<replace "#statstemperedwillpower">><<print $AMCTraits.willpower - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Skulduggery: <span id="statstemperedskulduggery"><<print $AMCTraits.skulduggery - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.skulduggery += 1>>
+	<<if $AMCTraits.skulduggery gte 3>>
+	<<set $AMCTraits.skulduggery to 1>>
+	<</if>>
+	<<replace "#statstemperedskulduggery">><<print $AMCTraits.skulduggery - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Dancing: <span id="statstempereddancing"><<print $AMCTraits.dancing - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.dancing += 1>>
+	<<if $AMCTraits.dancing gte 3>>
+	<<set $AMCTraits.dancing to 1>>
+	<</if>>
+	<<replace "#statstempereddancing">><<print $AMCTraits.dancing - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Swimming: <span id="statstemperedswimming"><<print $AMCTraits.swimming - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.swimming += 1>>
+	<<if $AMCTraits.swimming gte 3>>
+	<<set $AMCTraits.swimming to 1>>
+	<</if>>
+	<<replace "#statstemperedswimming">><<print $AMCTraits.swimming - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Athletics: <span id="statstemperedathletics"><<print $AMCTraits.athletics - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.athletics += 1>>
+	<<if $AMCTraits.athletics gte 3>>
+	<<set $AMCTraits.athletics to 1>>
+	<</if>>
+	<<replace "#statstemperedathletics">><<print $AMCTraits.athletics - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Tending: <span id="statstemperedtending"><<print $AMCTraits.tending - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.tending += 1>>
+	<<if $AMCTraits.tending gte 3>>
+	<<set $AMCTraits.tending to 1>>
+	<</if>>
+	<<replace "#statstemperedtending">><<print $AMCTraits.tending - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Housekeeping: <span id="statstemperedhousekeeping"><<print $AMCTraits.housekeeping - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.housekeeping += 1>>
+	<<if $AMCTraits.housekeeping gte 3>>
+	<<set $AMCTraits.housekeeping to 1>>
+	<</if>>
+	<<replace "#statstemperedhousekeeping">><<print $AMCTraits.housekeeping - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Brawling: <span id="statstemperedbrawling"><<print $AMCTraits.brawling - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.brawling += 1>>
+	<<if $AMCTraits.brawling gte 3>>
+	<<set $AMCTraits.brawling to 1>>
+	<</if>>
+	<<replace "#statstemperedbrawling">><<print $AMCTraits.brawling - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Science: <span id="statstemperedscience"><<print $AMCTraits.science - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.science += 1>>
+	<<if $AMCTraits.science gte 3>>
+	<<set $AMCTraits.science to 1>>
+	<</if>>
+	<<replace "#statstemperedscience">><<print $AMCTraits.science - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Maths: <span id="statstemperedmaths"><<print $AMCTraits.maths - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.maths += 1>>
+	<<if $AMCTraits.maths gte 3>>
+	<<set $AMCTraits.maths to 1>>
+	<</if>>
+	<<replace "#statstemperedmaths">><<print $AMCTraits.maths - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered English: <span id="statstemperedenglish"><<print $AMCTraits.english - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.english += 1>>
+	<<if $AMCTraits.english gte 3>>
+	<<set $AMCTraits.english to 1>>
+	<</if>>
+	<<replace "#statstemperedenglish">><<print $AMCTraits.english - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered History: <span id="statstemperedhistory"><<print $AMCTraits.history - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.history += 1>>
+	<<if $AMCTraits.history gte 3>>
+	<<set $AMCTraits.history to 1>>
+	<</if>>
+	<<replace "#statstemperedhistory">><<print $AMCTraits.history - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Seduction Skill: <span id="statstemperseduction"><<print $AMCTraits.seduction - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.seduction += 1>>
+	<<if $AMCTraits.seduction gte 3>>
+	<<set $AMCTraits.seduction to 1>>
+	<</if>>
+	<<replace "#statstemperseduction">><<print $AMCTraits.seduction - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Oral Skill: <span id="statstemperedoral"><<print $AMCTraits.oral - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.oral += 1>>
+	<<if $AMCTraits.oral gte 3>>
+	<<set $AMCTraits.oral to 1>>
+	<</if>>
+	<<replace "#statstemperedoral">><<print $AMCTraits.oral - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Chest Skill: <span id="statstemperedchest"><<print $AMCTraits.chest - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.chest += 1>>
+	<<if $AMCTraits.chest gte 3>>
+	<<set $AMCTraits.chest to 1>>
+	<</if>>
+	<<replace "#statstemperedchest">><<print $AMCTraits.chest - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Hands Skill: <span id="statstemperedhands"><<print $AMCTraits.hands - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.hands += 1>>
+	<<if $AMCTraits.hands gte 3>>
+	<<set $AMCTraits.hands to 1>>
+	<</if>>
+	<<replace "#statstemperedhands">><<print $AMCTraits.hands - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Buttocks Skill: <span id="statstemperedbuttocks"><<print $AMCTraits.buttocks - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.buttocks += 1>>
+	<<if $AMCTraits.buttocks gte 3>>
+	<<set $AMCTraits.buttocks to 1>>
+	<</if>>
+	<<replace "#statstemperedbuttocks">><<print $AMCTraits.buttocks - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Penile Skill: <span id="statstemperedpenile"><<print $AMCTraits.penile - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.penile += 1>>
+	<<if $AMCTraits.penile gte 3>>
+	<<set $AMCTraits.penile to 1>>
+	<</if>>
+	<<replace "#statstemperedpenile">><<print $AMCTraits.penile - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Vaginal Skill: <span id="statstemperedvaginal"><<print $AMCTraits.vaginal - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.vaginal += 1>>
+	<<if $AMCTraits.vaginal gte 3>>
+	<<set $AMCTraits.vaginal to 1>>
+	<</if>>
+	<<replace "#statstemperedvaginal">><<print $AMCTraits.vaginal - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Anal Skill: <span id="statstemperedanal"><<print $AMCTraits.anal - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.anal += 1>>
+	<<if $AMCTraits.anal gte 3>>
+	<<set $AMCTraits.anal to 1>>
+	<</if>>
+	<<replace "#statstemperedanal">><<print $AMCTraits.anal - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Thighs Skill: <span id="statstemperedthighs"><<print $AMCTraits.thighs - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.thighs += 1>>
+	<<if $AMCTraits.thighs gte 3>>
+	<<set $AMCTraits.thighs to 1>>
+	<</if>>
+	<<replace "#statstemperedthighs">><<print $AMCTraits.thighs - 1>><</replace>>
+	<</link>>
+	<br>
+
+	Tempered Feet Skill: <span id="statstemperedfeet"><<print $AMCTraits.feet - 1>></span> |
+	<<link "Change">>
+	<<set $AMCTraits.feet += 1>>
+	<<if $AMCTraits.feet gte 3>>
+	<<set $AMCTraits.feet to 1>>
+	<</if>>
+	<<replace "#statstemperedfeet">><<print $AMCTraits.feet - 1>><</replace>>
 	<</link>>
 	<br><br>
 
@@ -2613,10 +2857,11 @@
 				<<set _menstruation.recoveryTime to null>>
 				<<set _menstruation.recoveryTimeStart to null>>
 				<<set _menstruation.recoveryStage to null>>
-				<<run delete C.npc.Alex.pregnancy.knowledge>>
+				<<run delete C.npc.Alex.pregnancy.pcKnowledge>>
 				<<run delete C.npc.Alex.pregnancy.test>>
+				<<run delete C.npc.Alex.pregnancy.ultraSound>>
 				<<run delete C.npc.Alex.pregnancy.sample>>
-				<<run delete C.npc.Alex.pregnancy.fee>>
+				<<run delete C.npc.Alex.pregnancy.ultraSoundPics>>
 			<</link>>
 			<span class="description">This is a cheat, not an abortion.</span>
 			<br><br>
@@ -2851,10 +3096,7 @@
 			<<set _pregnancyNPC.potentialFathers to []>>
 			<<set _pregnancyNPC.sperm to []>>
 			<<set _pregnancyNPC.cicleDay to 1>>
-			<<run delete C.npc.Alex.pregnancy.knowledge>>
-			<<run delete C.npc.Alex.pregnancy.test>>
-			<<run delete C.npc.Alex.pregnancy.sample>>
-			<<run delete C.npc.Alex.pregnancy.fee>>
+			<<run delete C.npc.Alex.pregnancy.selfKnowledge>>
 		<</link>>
 
 	<<else>>
@@ -2926,18 +3168,26 @@
 	<<link ">">><<farmincrcheat>><<set $farm_stage_cheat = Math.clamp($farm_stage_cheat, 1, 9)>><<replace "#farm_stage_cheat">><<print Math.trunc($farm_stage_cheat)>><</replace>><</link>>
 	<br>
 	Note: The above may or may not break the farm.
+	<br>
+	<<link "<<<">><<set $farm.clearing -= 100>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+	<<link "<<">><<set $farm.clearing -= 50>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+	<<link "<">><<set $farm.clearing -= 1>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+	Farm Clearing: <span id="farm_clearing"><<print Math.trunc($farm.clearing)>></span>
+	| <<link ">">><<set $farm.clearing += 1>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
+	| <<link ">>">><<set $farm.clearing += 50>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
+	| <<link ">>>">><<set $farm.clearing += 100>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
 	<br><br>
 	<<if $farm_stage gte 7>>
-		<<if $farm.wall is undefined>>
-			<<set $farm.wall to 0>>
+		<<if $farm.clearing is undefined>>
+			<<set $farm.clearing to 0>>
 		<</if>>
-		<<link "<<<">><<set $farm.wall -= 4>><<set $farm.wall = Math.clamp($farm.wall, 0, 4)>><<replace "#farm_wall">><<print Math.trunc($farm.wall)>><</replace>><</link>> |
-		<<link "<<">><<set $farm.wall -= 2>><<set $farm.wall = Math.clamp($farm.wall, 0, 4)>><<replace "#farm_wall">><<print Math.trunc($farm.wall)>><</replace>><</link>> |
-		<<link "<">><<set $farm.wall -= 1>><<set $farm.wall = Math.clamp($farm.wall, 0, 4)>><<replace "#farm_wall">><<print Math.trunc($farm.wall)>><</replace>><</link>> |
-		Farm Wall: <span id="farm_wall"><<print Math.trunc($farm.wall)>></span>
-		| <<link ">">><<set $farm.wall += 1>><<set $farm.wall = Math.clamp($farm.wall, 0, 4)>><<replace "#farm_wall">><<print Math.trunc($farm.wall)>><</replace>><</link>>
-		| <<link ">>">><<set $farm.wall += 2>><<set $farm.wall = Math.clamp($farm.wall, 0, 4)>><<replace "#farm_wall">><<print Math.trunc($farm.wall)>><</replace>><</link>>
-		| <<link ">>>">><<set $farm.wall += 4>><<set $farm.wall = Math.clamp($farm.wall, 0, 4)>><<replace "#farm_wall">><<print Math.trunc($farm.wall)>><</replace>><</link>>
+		<<link "<<<">><<set $farm.clearing -= 4>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 4)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+		<<link "<<">><<set $farm.clearing -= 2>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 4)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+		<<link "<">><<set $farm.clearing -= 1>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 4)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+		Farm Clearing: <span id="farm_clearing"><<print Math.trunc($farm.clearing)>></span>
+		| <<link ">">><<set $farm.clearing += 1>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 4)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.clearing += 2>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 4)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
+		| <<link ">>>">><<set $farm.clearing += 4>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 4)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
 		<br>
 	<</if>>
 	<<if $farm_stage gte 8>>
