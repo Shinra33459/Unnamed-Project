@@ -44579,8 +44579,8 @@ function settingsObjects(type) {
 				dgchance: { min: 0, max: 100, decimals: 0, displayName: "Percentage of women that have penises:", randomize: "encounter" },
 				cbchance: { min: 0, max: 100, decimals: 0, displayName: "Percentage of men that have vaginas:", randomize: "encounter" },
 				malevictimchance: { min: 0, max: 100, decimals: 0, displayName: "Percentage of other victims that are male:", randomize: "encounter" },
-				npcHealthMult: { min: 1, max: 10, decimals: 0, displayName: "NPC Health Max Multiplier:", randomize: "encounter" },
-				npcArousalMult: { min: 1, max: 10, decimals: 0, displayName: "NPC Arousal Max Multiplier:", randomize: "encounter" },
+				npcHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Health Max Multiplier:", randomize: "encounter" },
+				npcArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Arousal Max Multiplier:", randomize: "encounter" },
 				npcVirginityChance: { min: 0, max: 100, decimals: 0, displayName: "Likelihood of students being virgins:", randomize: "encounter" },
 				npcVirginityChanceAdult: { min: 0, max: 100, decimals: 0, displayName: "Likelihood of adults being virgins:", randomize: "encounter" },
 				breast_mod: { min: -12, max: 12, decimals: 0, displayName: "Average size of women's breasts:", randomize: "encounter" },
@@ -44596,8 +44596,8 @@ function settingsObjects(type) {
 				furniturePriceFactor: { min: 0.6, max: 2, decimals: 1, displayName: "Cost of furniture:", randomize: "gameplay" },
 				tending_yield_factor: { min: 1, max: 10, decimals: 1, displayName: "Crop yield:", randomize: "gameplay" },
 				rentmod: { min: 0.1, max: 3, decimals: 1, displayName: "Bailey's rent:", randomize: "gameplay" },
-				beastHealthMult: { min: 1, max: 20, decimals: 0, displayName: "Beast Health Max Multiplier:", randomize: "encounter" },
-				beastArousalMult: { min: 1, max: 20, decimals: 0, displayName: "Beast Arousal Max Multiplier:", randomize: "encounter" },
+				beastHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "Beast Health Max Multiplier:", randomize: "encounter" },
+				beastArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "Beast Arousal Max Multiplier:", randomize: "encounter" },
 				beastmalechance: { min: 0, max: 100, decimals: 0, displayName: "Percentage of beasts attracted to you that are male:", randomize: "encounter" },
 				beastMaleChanceSplit: { boolLetter: true, bool: true, displayName: "Beast attraction split by gender appearance:" },
 				beastMaleChanceMale: { min: 0, max: 100, decimals: 0, displayName: "Beasts who are attracted to men:", randomize: "encounter" },
@@ -131982,6 +131982,7 @@ It will cost you
 			&lt;&lt;if $combatExtended.standingFightStart is 1 and $position isnot &quot;wall&quot; and $punishmentposition isnot &quot;gloryhole&quot; &gt;&gt;
 				&lt;&lt;set $combatExtended.standingFightStart to 0&gt;&gt;
 				&lt;&lt;set $combatExtended.stability to 100&gt;&gt;
+				&lt;&lt;unset $encounterHit&gt;&gt;
 				&lt;&lt;npcidlegenitals&gt;&gt;
 			&lt;&lt;/if&gt;&gt;
 
@@ -149898,6 +149899,9 @@ It will cost you
 			&lt;&lt;if $permenemyhealthmax gte 10000&gt;&gt;
 				&lt;&lt;earnFeat &quot;Ten Thousand&quot;&gt;&gt;
 			&lt;&lt;/if&gt;&gt;
+			&lt;&lt;if $permenemyhealthmax gte 20000&gt;&gt;
+				&lt;&lt;earnFeat &quot;Two Thousand&quot;&gt;&gt;
+			&lt;&lt;/if&gt;&gt;
 			&lt;&lt;if $permenemyhealthmax gte 50000&gt;&gt;
 				&lt;&lt;earnFeat &quot;Fifty Thousand&quot;&gt;&gt;
 			&lt;&lt;/if&gt;&gt;
@@ -152239,7 +152243,7 @@ It will cost you
 	* This will prevent said NPC from entering combat plus deal with all the rest of the math.
 	* Optional arguments [1] and [2] for health and arousal respectivelly. If the original health or arousal values for the NPCs haven&#39;t been changed, no need to use those arguments.
 	*/
-	&lt;&lt;set $_hpToReduce to _args[1] || $NPCList[_args[0]].healthmax * $npcHealthMult&gt;&gt;
+	&lt;&lt;set $_hpToReduce to _args[1] || $NPCList[_args[0]].healthmax * ($npcHealthMult / 100)&gt;&gt;
 	&lt;&lt;set $_arousalToReduce to _args[2] || $enemyarousalmax/$enemyno&gt;&gt;
 	&lt;&lt;if _args[0] isnot undefined and $NPCList[_args[0]]&gt;&gt;
 		&lt;&lt;if $NPCList[_args[0]].active isnot &quot;inactive&quot;&gt;&gt;
@@ -163260,9 +163264,9 @@ Hands are &#39;inverted&#39;: NPC holds PC&#39;s left hand with their right one,
 	&lt;!-- Remove Defeated NPC from loops --&gt;
 	&lt;&lt;set $enemyno--&gt;&gt;
 	&lt;!-- Reset Group attributes--&gt;
-	&lt;&lt;set $enemyarousalmax to 500 * $enemyno * $npcArousalMult&gt;&gt;
+	&lt;&lt;set $enemyarousalmax to 500 * $enemyno * ($npcArousalMult / 100)&gt;&gt;
 	&lt;&lt;set $enemyarousal to $enemyarousal * ($enemyno / ($enemyno +1))&gt;&gt;
-	&lt;&lt;set $enemyhealthmax -= $NPCList[_i].healthmax * $npcHealthMult&gt;&gt;
+	&lt;&lt;set $enemyhealthmax -= $NPCList[_i].healthmax * ($npcHealthMult / 100)&gt;&gt;
 	&lt;&lt;set $_excessdamage to (0-$NPCList[_i].health)&gt;&gt;
 
 	&lt;!-- Debug message --&gt;
@@ -280363,8 +280367,8 @@ You swiftly exit, not looking back.
 	&lt;&lt;generateWraith 1&gt;&gt;
 	&lt;&lt;initWraith _wraithSelect&gt;&gt;
 	&lt;&lt;set $NPCList[0].intro to 0&gt;&gt;
-	&lt;&lt;if $wraithHealth lt ($enemyhealth * 0.2) * $npcHealthMult&gt;&gt;
-		&lt;&lt;set $enemyhealth to $enemyhealth * 0.2 * $npcHealthMult&gt;&gt;
+	&lt;&lt;if $wraithHealth lt ($enemyhealth * 0.2) * ($npcHealthMult / 100)&gt;&gt;
+		&lt;&lt;set $enemyhealth to $enemyhealth * 0.2 * ($npcHealthMult / 100)&gt;&gt;
 	&lt;&lt;else&gt;&gt;
 		&lt;&lt;set $enemyhealth to $wraithHealth&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
@@ -364554,6 +364558,14 @@ pussy appears at the hole.
 &lt;br&gt;
 &lt;&lt;link [[&quot;Service with your feet (&quot; + getTimeString(_service.feet.time) + &quot;)&quot;|Brothel Gloryhole]]&gt;&gt;&lt;&lt;gloryHoleServiceEffects &quot;feet&quot; &quot;normal&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gfeetskill&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
 &lt;br&gt;
+&lt;&lt;if $NPCList[0].penis isnot &quot;none&quot;&gt;&gt;
+	&lt;&lt;link [[&quot;Service with your thighs (&quot; + getTimeString(_service.thigh.time) + &quot;)&quot;|Brothel Gloryhole]]&gt;&gt;&lt;&lt;gloryHoleServiceEffects &quot;thigh&quot; &quot;normal&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gthighskill&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+	&lt;br&gt;
+&lt;&lt;/if&gt;&gt;
+&lt;&lt;if $NPCList[0].penis isnot &quot;none&quot;&gt;&gt;
+	&lt;&lt;link [[&quot;Service with your cheeks (&quot; + getTimeString(_service.bottom.time) + &quot;)&quot;|Brothel Gloryhole]]&gt;&gt;&lt;&lt;gloryHoleServiceEffects &quot;butt&quot; &quot;normal&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gbottomskill&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+	&lt;br&gt;
+&lt;&lt;/if&gt;&gt;
 &lt;&lt;if ($player.penisExist or $worn.genitals.type.includes(&quot;strap-on&quot;) or playerHasStrapon()) and !playerChastity(&quot;penis&quot;)&gt;&gt;
 	&lt;&lt;link [[&quot;Service with your penis (&quot; + getTimeString(_service.penis.time) + &quot;)&quot;|Brothel Gloryhole]]&gt;&gt;&lt;&lt;gloryHoleServiceEffects &quot;penis&quot; &quot;normal&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gpenileskill&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
 	&lt;br&gt;
@@ -364676,6 +364688,14 @@ pussy appears at the hole.
 	&lt;br&gt;
 	&lt;&lt;link [[&quot;Service with your feet (&quot; + getTimeString(_service.feet.time) + &quot;)&quot;|Brothel Exclusive Gloryhole]]&gt;&gt;&lt;&lt;gloryHoleServiceEffects &quot;feet&quot; &quot;exclusive&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gfeetskill&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
 	&lt;br&gt;
+	&lt;&lt;if $NPCList[0].penis isnot &quot;none&quot;&gt;&gt;
+		&lt;&lt;link [[&quot;Service with your thighs (&quot; + getTimeString(_service.thigh.time) + &quot;)&quot;|Brothel Exclusive Gloryhole]]&gt;&gt;&lt;&lt;gloryHoleServiceEffects &quot;thigh&quot; &quot;exclusive&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gthighskill&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+		&lt;br&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;if $NPCList[0].penis isnot &quot;none&quot;&gt;&gt;
+		&lt;&lt;link [[&quot;Service with your cheeks (&quot; + getTimeString(_service.bottom.time) + &quot;)&quot;|Brothel Exclusive Gloryhole]]&gt;&gt;&lt;&lt;gloryHoleServiceEffects &quot;butt&quot; &quot;exclusive&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gbottomskill&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
+		&lt;br&gt;
+	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if ($player.penisExist or $worn.genitals.type.includes(&quot;strap-on&quot;) or playerHasStrapon()) and !playerChastity(&quot;penis&quot;)&gt;&gt;
 		&lt;&lt;link [[&quot;Service with your penis (&quot; + getTimeString(_service.penis.time) + &quot;)&quot;|Brothel Exclusive Gloryhole]]&gt;&gt;&lt;&lt;gloryHoleServiceEffects &quot;penis&quot; &quot;exclusive&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gpenileskill&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
 		&lt;br&gt;
@@ -364691,7 +364711,7 @@ pussy appears at the hole.
 	&lt;&lt;link [[Engage|Brothel Basement Exclusive Sex]]&gt;&gt;&lt;&lt;set $sexstart to 1&gt;&gt;&lt;&lt;tiredness 3&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gtiredness&gt;&gt;
 	&lt;br&gt;
 &lt;&lt;/if&gt;&gt;
-&lt;&lt;ind&gt;&gt;&lt;&lt;link [[Wait (0:10)|$passage]]&gt;&gt;&lt;&lt;tiredness -1&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;ltiredness&gt;&gt;
+&lt;&lt;ind&gt;&gt;&lt;&lt;link [[Wait (0:10)|$passage]]&gt;&gt;&lt;&lt;tiredness -1&gt;&gt;&lt;&lt;endevent&gt;&gt;&lt;&lt;endcombat&gt;&gt;&lt;&lt;unset $desperateaction&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;ltiredness&gt;&gt;
 &lt;br&gt;
 &lt;&lt;getouticon&gt;&gt;&lt;&lt;link [[Leave|Brothel Basement]]&gt;&gt;&lt;&lt;endevent&gt;&gt;&lt;&lt;endcombat&gt;&gt;&lt;&lt;unset $desperateaction&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="3597" name="Brothel Basement Exclusive Sex" tags="" position="850,44975" size="100,100">&lt;&lt;if $sexstart is 1&gt;&gt;
@@ -368953,6 +368973,28 @@ You make &lt;&lt;moneyGain `($brothel_show_bukkake * 50) + 1000`&gt;&gt;.
 	&lt;&lt;set _service.feet.rounds to _rounds&gt;&gt;
 	&lt;&lt;set _service.feet.time to _time + _waitTime&gt;&gt;
 
+	/* Thigh */
+	&lt;&lt;set _skill to (currentSkillValue(&quot;thighskill&quot;) / 100)&gt;&gt;
+	&lt;&lt;set _submission to 5&gt;&gt;
+	&lt;&lt;set _sex to 5&gt;&gt;
+	&lt;&lt;gloryHoleServiceCalc&gt;&gt;
+	&lt;&lt;set _service.thigh to {}&gt;&gt;
+	&lt;&lt;set _service.thigh.submission to _submission&gt;&gt;
+	&lt;&lt;set _service.thigh.sex to _sex&gt;&gt;
+	&lt;&lt;set _service.thigh.rounds to _rounds&gt;&gt;
+	&lt;&lt;set _service.thigh.time to _time + _waitTime&gt;&gt;
+
+	/* Butt */
+	&lt;&lt;set _skill to (currentSkillValue(&quot;bottomskill&quot;) / 100)&gt;&gt;
+	&lt;&lt;set _submission to 3&gt;&gt;
+	&lt;&lt;set _sex to 2&gt;&gt;
+	&lt;&lt;gloryHoleServiceCalc&gt;&gt;
+	&lt;&lt;set _service.bottom to {}&gt;&gt;
+	&lt;&lt;set _service.bottom.submission to _submission&gt;&gt;
+	&lt;&lt;set _service.bottom.sex to _sex&gt;&gt;
+	&lt;&lt;set _service.bottom.rounds to _rounds&gt;&gt;
+	&lt;&lt;set _service.bottom.time to _time + _waitTime&gt;&gt;
+
 	/* Penis */
 	&lt;&lt;set _skill to (currentSkillValue(&quot;penileskill&quot;) / 100)&gt;&gt;
 	&lt;&lt;set _submission to 20&gt;&gt;
@@ -369058,6 +369100,20 @@ You make &lt;&lt;moneyGain `($brothel_show_bukkake * 50) + 1000`&gt;&gt;.
 			&lt;&lt;elseif $NPCList[0].vagina isnot &quot;none&quot;&gt;&gt;
 				&lt;&lt;set $NPCList[0].vagina to &quot;feet&quot;&gt;&gt;
 			&lt;&lt;/if&gt;&gt;
+		&lt;&lt;case &quot;thigh&quot;&gt;&gt;
+			&lt;&lt;set _submission to _service.thigh.submission&gt;&gt;
+			&lt;&lt;set _sex to _service.thigh.sex&gt;&gt;
+			&lt;&lt;set _rounds to _service.thigh.rounds&gt;&gt;
+			&lt;&lt;set _time to _service.thigh.time&gt;&gt;
+			&lt;&lt;thighskill _rounds&gt;&gt;&lt;&lt;thighstat&gt;&gt;
+			&lt;&lt;set $NPCList[0].penis to &quot;thighs&quot;&gt;&gt;
+		&lt;&lt;case &quot;butt&quot;&gt;&gt;
+			&lt;&lt;set _submission to _service.bottom.submission&gt;&gt;
+			&lt;&lt;set _sex to _service.bottom.sex&gt;&gt;
+			&lt;&lt;set _rounds to _service.bottom.rounds&gt;&gt;
+			&lt;&lt;set _time to _service.bottom.time&gt;&gt;
+			&lt;&lt;bottomskill _rounds&gt;&gt;&lt;&lt;bottomstat&gt;&gt;
+			&lt;&lt;set $NPCList[0].penis to &quot;cheeks&quot;&gt;&gt;
 		&lt;&lt;case &quot;penis&quot;&gt;&gt;
 			&lt;&lt;set _submission to _service.penis.submission&gt;&gt;
 			&lt;&lt;set _sex to _service.penis.sex&gt;&gt;
@@ -475697,7 +475753,7 @@ The bell rings, and you join the throng of students in the hallway.
 &lt;&lt;link [[Next|Hallways]]&gt;&gt;&lt;&lt;endevent&gt;&gt;&lt;&lt;/link&gt;&gt;
 &lt;br&gt;</tw-passagedata><tw-passagedata pid="7186" name="Swimming Exam" tags="" position="725,89850" size="100,100">&lt;&lt;schooleffects&gt;&gt;&lt;&lt;effects&gt;&gt;
 
-&lt;&lt;set _time_temp to (57 - Time.minute)&gt;&gt;
+&lt;&lt;set _time_temp to (59 - Time.minute)&gt;&gt;
 &lt;&lt;pass _time_temp&gt;&gt;
 
 &lt;&lt;npc Mason&gt;&gt;&lt;&lt;person1&gt;&gt;
