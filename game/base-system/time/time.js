@@ -1904,6 +1904,23 @@ function dailyBaileyHQ() {
 		V.baileyHQ.tail = 0;
 	}
 
+	if (V.baileyHQ.fenceFix > 0) {
+		V.baileyHQ.fenceFix -= 1;
+	} else {
+		V.baileyHQ.fenceHole = 0;
+	}
+
+	if (V.baileyHQ.fenceTunnelFix > 0) {
+		V.baileyHQ.fenceTunnelFix -= 1;
+	} else {
+		V.baileyHQ.fenceTunnel = 0;
+	}
+
+	if (V.baileyHQ.nextDayAlertness > 0) {
+		V.baileyHQ.alertness += V.baileyHQ.nextDayAlertness;
+		V.baileyHQ.nextDayAlertness = 0;
+	}
+
 	if (V.baileyHQ.alertness > 0) {
 		V.baileyHQ.alertness -= 1;
 	}
