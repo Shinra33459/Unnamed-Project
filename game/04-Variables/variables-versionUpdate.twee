@@ -3619,7 +3619,7 @@
 	/* Code that should not be moved into a check like above */
 	<<set $runWardrobeSanityChecker to true>>
 
-	<<if $objectVersion.updateClothes lt 43 or $objectVersion.updateClothes is undefined>>
+	<<if $objectVersion.updateClothes lt 44 or $objectVersion.updateClothes is undefined>>
 		<<updateClothes>>
 		<<if $objectVersion.updateClothes lt 38>>
 			<!-- V0.4.0.7 return items stuck in $store without proper .location -->
@@ -3630,7 +3630,7 @@
 			<!--Should'nt need to re-run that often-->
 			<<run clothesDataTrimmerLoop()>>
 		<</if>>
-		<<set $objectVersion.updateClothes to 43>>
+		<<set $objectVersion.updateClothes to 44>>
 		<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 		Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
 	<</if>>
@@ -4844,13 +4844,20 @@
 			moneyModifier: 0
 		}>>
 	<</if>>
-	<<if $outfit_update is undefined or $outfit_update lt 4>>
-		<<set $outfit_update to 4>>
+	<<if $outfit_update is undefined or $outfit_update lt 5>>
+		<<set $outfit_update to 5>>
 		<<for $_i to 0; $_i lt $outfit.length; $_i++>>
 			<<if $outfit[$_i].handheld is undefined>>
 				<<set $outfit[$_i].handheld to "naked">>
 			<</if>>
+			<<if $outfit[$_i].colors and !$outfit[$_i].colors.handheld>>
+				<<set $outfit[$_i].colors.handheld to [0, 0]>>
+			<</if>>
 		<</for>>
+	<</if>>
+
+	<<if $brothelVending and $brothelVending.status is "sold" and $brothelVending.weeksEmpty lt 4>>
+		<<set $brothelVending.status to "set">>/*return vending machine to players whose machines were incorrectly eaten*/
 	<</if>>
 
 	<<modupdate>>
@@ -5021,6 +5028,21 @@
 	<</if>>
 	<<if $furnitureMovePrice is undefined>>
 		<<set $furnitureMovePrice = []>>
+	<</if>>
+	<<if $multFix is undefined>>
+		<<if $npcHealthMult is 1>>
+			<<set $npcHealthMult to 100>>
+		<</if>>
+		<<if $npcArousalMult is 1>>
+			<<set $npcArousalMult to 100>>
+		<</if>>
+		<<if $beastHealthMult is 1>>
+			<<set $beastHealthMult to 100>>
+		<</if>>
+		<<if $beastArousalMult is 1>>
+			<<set $beastArousalMult to 100>>
+		<</if>>
+		<<set $multFix to 1>>
 	<</if>>
 	<<if $npcHealthMult is undefined>>
 		<<set $npcHealthMult to 100>>
