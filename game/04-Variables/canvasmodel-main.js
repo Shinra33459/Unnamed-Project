@@ -960,7 +960,7 @@ Renderer.CanvasModels["main"] = {
 			filters: ["body"],
 			zfn(options) {
 				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.arms_cover;
-				return options.zarms;
+				return ZIndices.under_upper_arm_right;
 			},
 			animation: "idle",
 		},
@@ -3067,7 +3067,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_right !== "none"
 			},
 			zfn(options) {
-				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.hands : (options.zarms + 0.2);
+				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.hands : (ZIndices.under_upper_arm_right + 0.2);
 			},
 			filters: ["worn_hands"],
 			animation: "idle"
@@ -3087,7 +3087,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_right !== "none"
 			},
 			zfn(options) {
-				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.hands : (options.zarms + 0.2);
+				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.hands : (ZIndices.under_upper_arm_right + 0.2);
 			},
 			filters: ["worn_hands_acc"],
 			animation: "idle"
