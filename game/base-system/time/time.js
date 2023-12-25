@@ -1629,7 +1629,7 @@ function dailyFarmEvents() {
 		if (V.farm.watchtowerDailyAttempt == 1){
 			V.farm.watchtowerDailyAttempt = 0;
 		}
-		if (V.farm.build !== undefined && V.farm.build !== 0){
+		if (V.farm.dailyHelp == 1){
 			V.farm.dailyHelp = 0;
 		}
 	}

@@ -81625,7 +81625,9 @@ function dailyFarmEvents() {
 		if (V.farm.watchtowerDailyAttempt == 1){
 			V.farm.watchtowerDailyAttempt = 0;
 		}
-	
+		if (V.farm.build !== undefined && V.farm.build !== 0){
+			V.farm.dailyHelp = 0;
+		}
 	}
 	if (V.farm_stage >= 9) {
 		if (V.lurkers_stored >= 1) {
@@ -97138,6 +97140,9 @@ If you want to avoid trouble, dress modestly and stick to safe, well-lit areas. 
 		&lt;&lt;/if&gt;&gt;
 		&lt;&lt;if $farm.watchtowerDailyAttempt is undefined&gt;&gt;
 			&lt;&lt;set $farm.watchtowerDailyAttempt to 0&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
+		&lt;&lt;if $farm.dailyHelp is undefined&gt;&gt;
+			&lt;&lt;set $farm.dailyHelp to 0&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $studyBooks is undefined&gt;&gt;
@@ -208897,8 +208902,7 @@ Zohar
 						{ requiredValue:	($physiquesize / 7) * 10,	level: 10, color: &#39;gold&#39;,	description: &#39;Your body is ripped and robust.&#39;},
 						{ requiredValue:	($physiquesize / 7) * 11,	level: 11, color: &#39;gold&#39;,	description: &#39;Your body is defined and Herculean.&#39;},
 						{ requiredValue:	($physiquesize / 7) * 12,	level: 12, color: &#39;lustful&#39;,	description: &#39;Your body is powerful and supremely fit.&#39;},
-						{ requiredValue:	($physiquesize / 7) * 13,	level: 13, color: &#39;lustful&#39;,	description: &#39;Your body is a pinnacle of strength and vitality.&#39;},
-						{ requiredValue:	($physiquesize / 7) * 14,	level: 14, color: &#39;lustful&#39;,	description: &#39;Your body is a pinnacle of strength and vitality.&#39;}
+						{ requiredValue:	($physiquesize / 7) * 13,	level: 13, color: &#39;lustful&#39;,	description: &#39;Your body is a pinnacle of strength and vitality.&#39;}
 					]
 				}&gt;&gt;
 				&lt;&lt;if playerBellySize() gte 10 and playerNormalPregnancyTotal() lt 50&gt;&gt;
@@ -220931,7 +220935,7 @@ Zohar
 			},
 
 		green_manure: {
-			index: 40,
+			index: 39,
 			name: &quot;green_manure&quot;,
 			plural: &quot;green manure&quot;,
 			plant_cost: 1,
@@ -318703,12 +318707,12 @@ You help the builders carry material to the site.
 	It&#39;s hard work, &lt;span class=&quot;green&quot;&gt;but you&#39;re able to keep up.&lt;/span&gt;
 	&lt;br&gt;&lt;br&gt;
 
-	&lt;&lt;if random(1, 5) is 5&gt;&gt;
+	/* &lt;&lt;if random(1, 5) is 5&gt;&gt; */
 		&quot;Thanks for the help,&quot; a &lt;&lt;person&gt;&gt; says. &lt;span class=&quot;green&quot;&gt;&quot;I think we&#39;re ahead of schedule.&quot;&lt;/span&gt;
 		&lt;&lt;set $farm.build_timer -= 1&gt;&gt;
-	&lt;&lt;else&gt;&gt;
+	/* &lt;&lt;else&gt;&gt;
 		&quot;Thanks for the help,&quot; a &lt;&lt;person&gt;&gt; says. &quot;All this carrying does my back in.&quot;
-	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;/if&gt;&gt; */
 	&lt;br&gt;&lt;br&gt;
 &lt;&lt;else&gt;&gt;
 	&lt;span class=&quot;red&quot;&gt;Most is too heavy for you,&lt;/span&gt; so you help with the little things.
@@ -328679,6 +328683,12 @@ An even bigger compost bin.
 		&lt;&lt;set $skulduggerydifficulty to 700&gt;&gt;
 		&lt;&lt;bathroomicon &quot;shower&quot;&gt;&gt;&lt;&lt;link [[Spy on Alex (0:20)|Farm Spy]]&gt;&gt;&lt;&lt;pass 20&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;promiscuous1&gt;&gt;&lt;&lt;skulduggerydifficulty&gt;&gt;
 		&lt;br&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;if Time.hour gte 6&gt;&gt;
+		&lt;&lt;if $farm.build isnot undefined and $farm.build isnot 0 and $farm.dailyHelp is 0&gt;&gt;
+			&lt;&lt;link [[Help out the builders (1:00)|Farm Builders Help]]&gt;&gt;&lt;&lt;pass 60&gt;&gt;&lt;&lt;set $farm.dailyHelp to 1&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;physiquedifficulty 1 16000&gt;&gt;&lt;&lt;note &quot;Might speed construction if successful&quot; &quot;green&quot;&gt;&gt;
+			&lt;br&gt;
+		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if Time.hour gte 6&gt;&gt;
 		&lt;&lt;if $farm_work.border lt 1&gt;&gt;
@@ -423270,6 +423280,14 @@ In the chaos that ensues, you both get away.
 			&lt;&lt;set _canmath to 5&gt;&gt;
 		&lt;&lt;case 3 4&gt;&gt;&lt;!-- A, A* --&gt;
 			&lt;&lt;set _canmath to 6&gt;&gt;
+		&lt;&lt;case 5&gt;&gt;
+			&lt;&lt;set _canmath to 7&gt;&gt;
+		&lt;&lt;case 6&gt;&gt;
+			&lt;&lt;set _canmath to 8&gt;&gt;
+		&lt;&lt;case 7&gt;&gt;
+			&lt;&lt;set _canmath to 9&gt;&gt;
+		&lt;&lt;case 8&gt;&gt;
+			&lt;&lt;set _canmath to 10&gt;&gt;
 		&lt;&lt;default&gt;&gt;
 			&lt;&lt;set _canmath to 0&gt;&gt;
 	&lt;&lt;/switch&gt;&gt;
