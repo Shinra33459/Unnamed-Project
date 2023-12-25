@@ -743,7 +743,7 @@ Renderer.CanvasModels["main"] = {
 		if (options.upper_tucked) {
 			options.zupper = ZIndices.upper_tucked;
 			options.zupperleft = ZIndices.upper_arms_tucked;
-			options.zupperright = ZIndices.upper_arms_tucked;
+			options.zupperright = ZIndices.upper_arms_tucked + 2;
 		} else {
 			options.zupper = ZIndices.upper;
 			options.zupperleft = ZIndices.upper_arms;
