@@ -1641,6 +1641,16 @@ function dailyFarmEvents() {
 				V.phials_stored++;
 				V.farm.still_timer = 7;
 			}
+			if (V.farm.player_still_timer >= 0) {
+				V.farm.player_still_timer--;
+			}
+			if (V.farm.player_still_timer == 0) {
+				V.lurkers_stored--;
+				V.phials_stored++;
+				if (V.farm.extract == 2 && V.lurkers_stored > 0){
+					V.farm.player_still_timer = 9 - V.sciencetrait;
+				}
+			}
 		}
 	}
 	if (V.farm_countdown >= 1) V.farm_countdown--;
