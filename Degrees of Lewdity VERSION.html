@@ -81059,7 +81059,9 @@ function dailyNPCEffects() {
 function dailyPlayerEffects() {
 	const fragment = document.createDocumentFragment();
 
-	V.willpower *= 0.99;
+	if (V.willpowerDecay == 1){
+		V.willpower *= 0.99;
+	}
 
 	if (V.awareness <= -200 && V.innocencestate !== 1) {
 		V.innocencestate = 1;
@@ -97556,6 +97558,9 @@ If you want to avoid trouble, dress modestly and stick to safe, well-lit areas. 
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $npcStealMoneyPercentage is undefined&gt;&gt;
 		&lt;&lt;set $npcStealMoneyPercentage to 10&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;if $willpowerDecay is undefined&gt;&gt;
+		&lt;&lt;set $willpowerDecay to 1&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;</tw-passagedata><tw-passagedata pid="20" name="Widgets Canvas Low-Level API" tags="widget" position="1225,225" size="100,100">&lt;!--
 
@@ -190009,6 +190014,15 @@ hue-rotate(45deg) saturate(0.4) brightness(0.5)
 	&lt;&lt;/if&gt;&gt;
 	&lt;br&gt;
 
+	&lt;&lt;if $attitudesControl.unlockWillpower&gt;&gt;
+		&lt;label&gt;&lt;&lt;checkbox &quot;$willpowerDecay&quot; false true autocheck&gt;&gt; Your willpower wanes. &lt;i&gt;If unchecked, willpower will not decay.&lt;/i&gt;&lt;/label&gt;
+	&lt;&lt;else&gt;&gt;
+		Your willpower wanes.
+		&lt;br&gt;
+		&lt;span class=&quot;black&quot;&gt;&lt;i&gt;Unlock level 4 willpower.&lt;/i&gt;&lt;/span&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;br&gt;&lt;br&gt;
+
 	&lt;&lt;set _loveIntStart1 to $loveInterest.primary&gt;&gt;
 	&lt;&lt;set _loveIntStart2 to $loveInterest.secondary&gt;&gt;
 	&lt;div id=&quot;loveInterest&quot;&gt;
@@ -190786,6 +190800,7 @@ hue-rotate(45deg) saturate(0.4) brightness(0.5)
 		V.attitudesControl.unlockLewd = V.exhibitionism &gt;= 35 || V.promiscuity &gt;= 35 || V.deviancy &gt;= 35;
 		V.attitudesControl.unlockSadoMaso = V.sadism &gt;= 300 || V.masochism &gt;= 300;
 		V.attitudesControl.unlockHypnosis = Object.keys(V.hypnosis_traits).length &gt;= 1;
+		V.attitudesControl.unlockWillpower = V.willpower &gt;= 429;
 		/* set the highlight flag when one of the controls switches to true */
 		for (const c in V.attitudesControl) {
 			if (V.attitudesControl[c] &amp;&amp; !T.oldControl[c]) { V.attitudesControl.showGoldLink = true; break }
@@ -405260,16 +405275,12 @@ You are in your bedroom.
 	&lt;&lt;unset $study&gt;&gt;
 	&lt;&lt;if $phase is 1&gt;&gt;
 		You crack open your science textbook and read through the material.
-		&lt;&lt;scienceskill&gt;&gt;
 	&lt;&lt;elseif $phase is 2&gt;&gt;
 		You crack open your maths textbook and read through the material.
-		&lt;&lt;mathsskill&gt;&gt;
 	&lt;&lt;elseif $phase is 3&gt;&gt;
 		You crack open your English textbook and read through the material.
-		&lt;&lt;englishskill&gt;&gt;
 	&lt;&lt;elseif $phase is 4&gt;&gt;
 		You crack open your history textbook and read through the material.
-		&lt;&lt;historyskill&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;endevent&gt;&gt;
 	&lt;br&gt;&lt;br&gt;
