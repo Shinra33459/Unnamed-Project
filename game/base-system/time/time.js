@@ -1063,7 +1063,9 @@ function dailyNPCEffects() {
 function dailyPlayerEffects() {
 	const fragment = document.createDocumentFragment();
 
-	V.willpower *= 0.99;
+	if (V.willpowerDecay == 1){
+		V.willpower *= 0.99;
+	}
 
 	if (V.awareness <= -200 && V.innocencestate !== 1) {
 		V.innocencestate = 1;
