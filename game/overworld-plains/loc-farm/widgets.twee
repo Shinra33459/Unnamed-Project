@@ -742,12 +742,30 @@
 			<br>
 		<</if>>
 	<</if>>
+	<<if $farm_work.alex is "clearing">>
+		<<set _baseTime = 20>>
+	<<else>>
+		<<set _baseTime = 40>>
+	<</if>>
+	<<if $location is "alex_farm">>
+		<<if $farm.tractor gte 3>>
+			<<set _tractor = 0.25>>
+		<<elseif $farm.tractor gte 2>>
+			<<set _tractor = 0.5>>
+		<<elseif $farm.tractor gte 1>>
+			<<set _tractor = 1>>
+		<</if>>
+		<<if $farm.tractorloader is true>>
+			<<set _baseTime = Math.round(_baseTime * (0.5 * _tractor))>>
+		<</if>>
+	<</if>>
+	<<set _timeString to getTimeString(_baseTime)>>
 	<<if $farm_stage isnot 12 and $farm_work.alex is "clearing" and ($exposed lt 2 or $exhibitionism gte 75) and Time.dayState isnot "night">>
-		<<farmicon "clear yard">><<link [[Help Alex clear a field (0:20)|Farm Clearing]]>><<physique 2>><<farm_clear>><</link>><<gtiredness>><<run _actions++>>
+		<<farmicon "clear yard">><<link [["Help Alex clear a field ("+ _timeString +")"|Farm Clearing]]>><<physique 2>><<farm_clear>><</link>><<gtiredness>><<run _actions++>>
 		<br>
 	<</if>>
 	<<if $farm_stage isnot 12 and _actions is 0 and $farm_work.alex isnot "clearing" and ($exposed lt 2 or $exhibitionism gte 75)>>
-		<<farmicon "clear yard">><<link [[Clear a field alone (0:40)|Farm Clearing Alone]]>><<physique 3>><<farm_clear>><</link>><<ggtiredness>><<run _actions++>>
+		<<farmicon "clear yard">><<link [["Clear a field alone ("+ _timeString +")"|Farm Clearing Alone]]>><<physique 3>><<farm_clear>><</link>><<ggtiredness>><<run _actions++>>
 		<br>
 	<</if>>
 
