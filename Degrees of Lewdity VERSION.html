@@ -214254,6 +214254,14 @@ Zohar
 							Irrigation is being installed in a field.
 						&lt;&lt;case &quot;nursery&quot;&gt;&gt;
 							A nursery is being built in the cottage.
+						&lt;&lt;case &quot;compost bin 1&quot;&gt;&gt;
+							A compost bin is being installed.
+						&lt;&lt;case &quot;compost bin 2&quot; &quot;compost bin 3&quot;&gt;&gt;
+							The compost bin is being expanded.
+						&lt;&lt;case &quot;extract 1&quot;&gt;&gt;
+							The aphrodisiac extraction system is being installed.
+						&lt;&lt;case &quot;extract 2&quot;&gt;&gt;
+							The aphrodisiac extraction system is being upgraded.
 					&lt;&lt;/switch&gt;&gt;
 					&lt;&lt;if $farm.build_timer is 1&gt;&gt;
 						It&#39;ll be finished &lt;span class=&quot;gold&quot;&gt;tomorrow.&lt;/span&gt;
@@ -329016,12 +329024,30 @@ Automate the aphrodisiac extraction system.
 			&lt;br&gt;
 		&lt;&lt;/if&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;if $farm_work.alex is &quot;clearing&quot;&gt;&gt;
+		&lt;&lt;set _baseTime = 20&gt;&gt;
+	&lt;&lt;else&gt;&gt;
+		&lt;&lt;set _baseTime = 40&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;if $location is &quot;alex_farm&quot;&gt;&gt;
+		&lt;&lt;if $farm.tractor gte 3&gt;&gt;
+			&lt;&lt;set _tractor = 0.25&gt;&gt;
+		&lt;&lt;elseif $farm.tractor gte 2&gt;&gt;
+			&lt;&lt;set _tractor = 0.5&gt;&gt;
+		&lt;&lt;elseif $farm.tractor gte 1&gt;&gt;
+			&lt;&lt;set _tractor = 1&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
+		&lt;&lt;if $farm.tractorloader is true&gt;&gt;
+			&lt;&lt;set _baseTime = Math.round(_baseTime * (0.5 * _tractor))&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
+	&lt;&lt;set _timeString to getTimeString(_baseTime)&gt;&gt;
 	&lt;&lt;if $farm_stage isnot 12 and $farm_work.alex is &quot;clearing&quot; and ($exposed lt 2 or $exhibitionism gte 75) and Time.dayState isnot &quot;night&quot;&gt;&gt;
-		&lt;&lt;farmicon &quot;clear yard&quot;&gt;&gt;&lt;&lt;link [[Help Alex clear a field (0:20)|Farm Clearing]]&gt;&gt;&lt;&lt;physique 2&gt;&gt;&lt;&lt;farm_clear&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gtiredness&gt;&gt;&lt;&lt;run _actions++&gt;&gt;
+		&lt;&lt;farmicon &quot;clear yard&quot;&gt;&gt;&lt;&lt;link [[&quot;Help Alex clear a field (&quot;+ _timeString +&quot;)&quot;|Farm Clearing]]&gt;&gt;&lt;&lt;physique 2&gt;&gt;&lt;&lt;farm_clear&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;gtiredness&gt;&gt;&lt;&lt;run _actions++&gt;&gt;
 		&lt;br&gt;
 	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $farm_stage isnot 12 and _actions is 0 and $farm_work.alex isnot &quot;clearing&quot; and ($exposed lt 2 or $exhibitionism gte 75)&gt;&gt;
-		&lt;&lt;farmicon &quot;clear yard&quot;&gt;&gt;&lt;&lt;link [[Clear a field alone (0:40)|Farm Clearing Alone]]&gt;&gt;&lt;&lt;physique 3&gt;&gt;&lt;&lt;farm_clear&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;ggtiredness&gt;&gt;&lt;&lt;run _actions++&gt;&gt;
+		&lt;&lt;farmicon &quot;clear yard&quot;&gt;&gt;&lt;&lt;link [[&quot;Clear a field alone (&quot;+ _timeString +&quot;)&quot;|Farm Clearing Alone]]&gt;&gt;&lt;&lt;physique 3&gt;&gt;&lt;&lt;farm_clear&gt;&gt;&lt;&lt;/link&gt;&gt;&lt;&lt;ggtiredness&gt;&gt;&lt;&lt;run _actions++&gt;&gt;
 		&lt;br&gt;
 	&lt;&lt;/if&gt;&gt;
 
