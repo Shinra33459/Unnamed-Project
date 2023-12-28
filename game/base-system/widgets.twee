@@ -1783,7 +1783,7 @@
 		<div id="hallucinogencaption">
 			<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
 				<<if $options.showCaptionText is true>>
-					<span class="purple">Your perception is altered</span>
+					<span class="purple">Your perception is altered.</span>
 				<<else>>
 					Hallucinogen:
 				<</if>>
@@ -2490,6 +2490,11 @@
 			<<genitalsruined>><<clothesruinstat>>
 		<</if>>
 	<</if>>
+	<<if $worn.handheld.type.includes("rainproof") and $worn.handheld.integrity lte 0>>
+		<span class="red">Your $worn.handheld.name breaks from the abuse.</span>
+		<br>
+		<<handheldruined>><<set $umbrellaStat += 1>>
+	<</if>>
 <</widget>>
 
 <<widget "arm_unbind">>
@@ -2530,8 +2535,18 @@
 <</widget>>
 
 <<widget "bind">>
-	<<set $leftarm to "bound">>
-	<<set $rightarm to "bound">>
+	<<if _args[0]>>
+		<<set _args[0] to "bound">>
+		<<if $rightarm is "bound" and $worn.handheld.name isnot "naked">>
+			<<handheldruined>>
+		<</if>>
+	<<else>>
+		<<set $leftarm to "bound">>
+		<<set $rightarm to "bound">>
+		<<if $worn.handheld.name isnot "naked">>
+			<<handheldruined>>
+		<</if>>
+	<</if>>
 <</widget>>
 
 <<widget "legbind">>
@@ -2567,7 +2582,7 @@
 	<<if $leftarm is "bound" and $position isnot "wall">><<set $leftboundcarry to 1>><</if>>
 	<<if $rightarm is "bound" and $position isnot "wall">><<set $rightboundcarry to 1>><</if>>
 	<<if $rightboundcarry is 1 and $rightarm isnot "bound">>
-		<<set $rightarm to "bound">>
+		<<set $rightarm to "bound">><<handheldruined>>
 	<</if>>
 	<<if $leftboundcarry is 1 and $leftarm isnot "bound">>
 		<<set $leftarm to "bound">>
@@ -3209,7 +3224,7 @@
 
 <<widget "roomoptions">>
 	<<if $sexStats.pills.boughtOnce is true or $sexStats.pills["pills"]["Dr Harper\'s prescription"].owned gte 1 or $sexStats.pills["pills"]["asylum\'s prescription"].owned gte 1>>
-		<<pillicon>><<link [[Check your pills|PillCollection]]>><<set $pillsExitPassage to $passage>><<endevent>><</link>>
+		<<pillicon>><<link [[Check your Medicine Drawer|PillCollection]]>><<set $pillsExitPassage to $passage>><<endevent>><</link>>
 		<br>
 	<</if>>
 <</widget>>
@@ -4035,18 +4050,18 @@
 <<widget "nounderwearcheck">>
 	/*Checks if the PC is pantiless, but otherwise decent. Results in low level exhibitionism increases.*/
 	/*
-		Feature was disabled previous but left the text as is, just disabling the text rather than removing it
+		Feature was disabled previously, has been re-enabled after meeting the below requirement
 		Vrelnir: Exhibitionism should only rise when the player directly choses certain actions. The PC could have their underwear stolen, which would result in exhibitionism rising without a direct decision to do so.
-		Left in incase a valid use of the feature can be correctly implemented that meets the above requirement
 	*/
-	/*<<if !$worn.lower.type.includes("naked") and $worn.under_lower.type.includes("naked") and $exposed lte 0 and $exhibitionism lt 19>>
+	<<if (!$worn.over_lower.type.includes("naked") or !$worn.lower.type.includes("naked")) and $worn.under_lower.type.includes("naked") and ["notWorn", "notBought", "sold", "given"].includes($worn.under_lower.exposedType) and $exposed lte 0 and $exhibitionism lt 19 and !$daily.no_underwear>>
 		<<set $no_underwear += 1>>
 	<</if>>
-	<<if $no_underwear gte 8>>
+	<<if $no_underwear gte 20>>
+		<<set $daily.no_underwear to true>>
 		<<set $no_underwear to 0>>
 		<<set $effectsmessage to 1>>
 		<<set $exhibitionism_message to 1>>
-	<</if>>*/
+	<</if>>
 <</widget>>
 
 <<widget "breastfed">>
@@ -5535,45 +5550,9 @@
 
 <<widget "umbrellaDurability">>
 	<<if $umbrellaHit isnot undefined>>
-		<<set $umbrellaDurability -= Math.round(5 * $umbrellaHit)>>
+		<<set $worn.handheld.integrity -= Math.round(15 * $umbrellaHit)>>
 		<<unset $umbrellaHit>>
 	<<else>>
-		<<set $umbrellaDurability -= 1>>
-	<</if>>
-	<<if $umbrellaDurability lte 0>>
-		<<set $umbrellaStat += 1>>
-		<<set $umbrella to 3>>
-	<</if>>
-<</widget>>
-
-<<widget "umbrellacaption">>
-	<<if $umbrella isnot 0>>
-		<<if Number.isFinite($umbrellaDurability)>>
-			<div id="umbrellacaption" @title="'Umbrella: ' + $umbrellaDurability.toFixed(2)">
-				<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
-					Umbrella:
-					<<if $options.showCaptionText is true>>
-						<<if $umbrellaDurability gte 25>>
-							<span class="green">The umbrella is fine and dandy.</span>
-						<<elseif $umbrellaDurability gte (25 / 5) * 4>>
-							<span class="teal">Your umbrella is a little dented.</span>
-						<<elseif $umbrellaDurability gte (25 / 5) * 3>>
-							<span class="lblue">Your umbrella is starting to wiggle a bit.</span>
-						<<elseif $umbrellaDurability gte (25 / 5) * 2>>
-							<span class="blue">One of the ribs are broken.</span>
-						<<elseif $umbrellaDurability gte (25 / 5) * 1>>
-							<span class="purple">You're not sure its gonna last much longer.</span>
-						<<elseif $umbrellaDurability gte 1>>
-							<span class="pink">Its going to break.</span>
-						<<elseif $umbrella is 3>>
-							<span class="red">You broke it.</span>
-						<</if>>
-					<</if>>
-				</div>
-				<<set _showCaptionText to !$options.showCaptionText>>
-				<<statbarinverted $umbrellaDurability 25 _showCaptionText>>
-				<div style="clear:both;"></div>
-			</div>
-		<</if>>
+		<<set $worn.handheld.integrity -= 10>>
 	<</if>>
 <</widget>>

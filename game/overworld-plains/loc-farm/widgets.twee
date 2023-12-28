@@ -571,6 +571,12 @@
 		<br>
 	<</if>>
 	<<if Time.hour gte 6>>
+		<<if $farm.build isnot undefined and $farm.build isnot 0 and $farm.dailyHelp is 0>>
+			<<link [[Help out the builders (1:00)|Farm Builders Help]]>><<pass 60>><<set $farm.dailyHelp to 1>><</link>><<physiquedifficulty 1 16000>><<note "Might speed construction if successful" "green">>
+			<br>
+		<</if>>
+	<</if>>
+	<<if Time.hour gte 6>>
 		<<if $farm_work.border lt 1>>
 			<<investigateicon>><<link [[Investigate the perimeter (0:20)|Farm Border]]>><<farm_count 20>><<set $farm_work.border to 1>><<pass 20>><</link>><<run _actions++>>
 			<br>
@@ -736,12 +742,30 @@
 			<br>
 		<</if>>
 	<</if>>
+	<<if $farm_work.alex is "clearing">>
+		<<set _baseTime = 20>>
+	<<else>>
+		<<set _baseTime = 40>>
+	<</if>>
+	<<if $location is "alex_farm">>
+		<<if $farm.tractor gte 3>>
+			<<set _tractor = 0.25>>
+		<<elseif $farm.tractor gte 2>>
+			<<set _tractor = 0.5>>
+		<<elseif $farm.tractor gte 1>>
+			<<set _tractor = 1>>
+		<</if>>
+		<<if $farm.tractorloader is true>>
+			<<set _baseTime = Math.round(_baseTime * (0.5 * _tractor))>>
+		<</if>>
+	<</if>>
+	<<set _timeString to getTimeString(_baseTime)>>
 	<<if $farm_stage isnot 12 and $farm_work.alex is "clearing" and ($exposed lt 2 or $exhibitionism gte 75) and Time.dayState isnot "night">>
-		<<farmicon "clear yard">><<link [[Help Alex clear a field (0:20)|Farm Clearing]]>><<physique 2>><<farm_clear>><</link>><<gtiredness>><<run _actions++>>
+		<<farmicon "clear yard">><<link [["Help Alex clear a field ("+ _timeString +")"|Farm Clearing]]>><<physique 2>><<farm_clear>><</link>><<gtiredness>><<run _actions++>>
 		<br>
 	<</if>>
 	<<if $farm_stage isnot 12 and _actions is 0 and $farm_work.alex isnot "clearing" and ($exposed lt 2 or $exhibitionism gte 75)>>
-		<<farmicon "clear yard">><<link [[Clear a field alone (0:40)|Farm Clearing Alone]]>><<physique 3>><<farm_clear>><</link>><<ggtiredness>><<run _actions++>>
+		<<farmicon "clear yard">><<link [["Clear a field alone ("+ _timeString +")"|Farm Clearing Alone]]>><<physique 3>><<farm_clear>><</link>><<ggtiredness>><<run _actions++>>
 		<br>
 	<</if>>
 
@@ -1051,7 +1075,7 @@
 <</widget>>
 
 <<widget "farm_aggro">>
-	<<if _args[0]>>
+	<<if _args[0] and $farm>>
 		<<set _aggro_mod to 1>>
 		<<if _args[0] gt 0>>
 			<<if $farm.wall gte 1>>
@@ -2361,7 +2385,12 @@
 
 	<</if>>
 
-	<<getouticon>><<link [[Go outside (0:01)|Farm Work]]>><<pass 1>><<endevent>><</link>>
+	<<getouticon>><<link [[Go outside (0:01)|Farm Work]]>>
+		<<pass 1>><<endevent>>
+		<<if $farm_stage gte 7 and (($exhibitionism gte 75 and $exposed gte 2) or ($exhibitionism gte 55 and $exposed gte 1))>>
+			<<set $farm_naked to 1>>
+		<</if>>
+	<</link>>
 	<br>
 <</widget>>
 
@@ -2867,6 +2896,10 @@
 				A compost bin is being installed.
 			<<case "compost bin 2" "compost bin 3">>
 				The compost bin is being expanded.
+			<<case "extract 1">>
+				The aphrodisiac extraction system is being installed.
+			<<case "extract 2">>
+				The aphrodisiac extraction system is being upgraded.
 		<</switch>>
 		<<if $farm.build_timer is 1>>
 			It'll be finished tomorrow.
@@ -3030,6 +3063,25 @@
 			<br>
 		<</if>>
 		<br>
+		<<if $sciencetrait gte 2>>
+			Aphrodisiac Extraction System:
+			<<if $farm isnot undefined>>
+				<<if $farm.extract is undefined>>
+					<<set $farm.extract = 0>>
+				<</if>>
+			<</if>>
+			<<if $farm.extract gte 2 or $farm.build is "extract 2">>
+				<span class="green">As large as it can be</span>
+				<br>
+			<<elseif $farm.extract gte 1 and $sciencetrait gte 4>>
+				<<link [[Upgrade|Farm Upgrades Extract 2]]>><</link>>
+				<br>
+			<<elseif $farm.extract is 0>>
+				<<link [[Purchase|Farm Upgrades Extract 1]]>><</link>>
+				<br>
+			<</if>>
+			<br>
+		<</if>>
 		Farm Irrigation:
 		<<if $farm.irrigation gte 9>>
 			<span class="green">Every field has irrigation</span>
@@ -3440,5 +3492,97 @@
 	<<set $farm.tower_guard_skill to clone($NPCList[0].skills.security)>>
 	<<if $NPCList[0].skills.security gte 1000>>
 		<<earnFeat "Reliable Employer">>
+	<</if>>
+<</widget>>
+
+<<widget "alexBoozeShopping">>
+	<<if $alexBooze is "noID">>
+		A slightly annoyed look appears on <<his>> as <<he>> turns back toward you.
+		
+		<<if C.npc.Alex.dom gte 20>>
+			"Thought I included some alcohol on the list," Alex says, the annoyance dripping from <<his>> voice.
+			<br><br>
+
+			"Sorry, I don't have an ID."
+			<br><br>
+
+			<<He>> cocks <<his>> head to the side, opening <<his>> mouth to speak before closing it again. Alex gives a nod and a mumbled apology.
+			<br><br>
+
+		<<else>>
+			"Why'd you leave out the alcohol?" Alex says, not trying to hide <<his>> displeasure. <<He>> draws closer, not leaving you with much space.<<gstress>><<stress 6>>
+			<br><br>
+
+			<<if $speech_attitude is "meek">>
+				"I'm sorry...I don't have an ID. Don't be angry..."
+			<<elseif $speech_attitude is "bratty">>
+				"Cause I don't have a fucking ID."
+			<<else>>
+				"Sorry, I didn't have an ID."
+			<</if>>
+			<br><br>
+
+			"Should have mentioned it before I sent you out," <<he>> grumbles, staring at you for a moment. <<He>> turns away once again, leaving a bitter taste in the air as <<he>> walks off.<<gstress>><<stress 6>>
+			<br><br>
+
+		<</if>>
+
+		<<link [[Give Alex the money|Farm Shopping Booze]]>><</link>>
+		<br>
+		<<link [[Keep the money|Farm Work]]>><<set $money += $farm_work.shopping_money>><<endevent>><</link>>
+
+	<<elseif $alexBooze is "noBooze">>
+		A slightly annoyed look appears on <<his>> as <<he>> turns back toward you.
+
+		<<if C.npc.Alex.dom gte 20>>
+			"Why'd you leave out the alcohol?" Alex says, not trying to hide <<his>> displeasure. <<He>> draws closer, not leaving you with much space.<<gstress>><<stress 6>>
+			<br><br>
+
+			<<if $speech_attitude is "meek">>
+				"I'm...I'm sorry...I'm just worried about you..."
+				<br><br>
+
+				Alex's face softens slightly, but the anger is still evident on it. <<He>> steps away, giving you some space. "Nothing to worry about. I'm right as rain."
+				<br><br>
+
+				<<He>> bumps shoulders with you before turning back toward the farmhouse. You swore <<he>> mumbled an apology.<<lstress>><<stress -6>>
+
+			<<elseif $speech_attitude is "bratty">>
+				"Because you drink too fucking much!" you shout before pushing Alex away. 
+				<br><br>
+
+				<<He>> glares at you, clutching the basket tightly. <<Hes>> gritting his teeth tightly. "You got no fucking right to tell me if I'm drinking too much." Alex wastes not a moment turning away and heading back to the farmhouse.<<llove>><<ldom>><<npcincr "Alex" dom -1>>
+
+			<<else>>
+				"Thought you had plenty already."
+				<br><br>
+	
+				"Wouldn't have put it on the list if I had enough of it," Alex huffs before turning away. <<He>> looks over his shoulder with a hint of anger in his eyes. "Just enjoying my life," <<he>> says. "What's wrong with that?" <<He>> heads back to the farmhouse.<<gstress>><<stress 6>>
+
+			<</if>>
+		<<else>>
+			"Thought I included some alcohol on the list," Alex says, the annoyance dripping from <<his>> voice.
+			<br><br>
+
+			"You did. Thought you had plenty of it still."
+			<br><br>
+
+			Alex stares at you for a bit too long. You can tell <<he>> is biting <<his>> tongue. <<He>> shakes <<his>> head before sighing. 
+			<br><br>
+			
+			"Always can do with a little more. I'll go myself later and pick some up." <<His>> voice betrays the irritation <<he>> tried to brush off.
+		<</if>>
+		<br><br>
+
+		<<link [[Give Alex the money|Farm Shopping Booze]]>><</link>>
+		<br>
+		<<link [[Keep the money|Farm Work]]>><<set $money += $farm_work.shopping_money>><<endevent>><</link>>
+
+	<<else>>
+		A wide smile appears at the sight of the alcohol.
+		<br><br>
+
+		<<link [[Next|Farm Work]]>><<endevent>><</link>>
+
 	<</if>>
 <</widget>>
