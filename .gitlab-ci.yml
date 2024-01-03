@@ -1,6 +1,5 @@
 stages:
-    - build
-    - release
+    - auto-release
 
 variables:
     VERSION: ""
@@ -16,9 +15,9 @@ before_script:
     - npm install -g cordova
 
 build_job:
-    stage: build
+    stage: auto-release
     script:
-    - echo "Building version $VERSION"
+    - echo "Building version v0.$CI_PIPELINE_IID"
     - mkdir -p releases/DoLP_Vanilla/img/
     - mkdir -p releases/DoLP_BEEESSS/img/
     - mkdir -p releases/DoLP_BEEESSS+Hikari_Female/img/
@@ -41,9 +40,11 @@ build_job:
     - cp -r -f ./vanillaimg/* ./releases/DoLP_Modloader/img/
     only:
     - master
+    after_script:
+        - echo "Finished building."
 
 build_apk_vanilla:
-    stage: build
+    stage: auto-release
     needs:
         - job: build_job
     script:
@@ -52,7 +53,7 @@ build_apk_vanilla:
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
 build_apk_beeesss:
-    stage: build
+    stage: auto-release
     needs:
         - job: build_job
         - job: build_apk_vanilla
@@ -62,7 +63,7 @@ build_apk_beeesss:
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
 build_apk_hikari_female:
-    stage: build
+    stage: auto-release
     needs:
         - job: build_job
         - job: build_apk_vanilla
@@ -72,7 +73,7 @@ build_apk_hikari_female:
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
 build_apk_hikari_male:
-    stage: build
+    stage: auto-release
     needs:
         - job: build_job
         - job: build_apk_vanilla
@@ -82,7 +83,7 @@ build_apk_hikari_male:
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
 build_apk_paril_hairstyle_extended:
-    stage: build
+    stage: auto-release
     needs:
         - job: build_job
         - job: build_apk_vanilla
@@ -92,7 +93,7 @@ build_apk_paril_hairstyle_extended:
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
 build_apk_modloader:
-    stage: build
+    stage: auto-release
     needs:
         - job: build_job
         - job: build_apk_vanilla
@@ -102,11 +103,11 @@ build_apk_modloader:
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
 upload:
-    stage: build
+    stage: auto-release
     needs:
         - job: build_job
-        - job: build_apk_vanilla
     script:
+        - echo "Uploading zips..."
         - cd ./releases/
         - zip -r ./DoLP_Vanilla/DoLP_Vanilla.zip ./DoLP_Vanilla/ 1>NUL
         - 'curl 
@@ -140,14 +141,14 @@ upload:
             "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Modloader.zip"'
 
 after_script:
-    - echo "Finished building."
+    - echo "Finished uploading zips."
 
 release_job:
-    stage: release
+    stage: auto-release
     image: registry.gitlab.com/gitlab-org/release-cli:latest
     needs:
         - job: build_job
-        - job: build_apk_vanilla
+        - job: upload
           artifacts: true
     rules:
     - if: $CI_COMMIT_TAG
@@ -173,3 +174,5 @@ release_job:
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Paril+Hairstyle_Extended.zip"
                 - name: 'DoLP_Modloader'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Modloader.zip"
+    after_script:
+    - echo "Finished creating releases."
