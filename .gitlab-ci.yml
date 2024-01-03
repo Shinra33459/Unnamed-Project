@@ -47,7 +47,7 @@ build_apk_vanilla:
     needs:
         - job: build_job
     script:
-        - cd ./releases/DoLP_Vanilla
+        - cd ./releases/DoLP_Vanilla/
         - cordova platform add android
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
@@ -55,8 +55,9 @@ build_apk_beeesss:
     stage: build
     needs:
         - job: build_job
+        - job: build_apk_vanilla
     script:
-        - cd ./releases/DoLP_BEEESSS
+        - cd ./releases/DoLP_BEEESSS/
         - cordova platform add android
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
@@ -64,8 +65,9 @@ build_apk_hikari_female:
     stage: build
     needs:
         - job: build_job
+        - job: build_apk_vanilla
     script:
-        - cd ./releases/DoLP_BEEESSS+Hikari_Female
+        - cd ./releases/DoLP_BEEESSS+Hikari_Female/
         - cordova platform add android
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
@@ -73,8 +75,9 @@ build_apk_hikari_male:
     stage: build
     needs:
         - job: build_job
+        - job: build_apk_vanilla
     script:
-        - cd ./releases/DoLP_BEEESSS+Hikari_Male
+        - cd ./releases/DoLP_BEEESSS+Hikari_Male/
         - cordova platform add android
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
@@ -82,8 +85,9 @@ build_apk_paril_hairstyle_extended:
     stage: build
     needs:
         - job: build_job
+        - job: build_apk_vanilla
     script:
-        - cd ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended
+        - cd ./releases/DoLP_BEEESSS+Paril+Hairstyle_Extended/
         - cordova platform add android
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
@@ -91,8 +95,9 @@ build_apk_modloader:
     stage: build
     needs:
         - job: build_job
+        - job: build_apk_vanilla
     script:
-        - cd ./releases/DoLP_Modloader
+        - cd ./releases/DoLP_Modloader/
         - cordova platform add android
         - cordova build android --release -- --gradleArg=-PcdvMinSdkVersion=34
 
@@ -100,6 +105,7 @@ upload:
     stage: build
     needs:
         - job: build_job
+        - job: build_apk_vanilla
     script:
         - cd ./releases/
         - zip -r ./DoLP_Vanilla/DoLP_Vanilla.zip ./DoLP_Vanilla/ 1>NUL
@@ -141,6 +147,7 @@ release_job:
     image: registry.gitlab.com/gitlab-org/release-cli:latest
     needs:
         - job: build_job
+        - job: build_apk_vanilla
           artifacts: true
     rules:
     - if: $CI_COMMIT_TAG
