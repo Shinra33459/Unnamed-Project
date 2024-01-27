@@ -97609,6 +97609,17 @@ If you want to avoid trouble, dress modestly and stick to safe, well-lit areas. 
 	&lt;&lt;if $birdFly is 1&gt;&gt;
 		&lt;&lt;set $birdFlyUnlocked to 1&gt;&gt;
 	&lt;&lt;/if&gt;&gt;
+
+	&lt;&lt;set $daisyCount to 0&gt;&gt;
+	&lt;&lt;for _i to 0; _i lt $plants_known.length; _i++&gt;&gt;
+		&lt;&lt;if $plants_known[_i] is &quot;daisy&quot;&gt;&gt;
+			&lt;&lt;set $daisyCount += 1&gt;&gt;
+		&lt;&lt;/if&gt;&gt;
+	&lt;&lt;/for&gt;&gt;
+	&lt;&lt;if $daisyCount gte 2&gt;&gt;
+		&lt;&lt;set $plants_known to []&gt;&gt;
+		&lt;&lt;run unlockAllSeeds()&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;</tw-passagedata><tw-passagedata pid="20" name="Widgets Canvas Low-Level API" tags="widget" position="1225,225" size="100,100">&lt;!--
 
 Low-level canvas renderer composition functions.
@@ -151677,7 +151688,7 @@ It will cost you
 			&lt;&lt;if $encounterHit is undefined&gt;&gt;
 				&lt;&lt;earnFeat &quot;Hitless&quot;&gt;&gt;
 			&lt;&lt;/if&gt;&gt;
-			&lt;&lt;if $wraith.type is &quot;man&quot;&gt;&gt;
+			&lt;&lt;if $NPCList[0].fullDescription is &quot;Ivory Wraith&quot; and $wraith.type is &quot;man&quot;&gt;&gt;
 				&lt;&lt;earnFeat &quot;Ghost Buster&quot;&gt;&gt;
 			&lt;&lt;/if&gt;&gt;
 		&lt;&lt;/if&gt;&gt;
@@ -197163,6 +197174,8 @@ hue-rotate(45deg) saturate(0.4) brightness(0.5)
 	&lt;br&gt;
 	- BEEESSS Wax | &lt;span class=&quot;gold&quot;&gt;The Immortal Heaven-Ascended Sword God Paril&lt;/span&gt;
 	&lt;br&gt;
+	- Meow Face | &lt;span class=&quot;gold&quot;&gt;Okbd&lt;/span&gt;
+	&lt;br&gt;
 	- The many amazing artists that made the Community Sprite Compilation happen | &lt;span class=&quot;gold&quot;&gt;BEEESSS, ethanatortx, MatchaCrepeCakes, LedhaKuromi, Tommohas, Jessplayin690, SkyFall669/SomethingIsHuntingYou, AvinsXD, okbd321, cloversnipe, Elegant_Dress_5771, doseonseng, G259M, VanityDecay, Hikari, luoyin mengling, Tieba user_5CU79bt, Xiaochien, cheese shredded cake, artiste (the gayest man alive), Suqi eggplant stew, Paril, La Maritza, AD calcium, Isari, 森谷華子, aqua, superhydroxide, 再3棘, 567600, ToumanLin, Isopod, ◌/あきやま&lt;/span&gt;
 	&lt;br&gt;&lt;br&gt;
 	&lt;span id=&quot;devNote3&quot;&gt;
@@ -212536,7 +212549,7 @@ Zohar
 	&lt;&lt;/if&gt;&gt;
 
 	&lt;br&gt;&lt;br&gt;
-	&lt;&lt;link &quot;Unlock All Plants&quot;&gt;&gt;&lt;&lt;unlockplants&gt;&gt;&lt;&lt;/link&gt;&gt;
+	&lt;&lt;link &quot;Unlock All Seeds&quot;&gt;&gt;&lt;&lt;run unlockAllSeeds()&gt;&gt;&lt;&lt;/link&gt;&gt;
 	&lt;br&gt;&lt;br&gt;
 	&lt;&lt;link &quot;Unlock All Special Clothing&quot;&gt;&gt;&lt;&lt;unlockspecialclothing&gt;&gt;&lt;&lt;/link&gt;&gt;
 	&lt;br&gt;&lt;br&gt;
@@ -213008,6 +213021,9 @@ Zohar
 	&lt;br&gt;
 	Note: The above may or may not break the farm.
 	&lt;br&gt;
+	&lt;&lt;if $farm.clearing is undefined&gt;&gt;
+		&lt;&lt;set $farm.clearing to 0&gt;&gt;
+	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;link &quot;&lt;&lt;&lt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing -= 100&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 100)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt; |
 	&lt;&lt;link &quot;&lt;&lt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing -= 50&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 100)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt; |
 	&lt;&lt;link &quot;&lt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing -= 1&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 100)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt; |
@@ -213016,19 +213032,6 @@ Zohar
 	| &lt;&lt;link &quot;&gt;&gt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing += 50&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 100)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt;
 	| &lt;&lt;link &quot;&gt;&gt;&gt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing += 100&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 100)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt;
 	&lt;br&gt;&lt;br&gt;
-	&lt;&lt;if $farm_stage gte 7&gt;&gt;
-		&lt;&lt;if $farm.clearing is undefined&gt;&gt;
-			&lt;&lt;set $farm.clearing to 0&gt;&gt;
-		&lt;&lt;/if&gt;&gt;
-		&lt;&lt;link &quot;&lt;&lt;&lt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing -= 4&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 4)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt; |
-		&lt;&lt;link &quot;&lt;&lt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing -= 2&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 4)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt; |
-		&lt;&lt;link &quot;&lt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing -= 1&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 4)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt; |
-		Farm Clearing: &lt;span id=&quot;farm_clearing&quot;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;/span&gt;
-		| &lt;&lt;link &quot;&gt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing += 1&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 4)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt;
-		| &lt;&lt;link &quot;&gt;&gt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing += 2&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 4)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt;
-		| &lt;&lt;link &quot;&gt;&gt;&gt;&quot;&gt;&gt;&lt;&lt;set $farm.clearing += 4&gt;&gt;&lt;&lt;set $farm.clearing = Math.clamp($farm.clearing, 0, 4)&gt;&gt;&lt;&lt;replace &quot;#farm_clearing&quot;&gt;&gt;&lt;&lt;print Math.trunc($farm.clearing)&gt;&gt;&lt;&lt;/replace&gt;&gt;&lt;&lt;/link&gt;&gt;
-		&lt;br&gt;
-	&lt;&lt;/if&gt;&gt;
 	&lt;&lt;if $farm_stage gte 8&gt;&gt;
 		&lt;&lt;if $farm.tower is undefined&gt;&gt;
 			&lt;&lt;set $farm.tower to 0&gt;&gt;
@@ -252247,34 +252250,12 @@ Argument 2, where appropriate, determines whether it&#39;s the player undressing
 	&lt;&lt;/if&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 
-&lt;&lt;widget &quot;unlockplants&quot;&gt;&gt;
-	/*&lt;&lt;set _plant_keys to Object.keys($plants)&gt;&gt;
-	&lt;&lt;for _i to 0; _i lt _plant_keys.length; _i++&gt;&gt;
-		&lt;&lt;set $plants_known.push(setup.plants[_plant_keys[_i]].name)&gt;&gt;
-	&lt;&lt;/for&gt;&gt;*/
-	&lt;&lt;set $plants_known.push(&quot;red_rose&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;white_rose&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;orchid&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;daisy&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;tulip&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;lotus&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;lily&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;poppy&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;wild_carrot&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;onion&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;garlic_bulb&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;potato&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;strange_flower&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;cabbage&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;turnip&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;broccoli&quot;)&gt;&gt;
-	&lt;&lt;set $plants_known.push(&quot;green_manure&quot;)&gt;&gt;
-&lt;&lt;/widget&gt;&gt;
-
 &lt;&lt;widget &quot;unlockspecialclothing&quot;&gt;&gt;
 	&lt;&lt;set $specialClothes to {
 		&quot;witchdress&quot;:&quot;unlocked&quot;,
 		&quot;christmasdress&quot;:&quot;unlocked&quot;,
+		&quot;jinglebelldress&quot;:&quot;unlocked&quot;,
+		&quot;sleevelessjinglebelldress&quot;:&quot;unlocked&quot;,
 		&quot;serafuku&quot;:&quot;unlocked&quot;,
 		&quot;vampirejacket&quot;:&quot;unlocked&quot;,
 		&quot;slutshirt&quot;:&quot;unlocked&quot;,
