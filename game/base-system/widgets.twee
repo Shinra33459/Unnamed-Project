@@ -1574,7 +1574,7 @@
 		<div id="hallucinogencaption">
 			<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
 				<<if $options.showCaptionText is true>>
-					<span class="purple">Your perception is altered</span>
+					<span class="purple">Your perception is altered.</span>
 				<<else>>
 					Hallucinogen:
 				<</if>>
@@ -2300,6 +2300,10 @@
 <</widget>>
 
 <<widget "unbind">>
+	/*<<unbind>> is only used for the player unbinding their arms after they've been tied with rope. it will destroy handheld items. do not use it for unbinding arms after they've been temporarily restrained; use <<unbindtemp>> instead*/
+	<<if $worn.handheld.name isnot "naked">>
+		<<handheldruined>>
+	<</if>>
 	<<set $rightboundcarry to 0>>
 	<<set $leftboundcarry to 0>>
 	<<set $leftarm to 0>>
@@ -2320,7 +2324,35 @@
 	<</if>>
 <</widget>>
 
+<<widget "unbindtemp">>
+	<<set $rightboundcarry to 0>>
+	<<set $leftboundcarry to 0>>
+	<<set $leftarm to 0>>
+	<<set $rightarm to 0>>
+	<<remove_shackle>>
+	<<leg_unbind>>
+	<<if $head is "bound">>
+		<<set $head to 0>>
+	<</if>>
+<</widget>>
+
 <<widget "bind">>
+	/*<<bind>> and <<unbind>> are only used for binding the player's arms with rope. they are only meant to be used for scenes where the player is left helpless and must undo their bindings elsewhere, forcing them to leave behind their handheld items. Use <<bindtemp>> and <<unbindtemp>> for temporarily binding arms.*/
+	<<if _args[0]>>
+		<<set _args[0] to "bound">>
+		<<if $rightarm is "bound" and $worn.handheld.name isnot "naked">>
+			<<handheldruined>>
+		<</if>>
+	<<else>>
+		<<set $leftarm to "bound">>
+		<<set $rightarm to "bound">>
+		<<if $worn.handheld.name isnot "naked">>
+			<<handheldruined>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "bindtemp">>
 	<<set $leftarm to "bound">>
 	<<set $rightarm to "bound">>
 <</widget>>
@@ -3000,7 +3032,7 @@
 
 <<widget "roomoptions">>
 	<<if $sexStats.pills.boughtOnce is true or $sexStats.pills["pills"]["Dr Harper\'s prescription"].owned gte 1 or $sexStats.pills["pills"]["asylum\'s prescription"].owned gte 1>>
-		<<pillicon>><<link [[Check your pills|PillCollection]]>><<set $pillsExitPassage to $passage>><<endevent>><</link>>
+		<<pillicon>><<link [[Check your Medicine Drawer|PillCollection]]>><<set $pillsExitPassage to $passage>><<endevent>><</link>>
 		<br>
 	<</if>>
 <</widget>>
@@ -3826,18 +3858,18 @@
 <<widget "nounderwearcheck">>
 	/*Checks if the PC is pantiless, but otherwise decent. Results in low level exhibitionism increases.*/
 	/*
-		Feature was disabled previous but left the text as is, just disabling the text rather than removing it
+		Feature was disabled previously, has been re-enabled after meeting the below requirement
 		Vrelnir: Exhibitionism should only rise when the player directly choses certain actions. The PC could have their underwear stolen, which would result in exhibitionism rising without a direct decision to do so.
-		Left in incase a valid use of the feature can be correctly implemented that meets the above requirement
 	*/
-	/*<<if !$worn.lower.type.includes("naked") and $worn.under_lower.type.includes("naked") and $exposed lte 0 and $exhibitionism lt 19>>
+	<<if (!$worn.over_lower.type.includes("naked") or !$worn.lower.type.includes("naked")) and $worn.under_lower.type.includes("naked") and ["notWorn", "notBought", "sold", "given"].includes($worn.under_lower.exposedType) and $exposed lte 0 and $exhibitionism lt 19 and !$daily.no_underwear>>
 		<<set $no_underwear += 1>>
 	<</if>>
-	<<if $no_underwear gte 8>>
+	<<if $no_underwear gte 20>>
+		<<set $daily.no_underwear to true>>
 		<<set $no_underwear to 0>>
 		<<set $effectsmessage to 1>>
 		<<set $exhibitionism_message to 1>>
-	<</if>>*/
+	<</if>>
 <</widget>>
 
 <<widget "breastfed">>

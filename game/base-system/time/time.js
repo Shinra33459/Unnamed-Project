@@ -346,7 +346,7 @@ function weekPassed() {
 		fragment.append(wikifier("robinPunishment", "docks"));
 		V.robineventnote = 1;
 	}
-	V.robinmoney += 300;
+	V.robinmoney += 300 + V.robin.moneyModifier;
 	V.compoundcentre = 0;
 	if (V.edenfreedom >= 1 && V.edenshopping === 2) V.edenshopping = 0;
 	if (V.loft_kylar) V.loft_spray = 0;
@@ -371,9 +371,10 @@ function weekPassed() {
 		V.nightmareTimer--;
 		if (V.nightmareTimer <= 0) delete V.nightmareTimer;
 	}
-	if (V.brothelVending) {
+	if (V.brothelVending && V.brothelVending.products >= 1) {
 		if (V.brothelVending.condoms === 0 && V.brothelVending.lube === 0) V.brothelVending.weeksEmpty += 1;
 		V.brothelVending.weeksRent++;
+		if (V.brothelVending.weeksEmpty >= 4) V.brothelVending.status = "sold";
 	}
 
 	fragment.append(wikifier("world_corruption", "soft", V.world_corruption_hard));
@@ -477,6 +478,10 @@ function dayPassed() {
 			V.estatePersistent.newDeckTimer--;
 		}
 	}
+	if (V.balloonStand.robin.status === "closed") V.balloonStand.robin.status = "sabotaged";
+	if (V.robin.timer.customer >= 1) V.robin.timer.customer--;
+	if (V.robin.timer.hurt >= 1) V.robin.timer.hurt--;
+	if (V.robin.timer.hurt === 0) V.robin.hurtReason = "nothing";
 
 	if (numberOfEarSlime()) {
 		// Daily Corruption
@@ -624,6 +629,7 @@ function dayPassed() {
 		const rng = random(Math.min(1, V.brothelVending.condoms), Math.min(10, V.brothelVending.condoms));
 		V.brothelVending.condoms -= rng;
 		V.brothelVending.condomsSold += rng;
+		V.brothelVending.condomsToRefill = 200 - (V.brothelVending.condoms);
 		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
 	}
 
@@ -631,6 +637,7 @@ function dayPassed() {
 		const rng = random(Math.min(1, V.brothelVending.lube), Math.min(10, V.brothelVending.lube));
 		V.brothelVending.lube -= rng;
 		V.brothelVending.lubeSold += rng;
+		V.brothelVending.lubeToRefill = 200 - (V.brothelVending.lube);
 		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
 	}
 
@@ -694,7 +701,7 @@ function dayPassed() {
 	}
 
 	if (V.pirate_journey > 1) {
-		V.pirate_journey--;	
+		V.pirate_journey--;
 	} else {
 		delete V.pirate_journey;
 	}
@@ -724,9 +731,11 @@ function hourPassed(hours) {
 		if (V.ejactrait >= 1) V.stress -= (V.goocount + V.semencount) * 10;
 		if (V.kylarwatched) V.kylarwatchedtimer--;
 		if (V.parasite.nipples.name) fragment.append(wikifier("milkvolume", 1));
-		if (V.worn.head.name === "hairpin") {
-			V.hairlength++;
-			V.fringelength++;
+		if (V.worn.head.name === "hairpin" || V.sexStats.pills.pills["Hair Growth Formula"].doseTaken) {
+			let count = 0 + (V.worn.head.name === "hairpin" && random(0, 100) >= 75 ? 1 : 0);
+			count += V.sexStats.pills.pills["Hair Growth Formula"].doseTaken ? 1 : 0;
+			V.hairlength += count;
+			V.fringelength += count;
 			fragment.append(wikifier("calchairlengthstage"));
 		}
 		if (V.earSlime.defyCooldown) {
@@ -1629,7 +1638,7 @@ function dailyFarmEvents() {
 
 	delete V.farm_work;
 	delete V.farm_count;
-	delete V.farm_naked;
+	if (V.farm_stage < 7) delete V.farm_naked;
 	delete V.farm_event;
 	delete V.farm_end;
 	delete V.alex_breakfast;
@@ -1656,7 +1665,7 @@ function passWater(passMinutes) {
 		if (V.lowerwet) fragment.append(wikifier("lowerwet", -passMinutes * 2));
 		if (V.underlowerwet) fragment.append(wikifier("underlowerwet", -passMinutes * (V.worn.lower.type.includes("naked") ? 2 : 1)));
 		if (V.underupperwet) fragment.append(wikifier("underupperwet", -passMinutes * (V.worn.upper.type.includes("naked") ? 2 : 1)));
-	} else if (V.outside && V.weather === "rain" && !V.worn.head.type.includes("rainproof")) {
+	} else if (V.outside && V.weather === "rain" && !V.worn.head.type.includes("rainproof") && !V.worn.handheld.type.includes("rainproof")) {
 		if (!V.worn.upper.type.includes("naked") && !waterproofCheck(V.worn.upper) && !waterproofCheck(V.worn.over_upper)) {
 			fragment.append(wikifier("upperwet", passMinutes));
 		}
@@ -1868,12 +1877,13 @@ function earSlimeDaily(passageEffects = false) {
 				V.worn.genitals.integrity = clothingData("genitals", V.worn.genitals, "integrity_max");
 			}
 		}
-		if (V.earSlime.forcedCommando && V.earSlime.forcedCommando > 0) {
-			V.earSlime.forcedCommando--;
-		}
 		if (V.earSlime.forcedDressing && V.earSlime.forcedDressing.days > 0) {
 			V.earSlime.forcedDressing.days--;
 		}
+	}
+
+	if (V.earSlime.forcedCommando && V.earSlime.forcedCommando > 0) {
+		V.earSlime.forcedCommando--;
 	}
 }
 DefineMacro("earSlimeDaily", earSlimeDaily);

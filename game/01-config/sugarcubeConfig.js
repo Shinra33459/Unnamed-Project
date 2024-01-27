@@ -11,7 +11,7 @@ window.StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.4.4.5",
+	version: "0.4.5.3",
 	versionName: "",
 	sneaky: false,
 };
@@ -213,6 +213,13 @@ Config.navigation.override = function (dest) {
 			case "Forest Shop Legs":
 			case "Forest Shop Feet":
 				return "Forest Shop";
+
+			case "Cafe Fruit Salad":
+			case "Cafe Autumn Ale":
+			case "Cafe Summer Ale":
+			case "Cafe Spring Ale":
+			case "Cafe Winter Ale":
+				return "Cafe Eat";
 
 			case "Over Outfit Shop":
 			case "Outfit Shop":
@@ -478,6 +485,17 @@ Config.navigation.override = function (dest) {
 				return "Chalets Work One Sex";
 			case "Chalets Work One Rape Finish":
 				return "Chalets Work One Sex Finish";
+			
+			case "Whitney Bully Parasite Event Submit":
+			case "Whitney Bully Parasite Event Escape Attempt":
+				return "Bully Parasite";
+			
+			case "Whitney Bully Parasite Event Combat":
+				return "Bully Parasite Fight";
+
+			case "Whitney Bully Parasite Event Combat Loss":
+			case "Whitney Bully Parasite Event Combat Victory":
+				return "Bully Parasite Fight Finish";
 			default:
 				return false;
 		}
