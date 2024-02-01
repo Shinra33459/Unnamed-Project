@@ -633,6 +633,13 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Transformation"],
 	},
+	Bunny: {
+		title: "Happy Hops",
+		desc: "Don't eat too many carrots.",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Transformation"]
+	},
 	Angel: {
 		title: "Walk Like an Angel",
 		desc: "Try not to fall.",

@@ -3,7 +3,7 @@
 <<widget "setupTransformationPiecesObject">>
 	<<if $transformationParts is undefined>>
 		<<set $transformationParts to {
-			traits: {fangs:"disabled", sharpEyes:"disabled", mateForLife:"disabled", flaunting:"disabled"},
+			traits: {fangs:"disabled", sharpEyes:"disabled", mateForLife:"disabled", flaunting:"disabled", prey:"disabled", strongFeet:"disabled"},
 			angel: {halo:"disabled", wings:"disabled"},
 			fallenAngel: {halo:"disabled", wings:"disabled"},
 			demon: {horns:"disabled", wings:"disabled", tail: "disabled"},
@@ -12,6 +12,7 @@
 			wolf: {ears:"disabled", tail:"disabled", pubes:"disabled", pits:"disabled"},
 			bird: {tail:"disabled", wings:"disabled", eyes:"disabled", malar:"disabled", plumage:"disabled", pubes:"disabled"},
 			fox: {ears:"disabled", tail:"disabled", cheeks:"disabled"},
+			bunny: {ears:"disabled", tail:"disabled"}
 		}>>
 		<<if $specialTransform is 1>>
 			<<if $angel gte 4>>
@@ -67,6 +68,12 @@
 			<<if $cow gte 6>>
 				<<set $transformationParts.cow.tail to "default">>
 			<</if>>
+			<<if $bunny gte 3>>
+				<<set $transformationParts.bunny.ears to "default">>
+			<</if>>
+			<<if $bunyy gte 5>>
+				<<set $transformationParts.bunny.tail to "default">>
+			<</if>>
 		<</if>>
 	<</if>>
 	<<if $transformationParts.fallenAngel.halo is 1>>
@@ -117,6 +124,9 @@
 			<<set $transformationParts.traits.sharpEyes to "default">>
 		<</if>>
 	<</if>>
+	<<if $transformationParts.bunny is undefined>>
+		<<set $transformationParts.traits.bunny to {ears:"disabled", tail:"disabled", prey:"disabled", strongFeet:"disabled"}>>
+	<</if>>
 	/* Setup chimera's config */
 	<<set _defaultChimeraConfig to {
 		demoncat: {
@@ -145,6 +155,7 @@
 			<<case "cow">>   <<set $cowbuild   = Math.clamp($cowbuild   + _args[1], 0, 100)>>
 			<<case "bird">>  <<set $birdbuild  = Math.clamp($birdbuild  + _args[1], 0, 100)>>
 			<<case "fox">>   <<set $foxbuild   = Math.clamp($foxbuild   + _args[1], 0, 100)>>
+			<<case "bunny">> <<set $bunnybuild = Math.clamp($bunnybuild + _args[1], 0, 100)>>
 			<<case "angel">> <<set $angelbuild = Math.clamp($angelbuild + _args[1], 0, 100)>>
 			<<case "fallen">> <<set $fallenbuild = Math.clamp($fallenbuild + _args[1], 0, 100)>>
 			<<case "demon">> <<set $demonbuild = Math.clamp($demonbuild + _args[1], 0, 100)>>
@@ -165,6 +176,9 @@
 		<</if>>
 		<<if _args[0] isnot "fox" and $worn.head.name isnot "spirit mask">>
 			<<set $foxbuild = Math.clamp($foxbuild - _args[1], 0, 100)>>
+		<</if>>
+		<<if _args[0] isnot "bunny" and $worn.head.name isnot "carrot clip">>
+			<<set $bunnybuild = Math.clamp($bunnybuild - _args[1], 0, 100)>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -191,13 +205,17 @@
 		<<transform fox -1>>
 	<</if>>
 
+	<<if $bunnybuild gte 1 and $worn.head.name isnot "carrot clip" and playerNormalPregnancyType() isnot "bunny">>
+		<<transform bunny -1>>
+	<</if>>
+
 	<<if $wolfgirl gte 6>>
 		<<def 5>>
 	<</if>>
 
 	<<transformationAlteration>>
 
-	<<if $cat gt 0 or $wolfgirl gt 0 or $cow gt 0 or $harpy gt 0 or $fox gt 0>>
+	<<if $cat gt 0 or $wolfgirl gt 0 or $cow gt 0 or $harpy gt 0 or $fox gt 0 or $bunny gt 0>>
 		<<set $physicalTransform to 1>>
 	<<else>>
 		<<set $physicalTransform to 0>>
@@ -260,6 +278,8 @@
 			<<harpyTransform $harpy>>
 		<<elseif ($foxbuild gte 5 and $physicalTransform isnot 1) or ($fox gte 1 and $physicalTransform is 1)>>
 			<<foxTransform $fox>>
+		<<elseif ($bunnybuild gte 5 and $physicalTransform isnot 1) or ($bunny gte 1 and $physicalTransform is 1)>>
+		    <<bunnyTransform $bunny>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -1222,12 +1242,110 @@
 	<</if>>
 <</widget>>
 
+/* <<bunnyTransform step>> If neither is provided, force full transformation */
+<<widget "bunnyTransform">>
+	<<if _args[0] gte 0>>
+		<<switch _args[0]>>
+			<<case 0>>
+			    <<if $bunnybuild gte 5>>
+				    <<set $bunny to 1>>
+				    <<set $physicalTransform to 1>>
+				    <span class="gold">Your room feels safe.</span>
+				    <br><br>
+			    <</if>>
+		    <<case 1>>
+		        <<if $bunnybuild gte 10>>
+			        <<set $bunny to 2>>
+			        <span class="gold">The open sky fills you with stress as your scalp begins to itch.</span>
+			        <<set $transformationParts.traits.prey to "default">>
+			        <br><br>
+		        <<elseif $bunnybuild lt 5>>
+		            <<set $bunny to 0>>
+			        <<set $physicalTransform to 0>>
+			        <span class="gold">You don't feel anxious about the open sky anymore.
+			        <br><br>
+				<</if>>
+			<<case 2>>
+			    <<if $bunnybuild gte 15>>
+					<<set $bunny to 3>>
+					<span class="gold">You feel something on your head. You reach up and give your new pair of bunny ears a tug.</span>
+					<<set $transformationParts.traits.bunny.ears to "default">>
+					<br><br>
+				<<elseif $bunnybuild lt 10>>
+				    <<set $bunny to 1>>
+					<span class="gold">The itching disappears and the thought of going outside nolonger stresses you.
+					<<set $transformationParts.traits.prey to "disabled">>
+					<br><br>
+				<</if>>
+			<<case 3>>
+			    <<if $bunnybuild gte 20>>
+					<<set $bunny to 4>>
+					<span class="gold">Your lower back begins to itch. You fight the urge to scratch at it.</span>
+					<br><br>
+				<<elseif $bunnybuild lt 15>>
+				    <<set $bunny to 2>>
+					<span class="gold">Your bunny ears have disappeared.
+					<<set $transformationParts.traits.bunny.ears to "disabled">>
+					<br><br>
+				<</if>>
+			<<case 4>>
+			    <<if $bunnybuild gte 25>>
+					<<set $bunny to 5>>
+					<span class="gold">Your bottom feels heavier then usual. You reach behind and give your bunny tail a pull.</span>
+					<<set $transformationParts.traits.bunny.tail to "default">>
+					<br><br>
+				<<elseif $bunnybuild lt 20>>
+				    <<set $bunny to 3>>
+					<span class="gold">Your lower back nolonger itches.</span>
+					<br><br>
+				<</if>>
+			<<case 5>>
+			   <<if $bunnybuild gte 30>>
+				    <<set $bunny to 6>>
+					<span class="gold">Your steps feel lighter. You feel like your feet could pack a punch.</span>
+					<<set transformationParts.traits.strongFeet to "default">>
+					<br><br>
+				<<elseif $bunnybuild lt 25>>
+				    <<set $bunny to 4>>
+					<span class="gold">Your bottom feels lighter. Your bunny tail has disappeared.
+					<<set $transformationParts.traits.bunny.tail to "disabled">>
+					<br><br>
+				<</if>>
+			<<case 6>>
+			    <<if $bunnybuild lt 30>>
+					<<set $bunny to 5>>
+					<span class="gold">Walking feels heavier. Your feet nolonger feel strong.
+					<<set transformationParts.traits.strongFeet to "disabled">>
+					<br><br>
+				<</if>>
+			<<case 99>>
+			    <<set $physicalTransform to 0>>
+				<<set $bunny to 0>>
+				<<set $foxbuild to 0>>
+				<<set transformationParts.traits.prey to "disabled">>
+				<<set transformationParts.traits.bunny.ears to "disabled">>
+				<<set transformationParts.traits.bunny.tail to "disabled">>
+				<<set transformationParts.traits.strongFeet to "disabled">>
+		<</switch>>
+	<<else>>
+		<<clearAnimalTransformations>>
+		 <<set $physicalTransform to 1>>
+		<<set $bunny to 6>>
+		<<set $foxbuild to 100>>
+		<<set transformationParts.traits.prey to "default">>
+		<<set transformationParts.traits.bunny.ears to "default">>
+		<<set transformationParts.traits.bunny.tail to "default">>
+		<<set transformationParts.traits.strongFeet to "default">>
+	<</if>>
+<</widget>>
+
 <<widget "clearAnimalTransformations">>
 	<<harpyTransform 99>>
 	<<cowTransform 99>>
 	<<catTransform 99>>
 	<<wolfTransform 99>>
 	<<foxTransform 99>>
+	<<bunnyTransform 99>>
 <</widget>>
 
 <<widget "clearDivineTransformations">>
