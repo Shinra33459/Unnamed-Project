@@ -3,16 +3,18 @@
 
 <<widget "subwaytrip">>
 	<<if $worn.feet.type.includes("naked")>>
-		Your bare foot steps on a hard and jagged rock. It doesn't hurt much, but the shock makes you lose your footing and you tumble into a fern.
+		Your bare foot steps on the rails. It doesn't hurt much, but the shock makes you lose your footing and you slip and fall.
 		<<gstress>><<gpain>><<stress 6>><<pain 6>>
 		<br><br>
 
+		<<set $subway_darkness -= 20>>
 		<<destinationsubway>>
 		<br>
 	<<else>>
-		The ground here is covered by hard and jagged rocks. They're hard to spot within the grass, but your $worn.feet.name hold up.
+		The rails here are damp and slippery. Thankfully your $worn.feet.name are enough to prevent you slipping on them.
 		<br><br>
 
+		<<set $subway_darkness -= 30>>
 		<<destinationsubway>>
 		<br>
 	<</if>>
@@ -21,18 +23,18 @@
 <<widget "subwayparanoia">>
 	Something brushes against your ankle. You look down, but see nothing.<<stress 8>><<gstress>>
 		<br><br>
-
+		<<set $subway_darkness += 5>>
 		<<destinationsubway>>
 <</widget>>
 
 <<widget "subwayfloodedtunnel">>
-	You come to a fast-flowing river.
-	<<if $foresthunt gte 1>>
+	You come to a fork in the road. One of the branching tunnels ahead is flooded.
+	<<if $$subway_darkness gte 50>>
 		You might be able to use it to disrupt your trail and escape your pursuer, but it looks dangerous.
 	<</if>>
 	<br><br>
 
-	<<link [[Swim across|Subway Swim]]>><<set $subway_darkness to 0>><</link>><<swimmingdifficulty 1 600>>
+	<<link [[Swim through|Subway Swim]]>><<set $subway_darkness to 0>><</link>><<swimmingdifficulty 1 600>>
 	<br>
 	<<destinationsubway>>
 	<br>
@@ -45,6 +47,7 @@
 	<<set $antiquemoney += 20>>
 
 	/*<<set $antiquemoney += 20>><<museumAntiqueStatus "antiquesubwayticket" "found">>*/
+	<<set $subway_darkness -= 20>>
 	<<destinationsubway>>
 	<br>
 <</widget>>
@@ -59,6 +62,7 @@
 		<<set $stripintegrity to 20>><<set $stripobject to "jutting rock">><<stripobject>>
 		Despite this, you <span class="green">successfully</span> swim through.
 		<br><br>
+		<<set $subway_darkness -= 100>>
 		<<destinationsubway>>
 	<<else>>
 		The rushing water tears at you.
