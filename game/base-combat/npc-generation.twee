@@ -835,16 +835,45 @@
 	<</if>>
 
 	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
-	<<if $combatExtended.enemyLevelDayScaling is 1 and (_buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1)>>
-		<<set _i to Math.clamp(_i + (_buffAmount * $combatExtended.enemyLevelDayScalingMult), 1, 20)>>
+	<<if $combatExtended.enemyLevelDayScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
+			<<set _i to Math.clamp(_i + (_buffAmount * $combatExtended.enemyLevelDayScalingMult), 1, 20)>>
+		<<else>>
+			<<set _i to Math.clamp(_i + ($combatExtended.enemyDayScalingLimit * $combatExtended.enemyLevelDayScalingMult), 1, 20)>>
+		<</if>>
 	<</if>>
 
 	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
-	<<if $combatExtended.enemyLevelDayScaling is 1 and (_buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1)>>
-		<<set _i to Math.clamp(_i + (_buffAmount * $combatExtended.enemyLevelDefeatScaling), 1, 20)>>
+	<<if $combatExtended.enemyLevelDefeatScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1>>
+			<<set _i to Math.clamp(_i + (_buffAmount * $combatExtended.enemyLevelDefeatScalingMult), 1, 20)>>
+		<<else>>
+			<<set _i to Math.clamp(_i + ($combatExtended.enemyDefeatScalingLimit * $combatExtended.enemyLevelDefeatScalingMult), 1, 20)>>
+		<</if>>
 	<</if>>
 
 	<<set $NPCList[_n].healthmax to $_hpMax[_i]>>
+
+	<<set _buff to 0>>
+	<<set $NPCList[_n].healthmax to Math.round($NPCList[_n].healthmax * ($npcHealthMult / 100))>>
+	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
+	<<if $combatExtended.enemyHealthDayScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
+		<<else>>
+			<<set _buff += $combatExtended.enemyDayScalingLimit * $combatExtended.enemyHealthDayScalingMult>>
+		<</if>>
+	<</if>>
+	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
+	<<if $combatExtended.enemyHealthDefeatScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
+		<<else>>
+			<<set _buff += $combatExtended.enemyDefeatScalingLimit * $combatExtended.enemyHealthDefeatScalingMult>>
+		<</if>>
+	<</if>>
+	<<set $NPCList[_n].healthmax to Math.round($NPCList[_n].healthmax * (1 + (_buff / 100)))>>
+	
 	<<set $NPCList[_n].health to $NPCList[_n].healthmax>>
 	<<set $NPCList[_n].description to $_desc[random(1, 20)]>>
 
