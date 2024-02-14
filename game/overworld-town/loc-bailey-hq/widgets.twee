@@ -7,24 +7,168 @@
 	<</if>>
 <</widget>>
 
+<<widget "rumorsBaileyHq">>
+	<<cleareventpool>>
+	<<addinlineevent "undertaker" 1>>
+		"Hey, have you heard about the undertakers?"
+		<br>
+		"Shut up."
+		<br>
+		"What? I'm just asking a question."
+		<br>
+		"Shut the fuck up if you don't wanna be next to be buried."
+		<br>
+		"Buried? The hell are you talking about?"
+		<br>
+		"Sometimes Bailey needs certain people to disappear, does that answer your question?"
+		<br>
+		"And they bury them? Here?"
+		<br>
+		"What do you think the shovels are for? Now shut up."
+		<br><br>
+	<</addinlineevent>>
+	<<addinlineevent "smugglers" 1>>
+		"Where the hell is Bailey getting all of these items anyway?"
+		<br>
+		"It's the smuggling ring man, Bailey's got them under <<nnpc_his "Bailey">> thumb."
+		<br>
+		"Damn, them too?"
+		<br>
+		"The entire underworld is <<nnpc_his "Bailey">> playground, its an open secret at this point."
+		<br><br>
+	<</addinlineevent>>
+	<<addinlineevent "quinn" 1>>
+		"How do you think Bailey gets away with all this?"
+		<br>
+		"How else? <<nnpc_Hes "Bailey">> got the mayor in his pocket."
+		<br>
+		"The mayor? Why? It's not like Quinn needs the cash."
+		<br>
+		"Not money dumbass, Bailey's got dirt on <<nnpc_him "Quinn">>, gotta be."
+		<br>
+		"Dirt bad enough to shut the mayor up? How did Bailey get <<nnpc_his "Bailey">> on that?"
+		<br>
+		"Don't know, don't care, now shut up before <<nnpc_he "Bailey">> somehow gets word we talked about this."
+		<br><br>
+	<</addinlineevent>>
+	<<addinlineevent "guns" 1>>
+		"Have you seen the last shipment we got?"
+		<br>
+		"Fucking guns mate, I heard its military hardware, even the gun cases are military."
+		<br>
+		"Bailey's got his hands on the military?"
+		<br>
+		"Well probably not, but it certainly looks like <<nnpc_he "Bailey">> has the resources or the people to smuggle military gear."
+		<br><br>
+	<</addinlineevent>>
+	<<addinlineevent "antiques" 1>>
+		"Have you heard about the last operation?"
+		<br>
+		"Oh yeah, we got lots of valuables this time."
+		<br>
+		"Yeah, heard we got paintings and some antiques."
+		<br>
+		"Collectors would pay a pretty penny for those, just wish we got a cut."
+		<br>
+		"In your dreams..."
+		<br><br>
+	<</addinlineevent>>
+	<<runeventpool>>
+<</widget>>
+
 <<widget "innerOutskirtsEvents">>
+	<<effects>>
+
+	<<if $baileyHQ.alertness gte 25>>
+		<<set _badEventChance to 3>>
+	<<elseif $baileyHQ.alertness gte 15>>
+		<<set _badEventChance to 2>>
+	<<else>>
+		<<set _badEventChance to 1>>
+	<</if>>
+
 	<<cleareventpool>>
 	<<addinlineevent "nothing" 1>>
+		<<rumorsBaileyHq>>
+
+		You make your way closer to the complex uneventfully.
+		<br><br>
 		
+		<<link [[Next (0:05)|Bailey HQ Inner]]>><<pass 5>><</link>>
 	<</addinlineevent>>
-	<<addinlineevent "guards smoke" 1>>
+	<<addinlineevent "guards smoke" _badEventChance>>
 		<<generate1>><<generate2>><<person1>>
 		You spot a couple of guards on their smoke break. They're in a spot with high visibility so sneaking past them isn't an option.
 		<br><br>
 
-		<<set $skulduggerydifficulty to 800>>
+		<<if $baileyHQ.alertness gte 25>>
+			<<set $skulduggerydifficulty to 1500>>
+		<<elseif $baileyHQ.alertness gte 15>>
+			<<set $skulduggerydifficulty to 1000>>
+		<<else>>
+			<<set $skulduggerydifficulty to 500>>
+		<</if>>
+		<<if Time.dayState is "night">>
+			<<set $skulduggerydifficulty to $skulduggerydifficulty / 2>>
+		<</if>>
 
-		<<link [[Cause a distraction (0:02)|Bailey HQ Inner Outskirts Traverse Distract]]>><</link>><<skulduggerydifficulty>>
+		<<link [[Cause a distraction (0:02)|Bailey HQ Inner Outskirts Traverse Distract]]>><<pass 2>><</link>><<skulduggerydifficulty>>
 		<br>
-		<<link [[Wait for them to leave (0:30)|Bailey HQ Inner Outskirts Traverse]]>><<pass 30>><</link>>
+		<<link [[Wait for them to leave (1:00)|Bailey HQ Inner]]>><<pass 60>><<endevent>><</link>>
 	<</addinlineevent>>
-	<<addinlineevent "security camera" 1>>
-		
+	<<addinlineevent "security camera" _badEventChance>>
+		<<pass 10>>
+		The area is completely covered by security cameras 
+		<<if $baileyHQ.alertness gte 25>>
+			and you can see the telltale sign that someone is watching <span class="red">all of them</span> through the red blinking lights.
+			<br><br>
+			<<set $skulduggerydifficulty to 1500>>
+		<<elseif $baileyHQ.alertness gte 15>>
+			and you see that <span class="yellow">most</span> are being monitored.
+			<br><br>
+			<<set $skulduggerydifficulty to 1000>>
+		<<else>>
+			but <span class="green"> less than half are being monitored.
+			<br><br>
+			<<set $skulduggerydifficulty to 500>>
+		<</if>>
+		<<if Time.dayState is "night">>
+			<<set $skulduggerydifficulty to $skulduggerydifficulty / 2>>
+		<</if>>
+		<<skulduggerycheck>>
+		<<if $skulduggerysuccess is 1>>
+			<<if $baileyHQ.alertness gte 25>>
+				Regardless, you manage to find the few gaps and blindspots throughout the security network and <span class="green">slip past unnoticed</span>.
+			<<elseif $baileyHQ.alertness gte 15>>
+				You manage to spot all of the inactive cameras and weave your way around the gaps to <span class="green">slip in unnoticed</span>.
+			<<else>>
+				You relatively easily <span class="green">slip past</span> the security cameras with all of the gaps available to you.
+			<</if>>
+		<<else>>
+			You try to slip past the security cameras but <span class="red">you make a mistake</span> and notice an active camera looking straight at you too late.
+			<<set $baileyHQ.alertness += 15>><<alertnessclamp>>
+		<</if>>
+		<br><br>
+
+		<<link [[Next|Bailey HQ Inner]]>><</link>>
+	<</addinlineevent>>
+	<<addinlineevent "guards patrol" _badEventChance>>
+		<<generate1>><<generate2>><<person1>>
+		You spot a couple of guards on their patrol, <span class="red">they're coming your way</span>.
+		<br><br>
+
+		<<if $baileyHQ.alertness gte 25>>
+			<<set $skulduggerydifficulty to 1500>>
+		<<elseif $baileyHQ.alertness gte 15>>
+			<<set $skulduggerydifficulty to 1000>>
+		<<else>>
+			<<set $skulduggerydifficulty to 500>>
+		<</if>>
+		<<if Time.dayState is "night">>
+			<<set $skulduggerydifficulty to $skulduggerydifficulty / 2>>
+		<</if>>
+
+		<<link [[Hide (0:10)|Bailey HQ Inner Outskirts Traverse Hide]]>><<pass 10>><</link>><<skulduggerydifficulty>>
 	<</addinlineevent>>
 	<<runeventpool>>
 <</widget>>

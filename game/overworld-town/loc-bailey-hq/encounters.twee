@@ -41,7 +41,7 @@
 		The <<group>> staggers back, giving you the chance you need. <<tearful>> you escape into the darkness. <span class="red">They're bound to be more alert now.</span>
 		<br><br>
 	<</if>>
-	<<set $baileyHQ.alertness += 10>>
+	<<set $baileyHQ.alertness += 10>><<alertnessclamp>>
 	<<clotheson>>
 	<<endcombat>>
 
@@ -52,7 +52,7 @@
 
 	They put something over your mouth and you passout immediately.
 	<br><br>
-	<<set $baileyHQ.alertness -= 10>>
+	<<set $baileyHQ.alertness -= 10>><<alertnessclamp>>
 	<<endcombat>>
 
 	<<passoutbaileyhq>>
@@ -60,7 +60,7 @@
 <<elseif $stalk_end is "escaped">>
 	You slow to a walk. <<tearful>> you consider your options. <span class="red">They're bound to be more alert now.</span>
 	<br><br>
-	<<set $baileyHQ.alertness += 10>>
+	<<set $baileyHQ.alertness += 10>><<alertnessclamp>>
 	<<clotheson>>
 	<<endcombat>>
 
@@ -69,7 +69,7 @@
 <<elseif $stalk_end is "hide">>
 	<<tearful>> you emerge from your hiding place. You consider your options. <span class="red">They're bound to be more alert now.</span>
 	<br><br>
-	<<set $baileyHQ.alertness += 10>>
+	<<set $baileyHQ.alertness += 10>><<alertnessclamp>>
 	<<clotheson>>
 	<<endcombat>>
 
@@ -128,40 +128,36 @@
 		The <<group>> staggers back, giving you the chance you need. <<tearful>> you escape into the darkness. <span class="red">They're bound to be on high alert now.</span>
 		<br><br>
 	<</if>>
-	<<set $baileyHQ.alertness += 25>>
+	<<set $baileyHQ.alertness += 25>><<alertnessclamp>>
 	<<clotheson>>
 	<<endcombat>>
 
 	<<link [[Next|Bailey HQ Inner Outskirts]]>><</link>>
-
 <<elseif $enemyarousal gte $enemyarousalmax>>
 	<<ejaculation>>
 
 	They put something over your mouth and you passout immediately.
 	<br><br>
-	<<set $baileyHQ.alertness -= 10>>
+	<<set $baileyHQ.alertness -= 10>><<alertnessclamp>>
 	<<endcombat>>
 
 	<<passoutbaileyhq>>
-
 <<elseif $stalk_end is "escaped">>
 	You slow to a walk. <<tearful>> you consider your options. <span class="red">They're bound to be on high alert now.</span>
 	<br><br>
-	<<set $baileyHQ.alertness += 25>>
+	<<set $baileyHQ.alertness += 25>><<alertnessclamp>>
 	<<clotheson>>
 	<<endcombat>>
 
 	<<link [[Next|Bailey HQ Inner Outskirts]]>><</link>>
-
 <<elseif $stalk_end is "hide">>
 	<<tearful>> you emerge from your hiding place. <span class="red">They're bound to be on high alert now.</span>
 	<br><br>
-	<<set $baileyHQ.alertness += 25>>
+	<<set $baileyHQ.alertness += 25>><<alertnessclamp>>
 	<<clotheson>>
 	<<endcombat>>
 
 	<<link [[Next|Bailey HQ Inner Outskirts]]>><</link>>
-
 <<else>>
 	The group walks ahead. <<tearful>> you consider your options.
 	<br><br>
@@ -169,7 +165,6 @@
 	<<endcombat>>
 
 	<<link [[Next|Bailey HQ Inner Outskirts]]>><</link>>
-
 <</if>>
 
 :: Bailey HQ Dig Run Caught
@@ -214,7 +209,137 @@
 
 	You don't even get a moment to breathe before they put something over your mouth and you passout.
 	<br><br>
+	<<set $baileyHQ.alertness -= 10>><<alertnessclamp>>
+	<<endcombat>>
+
+	<<passoutbaileyhq>>
+<</if>>
+
+:: Bailey HQ Inner Outskirts Traverse Distract Stalk
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<violence 1>>
+	<<neutral 1>>
+
+	<<maninit>>
+	<<stalk_init>>
+	<<set $combatgoal to "confront">>
+	<<set $NPCList[0].bold to 10000>>
+	<<if $baileyHQ.alertness gte 40>>
+		<<set $NPCList[0].skills to {athletics: random(1000, 2000), security: random(1000, 2000)}>>
+	<<elseif $baileyHQ.alertness gte 25>>
+		<<set $NPCList[0].skills to {athletics: random(750, 1500), security: random(750, 1500)}>>
+	<<else>>
+		<<set $NPCList[0].skills to {athletics: random(500, 1000), security: random(500, 1000)}>>
+	<</if>>
+<</if>>
+
+<<effects>>
+
+<<effectsman>><<man>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $stalk_end>>
+	<span id="next"><<link [[Next|Bailey HQ Inner Outskirts Traverse Distract Stalk Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Bailey HQ Inner Outskirts Traverse Distract Stalk]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Bailey HQ Inner Outskirts Traverse Distract Stalk Finish
+<<effects>>
+<<if $enemyhealth lte 0>>
+	<<if Time.dayState isnot "night">>
+		The <<group>> staggers back, giving you the chance you need. <<tearful>> you escape into the maze of vehicles and buildings. <span class="red">They're bound to be on high alert now.</span>
+		<br><br>
+	<<else>>
+		The <<group>> staggers back, giving you the chance you need. <<tearful>> you escape into the darkness. <span class="red">They're bound to be on high alert now.</span>
+		<br><br>
+	<</if>>
+	<<set $baileyHQ.alertness += 25>><<alertnessclamp>>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Bailey HQ Inner]]>><</link>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+
+	They put something over your mouth and you passout immediately.
+	<br><br>
 	<<set $baileyHQ.alertness -= 10>>
+	<<endcombat>>
+
+	<<passoutbaileyhq>>
+<<elseif $stalk_end is "escaped">>
+	You slow to a walk. <<tearful>> you consider your options. <span class="red">They're bound to be on high alert now.</span>
+	<br><br>
+	<<set $baileyHQ.alertness += 25>><<alertnessclamp>>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Bailey HQ Inner]]>><</link>>
+<<elseif $stalk_end is "hide">>
+	<<tearful>> you emerge from your hiding place. <span class="red">They're bound to be on high alert now.</span>
+	<br><br>
+	<<set $baileyHQ.alertness += 25>><<alertnessclamp>>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Bailey HQ Inner]]>><</link>>
+<<else>>
+	The group walks ahead. <<tearful>> you consider your options.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Bailey HQ Inner]]>><</link>>
+<</if>>
+
+:: Bailey HQ Inner Outskirts Traverse Hide Caught
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<maninit>>
+	<<set $enemytrust -= 100>>
+	<<set $enemyanger += 200>>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<<man>>
+<<audience>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if _combatend>>
+<span id="next"><<link [[Next|Bailey HQ Dig Run Caught Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Bailey HQ Dig Run Caught]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Bailey HQ Inner Outskirts Traverse Hide Caught Finish
+<<effects>>
+<<if $enemyhealth lte 0>>
+	<<tearful>> you manage to beat them back and run away before they get back up.
+	<br><br>
+	<<set $baileyHQ.alertness += 25>><<alertnessclamp>>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Bailey HQ Inner]]>><</link>>
+
+<<else>>
+	<<ejaculation>>
+
+	You don't even get a moment to breathe before they put something over your mouth and you passout.
+	<br><br>
+	<<set $baileyHQ.alertness -= 10>><<alertnessclamp>>
 	<<endcombat>>
 
 	<<passoutbaileyhq>>
