@@ -371,7 +371,7 @@ function weekPassed() {
 		V.nightmareTimer--;
 		if (V.nightmareTimer <= 0) delete V.nightmareTimer;
 	}
-	if (V.brothelVending) {
+	if (V.brothelVending && V.brothelVending.products >= 1) {
 		if (V.brothelVending.condoms === 0 && V.brothelVending.lube === 0) V.brothelVending.weeksEmpty += 1;
 		V.brothelVending.weeksRent++;
 		if (V.brothelVending.weeksEmpty >= 4) V.brothelVending.status = "sold";
@@ -629,6 +629,7 @@ function dayPassed() {
 		const rng = random(Math.min(1, V.brothelVending.condoms), Math.min(10, V.brothelVending.condoms));
 		V.brothelVending.condoms -= rng;
 		V.brothelVending.condomsSold += rng;
+		V.brothelVending.condomsToRefill = 200 - (V.brothelVending.condoms);
 		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
 	}
 
@@ -636,6 +637,7 @@ function dayPassed() {
 		const rng = random(Math.min(1, V.brothelVending.lube), Math.min(10, V.brothelVending.lube));
 		V.brothelVending.lube -= rng;
 		V.brothelVending.lubeSold += rng;
+		V.brothelVending.lubeToRefill = 200 - (V.brothelVending.lube);
 		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
 	}
 
@@ -731,9 +733,11 @@ function hourPassed(hours) {
 		if (V.ejactrait >= 1) V.stress -= (V.goocount + V.semencount) * 10;
 		if (V.kylarwatched) V.kylarwatchedtimer--;
 		if (V.parasite.nipples.name) fragment.append(wikifier("milkvolume", 1));
-		if ((V.worn.head.name === "hairpin" && random(0, 100) >= 75) || V.sexStats.pills.pills["Hair Growth Formula"].doseTaken) {
-			V.hairlength++;
-			V.fringelength++;
+		if (V.worn.head.name === "hairpin" || V.sexStats.pills.pills["Hair Growth Formula"].doseTaken) {
+			let count = 0 + (V.worn.head.name === "hairpin" && random(0, 100) >= 75 ? 1 : 0);
+			count += V.sexStats.pills.pills["Hair Growth Formula"].doseTaken ? 1 : 0;
+			V.hairlength += count;
+			V.fringelength += count;
 			fragment.append(wikifier("calchairlengthstage"));
 		}
 		if (V.earSlime.defyCooldown) {
@@ -1560,10 +1564,22 @@ function dailyMasochismSadismEffects() {
 		return false;
 	};
 
-	if (V.uncomfortable.sadoMaso === true) {
-		V.masochism *= 0.985;
-		V.sadism *= 0.985;
+	if (V.featsSadismBoost) {
+		if (V.uncomfortable.sadoMaso === true) V.masochism *= 0.985;
 	}
+	else if (V.featsMasochismBoost) {
+		if (V.uncomfortable.sadoMaso === true) V.sadism *= 0.985;
+	}
+	else if (V.uncomfortable.sadoMaso === true) V.masochism *= 0.985; V.sadism *= 0.985;
+
+	let dailySadism = 0;
+		if (V.featsSadismBoost) dailySadism += V.featsSadismBoost;
+		fragment.append(wikifier("sadism", dailySadism));
+	let dailyMasochism = 0;
+		if (V.featsMasochismBoost) dailyMasochism += V.featsMasochismBoost;
+		fragment.append(wikifier("masochism", dailyMasochism));
+
+
 	const masochism = effects(V.masochism_level, V.masochism);
 	if (masochism) {
 		V.masochism_level = masochism.level;
@@ -1579,6 +1595,8 @@ function dailyMasochismSadismEffects() {
 
 	return fragment;
 }
+
+
 
 function dailyFarmEvents() {
 	const fragment = document.createDocumentFragment();
