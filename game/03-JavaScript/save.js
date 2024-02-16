@@ -1182,6 +1182,7 @@ function settingsObjects(type) {
 					enemyDefeatScalingLimit: { min: 0, max: 1, decimals: 0, displayName: "Enemy Defeats Scaling Limit:" }
 				},
 				AMCTraits: {
+					halfGain: { min: 0, max: 1, decimals: 0, displayName: "Half Gain:" },
 					physique: { min: 1, max: 2, decimals: 0, displayName: "Tempered Physique:" },
 					willpower: { min: 1, max: 2, decimals: 0, displayName: "Tempered Willpower:" },
 					skulduggery: { min: 1, max: 2, decimals: 0, displayName: "Tempered Skulduggery:" },
@@ -1206,6 +1207,7 @@ function settingsObjects(type) {
 					thighs: { min: 1, max: 2, decimals: 0, displayName: "Tempered Thighs Skill:" },
 					feet: { min: 1, max: 2, decimals: 0, displayName: "Tempered Feet Skill:" }
 				},
+				multiOrgasmToggle: { min: 0, max: 1, decimals: 0, displayName: "Multi-Orgasm:" },
 				debugdisable: { boolLetter: true, bool: true, displayName: "Debug mode:" },
 				statdisable: { boolLetter: true, bool: true, displayName: "Blind stats mode:" },
 				cheatdisabletoggle: { boolLetter: true, bool: true, displayName: "Cheat mode:" },
