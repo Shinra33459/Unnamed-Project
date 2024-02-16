@@ -156,19 +156,19 @@
 	<br><br>
 		
 	<<if Time.dayState isnot "night">>
-		<<link [[Sneak into the garage|Bailey HQ Vehicle Storage Area Sneak]]>><</link>><<skulduggerydifficulty>>
+		<<link [[Sneak into the garage (0:10)|Bailey HQ Vehicle Storage Area Sneak]]>><<pass 10>><</link>><<skulduggerydifficulty>>
 		<br>
 	<<else>>
-		<<link [[Lift the garage door|Bailey HQ Garage Lift]]>><</link>><<physiquedifficulty 10000 24000>>
+		<<link [[Lift the garage door (0:05)|Bailey HQ Garage Lift]]>><<pass 5>><</link>><<physiquedifficulty 10000 24000>>
 		<br>
 	<</if>>
 	<<if Time.dayState isnot "night">>
-		<<link [[Sneak into the external loading dock|Bailey HQ External Loading Dock Sneak]]>><</link>><<skulduggerydifficulty>>
+		<<link [[Sneak into the external loading dock (0:10)|Bailey HQ External Loading Dock Sneak]]>><<pass 10>><</link>><<skulduggerydifficulty>>
 		<br>
 	<<else>>
 		<<set $lock to 1000>>
 		<<if currentSkillValue('skulduggery') gte $lock>>
-			<<link [[Unlock one of the loading dock doors|Bailey HQ External Loading Dock Unlock]]>><</link>>
+			<<link [[Unlock one of the loading dock doors (0:05)|Bailey HQ External Loading Dock Unlock]]>><<pass 5>><</link>>
 			<br>
 		<<else>>
 			<span class="red">The industrial lock is too difficult for you.</span><<skulduggeryrequired>>
@@ -179,8 +179,67 @@
 	<<link [[Climb up the access ladder|Bailey HQ Ladder]]>><</link>><<if Time.dayState isnot "night">><<dangerousText>><</if>>
 	<br>
 	<span class="yellow">This will immediately put them on high alert.</span><br>
-	<<link [[Go through the access door|Bailey HQ Vehicle Storage Area]]>><</link>><<dangerousText>>
+	<<link [[Go through the access door (0:02)|Bailey HQ Access Door]]>><<pass 2>><</link>><<dangerousText>>
 	<br>
 <</if>>
 
-:: 
+:: Bailey HQ Vehicle Storage Area
+<<effects>>
+
+<<if $baileyHQ.alertness gte 25>>
+	<<set $skulduggerydifficulty to 1500>>
+<<elseif $baileyHQ.alertness gte 15>>
+	<<set $skulduggerydifficulty to 1000>>
+<<else>>
+	<<set $skulduggerydifficulty to 500>>
+<</if>>
+
+<<if $stress gte $stressmax and !$possessed>>
+	<<set $baileyHQ.alertness += 15>><<alertnessclamp>>
+	<<passoutbaileyhq>>
+<<else>>
+	You're inside the warehouse and it seems like you're in a vehicle storage area of sorts. SUVs, vans, trucks and even some luxury cars are parked here.
+	<br><br>
+	
+	<<if Time.dayState isnot "night">>
+		The reception area has a few guards doing quality checks on the cargo and workers carrying some of the cargo onto a freight lift. 
+	<<else>>
+		The reception area is quiet and the freight lift is on the ground floor. 
+	<</if>>
+	<<if $baileyHQ.meetingRoomKnown is 1>>
+		The door leading to the meeting room is still shut 
+	<<else>>
+		You see a shut door across the warehouse 
+	<</if>>
+	and the stairs going up to the mezzanine is 
+	<<if $baileyHQ.alertness gte 25>>
+		<span class="red">guarded by four guards</span>.
+		<<set _guarded to 1>>
+	<<elseif $baileyHQ.alertness gte 15>>
+		<span class="blue">guarded by two guards</span>.
+		<<set _guarded to 1>>
+	<<elseif $baileyHQ.alertness gte 5>>
+		<span class="yellow">guarded by one guard</span>.
+		<<set _guarded to 1>>
+	<<else>>
+		<span class="green">unguarded</span>.
+		<<set _guarded to 0>>
+	<</if>>
+	
+	<<if _guarded is 0>>
+		<<link [[Sneak up the stairs (0:05)|Bailey HQ Ground Stairs Sneak]]>><<pass 5>><</link>>
+		<br>
+	<<else>>
+		<<link [[Fight the guards guarding the stairs|Bailey HQ Ground Stairs Fight]]>><</link>><<dangerousText>>
+		<br>
+	<</if>>
+	<<if $baileyHQ.meetingRoomKnown is 1>>
+		<<link [[Sneak to the meeting room|Bailey HQ Meeting Room]]>><</link>>
+		<br>
+	<<else>>
+		<<link [[Sneak to the shut door|Bailey HQ Meeting Room]]>><</link>>
+	<</if>>
+	<span class="yellow">This will immediately put them on high alert.</span><br>
+	<<link [[Go back out through the access door (0:02)|Bailey HQ Access Door]]>><<pass 2>><</link>><<dangerousText>>
+	<br>
+<</if>>

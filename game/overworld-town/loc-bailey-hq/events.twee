@@ -66,7 +66,7 @@
 You take out your wirecutter and start snipping away at the fence. Not long after, you have a human sized hole in the fence for easy access. You reckon it'll be a day before they notice and another to fix it.
 <br><br>
 
-<<set $baileyHQ.fenceHole to 1>><<set $baileyHQ.fenceFix to 2>><<set $baileyHQ.nextDayAlertness += 25>><<alertnessclamp>>
+<<set $baileyHQ.fenceHole to 1>><<set $baileyHQ.fenceFix to 2>><<set $baileyHQ.nextDayAlertness += 25>>
 
 <<link [[Next|Bailey HQ Outskirts]]>><</link>>
 
@@ -501,7 +501,7 @@ You sneak up to the garage door, making sure nobody's around to spot your daring
 		You brace yourself before heaving the heavy garage door up enough to slip under <span class="red">but you can't hold it up</span>. You have a split second to decide whether to commit or bail, either way, the door's going to crash down loudly.
 		<br><br>
 
-		<<link [[Commit and scramble in|Bailey HQ Vehicle Area Scramble]]>><<set $baileyHQ.alertness += 15>><<alertnessclamp>><</link>>
+		<<link [[Commit and scramble in|Bailey HQ Vehicle Area Scramble]]>><</link>>
 		<br>
 		<<link [[Bail and run|Bailey HQ Inner Stalk]]>>
 			<<set $molestationstart to 1>>
@@ -537,8 +537,135 @@ You sneak up to the garage door, making sure nobody's around to spot your daring
 
 :: Bailey HQ Vehicle Area Scramble
 <<effects>>
+<<set $baileyHQ.alertness += 15>><<alertnessclamp>>
 
 You give it your last ounce of power and throw the garage door as high as you can before rolling in. The door crashes loudly behind you, <span class="red">they know you're here</span>.
 <br><br>
 
 <<link [[Next|Bailey HQ Vehicle Area]]>><</link>>
+
+:: Bailey HQ External Loading Dock Sneak
+<<effects>>
+
+You sneak as close as possible to the external loading dock and wait for an opportunity. You watch the workers go back and forth the trucks and the dock before spotting a moment when none are looking and 
+<<skulduggerycheck>>
+<<if $skulduggerysuccess is 1>>
+	<span class="green">slip in</span>.
+	<br><br>
+<<else>>
+	<<if $baileyHQ.alertness gte 25>>
+		<<generate1>><<generate2>><<generate3>><<generate4>><<person1>>
+	<<elseif $baileyHQ.alertness gte 15>>
+		<<generate1>><<generate2>><<generate3>><<person1>>
+	<<elseif $baileyHQ.alertness gte 5>>
+		<<generate1>><<generate2>><<person1>>
+	<<else>>
+		<<generate1>><<person1>>
+	<</if>>
+	slip i-
+	<br><br>
+
+	"<span class="red">Stop right there</span>," a <<person>> says as <<he>> approaches you, "you're not supposed to be here aren't you? You're coming with me."
+	<br><br>
+
+	<<link [[Next|Bailey HQ External Loading Dock Sneak Caught]]>><<set $molestationstart to 1>><</link>>
+<</if>>
+
+:: Bailey HQ External Loading Dock Unlock
+<<effects>>
+<<set $baileyHQ.nextDayAlertness += 5>>
+The lock is a heavy industrial padlock but it is no match for your skills. <span class="green">You've unlocked the dock door</span>, though they'll be suspicious no doubt.
+<br><br>
+
+<<link [[Next|Bailey HQ External Loading Dock]]>><</link>>
+
+:: Bailey HQ Ladder
+<<effects>>
+
+You sneak up to the ladder, look around to make sure nobody's around and start the climb.
+<br><br>
+
+<<link [[Next|Bailey HQ Ladder Traverse (0:01)]]>><<pass 1>><<set $baileyHQ.ladderProgress to 0>><</link>>
+
+:: Bailey HQ Ladder Traverse
+<<effects>><<pass 1>>
+
+<<if $baileyHQ.alertness gte 25>>
+	<<set _check to 100>>
+<<elseif $baileyHQ.alertness gte 15>>
+	<<set _check to 75>>
+<<elseif $baileyHQ.alertness gte 5>>
+	<<set _check to 50>>
+<<else>>
+	<<set _check to 25>>
+<</if>>
+<<if Time.dayState isnot "night">>
+	<<set _check to _check / 2>>
+<</if>>
+
+<<if random(1,100) lte _check>>
+	<<set $baileyHQ.alertness += 15>><<alertnessclamp>>
+	<<if $baileyHQ.alertness gte 25>>
+		<<generate1>><<generate2>><<generate3>><<generate4>><<person1>>
+	<<elseif $baileyHQ.alertness gte 15>>
+		<<generate1>><<generate2>><<generate3>><<person1>>
+	<<elseif $baileyHQ.alertness gte 5>>
+		<<generate1>><<generate2>><<person1>>
+	<<else>>
+		<<generate1>><<person1>>
+	<</if>>
+	"<span class="red">Well well well, what do we have here?</span>" 
+	<br><br>
+
+	You startle to a stop before looking down to see a <<person>> looking straight at you.
+	<br><br>
+
+	"Oh don't mind 
+	<<if $baileyHQ.alertness gte 5>>
+		us.
+	<<else>>
+		me.
+	<</if>>
+	Keep going, whichever you choose, we'll be there." the <<person>> says smirking.
+	<br><br>
+
+	<<link [[Face them on the rooftop|Bailey HQ Rooftop Ladder Caught]]>><</link>>
+	<br>
+	<<link [[Face them on the ground|Bailey HQ Inner Ladder Caught]]>><</link>>
+<<else>>
+	Nobody has noticed you yet. 
+	<<if $baileyHQ.ladderProgress gte 3>>
+		You're almost at the top.
+	<<elseif $baileyHQ.ladderProgress gte 2>>
+		You're halfway up the ladder.
+	<<elseif $baileyHQ.ladderProgress gte 1>>
+		You're about a quarter up.
+	<<else>>
+		You're at the bottom.
+	<</if>>
+	<br><br>
+
+	<<if $baileyHQ.ladderProgress is 0>>
+		<<link [[Get off the ladder (0:01)|Bailey HQ Inner]]>><</link>>
+		<br>
+	<<elseif $baileyHQ.ladderProgress is 4>>
+		<<link [[Get onto the rooftop (0:01)|Bailey HQ Rooftop]]>><</link>>
+		<br>
+	<</if>>
+	<<if $baileyHQ.ladderProgress lt 4>>
+		<<link [[Go up the ladder (0:01)|Bailey HQ Ladder Traverse]]>><<set $baileyHQ.ladderProgress += 1>><</link>>
+		<br>
+	<</if>>
+	<<if $baileyHQ.ladderProgress gt 0>>
+		<<link [[Go down the ladder (0:01)|Bailey HQ Ladder Traverse]]>><<set $baileyHQ.ladderProgress -= 1>><</link>>
+		<br>
+	<</if>>
+<</if>>
+
+:: Bailey HQ Access Door
+<<effects>>
+
+You throw all caution into the wind and simply stroll through the access door and as soon as you get through it, an alarm blares. <span class="red">They know you're here.</span>
+<br><br>
+
+<<link [[Next|Bailey HQ Vehicle Storage Area]]>><</link>>
