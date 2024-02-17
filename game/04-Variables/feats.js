@@ -626,6 +626,13 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Transformation"],
 	},
+	"Frequent Flyer": {
+		title: "Sky's The Limit",
+		desc: "Maybe not legendary, but you've certainly mastered the wind.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Transformation"],
+	},
 	Fox: {
 		title: "You Sly Fox",
 		desc: "Thieving little rascal.",
