@@ -641,6 +641,10 @@ function dayPassed() {
 		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
 	}
 
+	if (V.dailyBrothelPriceCheck) {
+		V.dailyBrothelPriceCheck = undefined;
+	}
+
 	fragment.append(wikifier("menstruationCycle", "daily"));
 	pregnancyProgress();
 	pregnancyProgress("anus");
