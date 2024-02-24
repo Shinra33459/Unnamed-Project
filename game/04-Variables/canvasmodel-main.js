@@ -961,7 +961,7 @@ Renderer.CanvasModels["main"] = {
 			filters: ["body"],
 			zfn(options) {
 				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.arms_cover;
-				return ZIndices.under_upper_arm_right;
+				return options.zarms;
 			},
 			animation: "idle",
 		},
@@ -2327,11 +2327,12 @@ Renderer.CanvasModels["main"] = {
 				return options.show_writings && !!options.writing_right_shoulder;
 			},
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") {
-					return ZIndices.arms_cover + 0.1
-				} else {
-					return ZIndices.armsidle + 0.1
-				}
+				// if (options.arm_right === "cover" || options.arm_right === "hold") {
+				// 	return ZIndices.arms_cover + 0.1
+				// } else {
+				// 	ZIndices.armsidle + 0.1
+				// }
+				return options.zarms + 0.01
 			},
 			animation: "idle"
 		},
@@ -2997,7 +2998,7 @@ Renderer.CanvasModels["main"] = {
 		"under_upper_back": genlayer_clothing_back_img('under_upper'),
 		"under_upper_rightarm": genlayer_clothing_arm("right", "under_upper", {
 			zfn(options) {
-				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.under_upper_arms_cover : ZIndices.under_upper_arms;
+				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.under_upper_arms_cover : ZIndices.under_upper_arm_right;
 			}
 		}),
 		"under_upper_leftarm": genlayer_clothing_arm("left", "under_upper", {
