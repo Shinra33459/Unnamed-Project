@@ -1566,13 +1566,8 @@ function dailyMasochismSadismEffects() {
 		return false;
 	};
 
-	if (V.featsSadismBoost) {
-		if (V.uncomfortable.sadoMaso === true) V.masochism *= 0.985;
-	}
-	else if (V.featsMasochismBoost) {
-		if (V.uncomfortable.sadoMaso === true) V.sadism *= 0.985;
-	}
-	else if (V.uncomfortable.sadoMaso === true) V.masochism *= 0.985; V.sadism *= 0.985;
+	if (!V.featsSadismBoost && V.uncomfortable.sadoMaso === true) V.sadism *= 0.985;
+	if (!V.featsMasochismBoost && V.uncomfortable.sadoMaso === true) V.masochism *= 0.985;
 
 	let dailySadism = 0;
 		if (V.featsSadismBoost) dailySadism += V.featsSadismBoost;
