@@ -357,6 +357,13 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Stats"],
 	},
+	"Wizard": {
+		title: "Wizard",
+		desc: "Bailey asks you how to send emails",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Stats"],
+	},
 	"Shining Reputation": {
 		title: "Shining Reputation",
 		desc: "Famous, but only in the right ways.",
@@ -1855,6 +1862,15 @@ setup.feats = {
 		filter: ["All", "AMC Traits"],
 		softLockable: true,
 		hint: "Hint: Max brawling with tempered brawling.",
+	},
+	"Linux User": {
+		title: "Linux User",
+		desc: "I bet you probably use arch",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max technology with tempered technology.",
 	},
 	"Starting Point": {
 		title: "Starting Point",
