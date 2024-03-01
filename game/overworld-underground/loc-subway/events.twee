@@ -1,6 +1,14 @@
 
 :: Events Subway [widget]
 
+<<widget "subwayvampireassault">>
+	<<npc Lennox>><<person1>>
+	In the darkness you stumble around, unaware of your surroundings. Suddenly you see a flash of red and someone grabs you from behind.
+	<br><br>
+
+	<<link [[Next|Subway Vampire Assault]]>><<set $fightstart to 1>><</link>>
+<</widget>>
+
 <<widget "subwaytrip">>
 	<<if $worn.feet.type.includes("naked")>>
 		Your bare foot steps on the rails. It doesn't hurt much, but the shock makes you lose your footing and you slip and fall.
@@ -73,3 +81,63 @@
 		<br>
 	<</if>>
 <<set $eventskip to 0>>
+
+:: Subway Vampire Assault
+<<if $fightstart is 1>>
+	<<set $fightstart to 0>>
+
+	<<neutral 1>>
+
+	<<maninit>>
+	<<set $enemytrust -= 100>>
+	<<set $enemyanger += 200>>
+	<<npcidlegenitals>>
+	<<set $enemyhealthmax += 250>><<set $enemyhealth += 250>>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+
+<<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if _combatend or ($pain gte 100 and $willpowerpain is 0)>>
+	<span id="next"><<link [[Next|Subway Vampire Assault Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Subway Vampire Assault]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Subway Vampire Assault Finish
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+
+	<<tearful>> you escape into another tunnel.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+	
+	<<subwaylinks>>
+
+<<elseif $enemyhealth lte 0>>
+	You shove the figure away from you, dodge <<his>> clutching grasp and stumble to your feet.
+	<br><br>
+
+	<<tearful>> you escape into another tunnel.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<subwaylinks>>
+
+<<else>>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<subwaylinks>>
+<</if>>
