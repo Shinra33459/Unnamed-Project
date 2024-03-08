@@ -1962,5 +1962,16 @@ function dailyBaileyHQ() {
 		V.baileyHQ.alertness -= 1;
 	}
 
+	if (random(1, 100) >= 75) {
+		V.baileyHQ.meeting = 1;
+	} else {
+		V.baileyHQ.meeting = 0;
+	}
+
+	V.baileyHQ.chairs = random(1, 9);
+	V.baileyHQ.ashtray = random(1, 9);
+	V.baileyHQ.helicopter = random(0, 1);
+	V.baileyHQ.trucks = random(2, 8);
+
 	return fragment;
 }
