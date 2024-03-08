@@ -910,6 +910,26 @@ Zohar
 		<<set $NPCList[_npcno].dodgeChance to 20>>
 	<</switch>>
 
+	<<set _buff to 0>>
+	<<set $NPCList[_npcno].healthmax to Math.round($NPCList[_npcno].healthmax * ($npcHealthMult / 100))>>
+	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
+	<<if $combatExtended.enemyHealthDayScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
+		<<else>>
+			<<set _buff += $combatExtended.enemyDayScalingLimit * $combatExtended.enemyHealthDayScalingMult>>
+		<</if>>
+	<</if>>
+	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
+	<<if $combatExtended.enemyHealthDefeatScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
+		<<else>>
+			<<set _buff += $combatExtended.enemyDefeatScalingLimit * $combatExtended.enemyHealthDefeatScalingMult>>
+		<</if>>
+	<</if>>
+	<<set $NPCList[_npcno].healthmax to Math.round($NPCList[_npcno].healthmax * (1 + (_buff / 100)))>>
+
 	<<set $NPCList[_npcno].breastsize to $NPCName[_i].breastsize>>
 	<<set $NPCList[_npcno].breastsdesc to $NPCName[_i].breastsdesc>>
 	<<set $NPCList[_npcno].breastdesc to $NPCName[_i].breastdesc>>
