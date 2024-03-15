@@ -223,6 +223,19 @@ Zohar
     <</if>>
 <</widget>>
 
+<<widget "initNPCBaseMaxOrgasm">>
+    <<for _i to 0; _i lt $NPCName.length; _i++>>
+        <<initNPCBaseMaxOrgasmSingle _i _args[0]>>
+    <</for>>
+<</widget>>
+
+<<widget "initNPCBaseMaxOrgasmSingle">>
+    <<set _i to _args[0]>>
+	<<if !$NPCName[_i].maxOrgasms or $NPCName[_i].maxOrgasms is 0 or _args[1] is "base max orgasms">>
+    	<<set $NPCName[_i].maxOrgasms to random(1, 5)>>
+	<</if>>
+<</widget>>
+
 <<widget "initnpcgender">>
 	<<for _i to 0; _i lt $NPCName.length; _i++>>
 		<<initnpcgendersingle _i _args[0]>>
@@ -835,7 +848,7 @@ Zohar
 		<<set $pronoun to $NPCName[_i].pronoun>>
 	<</if>>
 	/*Sets up multiple orgasms, code needs work*/
-	<<set $NPCList[0].maxOrgasms to 1>>
+	/* <<set $NPCList[0].maxOrgasms to 1>>
 	<<set $NPCList[0].orgasms to 0>>
 	<<if $multiOrgasmToggle is 1>>
 		<<set _nameCheck to $NPCList[0].fullDescription>>
@@ -848,11 +861,7 @@ Zohar
 		<<elseif _nameCheck is "Bailey" or _nameCheck is "Briar" or _nameCheck is "Eden" or _nameCheck is "Black Wolf" or _nameCheck is "Great Hawk" or _nameCheck is "Ivory Wraith" or _nameCheck is "Zephyr">>
 			<<set $NPCList[0].maxOrgasms to 5 + Math.floor($NPCName[$NPCNameList.indexOf(_nameCheck)].lust / 20)>>
 		<</if>>
-	<</if>>
-
-	<<if $NPCList[0].maxOrgasms gt 1>>
-		<<set $setupMidOrgasm to true>>
-	<</if>>
+	<</if>> */
 
 	<!-- Set combat variables -->
 
@@ -862,6 +871,20 @@ Zohar
 	<<set $NPCList[_npcno].pronouns to clone($NPCName[_i].pronouns)>>
 	<<set $NPCList[_npcno].gender to $NPCName[_i].gender>>
 	<<set $NPCList[_npcno].type to $NPCName[_i].type>>
+	<<set $NPCList[_npcno].maxOrgasms to $NPCName[_i].maxOrgasms>>
+
+	<<if $multiOrgasmToggle is 1>>
+		<<if !$NPCList[_npcno].maxOrgasms or $NPCList[_npcno].maxOrgasms lte 0>>
+			<<set $NPCList[_npcno].maxOrgasms = random(1, 5)>>
+		<</if>>
+		<<if $multiOrgasmLustScaling is 1>>
+			<<set $NPCList[_npcno].maxOrgasms += Math.floor($NPCName[$NPCNameList.indexOf(_nam)].lust / 20)>>
+		<</if>>
+	<</if>>
+
+	<<if $NPCList[_npcno].maxOrgasms gt 1>>
+		<<set $setupMidOrgasm to true>>
+	<</if>>
 
 	<<set $NPCList[_npcno].lefthand to 0>>
 	<<set $NPCList[_npcno].righthand to 0>>
