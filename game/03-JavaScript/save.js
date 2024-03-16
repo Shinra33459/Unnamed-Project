@@ -1208,6 +1208,7 @@ function settingsObjects(type) {
 					feet: { min: 1, max: 2, decimals: 0, displayName: "Tempered Feet Skill:" }
 				},
 				multiOrgasmToggle: { min: 0, max: 1, decimals: 0, displayName: "Multi-Orgasm:" },
+				multiOrgasmLustScaling: { min: 0, max: 1, decimals: 0, displayName: "Multi-Orgasm Lust Scaling:" },
 				debugdisable: { boolLetter: true, bool: true, displayName: "Debug mode:" },
 				statdisable: { boolLetter: true, bool: true, displayName: "Blind stats mode:" },
 				cheatdisabletoggle: { boolLetter: true, bool: true, displayName: "Cheat mode:" },
@@ -1318,6 +1319,12 @@ function settingsObjects(type) {
 						11: "Gigantic",
 						12: "Enormous",
 					},
+				},
+				maxOrgasms: {
+					min: 1,
+					max: 5,
+					decimals: 0,
+					displayName: "Base max orgasms: ",
 				},
 			};
 			break;
