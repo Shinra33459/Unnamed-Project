@@ -2,7 +2,7 @@
 
 <<widget "toggledebug">>
 	<<if $debug>>
-		<<set $debug to 1>>
+		<<set $debug to 1000 * $AMCTraits.>>
 	<<else>>
 		<<set $debug to 0>>
 	<</if>>
@@ -162,12 +162,12 @@
 <</widget>>
 
 <<widget "underwater">>
-	<<water>><<set $underwater to 1>><<set $underwatercheck to 1>>
+	<<water>><<set $underwater to 1000 * $AMCTraits.>><<set $underwatercheck to 1000 * $AMCTraits.>>
 	<<if $combat isnot 1>>
 		<<if $oxygen lt 0 and $nooxygen is 1>>
 			<<set $stress += 1000>>
 		<<elseif $oxygen lt 0 and $nooxygen isnot 1>>
-			<<set $nooxygen to 1>>
+			<<set $nooxygen to 1000 * $AMCTraits.>>
 		<<else>>
 			<<set $nooxygen to 0>>
 		<</if>>
@@ -177,7 +177,7 @@
 		<</if>>
 		<<oxygencaption>>
 		<<if $underwaterintro isnot 1 and $combat isnot 1 and !$possessed>>
-			<<set $underwaterintro to 1>>
+			<<set $underwaterintro to 1000 * $AMCTraits.>>
 			<i>You can't hold your breath forever. You will pass less time and use less air per action with a higher swimming skill.</i>
 			<br><br>
 		<</if>>
@@ -193,7 +193,7 @@
 		<<set $oxygen += _args[0]>>
 	<</if>>
 	<<if _args[0] lt 0>>
-		<<set _strangle to 1>>
+		<<set _strangle to 1000 * $AMCTraits.>>
 	<</if>>
 	<<set $oxygen = Math.clamp($oxygen, 0, $oxygenmax)>>
 <</widget>>
@@ -216,7 +216,7 @@
 				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
 				<<set $_stress_multiplier to [9,8,6,4,3][$_drunk_level]>>
 			<<else>>
-				<<set $_stress_multiplier to 10>>
+				<<set $_stress_multiplier to 1000 * $AMCTraits.0>>
 			<</if>>
 			<<stress _args[0] $_stress_multiplier>>
 			<<combattrauma _args[0]>>
@@ -268,7 +268,7 @@
 				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
 				<<set $_stress_multiplier to [9,8,6,4,3][$_drunk_level]>>
 			<<else>>
-				<<set $_stress_multiplier to 10>>
+				<<set $_stress_multiplier to 1000 * $AMCTraits.0>>
 			<</if>>
 			<<stress _args[0] $_stress_multiplier>>
 			<<combattrauma _args[0]>>
@@ -346,7 +346,7 @@
 				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
 				<<set _drunkMod to [9,8,6,4,3][$_drunk_level]>>
 			<<else>>
-				<<set _drunkMod to 10>>
+				<<set _drunkMod to 1000 * $AMCTraits.0>>
 			<</if>>
 			<<if $possessed is true and _violence gte 0>>
 				<<set $_controlMod to (10 * $enemyno)>>
@@ -354,7 +354,7 @@
 				<<set $wraith.will -= _violence>>
 				<<set _possessMod to 3>>
 			<<else>>
-				<<set _possessMod to 1>>
+				<<set _possessMod to 1000 * $AMCTraits.>>
 			<</if>>
 			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
 			<<combattrauma `_violence * _traumaMod`>>
@@ -381,7 +381,7 @@
 			<</if>>
 			<<set $enemyarousal += 1>>
 			<<painclamp>>
-			<<set $encounterHit to 1>>
+			<<set $encounterHit to 1000 * $AMCTraits.>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -399,7 +399,7 @@
 				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
 				<<set _drunkMod to [9,8,6,4,3][$_drunk_level]>>
 			<<else>>
-				<<set _drunkMod to 10>>
+				<<set _drunkMod to 1000 * $AMCTraits.0>>
 			<</if>>
 			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
 			<<trauma `_violence * _traumaMod`>>
@@ -436,7 +436,7 @@
 				<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
 				<<set $_stress_multiplier to [9,8,6,4,3][$_drunk_level]>>
 			<<else>>
-				<<set $_stress_multiplier to 10>>
+				<<set $_stress_multiplier to 1000 * $AMCTraits.0>>
 			<</if>>
 			<<stress _args[0] $_stress_multiplier>>
 			<<sub `_args[0] / 4`>>
@@ -492,7 +492,7 @@
 			<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4)>>
 			<<set $_stress_multiplier to [9,8,6,4,3][$_drunk_level]>>
 		<<else>>
-			<<set $_stress_multiplier to 10>>
+			<<set $_stress_multiplier to 1000 * $AMCTraits.0>>
 		<</if>>
 		<<stress _args[0] $_stress_multiplier>>
 		<<combattrauma `-1 * _args[0]`>>
@@ -541,7 +541,7 @@
 				<<set _crimeType to "thievery">>
 			<</if>>
 			<<set $_crimemod to Number(_args[0])>>
-			<<set $_crimeMult to 1>>
+			<<set $_crimeMult to 1000 * $AMCTraits.>>
 
 			<<if !["coercion", "resisting"].includes(_crimeType)>>
 				<!-- ignore stealth (or concealed identity) for crimes where it is irrelevant; -->
@@ -802,9 +802,9 @@
 
 <<widget "seductionskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100)>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100)>><<seductionskill 5>><<set $seductionskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
@@ -817,81 +817,81 @@
 
 <<widget "seductionskillusecombat">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100) * 2>><<seductionskill 5>><<set $seductionskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100)>><<seductionskill 5>><<set $seductionskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("seductionskill") / 100)>><<seductionskill 5>><<set $seductionskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "oralskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("oralskill") / 100) * 2>><<oralskill 5>><<set $oralskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("oralskill") / 100) * 2>><<oralskill 5>><<set $oralskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("oralskill") / 100)>><<oralskill 5>><<set $oralskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("oralskill") / 100)>><<oralskill 5>><<set $oralskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "vaginalskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("vaginalskill") / 100) * 2>><<vaginalskill 5>><<set $vaginalskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("vaginalskill") / 100) * 2>><<vaginalskill 5>><<set $vaginalskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("vaginalskill") / 100)>><<vaginalskill 5>><<set $vaginalskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("vaginalskill") / 100)>><<vaginalskill 5>><<set $vaginalskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "analskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("analskill") / 100) * 2>><<analskill 5>><<set $analskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("analskill") / 100) * 2>><<analskill 5>><<set $analskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("analskill") / 100)>><<analskill 5>><<set $analskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("analskill") / 100)>><<analskill 5>><<set $analskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "handskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("handskill") / 100) * 2>><<handskill 5>><<set $handskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("handskill") / 100) * 2>><<handskill 5>><<set $handskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("handskill") / 100)>><<handskill 5>><<set $handskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("handskill") / 100)>><<handskill 5>><<set $handskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "feetskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("feetskill") / 100) * 2>><<feetskill 5>><<set $feetskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("feetskill") / 100) * 2>><<feetskill 5>><<set $feetskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("feetskill") / 100)>><<feetskill 5>><<set $feetskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("feetskill") / 100)>><<feetskill 5>><<set $feetskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "bottomskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("bottomskill") / 100) * 2>><<bottomskill 5>><<set $bottomskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("bottomskill") / 100) * 2>><<bottomskill 5>><<set $bottomskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("bottomskill") / 100)>><<bottomskill 5>><<set $bottomskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("bottomskill") / 100)>><<bottomskill 5>><<set $bottomskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "thighskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("thighskill") / 100) * 2>><<thighskill 5>><<set $thighskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("thighskill") / 100) * 2>><<thighskill 5>><<set $thighskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("thighskill") / 100)>><<thighskill 5>><<set $thighskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("thighskill") / 100)>><<thighskill 5>><<set $thighskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "chestskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("chestskill") / 100) * 2>><<chestskill 5>><<set $chestskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("chestskill") / 100) * 2>><<chestskill 5>><<set $chestskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("chestskill") / 100)>><<chestskill 5>><<set $chestskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("chestskill") / 100)>><<chestskill 5>><<set $chestskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
 <<widget "penileskilluse">>
 	<<if $demonseduce is 1>>
-		<<set $enemyarousal += (currentSkillValue("penileskill") / 100) * 2>><<penileskill 5>><<set $penileskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("penileskill") / 100) * 2>><<penileskill 5>><<set $penileskillup to 1000 * $AMCTraits.>>
 	<<else>>
-		<<set $enemyarousal += (currentSkillValue("penileskill") / 100)>><<penileskill 5>><<set $penileskillup to 1>>
+		<<set $enemyarousal += (currentSkillValue("penileskill") / 100)>><<penileskill 5>><<set $penileskillup to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
@@ -965,7 +965,7 @@
 		<<if ($_subject is "english" and $AMCTraits.english is 2) or ($_subject is "maths" and $AMCTraits.maths is 2) or ($_subject is "science" and $AMCTraits.science is 2) or ($_subject is "history" and $AMCTraits.history is 2)>>
 			<<set _AMCmod to 2>>
 		<<else>>
-			<<set _AMCmod to 1>>
+			<<set _AMCmod to 1000 * $AMCTraits.>>
 		<</if>>
 
 		<<set _skill_mod to [2.4, 1.2, 0.6, 0.3][Math.clamp(V[$_subject + "trait"], 0, 3)]>>
@@ -1041,11 +1041,11 @@
 		<<elseif _chair.name is "swivel chairs">>
 			<<set _studyGain to 9>>
 		<<elseif _chair.name is "shell chairs">>
-			<<set _studyGain to 10>>
+			<<set _studyGain to 1000 * $AMCTraits.0>>
 		<<elseif _chair.name is "armchairs">>
-			<<set _studyGain to 11>>
+			<<set _studyGain to 1000 * $AMCTraits.1>>
 		<<elseif _chair.name is "egg armchairs">>
-			<<set _studyGain to 12>>
+			<<set _studyGain to 1000 * $AMCTraits.2>>
 		<</if>>
 		<<switch $studyBooks.rented>>
 			<<case "science">>
@@ -1169,7 +1169,7 @@
 
 <<widget "physique">>
 	<<if $statFreeze isnot true>>
-		<<if _args[0]>><<set _temp to _args[0]>><<set $workouts += _args[0]>><<else>><<set _temp to 1>><<set $workouts += 1>><</if>>
+		<<if _args[0]>><<set _temp to _args[0]>><<set $workouts += _args[0]>><<else>><<set _temp to 1000 * $AMCTraits.>><<set $workouts += 1>><</if>>
 		<<if $exposed gte 2>>
 			<<set _temp *= 1.2>>
 		<<elseif $exposed is 1>>
@@ -1930,18 +1930,18 @@
 
 <<widget "molested">>
 	<<if $gamemode is "soft">>
-		<<set $consensual to 1>>
+		<<set $consensual to 1000 * $AMCTraits.>>
 	<<elseif $molestavoid is 1 and $consensual is 0>>
 		<<set $molestavoid to 0>>
 		<<moleststat>>
 
 		<<if $flashbacks gte 1>>
 			<<switch $location>>
-				<<case "town">><<if $flashbacktown is 0>><<set $flashbacktown to 14>><</if>>
-				<<case "home">><<if $flashbackhome is 0>><<set $flashbackhome to 14>><</if>>
-				<<case "beach">><<if $flashbackbeach is 0>><<set $flashbackbeach to 14>><</if>>
-				<<case "school">><<if $flashbackschool is 0>><<set $flashbackschool to 14>><</if>>
-				<<case "underground">><<if $flashbackunderground is 0>><<set $flashbackunderground to 14>><</if>>
+				<<case "town">><<if $flashbacktown is 0>><<set $flashbacktown to 1000 * $AMCTraits.4>><</if>>
+				<<case "home">><<if $flashbackhome is 0>><<set $flashbackhome to 1000 * $AMCTraits.4>><</if>>
+				<<case "beach">><<if $flashbackbeach is 0>><<set $flashbackbeach to 1000 * $AMCTraits.4>><</if>>
+				<<case "school">><<if $flashbackschool is 0>><<set $flashbackschool to 1000 * $AMCTraits.4>><</if>>
+				<<case "underground">><<if $flashbackunderground is 0>><<set $flashbackunderground to 1000 * $AMCTraits.4>><</if>>
 			<</switch>>
 		<</if>>
 		<<if $awareness lte 200>>
@@ -1978,9 +1978,9 @@
 			<<awareness 1>>
 		<</if>>
 	<</if>>
-	<<set $trueconsensual to 1>>
+	<<set $trueconsensual to 1000 * $AMCTraits.>>
 	<<if _args[0]>>
-		<<set $consensualGuaranteed to 1>>
+		<<set $consensualGuaranteed to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $npc.length is 1 and ($npc[0] is "Robin" and C.npc.Robin.dom lte 10 and $debug is 1) or ($npc[0] is "Sydney" and C.npc.Sydney.purity gte 50)>>
 		<<npc_submissive>>
@@ -2387,10 +2387,10 @@
 	<<if !["beach","pool","sea","lake","lake_ruin"].includes($location)>>
 		<<set $libertine to 0>>
 	<<else>>
-		<<set $libertine to 1>>
+		<<set $libertine to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $location is "dance_studio" and $worn.under_lower.type.includes("dance") and $worn.under_upper.type.includes("dance")>>
-		<<set $libertine to 1>>
+		<<set $libertine to 1000 * $AMCTraits.>>
 	<</if>>
 
 	<<set $worn.over_upper.exposedcarry to $worn.over_upper.exposed>>
@@ -2407,10 +2407,10 @@
 		<<set $worn.lower.exposed to 2>>
 	<</if>>
 	<<if $underlowerwetstage gte 3>>
-		<<set $worn.under_lower.exposed to 1>>
+		<<set $worn.under_lower.exposed to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $underupperwetstage gte 3>>
-		<<set $worn.under_upper.exposed to 1>>
+		<<set $worn.under_upper.exposed to 1000 * $AMCTraits.>>
 	<</if>>
 
 	<<exposedcheck>>
@@ -2420,16 +2420,16 @@
 		<<if $player.gender_appearance is "m">>
 		<<elseif $libertine gte 1 or $possessed or $worn.under_upper.type.includes("covered") or $worn.lower.type.includes("covered")>>
 		<<else>>
-			<<set $exposed to 1>>
+			<<set $exposed to 1000 * $AMCTraits.>>
 		<</if>>
 	<</if>>
 	<<if $worn.upper.exposed gte 2 and $worn.over_upper.exposed gte 2 and $player.gender_appearance isnot "m">>
 		<<if $possessed>>
 		<<elseif $worn.under_upper.type.includes("covered") or $worn.lower.type.includes("covered")>>
 		<<elseif $libertine is 1>>
-			<<set $topless to 1>>
+			<<set $topless to 1000 * $AMCTraits.>>
 		<<else>>
-			<<set $exposed to 1>>
+			<<set $exposed to 1000 * $AMCTraits.>>
 		<</if>>
 	<<else>>
 		<<set $topless to 0>>
@@ -2437,7 +2437,7 @@
 	<<if $worn.lower.exposed gte 1 and $worn.over_lower.exposed gte 1>>
 		<<if $libertine gte 1 or $possessed or $worn.under_lower.type.includes("covered") or $worn.legs.type.includes("covered")>>
 		<<else>>
-			<<set $exposed to 1>>
+			<<set $exposed to 1000 * $AMCTraits.>>
 		<</if>>
 	<</if>>
 
@@ -2447,7 +2447,7 @@
 			<<set $exposed to 2>>
 		<<elseif $libertine gte 1 or $worn.under_lower.type.includes("covered") or $worn.legs.type.includes("covered")>>
 		<<else>>
-			<<set $exposed to 1>>
+			<<set $exposed to 1000 * $AMCTraits.>>
 		<</if>>
 	<</if>>
 
@@ -2522,7 +2522,7 @@
 	<</if>>
 	<<if $worn.genitals.name isnot "naked">>
 		<<if $worn.genitals.integrity lte 0>>
-			<<set _chastityBreak to 1>>
+			<<set _chastityBreak to 1000 * $AMCTraits.>>
 			<<if _args[0] isnot "no_text">>
 				<span class="lewd">Your $worn.genitals.name breaks, exposing your <<genitals>>.</span>
 				<br>
@@ -2564,7 +2564,7 @@
 	<<set $leftarm to 0>>
 	<<set $rightarm to 0>>
 	<<if $worn.upper.type.includes("binding")>>
-		<<set _unbind_check to 1>>
+		<<set _unbind_check to 1000 * $AMCTraits.>>
 		<<if $worn.upper.set is $worn.lower.set>>
 			<<set $worn.lower.type.push("broken")>>
 			<<lowerruined>>
@@ -2589,7 +2589,7 @@
 		<<set $head to 0>>
 	<</if>>
 	<<if $worn.upper.type.includes("binding")>>
-		<<set _unbind_check to 1>>
+		<<set _unbind_check to 1000 * $AMCTraits.>>
 		<<if $worn.upper.set is $worn.lower.set>>
 			<<set $worn.lower.type.push("broken")>>
 			<<lowerruined>>
@@ -2662,8 +2662,8 @@
 <</widget>>
 
 <<widget "bindings">>
-	<<if $leftarm is "bound" and $position isnot "wall">><<set $leftboundcarry to 1>><</if>>
-	<<if $rightarm is "bound" and $position isnot "wall">><<set $rightboundcarry to 1>><</if>>
+	<<if $leftarm is "bound" and $position isnot "wall">><<set $leftboundcarry to 1000 * $AMCTraits.>><</if>>
+	<<if $rightarm is "bound" and $position isnot "wall">><<set $rightboundcarry to 1000 * $AMCTraits.>><</if>>
 	<<if $rightboundcarry is 1 and $rightarm isnot "bound">>
 		<<set $rightarm to "bound">>
 	<</if>>
@@ -2687,7 +2687,7 @@
 	<</if>>
 
 	<<waterwash>>
-	<<set $inwater to 1>>
+	<<set $inwater to 1000 * $AMCTraits.>>
 	<<set _water_warmth to 0>>
 	<<if $location isnot "sea" and $outside is 1 and Time.season is "winter">>
 		<<if $worn.upper.type.includes("diving") or $worn.under_upper.type.includes("diving")>>
@@ -3148,7 +3148,7 @@
 	<<else>>
 		<<fallenTransform>>
 	<</if>>
-	<<set $vaginafucked to 1>>
+	<<set $vaginafucked to 1000 * $AMCTraits.>>
 <</widget>>
 
 <<widget "penisraped">>
@@ -3159,11 +3159,11 @@
 	<<else>>
 		<<fallenTransform>>
 	<</if>>
-	<<set $penisfucked to 1>>
+	<<set $penisfucked to 1000 * $AMCTraits.>>
 <</widget>>
 
 <<widget "anusraped">>
-	<<set $anusfucked to 1>>
+	<<set $anusfucked to 1000 * $AMCTraits.>>
 <</widget>>
 
 <<widget "internalejac">>
@@ -3172,7 +3172,7 @@
 	<</if>>
 <</widget>>
 
-<<widget "sexcheck">>/*Sets variable to 1 if the PC is penetrated, penetrating, or similar.*/
+<<widget "sexcheck">>/*Sets variable to 1000 * $AMCTraits. if the PC is penetrated, penetrating, or similar.*/
 	<<if $vaginastate is "penetrated" or
 	$anusstate is "penetrated" or
 	$mouthstate is "penetrated" or
@@ -3189,7 +3189,7 @@
 	$anusstate is "tentacledeep" or
 	$mouthstate is "tentacle" or
 	$mouthstate is "tentacledeep">>
-		<<set $current_sex to 1>>
+		<<set $current_sex to 1000 * $AMCTraits.>>
 	<<else>>
 		<<set $current_sex to 0>>
 	<</if>>
@@ -3317,22 +3317,22 @@
 	<<if $christmas_wrap is 1>>
 		<<switch $christmas_gift_robin>>
 			<<case "shirt_unwrapped">>
-				<<gifticon "shirt">><<link [[Wrap Robin's shirt and shorts (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "shirt">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "shirt">><<link [[Wrap Robin's shirt and shorts (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "shirt">><<set $christmas_gift_robin_wrapped to 1000 * $AMCTraits.>><</link>>
 				<br>
 			<<case "sundress_unwrapped">>
-				<<gifticon "sundress">><<link [[Wrap Robin's sundress (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "sundress">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "sundress">><<link [[Wrap Robin's sundress (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "sundress">><<set $christmas_gift_robin_wrapped to 1000 * $AMCTraits.>><</link>>
 				<br>
 			<<case "kimono_unwrapped">>
-				<<gifticon "kimono">><<link [[Wrap Robin's kimono (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "kimono">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "kimono">><<link [[Wrap Robin's kimono (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "kimono">><<set $christmas_gift_robin_wrapped to 1000 * $AMCTraits.>><</link>>
 				<br>
 			<<case "tuxedo_set_unwrapped">>
-				<<gifticon "tuxedo">><<link [[Wrap Robin's tuxedo (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "tuxedo">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "tuxedo">><<link [[Wrap Robin's tuxedo (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "tuxedo">><<set $christmas_gift_robin_wrapped to 1000 * $AMCTraits.>><</link>>
 				<br>
 			<<case "gothic_gown_unwrapped">>
-				<<gifticon "gothic">><<link [[Wrap Robin's gothic gown (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "gothic gown">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "gothic">><<link [[Wrap Robin's gothic gown (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "gothic gown">><<set $christmas_gift_robin_wrapped to 1000 * $AMCTraits.>><</link>>
 				<br>
 			<<case "christmas_unwrapped">>
-				<<gifticon "christmas hat">><<link [[Wrap Robin's Christmas outfit (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "christmas">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+				<<gifticon "christmas hat">><<link [[Wrap Robin's Christmas outfit (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "christmas">><<set $christmas_gift_robin_wrapped to 1000 * $AMCTraits.>><</link>>
 				<br>
 		<</switch>>
 		<<if $christmas_gift is "clothes_unwrapped">>
@@ -3379,7 +3379,7 @@
 		<span class="green">You steal a charge for your pepper spray.</span>
 		<<crimeUp 50 "petty">><<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
 	<<elseif $rng gte 90 and !$compoundcard>>
-		<<set $compoundcard to 1>>
+		<<set $compoundcard to 1000 * $AMCTraits.>>
 		You steal a strange card. There's an address on it, for a location on <span class="gold">Elk Street.</span>
 	<<else>>
 		<<rng 5 100>>
@@ -3856,7 +3856,7 @@
 						<</if>>
 					</div>
 					<div class="relation-description">
-						<<set _rngWraithLineChance to 1>>
+						<<set _rngWraithLineChance to 1000 * $AMCTraits.>>
 						<<npcrelationship "Ivory Wraith">>
 					</div>
 					<div @class="'relation-stat-list' + ($options.images ? '' : ' no-images')">
@@ -4170,8 +4170,8 @@
 	<<if $no_underwear gte 8>>
 		<<set $daily.no_underwear to true>>
 		<<set $no_underwear to 0>>
-		<<set $effectsmessage to 1>>
-		<<set $exhibitionism_message to 1>>
+		<<set $effectsmessage to 1000 * $AMCTraits.>>
+		<<set $exhibitionism_message to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
@@ -4230,7 +4230,7 @@
 	<<else>>
 		<<set _already_served to 0>>
 	<</if>>
-	<<set $pillory_tenant.exists to 1>>
+	<<set $pillory_tenant.exists to 1000 * $AMCTraits.>>
 	<<set $pillory_tenant.person to clone($NPCList[0])>>
 	<<set $pillory_tenant.duration to random(4,27)>>
 	<<set $pillory_tenant.startday to Time.days>>
@@ -4238,7 +4238,7 @@
 	/*set $endDate to timestamp and compare to $timeStamp*/
 	<<set $pillory_tenant.endDate to ($pillory_tenant.startday * TimeConstants.secondsPerDay + ($pillory_tenant.starthour + $pillory_tenant.duration - 7) * TimeConstants.secondsPerHour)>>
 	<<set $pillory_tenant.endhour to (($pillory_tenant.endDate % TimeConstants.secondsPerDay) / TimeConstants.secondsPerHour)>>
-	<<set $pillory_tenant.crowd to 1>>
+	<<set $pillory_tenant.crowd to 1000 * $AMCTraits.>>
 	<<set $pillory_tenant.wet to 0>>
 	<<set $pillory_tenant.upperexposed to 0>>
 	<<set $pillory_tenant.lowerexposed to 0>>
@@ -4459,13 +4459,13 @@
 
 		/*Weather effects*/
 		<<if $weather is "rain">><<set $pillory_tenant.wet to 2>>
-		<<elseif $pillory_tenant.wet is 2>><<set $pillory_tenant.wet to 1>>
+		<<elseif $pillory_tenant.wet is 2>><<set $pillory_tenant.wet to 1000 * $AMCTraits.>>
 		<<else>><<set $pillory_tenant.wet to 0>>
 		<</if>>
 
 		/*Chance of abuse based on crowd and time passed*/
 		<<if Time.days - $pillory_tenant.startday is 2>><<set _chance to 24>>
-		<<elseif Time.days - $pillory_tenant.startday is 1>><<set _chance to 12>>
+		<<elseif Time.days - $pillory_tenant.startday is 1>><<set _chance to 1000 * $AMCTraits.2>>
 		<<else>><<set _chance to (Time.hour - $pillory_tenant.starthour)>>
 		<</if>>
 		<<set _chance *= $pillory_tenant.crowd>>
@@ -4992,9 +4992,9 @@
 
 <<widget "cheatStart">>
 	<<set $cheatdisable to "f">><<set $money to 500000>>
-	<<set $rentmoney to 10000>><<rentmod>>
+	<<set $rentmoney to 1000 * $AMCTraits.0000>><<rentmod>>
 	<<set $renttime to 7>><<set $rentday to Time.weekDay>>
-	<<set $rentstage to 1>>
+	<<set $rentstage to 1000 * $AMCTraits.>>
 <</widget>>
 
 <<widget "swim_check">>
@@ -5002,7 +5002,7 @@
 	($worn.lower.type.includes("naked") or $worn.lower.type.includes("swim")) and
 	($worn.under_upper.type.includes("naked") or $worn.under_upper.type.includes("swim")) and
 	($worn.under_lower.type.includes("naked") or $worn.under_lower.type.includes("swim"))>>
-		<<set _swim_check to 1>>
+		<<set _swim_check to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
@@ -5010,17 +5010,17 @@
 	<!-- check if lowerwear allows for player to be pantsed or upskirted
 	_pantsable: lowerwear can be pulled down; _upskirt: skirt can be flipped up -->
 	<<if setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 and ($worn.lower.set is $worn.upper.set)>>
-		<<set _upskirt to 1>>
+		<<set _upskirt to 1000 * $AMCTraits.>>
 		<<set _pantsable to 0>>
 	<<elseif setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
-		<<set _upskirt to 1>>
-		<<set _pantsable to 1>>
+		<<set _upskirt to 1000 * $AMCTraits.>>
+		<<set _pantsable to 1000 * $AMCTraits.>>
 	<<elseif ["shortalls"].includes($worn.lower.name) or ($worn.lower.set is $worn.upper.set)>>
 		<<set _upskirt to 0>>
 		<<set _pantsable to 0>>
 	<<else>>
 		<<set _upskirt to 0>>
-		<<set _pantsable to 1>>
+		<<set _pantsable to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
@@ -5074,7 +5074,7 @@
 	<<if _args[0] and _args[1] and (!$worn.face.type.includes("mask") or _args[1] lt 0)>>
 		<<if $schoolrep[_args[0]] lt 5 or _args[1] lt 0>>
 			<<if _args[0] is "crossdress" and ($daily.school.crossdress is undefined or _args[1] lt 0)>>
-				<<set $daily.school.crossdress to 1>>
+				<<set $daily.school.crossdress to 1000 * $AMCTraits.>>
 				<<set $schoolrep[_args[0]] += _args[1]>>
 				<<if $schoolrep.crossdress gte 5>>
 					<<set $genderknown.pushUnique("Kylar")>>
@@ -5094,7 +5094,7 @@
 				<<if _args[1] gt 0>><<set $weekly.crossdressingFameReduction to true>><</if>>
 				<<set $schoolrep.herm to 0>> /* Reset for females that lose a "penis" */
 			<<elseif _args[0] is "herm" and ($daily.school.herm is undefined or _args[1] lt 0)>>
-				<<set $daily.school.herm to 1>>
+				<<set $daily.school.herm to 1000 * $AMCTraits.>>
 				<<set $schoolrep[_args[0]] += _args[1]>>
 				<<if $schoolrep.herm gte 5>>
 					<<set $genderknown.pushUnique("Kylar")>>
@@ -5134,7 +5134,7 @@
 <<widget "event_trigger">>
 	<<set $danger to random(1, 10000)>>
 	<<if $danger gte (9900 - $allure)>>
-		<<set $event_trigger to 1>>
+		<<set $event_trigger to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
@@ -5159,7 +5159,7 @@
 	<<elseif $science gte 400>>
 		<<set $sciencetrait to 2>>
 	<<elseif $science gte 200>>
-		<<set $sciencetrait to 1>>
+		<<set $sciencetrait to 1000 * $AMCTraits.>>
 	<<else>>
 		<<set $sciencetrait to 0>>
 	<</if>>
@@ -5178,7 +5178,7 @@
 	<<elseif $maths gte 400>>
 		<<set $mathstrait to 2>>
 	<<elseif $maths gte 200>>
-		<<set $mathstrait to 1>>
+		<<set $mathstrait to 1000 * $AMCTraits.>>
 	<<else>>
 		<<set $mathstrait to 0>>
 	<</if>>
@@ -5197,7 +5197,7 @@
 	<<elseif $english gte 400>>
 		<<set $englishtrait to 2>>
 	<<elseif $english gte 200>>
-		<<set $englishtrait to 1>>
+		<<set $englishtrait to 1000 * $AMCTraits.>>
 	<<else>>
 		<<set $englishtrait to 0>>
 	<</if>>
@@ -5216,7 +5216,7 @@
 	<<elseif $history gte 400>>
 		<<set $historytrait to 2>>
 	<<elseif $history gte 200>>
-		<<set $historytrait to 1>>
+		<<set $historytrait to 1000 * $AMCTraits.>>
 	<<else>>
 		<<set $historytrait to 0>>
 	<</if>>
@@ -5240,7 +5240,7 @@
 	<<if _args[0]>>
 		<<set _base_amount to _args[0] * 100>>
 	<<else>>
-		<<set _base_amount to 100>>
+		<<set _base_amount to 1000 * $AMCTraits.00>>
 	<</if>>
 	<<if _args[1]>>
 		<<set _variation to Math.floor(random(Math.floor(_base_amount / 5 * -1), Math.floor(_base_amount / 5)))>>
@@ -5250,7 +5250,7 @@
 	<<if _args[2]>>
 		<<set _skulduggeryMulti to (1 + (currentSkillValue('skulduggery') / 2000))>>
 	<<else>>
-		<<set _skulduggeryMulti to 1>>
+		<<set _skulduggeryMulti to 1000 * $AMCTraits.>>
 	<</if>>
 	<<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
 	<<if _args[2]>>
@@ -5267,7 +5267,7 @@
 	<<if _args[0]>>
 		<<set _base_amount to _args[0] * 100>>
 	<<else>>
-		<<set _base_amount to 100>>
+		<<set _base_amount to 1000 * $AMCTraits.00>>
 	<</if>>
 	<<if _args[1]>>
 		<<set _variation to Math.floor(random(Math.floor(_base_amount / 5 * -1), Math.floor(_base_amount / 5)))>>
@@ -5277,7 +5277,7 @@
 	<<if _args[2]>>
 		<<set _skulduggeryMulti to (1 + (currentSkillValue('skulduggery') / 2000))>>
 	<<else>>
-		<<set _skulduggeryMulti to 1>>
+		<<set _skulduggeryMulti to 1000 * $AMCTraits.>>
 	<</if>>
 	<<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
 <</silently>><<printmoney _money_gain>><</widget>>
@@ -5312,7 +5312,7 @@
 <</widget>>
 
 <<widget "enable_rescue">>
-	<<set $rescue to 1>>
+	<<set $rescue to 1000 * $AMCTraits.>>
 <</widget>>
 
 <<widget "hypnotised">>
@@ -5400,13 +5400,13 @@
 		<<set $_fail to true>>
 	 <</if>>
 
-	<!-- process The Final Argument, if integer - assume amount, else default to 1 -->
+	<!-- process The Final Argument, if integer - assume amount, else default to 1000 * $AMCTraits. -->
 	<<if $_clear>>
 		<<set $_amount to -10>>
 	<<elseif Number.isInteger(_args.last())>>
 		<<set $_amount to _args.last()>>
 	<<else>>
-		<<set $_amount to 1>>
+		<<set $_amount to 1000 * $AMCTraits.>>
 	<</if>>
 
 	<<if $_fail is true>>
@@ -5526,37 +5526,37 @@
 			<<set $skulduggerydifficulty to 900>>
 		<</if>>
 
-		<<link [["Train with your " + _LTS + " Lockpick Training Set (0:30)"|$passage]]>><<pass 30>><<stress 6>><<set $ltsUsed to 1>><</link>><<gstress>><<skulduggerydifficulty>>	
+		<<link [["Train with your " + _LTS + " Lockpick Training Set (0:30)"|$passage]]>><<pass 30>><<stress 6>><<set $ltsUsed to 1000 * $AMCTraits.>><</link>><<gstress>><<skulduggerydifficulty>>	
 	<</if>>
 <</widget>>
 
 <<widget "tfcheck">>
 	<<if $fallenangel gte 2 or $transformationParts.fallenAngel.wings is "default">>
-		<<set $fallenangeltf to 1>>
+		<<set $fallenangeltf to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $fallenangel gte 4 or $transformationParts.fallenAngel.wings is "fallenplus">>
-		<<set $fallenangelplustf to 1>>
+		<<set $fallenangelplustf to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $demon gte 6 or $transformationParts.demon.wings is "default" or $transformationParts.demon.wings is "succubus">>
-		<<set $demontf to 1>>
+		<<set $demontf to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $angel gte 6 or $transformationParts.angel.wings is "default">>
-		<<set $angeltf to 1>>
+		<<set $angeltf to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $wolfgirl gte 6 or $transformationParts.wolf.tail is "default" or $transformationParts.wolf.tail is "feral">>
-		<<set $wolftf to 1>>
+		<<set $wolftf to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $cat gte 6 or $transformationParts.cat.tail is "default">>
-		<<set $cattf to 1>>
+		<<set $cattf to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $cow gte 6 or $transformationParts.cow.tail is "default" or $transformationParts.cow.tail is "black">>
-		<<set $cowtf to 1>>
+		<<set $cowtf to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $harpy gte 6 or $transformationParts.bird.wings is "default">>
-		<<set $harpytf to 1>>
+		<<set $harpytf to 1000 * $AMCTraits.>>
 	<</if>>
 	<<if $fox gte 6 or $transformationParts.fox.tail is "default">>
-		<<set $foxtf to 1>>
+		<<set $foxtf to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
@@ -5630,7 +5630,7 @@
 	<<elseif $farm_stage_cheat is 4>>
 		<<set $farm_attack_timer to 30>>
 		<<fields_init>>
-		<<set $farm_fields_intro to 1>>
+		<<set $farm_fields_intro to 1000 * $AMCTraits.>>
 		<<farm_stock_init>>
 		<<set $farm_stage_cheat to 5>>
 		<<set $farm_stage to 8>>
@@ -5652,7 +5652,7 @@
 	<<elseif $farm_stage gte 4>>
 		<<set $farm_stage_cheat to 2>>
 	<<elseif $farm_stage gte 2>>
-		<<set $farm_stage_cheat to 1>>
+		<<set $farm_stage_cheat to 1000 * $AMCTraits.>>
 	<</if>>
 <</widget>>
 
@@ -5710,4 +5710,26 @@
 	})>>
 	<<set $skulduggery to 0>>
 	<<set $spray to 0>>
+<</widget>>
+
+<<widget "amcTraitsUpdate">>
+	<<set $beautymax to 10000 * $AMCTraits.beauty>>
+	<<set $willpowermax to 1000 * $AMCTraits.willpower>>
+	<<set $skulduggerymax to 1000 * $AMCTraits.skulduggery>>
+	<<set $dancingmax to 1000 * $AMCTraits.dancing>>
+	<<set $swimmingmax to 1000 * $AMCTraits.swimming>>
+	<<set $athleticsmax to 1000 * $AMCTraits.athletics>>
+	<<set $tendingmax to 1000 * $AMCTraits.tending>>
+	<<set $housekeepingmax to 1000 * $AMCTraits.housekeeping>>
+	<<set $brawlingmax to 1000 * $AMCTraits.brawling>>
+	<<set $seductionskillmax to 1000 * $AMCTraits.seduction>>
+	<<set $oralskillmax to 1000 * $AMCTraits.oral>>
+	<<set $chestskillmax to 1000 * $AMCTraits.chest>>
+	<<set $handsskillmax to 1000 * $AMCTraits.hands>>
+	<<set $buttocksskillmax to 1000 * $AMCTraits.buttocks>>
+	<<set $penileskillmax to 1000 * $AMCTraits.penile>>
+	<<set $vaginalskillmax to 1000 * $AMCTraits.vaginal>>
+	<<set $analskillmax to 1000 * $AMCTraits.anal>>
+	<<set $thighsskillmax to 1000 * $AMCTraits.thighs>>
+	<<set $feetskillmax to 1000 * $AMCTraits.feet>>
 <</widget>>
