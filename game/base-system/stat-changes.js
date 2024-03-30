@@ -146,12 +146,12 @@ var statChange = (() => {
 		amount = Number(amount);
 		if (V.player.penisExist && amount) {
 			amount *= 3;
-			if (V.cow >= 6) amount *= 2;
-
+			if (V.cow >= 6 || V.transformationParts.cow.tail == "default" || V.transformationParts.cow.tail == "black") amount *= 2;
+			if (V.semen_volume >= V.semen_max || V.AMCTraits.halfGain == 1) amount /= 2;
 			/* Prevents those who can only have "female climax" increase their cum volume */
 			if (V.player.penissize > -2 || amount <= 0) V.semen_volume += amount;
 
-			V.semen_volume = Math.clamp(V.semen_volume, 0, V.semen_max);
+			V.semen_volume = Math.clamp(V.semen_volume, 0, V.semen_max * $AMCTraits.semen);
 		}
 	}
 	DefineMacro("semenvolume", semenvolume);
@@ -169,10 +169,11 @@ var statChange = (() => {
 		if (isNaN(amount)) paramError("milkvolume", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
-			if (amount > 0) lactationPressure(V.cow >= 6 ? 2 : 1);
+			if (amount > 0) lactationPressure(V.cow >= 6 || V.transformationParts.cow.tail == "default" || V.transformationParts.cow.tail == "black" ? 2 : 1);
 			if (V.lactating) {
-				if (V.cow >= 6) amount *= 2;
-				V.milk_volume = Math.clamp(V.milk_volume + amount, 24, V.milk_max);
+				if (V.cow >= 6 || V.transformationParts.cow.tail == "default" || V.transformationParts.cow.tail == "black") amount *= 2;
+				if (V.milk_volume >= V.milk_max || V.AMCTraits.halfGain == 1) amount /= 2;
+				V.milk_volume = Math.clamp(V.milk_volume + amount, 24, V.milk_max * $AMCTraits.milk);
 			}
 		}
 	}
@@ -867,6 +868,7 @@ var statChange = (() => {
 		if (type === "penileskill" && !(V.player.penisExist || playerHasStrapon())) return;
 		amount = Number(amount);
 		if (amount) {
+			if (V[type] >= 1000 || V.AMCTraits.halfGain == 1) amount /= 2;
 			V[type] = Math.clamp(V[type] + amount, 0, V[type + "max"] || 1000);
 		}
 	}
