@@ -12,7 +12,7 @@ window.StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.4.6.3 DoLP version",
+	version: "0.4.6.4 DoLP version",
 	versionName: "",
 	sneaky: false,
 };
@@ -531,7 +531,7 @@ Config.navigation.override = function (dest) {
 			case "Livestock Field Friendly":
 			case "Livestock Field Firm":
 				return "Livestock Field Horse Intro";
-			
+
 			case "Livestock Field Centaur Brush":
 				return "Livestock Field Horse Brush";
 
@@ -561,9 +561,9 @@ Config.navigation.override = function (dest) {
 			case "Livestock Field Centaur Female Vagina 3":
 			case "Livestock Field Centaur Female 3":
 			case "Livestock Field Centaur Male Vagina 3":
-			case "Livestock Field Centaur Male 3":		
-			case "Livestock Field Centaur Male Hand":			
-			case "Livestock Field Centaur Male Hand Vagina":				
+			case "Livestock Field Centaur Male 3":
+			case "Livestock Field Centaur Male Hand":
+			case "Livestock Field Centaur Male Hand Vagina":
 			case "Livestock Field Centaur Female Hand":
 			case "Livestock Field Centaur Female Hand Vagina":
 			case "Livestock Field Horse Lewd 3":
@@ -573,11 +573,11 @@ Config.navigation.override = function (dest) {
 				return "Livestock Field Deviancy Hand";
 
 			case "Livestock Field Centaur Male Mouth":
-			case "Livestock Field Centaur Male Mouth Vagina":	
-			case "Livestock Field Centaur Female Mouth":	
+			case "Livestock Field Centaur Male Mouth Vagina":
+			case "Livestock Field Centaur Female Mouth":
 			case "Livestock Field Centaur Female Mouth Vagina":
-			case "Livestock Field Horse Lewd Mouth":	
-			case "Livestock Field Horse Lewd Female Mouth":			
+			case "Livestock Field Horse Lewd Mouth":
+			case "Livestock Field Horse Lewd Female Mouth":
 				return "Livestock Field Deviancy Mouth";
 
 			case "Livestock Field Centaur Male Seduce":
