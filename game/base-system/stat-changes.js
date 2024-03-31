@@ -868,8 +868,8 @@ var statChange = (() => {
 		if (type === "penileskill" && !(V.player.penisExist || playerHasStrapon())) return;
 		amount = Number(amount);
 		if (amount) {
-			if (V[type] >= 1000 || V.AMCTraits.halfGain == 1) amount /= 2;
-			V[type] = Math.clamp(V[type] + amount, 0, V[type + "max"] * V["AMCTraits." + type] || 1000);
+			if (V[type] >= V[type + "max"] || V.AMCTraits.halfGain == 1) amount /= 2;
+			V[type] = Math.clamp(V[type] + amount, 0, V[type + "max"] || 1000);
 		}
 	}
 	DefineMacro("oralskill", amount => skill("oralskill", amount));
