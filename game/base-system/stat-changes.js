@@ -753,7 +753,7 @@ var statChange = (() => {
 		if (isNaN(amount)) paramError("willpower", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
-			V.willpower = Math.clamp(V.willpower + amount * 2, 0, V.willpowermax);
+			V.willpower = Math.clamp(V.willpower + amount * 2, 0, V.willpowermax * V.AMCTraits.willpower);
 		}
 	}
 	DefineMacro("willpower", willpower);
