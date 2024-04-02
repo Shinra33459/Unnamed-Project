@@ -1872,7 +1872,39 @@ function initHead() {
 		Clothes that modders add go into this array, this should be empty in the base game at all times.
 		These items should have a `modder` variable with a the modders name in a short string
 	*/
-	setup.moddedClothes.head = [];
+	setup.moddedClothes.head = [
+		{
+			index: 57,
+			name: "carrot pin",
+			name_cap: "Carrot pin",
+			variable: "carrotpin",
+			integrity: 200,
+			integrity_max: 200,
+			fabric_strength: 30,
+			reveal: 1,
+			word: "a",
+			plural: 0,
+			colour: 0,
+			colour_options: [],
+			colour_sidebar: 0,
+			colour_combat: 0,
+			type: ["normal", "eerie"],
+			gender: "n",
+			warmth: 0,
+			cost: 6000,
+			description: "Simple but cute.",
+			shop: ["clothing"],
+			accessory: 0,
+			accessory_colour: 0,
+			accessory_colour_options: [],
+			accessory_colour_sidebar: 0,
+			back_img: 0,
+			cursed: 0,
+			location: 0,
+			iconFile: "carrot_pin.png",
+			accIcon: "carrot_pin_acc.png",
+		}
+	];
 
 	setup.moddedClothes.head.forEach((x, i) => (x.index = setup.clothes.head.length + i));
 	setup.clothes.head.push(...setup.moddedClothes.head);

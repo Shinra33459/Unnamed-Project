@@ -155,6 +155,9 @@ replace (?<!["'\w])_(?=\w) with T.
  * "fox_tail_layer": "front"|"back"
  * "fox_ears_type": "disabled"|"hidden"|"default"|
  * "fox_cheeks_type": "disabled"|"hidden"|
+ * "bunny_tail_type": "disabled"|"hidden"|"default"|
+ * "bunny_tail_layer": "front"|"back"|
+ * "bunny_ears_type": "disabled"|"hidden"|"default"|
  *
  * BODY WRITING OPTIONS:
  * --------------------
@@ -381,6 +384,9 @@ Renderer.CanvasModels["main"] = {
 			"fox_tail_layer": "front",
 			"fox_ears_type": "disabled",
 			"fox_cheeks_type": "disabled",
+			"bunny_tail_type": "disabled",
+			"bunny_tail_layer": "front",
+			"bunny_ears_type": "disabled",
 			// body writings
 			"writing_forehead": "",
 			"writing_left_cheek": "",
@@ -2178,6 +2184,48 @@ Renderer.CanvasModels["main"] = {
 			filters: ["hair"],
 			z: ZIndices.lower,
 			animation: "idle"
+
+		},
+		/***
+		 *    ██████  ██   ██ ███    ██ ███    ██ ██ ██
+		 *    ██   ██ ██   ██ ████   ██ ████   ██ ██ ██
+		 *    ██████  ██   ██ ██ ██  ██ ██ ██  ██  ███ 
+		 *    ██   ██ ██   ██ ██  ██ ██ ██  ██ ██   █
+		 *    ██████   █████  ██   ████ ██   ████   █
+		 * 
+		 * 
+		 */
+		"bunny_tail": {
+			srcfn(options) {
+				return `img/transformations/bunny/tail/${options.bunny_tail_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bunny_tail_type);
+			},
+			filters: ["hair"],
+			zfn(options) {
+				if (options.bunny_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
+			animation: "idle"
+		},
+		"bunny_ears": {
+			srcfn(options) {
+				return `img/transformations/bunny/ears/${options.bunny_ears_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bunny_ears_type);
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
+			filters: ["hair"],
+			z: ZIndices.backhair,
+			animation: "idle"
+
 		},
 		/***
 		 *    ██     ██ ██████  ██ ████████ ██ ███    ██  ██████  ███████
