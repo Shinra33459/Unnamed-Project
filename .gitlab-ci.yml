@@ -1,0 +1,48 @@
+stages:
+    - auto-release
+
+before_script:
+    - apk add --no-cache zip curl jq nodejs git
+
+build_upload_vanilla_job:
+    stage: auto-release
+    script:
+        - echo "Building DoLB Vanilla v0.$CI_PIPELINE_IID"
+        - find . -type f -exec sed -i "s/DoLB version/DoLB v0.$CI_PIPELINE_IID/g" {} +
+        - mkdir -p releases/DoLB_Vanilla/img/
+        - sh ./compile.sh
+        - cp "Degrees of Lewdity.html" ./releases/DoLB_Vanilla/
+        - cp -r -f ./img/* ./releases/DoLB_Vanilla/img/
+        - echo "Finished Building DoLB Vanilla v0.$CI_PIPELINE_IID"
+        - echo "Uploading DoLB Vanilla v0.$CI_PIPELINE_IID"
+        - zip -r ./releases/DoLB_Vanilla/DoLB_Vanilla_v0.$CI_PIPELINE_IID.zip ./releases/DoLB_Vanilla/ 1>NUL
+        - 'curl 
+            --header "JOB-TOKEN: $CI_JOB_TOKEN"
+            --upload-file ./releases/DoLB_Vanilla/DoLB_Vanilla_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLB_Vanilla_v0.$CI_PIPELINE_IID.zip"'
+        - echo "Finished Uploading DoLB Vanilla v0.$CI_PIPELINE_IID"
+    only:
+        - master
+
+release_job:
+    stage: auto-release
+    image: registry.gitlab.com/gitlab-org/release-cli:latest
+    needs:
+        - job: build_upload_vanilla_job
+          artifacts: true
+    rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    script:
+        - echo "Creating releases..."
+    release:
+        description: 'null'
+        tag_name: 'v0.$CI_PIPELINE_IID'
+        ref: '$CI_COMMIT_SHA'
+        assets:
+            links:
+                - name: 'DoLB_Vanilla'
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLB_Vanilla_v0.$CI_PIPELINE_IID.zip"
+    after_script:
+        - echo "Finished creating releases."
