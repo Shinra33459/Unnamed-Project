@@ -2369,7 +2369,7 @@ function earnHourlyFeats() {
 	}
 	if (V.combatExtended.brawling >= 1000) earnFeat("Brawler");
 	if (V.combatExtended.brawling >= 2000) earnFeat("Many Punch Man");
-	if (V.birdFly >= 1) earnFeat("Catch the Wind");
+	if (V.birdFly == 1) earnFeat("Catch the Wind");
 	if (V.beauty >= 20000) earnFeat("Brawler");
 	if (V.milk_volume >= 12000) earnFeat("Rivers of White");
 	if (V.semen_volume >= 12000) earnFeat("Sticky Fountain");
