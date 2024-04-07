@@ -495,7 +495,7 @@ function playerRutMinArousal() {
 		if (V.cat >= 2) minArousal += Math.clamp(V.catbuild, 0, 100) * 10;
 		if (V.cow >= 2) minArousal += Math.clamp(V.cowbuild, 0, 100) * 10;
 		if (V.fox >= 2) minArousal += Math.clamp(V.foxbuild, 0, 100) * 10;
-		if (V.bunny >= 2) minArousal += Math.clamp(Vbunnybuild, 0, 100) * 10;
+		if (V.bunny >= 2) minArousal += Math.clamp(V.bunnybuild, 0, 100) * 10;
 	}
 	if (pills["fertility booster"].doseTaken > 2) {
 		minArousal += 500;
