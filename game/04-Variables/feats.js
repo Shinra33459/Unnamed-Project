@@ -2345,7 +2345,7 @@ function earnHourlyFeats() {
 	if (V.skulduggery >= 2000) earnFeat("Agent 47");
 	if (V.danceskill >= 2000) earnFeat("Can't Touch This");
 	if (V.swimmingskill >= 2000) earnFeat("Atlantean");
-	if (V.seductionskill >= 2000) earnFeat("Ludicrous Speed");
+	if (V.athletics >= 2000) earnFeat("Ludicrous Speed");
 	if (V.tending >= 2000) earnFeat("Grass Toucher");
 	if (V.housekeeping >= 2000) earnFeat("Demolisher of Filth");
 	if (V.sciencetrait >= 8) earnFeat("Smarter than Einstein");
