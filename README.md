@@ -19,3 +19,4 @@ Currently the only way to get the tf is by picking clovers in the forest and mea
 ## Credits
 
 Special thanks to Vrelnir for making the Degrees of Lewdity! You can download the main game here: https://gitgud.io/Vrelnir/degrees-of-lewdity
+Thanks to melllowss on Discord for making the bunny TF combat sprites
