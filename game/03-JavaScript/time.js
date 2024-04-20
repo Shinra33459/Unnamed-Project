@@ -764,6 +764,9 @@ function dayPassed() {
 
 	if (V.dailyBrothelPriceCheck) {
 		V.dailyBrothelPriceCheck = undefined;
+		V.brothelExclusiveGloryholeAccuratePrice = undefined;
+		V.brothelExclusiveGloryholeEstimatePrice = undefined;
+		V.brothelExclusiveGloryholeRoughEstimatePrice = undefined;
 	}
 
 	fragment.append(wikifier("menstruationCycle", "daily"));
