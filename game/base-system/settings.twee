@@ -144,7 +144,7 @@
 	<<run settingsDisableElement()>>
 <</widget>>
 
-<<widget "fa-icon">><span @class="'fa-icon fa-' + $args.raw" alt="' + $args.raw + '"></span><</widget>>
+<<widget "fa-icon">><span @class="'fa-icon fa-' + _args.raw" alt="' + _args.raw + '"></span><</widget>>
 
 <<widget "startOptionsComplexityButton">>
 	<div @class="_selectedStart is _args[1] ? 'gold buttonStartSelected' : 'buttonStart'" >
@@ -288,7 +288,6 @@
 			<<unset _maleChanceSplit>>
 			<<unset _beastMaleChanceSplit>>
 			<<unset _pregnancytype>>
-			<<unset _cycledisable>>
 			<<unset _incompletePregnancyDisable>>
 		<</button>>
 	</div>
@@ -463,7 +462,6 @@
 						<<set $playerPregnancyBeastDisable to "f">>
 						<<set $npcPregnancyDisable to "f">>
 					<</if>>
-					<<set $cycledisable to _cycledisable>>
 					<<if _incompletePregnancyDisable is "t" or (_incompletePregnancyDisable is "f" and !_foundPregnancy)>>
 						<<set $incompletePregnancyDisable to _incompletePregnancyDisable>>
 						<<npcPregnancyUpdater>>
@@ -642,6 +640,7 @@
 	<<set $combatExtended.enemyHealthDefeatScalingMult to Math.clamp($combatExtended.enemyHealthDefeatScalingMult, 1, 1000000)>>
 	<<set $combatExtended.enemyDefeatScaling to Math.clamp($combatExtended.enemyDefeatScaling, 1, 1000000)>>
 	<<set $combatExtended.enemyDefeatScalingLimit to Math.clamp($combatExtended.enemyDefeatScalingLimit, 1, 1000000)>>
+	<<amcTraitsUpdate>>
 	<<if $settingsExitPassage is "Start2">>
 		<<setSkinColorBase>>
 	<</if>>
@@ -675,7 +674,7 @@
 
 	/* this never worked as intended
 	<!-- check if specified face style is installed -->
-	<img id="testImage" class="hidden" @scr="'img/face/' + $facestyle + '/base.png'">
+	<img id="testImage" class="hidden" @src="'img/face/' + $facestyle + '/base.png'">
 	<<if $facestyle is "" or isImageOk("#testImage")>>
 		<<set $facestyle = "default">>
 	<</if>>
@@ -693,6 +692,11 @@
 	<<run State.display(_settingsExitPassage)>>
 	<<set $saveName to $saveName.replace(/[^a-zA-Z\u4e00-\u9fa5 0-9]+/g,"")>>
 	<<unset $importString>>
+
+	/* Updates the penis max size for females so its never below 1 */
+	<<if $player.gender is "f" && $penissizemax < 0>>
+		<<set $penissizemax to 0>>
+	<</if>>
 <</widget>>
 
 /*complete:{"Vrelnir (Default)":"vrelDefault","Lollipop Scythe":"lollipopScythe","PurityGuy":"purityGuy","Fangi":"fangi"},*/
@@ -1193,7 +1197,7 @@
 	<br><br>
 	<span class="red">Changing settings in specific ways may prevent you from earning some feats, and coins, in your current game.</span> Enabling cheats at any point will prevent you from earning feats for the remainder of your current playthrough. You will be warned if you are about to change any setting that does this.
 	<br><br>
-	 Some feats display as earned as soon as you meet the requirements, while others won't trigger until the next in-game hour or at midnight. Happy hunting!
+	 Some feats display as earned as soon as you meet the requirements, while others won't trigger until the next in-game hour. Happy hunting!
 <</widget>>
 
 <<widget "featSettings">>
@@ -1354,41 +1358,53 @@
 			</div>
 
 			<div class="settingsToggleItem">
-				<span class="gold">Enemy Multi-Orgasm</span> <mouse class = "tooltip linkBlue">(?)<span>Human and Named NPCs will be able to orgasm multiple times.</span></mouse>
+				<span class="gold">Enemy Multi-Orgasm</span>
 				<br>
 				<label>
-					<<checkbox "$multiOrgasmToggle" 0 1 autocheck>> Enable multi-orgasm
+					<<checkbox "$multiOrgasmToggle" 0 1 autocheck>> Enable multi-orgasm <mouse class = "tooltip linkBlue">(?)<span>Human and Named NPCs will be able to orgasm multiple times.</span></mouse>
 				</label>
 				<br>
+				<label>
+					<<checkbox "$multiOrgasmLustScaling" 0 1 autocheck>> Enable NNPC lust scaling <mouse class = "tooltip linkBlue">(?)<span>Named NPCs will get +1 to max orgasm per 20 lust.</span></mouse>
+				</label>
+			</div>
+
+			<div class="settingsToggleItem">
+				<span class="gold">Tiredness Max Scaling</span>
+				<br>
+				<label>
+					<<checkbox "$tirednessMaxScalingToggle" 0 1 autocheck>> Enable Tiredness Max Scaling <mouse class = "tooltip linkBlue">(?)<span>Tiredness max will now increase with your physique and willpower.</span></mouse>
+				</label>
 			</div>
 
 			<<if $options.images is 1>>
 				<div class="settingsToggleItem">
 					<span class="gold">Banner Toggle</span> <mouse class = "tooltip linkBlue">(?)<span>Toggle which version of the banner you want to use.</span></mouse>
 					<br>
-					<<link "Default Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/banner.png"><</replace>><</link>>
+					<<link "No Banner">><<replace #bannerStyle>><</replace>><<set $bannerstyle to "none">><</link>>
+						| <<link "Default Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/banner.png"><</replace>><<set $bannerstyle to "default">><</link>>
 					<<if $feats.allSaves.points isnot undefined and $feats.allSaves.points gte 25>>
-						| <<link "Alien Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerAlien.png"><</replace>><</link>>
+						| <<link "Alien Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerAlien.png"><</replace>><<set $bannerstyle to "alien">><</link>>
 					<<else>>
 						| <label><span class="red">25 VrelCoins</span></label>
 					<</if>>
 					<<if $feats.allSaves.points isnot undefined and $feats.allSaves.points gte 50>>
-						| <<link "Blood Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerBlood.png"><</replace>><</link>>
+						| <<link "Blood Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerBlood.png"><</replace>><<set $bannerstyle to "blood">><</link>>
 					<<else>>
 						| <label><span class="red">50 VrelCoins</span></label>
 					<</if>>
 					<<if $feats.allSaves.points isnot undefined and $feats.allSaves.points gte 100>>
-						| <<link "Bronze Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerBronze.png"><</replace>><</link>>
+						| <<link "Bronze Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerBronze.png"><</replace>><<set $bannerstyle to "bronze">><</link>>
 					<<else>>
 						| <label><span class="red">100 VrelCoins</span></label>
 					<</if>>
 					<<if $feats.allSaves.points isnot undefined and $feats.allSaves.points gte 150>>
-						| <<link "Silver Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerSilver.png"><</replace>><</link>>
+						| <<link "Silver Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerSilver.png"><</replace>><<set $bannerstyle to "silver">><</link>>
 					<<else>>
 						| <label><span class="red">150 VrelCoins</span></label>
 					<</if>>
 					<<if $feats.allSaves.points isnot undefined and $feats.allSaves.points gte 200>>
-						| <<link "Golden Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerGold.png"><</replace>><</link>>
+						| <<link "Golden Banner">><<replace #bannerStyle>><img class="resize" src="img/misc/bannerGold.png"><</replace>><<set $bannerstyle to "gold">><</link>>
 					<<else>>
 						| <label><span class="red">200 VrelCoins</span></label>
 					<</if>>
@@ -1863,7 +1879,7 @@
 				<<checkbox "$forcedcrossdressingdisable" "t" "f" autocheck>> Enable forced crossdressing
 			</label>
 		</div>
-		
+
 		<div class="settingsToggleItem">
 			<label>
 				<<checkbox "$ruinedorgasmdisable" "t" "f" autocheck>> Enable ruined orgasms
@@ -2232,29 +2248,31 @@
 		</div>
 		<<if $passage is "Start" or $player.penisExist>>
 			<div class="settingsToggleItem">
+				<!-- Not applicable to the parasite penis -->
 				<span class="gold" data-target="player.gender" data-disabledif="V.player.gender==='f'">Minimum penis size - if applicable:</span> <mouse class="tooltip linkBlue">(?)<span>Penises already below this size won't automatically grow.</span></mouse>
 				<br>
 				<<set _name to ["Micro","Mini", "Tiny"]>>
 				<<for _i to 0; _i lt _name.length; _i++>>
-					<span data-target="penissizemax" @data-disabledif="_i - 2 + ' > V.penissizemax'">
+					<span data-target="penissizemax" @data-disabledif="_i - 2 + ` > V.penissizemax||V.player.gender==='f'`">
 						<label data-target="player.gender" data-disabledif="V.player.gender==='f'"><<print _name[_i]>> <<radiobutton "$penissizemin" `(_i - 2)` autocheck>></label>
 						<<if _i lt _name.length - 1>>|<</if>>
 					</span>
 				<</for>>
 			</div>
-
-			<div class="settingsToggleItem">
-				<span class="gold" data-target="player.gender" data-disabledif="V.player.gender==='f'">Maximum penis size - if applicable:</span> <mouse class="tooltip linkBlue">(?)<span>Penises already above this size won't automatically shrink.</span></mouse>
-				<br>
-				<<set _name to ["Micro","Mini", "Tiny", "Small", "Normal", "Large", "Enormous"]>>
-				<<for _i to 0; _i lt _name.length; _i++>>
-					<span data-target='["penissizemin", "player.gender"]' @data-disabledif="_i - 2 + ' < V.penissizemin'||V.player.gender==='f'">
-						<label data-target="player.gender" data-disabledif="V.player.gender==='f'"><<print _name[_i]>> <<radiobutton "$penissizemax" `(_i - 2)` autocheck>></label>
-						<<if _i lt _name.length - 1>>|<</if>>
-					</span>
-				<</for>>
-			</div>
 		<</if>>
+
+		<div class="settingsToggleItem">
+			<!-- Not applicable to females without a parasite penis -->
+			<span class="gold" data-target="player.gender">Maximum penis size - if applicable:</span> <mouse class="tooltip linkBlue">(?)<span>Penises already above this size won't automatically shrink.</span></mouse>
+			<br>
+			<<set _name to ["Micro","Mini", "Tiny", "Small", "Normal", "Large", "Enormous"]>>
+			<<for _i to 0; _i lt _name.length; _i++>>
+				<span data-target='["penissizemin", "player.gender"]' @data-disabledif="_i - 2 + ` < V.penissizemin||(` + _i + `<2&&V.player.gender==='f')`">
+					<label data-target="player.gender" @data-disabledif="`(` + _i + `<2&&V.player.gender==='f')`"><<print _name[_i]>> <<radiobutton "$penissizemax" `(_i - 2)` autocheck>></label>
+					<<if _i lt _name.length - 1>>|<</if>>
+				</span>
+			<</for>>
+		</div>
 	</div>
 <</widget>>
 
@@ -2389,6 +2407,12 @@
 			<<link "Skin colours">>
 				<<initnpcskin "skincolour">>
 				<<updatePersistentNPCs "skincolour">>
+				<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
+			<</link>>
+			|
+			<<link "Base max orgasms">>
+				<<initNPCBaseMaxOrgasm "base max orgasms">>
+				<<updatePersistentNPCs "base max orgasms">>
 				<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
 			<</link>>
 			<<if $debug is 1>>
@@ -2659,6 +2683,12 @@
 				<label><<radiobutton "$greathawkmonster" 2 autocheck>> Always a monster girl or boy</label>
 			</div>
 		<</if>>
+
+		<div class="settingsToggleItem">
+		<span class="gold">Base max orgasms:</span>
+		<br>
+		<<numberslider "$NPCName[_npcId].maxOrgasms" $NPCName[_npcId].maxOrgasms 1 5 1>>
+		</div>
 	</div>
 	<div style="clear:both;"></div>
 
@@ -3401,8 +3431,9 @@
 		<div class="settingsGrid">
 			<div class="settingsToggleItemWide">
 				<span class="gold">Anime Main Character Traits:</span><mouse class="tooltip linkBlue">(?)<span>These traits will halve your gains of the corresponding stat but will double the cap.</span></mouse><br>
-				
+
 				<<link "Toggle All">>
+					<<set $AMCTraits.beauty to 2>>
 					<<set $AMCTraits.physique to 2>>
 					<<set $AMCTraits.willpower to 2>>
 					<<set $AMCTraits.skulduggery to 2>>
@@ -3416,19 +3447,22 @@
 					<<set $AMCTraits.maths to 2>>
 					<<set $AMCTraits.english to 2>>
 					<<set $AMCTraits.history to 2>>
-					<<set $AMCTraits.seduction to 2>>
-					<<set $AMCTraits.oral to 2>>
-					<<set $AMCTraits.chest to 2>>
-					<<set $AMCTraits.hands to 2>>
-					<<set $AMCTraits.buttocks to 2>>
-					<<set $AMCTraits.penile to 2>>
-					<<set $AMCTraits.vaginal to 2>>
-					<<set $AMCTraits.anal to 2>>
-					<<set $AMCTraits.thighs to 2>>
-					<<set $AMCTraits.feet to 2>>
+					<<set $AMCTraits.seductionskill to 2>>
+					<<set $AMCTraits.oralskill to 2>>
+					<<set $AMCTraits.chestskill to 2>>
+					<<set $AMCTraits.handskill to 2>>
+					<<set $AMCTraits.bottomskill to 2>>
+					<<set $AMCTraits.penileskill to 2>>
+					<<set $AMCTraits.vaginalskill to 2>>
+					<<set $AMCTraits.analskill to 2>>
+					<<set $AMCTraits.thighskill to 2>>
+					<<set $AMCTraits.feetskill to 2>>
+					<<set $AMCTraits.milk to 2>>
+					<<set $AMCTraits.semen to 2>>
 					<<set _subsection to "amcTraits">><<replace #subsectionDiv>><<amcTraitsSettings>><</replace>>
 				<</link>><br>
 				<label><span class="green">Universal Half Gains Toggle</span> <<checkbox "$AMCTraits.halfGain" 0 1 autocheck>></label><br>
+				<label><span class="green">Tempered Beauty</span> <<checkbox "$AMCTraits.beauty" 1 2 autocheck>></label><br>
 				<label><span class="green">Tempered Physique</span> <<checkbox "$AMCTraits.physique" 1 2 autocheck>></label><br>
 				<label><span class="green">Tempered Willpower</span> <<checkbox "$AMCTraits.willpower" 1 2 autocheck>></label><br>
 				<label><span class="green">Tempered Skulduggery</span> <<checkbox "$AMCTraits.skulduggery" 1 2 autocheck>></label><br>
@@ -3442,16 +3476,18 @@
 				<label><span class="teal">Tempered Maths</span> <<checkbox "$AMCTraits.maths" 1 2 autocheck>></label><br>
 				<label><span class="teal">Tempered English</span> <<checkbox "$AMCTraits.english" 1 2 autocheck>></label><br>
 				<label><span class="teal">Tempered History</span> <<checkbox "$AMCTraits.history" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Seduction Skill</span> <<checkbox "$AMCTraits.seduction" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Oral Skill</span> <<checkbox "$AMCTraits.oral" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Chest Skill</span> <<checkbox "$AMCTraits.chest" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Hands Skill</span> <<checkbox "$AMCTraits.hands" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Buttocks Skill</span> <<checkbox "$AMCTraits.buttocks" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Penile Skill</span> <<checkbox "$AMCTraits.penile" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Vaginal Skill</span> <<checkbox "$AMCTraits.vaginal" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Anal Skill</span> <<checkbox "$AMCTraits.anal" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Thighs Skill</span> <<checkbox "$AMCTraits.thighs" 1 2 autocheck>></label><br>
-				<label><span class="blue">Tempered Feet Skill</span> <<checkbox "$AMCTraits.feet" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Seduction Skill</span> <<checkbox "$AMCTraits.seductionskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Oral Skill</span> <<checkbox "$AMCTraits.oralskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Chest Skill</span> <<checkbox "$AMCTraits.chestskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Hands Skill</span> <<checkbox "$AMCTraits.handskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Buttocks Skill</span> <<checkbox "$AMCTraits.bottomskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Penile Skill</span> <<checkbox "$AMCTraits.penileskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Vaginal Skill</span> <<checkbox "$AMCTraits.vaginalskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Anal Skill</span> <<checkbox "$AMCTraits.analskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Thighs Skill</span> <<checkbox "$AMCTraits.thighskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Feet Skill</span> <<checkbox "$AMCTraits.feetskill" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Milk Volume</span> <<checkbox "$AMCTraits.milk" 1 2 autocheck>></label><br>
+				<label><span class="blue">Tempered Semen Volume</span> <<checkbox "$AMCTraits.semen" 1 2 autocheck>></label><br>
 			</div>
 		</div>
 	</div>
@@ -3524,9 +3560,13 @@
 			<<elseif ($feats.allSaves.points gte 25 and $bannerstyleintro.alien is false) or $bannerstyle is "alien">>
 				<<set $bannerstyleintro.alien to true>>
 				<img class="resize" src="img/misc/bannerAlien.png">
+			<<elseif $bannerstyle is "none">>
+
 			<<else>>
 				<img class="resize" src="img/misc/banner.png">
 			<</if>>
+		<<elseif $bannerstyle is "none">>
+
 		<<else>>
 			<img class="resize" src="img/misc/banner.png">
 		<</if>>
