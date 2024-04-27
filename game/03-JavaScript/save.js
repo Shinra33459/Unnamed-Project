@@ -601,7 +601,7 @@ const importSettingsData = function (data) {
 		if (S.general != null) {
 			const listObject = settingsObjects("general");
 			const listKey = Object.keys(listObject);
-			const namedObjects = ["map", "skinColor", "shopDefaults", "options"];
+			const namedObjects = ["map", "skinColor", "shopDefaults", "options", "combatExtended", "AMCTraits"];
 			// correct swapped min/max values
 			if (S.general.breastsizemin > S.general.breastsizemax) {
 				const temp = S.general.breastsizemin;
@@ -704,6 +704,8 @@ function exportSettings(data, type) {
 			skinColor: {},
 			shopDefaults: {},
 			options: {},
+			combatExtended: {},
+			AMCTraits: {},
 		},
 		npc: {},
 	};
@@ -741,7 +743,7 @@ function exportSettings(data, type) {
 
 	listObject = settingsObjects("general");
 	listKey = Object.keys(listObject);
-	namedObjects = ["map", "skinColor", "shopDefaults", "options"];
+	namedObjects = ["map", "skinColor", "shopDefaults", "options", "combatExtended", "AMCTraits"];
 
 	for (let i = 0; i < listKey.length; i++) {
 		if (namedObjects.includes(listKey[i]) && V[listKey[i]] != null) {
@@ -1170,19 +1172,19 @@ function settingsObjects(type) {
 					enemyCountering: { min: 0, max: 1, decimals: 0, displayName: "Enemy Countering:" },
 					enemyFeinting: { min: 0, max: 1, decimals: 0, displayName: "Enemy Feinting:" },
 					enemyLevelDayScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Level Day Scaling:" },
-					enemyLevelDayScalingMult: { min: 0, max: 1000000, decimals: 1, displayName: "Enemy Level Day Scaling Multiplier:" },
+					enemyLevelDayScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Level Day Scaling Multiplier:" },
 					enemyHealthDayScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Health Day Scaling:" },
-					enemyHealthDayScalingMult: { min: 0, max: 1000000, decimals: 1, displayName: "Enemy Health Day Scaling Multiplier:" },
-					enemyDayScaling: { min: 0, max: 1000000, decimals: 0, displayName: "Enemy Day Scaling Interval:" },
+					enemyHealthDayScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Health Day Scaling Multiplier:" },
+					enemyDayScaling: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Day Scaling Interval:" },
 					enemyInfiniteDayScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Infinite Day Scaling:" },
-					enemyDayScalingLimit: { min: 0, max: 1, decimals: 0, displayName: "Enemy Day Scaling Limit:" },
-					enemyLevelDefeatScaling: { min: 0, max: 1000000, decimals: 1, displayName: "Enemy Defeats Scaling:" },
-					enemyLevelDefeatScalingMult: { min: 0, max: 1000000, decimals: 1, displayName: "Enemy Level Defeats Scaling Multiplier:" },
+					enemyDayScalingLimit: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Day Scaling Limit:" },
+					enemyLevelDefeatScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Defeats Scaling:" },
+					enemyLevelDefeatScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Level Defeats Scaling Multiplier:" },
 					enemyHealthDefeatScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Health Defeats Scaling:" },
-					enemyHealthDefeatScalingMult: { min: 0, max: 1000000, decimals: 1, displayName: "Enemy Health Defeats Scaling Multiplier:" },
-					enemyDefeatScaling: { min: 0, max: 1000000, decimals: 0, displayName: "Enemy Defeats Scaling Interval:" },
+					enemyHealthDefeatScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Health Defeats Scaling Multiplier:" },
+					enemyDefeatScaling: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Defeats Scaling Interval:" },
 					enemyInfiniteDefeatScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Infinite Defeats Scaling:" },
-					enemyDefeatScalingLimit: { min: 0, max: 1, decimals: 0, displayName: "Enemy Defeats Scaling Limit:" }
+					enemyDefeatScalingLimit: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Defeats Scaling Limit:" }
 				},
 				AMCTraits: {
 					halfGain: { min: 0, max: 1, decimals: 0, displayName: "Half Gain:" },
@@ -1350,7 +1352,7 @@ function settingsConvert(exportType, type, settings) {
 	const keys = Object.keys(listObject);
 	for (let i = 0; i < keys.length; i++) {
 		if (result[keys[i]] === undefined) continue;
-		if (["map", "skinColor", "player", "shopDefaults", "options"].includes(keys[i])) {
+		if (["map", "skinColor", "player", "shopDefaults", "options", "combatExtended", "AMCTraits"].includes(keys[i])) {
 			const itemKey = Object.keys(listObject[keys[i]]);
 			for (let j = 0; j < itemKey.length; j++) {
 				if (result[keys[i]][itemKey[j]] === undefined) continue;
