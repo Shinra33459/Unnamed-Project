@@ -124,7 +124,7 @@ replace (?<!["'\w])_(?=\w) with T.
  * "demon_tail_type": "disabled"|"hidden"|"default"|"classic"
  * "demon_tail_state": "idle"|"cover"|"flaunt"
  * "demon_tail_layer": "front"|"back"
- * "demon_horns_type": "disabled"|"hidden"|"default"|"classic"
+ * "demon_horns_type": "disabled"|"hidden"|"default"|"classic" | "antler"
  * "demon_horns_layer": "front"|"back"
  * "wolf_tail_type": "disabled"|"hidden"|"default"|"feral"
  * "wolf_tail_layer": "front"|"back"
@@ -154,9 +154,9 @@ replace (?<!["'\w])_(?=\w) with T.
  * "fox_tail_layer": "front"|"back"
  * "fox_ears_type": "disabled"|"hidden"|"default"|
  * "fox_cheeks_type": "disabled"|"hidden"|
- * "bunny_tail_type": "disabled"|"hidden"|"default"|
+ * "bunny_tail_type": "disabled"|"hidden"|"default"| "fluffy"
  * "bunny_tail_layer": "front"|"back"|
- * "bunny_ears_type": "disabled"|"hidden"|"default"|
+ * "bunny_ears_type": "disabled"|"hidden"|"default"| "lop"
  *
  * BODY WRITING OPTIONS:
  * --------------------
