@@ -4298,7 +4298,8 @@ function genlayer_clothing_breasts(slot, overrideOptions) {
 				(options["worn_" + slot + "_setup"].altposition !== undefined &&
 				!options.alt_without_breasts);
 			let breastImg = options["worn_" + slot + "_setup"].breast_img;
-			let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			// let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			let breastSize = Math.min(options.breast_size, 6);
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
