@@ -2113,5 +2113,7 @@ function dailyBaileyHQ() {
 	V.baileyHQ.helicopter = random(0, 1);
 	V.baileyHQ.trucks = random(2, 8);
 
+	V.baileyHQ.lift = undefined;
+
 	return fragment;
 }

@@ -9,7 +9,7 @@
 	<<if Time.dayState isnot "night">>
 		You approach the sprawling warehouse complex surrounded by barbed wire fence. Activity is bustling inside as trucks unload their cargo into the external loading dock, workers traipse around the warehouse and trucks occasionally go in and out of the garage. There is only one entrace in or out and a manned security checkpoint stands watch.
 	<<else>>
-		You approach the sprawling warehouse complex surrounded by barbed wire fence. Activity is quiet inside, trucks are stationary at the external loading dock, the loading dock gates are closed and the garage door is closed. There is only one entrace in or out and a manned security checkpoint stands watch.	
+		You approach the sprawling warehouse complex surrounded by barbed wire fence. Activity is quiet inside, trucks are stationary at the external loading dock, the loading dock gates are closed and the garage door is closed. There is only one entrace in or out and a manned security checkpoint stands watch.
 	<</if>>
 	<br><br>
 
@@ -82,7 +82,7 @@
 	<<if $baileyHQ.fenceTunnel is 0>>
 		<<if $baileyHQ.shovel is 1>>
 			<span class="yellow">You can use the shovel to dig a hole under the fence but they'll notice by tomorrow and be alerted.</span><br>
-			<<link [[Use the shovel to dig under the fence (0:10)|Bailey HQ Fence Dig]]>><<pass 10>><<set $phase to 1>><</link>>	
+			<<link [[Use the shovel to dig under the fence (0:10)|Bailey HQ Fence Dig]]>><<pass 10>><<set $phase to 1>><</link>>
 			<br>
 		<<else>>
 			<span class="yellow">Maybe you can get a tool to dig faster.</span><br>
@@ -115,12 +115,12 @@
 	<<passoutbaileyhq>>
 <<else>>
 	<<if Time.dayState isnot "night">>
-		You're inside the warehouse complex's perimeter. There's still sunlight, making it harder for you to sneak around. 
+		You're inside the warehouse complex's perimeter. There's still sunlight, making it harder for you to sneak around.
 	<<else>>
 		You're inside the warehouse complex's perimeter. It's dark, there are lights here and there but you can easily blend in the shadows.
 	<</if>>
 	<br><br>
-		
+
 	<<link [[Go deeper into the complex|Bailey HQ Inner Outskirts Traverse]]>><</link>>
 	<br>
 	<<link [[Approach the barbed wire fence|Bailey HQ Barbed Wire Fence]]>><</link>>
@@ -155,7 +155,7 @@
 		<<set $skulduggerydifficulty to $skulduggerydifficulty / 2>>
 	<</if>>
 	<br><br>
-		
+
 	<<if Time.dayState isnot "night">>
 		<<link [[Sneak into the garage (0:10)|Bailey HQ Vehicle Storage Area Sneak]]>><<pass 10>><</link>><<skulduggerydifficulty>>
 		<br>
@@ -168,7 +168,10 @@
 		<br>
 	<<else>>
 		<<set $lock to 1000>>
-		<<if currentSkillValue('skulduggery') gte $lock>>
+		<<if $baileyHQ.dockUnlocked is 1>>
+			<<link [[Sneak in through the unlocked loading dock door|Bailey HQ Vehicle Storage Area]]>><</link>>
+			<br>
+		<<elseif currentSkillValue('skulduggery') gte $lock>>
 			<<link [[Unlock one of the loading dock doors (0:05)|Bailey HQ External Loading Dock Unlock]]>><<pass 5>><</link>>
 			<br>
 		<<else>>
@@ -202,18 +205,18 @@
 <<else>>
 	You're inside the warehouse and it seems like you're in a vehicle storage area of sorts. SUVs, vans, trucks and even some luxury cars are parked here.
 	<br><br>
-	
+
 	<<if Time.dayState isnot "night">>
-		The reception area has a few guards doing quality checks on the cargo and workers carrying some of the cargo onto a freight lift. 
+		The reception area has a few guards doing quality checks on the cargo and workers carrying some of the cargo onto a freight lift.
 	<<else>>
-		The reception area is quiet and the freight lift is on the ground floor. 
+		The reception area is quiet and the freight lift is on the ground floor.
 	<</if>>
 	<<if $baileyHQ.meetingRoomKnown is 1>>
-		The door leading to the meeting room is still shut 
+		The door leading to the meeting room is still shut
 	<<else>>
-		You see a shut door across the warehouse 
+		You see a shut door across the warehouse
 	<</if>>
-	and the stairs going up to the mezzanine is 
+	and the stairs going up to the mezzanine is
 	<<if $baileyHQ.alertness gte 25>>
 		<<generate1>><<generate2>><<generate3>><<generate4>><<person1>>
 		<span class="red">guarded by four guards</span>.
@@ -230,7 +233,7 @@
 		<span class="green">unguarded</span>.
 		<<set _guarded to 0>>
 	<</if>>
-	
+
 	<<if _guarded is 0>>
 		<<link [[Sneak up the stairs (0:05)|Bailey HQ Ground Stairs Sneak]]>><<pass 5>><</link>><<skulduggerydifficulty>>
 		<br>
@@ -245,6 +248,8 @@
 		<<link [[Sneak to the shut door|Bailey HQ Meeting Room Sneak]]>><</link>><<skulduggerydifficulty>>
 		<br>
 	<</if>>
+	<<link [[Sneak to the external loading dock|Bailey HQ Ground Traverse]]>><</link>>
+	<br>
 	<span class="yellow">This will immediately put them on high alert.</span><br>
 	<<link [[Go back out through the access door (0:02)|Bailey HQ Access Door]]>><<pass 2>><</link>><<dangerousText>>
 	<br>
@@ -268,3 +273,92 @@ You also see <<print $baileyHQ.chairs>> empty chairs surrounding the conference 
 <br><br>
 
 <<link [[Back|Bailey HQ Vehicle Storage Area]]>><</link>>
+
+:: Bailey HQ External Loading Dock
+<<effects>>
+<<set $location to "Bailey HQ External Loading Dock">>
+
+<<if $baileyHQ.alertness gte 25>>
+	<<set $skulduggerydifficulty to 1500>>
+<<elseif $baileyHQ.alertness gte 15>>
+	<<set $skulduggerydifficulty to 1000>>
+<<else>>
+	<<set $skulduggerydifficulty to 500>>
+<</if>>
+
+<<if $stress gte $stressmax and !$possessed>>
+	<<set $baileyHQ.alertness += 15>><<alertnessclamp>>
+	<<passoutbaileyhq>>
+<<else>>
+	You're in the external loading dock.
+	<br><br>
+
+	<<if Time.dayState isnot "night">>
+		You see workers carrying boxes to and from the trucks, with some bringing said boxes to the reception area for insepction and others using the freight lift to bring the cargo up and deeper into the warehouse.
+	<<else>>
+		<<if $baileyHQ.lift is undefined>>
+			<<set $baileyHQ.lift to random(0,1)>>
+		<</if>>
+		It's quiet,
+		<<if $baileyHQ.lift is 1>>
+			the freight lift resting on the ground floor with a few boxes still strewn upon it.
+		<<else>>
+			the freight lift is up on the mezzanine.
+		<</if>>
+	<</if>>
+
+	<<link [[Sneak onto the freight lift|Bailey HQ Ground Lift Sneak]]>><</link>><<skulduggerydifficulty>>
+	<br>
+	<<link [[Sneak to the vehicle storage area|Bailey HQ Ground Traverse]]>><</link>><<skulduggerydifficulty>>
+	<br>
+	<<if $baileyHQ.dockUnlocked is 1>>
+		<<link [[Sneak out through the unlocked loading dock|Bailey HQ Inner]]>><</link>>
+		<br>
+	<<else>>
+		<span class="yellow">The loading dock door is locked from the outside.</span><br>
+	<</if>>
+<</if>>
+
+:: Bailey HQ Mezzanine
+<<effects>>
+<<set $location to "Bailey HQ Mezzanine">>
+
+<<if $baileyHQ.alertness gte 25>>
+	<<set $skulduggerydifficulty to 1500>>
+<<elseif $baileyHQ.alertness gte 15>>
+	<<set $skulduggerydifficulty to 1000>>
+<<else>>
+	<<set $skulduggerydifficulty to 500>>
+<</if>>
+
+<<if $stress gte $stressmax and !$possessed>>
+	<<set $baileyHQ.alertness += 15>><<alertnessclamp>>
+	<<passoutbaileyhq>>
+<<else>>
+	You're up on the mezzanine.
+
+	<<if Time.dayState isnot "night">>
+		You see workers hauling some boxes onto the pallet racks while others are taking them into the storage rooms.
+	<<else>>
+		The floor is quiet with only guards occasionally patrolling the area.
+	<</if>>
+	<br>
+
+	<<if _guarded is 0>>
+		<<link [[Sneak up the stairs (0:05)|Bailey HQ Ground Stairs Sneak]]>><<pass 5>><</link>><<skulduggerydifficulty>>
+		<br>
+	<<else>>
+		<<link [[Fight the guards guarding the stairs|Bailey HQ Ground Stairs Fight]]>><</link>><<dangerousText>>
+		<br>
+	<</if>>
+	<<if $baileyHQ.meetingRoomKnown is 1>>
+		<<link [[Sneak to the meeting room|Bailey HQ Meeting Room Sneak]]>><</link>><<skulduggerydifficulty>>
+		<br>
+	<<else>>
+		<<link [[Sneak to the shut door|Bailey HQ Meeting Room Sneak]]>><</link>><<skulduggerydifficulty>>
+		<br>
+	<</if>>
+	<span class="yellow">This will immediately put them on high alert.</span><br>
+	<<link [[Go back out through the access door (0:02)|Bailey HQ Access Door]]>><<pass 2>><</link>><<dangerousText>>
+	<br>
+<</if>>
