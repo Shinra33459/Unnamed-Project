@@ -1,7 +1,9 @@
 # Degrees of Lewdity - Bunny Transformation Mod
 
 [Support Vrelnir](https://subscribestar.adult/vrelnir) and the main game!
+[Support Vrelnir](https://subscribestar.adult/vrelnir) and the main game!
 
+The bunny transformation mod adds a bunny TF to the game along with ~~work in progress~~ predator/prey dynamics and a future love interest! Created by [winterppeach](https://www.tumblr.com/blog/winterppeach) on tumblr.
 The bunny transformation mod adds a bunny TF to the game along with ~~work in progress~~ predator/prey dynamics and a future love interest! Created by [winterppeach](https://www.tumblr.com/blog/winterppeach) on tumblr.
 
 Currently there is no BEEESSS sprite support but there is one coming in the future
