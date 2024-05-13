@@ -124,7 +124,7 @@ replace (?<!["'\w])_(?=\w) with T.
  * "demon_tail_type": "disabled"|"hidden"|"default"|"classic"
  * "demon_tail_state": "idle"|"cover"|"flaunt"
  * "demon_tail_layer": "front"|"back"
- * "demon_horns_type": "disabled"|"hidden"|"default"|"classic"
+ * "demon_horns_type": "disabled"|"hidden"|"default"|"classic" | "antler"
  * "demon_horns_layer": "front"|"back"
  * "wolf_tail_type": "disabled"|"hidden"|"default"|"feral"
  * "wolf_tail_layer": "front"|"back"
@@ -154,9 +154,9 @@ replace (?<!["'\w])_(?=\w) with T.
  * "fox_tail_layer": "front"|"back"
  * "fox_ears_type": "disabled"|"hidden"|"default"|
  * "fox_cheeks_type": "disabled"|"hidden"|
- * "bunny_tail_type": "disabled"|"hidden"|"default"|
+ * "bunny_tail_type": "disabled"|"hidden"|"default"| "fluffy"
  * "bunny_tail_layer": "front"|"back"|
- * "bunny_ears_type": "disabled"|"hidden"|"default"|
+ * "bunny_ears_type": "disabled"|"hidden"|"default"| "lop"
  *
  * BODY WRITING OPTIONS:
  * --------------------
@@ -387,6 +387,7 @@ Renderer.CanvasModels["main"] = {
 			"bunny_tail_type": "disabled",
 			"bunny_tail_layer": "front",
 			"bunny_ears_type": "disabled",
+			"bunny_ears_layer": "front",
 			// body writings
 			"writing_forehead": "",
 			"writing_left_cheek": "",
@@ -765,10 +766,10 @@ Renderer.CanvasModels["main"] = {
 		if (options.worn_upper_setup.mask_img === 1 && options.worn_upper_setup.name === "cocoon") {
 			options.head_mask_src = "img/clothes/upper/cocoon/mask.png";
 		} else if (options.worn_over_head_setup.mask_img === 1 &&
-			!(options.hood_down && options.worn_over_head_setup.hood && options.worn_over_head_setup.outfitSecondary !== undefined)) {
+			!(options.hood_down && options.worn_over_head_setup.hood && options.worn_over_head_setup.outfitSecondary !== undefined)  && V.tfearshatposition == "under") {
 			options.head_mask_src = "img/clothes/head/" + options.worn_over_head_setup.variable + "/mask.png";
 		} else if (options.worn_head_setup.mask_img === 1 &&
-			!(options.hood_down && options.worn_head_setup.hood && options.worn_head_setup.outfitSecondary !== undefined)) {
+			!(options.hood_down && options.worn_head_setup.hood && options.worn_head_setup.outfitSecondary !== undefined)  && V.tfearshatposition == "under") {
 			if (options.worn_head_setup.mask_img_ponytail === 1 && ["curly pigtails", "fluffy ponytail", "thick sidetail", "thick twintails", "ribbon tail", "thick sidetail", "thick ponytail", "half-up"].includes(options.hair_sides_type) || ["scorpion tails", "thick pigtails", "thick twintails"].includes(options.hair_sides_type) && ["furcap f", "furcap m"].includes(options.worn_head_setup.variable)) {
 				options.head_mask_src = "img/clothes/head/" + options.worn_head_setup.variable + "/mask_ponytail.png";
 			} else {
@@ -2369,6 +2370,8 @@ Renderer.CanvasModels["main"] = {
 			animation: "idle"
 
 		},
+
+
 		/***
 		 *    ██████  ██   ██ ███    ██ ███    ██ ██ ██
 		 *    ██   ██ ██   ██ ████   ██ ████   ██ ██ ██
@@ -2395,9 +2398,23 @@ Renderer.CanvasModels["main"] = {
 			},
 			animation: "idle"
 		},
-		"bunny_ears": {
+		"bunny_ear_front": {
 			srcfn(options) {
-				return `img/transformations/bunny/ears/${options.bunny_ears_type}.png`;
+				return `img/transformations/bunny/earfront/${options.bunny_ears_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bunny_ears_type);
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
+			filters: ["hair"],
+			z: ZIndices.horns,
+			animation: "idle"
+		},
+		"bunny_ear_back": {
+			srcfn(options) {
+				return `img/transformations/bunny/earback/${options.bunny_ears_type}.png`;
 			},
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.bunny_ears_type);
@@ -2408,9 +2425,7 @@ Renderer.CanvasModels["main"] = {
 			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
-
 		},
-
 
 		/***
 		 *    ██     ██ ██████  ██ ████████ ██ ███    ██  ██████  ███████

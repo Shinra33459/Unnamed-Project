@@ -877,6 +877,9 @@ Macro.add("canvasModelEditor", {
 						selectOption("fox_tail_layer", ["front", "back"]),
 						selectOption("fox_ears_type", ["disabled", "hidden", "default"]),
 						selectOption("fox_cheeks_type", ["disabled", "hidden", "default"]),
+						selectOption("bunny_tail_type", ["disabled", "hidden", "default", "fluffy"]),
+						selectOption("bunny_tail_layer", ["front", "back"]),
+						selectOption("bunny_ears_type", ["disabled", "hidden", "default", "lop"]),
 
 						optionCategory("Body writings"),
 						selectOption("writing_forehead", bodyWritings),
