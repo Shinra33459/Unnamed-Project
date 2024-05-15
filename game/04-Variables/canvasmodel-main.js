@@ -1993,9 +1993,9 @@ Renderer.CanvasModels["main"] = {
 			filters: ["hair"],
 			zfn(options) {
 				if (options.wolf_tail_layer === "back") {
-					return ZIndices.tail
+					return ZIndices.tail;
 				} else {
-					return ZIndices.back_lower
+					return ZIndices.back_lower;
 				}
 			},
 			animation: "idle"
@@ -2011,7 +2011,13 @@ Renderer.CanvasModels["main"] = {
 				return options.head_mask_src;
 			},
 			filters: ["hair"],
-			z: ZIndices.brow,
+			zfn(options) {
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
+			},
 			animation: "idle"
 		},
 		"wolf_pits": {
@@ -2109,7 +2115,13 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && isPartEnabled(options.cat_ears_type);
 			},
 			filters: ["hair"],
-			z: ZIndices.brow,
+			zfn(options) {
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
+			},
 			animation: "idle"
 		},
 		/***
@@ -2154,7 +2166,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.cow_ears_type);
 			},
-			z: ZIndices.brow,
+			zfn(options) {
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
+			},
 			animation: "idle"
 		},
 		"cow_tag": {
@@ -2348,7 +2366,13 @@ Renderer.CanvasModels["main"] = {
 				return options.head_mask_src;
 			},
 			filters: ["hair"],
-			z: ZIndices.brow,
+			zfn(options) {
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
+			},
 			animation: "idle"
 		},
 		"fox_cheeks": {
@@ -4298,7 +4322,8 @@ function genlayer_clothing_breasts(slot, overrideOptions) {
 				(options["worn_" + slot + "_setup"].altposition !== undefined &&
 				!options.alt_without_breasts);
 			let breastImg = options["worn_" + slot + "_setup"].breast_img;
-			let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			// let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			let breastSize = Math.min(options.breast_size, 6);
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
@@ -4647,7 +4672,8 @@ function genlayer_clothing_breasts_acc(slot, overrideOptions) {
 	return Object.assign({
 		srcfn(options) {
 			let breastImg = options["worn_" + slot + "_setup"].breast_img;
-			let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			// let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			let breastSize = Math.min(options.breast_size, 6);
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
