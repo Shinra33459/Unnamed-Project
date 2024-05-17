@@ -773,7 +773,8 @@ Renderer.CanvasModels["main"] = {
 		}
 
 		if (["fro", "afro pouf", "afro puffs"].includes(options.hair_sides_type) && ["fro"].includes(options.hair_fringe_type)) {
-			options.fringe_mask_src = "img/hair/fringe/" + options.hair_fringe_type + "/mask.png";
+			// options.fringe_mask_src = "img/hair/fringe/" + options.hair_fringe_type + "/mask.png";
+			options.fringe_mask_src = null;
 		} else {
 			options.fringe_mask_src = null;
 		}
@@ -959,7 +960,11 @@ Renderer.CanvasModels["main"] = {
 				return !!options.breasts;
 			},
 			filters: ["breasts"],
-			z: ZIndices.breasts,
+			// z: ZIndices.breasts,
+			zfn(options) {
+				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked"))) return ZIndices.breasts + 80;
+				return ZIndices.breasts;
+			},
 			animation: "idle"
 		},
 		"belly": {
@@ -2657,7 +2662,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return !!options.drip_vaginal;
 			},
-			z: ZIndices.tears,
+			z: ZIndices.tears + 120,
 			animationfn(options) {
 				return "VaginalCumDrip" + options.drip_vaginal;
 			}
@@ -2669,7 +2674,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return !!options.drip_anal;
 			},
-			z: ZIndices.tears,
+			z: ZIndices.tears + 120,
 			animationfn(options) {
 				return "AnalCumDrip" + options.drip_anal;
 			}
