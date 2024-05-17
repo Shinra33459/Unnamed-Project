@@ -2662,7 +2662,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return !!options.drip_vaginal;
 			},
-			z: ZIndices.tears + 120,
+			z: ZIndices.tears,
 			animationfn(options) {
 				return "VaginalCumDrip" + options.drip_vaginal;
 			}
@@ -2674,7 +2674,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return !!options.drip_anal;
 			},
-			z: ZIndices.tears + 120,
+			z: ZIndices.tears,
 			animationfn(options) {
 				return "AnalCumDrip" + options.drip_anal;
 			}
