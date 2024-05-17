@@ -959,7 +959,11 @@ Renderer.CanvasModels["main"] = {
 				return !!options.breasts;
 			},
 			filters: ["breasts"],
-			z: ZIndices.breasts,
+			// z: ZIndices.breasts,
+			zfn(options) {
+				if (V.exposed >= 1 || (V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked"))) return ZIndices.breasts + 80;
+				return ZIndices.breasts;
+			},
 			animation: "idle"
 		},
 		"belly": {
