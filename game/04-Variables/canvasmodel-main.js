@@ -2664,7 +2664,7 @@ Renderer.CanvasModels["main"] = {
 			},
 			// z: ZIndices.tears,
 			zfn(options) {
-				if (V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked")) return ZIndices.tears + 120;
+				if (V.worn.over_lower.type.includes("naked") && V.worn.lower.type.includes("naked") && V.worn.under_lower.type.includes("naked")) return ZIndices.tears + 120;
 				return ZIndices.tears;
 			},
 			animationfn(options) {
