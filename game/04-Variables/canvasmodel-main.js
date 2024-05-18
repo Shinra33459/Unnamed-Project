@@ -2662,7 +2662,11 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return !!options.drip_vaginal;
 			},
-			z: ZIndices.tears,
+			// z: ZIndices.tears,
+			zfn(options) {
+				if (V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked")) return ZIndices.tears + 120;
+				return ZIndices.tears;
+			},
 			animationfn(options) {
 				return "VaginalCumDrip" + options.drip_vaginal;
 			}
@@ -2674,7 +2678,11 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return !!options.drip_anal;
 			},
-			z: ZIndices.tears,
+			// z: ZIndices.tears,
+			zfn(options) {
+				if (!V.worn.over_upper.type.includes("naked") && !V.worn.upper.type.includes("naked") && !V.worn.under_upper.type.includes("naked")) return ZIndices.tears + 120;
+				return ZIndices.tears;
+			},
 			animationfn(options) {
 				return "AnalCumDrip" + options.drip_anal;
 			}
