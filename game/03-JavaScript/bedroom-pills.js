@@ -35,6 +35,111 @@ A single pill object contains multiple 'properties' which define the pill.
 */
 setup.pills = [
 	{
+		name: "body reduction",
+		description:
+			"Testosterone Pills. Intended to make you more masculine",
+		onTakeMessage: "You take the pills intended to masculinize you. You hope it will be as effective as advertised.",
+		warning_label:
+			"Warning: Severe side effects upon exceeding the maximum dose prescribed per day. Not to be associated with any other hormonal treatment.",
+		autoTake() {
+			return V.sexStats.pills["pills"][this.name].autoTake;
+		},
+		doseTaken() {
+			return V.sexStats.pills["pills"][this.name].doseTaken;
+		},
+		owned() {
+			return V.sexStats.pills["pills"][this.name].owned;
+		},
+		type: "body",
+		subtype: "reduction",
+		shape: "pill",
+		overdose() {
+			return V.sexStats.pills["pills"][this.name].overdose;
+		},
+		icon: "img/misc/icon/male.png",
+		display_condition() {
+			return this.owned() > 0 ? 1 : 0;
+		},
+		take_condition() {
+			return this.doseTaken() < 2 &&
+				V.sexStats.pills["pills"]["body growth"].doseTaken === 0 &&
+				V.sexStats.pills["pills"]["body blocker"].doseTaken === 0
+				? 1
+				: 0;
+		},
+		effects: [],
+	},
+	{
+		name: "body growth",
+		description:
+			"Estradiol pills. Intended to make you more feminine",
+		onTakeMessage: "You take the pills intended to feminize you. You hope it will be as effective as advertised.",
+		warning_label:
+			"Warning: Severe side effects upon exceeding the maximum dose prescribed per day. Not to be associated with any other hormonal treatment.",
+		autoTake() {
+			return V.sexStats.pills["pills"][this.name].autoTake;
+		},
+		doseTaken() {
+			return V.sexStats.pills["pills"][this.name].doseTaken;
+		},
+		owned() {
+			return V.sexStats.pills["pills"][this.name].owned;
+		},
+		type: "body",
+		subtype: "growth",
+		shape: "pill",
+		overdose() {
+			return V.sexStats.pills["pills"][this.name].overdose;
+		},
+		icon: "img/misc/icon/female.png",
+		display_condition() {
+			return this.owned() > 0 ? 1 : 0;
+		},
+		take_condition() {
+			return this.doseTaken() < 2 &&
+				V.sexStats.pills["pills"]["body reduction"].doseTaken === 0 &&
+				V.sexStats.pills["pills"]["body blocker"].doseTaken === 0
+				? 1
+				: 0;
+		},
+		effects: [],
+	},
+	{
+		name: "body blocker",
+		description:
+			"Generic GnRH antagonist. Blocks Hormone production, preventing your body from becoming more masculine or feminine.",
+		onTakeMessage: "You take the pills intended to block puberty. You hope it will be as effective as advertised.",
+		warning_label:
+			"Warning: Severe side effects upon exceeding the maximum dose prescribed per day. Not to be associated with any other hormonal treatment.",
+		autoTake() {
+			return V.sexStats.pills["pills"][this.name].autoTake;
+		},
+		doseTaken() {
+			return V.sexStats.pills["pills"][this.name].doseTaken;
+		},
+		owned() {
+			return V.sexStats.pills["pills"][this.name].owned;
+		},
+		type: "body",
+		subtype: "blocker",
+		shape: "pill",
+		overdose() {
+			return V.sexStats.pills["pills"][this.name].overdose;
+		},
+		icon: "img/misc/icon/bottomBlocker.png",
+		display_condition() {
+			return this.owned() > 0 ? 1 : 0;
+		},
+		take_condition() {
+			return this.doseTaken() < 2 &&
+				V.sexStats.pills["pills"]["body growth"].doseTaken === 0 &&
+				V.sexStats.pills["pills"]["body reduction"].doseTaken === 0
+				? 1
+				: 0;
+		},
+		effects: [],
+	},
+	{
 		name: "bottom reduction",
 		description:
 			"Each pill contains 500mg of Praberrhol, a derived molecule crafted specifically to attach to the triglyceride present in your buttocks and dissolve them over time.",
@@ -736,7 +841,7 @@ function redetermineMostTaken(type, subtype, fullname = null) {
 			}
 		}
 	}
-	if (!["breast", "bottom", "penis"].includes(type)) return;
+	if (!["breast", "bottom", "penis", "body"].includes(type)) return;
 	for (const pill of setup.pills) {
 		if (pill.type === type && ["blocker", "growth", "reduction"].includes(pill.subtype)) {
 			result[pill.subtype] = pill.doseTaken();
@@ -812,7 +917,7 @@ function onAutoTakeClick(itemName, itemType) {
 		if (setup.pills[item].name === itemName) {
 			V.sexStats.pills["pills"][itemName].autoTake = !V.sexStats.pills["pills"][itemName].autoTake; // toggle auto take
 			window.initPillContextButtons(setup.pills[item]); // change "Take every morning" button to "Stop taking them"
-		} else if (["breast", "penis", "bottom", "pregnancy"].includes(itemType) && setup.pills[item].type === itemType)
+		} else if (["breast", "body", "penis", "bottom", "pregnancy"].includes(itemType) && setup.pills[item].type === itemType)
 			V.sexStats.pills["pills"][setup.pills[item].name].autoTake = false; // disable auto takes for other similar pills(bottom/penis/breast etc)
 	}
 	window.syncAutoTakeDisplayedState();
@@ -833,13 +938,13 @@ window.syncAutoTakeDisplayedState = syncAutoTakeDisplayedState;
 
 function onSecondDoseTakenSetVars() {
 	// If player take two doses of anything but blocker/pregnancy/harper/asylum pills, determine the risk stat and
-	let doseTaken = { bottom: 0, penis: 0, breast: 0 };
+	let doseTaken = { bottom: 0, penis: 0, breast: 0, body: 0 };
 
 	T.risk = 0;
 	T.pillAmountOfCategoriesUsed = 0;
 	for (const item of setup.pills) {
 		// determine how many pills of each have been taken.
-		if (["bottom", "penis", "breast"].contains(item.type)) doseTaken[item.type] += item.doseTaken();
+		if (["bottom", "penis", "breast", "body"].contains(item.type)) doseTaken[item.type] += item.doseTaken();
 	}
 	const sumValues = obj => Object.values(obj).reduce((a, b) => a + b); // count every doses
 	let i = -1;
@@ -851,6 +956,7 @@ function onSecondDoseTakenSetVars() {
 		["bottom", doseTaken["bottom"]],
 		["penis", doseTaken["penis"]],
 		["breast", doseTaken["breast"]],
+		["body", doseTaken["body"]],
 	]; // Changed object to array as it's easier to sort.
 	for (const array of doseTaken) {
 		if (array[1] > 0) T.pillAmountOfCategoriesUsed += 1; // How many different categories of pills we took ?
@@ -889,6 +995,9 @@ function backCompPillsInventory() {
 		}
 	}
 	Object.assign(pills, {
+		"body reduction": { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 },
+		"body growth": { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 },
+		"body blocker": { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 },
 		"bottom reduction": { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 },
 		"bottom growth": { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 },
 		"bottom blocker": { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 },
@@ -911,8 +1020,8 @@ function backCompPillsInventory() {
 	}
 	Object.assign(V.sexStats.pills, {
 		boughtOnce: pills.boughtOnce === true,
-		lastTaken: { bottom: "", breast: "", penis: "", pregnancy: "" },
-		mostTaken: { bottom: "", breast: "", penis: "", pregnancy: "" },
+		lastTaken: { body: "", bottom: "", breast: "", penis: "", pregnancy: "" },
+		mostTaken: { body: "", bottom: "", breast: "", penis: "", pregnancy: "" },
 		pills,
 	});
 }
@@ -921,6 +1030,14 @@ window.backCompPillsInventory = backCompPillsInventory;
 function pillsObjectRepair(oPills, pills) {
 	/* if the variable already exist, and is not of the new version(new version has "mostTaken" property that's why we check it),
 	then we try to  port the old one to the new one */
+	if (typeof oPills.body === "object") {
+		Object.assign(pills, {
+			"body reduction": { autoTake: oPills.body.autoTake === "reduction", owned: oPills.body.owned.reduction },
+			"body growth": { autoTake: oPills.body.autoTake === "growth", owned: oPills.body.owned.growth },
+			"body blocker": { autoTake: oPills.body.autoTake === "blocker", owned: oPills.body.owned.blocker },
+		});
+		delete oPills.body;
+	}
 	if (typeof oPills.bottom === "object") {
 		Object.assign(pills, {
 			"bottom reduction": { autoTake: oPills.bottom.autoTake === "reduction", owned: oPills.bottom.owned.reduction },
@@ -990,12 +1107,12 @@ function resetAllDoseTaken() {
 window.resetAllDoseTaken = resetAllDoseTaken;
 
 function resetLastTaken() {
-	V.sexStats.pills.lastTaken = { bottom: "", breast: "", penis: "", pregnancy: "" };
+	V.sexStats.pills.lastTaken = { body: "", bottom: "", breast: "", penis: "", pregnancy: "" };
 }
 window.resetLastTaken = resetLastTaken;
 
 function resetMostTaken() {
-	V.sexStats.pills.mostTaken = { bottom: "", breast: "", penis: "", pregnancy: "" };
+	V.sexStats.pills.mostTaken = { body: "", bottom: "", breast: "", penis: "", pregnancy: "" };
 }
 window.resetMostTaken = resetMostTaken;
 

@@ -911,11 +911,11 @@ function hourPassed(hours) {
 function minutePassed(minutes) {
 	const fragment = document.createDocumentFragment();
 	// Stress
-	// decay/rise and crossdresser trait
-	const isCrossdresser = V.backgroundTraits.includes("crossdresser");
-	const isCrossdressing = V.player.gender !== V.player.gender_appearance && V.player.gender !== "h";
-	if (V.controlled === 0 && V.anxiety >= 2) V.stress += minutes * ((isCrossdresser && !isCrossdressing) + 1);
-	else if (V.stress < V.stressmax && (V.controlled === 1 || V.anxiety === 0)) V.stress -= minutes * ((isCrossdresser && isCrossdressing) + 1);
+	const traitCheck = V.backgroundTraits.includes("crossdresser") || V.player.trans === "t";
+	const traitFulfilled = (V.player.gender !== V.player.appearance && V.player.gender != "h" && (V.exposed < 2 || V.worn.genitals.type.includes("hidden")));
+	// TRANSMOD Since I changed exposed genital weighting to make it possible to be perceived as a girl with a dick or a boy with a pussy, I added the extra condition of genital exposure for the effects of Crossdresser and Trans traits.
+	if (V.controlled === 0 && V.anxiety >= 2) V.stress += minutes * ((traitCheck && !traitFulfilled) + 1);
+	else if (V.stress < V.stressmax && (V.controlled === 1 || V.anxiety === 0)) V.stress -= minutes * ((traitCheck && traitFulfilled) + 1);
 
 	parasiteProgressTime(minutes);
 	parasiteProgressTime(minutes, "vagina");

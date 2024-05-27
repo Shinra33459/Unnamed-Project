@@ -1,186 +1,89 @@
-# Degrees of Lewdity
+This is a continuation of the mod by Gay Raccoon.
 
-## Lexicon of Lewdity
+# What is Transmod?
+That's simple: a mod that makes it so all the bad little trans boys and girls are now allowed onboard the abusement park rides! If you've ever found yourself wanting to get sexually assaulted, be extorted, date fucked-up and abusive love interests, fall in love with your rapist, be cruelly bullied, resort to crimes and/or sex work to survive, end up in the honor student-to-cumdump pipeline, re-enact your traumas to feel like you have some kind of control over the things that happen to you, and generally find yourself in a downward spiral of trauma of the horny kind, but *as a trans girl or boy* and you found the Crossdresser background to be woefully insufficient for this, this is the mod for you! While it's in its early stages, current features include being able to set your character's trans status independently of any background, re-weighting of exposed genitals on the gender appearance system, trans-specific reputation and bullying and slurs at school, improved gender display on the Characteristics panel, not assuming you're using the girl's/boy's locker room for prurient purposes, feats for playing trans girls and trans boys to day 50, and more!
 
-Looking to contribute to Degrees of Lewdity? Read the [Lexicon of Lewdity](https://gitgud.io/Vrelnir/degrees-of-lewdity/-/wikis/home).
+Check the branch above and make sure you're on the branch named "transmod-dev" if you want the most current updates. **Remember to export your saves often, and especially when updating versions!**
 
-_Failure to do so can lead to your work being denied._
+# Content warning for transphobia, slurs, some trans-related objectification, etc., on top of everything in the base game.
 
-## How to build
+## How to play this mod
 
-### Changing the build version and type
+There are two ways. If you want to run the game locally, you'll need to follow these instructions:
 
-1. Open `01-config\sugarcubeConfig.js`.
-2. Edit the `window.StartConfig` object to the relevant config type.
-    - Normal Build - `enableImages` needs to be `true` and `enableLinkNumberify` needs to be `true`.
-    - Text Only Build - `enableImages` needs to be `false` and `enableLinkNumberify` needs to be `true`.
-    - Android Build - `enableImages` needs to be `true` and `enableLinkNumberify` needs to be `false`.
-3. `version` is optional between release versions but will be displayed on screen in several places and stored in the saves made.
-4. `debug` is optional and will only effect new games.
+1. Download the compressed repo above (make sure you're on the branch named "dev" if you want the most current updates).
+2. Unzip it to a folder.
+3. Run `compile.bat`.
+4. Open `Degrees of Lewdity VERSION.html`.
 
-### Compiling the html
+The other way, which you'll need to use if you're on mobile or some other platform where you don't have the option to build the file locally as above, is to head on over to dolmods.net, where Transmod is one of the supported mods. (Thanks Nameless Magician!)
 
-1. On Windows: Run `compile.bat` or `compile-watch.bat`.
-2. On Linux: Run `compile.sh`
-3. Open `Degrees of Lewdity VERSION.html`.
+After that, you're good to create your trans girl or trans boy! Just check the box for the character being transgender after you've selected their birth sex. Bear in mind that if you want to be gendered as a girl with a penis or a boy with a vagina when your genitals are exposed, you'll need to look the part. *Trans boys in particular will probably want to select masculine features,* since there are almost no masculine body features to work with other than that, and you can't get them after character creation (I might have to do something about that). Then, be careful out there. Or don't. We all know why we're here.
 
-### Build Android version (.apk)
+## What to do if you have an old save from vanilla and want that character to be set as trans
 
-See [README in devTools/apkbuilder](devTools/apkbuilder/README-windows.txt)
+Until I stop being too lazy to patch in something in the Attitudes menu or something, you can hack it in via the browser console (at least if you're running the game locally; I'm not sure how this works if you're playing via dolmods.net). Make sure you're in the tab where you're playing Transmod and hit F12 to bring up the devtools panel, and then navigate to the Console tab in that if you aren't already there. Once you've got the console open, copypasta the following snippet of code into its command line, then hit Enter:
 
-## Development
+V.player.trans = "t"
 
-### Prerequisites
+If your browser requires you to type "allow pasting" or something first, that's normal, and it's because pasting strange code off the Internets into your browser console can be dangerous if it's malicious. But in any case, once you've got the above line of code entered, your character should now be flagged as trans, and you'll probably see a change in crossdressing warning message (either disappearing or appearing) when you advance to the next passage.
 
--   Read [Coder's-Guide](https://gitgud.io/Vrelnir/degrees-of-lewdity/-/wikis/Programming/Coder's-Guide)
--   [Node.js 16 or later](https://nodejs.org/en/).
+## What's new in Transmod? (check CHANGELOG_TRANSMOD.md above!)
+I actually try to keep Transmod current on mainline content. For the date/version of the most recent mainline merge, and for what *I've* been doing in Transmod, click CHANGELOG_TRANSMOD.md in the list of files above!
 
-### Optional Prerequisites
+If you want a complete list of commits including commits that were made in mainline, you can instead click the History button above the most recent commit at the top.
 
-1. Install [Tweego](http://www.motoslave.net/tweego/) and remember the path where it was installed.
-2. Add path to `tweego.exe` (e.g. `C:\Program Files\Twine\tweego-2.1.0-windows-x64`) to Windows `Path` environment variable.
+## What is Transmod *not*?
+For one, it's not a pronoun picker, so don't give me any discourse about "rapists respecting your pronouns." It does tweak how the player is gendered by NPCs (including the possibility of them deciding you look like a girl with a penis or a boy with a vagina) and the game itself, but my goal was to do this in a more organic way, and account for the fact that NPCs may be ignorant or even shitty about it. I'm also trying to follow mainline design boundaries, one of which is that it uses other systems for how NPCs gender the player instead of a pronoun picker.
 
-### Initial setup
+For two, its primary purpose isn't to be *process-oriented* (like it's not a "surgery mod" or anything like that), though I'm not inherently opposed to all process-of-transition-related or -adjacent content and I *could* see adding some options along those lines in the future (like, say, surgery to alter whether your natural features are masculine/androgynous/feminine, would be one of the easier ones).
 
-1. Install project dependencies:
+For three, one thing I don't presently have the ability to support well is nonbinary characters, aside from characters that just change their gender presentation from time to time, which you can already do in the base game. The problem here is that the game tends to be binary about gendering the player, especially with the gender appearance system, which is strictly binary. Changing this would require radically overhauling one of the basic systems of the game in ways that require both extensive coding work and extensive design decision-making, and it's way beyond my reach at the moment and would require a massive deviation from mainline to implement, and I'm not sure I want to take such a radical departure from mainline's systems at the moment.
 
-    ```bash
-    npm i
-    ```
+## What you can do to help
+Helping me test and keep an eye out for things I missed or implemented incorrectly, mostly! Everything in this mod is very much a work in progress at the moment and I haven't been able to test every change I've implemented, because some of the changes are in events that it's hard to test on demand. For that reason, it'd be great if you could tell me how events mentioned in the changelog go for you should you encounter them. Beyond that, if you get a bug or the like that seems related to character gender or something that it seems like I missed, drop me a line. Try not to spoil too much, but leave a snippet of dialogue or text I could use to search the code files for the incident and maybe a vague summary of the nature of the event if that wouldn't be a spoiler, or roughly where in the game you encountered the error. Please be understanding if it's heavily based in content I haven't experienced yet and don't want to get spoiled on and it takes me a while to get around to it on that basis.
 
-2. If you use Visual Studio Code:
+Also, if you could let me know how I did with the bullying events at school (and the maths fair). Much of this is early drafts, and you can help me by getting your trans rep up at school (same way you'd raise herm or crossdress rep: getting caught with your knickers down) so they start occurring. Do I need to tone things down a notch? Does the writing come off as inorganic or otherwise in need of touching up? Do you have any good ideas for more slurs I could use? Drop me a line!
 
-    1. Install [Twee 3 Language Tools extension](https://marketplace.visualstudio.com/items?itemName=cyrusfirheir.twee3-language-tools)
-    2. Install [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
-    3. Install [Stylelint extension](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint)
-    4. Install and configure [Code Spell Checker extension](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker):
-        1. Use "English - United Kingdom" and "English - United States" dictionaries
-        2. Enable spellchecking for`twee3-sugarcube-2`, `markdown`, `javascript` and other programming languages
-    5. Optionally enable fixing js/css on save. In `settings.json` set:
+### How you can drop me a line
+I have a channel on the DoL modding Discord server! If you don't know how to get there, first go to the official DoL Discord server, go to the #partnered-servers channel, and follow the link to Degrees of Lewdity Modding there. On the DoL modding server, you're looking for the channel named #transmod, naturally enough. I might have to set up a burner email I can post here for people who don't want to join Discord servers, tho.
 
-        ```json
-        // This disables built-in formatting
-        "[javascript]": {
-          "editor.formatOnSave": false
-        },
-        "[css]": {
-          "editor.formatOnSave": false
-        },
-        // This enables running ESLint, Prettier, Stylelint formatting on file save
-        "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": true,
-          "source.fixAll.stylelint": true
-        },
+# What sorts of things will Transmod incorporate in the future?
+I've divided this up into segments by necessity: what's necessary to simply *allow* the PC to be trans without necessarily reflecting it that deeply, and then less urgent stuff that would simply *make lots of sense* for trans PCs. (And then there's a pie-in-the-sky thing towards the end, but don't put too much stock in it.)
 
-        ```
+## First order of business: simply allowing the PC to be trans
+The first layer is simply *allowing* the player to play a trans PC, without the game mistaking them for a crossdresser or constantly misgendering them (though *NPCs* might diegetically do so), but not necessarily incorporating a lot of content that deeply reflects it. The most necessary thing is to correct things that *actively conflict* with playing a trans PC.
 
-### Linting
+### Things I have left to correct in the "actively conflict with playing a trans PC" pile
+1. Accounting for trans characters in the Insecurity system. Gender checks in the existing system need to be tweaked so that trans girls are insecure about flat chests but not about normal-sized breasts, and also insecure about any size of penis, and so that trans boys are insecure about any size of breasts that isn't flat but not a flat chest, and about their vagina. This is going to require sifting through everything that currently increments insecurity (and the game checks gender for this purpose at the level of *individual catcalls* and such), and also adding an entirely new insecurity for the vagina for trans boys and running down everywhere it needs to be implemented. Not looking forward to it, but it's gotta be done.
+2. Sifting through basically every instance where the game calls $player.gender (roughly ~400 references) and either accounting for the player being trans where necessary or updating it to use $player.gender_appearance where it's just old code that today probably would have used that instead. My primary obstacle here is honestly that there's a lot of content I don't want to be spoiled on yet.
+3. Further squishing of bugs and missed things as they pop up, like occasionally I've caught assumptions of boy-ness hidden behind things like $penisexist, as an example.
 
-#### JavaScript
+## Future stuff I might get to move onto someday
+This stuff moves beyond the "strictly necessary to just *let* the player play a trans PC" zone and into making it an experience that more organically reflects that the PC is trans, and it's a lot less concrete/predetermined. An example of some content in this vein that's already in the mod is trans school rep and bullying: the school had a full reputation tracker and bullying events for crossdressers and herm characters, so I was basically obligated to match this for trans characters. There are similar cases where I basically have to write a bit of new dialogue or fork something to account for the PC being trans, as opposed to it being optional, but as far as more optional stuff goes:
 
-JavaScript code linting is handled by [`ESLint`](https://eslint.org/).
+1. A pillar of the initial release of Transmod was changing the weighting of exposed genitalia so that it's possible to be perceived as a girl with a penis or a boy with a vagina. But organic NPC reactions are likely to be more complex than that, and so I'd like to write and code more NPC reactions where instead of the PC being simply perceived as, say, a girl with a penis instead of a boy who was crossdressing, the PC is instead more precisely perceived as an *obviously transgender person* where appropriate, and having NPCs react to this even if the PC still looks like a girl or a boy even when exposed. This would be an involved enough process that it would likely be an eternal work-in-progress as more instances where this would fit are discovered.
+2. Expansion of genital shame. There's an extremely primitive form of this in Transmod already in that I've applied the *downside* of the Crossdresser trait to trans characters (worsened stress gain when very anxious and dressed as birth gender), and *additionally* made exposed genitalia a condition that triggers this penalty even if the PC still otherwise looks like the gender they want to look like. Getting the Insecurity system working properly for trans characters will also be a big step in the right direction for this. But I'd *love* to go deeper on this and make both consensual and forced exhibitionism as intense as they should be for trans PCs, since this goes beyond embarrassment or insecurity and into the realm of outright *shame* and fear of scorn. I'd also kind of like some way for the PC to eventually overcome this, like perhaps if the PC has reached full acceptance.
+3. Fleshing out some scenes that it makes sense to flesh out for trans PCs in general. Some of this stuff would overlap with expanding upon genital shame, but not all of it.
+4. Adding text and/or stress/trauma incrementation for other scenarios where something seems like it'd hit trans characters especially hard (example: having to wear the wrong clothes from Leighton or Mason). There's some overlap here with the genital shame mechanics thing above.
+5. *Possibly* some process-oriented stuff like more options at the hospital. Like getting surgery for more masculine or feminine facial features would probably be one of the easiest ones, and a very useful one tbh. Getting more involved could possibly create an excuse to write some Dr. Harper scenes (imagine *Dr. Harper* being your gatekeeper), but mainline design principles generally discourage scenes that are gender-specific, which I presume would also extend to too much in the way of scenes that are *trans*-specific, so idk. Hormones have crossed my mind, but given this game is a little light on clear differences between male and female bodies and breast/butt pills already exist, idk. I could see using them to slowly shift natural features in lieu of surgery, and they'd probably also affect breast development (in ways more like removing or imposing the male breast growth penalty, rather than a true replacement for growth/shrinkage/stasis pills) while they're at it; they'd probably be more beneficial for trans boys if higher levels of masculine features were added to compensate for the fact that there aren't any other hard masculine characteristics to work with in this game, as opposed to how trans girls have breasts to work with. The part that's more challenging to conceive of is how to create the need for the PC to keep taking hormones indefinitely even after they've got their features where they want them. Which is a shame, because I'd love to do something like certain LIs controlling the player by controlling their access to their hormones (you know who I'm talking about). And speaking of...
+6. NPCs otherwise using the PC's trans-ness to manipulate or hurt them. A lot of the NPCs in this game are kind of awful people who would do exactly that, aren't they? I'm not sure who the best candidates would be, and unfortunately this does sort of run the risk of overly targeted scenes. I could see things like teachers at school being worse about the PC being trans if the PC is a delinquent, though, as an example.
+7. Other features occasionally pop into my head. Like sometimes I think about putting a wardrobe preference toggle in the Attitudes menu for PCs who don't have a specific trait that stresses them out for being dressed a certain way (read: trans PCs and Obligate Crossdressers)
 
-ESLint is [configured](./.eslintrc.cjs) to follow some of best practices ([ESLint Recommended Rules](https://eslint.org/docs/latest/rules/), [JavaScript Standard Style](https://standardjs.com/rules.html)) with formatting handled by Prettier (`eslint --fix` formats code with Prettier). You don't need to use `Prettier` VS Code extension to format `.js` files.
+## Pie in the sky: you know how NPCs can have their gender and genitals set separately?
+Honestly doing that much with this is so far off as to hardly be worth talking about, and also I wouldn't want to run too afoul of the mainline design principle of not writing scenes that wouldn't work independently of the NPC's gender and genital configuration. *The most likely way this will show up in Transmod* is that I could see NPCs reacting slightly differently to the PC being trans if the NPC is *also* trans. With the caveat that most of the NPCs are still shitty people, so don't get your hopes up too much. Not that things like, say, Robin sharing their hormones with the player if the player's running low wouldn't be extremely cute (as an example), but there are obstacles as I've mentioned before.
 
-To run ESLint for single file:
+## Why did I make Transmod?
+I tried playing my first character as a femboy non-avatar style (because they can be cute sometimes), and this lasted for about five minutes before she ended up a big tiddy proto-transgirl avatar. I tried going on like this, and did have a fair bit of fun, but things kept happening that took me out of the experience. A lot of that being related to NPCs abruptly changing their assessment of my avatar to male as soon as her skirt was up and her panties were down, or when her clothes were soaked, or just when the code was old, or etc. (which was particularly jarring in the case of LIs), and a fair bit of it being related to the game *assuming my avatar considered herself a boy*, because there's still a lot of that in there. So basically I *had* to make this mod for my own sake, so that I could just bloody enjoy the game, because it's a wonderful game that spoke to me like few things have in *years* but its handling of my avatar's gender was becoming enough of an issue that I was no longer able to enjoy playing it. I wish I hadn't had to, honestly, because being in the community and poking through code has exposed me to a lot of spoilers, which has also been detrimental to my experience. Even if the game just allowed you to play a girl with a dick as opposed to a boy with tits, with trans-ness left entirely to the realm of player interpretation, I probably never would have ended up making this mod.
 
-```bash
-npx eslint "game/03-JavaScript/02-Helpers/Utils.js"
-```
+So please bear in mind that unlike most modders, my path to modding wasn't wearing out the content in the base game and then deciding to make more; it was so that I could enjoy the base game in the first place. Please understand that I may not want things more spoiled than they already are, and that getting through more of the content on my own for the first time is probably the thing that'll take the most time with regards to developing Transmod.
 
-or for all files inside `game` directory:
+## Special thanks
+Vrelnir and the crew for making the game, even if I was just being a little salty about certain things.
 
-```bash
-npx eslint "game/**"
-```
+The DoL Modding server for helping me get started on this and answering my questions. Especially folks like note leven, hwp, and Rukarin (even if he didn't entirely get why I'm making the mod), without whom I never would have been able to get started because I had no bloody clue what I'm doing with this "git" or "code" thing. (Still hardly do tbh.) And Rukarin was right about it being a better idea to build new variables and systems for trans characters separate from and not hijacking the traits and rep and etc. for crossdressers so that both can co-exist in the same version of the game right from the start.
 
-##### Resolving issues
+Koharu from the DoL modding server for making the Android .apk file.
 
-Some issues are fixable and can be auto-fixed when you save a file (provided ESLint extension is configured to run fix on save) or by running `eslint --fix file_relative_path`
-
-If you find a rule that doesn't make sense for the project you can disable it inside `rules` section inside `.eslintrc.cjs`:
-
-```json
-rules: {
-  ...
-  // SugarCube extends native objects and we follow it
-  "no-extend-native": "off",
-  ...
-}
-```
-
-Please discuss the reasons with the team before disabling the rule. Add a comment explaining why the rule was disabled
-
-If ESLint reports a lot of issues for particular file and you cannot fix them all at once feel free to [disable particular rule](https://eslint.org/docs/latest/user-guide/configuring/rules#disabling-rules) for the file (there is quick actions menu when code with error is hovered):
-
-```js
-/* eslint-disable camelcase -- TODO: Fix variables' names */
-...
-let demo_rainbow_colors = [
-...
-```
-
-Add a TODO comment explaining that this will be fixed someday
-
-##### Global variables
-
-ESLint may report a issue like `'myVariable' is not defined`. It means ESLint cannot figure out where the variable is defined. If you really meant to make variable global add the new variable to `.eslintrc.cjs` `globals` section inside corresponding group:
-
-```json
-myVariable: "readonly"
-```
-
-If the variable is suppose to be writable set `myVariable: "writable"` instead.
-
-### CSS
-
-CSS linting is handled by [`Stylelint`](https://stylelint.io/).
-
-Stylelint is [configured](./stylelint.config.cjs) to follow [common conventions](https://github.com/stylelint/stylelint-config-standard) along with [rules for properties order](https://github.com/cahamilton/stylelint-config-property-sort-order-smacss) and formatting handled by Prettier (`stylelint --fix` formats code with Prettier). You don't need to use `Prettier` VS Code extension to format `.css` files.
-
-To run Stylelint for the file:
-
-```bash
-npx stylelint "game/02-CSS/pillsInventory.css"
-```
-
-or for all CSS file inside `game` directory:
-
-```bash
-npx stylelint "game/**/*.css"
-```
-
-#### Resolving issues
-
-Some issues are fixable and can be auto-fixed when you save a file (provided Stylelint extension is configured to run fix on save) or by running `stylelint --fix file_relative_path`.
-
-Sometimes all issues cannot be fixed within single "fix" run (e.g. properties order). Simply run fix command several time until all auto-fixable issues are resolved.
-
-If you find a rule that doesn't make sense for the project you can disable it inside `rules` section inside `stylelint.config.cjs`:
-
-```js
-rules: {
-  // Class and ID patterns disabled for now due to the large amounts of classes and IDs that break this rule
-  "selector-class-pattern": null,
-  "selector-id-pattern": null,
-  ...
-}
-```
-
-Please discuss the reasons with the team before disabling the rule. Add a comment explaining why the rule was disabled
-
-### Formatting
-
-Formatting CSS and other non-JavaScript file is handled by `Prettier`. Formatting rules are set in `.prettierrc.json`
-
-### Pre-commit hook
-
-On pre-commit [`lint-staged`](https://github.com/okonet/lint-staged) using [`husky`](https://typicode.github.io/husky) lints/formats `.js`, `.css` with ESLint, Stylelint and formats other supported files with Prettier.
-
-Pre-commit hook is the last quality gate to avoid "bad" code getting into the repository. It's better to make sure you aren't committing files with issues beforehand - you can run command `npm run lint-staged` when you've staged the files to check if there are issues.
-
-If for some reason you really want to commit the code that fails linting add `--no-verify` parameter to `commit` call
-
-```bash
-commit --no-verify
-```
+### what's with this giant wall of text
+i have a nice keyboard that feels good and makes pretty clacky clack thocc noises and this was a good excuse ok

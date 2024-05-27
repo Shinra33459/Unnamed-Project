@@ -160,7 +160,7 @@ function genderappearancecheck() {
 	addfemininityfromfactor(V.makeup.mascara ? 50 : 0, "Mascara");
 	/* Body structure */
 	setfemininitymultiplierfromgender(V.player.gender_body);
-	addfemininityfromfactor(T.femininity_multiplier * 200, "Body type");
+	addfemininityfromfactor(V.player.bodytype * 100, "Body type");
 	addfemininityfromfactor(Math.trunc(((V.physique + V.physiquesize / 2) / V.physiquesize) * -100), "Toned muscles");
 	/* Behaviour */
 	setfemininitymultiplierfromgender(V.player.gender_posture);
@@ -276,10 +276,10 @@ function genderappearancecheck() {
 			playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly"
 		);
 	} else if (playerBellySize() >= 18) {
-		addfemininityfromfactor(Math.clamp(10000, 0, Infinity), playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly");
+		addfemininityfromfactor(Math.clamp(1000, 0, Infinity), playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly");
 	} else if (playerBellySize() >= 8) {
 		addfemininityfromfactor(
-			Math.clamp((playerBellySize() - 7) * 250, 0, Infinity),
+			Math.clamp((playerBellySize() - 7) * 50, 0, Infinity),
 			playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly"
 		);
 	}

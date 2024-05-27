@@ -19,6 +19,9 @@
 			},
 			"pills":{
 				"pills":{
+					'body growth':{autoTake: false, doseTaken: 0, owned: 0, overdose: 0},
+					'body reduction':{autoTake: false, doseTaken: 0, owned: 0, overdose: 0},
+					'body blocker':{autoTake: false, doseTaken: 0, owned: 0, overdose: 0},
 					'bottom reduction':{autoTake: false, doseTaken: 0, owned: 0, overdose: 0},
 					'bottom growth':{autoTake: false, doseTaken: 0, owned: 0, overdose: 0},
 					'bottom blocker':{autoTake: false, doseTaken: 0, owned: 0, overdose: 0},
@@ -35,10 +38,19 @@
 					'Anti-Parasite Cream': { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 },
 				},
 				"boughtOnce": false,
-				"lastTaken":{"bottom":'', "breast":'', "penis":'', "pregnancy":''},
-				"mostTaken":{"bottom":'', "breast":'', "penis":'', "pregnancy":''}
+				"lastTaken":{"bottom":'', "breast":'', "penis":'', "pregnancy":'', "body":''},
+				"mostTaken":{"bottom":'', "breast":'', "penis":'', "pregnancy":'', "body":''}
 			}
 		}>>
+	<</if>>
+	<<if $sexStats.pills.pills && $sexStats.pills.pills["body blocker"] is undefined>>
+		<<set $sexStats.pills.pills["body blocker"] to { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 }>>
+	<</if>>
+	<<if $sexStats.pills.pills && $sexStats.pills.pills["body growth"] is undefined>>
+		<<set $sexStats.pills.pills["body growth"] to { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 }>>
+	<</if>>
+	<<if $sexStats.pills.pills && $sexStats.pills.pills["body reduction"] is undefined>>
+		<<set $sexStats.pills.pills["body reduction"] to { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 }>>
 	<</if>>
 	<<if $sexStats.pills.pills && $sexStats.pills.pills["Anti-Parasite Cream"] is undefined>>
 		<<set $sexStats.pills.pills["Anti-Parasite Cream"] to { autoTake: false, doseTaken: 0, owned: 0, overdose: 0 }>>
@@ -300,6 +312,63 @@
 
 :: Widgets physicalAdjustments [widget]
 <<widget "physicalAdjustments">>
+	/*Body*/
+	<<switch $sexStats.pills.mostTaken["body"]>>
+		<<case "blocker">>
+			<<set _bodyMulti to 0>>
+		<<default>>
+			<<set _bodyMulti to 1>>
+	<</switch>>
+	<<if $staticBody is 1>>
+		<<set _bodyMulti to 0>>
+	<</if>>
+	<<if _bodyMulti isnot 0>>
+		<<if $player.penisExist>>
+			<<set _bodyMulti to -1>>
+		<</if>>
+		<<if $player.vaginaExist>>
+			<<set _bodyMulti to 1>>
+		<</if>>
+		<<if $player.penisExist and $player.vaginaExist>>
+			<<set _bodyMulti to 0>>
+		<</if>>
+		<<set _bodyMulti += Math.clamp(($sexStats.creampie.self.anus + $sexStats.creampie.self.mouth + $sexStats.creampie.self.vagina) * 2, 0, 50)/10>>
+		<<set _bodyMulti -= Math.clamp(($sexStats.creampie.npc.anus + $sexStats.creampie.npc.mouth + $sexStats.creampie.npc.vagina) * 2, 0, 50)/10>>
+
+		<<if $earSlime.focus is "pregnancy" and $earSlime.growth gte 75>>
+			<<set _bodyMulti += 2>>
+		<<elseif $earSlime.focus is "impregnation" and $earSlime.growth gte 75>>
+			<<set _bodyMulti -= 2>>
+		<</if>>
+
+		<<switch $sexStats.pills.mostTaken["body"]>>
+		<<case "growth">>
+			<<set _bodyMulti += (2.25 * $sexStats.pills["pills"]["body growth"].doseTaken)>>
+		<<case "reduction">>
+			<<set _bodyMulti -= (2.25 * $sexStats.pills["pills"]["body reduction"].doseTaken)>>
+		<</switch>>
+
+		<<set _purityBoost to (1 + ((1000 - $purity) / 1000))>>
+		<<set $bodygrowthtimer -= _bodyMulti * 25 * _purityBoost>>
+
+		<<if $bodygrowthtimer lte 0 and $player.bodytype lt 4>>
+			<<set $player.bodytype += 1>>
+			<<set $bodygrowthtimer += 700>>
+			<<set $bodygrowthmessage to $player.bodytype>><<set $effectsmessage to 1>>
+		<<elseif $bodygrowthtimer gte 1000 and $player.bodytype gt -8>>
+			<<set $player.bodytype -= 1>>
+			<<set $bodygrowthtimer -= 700>>
+			<<set $bodyshrinkmessage to $player.bodytype>><<set $effectsmessage to 1>>
+		<</if>>
+	<</if>>
+	<<switch $player.bodytype>>
+		<<case gte 2>>
+			<<set $player.gender_body to "f">>
+		<<case lte -2>>
+			<<set $player.gender_body to "m">>
+		<<default>>
+			<<set $player.gender_body to "a">>
+	<</switch>>
 	/*Breasts*/
 	<<switch $sexStats.pills.mostTaken["breast"]>>
 		<<case "growth">>

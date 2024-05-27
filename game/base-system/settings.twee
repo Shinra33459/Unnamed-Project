@@ -3,7 +3,12 @@
 <<widget "initsettings">>
 	<<set $player.gender to "f">>
 	<<set $player.sex to "f">>
-	<<set $player.gender_body to "a">>
+	<<set $player.trans to "f">>
+	<<set $player.surgery to "f">>
+	<<set $surgeryToggle to "f">>
+	<<set $staticBody to 0>>
+	<<set $capBody to 0>>
+	<<set $player.bodytype to 0>>
 	<<set $player.ballsExist to false>>
 	<<set $player.freckles to false>>
 	<<set $player.breastsize to 0>>
@@ -926,23 +931,25 @@
 
 		<div class="settingsToggleItem">
 			<div class="playergender">
-				<span class="gold">Gender:</span><br>
+				<span class="gold">Sex:</span><br>
 				<label>Male <<radiobutton "$player.gender" "m" autocheck>></label> |
 				<label>Female <<radiobutton "$player.gender" "f" autocheck>></label> |
 				<label>Hermaphrodite <<radiobutton "$player.gender" "h" autocheck>></label>
+	<br>
+	<label data-target="player.gender" data-disabledif="V.player.gender==='h'"><<checkbox "$player.trans" "f" "t" autocheck>> Character is transgender (trans girl if male is selected above, or trans boy if female is selected). Does nothing for hermaphrodites.</label>
 			</div>
 		</div>
 
 		<div class="settingsToggleItem">
 			<span class="gold">Body type:</span><br>
-			<label>Masculine <<radiobutton "$player.gender_body" "m" autocheck>></label> |
-			<label>Feminine <<radiobutton "$player.gender_body" "f" autocheck>></label> |
-			<label>Androgynous <<radiobutton "$player.gender_body" "a" autocheck>></label>
+			<label>Masculine <<radiobutton "$player.bodytype" -8 autocheck>></label> |
+			<label>Feminine <<radiobutton "$player.bodytype" 4 autocheck>></label> |
+			<label>Androgynous <<radiobutton "$player.bodytype" 0 autocheck>></label>
 		</div>
 
-		<<if $debug is 1>>
+		<<if $surgeryToggle is "t">>
 			<div class="settingsToggleItem">
-				<span class="gold">Sex:</span><br>
+				<span class="gold">Genitals:</span><br>
 				<label>Penis <<radiobutton "$player.sex" "m" autocheck>></label> |
 				<label>Vagina <<radiobutton "$player.sex" "f" autocheck>></label>
 			</div>
@@ -1146,7 +1153,12 @@
 			<br>
 			<label><span class="lewd">Beautiful</span> <<radiobutton "$background" "beautiful" autocheck>> - You turn heads. <i>Not recommended for beginners.</i></label>
 			<br>
-			<label data-target="player.gender" data-disabledif="V.player.gender==='h'"><span class="lewd">Crossdresser</span> <<radiobutton "$background" "crossdresser" autocheck>> - You've taken a liking to the clothing of the opposite sex. Does nothing for hermaphrodites.</label>
+			<label><span class="lewd">Crossdresser</span>
+		<label data-target="player.gender" data-disabledif="V.player.gender==='h'">
+			<label data-target="player.trans" data-disabledif="V.player.trans==='t'"> <<radiobutton "$background" "crossdresser" autocheck>> - You've taken a liking to the clothing of the opposite sex. Does nothing for hermaphrodites or transgender characters.
+			</label>
+		</label>
+	</label>
 			<br>
 			<label><span class="lewd">Lustful</span> <<radiobutton "$background" "lustful" autocheck>> - Arousal increases over time, and needs to be managed.</label>
 			/*<br>
@@ -1346,6 +1358,37 @@
 				<br>
 				<label>
 				<<checkbox "$statdisable" "f" "t" autocheck>> <mouse class = "tooltip linkBlue">Enable blind stats<span>Playing with blind stats enabled means that you'll receive no indication when your stats change, or what skills are required to succeed in certain events. Survive on your intuition. <i class="red normal"><br>Not recommended for beginners. This is an experimental feature and may be changed or removed in the future.</i></span></mouse>
+				</label>
+			</div>
+		
+			<div class="settingsToggleItem">
+				<span class="gold">Surgery Settings</span>
+				<br>
+				<<if $surgeryToggle is "f">>
+					<label>
+					<<checkbox "$surgeryToggle" "f" "t" autocheck>> If checked, will allow trans characters to get genital surgery. This feature is untested and will more than likely break things. Backing up save recommended. <span class="red">Cannot be unset, use at own risk</span>
+					</label>
+				<</if>>
+			</div>
+
+			<div class="settingsToggleItem">
+				<span class="gold">Slur Toggle</span>
+				<label>
+				<<checkbox "$slurToggle" "f" "t" autocheck>> If checked, will replace usage of slurs with alternate dialogue.
+				</label>
+			</div>
+
+			<div class="settingsToggleItem">
+				<span class="gold">Static Body</span>
+				<label>
+				<<checkbox "$staticBody" "0" "1" autocheck>> If checked, will pervent your body features from changing over time and remove hrt pills.
+				</label>
+			</div>
+
+			<div class="settingsToggleItem">
+				<span class="gold">Cap Body Features</span>
+				<label>
+				<<checkbox "$capBody" "0" "1" autocheck>> Limits the bodytypes to the vanilla range if checked.
 				</label>
 			</div>
 

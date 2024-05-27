@@ -7659,7 +7659,51 @@ function initUpper() {
 		Clothes that modders add go into this array, this should be empty in the base game at all times.
 		These items should have a `modder` variable with a the modders name in a short string
 	*/
-	setup.moddedClothes.upper = [];
+	setup.moddedClothes.upper = [
+		{
+			index: 0,
+			name: "trans pride shirt",
+			name_cap: "Trans pride shirt",
+			variable: "transshirt",
+			integrity: 100,
+			integrity_max: 100,
+			fabric_strength: 20,
+			reveal: 400,
+			bustresize: 0,
+			word: "a",
+			one_piece: 0,
+			strap: 0,
+			open: 0,
+			state: "waist",
+			state_base: "waist",
+			state_top: "chest",
+			state_top_base: "chest",
+			plural: 0,
+			colour: 0,
+			colour_options: [],
+			colour_sidebar: 0,
+			exposed: 0,
+			exposed_base: 0,
+			type: ["normal"],
+			set: "upper",
+			gender: "n",
+			warmth: 40,
+			cost: 1000,
+			description: "T-shirt in the Trans Pride colors.",
+			shop: ["forest"],
+			accessory: 0,
+			accessory_colour: 0,
+			accessory_colour_options: [],
+			sleeve_img: 1,
+			breast_img: 0,
+			cursed: 0,
+			location: 0,
+			iconFile: "transshirt.png",
+			accIcon: 0,
+			notuck: 0,
+			pregType: 0,
+		}
+	];
 
 	setup.moddedClothes.upper.forEach((x, i) => (x.index = setup.clothes.upper.length + i));
 	setup.clothes.upper.push(...setup.moddedClothes.upper);

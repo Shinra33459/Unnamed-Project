@@ -95,7 +95,31 @@
 		<label><<checkbox "$uncomfortable.hypnosis" false true autocheck>> You're uncomfortable being hypnotised during sex. <i>If unchecked, you will accept hypnosis attempts during combat regardless of willpower.</i></label>
 		<br>
 	<</if>>
-	<br>
+
+<<if $player.trans is undefined>>
+	<<set $player.trans to "f">>
+<</if>>
+<<if $player.trans is "f" and $player.gender isnot "h">>
+<br>
+How do you feel about yourself?
+<br>
+<</if>>
+	<<if $player.trans is "f">>
+		<label><<print '<<checkbox "$player.trans" "f" "t" ' + ($player.trans ? "" : "checked") + '>>'>> You're trans. <span class="red">Cannot be undone if you leave this menu with the checkbox checked.</span></label>
+		<<if $player.trans is "t">>
+			<<if $player.gender is "m">>
+				<<earnFeat "Being a Trans Girl">>
+			<<elseif $player.gender is "f">>
+				<<earnFeat "Being a Trans Boy">>
+			<</if>>
+		<</if>>
+		<<if $player.trans is "t" and $crossdressingTrait gte 100>>
+			<<set $crossdressingTrait to 0>>
+			<<set $backgroundTraits.delete("crossdresser")>>
+		<</if>>
+	<</if>>
+<br><br>
+
 
 	<<if $attitudesControl.unlockWillpower>>
 		<label><<checkbox "$willpowerDecay" false true autocheck>> Your willpower wanes. <i>If unchecked, willpower will not decay.</i></label>

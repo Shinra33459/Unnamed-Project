@@ -4,6 +4,8 @@ Config.history.controls = false;
 Config.saves.slots = 9;
 Config.history.maxStates = 5;
 
+Config.saves.id = "degrees-of-lewdity"
+
 /* LinkNumberify and images will enable or disable the feature completely */
 /* debug will enable or disable the feature only for new games */
 /* sneaky will enable the Sneaky notice banner on the opening screen and save display */

@@ -3,6 +3,11 @@
 <<widget "changingRoom">>
 	<<unset $lastChangingRoom>>
 	<<set _studentsKnow to ($schoolrep.crossdress gte 4 and $changingroomstate is "own") or ($schoolrep.crossdress gte 5 and $changingroomstate isnot "empty")>>
+	<<if $player.trans is "f" or $NudeGenderDC is 2>>
+		<<set _seenGender to (_studentsKnow ? $player.gender : $player.gender_appearance)>> <!-- If they know you crossdress, then they won't judge you by appearance -->
+	<<elseif $NudeGenderDC lte 1>>
+		<<set _seenGender to $player.gender_appearance>>
+	<</if>>
 	<<set _changingRoomGenderType to ($changingRoomGender is "girls" ? "f" : "m")>>
 	<<if !$daily.changingRoomPregnancyFame>><<set $daily.changingRoomPregnancyFame to $player.gender_appearience is "m" ? random(500, 1500) : random(200, 1000)>><</if>>
 	<<if _changingRoomGenderType is "f" and ($fame.pregnancy gte $daily.changingRoomPregnancyFame or playerBellyVisible() or ($forcedcrossdressingdisable is "f" and $whitneyCrossdressSwimwear gte 1 and $player.gender_appearance is "f"))>>
@@ -11,7 +16,7 @@
 		<<set _seenGender to (_studentsKnow ? $player.gender : $player.gender_appearance)>> <!-- If they know you crossdress, then they won't judge you by appearance -->
 	<</if>>
 	<<set _playerGenderAppearance to (_seenGender is _changingRoomGenderType ? "same" : "other")>>
-	<<set _uncomfortable to ($backgroundTraits.includes("crossdresser") and $player.gender is _changingRoomGenderType)>>
+	<<set _uncomfortable to (($backgroundTraits.includes("crossdresser") or $player.trans is "t") and $player.gender is _changingRoomGenderType)>>
 	<<set _justChangedClothes to ["School Pool Wardrobe", "School Boy Changing Room", "School Girl Changing Room"].includes($passagePrev)>>
 	<<if $changingRoomGender is "girls">>
 		<<set _chance to 100 - maleChance()>>
@@ -33,13 +38,21 @@
 				<<if $changingRoomGender is "girls" and
 					($player.gender is "m" and ($fame.pregnancy gte $daily.changingRoomPregnancyFame or playerBellyVisible()) or
 					($player.gender isnot "m" and $player.gender_appearance is "m" and $fame.pregnancy gte $daily.changingRoomPregnancyFame))>>
-					<<if playerBellyVisible()>>
-						No one gives you a second glance, not realising you're a <<gender>> due to your <<print playerAwareTheyArePregnant() ? "pregnancy" : "pregnant looking belly">>.
+					<<if playerBellyVisible()>>	
+						<<if $player.trans is "f">>
+							No one gives you a second glance, not realising you're a <<gender>> due to your <<print playerAwareTheyArePregnant() ? "pregnancy" : "pregnant looking belly">>.
+						<<else>>
+							No one gives you a second glance, not realising you weren't born a <<girl>> due to your <<print playerAwareTheyArePregnant() ? "pregnancy" : "pregnant looking belly">>.
+						<</if>>
 					<<else>>
 						<<if $player.gender_appearance is "m">>
 							Some of the $changingRoomGender look at you with a conflicted expression before ignoring you
 						<<else>>
-							No one gives you a second glance, not realising you're a <<gender>>
+							<<if $player.trans is "f">>
+								No one gives you a second glance, not realising you're a <<gender>>
+							<<else>>
+								No one gives you a second glance, not realising you weren't born a <<girl>>
+							<</if>>
 						<</if>>
 						due to all the gossip about your last pregnancy.
 					<</if>>
@@ -59,11 +72,23 @@
 					<<endevent>>
 				<<elseif $player.gender isnot $player.gender_appearance and $NudeGenderDC isnot -1>>
 					<<if $schoolrep.crossdress gte 3 and $forcedcrossdressingdisable is "f" and $whitneyCrossdressSwimwear gte 1>>
-						Some of the $changingRoomGender snigger at you. <span class="red">They clearly know that you're being forced to change in here.</span> <<gstress>>
-					<<elseif $schoolrep.crossdress is 3>>
-						Some of the $changingRoomGender look at you uncomfortably. A few keep their eyes glued on you as you head to your locker. <span class="pink">They suspect the rumours of you crossdressing are true.</span> <<gstress>>
+						<<if $player.trans is "f">>
+							Some of the $changingRoomGender snigger at you. <span class="red">They clearly know that you're being forced to change in here.</span> <<gstress>>
+						<<else>>
+							Some of the $changingRoomGender eye you warily. <span class="red">They clearly know that Whitney is making sure you change in here<<if $schoolrep.crossdress gte 4>>, and know that you weren't born a <<girl>>.<<else>>, and suspect you weren't born a <<girl>>.<</if>></span>
+						<</if>>
+					<<elseif $schoolrep.crossdress gte 3>>
+						<<if $player.trans is "f">>
+							Some of the $changingRoomGender look at you uncomfortably. A few keep their eyes glued on you as you head to your locker. <span class="pink">They suspect the rumours of you crossdressing are true.</span> <<gstress>>
+						<<else>>
+							Some of the $changingRoomGender look at you uncomfortably. A few keep their eyes glued on you as you head to your locker. <span class="pink">They suspect the rumours that you weren't born a <<girl>> are true.</span> <<gstress>>
+						<</if>>
 					<<elseif $schoolrep.crossdress lt 3>>
+						<<if $player.trans is "f">>
 							No one gives you a second glance, not realising you're a <<gender>>. <<changingRoomFeelings>>
+						<<else>>
+							No one gives you a second glance, not realising you weren't born a <<girl>>. <<changingRoomFeelings>>
+						<</if>>
 					<</if>>
 				<</if>>
 				<<changingRoomFeelings 0>>
@@ -282,9 +307,9 @@
 	<</if>>
 <</widget>>
 
-<<widget "schoolPoolSwap">>
-	<<if $schoolrep.crossdress gte 1 and !$weekly.schoolPoolSwap and currentSkillValue('skulduggery') gte 400>>
-		<br>
+<<widget "schoolPoolSwap">> 
+	<<if $schoolrep.crossdress gte 1 and !$weekly.schoolPoolSwap and currentSkillValue('skulduggery') gte 400 and $player.trans is "f">>
+		<br> <!--TRANSMOD Can't do the above if trans; what people know about you cuts deeper than what you wear. -->
 		<<if Time.minute lte 40>>
 			<span class="lblue">An idea strikes you.</span> Perhaps you could distract from your reputation as a crossdresser.
 			<br>

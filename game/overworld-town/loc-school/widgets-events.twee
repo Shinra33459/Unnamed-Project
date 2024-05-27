@@ -51,7 +51,7 @@
 			<<if $player.penisExist and $player.vaginaExist>>
 				<<set _correctBathroom to (C.npc.Whitney.pronoun is "m" ? "boys" : "girls")>>
 			<</if>>
-			<<if $changingRoomGender is "boys" and $player.gender is "m" or $changingRoomGender is "girls" and $player.gender is "f" or ($player.penisExist and $player.vaginaExist) and $changingRoomGender isnot _correctBathroom>>
+			<<if ($player.trans is "f" and $changingRoomGender is "boys" and $player.gender is "m") or ( $player.trans is "f" and $changingRoomGender is "girls" and $player.gender is "f") or $player.gender is "h" and $changingRoomGender isnot _correctBathroom>>
 				<<if $player.gender is C.npc.Whitney.pronoun>>
 					<<npc Whitney>><<person1>>
 					You bump into Whitney. <<His>> expression darkens. "What did I say about showing your face in here?" <<he>> says. "I guess I'll have to beat it into you."
@@ -77,11 +77,37 @@
 					<<link [[Endure|Bully Friends Rape]]>><<set $phase to 0>><<set $molestationstart to 1>><</link>>
 					<br>
 				<</if>>
+			<<elseif ($player.trans is "t" and $changingRoomGender is "boys" and $player.gender is "f") or ($player.trans is "t" and $changingRoomGender is "girls" and $player.gender is "m") or $player.gender is "h" and $changingRoomGender isnot _correctBathroom>>
+				<<if $player.gender isnot $NPCName[$NPCNameList.indexOf("Whitney")].pronoun>>
+					<<npc Whitney>><<person1>>
+					You bump into Whitney. <<His>> expression darkens. "What did I say about showing your face in here?" <<he>> says. "I guess I'll have to beat it into you."
+					<br><br>
+					<<His>> friends block the exit.
+					<br><br>
+					<<link [[Next|Bully Toilets Fight]]>><<set $fightstart to 1>><</link>>
+				<<else>>
+					<<generatey1>><<generatey2>><<generatey3>><<person1>>
+					A few of Whitney's friends enter the toilets. They smirk when they see you.
+					<br><br>
+					"Naughty," a <<person>> says. "Didn't you hear that you're not supposed to come here anymore? Or were you just looking for an excuse to get punished? You're in luck. Whitney said we can do whatever we want to you in here."
+					<br><br>
+					They close in around you.
+					<br><br>
+					<<if $submissive lte 500>>
+						<<link [[Threaten|Bully Friends Threaten]]>><<def 1>><</link>><<defianttext>>
+						<br>
+					<<elseif $submissive gte 1500>>
+						<<link [[Submit|Bully Friends Rape]]>><<set $molestationstart to 1>><<set $phase to 1>><<sub 1>><</link>><<submissivetext>>
+						<br>
+					<</if>>
+					<<link [[Endure|Bully Friends Rape]]>><<set $phase to 0>><<set $molestationstart to 1>><</link>>
+					<br>
+				<</if>>
 			<<else>>
-				<<if $player.gender is C.npc.Whitney.pronoun>>
+				<<if ($player.gender is C.npc.Whitney.pronoun and $player.trans is "f") or ($player.gender isnot C.npc.Whitney.pronoun and $player.trans is "t")>>
 					A couple of Whitney's friends enter the bathroom. They laugh and nudge each other. They make no aggressive moves, but they refuse to leave you alone.
 					<br><br>
-					"We're just here to make sure you <<if $player.gender is "m">>sit down to pee<<else>>know how to use the urinal<</if>>. Whitney's orders."
+					"We're just here to make sure you <<if $changingRoomGender is "girls">>sit down to pee<<else>>know how to use the urinal<</if>>. Whitney's orders."
 					<br><br>
 					They stick to words. It seems Whitney hasn't given them permission to lay their hands on you. They soon grow bored and return to the hallway.
 					<<gtrauma>><<gstress>><<trauma 6>><<stress 6>>
@@ -403,7 +429,9 @@
 			<<elseif $cool gte 120>>
 				<<if $schoolrep.herm gte 5 and !$worn.face.type.includes("mask")>>
 					You pass by a group of students who break into whispers as you pass by. You hear something about a hermaphrodite.
-				<<elseif $schoolrep.crossdress gte 5 and !$worn.face.type.includes("mask")>>
+				<<elseif $schoolrep.crossdress gte 5 and!$worn.face.type.includes("mask") and $player.trans is "t">>
+				You pass by a group of students who break into whispers as you pass by. You hear something about a sex change.
+			<<elseif $schoolrep.crossdress gte 5 and !$worn.face.type.includes("mask")>>
 					You pass by a group of students who break into whispers as you pass by. You hear something about a crossdresser.
 				<<else>>
 					You pass by a group of students who completely ignore you. You might as well be invisible to them.
@@ -416,7 +444,9 @@
 			<<elseif $cool gte 40>>
 				<<if $schoolrep.herm gte 5 and !$worn.face.type.includes("mask")>>
 					You pass a group of students who mock and call you a freak.
-				<<elseif $schoolrep.crossdress gte 5 and !$worn.face.type.includes("mask")>>
+				<<elseif $schoolrep.crossdress gte 5 and !$worn.face.type.includes("mask") and $player.trans is "t">>
+				You pass a group of students who mock you for being trans.
+			<<elseif $schoolrep.crossdress gte 5 and !$worn.face.type.includes("mask")>>
 					You pass a group of students who mock you for crossdressing.
 				<<else>>
 					You pass a group of students who mock and laugh at you.
@@ -532,7 +562,7 @@
 
 		<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
 		<br>
-	<<elseif $rng gte 51 and $schoolrep.crossdress gte 5 and !$worn.face.type.includes("mask")>>
+	<<elseif $rng gte 51 and $schoolrep.crossdress gte 5 and $player.trans isnot "t" and !$worn.face.type.includes("mask")>>
 		<<generatey1>><<generatey2>><<generatey3>>
 		You hear whispering behind you.
 		<br>
@@ -691,6 +721,326 @@
 						"Whatever the reason," a <<person3>><<person>> adds. "She's a pervert."
 					<<else>>
 						"That must be it," a <<person3>><<person>> adds. "What a freak!"
+					<</if>>
+				<</if>>
+			<</if>>
+		<</if>>
+		<br><br>
+		The three glance at you, and hurry away when they notice you looking.<<gtrauma>><<gstress>><<trauma 6>><<stress 6>>
+		<br><br>
+		<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<br>
+	<<elseif $rng gte 51 and $schoolrep.crossdress gte 5 and $player.trans is "t" and !$worn.face.type.includes("mask")>>
+		<<generatey1>><<generatey2>><<generatey3>>
+		You hear whispering behind you.
+		<br>
+		<<if $player.gender_appearance is "f">>
+			<<if $player.gender is "f">>
+				<!--trans boy, feminine appearance -->
+				<<if !playerBellyVisible() and ($slurToggle is "t" or ($slurToggle is "f" and random(1, 2) is 2))>>
+					<<if random(1, 2) is 2>>
+						"She thinks she's a boy?" a <<person1>><<person>> says. "She looks like a girl now."
+					<<else>>
+						"She's the one?" a <<person1>><<person>> says. "Who thinks she's a boy? I wouldn't know it from looking at her."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"She knows she really isn't," a <<person2>><<person>> replies. "She just wishes she were."
+					<<else>>
+						"She looks just like a boy when she wants to," a <<person2>><<person>> replies. "Maybe it's just to trick people into sex."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with her," a <<person3>><<person>> adds. "She's a weirdo."
+					<<else>>
+						"That's sad," a <<person3>><<person>> adds. "She needs to get help."
+					<</if>>
+ 				<<elseif !playerBellyVisible() and $slurToggle is "f">>
+					<<if random(1, 2) is 2>>
+						"You sure she's a tranny?" a <<person1>><<person>> asks. "She looks just like a girl."
+					<<else>>
+						"You must be getting muddled," a <<person1>><<person>> says. "No way she thinks she's a boy."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"No mistake. That's the one," a <<person2>><<person>> replies. "She was born with a fanny and all."
+					<<else>>
+						"That's the right one. She's the one that thinks she's a boy," a <<person2>><<person>> replies. "They're getting a sex change."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with them," a <<person3>><<person>> adds. "They're a weirdo."
+					<<else>>
+						"Why would they let people like this in our school?" a <<person3>><<person>> adds. "They're a freak."
+					<</if>>
+				<<else>>
+					<<if ($slurToggle is "t" or ($slurToggle is "f" and random(1, 2) is 2))>>
+						<<if random(1, 2) is 2>>
+							"She thinks she's a boy? How?" a <<person1>><<person>> asks. "She's obviously pregnant..."
+						<<else>>
+							"She's the one?" a <<person1>><<person>> says. "Who thinks she's a boy? Hard to deny reality with a belly like that."
+						<</if>>
+						<br>
+						<<if random(1, 2) is 2>>
+							"How could she?" a <<person2>><<person>> replies. "She's going to be a mother. A boy being a mother just wouldn't be right."
+						<<else>>
+							"She should try looking in a mirror sometime," a <<person2>><<person>> snickers. "Should dispel that notion real quick."
+						<</if>>
+						<br>
+						<<if random(1, 2) is 2>>
+							"I'll say," a <<person3>><<person>> agrees. "Delusional, just like the rest of them."
+						<<else>>
+							"For sure," a <<person3>><<person>> agrees. "Whatever's going on with her, she needs help. Like, the professional kind."
+						<</if>>
+						<<schoolrep crossdress -1>>
+					<<elseif $slurToggle is "f">>
+						<<if random(1, 2) is 2>>
+							"She thinks she's a boy? How?" a <<person1>><<person>> asks. "She's obviously pregnant..."
+						<<else>>
+							"She's the one?" a <<person1>><<person>> says. "Who thinks she's a boy? Hard to deny reality with a belly like that."
+						<</if>>
+						<br>
+						<<if random(1, 2) is 2>>
+							"How could she?" a <<person2>><<person>> replies. "She's going to be a mother. A boy being a mother just wouldn't be right."
+						<<else>>
+							"She should try looking in a mirror sometime," a <<person2>><<person>> snickers. "Should dispel that notion real quick."
+						<</if>>
+						<br>
+						<<if random(1, 2) is 2>>
+							"I'll say," a <<person3>><<person>> agrees. "Delusional, just like the rest of them."
+						<<else>>
+							"For sure," a <<person3>><<person>> agrees. "Whatever's going on with her, she needs help. Like, the professional kind."
+						<</if>>
+						/*<<schoolrep crossdress -1>>*/
+					<</if>>
+				<</if>>
+			<<else>>
+				<!--trans girl, feminine appearance -->
+				<<if !playerBellyVisible() and ($slurToggle is "t" or ($slurToggle is "f" and random(1, 2) is 2))>>
+					<<if random(1, 2) is 2>>
+						"You sure she's a boy?" a <<person1>><<person>> asks. "She looks just like a girl."
+					<<else>>
+						"You must be getting muddled," a <<person1>><<person>> says. "No way that's a boy."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"No mistake. That's the one, he thinks he's a girl," a <<person2>><<person>> replies. "He was born with the wedding tackle and all."
+					<<else>>
+						"That's the right one. She's a he," a <<person2>><<person>> replies. "They're getting a sex change."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with them," a <<person3>><<person>> adds. "They're a weirdo."
+					<<else>>
+						"Why would they let people like this in our school?" a <<person3>><<person>> adds. "They're a freak."
+					<</if>>
+				<<elseif !playerBellyVisible() and $slurToggle is "f">>
+					<<if random(1, 2) is 2>>
+						"You sure she's a tranny?" a <<person1>><<person>> asks. "She looks just like a girl."
+					<<else>>
+						"You must be getting muddled," a <<person1>><<person>> says. "No way she used to be a boy."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"No mistake. That's a shemale," a <<person2>><<person>> replies. "She was born with the wedding tackle and all."
+					<<else>>
+						"That's the right one. She's a he," a <<person2>><<person>> replies. "They're getting a sex change."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with them," a <<person3>><<person>> adds. "They're a weirdo."
+					<<else>>
+						"Why would they let people like this in our school?" a <<person3>><<person>> adds. "They're a freak."
+					<</if>>
+				<<elseif ($slurToggle is "t" or ($slurToggle is "f" and random(1, 2) is 2))>>
+					<<if random(1, 2) is 2>>
+						"You sure she's actually a trans?" a <<person1>><<person>> asks. "She's totally pregnant. How could a boy be pregnant!?"
+					<<else>>
+						"You must be getting muddled," a <<person1>><<person>> says. "No way that's a trans. She's pregnant!"
+					<</if>>
+					<<if random(1, 2) is 2>>
+						"Yeah," a <<person2>><<person>> adds. "I've never heard of a transgender getting knocked up before."
+					<<else>>
+						"You must be thinking of someone else. She's clearly an actual girl," a <<person2>><<person>> adds. "Seriously, you've gotta quit sleeping through science class."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Still, though, look at that baby bump," a <<person3>><<person>> replies. "Even if she's not one of those freaks, she's still a total slut."
+					<<else>>
+						"Either way," a <<person3>><<person>> replies. "you'd have to be totally shameless to still come to school like that."
+					<</if>>
+					<<schoolrep crossdress -1>>
+				<<elseif $slurToggle is "f">>
+					<<if random(1, 2) is 2>>
+						"You sure she's a tranny?" a <<person1>><<person>> asks. "She's totally pregnant. How could a boy be pregnant!?"
+					<<else>>
+						"You must be getting muddled," a <<person1>><<person>> says. "No way that's a tranny. She's pregnant!"
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Yeah," a <<person2>><<person>> adds. "I've never heard of a transgender getting knocked up before."
+					<<else>>
+						"You must be thinking of someone else. She's clearly an actual girl," a <<person2>><<person>> adds. "Seriously, you've gotta quit sleeping through science class."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Still, though, look at that baby bump," a <<person3>><<person>> replies. "Even if she's not one of those freaks, she's still a total slut."
+					<<else>>
+						"Either way," a <<person3>><<person>> replies. "you'd have to be totally shameless to still come to school like that."
+					<</if>>
+					<<schoolrep crossdress -1>>
+				<</if>>
+			<</if>>
+		<<else>>
+			<<if $player.gender is "m">>
+				<!--trans girl, masculine appearance -->
+				<<if !playerBellyVisible() and ($slurToggle is "t" or ($slurToggle is "f" and random(1, 2) is 2))>>
+					<<if random(1, 2) is 2>>
+						"He thinks he's a girl?" a <<person1>><<person>> says. "He looks like a boy now."
+					<<else>>
+						"He's the one?" a <<person1>><<person>> says. "Who thinks he's a girl? I wouldn't know it from looking at him."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"He knows he really isn't," a <<person2>><<person>> replies. "He just wishes he were."
+					<<else>>
+						"He looks just like a girl when he wants to," a <<person2>><<person>> replies. "Maybe it's just to trick people into sex."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with him," a <<person3>><<person>> adds. "He's a weirdo."
+					<<else>>
+						"That's sad," a <<person3>><<person>> adds. "He needs to get help."
+					<</if>>
+				<<elseif !playerBellyVisible() and $slurToggle is "f">>
+					<<if random(1, 2) is 2>>
+						"You sure he's a tranny?" a <<person1>><<person>> asks. "He looks just like a boy."
+					<<else>>
+						"He's the one?" a <<person1>><<person>> says. "Who thinks he's a girl? I wouldn't know it from looking at him."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"He knows he really isn't," a <<person2>><<person>> replies. "He just wishes he were."
+					<<else>>
+						"He looks just like a girl when he wants to," a <<person2>><<person>> replies. "Maybe it's just to trick people into sex."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with him," a <<person3>><<person>> adds. "He's a weirdo."
+					<<else>>
+						"Why do they let people like this in our school?" a <<person3>><<person>> adds. "They're a freak."
+					<</if>>
+				<<elseif ($slurToggle is "t" or ($slurToggle is "f" and random(1, 2) is 2))>>
+					<<if random(1, 2) is 2>>
+						"He thinks he's a girl?" a <<person1>><<person>> asks. "More like she thinks she's a boy."
+					<<else>>
+						"He's the one?" a <<person1>><<person>> asks. "Don't you mean she's the one? Her belly's clear as day."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Must be some sort of mistake," a <<person2>><<person>> replies. "If she was really a trans then she wouldn't be pregnant."
+					<<else>>
+						"That's clearly the wrong one. She's an actual girl," a <<person2>><<person>> replies. "Bet she got knocked up by one of the teachers or something."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever the reason," a <<person3>><<person>> adds, "She's a pervert."
+					<<else>>
+						"Either way," a <<person3>><<person>> adds, "you'd have to be totally shameless to still come to school like that."
+					<</if>>
+					/*<<schoolrep crossdress -1>>*/
+				<<elseif $slurToggle is "f">>
+									<<if random(1, 2) is 2>>
+						"He thinks he's a girl?" a <<person1>><<person>> asks. "More like she thinks she's a boy."
+					<<else>>
+						"He's the one?" a <<person1>><<person>> asks. "Don't you mean she's the one? Her belly's clear as day."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Must be some sort of mistake," a <<person2>><<person>> replies. "If she was really a tranny then she wouldn't be pregnant."
+					<<else>>
+						"That's clearly the wrong one. She's an actual girl," a <<person2>><<person>> replies. "Bet she got knocked up by one of the teachers or something."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever the reason," a <<person3>><<person>> adds, "She's a pervert."
+					<<else>>
+						"Either way," a <<person3>><<person>> adds, "you'd have to be totally shameless to still come to school like that."
+					<</if>>
+				<</if>>
+			<<else>>
+				<<if !playerBellyVisible() and ($slurToggle is "t" or ($slurToggle is "f" and random(1, 2) is 2))>>
+					<!--trans boy, masculine appearance -->
+					<<if random(1, 2) is 2>>
+						"You sure he's a girl?" a <<person1>><<person>> asks. "He looks just like a boy."
+					<<else>>
+						"You must be getting muddled," a <<person1>><<person>> says. "No way that's a girl."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"No mistake. He used to be a girl," a <<person2>><<person>> replies. "Born with a fanny and all."
+					<<else>>
+						"That's the right one. He's a she," a <<person2>><<person>> replies. "They're getting a sex change."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with them," a <<person3>><<person>> adds. "They're a weirdo."
+					<<else>>
+						"Why do they let people like this in our school?" a <<person3>><<person>> adds. "They're a freak."
+					<</if>>
+				<<elseif !playerBellyVisible() and $slurToggle is "f">>
+					<<if random(1, 2) is 2>>
+						"You sure he's a tranny?" a <<person1>><<person>> asks. "He looks just like a boy."
+					<<else>>
+						"You must be getting muddled," a <<person1>><<person>> says. "No way he used to be a girl."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"No mistake. He used to be a girl," a <<person2>><<person>> replies. "Born with a fanny and all."
+					<<else>>
+						"That's the right one. He's a she," a <<person2>><<person>> replies. "They're getting a sex change."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with them," a <<person3>><<person>> adds. "They're a weirdo."
+					<<else>>
+						"Why do they let people like this in our school?" a <<person3>><<person>> adds. "They're a freak."
+					<</if>>
+				<<elseif ($slurToggle is "t" or ($slurToggle is "f" and random(1, 2) is 2))>>
+					<<if random(1, 2) is 2>>
+						Is she serious??" a <<person1>><<person>> asks. "She must be delusional if she thinks anyone would believe she's a guy with a baby bump like that..."
+					<<else>>
+						"You've gotta wonder if she knows," a <<person1>><<person>> says. "There's no running away from biological reality. That belly proves it."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Seriously," a <<person2>><<person>> replies. "I bet she gets off on spying on the boys in the locker room."
+					<<else>>
+						"I bet she's one of those 'fujoshi' I keep hearing about," a <<person2>><<person>> replies. "Pretending she's a boy to live out some sick fantasy. Ew."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with them," a <<person3>><<person>> adds. "They're a weirdo."
+					<<else>>
+						"Why do they let people like this in our school?" a <<person3>><<person>> adds. "They're a freak."
+					<</if>>
+				<<elseif $slurToggle is "f">>
+					<<if random(1, 2) is 2>>
+						Is she serious??" a <<person1>><<person>> asks. "She must be delusional if she thinks anyone would believe she's a guy with a baby bump like that..."
+					<<else>>
+						"You've gotta wonder if she knows," a <<person1>><<person>> says. "There's no running away from biological reality. That belly proves it."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>> <!-- -->
+						"Seriously," a <<person2>><<person>> replies. "I bet she only does it to sneak into the boys' locker room."
+					<<else>>
+						"I bet she's one of those 'fujoshi' I keep hearing about," a <<person2>><<person>> replies. "Pretending she's a boy to live out some sick fantasy. Ew."
+					<</if>>
+					<br>
+					<<if random(1, 2) is 2>>
+						"Whatever's going on with them," a <<person3>><<person>> adds. "They're a weirdo."
+					<<else>>
+						"Why do they let people like this in our school?" a <<person3>><<person>> adds. "They're a freak."
 					<</if>>
 				<</if>>
 			<</if>>
@@ -1331,7 +1681,7 @@
 					<<link [[Flaunt|Courtyard Herm Flaunt]]>><</link>><<exhibitionist5>>
 					<br>
 				<</if>>
-			<<elseif $rng gte 61 and $schoolrep.crossdress gte 5 and $player.gender isnot $player.gender_appearance and !$worn.face.type.includes("mask")>>
+			<<elseif $rng gte 61 and $schoolrep.crossdress gte 5 and $player.trans isnot "t" and $player.gender isnot $player.gender_appearance and !$worn.face.type.includes("mask")>>
 				<<generatey1>><<generatey2>><<generatey3>>
 				A <<fullGroup>> surround you.
 				<br><br>
@@ -1341,19 +1691,50 @@
 					"Nice," says a <<person2>><<person>>, leering at your crotch. "How about you show us?" <<He>> makes a grab for your $worn.lower.name, but you dodge out of the way.
 					<br><br>
 
-					You're still surrounded. The staff room is nearby. Perhaps a teacher would hear if you called for help.
-					<br><br>
+			You're still surrounded. The staff room is nearby. Perhaps a teacher would hear if you called for help.
+			<br><br>
 
-					<<link [[Fight|Courtyard Herm Resist]]>><<def 1>><</link>>
-					<br>
-					<<link [[Call for help|Courtyard Herm Call]]>><<set $rescued += 1>><<status -10>><<trauma -6>><<stress -6>><</link>><<lcool>><<ltrauma>><<lstress>>
-					<br>
-					<<link [[Show|Courtyard Herm Show]]>><<sub 1>><<trauma 6>><<stress 6>><</link>><<gtrauma>><<gstress>>
-					<br>
-					<<if $exhibitionism gte 75>>
-						<<link [[Flaunt|Courtyard Herm Flaunt]]>><</link>><<exhibitionist5>>
-						<br>
-					<</if>>
+			<<link [[Fight|Playground Herm Resist]]>><<def 1>><</link>>
+			<br>
+			<<link [[Call for help|Playground Herm Call]]>><<set $rescued += 1>><<status -10>><<trauma -6>><<stress -6>><</link>><<lcool>><<ltrauma>><<lstress>>
+			<br>
+			<<link [[Show|Playground Herm Show]]>><<sub 1>><<trauma 6>><<stress 6>><</link>><<gtrauma>><<gstress>>
+			<br>
+			<<if $exhibitionism gte 75>>
+				<<link [[Flaunt|Playground Herm Flaunt]]>><</link>><<exhibitionist5>>
+				<br>
+			<</if>>
+		<<elseif $rng gte 61 and $schoolrep.crossdress gte 5 and $player.trans is "t" and $player.gender isnot $player.gender_appearance and !$worn.face.type.includes("mask")>>
+			<<generatey1>><<generatey2>><<generatey3>><<person1>>
+			A <<person>>, <<person2>><<person>>, and <<person3>><<person>> surround you.
+			<br><br>
+			"This is the one," the <<person1>><<person>> says. "They say <<pshe>>'s getting a sex change."
+			<br><br>
+			<<if playerBellyVisible() and $pregnancyspeechdisable is "f" and $player.gender is "m">>
+					"With that growing belly of <<phers>>," the <<person3>><<person>> says, staring at your pregnant belly, "it looks like <<pshe>> already has."
+					<br><br>
+					<<famepregnancy 1>>
+			<<elseif playerBellyVisible() and $pregnancyspeechdisable is "f" and $player.gender is "f">>
+					"With that growing belly of <<phis>>," the <<person3>><<person>> says, staring at your pregnant belly, "it looks like <<phe>> hasn't."
+					<br><br>
+					<<famepregnancy 1>>
+			<<else>>
+			"Have you had the surgery?" asks a <<person2>><<person>>, leering at your crotch. "How about you show us?" <<He>> makes a grab for your $worn.lower.name, but you dodge out of the way.
+			<br><br>
+			<</if>>
+				You're still surrounded. The staff room is nearby. Perhaps a teacher would hear if you called for help.
+				<br><br>
+
+			<<link [[Fight|Courtyard Herm Resist]]>><<def 1>><</link>>
+			<br>
+			<<link [[Call for help|Courtyard Herm Call]]>><<set $rescued += 1>><<status -10>><<trauma -6>><<stress -6>><</link>><<lcool>><<ltrauma>><<lstress>>
+			<br>
+			<<link [[Show|Courtyard Herm Show]]>><<sub 1>><<trauma 6>><<stress 6>><</link>><<gtrauma>><<gstress>>
+			<br>
+			<<if $exhibitionism gte 75>>
+				<<link [[Flaunt|Courtyard Herm Flaunt]]>><</link>><<exhibitionist5>>
+				<br>
+			<</if>>
 				<<elseif $player.gender_appearance is "f">>
 					"You sure about that," a <<person2>><<person>> asks, looking at your belly. "She looks like a pregnant girl to me. Let's just leave her be; she wouldn't be able to crossdress right now anyway."
 					<br><br>
@@ -1712,21 +2093,35 @@
 		<<WhitneyPantyCheck>>
 	<<elseif $bullyevent is 11>>
 		<<set $bullyevent += 1>>
+
 		<<if $whitney_toilet is undefined and $genderknown.includes("Whitney") and _whitney.dom gte 18>>
-			Whitney and <<his>> friends surround you. Whitney smirks and grasps your shoulders.
-			<!-- dev note: Keep in mind that this scene uses player.gender directly and not player.gender_appearance. That's why we have to do complicated things. -->
-			<<if $player.gender is _whitney.pronoun>>
-				<<He>> tries to push you into the <<print ($player.gender is "m" ? "girl" : "boy")>>s' toilets.
+
+			<<if $player.gender is _whitney.pronoun and $player.trans is "f">>
+				Whitney and <<his>> friends surround you. Whitney smirks and grasps your shoulders. <<He>> tries to push you into the <<if $player.gender is "m">>boys'<<else>>girls'<</if>> toilets.
 				<br><br>
 				"A new rule, slut," <<he>> says. "You're a failure of a <<print ($player.gender is "m" ? "boy" : "girl")>>. You don't deserve to use the same toilets as me."
 				<<He>> pushes you closer.
-			<<else>>
-				<!-- includes when player has both genitals -->
+			<<elseif $player.trans is "f">>
+				<!-- includes player.gender is "h" -->
 				<<He>> tries to push you into the <<nnpc_gendery "Whitney">>s' toilets.
 				<br><br>
 				<!-- dev note: This scene is weird for herm PCs that normally choose the same toilets as Whitney. They aren't hiding from Whitney. How should Whitney's rule apply to herms? -->
 				<!-- dev note: This is ALSO weird for crossdresser PCs, because gender_appearance is what dictates getting thrown out of bathrooms, not gender, so they're ALSO already using the bathroom Whitney wants. -->
-				"A new rule, slut," <<he>> says. "No more hiding from me in the bathroom. You may be a <<if $player.gender is "m">>boy<<elseif $player.penisExist and $player.vaginaExist>>freak<<else>>girl<</if>>, but you're also mine. I want you nearby in case I feel like using you. That means you're using the <<nnpc_gendery "Whitney">>s' toilets from now on."
+				"A new rule, slut," <<he>> says. "No more hiding from me in the bathroom. You may be a <<if $player.gender is "m">>boy<<elseif $player.gender is "h">>freak<<else>>girl<</if>>, but you're also mine. I want you nearby in case I feel like using you. That means you're using the <<nnpc_gendery "Whitney">>s' toilets from now on."
+				<br><br>
+				<<He>> pushes you closer.
+			<</if>>
+			<<if $player.gender isnot _whitney.pronoun and $player.trans is "t">>
+				<<He>> tries to push you into the <<print ($player.gender is "f" ? "girl" : "boy")>>s' toilets.
+				<br><br>
+				"A new rule, slut," <<he>> says. "You're not a real <<print ($player.gender is "f" ? "boy" : "girl")>>. You don't deserve to use the same toilets as me."
+				<<He>> pushes you closer.
+			<<elseif $player.trans is "t">>
+				<!-- includes when player has both genitals -->
+				<<He>> tries to push you into the <<nnpc_gendery "Whitney">>s' toilets.
+				<br><br>
+				<!-- dev note: This scene is weird for herm PCs that normally choose the same toilets as Whitney. They aren't hiding from Whitney. How should Whitney's rule apply to herms? -->
+				"A new rule, slut," <<he>> says. "No more hiding from me in the bathroom. You're not a real <<print ($player.gender is "f" ? "boy" : "girl")>>, and you're also mine. I want you nearby in case I feel like using you. That means you're using the <<nnpc_gendery "Whitney">>s' toilets from now on."
 				<br><br>
 				<<He>> pushes you closer.
 			<</if>>
@@ -1754,9 +2149,11 @@
 			<<tearful>> you pick yourself off the floor.
 			<br><br>
 
-			<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
-			<br>
-		<</if>>
+		<<endevent>>
+		<<link [[Next|Hallways]]>><<set $eventskip to 1>><</link>>
+		<br>
+
+	<</if>>
 
 	<<elseif $bullyevent is 12>>
 		<<set $bullyevent += 1>>

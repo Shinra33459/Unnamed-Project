@@ -132,6 +132,52 @@
 			`"I bet you think this is funny."`,
 			`"Why do I keep falling for this?"`,
 		][random(0,4)]>>
+	<<elseif $speechtransangry is 1>>
+		<<He>> glares at your newly-exposed <<genitals>>.
+		<<print [
+			`"You thought you could hide this from me? Time to show you your place."`,
+			`"I bet you're real fucking happy right now. You won't be smiling when I'm through with you."`,
+			`"You wanna be a ${($player.gender is 'm' ? "girl" : "boy")}? How about I fuck you like one, <<bitch>>."`,
+			`"You think that's funny? I'm gonna fuck you senseless anyway."`,
+			`"You'll pay for this, slut."`,
+		][random(0,4)]>>
+	<<elseif $speechtransaroused is 1>>
+		<<He>> gazes with hunger at your newly exposed <<genitals>>.
+		<<if $player.gender is "m">>
+			<<print [
+				`"What a treat!"`,
+				`"You're full of surprises."`,
+				`"Nothing gets me going like a <<if $slurToggle is "f">>shemale<<else>>dickgirl<</if>> slut."`,
+				`"It's like unwrapping a present."`,
+				`"What a surprise, I know just what to do with you."`,
+			][random(0,4)]>>
+		<<else>>
+			<<print [
+				`"What a treat!"`,
+				`"You're full of surprises."`,
+				`"Nothing gets me going like a cuntboy slut."`,
+				`"It's like unwrapping a present."`,
+				`"What a surprise, I know just what to do with you."`,
+			][random(0,4)]>>
+		<</if>>
+	<<elseif $speechtransshock is 1>>
+		<<He>> stares at your <<genitals>> in shock.
+		<<print [
+			`"I'm not normally into this sort of thing. You're pretty cute though."`,
+			`"I never thought it could look so tasty."`,
+			`"How unexpected."`,
+			`"This is fine too."`,
+			`"Wow, I mever would have guessed."`,
+		][random(0,4)]>>
+	<<elseif $speechtransdisappointed is 1>>
+		<<He>> looks at your <<genitals>> and sighs.
+		<<print [
+			`"This isn't what I signed up for."`,
+			`"I've come this far I guess."`,
+			`"Cute, but that isn't what I wanted."`,
+			`"Just my luck."`,
+			`"Why do I keep getting <<girls>> like this?"`,
+		][random(0,4)]>>
 	<<elseif $speechhermangry is 1>>
 		<<He>> glares at your newly-exposed <<genitals>>.
 		<<print [
@@ -3586,11 +3632,24 @@
 
 	<<elseif $speechvaginaflaunt is 1>>
 		<<He>> coos.
-		<<if $player.gender_appearance is "m">>
+		<<if $npc.length gt 0>>
+			<<for _iii to 0; _iii lt $npc.length; _iii++>>
+				<<if $genderknown.includes($npc[_iii])>>
+					<<set _genitalsknown to true>>
+				<</if>>
+			<</for>>
+		<</if>>
+		<<if $player.gender_appearance is "m" and ($player.penisExist or ($exposed lte 1 and !_genitalsknown))>>
 			<<print [
-				`"I can't wait to swallow your dick."`,
-				`"Just look at the effect you're having on me."`,
-				`"Like what you see?"`,
+					`"I can't wait to swallow your dick."`,
+					`"Just look at the effect you're having on me."`,
+					`"Like what you see?"`,
+			][random(0,2)]>>
+		<<elseif $player.penisExist and ($exposed gte 2 or _genitalsknown)>> <!-- TRANSMOD I split this off into an elseif to avoid a rat's nest of parentheses -->
+			<<print [
+					`"I can't wait to swallow your dick."`,
+					`"Just look at the effect you're having on me."`,
+					`"Like what you see?"`,
 			][random(0,2)]>>
 		<<else>>
 			<<print [
@@ -5264,7 +5323,21 @@
 				<<else>>
 					<<set $_text_output to `<<He>> gasps. "I can make you pregnant. I'd given up on making a family, but..." <<He>> starts to cry. "I can make you pregnant...!"`>>
 				<</if>>
+			<<elseif $speechtransaroused is 1 and $pregnancyspeechdisable is "f">>
+				<<if _kylar.gender is "h">>
+					<<set $_text_output to `<<He>> gasps. "Oh. I thought you were..." <<He>> shakes <<his>> head with a grin. "Oh well! We can still make a family together...!"`>>
+				<<elseif $player.penisExist>>
+					<<set $_text_output to `<<He>> gasps. "You can make me pregnant. I'd given up on making a family, but..." <<He>> starts to cry. "You can make me pregnant...!"`>>
+				<<else>>
+					<<set $_text_output to `<<He>> gasps. "I can make you pregnant. I'd given up on making a family, but..." <<He>> starts to cry. "I can make you pregnant...!"`>>
+				<</if>>
 			<<elseif $speechcrossdressdisappointed is 1>>
+				<<if !$player.vaginaExist and knowsAboutAnyPregnancy("pc","Kylar")>>
+					<<set $_text_output to `<<He>> sighs. "Oh. I thought you were..." <<He>> suddenly looks excited. "But weren't you pregnant before? Hmm, there's still a chance then."`>>
+				<<else>>
+					<<set $_text_output to `<<He>> sighs. "Oh. I thought you were..." <<He>> shakes <<his>> head. "I-it's okay. We can always adopt."`>>
+				<</if>>
+			<<elseif $speechtransdisappointed is 1>>
 				<<if !$player.vaginaExist and knowsAboutAnyPregnancy("pc","Kylar")>>
 					<<set $_text_output to `<<He>> sighs. "Oh. I thought you were..." <<He>> suddenly looks excited. "But weren't you pregnant before? Hmm, there's still a chance then."`>>
 				<<else>>

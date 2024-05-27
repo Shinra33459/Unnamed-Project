@@ -213,7 +213,7 @@
 				<<set _studentBoxConfig = { name : "Students", icon : "img/misc/icon/schoolnew.png", description: "<<relation-text _studentRepConfig>> <<statbarinverted $cool $coolmax>>"}>>
 
 				/*Crossdressing*/
-				<<if $schoolrep.crossdress neq 0>>
+				<<if $schoolrep.crossdress neq 0 and $player.trans isnot "t">>
 					<<set _crossdressRepConfig = { currentValue: $schoolrep.crossdress, states : [
 						{ requiredValue: 1,	color: 'lblue',		description: 'A few cliques at school whisper amongst themselves about your crossdressing ways. Few believe it.'},
 						{ requiredValue: 2,	color: 'blue',		description: 'A rumour has taken root at school. Some say you\'re a crossdresser.'},
@@ -235,6 +235,18 @@
 					]}>>
 					<<set _hermBoxConfig = { name : "Genitalia", description : '<<relation-text _hermRepConfig>>'}>>
 				<</if>>
+
+				/*Trans*/
+				<<if $schoolrep.crossdress neq 0 and $player.trans is "t">>
+					<<set _transRepConfig = { currentValue: $schoolrep.crossdress, states : [
+						{ requiredValue: 1, color: 'lblue',		description: 'A few cliques at school speculate in whispers about your gender. Few take it seriously.'},
+						{ requiredValue: 2, color: 'blue',		description: 'A rumour has taken root at school. Some say you\'re a crossdresser, or even that you\'re trans.'},
+						{ requiredValue: 3, color: 'purple',	description: 'Students gossip about whether you\'re getting a sex change, though most think it only a joke.'},
+						{ requiredValue: 4, color: 'pink',		description: 'Everyone at school has heard the rumours about you supposedly getting a sex change.'},
+						{ requiredValue: 5, color: 'red',		description: 'Everyone at school knows that you\'re trans, including the teachers.'}
+					]}>>
+					<<set _transBoxConfig = { name : "Transgender", description : '<<relation-text _transRepConfig>>'}>>
+			<</if>>
 
 				/* Prison */
 				<<if $prison>>
@@ -333,13 +345,16 @@
 			<<relation-box-simple _orphanageBoxConfig>>
 			<<relation-box-simple _teacherBoxConfig>>
 			<<relation-box-simple _studentBoxConfig>>
-			<<if $schoolrep.crossdress neq 0>>
+			<<if $schoolrep.crossdress neq 0 and $player.trans isnot "t">>
 				<<relation-box-simple _crossdressBoxConfig>>
 			<</if>>
 			<<if $schoolrep.herm neq 0>>
 				<<relation-box-simple _hermBoxConfig>>
 			<</if>>
-			<<if $prison>>
+			<<if $schoolrep.crossdress neq 0 and $player.trans is "t">>
+			<<relation-box-simple _transBoxConfig>>
+		<</if>>
+		<<if $prison>>
 				<<relation-box-simple _guardBoxConfig>>
 				<<relation-box-simple _inmateBoxConfig>>
 				<<relation-box-simple _prisonBoxConfig>>
