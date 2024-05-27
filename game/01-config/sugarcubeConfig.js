@@ -14,7 +14,7 @@ window.StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.4.7.5 DoLP version",
+	version: "0.4.7.5 DoLP+Transmod version",
 	versionName: "",
 	sneaky: false,
 };
