@@ -49,7 +49,7 @@ function initOverHead() {
 			type: ["rainproof"],
 			set: "froggy",
 			gender: "n",
-			warmth: 3,
+			warmth: 65,
 			cost: 0,
 			description: "Protects you from rain.",
 			shop: ["clothing"],

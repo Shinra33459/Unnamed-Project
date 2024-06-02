@@ -19,7 +19,6 @@ function ampm(hour, minute) {
 	}
 	return !ampm ? ("0" + getTimeString(hour, minute)).slice(-5) : getTimeString(hour, minute) + ampm;
 }
-window.ampm = ampm;
 DefineMacroS("ampm", ampm);
 
 function advanceToHour() {
@@ -121,4 +120,5 @@ function schoolTerm() {
 	const date = Time.nextSchoolTermStartDate;
 	return "School term starts on " + date.weekDayName + " the " + ordinalSuffixOf(date.day) + " of " + date.monthName + ".";
 }
+
 DefineMacroS("schoolterm", schoolTerm);
