@@ -1,4 +1,5 @@
-/* global statDisplay */
+/* eslint-disable no-undef */
+/* eslint-disable no-useless-escape */
 
 const statChange = (() => {
 	function paramError(functionName = "", param = "", value, expectedValues = "") {
@@ -107,7 +108,7 @@ const statChange = (() => {
 	DefineMacro("traumaclamp", traumaClamp);
 
 	function updateHallucinations() {
-		if (V.trauma >= (V.traumamax / 10) * 5 || V.awareness >= 400 || V.hallucinogen > 0 || Time.isBloodMoon() || V.worn.face.type.includes("esoteric")) {
+		if (V.trauma >= (V.traumamax / 10) * 5 || V.awareness >= 400 || V.hallucinogen > 0 || isBloodmoon() || V.worn.face.type.includes("esoteric")) {
 			V.hallucinations = 2;
 		} else if (V.trauma >= (V.traumamax / 10) * 3 || V.awareness >= 300) {
 			V.hallucinations = 1;
@@ -235,6 +236,12 @@ const statChange = (() => {
 					const drunkMod = Math.clamp(Math.floor(V.drunk / 120), 0, 4);
 					stressMod = 30 - drunkMod * 5;
 				}
+
+				if (V.body_temperature === "cold") {
+					stressMod *= 3;
+				} else if (V.body_temperature === "chilly") {
+					stressMod *= 1.5;
+				}
 				V.stress += amount * stressMod;
 			}
 		}
@@ -351,12 +358,12 @@ const statChange = (() => {
 				mod *= 1 - Math.clamp(playerHeatMinArousal() + playerRutMinArousal(), 0, 4000) / 5000;
 			}
 
-			V.arousal += amount * mod * Weather.BodyTemperature.arousalModifier;
+			V.arousal += amount * mod;
 			arousalClamp();
 
 			// Add to the tracker
 			if (amount > 0) {
-				V.trackedArousal[V.trackedArousal.length - 1] += Math.round(amount * mod);
+				V.trackedArousal[V.trackedArousal.length - 1] += amount * mod;
 				V.timeSinceArousal = 0;
 			}
 		}
@@ -385,7 +392,17 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("tiredness", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
-			V.tiredness += Math.round(amount * Weather.BodyTemperature.fatigueModifier * (amount > 0 ? 15 : 20));
+			let mod = 1;
+			if (V.body_temperature === "hot") {
+				mod += 2;
+			} else if (V.body_temperature === "warm") {
+				mod += 0.5;
+			}
+			if (source === "pass") {
+				V.tiredness += amount * mod;
+				return;
+			}
+			V.tiredness += amount * mod * (amount > 0 ? 15 : 20);
 		}
 	}
 	DefineMacro("tiredness", tiredness);
@@ -409,7 +426,7 @@ const statChange = (() => {
 				}
 			}
 
-			V.pain += pain * Weather.BodyTemperature.painModifier;
+			V.pain += pain;
 		}
 		painClamp();
 	}
@@ -652,15 +669,15 @@ const statChange = (() => {
 			switch (V.player.penissize) {
 				case 4:
 					insecurity("penis_big", amount);
-					return statDisplay.ginsecurity("penis_big");
+					return statDisplay.gacceptance("penis_big");
 				case 1:
 					insecurity("penis_small", amount);
-					return statDisplay.ginsecurity("penis_small");
+					return statDisplay.gacceptance("penis_small");
 				case 0:
 				case -1:
 				case -2:
 					insecurity("penis_tiny", amount);
-					return statDisplay.ginsecurity("penis_tiny");
+					return statDisplay.gacceptance("penis_tiny");
 			}
 		}
 		return "";
@@ -684,7 +701,7 @@ const statChange = (() => {
 				penis_tiny: V.player.penisExist && V.player.penissize <= 0,
 				penis_small: V.player.penisExist && V.player.penissize === 1,
 				penis_big: V.player.penisExist && V.player.penissize >= 4,
-				breasts_tiny: V.player.gender !== "m",
+				breasts_tiny: V.gender !== "m",
 				breasts_small: true,
 				breasts_big: true,
 				pregnancy: playerBellySize() >= 8,

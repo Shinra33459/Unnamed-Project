@@ -152,6 +152,19 @@ var General = ((Macro, SexTypes) => {
 		},
 	});
 
+	Macro.add("capitalise2", {
+		tags: null,
+		handler() {
+			if (this.payload[0]) {
+				const contents = this.payload[0].contents;
+				if (contents) {
+					const text = Wikifier.wikifyEval(contents).textContent;
+					this.output.append(text.toUpperFirst());
+				}
+			}
+		},
+	});
+
 	function linkOverride(map) {
 		$(document).one(":passageoverride", function (_, passage) {
 			for (const key in map) {
