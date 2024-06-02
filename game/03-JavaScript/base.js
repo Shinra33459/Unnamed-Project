@@ -94,8 +94,8 @@ window.rangeIterate = rangeIterate;
  *
  * @param {string} macroName
  * @param {Function} macroFunction
- * @param {object} tags
- * @param {boolean} skipArgs
+ * @param {object=} tags
+ * @param {boolean=} skipArgs
  */
 function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 	Macro.add(macroName, {
@@ -127,9 +127,9 @@ function DefineMacro(macroName, macroFunction, tags, skipArgs) {
  *
  * @param {string} macroName
  * @param {Function} macroFunction
- * @param {object} tags
- * @param {boolean} skipArgs
- * @param {boolean} maintainContext
+ * @param {object=} tags
+ * @param {boolean=} skipArgs
+ * @param {boolean=} maintainContext
  */
 function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext) {
 	DefineMacro(
@@ -338,17 +338,21 @@ function outfitChecks() {
 				return V.worn[item].name !== "naked" && ((T.bottomIsSkirt = setup.clothes[item][clothesIndex(item, V.worn[item])].skirt), true);
 			})
 		];
-	T.bottomUnder =
-		V.worn[
-			bottomLayers.slice(bottomLayers.indexOf(T.bottom)).find(item => {
-				return V.worn[item].name !== "naked" && ((T.bottomUnderIsSkirt = setup.clothes[item][clothesIndex(item, V.worn[item])].skirt), true);
-			})
-		];
+	if (T.bottom !== V.worn.under_lower) {
+		T.bottomUnder =
+			V.worn[
+				bottomLayers.slice(bottomLayers.indexOf(T.bottom)).find(item => {
+					return V.worn[item].name !== "naked" && ((T.bottomUnderIsSkirt = setup.clothes[item][clothesIndex(item, V.worn[item])].skirt), true);
+				})
+			];
+	}
 	T.swimwear =
 		((V.worn.under_lower.type.includes("swim") && V.worn.lower.type.includes("naked")) || V.worn.lower.type.includes("swim")) &&
 		(V.worn.under_upper.type.includes("swim") || V.worn.under_upper.type.includes("naked")) &&
 		(V.worn.upper.type.includes("swim") || V.worn.upper.type.includes("naked"));
 	T.outfit = (T.bottom?.outfitSecondary && T.bottom?.outfitSecondary[1] === T.top?.name) || null;
+	if (!T.top && !T.shirtless) T.top = T.bottom;
+	if (T.outfit) T.bottom = T.top;
 }
 window.outfitChecks = outfitChecks;
 DefineMacro("outfitChecks", outfitChecks);
@@ -496,7 +500,7 @@ function weightedRandom(...options) {
 		return [value, totalWeight];
 	});
 
-	const random = Math.random() * totalWeight;
+	const random = State.random() * totalWeight;
 	for (const [value, cumulativeWeight] of processedOptions) {
 		if (cumulativeWeight >= random) {
 			return value;
@@ -506,6 +510,24 @@ function weightedRandom(...options) {
 	return options[0][0];
 }
 window.weightedRandom = weightedRandom;
+
+/**
+ * Resolves the provided value by checking if it is a function or a direct value.
+ * If the value is a function, the function is invoked and its result is returned.
+ * If it is not a function, the value itself is returned.
+ * If the value is undefined, a specified default value is returned instead.
+ * 
+ * @param {Function|any} value The value to resolve, which can be a function or any value
+ * @param {number} defaultValue The default value to use if the provided value is undefined
+ * @returns {number} The resolved value, either from the function call or directly
+ */
+function resolveValue(value, defaultValue = undefined) {
+	if (typeof value === "function") {
+		return value();
+	}
+	return value ?? defaultValue;
+}
+window.resolveValue = resolveValue;
 
 /**
  * This macro sets $rng. If the variable $rngOverride is set, $rng will always be set to that.
@@ -606,5 +628,27 @@ Macro.add("foldout", {
 			setFoldoutState(foldoutState, 100);
 		});
 		e.appendTo(this.output);
+	},
+});
+
+/* global ClothedSlots */
+
+/**
+ * @param {ClothedSlots} slot
+ */
+function carriedClear(slot) {
+	const slotFound = slot in V.carried;
+	if (!slotFound) {
+		return;
+	}
+
+	V.carried[slot] = clone(setup.clothes[slot][0]);
+}
+window.carriedClear = carriedClear;
+
+Macro.add("carriedClear", {
+	handler() {
+		console.log("Carried clear called", this.args);
+		carriedClear(this.args[0]);
 	},
 });
