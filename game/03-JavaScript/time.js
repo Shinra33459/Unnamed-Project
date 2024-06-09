@@ -483,6 +483,7 @@ function weekPassed() {
 	if (V.photo) {
 		if (V.photo.silly === "paid") V.photo.silly = 0;
 		V.photo.shoot = 0;
+		V.photo.shoot_whitney = 0;
 	}
 	if (V.nightmareTimer > 0) {
 		V.nightmareTimer--;
