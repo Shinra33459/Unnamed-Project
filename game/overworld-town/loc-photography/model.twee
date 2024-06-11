@@ -1115,11 +1115,19 @@ The light of the camera blinks as it records the scene.
 
 You and Whitney follow Niki up a flight of steps, into a large room dominated by a white screen. Several lights and a single camera wait.
 <br><br>
-
-<<set $photo.money to Math.round(400 * (($fame.sex + $fame.prostitution + $fame.rape + $fame.bestiality + $fame.exhibitionism + $fame.pregnancy + $fame.impreg + $fame.scrap + $fame.good + $fame.business + $fame.social + $fame.model + Math.clamp($beauty / 3, 0, 3000 * $AMCTraits.beauty)) / 3000))>>
-<<if $photo.pubfame>>
-	<<set $photo.money /= 3>>
-<</if>>
 <<set $photo.time to 0>>
 
 "Clothes are over there," Niki says, pointing at a two screens near the corner.
+
+
+<!-- Original calculation -->
+	<<set $baseMoney to Math.round(400 * (($fame.sex + $fame.prostitution + $fame.rape + $fame.bestiality + $fame.exhibitionism + $fame.pregnancy + $fame.impreg + $fame.scrap + $fame.good + $fame.business + $fame.social + $fame.model + Math.clamp($beauty / 3, 0, 3000 * $AMCTraits.beauty)) / 3000))>>
+<!-- Total money calculation -->
+	<<set $totalMoney to $baseMoney * 1.05 * 3>>  <!-- Multiply by 1.05 to add bonus and split into thirds -->
+
+<!-- Studio deduction -->
+	<<set $studioDeduction to Math.round($totalMoney * 2 / 5)>>
+	<<set $totalMoney to $totalMoney - $studioDeduction>>
+<!-- Split the remaining money -->
+	<<set $photo.money to Math.round($totalMoney * (2 / 3))>>  <!-- 2/3 of the remaining money goes to you -->
+	<<set $partner.money to Math.round($totalMoney * (1 / 3))>>  <!-- 1/3 of the remaining money goes to the partner -->
