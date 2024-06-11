@@ -1780,12 +1780,12 @@ function dailyMasochismSadismEffects() {
 	if (!V.featsSadismBoost && V.uncomfortable.sadoMaso === true) V.sadism *= 0.985;
 	if (!V.featsMasochismBoost && V.uncomfortable.sadoMaso === true) V.masochism *= 0.985;
 
-	let dailySadism = 0;
-		if (V.featsSadismBoost) dailySadism += V.featsSadismBoost;
-		fragment.append(wikifier("sadism", dailySadism));
-	let dailyMasochism = 0;
-		if (V.featsMasochismBoost) dailyMasochism += V.featsMasochismBoost;
-		fragment.append(wikifier("masochism", dailyMasochism));
+	V.dailySadism = 0;
+		if (V.featsSadismBoost) V.dailySadism += V.featsSadismBoost;
+		Wikifier.wikifyEval("<<sadism $dailySadism>>");
+	V.dailyMasochism = 0;
+		if (V.featsMasochismBoost) V.dailyMasochism += V.featsMasochismBoost;
+		Wikifier.wikifyEval("masochism $dailyMaso");
 
 
 	const masochism = effects(V.masochism_level, V.masochism);
