@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  * @typedef {object} DolLocation
  * @property {string} area The place they are at.
@@ -13,7 +11,7 @@ const UnknownLocation = { area: "unknown", state: "unknown" };
 const InactiveLocation = { area: "inactive", state: "inactive" };
 
 /** @returns {boolean} */
-const isRaining = () => Weather.precipitation !== "none"; // eslint-disable-line no-unused-vars
+const isRaining = () => ["rain", "snow"].includes(V.weather);
 
 const importantStates = ["rehearsal", "dual_rehearsal"];
 
@@ -63,7 +61,7 @@ function getKylarActiveLocation() {
 			return { area: "english", state: "dual_rehearsal" };
 		}
 		if (V.englishPlayRoles.KylarKnown) {
-			if (Weather.precipitation !== "none") {
+			if (isRaining()) {
 				return { area: "library", state: "library" };
 			}
 			return { area: "rear_courtyard", state: "stump" };
@@ -95,11 +93,11 @@ function getKylarLocationInLunchtime() {
 	if (!V.daily.school.lunchEaten) {
 		return { area: "canteen", state: "lunch" };
 	}
-	if (Weather.precipitation === "none") {
-		// NOT Raining or snowing, Kylar goes to the stump in rear courtyard.
+	if (!["rain", "snow"].includes(V.weather)) {
+		// Raining or snowing, Kylar goes to the stump in rear courtyard.
 		return { area: "rear_courtyard", state: "stump" };
 	}
-	// Raining or snowing, Kylar goes to library.
+	// Not raining or snowing, Kylar goes to library.
 	const libraryState = getKylarLibraryState();
 	if (!["elsewhere", "inactive"].includes(libraryState)) {
 		return { area: "library", state: libraryState };
@@ -116,7 +114,7 @@ function getKylarPersonalLocation() {
 	}
 	// 9:00 AM to 5:59 PM
 	if (Time.hour >= 9 && Time.hour < 18) {
-		if (Weather.precipitation !== "none") {
+		if (isRaining()) {
 			return { area: "arcade", state: "playing" };
 		}
 		const parkState = V.kylar.fountain === 1 ? "fountain" : "bench";

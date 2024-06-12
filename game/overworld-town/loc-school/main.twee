@@ -32,9 +32,9 @@
 	<</if>>
 <<else>>
 	You are in the courtyard in front of the school.
-	<<if Weather.precipitation is "rain">>
+	<<if $weather is "rain">>
 		It is empty, bar rivulets of rainwater.
-	<<elseif Weather.isSnow>>
+	<<elseif $weather is "snow">>
 		It is empty, the snow coating the ground lending to a picturesque stillness.
 	<<else>>
 		It is empty.
@@ -91,7 +91,7 @@
 <<set $eventskip to 0>>
 
 :: School Rear Courtyard
-<<set $outside to 1>><<set $location to "school_rear_courtyard">><<schooleffects>><<effects>><<set $bus to "schoolrearcourtyard">>
+<<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>><<set $bus to "schoolrearcourtyard">>
 
 <<if !["early", "late", "earlynoschool", "latenoschool", "daynoschool"].includes($schoolstate)>>
 	<<if $schoolstate is "morning">>
@@ -389,7 +389,7 @@ You haul yourself atop it, and shimmy along until another is within reach. Stude
 
 :: School Locked
 
-<<set $outside to 1>><<effects>><<set $lock to 200>>
+<<set $outside to 0>><<effects>><<set $lock to 200>>
 The school gate is shut and sealed by a sturdy padlock.
 <br><br>
 <<if currentSkillValue('skulduggery') gte $lock>>
@@ -567,7 +567,7 @@ You haul yourself over the fence and drop down on the other side.
 <</if>>
 <<if _commando>>
 	<br>
-	A breeze caresses your <<genitals>>, making you shiver<<if Weather.BodyTemperature.state is "cold">>. It's getting really cold.<<stress 6>><<gstress>><<elseif $exhibitionism gte 15>> <span class="lewd">with excitement</span>.<<arousal 150>><<garousal>><<else>>.<</if>>
+	A breeze caresses your <<genitals>>, making you shiver<<if $body_temperature is "cold">>. It's getting really cold.<<stress 6>><<gstress>><<elseif $exhibitionism gte 15>> <span class="lewd">with excitement</span>.<<arousal 150>><<garousal>><<else>>.<</if>>
 <</if>>
 
 <<integritycheck>>
@@ -634,7 +634,7 @@ You haul yourself over the fence and drop down on the other side.
 <</if>>
 <<if _commando>>
 	<br>
-	A breeze caresses your <<genitals>>, making you shiver<<if Weather.BodyTemperature.state is "cold">>. It's getting really cold.<<stress 6>><<gstress>><<elseif $exhibitionism gte 15>> <span class="lewd">with excitement</span>.<<arousal 150>><<garousal>><<else>>.<</if>>
+	A breeze caresses your <<genitals>>, making you shiver<<if $body_temperature is "cold">>. It's getting really cold.<<stress 6>><<gstress>><<elseif $exhibitionism gte 15>> <span class="lewd">with excitement</span>.<<arousal 150>><<garousal>><<else>>.<</if>>
 <</if>>
 
 <<integritycheck>>
@@ -674,6 +674,10 @@ You haul yourself over the fence and drop down on the other side.
 					<<photographystudioicon>><<link [[Photoshoot (0:20)|Head's Office Photoshoot Blackmail]]>><<set $schoolfameblackmail to 0>><<trauma 6>><<stress 6>><<npcincr Leighton dom 1>><</link>><<gtrauma>><<gstress>>
 					<br>
 				<</if>>
+			<</if>>
+			<<if $school_desk_dolp is undefined and $school_desk_dolp_buy gte 1>>
+			<<ind>><<link [[Offer to buy new desks and chairs|Head's Office Buy Chair Dolp]]>><<pass 10>><</link>>
+			<br>
 			<</if>>
 			<br>
 			<<getouticon>><<link [[Leave the office (0:01)|Hallways]]>><<endevent>><<pass 1>><<set $daily.school.headInterrupted to 1>><</link>>
@@ -876,10 +880,48 @@ You haul yourself over the fence and drop down on the other side.
 <<link [[Walk out|Hallways]]>><<detention 3>><<endevent>><</link>><<gdelinquency>>
 <br>
 
+:: Head's Office Buy Chair Dolp
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>><<person1>>
+<<if $school_desk_dolp_buy is 1>>
+You offer to buy new chairs and desks for the classrooms, leighton laughs for a moment before <<he>> realized you are serious.
+"Well" <<he>> says. "Lets see, we can use some new furniture for sure." 
+<br><br>
+<<He>> pulls out diffrent pieces of paper from the cabinets behind his desk
+and flips through a couple before finding what <<he>> is looking for. "Here these right here the total will be <span class="blue">£10.000</span> for all the classes"<br><br>  
+<<set $school_desk_dolp_buy to 2>>/*first time reading check */
+<<else>>
+leighton looks at you in amusement "Are you going to pay this time or just annoy me more about it". <<He>> sighs and gets the papers out from the cabinet
+"Remember the total is <span class="blue">£10.000</span> for the desk and chairs for all the classrooms"
+<br><br>
+<</if>>
+<br><br>
+<<if $money gte 1000000>>
+   	<<ind>><<link [[Pay for chairs and desks (£10.000)|Head's Office Brought Chair Dolp]]>><<pass 10>><<set $money -= 1000000>><<set $school_desk_dolp to 1>><<famebusiness 100>><<hope 14>><</link>><<ggghope>>
+    <br>
+<<else>>
+    <span class="blue">You can't afford such an expense.</span>
+    <br>
+<</if>>
+	<<getouticon>><<link [[Leave the office (0:01)|Hallways]]>><<endevent>><<pass 1>><<set $daily.school.headInterrupted to 1>><</link>>
+<br>
+
+:: Head's Office Brought Chair Dolp
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>><<person1>>
+<<effects>>
+You hand over the money. Leighton counts it with a big smile, then squirrels it away in <<his>> desk. You're handed a mountain of paperwork, and it takes some time to fill out.
+<br><br>
+"Don't worry, this money will get into the right hands," <<he>> says with a big smile on <<his>> face. "The whole faculty thanks you for your donation. Now, get out."
+<br><br>
+You leave the office, hoping you weren't just robbed.
+<br><br>
+<<getouticon>><<link [[Leave the office (0:01)|Hallways]]>><<endevent>><<pass 1>><<set $daily.school.headInterrupted to 1>><</link>>
+<br>
+
+
 :: School Passout
 <<sydneySchedule>>
 <<if isPlayerNonparasitePregnancyEnding()>>
-	<<pregnancyPassout "school">>
+	<<pregnancyWatersBrokenPassout "school">>
 <<elseif _sydney_location is "library" and (C.npc.Sydney.init isnot 1 or ($sydneySeen and !$sydneySeen.includes("libRescue")) or $rng gte 20)>>
 	<<pass 1 hour>>
 	You remain unconscious for a time. You hear a short gasp, and feel yourself being lifted before slipping back into unconsciousness.
@@ -887,7 +929,6 @@ You haul yourself over the fence and drop down on the other side.
 	<<trauma 6>><<set $stress -= 2000>>
 	<<link [[Next|Sydney Library Rescue]]>><</link>>
 <<else>>
-	<<unset $passoutReason>>
 	<<pass 1 hour>>
 	You remain unconscious for a time.
 	<br><br>
@@ -1575,7 +1616,7 @@ Fortunately your glasses appear undamaged.
 <<courtyard>>
 
 :: School Stump
-<<set $outside to 1>><<set $location to "school_rear_courtyard">><<schooleffects>><<effects>>
+<<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>>
 
 <<if $schoolstate is "lunch" or $schoolstate is "morning" or $schoolstate is "afternoon">>
 	You lean back on the stump. You close your eyes and listen to the murmuring of students in the courtyard.
