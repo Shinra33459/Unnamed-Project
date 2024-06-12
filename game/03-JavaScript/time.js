@@ -1787,7 +1787,6 @@ function dailyMasochismSadismEffects() {
 		if (V.featsMasochismBoost) V.dailyMasochism += V.featsMasochismBoost;
 		Wikifier.wikifyEval("masochism $dailyMaso");
 
-
 	const masochism = effects(V.masochism_level, V.masochism);
 	if (masochism) {
 		V.masochism_level = masochism.level;
