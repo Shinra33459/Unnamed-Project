@@ -954,7 +954,7 @@ Renderer.CanvasModels["main"] = {
 			filters: ["breasts"],
 			// z: ZIndices.breasts,
 			zfn(options) {
-				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && $passage != "Start")) {
+				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && V.passage != "Start")) {
 					return ZIndices.highBreasts;
 				}
 				return ZIndices.breasts;
@@ -991,7 +991,7 @@ Renderer.CanvasModels["main"] = {
 			},
 			// z: ZIndices.breastsparasite + 0.1,
 			zfn(options) {
-				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && $passage != "Start")) {
+				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && V.passage != "Start")) {
 					return ZIndices.breastsparasite + 80.1;
 				}
 				return ZIndices.breastsparasite + 0.1;
@@ -1013,7 +1013,7 @@ Renderer.CanvasModels["main"] = {
 			filters: ["breasts_parasite"],
 			// z: ZIndices.breastsparasite,
 			zfn(options) {
-				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && $passage != "Start")) {
+				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && V.passage != "Start")) {
 					return ZIndices.breastsparasite + 80;
 				}
 				return ZIndices.breastsparasite;
