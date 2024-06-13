@@ -954,8 +954,10 @@ Renderer.CanvasModels["main"] = {
 			filters: ["breasts"],
 			// z: ZIndices.breasts,
 			zfn(options) {
-				if ((!V.worn.over_upper.type.includes("naked") || !V.worn.upper.type.includes("naked") || !V.worn.under_upper.type.includes("naked"))) return ZIndices.breasts;
-				return ZIndices.breasts + 80;
+				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && $passage != "Start")) {
+					return ZIndices.highBreasts;
+				}
+				return ZIndices.breasts;
 			},
 			animation: "idle"
 		},
@@ -987,7 +989,13 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return !!options.nipples_parasite;
 			},
-			z: ZIndices.breastsparasite + 0.1,
+			// z: ZIndices.breastsparasite + 0.1,
+			zfn(options) {
+				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && $passage != "Start")) {
+					return ZIndices.breastsparasite + 80.1;
+				}
+				return ZIndices.breastsparasite + 0.1;
+			},
 			animation: "idle"
 		},
 		"breasts_parasite": {
@@ -1003,7 +1011,13 @@ Renderer.CanvasModels["main"] = {
 				return !!options.breasts_parasite;
 			},
 			filters: ["breasts_parasite"],
-			z: ZIndices.breastsparasite,
+			// z: ZIndices.breastsparasite,
+			zfn(options) {
+				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && $passage != "Start")) {
+					return ZIndices.breastsparasite + 80;
+				}
+				return ZIndices.breastsparasite;
+			},
 			animation: "idle"
 		},
 		"leftarm": {
