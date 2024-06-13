@@ -941,7 +941,7 @@ Renderer.CanvasModels["main"] = {
 		},
 		"breasts": {
 			srcfn(options) {
-				if (options.breast_size <= 0) return "";
+				if (options.breast_size <= 0 || (!V.worn.over_upper.type.includes("naked") || !V.worn.upper.type.includes("naked") || !V.worn.under_upper.type.includes("naked"))) return "";
 				let fn = "breasts" + options.breast_size + (options.breasts === "cleavage" && options.breast_size >= 3 ? "_clothed" : "") + ".png";
 				return `img/body${options.mannequin ? "/mannequin/" : "/"}breasts/${fn}`;
 			},
@@ -4362,21 +4362,37 @@ function genlayer_clothing_breasts(slot, overrideOptions) {
 				!options["worn_" + slot + "_setup"]?.altdisabled.includes("breasts");
 			let breastImg = options["worn_" + slot + "_setup"].breast_img;
 			let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			if (slot == "under_upper" && (!V.worn.over_upper.type.includes("naked") || !V.worn.upper.type.includes("naked"))) breastSize = 0;
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
-				(Math.min(options.breast_size, 6)) + (isAltPosition ? '_alt' : '') + '.png';
+				breastSize + (isAltPosition ? '_alt' : '') + '.png';
 			return gray_suffix(path, options.filters['worn_' + slot]);
 		},
-		z: ZIndices[slot],
+		masksrcfn(options) {
+			if (options.belly >= 19) {
+				return options.shirt_mask_breasts_src
+			} else if (options["worn_" + slot + "_setup"].mask_img === 1) {
+				let item = options["worn_" + slot + "_setup"].variable;
+				let integrity = options["worn_" + slot + "_integrity"];
+				return `img/clothes/${slot}/${item}/mask_${integrity}.png`;
+			} else {
+				return null;
+			}
+		},
 		showfn(options) {
+			let breastImg = options["worn_" + slot + "_setup"].breast_img;
+			if (typeof breastImg === 'object' && breastImg[options.breast_size] !== null) {
+				breastImg = 1;
+			}
 			return options.show_clothes &&
 				options["worn_" + slot] > 0 &&
-				options["worn_" + slot + "_setup"].breast_img === 1
+				breastImg === 1;
 		},
 		alphafn(options) {
 			return options["worn_" + slot + "_alpha"]
 		},
+		z: ZIndices[slot],
 		filters: ["worn_" + slot],
 		animation: "idle"
 	}, overrideOptions)
@@ -4708,21 +4724,28 @@ function genlayer_clothing_belly_acc(slot, overrideOptions) {
 function genlayer_clothing_breasts_acc(slot, overrideOptions) {
 	return Object.assign({
 		srcfn(options) {
+			let breastImg = options["worn_" + slot + "_setup"].breast_img;
+			let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
-				(Math.min(options.breast_size, 6)) + '_acc.png';
+				breastSize + '_acc.png';
 			return gray_suffix(path, options.filters['worn_' + slot + '_acc']);
 		},
-		z: ZIndices[slot],
 		showfn(options) {
+			let breastImg = options["worn_" + slot + "_setup"].breast_img;
+			if (typeof breastImg === 'object' && breastImg[options.breast_size] !== null) {
+				breastImg = 1;
+			}
 			return options.show_clothes &&
 				options["worn_" + slot] > 0 &&
-				options["worn_" + slot + "_setup"].breast_acc_img === 1
+				options["worn_" + slot + "_setup"].breast_acc_img === 1 &&
+				breastImg === 1;
 		},
 		alphafn(options) {
 			return options["worn_" + slot + "_alpha"]
 		},
+		z: ZIndices[slot],
 		filters: ["worn_" + slot + "_acc"],
 		animation: "idle"
 	}, overrideOptions)
