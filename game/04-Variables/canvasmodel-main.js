@@ -1062,7 +1062,9 @@ Renderer.CanvasModels["main"] = {
 			},
 			filters: ["body"],
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.arms_cover;
+				if (options.arm_right === "cover" || options.arm_right === "hold" || (V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked"))){
+					return ZIndices.arms_cover + 11;
+				}
 				return ZIndices.under_upper_arm_right - 0.1;
 			},
 			animation: "idle",
