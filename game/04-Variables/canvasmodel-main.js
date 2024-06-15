@@ -950,8 +950,12 @@ Renderer.CanvasModels["main"] = {
 				} else if (V.worn.under_upper.open == 1 && !V.worn.under_upper.type.includes("naked")) {
 					T.slot = "under_upper";
 				}
-				if (T.slot != undefined) T.breastSize = typeof setup.clothes[T.slot][V.worn[T.slot].index].breast_img === 'object' ? setup.clothes[T.slot][V.worn[T.slot].index].breast_img[options.breast_size] : Math.min(options.breast_size, 6);
-				if (T.breastSize == null) T.breastSize = 0;
+				if (T.slot.includes("over_upper", "upper", "under_upper")) {
+					T.breastSize = typeof setup.clothes[T.slot][V.worn[T.slot].index].breast_img === 'object' ? setup.clothes[T.slot][V.worn[T.slot].index].breast_img[options.breast_size] : Math.min(options.breast_size, 6);
+					if (T.breastSize == null) T.breastSize = 1;
+				} else {
+					T.breastSize = 1;
+				}
 				let fn = "breasts" + T.breastSize + (options.breasts === "cleavage" && T.breastSize >= 3 ? "_clothed" : "") + ".png";
 				delete T.breastSize;
 				return `img/body${options.mannequin ? "/mannequin/" : "/"}breasts/${fn}`;
@@ -4376,7 +4380,6 @@ function genlayer_clothing_breasts(slot, overrideOptions) {
 				!options["worn_" + slot + "_setup"]?.altdisabled.includes("breasts");
 			let breastImg = options["worn_" + slot + "_setup"].breast_img;
 			let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
-			T.tmp = breastSize;
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
@@ -4399,9 +4402,6 @@ function genlayer_clothing_breasts(slot, overrideOptions) {
 			if (typeof breastImg === 'object' && breastImg[options.breast_size] !== null) {
 				breastImg = 1;
 			}
-			T.tmp1 = options.show_clothes &&
-			options["worn_" + slot] > 0 &&
-			breastImg === 1;
 			return options.show_clothes &&
 				options["worn_" + slot] > 0 &&
 				breastImg === 1;
