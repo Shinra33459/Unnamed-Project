@@ -950,10 +950,10 @@ Renderer.CanvasModels["main"] = {
 				} else if (V.worn.under_upper.open == 1) {
 					T.slot = "under_upper";
 				}
-				if (T.slot.includes("over_upper", "upper", "under_upper")) {
+				if (T.slot == "over_upper" || T.slot == "upper" || T.slot == "under_upper") {
 					T.breastSize = typeof setup.clothes[T.slot][V.worn[T.slot].index].breast_img === 'object' ? setup.clothes[T.slot][V.worn[T.slot].index].breast_img[options.breast_size] : Math.min(options.breast_size, 6);
-					if (T.breastSize == null) T.breastSize = 1;
-				} else if (!V.worn.over_upper.type.includes("naked") || !V.worn.upper.type.includes("naked") || !V.worn.under_upper.type.includes("naked")){
+				}
+				if ((!V.worn.over_upper.type.includes("naked") && setup.clothes.over_upper[V.worn.over_upper.index].breast_img == 0) || (!V.worn.upper.type.includes("naked") && setup.clothes.upper[V.worn.upper.index].breast_img == 0) || (!V.worn.under_upper.type.includes("naked") && setup.clothes.under_upper[V.worn.under_upper.index].breast_img == 0) || T.breastSize == null){
 					T.breastSize = 1;
 				}
 				let fn = "breasts" + T.breastSize + (options.breasts === "cleavage" && T.breastSize >= 3 ? "_clothed" : "") + ".png";
@@ -4380,6 +4380,9 @@ function genlayer_clothing_breasts(slot, overrideOptions) {
 				!options["worn_" + slot + "_setup"]?.altdisabled.includes("breasts");
 			let breastImg = options["worn_" + slot + "_setup"].breast_img;
 			let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			if ((!V.worn.over_upper.type.includes("naked") && setup.clothes.over_upper[V.worn.over_upper.index].breast_img == 0) || (!V.worn.upper.type.includes("naked") && setup.clothes.upper[V.worn.upper.index].breast_img == 0) || (!V.worn.under_upper.type.includes("naked") && setup.clothes.under_upper[V.worn.under_upper.index].breast_img == 0) || breastSize == null){
+				breastSize = 1;
+			}
 			let path = 'img/clothes/' +
 				slot + '/' +
 				options["worn_" + slot + "_setup"].variable + '/' +
