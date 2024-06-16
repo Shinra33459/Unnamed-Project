@@ -2223,7 +2223,7 @@ function initHead() {
 	*/
 	setup.moddedClothes.head = [
 		{
-			index: 64,
+			index: 65,
 			name: "carrot pin",
 			name_cap: "Carrot pin",
 			variable: "carrotpin",
