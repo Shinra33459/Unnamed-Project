@@ -1,12 +1,9 @@
 # Degrees of Lewdity - Bunny Transformation Mod
 
 [Support Vrelnir](https://subscribestar.adult/vrelnir) and the main game!
-[Support Vrelnir](https://subscribestar.adult/vrelnir) and the main game!
 
-The bunny transformation mod adds a bunny TF to the game along with ~~work in progress~~ predator/prey dynamics and a future love interest! Created by [winterppeach](https://www.tumblr.com/blog/winterppeach) on tumblr.
-The bunny transformation mod adds a bunny TF to the game along with ~~work in progress~~ predator/prey dynamics and a future love interest! Created by [winterppeach](https://www.tumblr.com/blog/winterppeach) on tumblr.
+The bunny transformation mod adds a bunny TF to the game along with ~~work in progress~~ predator/prey dynamics! Created by [winterppeach](https://www.tumblr.com/blog/winterppeach) on tumblr.
 
-Currently there is no BEEESSS sprite support but there is one coming in the future
 
 ## Features List
 
@@ -26,6 +23,8 @@ Currently there is no BEEESSS sprite support but there is one coming in the futu
 
 - Special thanks to Vrelnir for making the Degrees of Lewdity! You can download the main game here: [Degrees of Lewdity](https://gitgud.io/Vrelnir/degrees-of-lewdity)
 - Thanks to Mellows for making the Bunny TF combat sprites! [Check out their own mod!](https://gitgud.io/melllow/m-v-c-r)
+- Thanks to Phreia on Discord for making the carrot pin, default bunny ears and tail for beeesss!
+- Thanks to Frostberg for making the auto-releases! [Check out his mod DoL+](https://gitgud.io/Andrest07/degrees-of-lewdity-plus/)
 
 ## Support
 
