@@ -52,6 +52,13 @@ const statDisplay = {
 };
 window.statDisplay = statDisplay;
 
+statDisplay.create("lwgratitude", () => statDisplay.statChange("Whitney's Gratitude", -1, "red"));
+statDisplay.create("llwgratitude", () => statDisplay.statChange("Whitney's Gratitude", -2, "red"));
+statDisplay.create("lllwgratitude", () => statDisplay.statChange("Whitney's Gratitude", -3, "red"));
+statDisplay.create("gwgratitude", () => statDisplay.statChange("Whitney's Gratitude", 1, "green"));
+statDisplay.create("ggwgratitude", () => statDisplay.statChange("Whitney's Gratitude", 2, "green"));
+statDisplay.create("gggwgratitude", () => statDisplay.statChange("Whitney's Gratitude", 3, "green"));
+
 statDisplay.create("lgrace", expectedRank => statDisplay.grace(-1, expectedRank));
 statDisplay.create("llgrace", expectedRank => statDisplay.grace(-2, expectedRank));
 statDisplay.create("lllgrace", expectedRank => statDisplay.grace(-3, expectedRank));
@@ -685,3 +692,10 @@ statDisplay.create("incggpenisinsecurity", () => statChange.gainPenisInsecurity(
 statDisplay.create("gpenisacceptance", statChange.gainPenisAcceptance);
 statDisplay.create("wolfpacktrust", statChange.wolfpacktrust);
 statDisplay.create("wolfpackfear", statChange.wolfpackfear);
+
+statDisplay.create("lwgratitude", (amount = 1) => statChange.gratitude(-amount));
+statDisplay.create("llwgratitude", (amount = 2) => statChange.gratitude(-amount));
+statDisplay.create("lllwgratitude", (amount = 3) => statChange.gratitude(-amount));
+statDisplay.create("gwgratitude", (amount = 1) => statChange.gratitude(amount));
+statDisplay.create("ggwgratitude", (amount = 2) => statChange.gratitude(amount));
+statDisplay.create("gggwgratitude", (amount = 3) => statChange.gratitude(amount));
