@@ -692,10 +692,3 @@ statDisplay.create("incggpenisinsecurity", () => statChange.gainPenisInsecurity(
 statDisplay.create("gpenisacceptance", statChange.gainPenisAcceptance);
 statDisplay.create("wolfpacktrust", statChange.wolfpacktrust);
 statDisplay.create("wolfpackfear", statChange.wolfpackfear);
-
-statDisplay.create("lwgratitude", (amount = 1) => statChange.gratitude(-amount));
-statDisplay.create("llwgratitude", (amount = 2) => statChange.gratitude(-amount));
-statDisplay.create("lllwgratitude", (amount = 3) => statChange.gratitude(-amount));
-statDisplay.create("gwgratitude", (amount = 1) => statChange.gratitude(amount));
-statDisplay.create("ggwgratitude", (amount = 2) => statChange.gratitude(amount));
-statDisplay.create("gggwgratitude", (amount = 3) => statChange.gratitude(amount));
