@@ -4381,7 +4381,7 @@ function genlayer_clothing_breasts(slot, overrideOptions) {
 			let breastImg = options["worn_" + slot + "_setup"].breast_img;
 			let breastSize = typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
 			if ((!V.worn.over_upper.type.includes("naked") && setup.clothes.over_upper[V.worn.over_upper.index].breast_img == 0) || (!V.worn.upper.type.includes("naked") && setup.clothes.upper[V.worn.upper.index].breast_img == 0) || (!V.worn.under_upper.type.includes("naked") && setup.clothes.under_upper[V.worn.under_upper.index].breast_img == 0) || breastSize == null){
-				breastSize = 1;
+				return "";
 			}
 			let path = 'img/clothes/' +
 				slot + '/' +
