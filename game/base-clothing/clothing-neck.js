@@ -1146,7 +1146,60 @@ function initNeck() {
 		Clothes that modders add go into this array, this should be empty in the base game at all times.
 		These items should have a `modder` variable with a the modders name in a short string
 	*/
-	setup.moddedClothes.neck = [];
+	setup.moddedClothes.neck = [		
+		{
+		index: 35,
+		name: "harness",
+		name_cap: "Harness",
+		variable: "harness",
+		integrity: 200,
+		integrity_max: 200,
+		fabric_strength: 30,
+		reveal: 100,
+		word: "a",
+		plural: 1,
+		colour: 0,
+		colour_options: [
+			"black", 
+			"navy blue", 
+			"wine", 
+			"blue", 
+			"brown", 
+			"green", 
+			"pink", 
+			"light pink", 
+			"purple", 
+			"lilac", 
+			"red", 
+			"tangerine", 
+			"teal", 
+			"white", 
+			"yellow", 
+			"custom"],
+		colour_sidebar: 1,
+		colour_combat: 0,
+		type: ["fetish"],
+		gender: "n",
+		warmth: 0,
+		cost: 6000,
+		description: "You feel like a freak wearing this",
+		shop: ["adult"],
+		collared: 1,
+		accessory: 1,
+		accessory_colour: 0,
+		accessory_colour_options: [
+			"steel",
+			"blue steel",
+		    "bronze",
+		    "gold",
+		    "silver"],
+		accessory_colour_sidebar: 1,
+		back_img: 0,
+		cursed: 0,
+		location: 0,
+		iconFile: "harness.png",
+		accIcon: "",
+	}];
 
 	setup.moddedClothes.neck.forEach((x, i) => (x.index = setup.clothes.neck.length + i));
 	setup.clothes.neck.push(...setup.moddedClothes.neck);
