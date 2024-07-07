@@ -1,0 +1,74 @@
+:: Widgets fishing [widget]
+<<widget "fishing_init">>
+	<<set $fish_position to { x: random(0, 10), y: random(0, 4) }>>
+	<<set $line_strength to 10>> /*buy new fishingrods with strength */
+	<<set $line_strength to $rod_strength>>
+	<<set $fish_tiredness to $fish_type>> 
+	<<set $fish_bait to 10>> 
+	<<set $total_fish = 0>>
+<</widget>>
+
+/* */
+$fish_type is random (small,medium,big,huge)
+/* */
+
+<<widget "fish_caught">>
+	<<set $total_fish += 1>>
+<</widget>>
+
+<<widget "fish_linebreak">>
+<</widget>>
+	
+<<widget "fish_reset">>
+	<<set $fish_position to { x: random(0, 10), y: random(0, 4) }>>
+	<<set $fish_tiredness = 0>> 
+	<<set $fish_bait -= 1>> 
+<</widget>>
+
+<<widget "fish_reel">>
+	/*the more tired a fish it the more chance to reel, if fish is not tired damage line alot*/
+	$line_strength - ($fish_tiredness)
+<</widget>>
+
+<<widget "fish_exhaust">>
+<</widget>>
+
+<<widget "fish_rest">>
+<</widget>>
+
+<<widget "fish_leave">>
+	<<print $total_fish>> /*say how many fish you caught*/
+	<<set $total_fish = 0>>
+<</widget>>
+
+<<widget "fishing_display">>
+	<div style="text-align: center;">
+		<style>
+			.fishing-grid {
+				border: 5px solid #000;
+				display: inline-block;
+				padding: 10px; 
+			}
+			.fishing-grid td {
+				padding: 10px; 
+				font-size: 24px; 
+			}
+			</style>
+
+	<table class="fishing-grid">
+		<<for _row to 0; _row lt 5; _row++>>
+			<tr>
+			<<for _col to 0; _col lt 11; _col++>>
+				<td>
+					<<if $fish_position.x is _col and $fish_position.y is _row>>
+						🐟
+					<<else>>
+						♒︎
+					<</if>>
+				</td>
+			<</for>>
+			</tr>
+		<</for>>
+		</table>
+	</div>
+<</widget>>
