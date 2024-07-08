@@ -12,7 +12,7 @@ const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "DoLP version",
+	version: "0.5.0.6 DoLP version",
 	versionName: "",
 	sneaky: false,
 	socialMediaEnabled: true,
