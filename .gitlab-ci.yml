@@ -1,11 +1,10 @@
 stages:
+    - init
     - compilation
     - upload
 
 variables:
     VERSION: ""
-    GIT_STRATEGY: clone  # Forces a fresh clone of the repository
-    GIT_CLEAN_FLAGS: -ffdx  # Ensures a force clean of the working directory
 
 before_script:
     - apk add --no-cache zip curl jq nodejs git
@@ -14,11 +13,17 @@ before_script:
     - git reset --hard origin/master
 
 dolmods_update:
-    stage: compilation
+    stage: init
     script:
         - git config --global user.email $username
         - git config --global user.name $token
-        - find . -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/platforms/android/app/src/main/AndroidManifest.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/platforms/android/app/src/main/assets/www/index.html -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/platforms/android/app/src/main/res/xml/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - version=$(cat version)
         - git add .
         - git commit -m "Update Dolmods"
@@ -474,47 +479,47 @@ release_job:
             links:
                 - name: 'DoLP_Vanilla'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Vanilla_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_Vanilla'
+                # - name: 'DoLP_Vanilla_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Vanilla_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_BEEESSS'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_BEEESSS'
+                # - name: 'DoLP_BEEESSS_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_v0.$CI_PIPELINE_IID.apk"  
                 - name: 'DoLP_BEEESSS+Hikari_Female'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Female_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_BEEESSS+Hikari_Female'
+                # - name: 'DoLP_BEEESSS+Hikari_Female_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Female_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_BEEESSS+Hikari_Male'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Male_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_BEEESSS+Hikari_Male'
+                # - name: 'DoLP_BEEESSS+Hikari_Male_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Male_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_BEEESSS+Paril+Hairstyle_Extended'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Paril+Hairstyle_Extended_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_BEEESSS+Paril+Hairstyle_Extended'
+                # - name: 'DoLP_BEEESSS+Paril+Hairstyle_Extended_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Paril+Hairstyle_Extended_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_BEEESSS_Wax'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_Wax_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_BEEESSS_Wax'
+                # - name: 'DoLP_BEEESSS_Wax_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_Wax_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_BEEESSS_Okbd'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_Okbd_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_BEEESSS_Okbd'
+                # - name: 'DoLP_BEEESSS_Okbd_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_Okbd_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_lllysmasc'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_lllysmasc_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_lllysmasc'
+                # - name: 'DoLP_lllysmasc_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_lllysmasc_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_susato'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_susato_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_susato'
+                # - name: 'DoLP_susato_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_susato_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_MIZZ'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_MIZZ_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_MIZZ'
+                # - name: 'DoLP_MIZZ_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_MIZZ_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_MVCR'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_MVCR_v0.$CI_PIPELINE_IID.zip"
-                # - name: 'DoLP_MVCR'
+                # - name: 'DoLP_MVCR_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_MVCR_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_Modloader'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Modloader_v0.$CI_PIPELINE_IID.zip"
