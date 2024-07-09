@@ -1,5 +1,5 @@
 stages:
-    - init
+    # - init
     - compilation
     - upload
 
@@ -9,26 +9,37 @@ variables:
 
 before_script:
     - apk add --no-cache zip curl jq nodejs git
+    - |
+        if [ ! -d ".git" ]; then
+            echo "Repository not cloned, cloning now..."
+            - git config --global user.email $username
+            - git config --global user.name $token
+            - git clone "https://$username:$token@gitgud.io/Frostberg/degrees-of-lewdity-plus.git" .
+        else
+            echo "Repository already cloned, resetting..."
+            - git fetch origin master
+            - git reset --hard origin/master
+        fi
 
-init:
-    stage: init
-    script:
-        - git config --global user.email $username
-        - git config --global user.name $token
-        - git clone "https://$username:$token@gitgud.io/Frostberg/degrees-of-lewdity-plus.git" repo
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
-    only:
-        - master
+# init:
+#     stage: init
+#     script:
+#         - git config --global user.email $username
+#         - git config --global user.name $token
+#         - git clone "https://$username:$token@gitgud.io/Frostberg/degrees-of-lewdity-plus.git" repo
+#     # cache:
+#     #     key: "${CI_PROJECT_NAME}-repo"
+#     #     paths:
+#     #       - repo/
+#     only:
+#         - master
 
 dolmods_update:
     stage: compilation
     dependencies:
         - init
     script:
-        - cd repo
+        # - cd repo
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -42,10 +53,10 @@ dolmods_update:
         - git add .
         - git commit -m "Update Dolmods $version"
         - git push "https://$username:$token@gitgud.io/Frostberg/degrees-of-lewdity-plus.git" HEAD:dolmods --force
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -54,9 +65,9 @@ build_upload_vanilla_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_vanilla_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -86,10 +97,10 @@ build_upload_vanilla_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Vanilla_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
         
@@ -98,9 +109,9 @@ build_upload_beeesss_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP BEEESSS v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_beeessss_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -130,10 +141,10 @@ build_upload_beeesss_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP BEEESSS v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -142,9 +153,9 @@ build_upload_beeesss_hikari_female_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP BEEESSS + Hikari Female v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_hikfem_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -174,10 +185,10 @@ build_upload_beeesss_hikari_female_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Female_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP BEEESSS + Hikari Female v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -186,9 +197,9 @@ build_upload_beeesss_hikari_male_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP BEEESSS + Hikari Male v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_hikmale_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -218,10 +229,10 @@ build_upload_beeesss_hikari_male_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Hikari_Male_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP BEEESSS + Hikari Male v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -230,9 +241,9 @@ build_upload_beeesss_paril_hairext_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP BEEESSS + Paril + Hairstyle Extended v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_parilold_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -262,10 +273,10 @@ build_upload_beeesss_paril_hairext_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS+Paril+Hairstyle_Extended_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP BEEESSS + Paril + Hairstyle Extended v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -274,9 +285,9 @@ build_upload_beeesss_wax_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP BEEESSS Wax v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_wax_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -306,10 +317,10 @@ build_upload_beeesss_wax_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_Wax_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP BEEESSS Wax v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -318,9 +329,9 @@ build_upload_beeesss_okbd_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP BEEESSS Okbd v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_okbd_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -350,10 +361,10 @@ build_upload_beeesss_okbd_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_BEEESSS_Okbd_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP BEEESSS Okbd v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -362,9 +373,9 @@ build_upload_lllysmasc_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP llly's Masculine Sideview v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_llly_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -394,10 +405,10 @@ build_upload_lllysmasc_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_lllysmasc_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP llly's Masculine Sideview v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -406,9 +417,9 @@ build_upload_susato_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP susato v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_susato_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -438,10 +449,10 @@ build_upload_susato_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_susato_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP susato v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -450,9 +461,9 @@ build_upload_mizz_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP MIZZ v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_mizz_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -482,10 +493,10 @@ build_upload_mizz_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Vanilla_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP MIZZ v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -494,9 +505,9 @@ build_upload_MVCR_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP MVCR v0.$CI_PIPELINE_IID"
         # - find . -type f -exec sed -i "s/dolp_debug/dolp_mvcr_debug/g" {} +
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -526,10 +537,10 @@ build_upload_MVCR_job:
         #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
         #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_MVCR_v0.$CI_PIPELINE_IID.apk"'
         - echo "Finished Uploading DoLP MVCR v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
@@ -538,9 +549,9 @@ build_upload_modloader_job:
     dependencies:
         - init
     script:
-        - cd repo
-        - git fetch origin master
-        - git reset --hard origin/master
+        # - cd repo
+        # - git fetch origin master
+        # - git reset --hard origin/master
         - echo "Building DoLP Modloader v0.$CI_PIPELINE_IID"
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
@@ -565,10 +576,10 @@ build_upload_modloader_job:
             --upload-file ./DoLP_Modloader_v0.$CI_PIPELINE_IID.zip
             "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Modloader_v0.$CI_PIPELINE_IID.zip"'
         - echo "Finished Uploading DoLP Modloader v0.$CI_PIPELINE_IID"
-    cache:
-        key: "${CI_PROJECT_NAME}-repo"
-        paths:
-          - repo/
+    # cache:
+    #     key: "${CI_PROJECT_NAME}-repo"
+    #     paths:
+    #       - repo/
     only:
         - master
 
