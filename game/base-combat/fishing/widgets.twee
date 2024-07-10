@@ -1,26 +1,160 @@
 :: Widgets fishing [widget]
 <<widget "fishing_init">>
-	<<set $fish_position to { x: random(0, 10), y: random(0, 4) }>>
-	<<set $line_strength to 10>> /*buy new fishingrods with strength */
-	<<set $line_strength to $rod_strength>>
-	<<set $fish_tiredness to $fish_type>> 
+	
+	<<set $fish_names to {
+		small: 	{"sardine": 40, "goldfish": 30, "guppy": 20, "betta": 10},
+		medium: {"blue tang": 2, "bass": 70, "koi": 7, "catfish": 21},
+		large: 	{"swordfish": 1, "trout": 65, "tuna": 20, "salmon": 16},
+		huge:	{"squid": 23, "sunfish": 1, "shark": 33, "dolphin": 43}
+		}>>
+    <<if $fish_ocean>> /*ocean fishing*/
+			<<set $fish_type to weighted_random({
+			"small": 30,
+			"medium": 40,
+			"big": 20,
+			"huge": 10
+			})>>
+		<<elseif $fish_lake>> /*lake fishing*/
+			<<set $fish_type to weighted_random({
+			"small": 55,
+			"medium": 30,
+			"big": 10,
+			"huge": 5
+			})>>
+		<</if>>
+	<<set $fish_position to { x: random(4, 4), y: random(2, 5) }>>
+	<<if $fishing_line is "monofilament">> /*beginner line*/
+			<<set $line_strength to 25>>
+		<<elseif $fishingline is "fluorocarbon">> /*clear water fishing aka ocean*/
+			<<if $fish_ocean>>
+				<<set $line_strength to 80>>
+			<<elseif $fish_lake>>
+				<<set $line_strength to 30>>
+			<</if>>
+		<<elseif $fishingling is "braided line">> /*heavy cover aka lake*/
+			<<if $fish_lake>>
+				<<set $line_strength to 80>>
+			<<elseif $fish_ocean>>
+				<<set $line_strength to 30>>
+			<</if>>
+		<<else>> /*copolymer aka general line*/
+			<<set $line_strength to 65>>
+		<</if>>
+	<<if $fishingrod is "masterwork">>
+			<<set $rod_strength to 50>>
+		<<elseif $fishingrod is "quality">>
+			<<set $rod_strength to 40>>
+		<<elseif $fishingrod is "decent">>
+			<<set $rod_strength to 30>>
+		<<elseif $fishingrod is "mediocre">>
+			<<set $rod_strength to 20>>
+		<<else>>
+			<<set $rod_strength to 10>>
+		<</if>>
+	<<set $fish_tiredness is $fish_type>> 
+
+
+	
+
+
+	<<set $fish_tiredness to 0>>
 	<<set $fish_bait to 10>> 
-	<<set $total_fish = 0>>
+	<<set $total_fish to 0>>
+	<<set $fish_round to 0>>
+<</widget>>
+x |
+y _
+
+<<widget "check_fish_position">>
+    <<set $zone to "none">>
+    <<if $fish_position.x is 1 or $fish_position.x is 11 or $fish_position.y is 1 or $fish_position.y is 5>>
+        <<if $fish_position.x is 0>>
+            <<set $zone to "left">>
+        <<elseif $fish_position.x gte 1 and $fish_position.x lte 8>>
+            <<set $zone to "middle">>
+        <<elseif $fish_position.x gte 9 and $fish_position.x lte 10>>
+            <<set $zone to "right">>
+        <</if>>
+    <</if>>
 <</widget>>
 
-/* */
-$fish_type is random (small,medium,big,huge)
-/* */
+<<widget "fish_movement">>
+		<<if random(1, 2) == 1>>
+			<<if random(1, 2) == 1>>
+				<<if $fish_position.y == 3>>
+					<<if random(1, 2) == 1>>
+						<<set $fish_position.y += 1>>
+					<<else>>
+						<<set $fish_position.y -= 1>>
+					<</if>>
+				<<elseif $fish_position.y == 2>>
+					<<set $fish_position.y -= 1>>
+				<<elseif $fish_position.y == 4>>
+					<<set $fish_position.y += 1>>
+				<</if>>
+			<<else>>
+				<<if $fish_position.y <= 6 and $fish_position.y >= 3>>
+					<<set $fish_position.y -= 2>>
+				<<elseif $fish_position.y <= 4 and $fish_position.y >= 1>>
+					<<set $fish_position.y += 2>>
+				<</if>>
+			<</if>>
+		<<elseif $fish_tiredness <= 10000>>
+			<<if $fish_position.x < 11>>
+				<<set $fish_position.x += 1>>
+			<</if>>
+		<</if>>
+<</widget>>
+
 
 <<widget "fish_caught">>
 	<<set $total_fish += 1>>
 <</widget>>
 
 <<widget "fish_linebreak">>
+        <div style="text-align: center;">
+            <style>
+                .line-container {
+                    border: 10px solid #000;
+                    padding: 10px;
+                }
+            </style>
+            <div class="line-container">
+                <div>
+				    <<if $line_strength lte 0>>
+   				    	<br><br>
+   				    	Your fishing line broke. Do you want to keep fishing?
+					<<else>> 
+						temp line stuff <<print $fish_tiredness>>
+					<</if>>
+				</div>
+            </div>
+        </div>
 <</widget>>
 	
 <<widget "fish_reset">>
-	<<set $fish_position to { x: random(0, 10), y: random(0, 4) }>>
+	<<set $fish_names to {
+		small: 	{"sardine": 40, "goldfish": 30, "guppy": 20, "betta": 10},
+		medium: {"blue tang": 2, "bass": 70, "koi": 7, "catfish": 21},
+		large: 	{"swordfish": 1, "trout": 65, "tuna": 20, "salmon": 16},
+		huge:	{"squid": 23, "sunfish": 1, "shark": 33, "dolphin": 43}
+		}>>
+    <<if $fish_ocean>> /*ocean fishing*/
+			<<set $fish_type to weighted_random({
+			"small": 30,
+			"medium": 40,
+			"big": 20,
+			"huge": 10
+			})>>
+		<<elseif $fish_lake>> /*lake fishing*/
+			<<set $fish_type to weighted_random({
+			"small": 55,
+			"medium": 30,
+			"big": 10,
+			"huge": 5
+			})>>
+		<</if>>
+	<<set $fish_position to { x: random(4, 4), y: random(2, 5) }>>
 	<<set $fish_tiredness = 0>> 
 	<<set $fish_bait -= 1>> 
 <</widget>>
@@ -31,6 +165,7 @@ $fish_type is random (small,medium,big,huge)
 <</widget>>
 
 <<widget "fish_exhaust">>
+	<<set $fish_tiredness += 1>>
 <</widget>>
 
 <<widget "fish_rest">>
@@ -38,37 +173,102 @@ $fish_type is random (small,medium,big,huge)
 
 <<widget "fish_leave">>
 	<<print $total_fish>> /*say how many fish you caught*/
-	<<set $total_fish = 0>>
+	<<unset $total_fish>>
+	<<unset $fish_linebreak>>
+	<<unset $fish_movement>>
+	<<unset $fish_position>>
+	<<unset $fish_tiredness>>
+	<<unset $_maxfish_x>>
+	<<unset $_maxfish_y>>
 <</widget>>
 
 <<widget "fishing_display">>
-	<div style="text-align: center;">
-		<style>
-			.fishing-grid {
-				border: 5px solid #000;
-				display: inline-block;
-				padding: 10px; 
-			}
-			.fishing-grid td {
-				padding: 10px; 
-				font-size: 24px; 
-			}
-			</style>
+<div style="text-align: center;">
+    <style>
+        .fishing-container {
+            display: table;
+            margin: 0 auto;
+        }
+        .fishing-row {
+            display: table-row;
+        }
+        .fishing-cell {
+            display: table-cell;
+            vertical-align: middle;
+            padding: 10px;
+        }
+        .fishing-grid {
+            border: 5px solid #000;
+            display: inline-block;
+            padding: 10px;
+        }
+        .fishing-grid td {
+            padding: 10px;
+            font-size: 35px;
+        }
+		.fishing-colome {
+			border: 10px solid #000;
+			vertical-align: middle;
+			font-size: 37px;
+			line-height: 1;
+			color: #2e1f41;
+		}
+    </style>
 
-	<table class="fishing-grid">
-		<<for _row to 0; _row lt 5; _row++>>
-			<tr>
-			<<for _col to 0; _col lt 11; _col++>>
-				<td>
-					<<if $fish_position.x is _col and $fish_position.y is _row>>
-						🐟
-					<<else>>
-						♒︎
-					<</if>>
-				</td>
-			<</for>>
-			</tr>
-		<</for>>
-		</table>
-	</div>
+    <div class="fishing-container">
+        <div class="fishing-row">
+            <div class="fishing-cell">
+                <div> you have <<if $fish_bait gte 0>>a total of <<print $fish_bait>> pieces of bait <<else>>no more bait<</if>></div>
+            </div>
+            <div class="fishing-cell">
+                <table class="fishing-grid">
+                    <<for _row to 1; _row lt 6; _row++>>
+                        <tr>
+                            <<for _col to 0; _col lt 12; _col++>>
+                                <td>
+									<<if _col is 0>>
+										█
+                                    <<elseif $fish_position.x is _col and $fish_position.y is _row>>
+                                        🐟
+                                    <<else>>
+                                        ♒︎
+                                    <</if>>
+                                </td>
+                            <</for>>
+                        </tr>
+                    <</for>>
+                </table>
+            </div>
+			<br>
+            <div class="fishing-colome">
+                <div> 	
+						<<if $fish_tiredness gte 100>>
+							█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█
+						<<elseif $fish_tiredness gte 90>>
+							█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█
+						<<elseif $fish_tiredness gte 80>>
+							█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█
+						<<elseif $fish_tiredness gte 70>>
+							█<br>█<br>█<br>█<br>█<br>█<br>█<br>█
+						<<elseif $fish_tiredness gte 60>>
+							█<br>█<br>█<br>█<br>█<br>█<br>█
+						<<elseif $fish_tiredness gte 50>>
+							█<br>█<br>█<br>█<br>█<br>█
+						<<elseif $fish_tiredness gte 40>>
+							█<br>█<br>█<br>█<br>█
+						<<elseif $fish_tiredness gte 30>>
+							█<br>█<br>█<br>█
+						<<elseif $fish_tiredness gte 20>>
+							█<br>█<br>█
+						<<elseif $fish_tiredness gte 10>>
+							█<br>█
+						<<elseif $fish_tiredness gte 0>>
+							█
+						<<else>>
+						<</if>>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
 <</widget>>

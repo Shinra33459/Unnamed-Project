@@ -1,23 +1,98 @@
-:: Fishing start
+:: Fishing Start
 <<fishing_init>> /*bootup fishing*/
+<<set $fish_position to { x: random(1, 12), y: random(1, 6) }>>
 
-you grab your <<if $line_strength gte 0>> bad quality <<elseif $line_strength gte 50>> decent quality 
-<<else>> masterwork quality <</if>>fishingrod and look in your baitbox<<if $fish_bait gt 0>> counting 
+you grab your fishingrod and look in your baitbox<<if $fish_bait gt 0>> counting 
 <<print $fish_bait>> pieces of bait.<<else>> it seems to be empty.<</if>>
 <br><br>
+rod debug
+<br><br>
+<<link[[masterwork|Fishing System1]]>><<set $fishingrod to "masterwork">><</link>><br>
+<<link[[quality|Fishing System1]]>><<set $fishingrod to "high-quality">><</link>><br>
+<<link[[decent|Fishing System1]]>><<set $fishingrod to "decent">><</link>><br>
+<<link[[mediocre|Fishing System1]]>><<set $fishingrod to "mediocre">><</link>><br>
+<<link[[abysmal|Fishing System1]]>><<set $fishingrod to "abysmal">><</link>><br>
 
-<<link[[start fishing|fishing system]]>><</link>>
 
+:: Fishing System1
 
+<<link[[bad|Fishing System]]>><<set $fishing_line to "monofilament">><</link>><br>
+<<link[[ocean|Fishing System]]>><<set $fishing_line to "fluorocarbon">><</link>><br>
+<<link[[lake|Fishing System]]>><<set $fishing_line to "braided line">><</link>><br>
+<<link[[general|Fishing System]]>><<set $fishing_line to "copolymer">><</link>><br>
 
-::fishing system
+:: Fishing System
 <<fishing_display>>
-<<set $fish_position to { x: random(0, 10), y: random(0, 4) }>>
-
-<<if $line_strength gte 0>>
-	<<link[[reel|fishing system]]>><<set $phase to 0>><</link>>
-	<<link[[rest|fishing system]]>><<set $phase to 1>><</link>>
-	<<link[[exhaust|fishing system]]>><<set $phase to 2>><</link>>
-<<else>>
-	<<link[[stop fishing|fishing system]]>><</link>>
-<</if>>
+<<fish_linebreak>>
+/*
+<<if $fish_position.x is 3 and $fish_position.y is 1>>
+	<<fish_caught>>
+<<elseif $phase is 1>> reel
+	<<fish_reel>>
+<<elseif $phase is 2>> pull left
+<<elseif $phase is 3>> rest
+<<elseif $phase is 4>> pull right
+*/
+<<check_fish_position>>
+<<fish_movement>>
+<<fish_exhaust>>
+<br> 
+<<print $fish_round>>
+<br>
+<<set $fish_round += 1>> 
+<br><br>
+<<print $fish_tiredness>>
+<br>
+<div style="text-align: center;">
+    <style>
+        .fishing-button {
+            border: 10px solid #000;
+            display: inline-block;
+            padding: 10px;
+			background-color: #241E6B;
+			border-radius: 15px;
+        }
+		.fishing-buttons{
+			font-size: 25px; 
+			display: inline-block;
+			padding: 10px;
+		}
+        .fishing-link {
+            display: inline-block;
+            padding: 10px;
+            background-color: #241E6B;
+			font-size: 25px; 
+        }
+        .fishing-link:hover {
+			border-radius: 5px; /* Rounded corners */
+            background-color: #130F42; /* Darker green on hover */
+        }
+    </style>
+    <table class="fishing-button" style="margin: 0 auto;">
+        <tr>
+            <td class="fishing-buttons"></td>
+            <td class="fishing-link">
+                <<link [[⬆️|Fishing System]]>><<set $phase to 1>><span class="fishing-link">Reel</span><</link>>
+            </td>
+            <td class="fishing-buttons"></td>
+        </tr>
+        <tr>
+            <td class="fishing-link">
+                <<link [[🛑|Bedroom]]>><<set $phase to 2>><<fish_leave>><span class="fishing-link">Pull Left</span><</link>>
+            </td>
+            <td class="fishing-link">
+                <<link [[⬅️|Fishing System]]>><<set $phase to 3>><span class="fishing-link">Rest</span><</link>>
+            </td>
+            <td class="fishing-link">
+                <<link [[➡️|Fishing System]]>><<set $phase to 4>><span class="fishing-link">Pull Right</span><</link>>
+            </td>
+        </tr>
+        <tr>
+            <td class="fishing-buttons"></td>
+            <td class="fishing-link">
+                <<link [[⬇️|Fishing System]]>><span class="fishing-link">Stop Fishing</span><</link>>
+            </td>
+            <td class="fishing-buttons"></td>
+        </tr>
+    </table>
+</div>
