@@ -1,4 +1,5 @@
-/* start making actual fish movement and passages to leave the fishing game, maybe something like <<whitneey exit>> can work otherwise try settinfg up $fishlocation instead of $fishlake/$fishocean and then you can set
+/* start making actual fish movement and passages to leave the fishing game, maybe something like <<whitneey exit>> can work otherwise try settinfg up $fishlocation instead 
+of $fishlake/$fishocean and then you can set
 exact places plus links*/
 
 
@@ -7,35 +8,6 @@ exact places plus links*/
 :: Widgets fishing [widget]
 <<widget "fishing_init">> 
 	<<fish_reset>>
-
-	<<if $fishing_line is "monofilament">> /*beginner line*/
-			<<set $line_strength to 25>>
-		<<elseif $fishingline is "fluorocarbon">> /*clear water fishing aka ocean*/
-			<<if $fish_ocean>>
-				<<set $line_strength to 80>>
-			<<elseif $fish_lake>>
-				<<set $line_strength to 30>>
-			<</if>>
-		<<elseif $fishingling is "braided line">> /*heavy cover aka lake*/
-			<<if $fish_lake>>
-				<<set $line_strength to 80>>
-			<<elseif $fish_ocean>>
-				<<set $line_strength to 30>>
-			<</if>>
-		<<else>> /*copolymer aka general line*/
-			<<set $line_strength to 65>>
-		<</if>>
-	<<if $fishingrod is "masterwork">>
-			<<set $rod_strength to 50>>
-		<<elseif $fishingrod is "quality">>
-			<<set $rod_strength to 40>>
-		<<elseif $fishingrod is "decent">>
-			<<set $rod_strength to 30>>
-		<<elseif $fishingrod is "mediocre">>
-			<<set $rod_strength to 20>>
-		<<else>>
-			<<set $rod_strength to 10>>
-		<</if>>
 	<<set $fish_tiredness to 0>>
 	<<set $fish_bait to 10>> 
 	<<set $total_fish to 0>>
@@ -115,7 +87,7 @@ y _
    				    	<br><br>
    				    	Your fishing line broke. Do you want to keep fishing?
 					<<else>> 
-						temp line stuff <<print $fish_tiredness>>
+						fish name and type <<print $fish_names>> <<print $fish_type>>, rod strength <<print $rod_strength>>, line strength <<print $line_strength>>, fish tiredness <<print $fish_tiredness>> 
 					<</if>>
 				</div>
             </div>
@@ -123,67 +95,184 @@ y _
 <</widget>>
 	
 <<widget "fish_reset">>
-	<<set $rng1 to random(1, 100)>>
-    <<if $fish_type is "small">>
-		<<if $rng1 lte 40>>
-			<<set $fish_names to "Sardine">>
-		<<elseif $rng1 lte 70>>
-			<<set $fish_names to "Goldfish">>
-		<<elseif $rng1 lte 90>>
-			<<set $fish_names to "Guppy">>
-		<<else>>
-			<<set $fish_names to "Betta">>
-		<</if>>
-	 <<elseif $fish_type is "medium">>
-		<<if $rng1 lte 2>>
-			<<set $fish_names to "Blue tang">>
-		<<elseif $rng1 lte 9>>
-			<<set $fish_names to "Bass">>
-		<<elseif $rng1 lte 30>>
-			<<set $fish_names to "Koi">>
-		<<else>>
-			<<set $fish_names to "Catfish">>
-		<</if>>
-	 <<elseif $fish_type is "large">>
-		<<if $rng1 lte 1>>
-			<<set $fish_names to "Swordfish">>
-		<<elseif $rng1 lte 17>>
-			<<set $fish_names to "Salmon">>
-		<<elseif $rng1 lte 37>>
-			<<set $fish_names to "Tuna">>
-		<<else>>
-			<<set $fish_names to "Trout">>
-		<</if>>
-	 <<elseif $fish_type is "huge">>
-		<<if $rng1 lte 1>>
-			<<set $fish_names to "Sunfish">>
-		<<elseif $rng1 lte 24>>
-			<<set $fish_names to "Squid">>
-		<<elseif $rng1 lte 57>>
-			<<set $fish_names to "Shark">>
-		<<else>>
-			<<set $fish_names to "Dolphin">>
-		<</if>>
-		<</if>>
-    <<if $fish_ocean>> /*ocean fishing*/
-			<<set $fish_type to  $rng({
-			"small": 30,
-			"medium": 40,
-			"big": 20,
-			"huge": 10
-			})>>
-		<<elseif $fish_lake>> /*lake fishing*/
-			<<set $fish_type to $rng({
-			"small": 55,
-			"medium": 30,
-			"big": 10,
-			"huge": 5
-			})>>
-		<</if>>
+  <<set $rng to random(1, 100)>>
+    <<if $fish_location is "ocean">>
+
+        <<if $rng lte 25>>
+            <<set $fish_type to "small">>
+        <<elseif $rng lte 60>>
+            <<set $fish_type to "medium">>
+        <<elseif $rng lte 85>>
+            <<set $fish_type to "large">>
+        <<else>>
+            <<set $fish_type to "huge">>
+        <</if>>
+        <<set $rng1 to random(1, 100)>>
+        <<switch $fish_type>>
+            <<case "small">>
+                <<if $rng1 lte 35>>
+                    <<set $fish_names to "Sardine">>
+                <<elseif $rng1 lte 60>>
+                    <<set $fish_names to "Goldfish">>
+                <<elseif $rng1 lte 75>>
+                    <<set $fish_names to "Guppy">>
+                <<elseif $rng1 lte 85>>
+                    <<set $fish_names to "Betta">>
+                <<elseif $rng1 lte 92>>
+                    <<set $fish_names to "Anchovy">>
+                <<elseif $rng1 lte 98>>
+                    <<set $fish_names to "Tetra">>
+                <<else>>
+                    <<set $fish_names to "Molly">>
+                <</if>>
+            <<case "medium">>         
+                <<if $rng1 lte 15>>
+                    <<set $fish_names to "Blue tang">>
+                <<elseif $rng1 lte 35>>
+                    <<set $fish_names to "Bass">>
+                <<elseif $rng1 lte 55>>
+                    <<set $fish_names to "Koi">>
+                <<elseif $rng1 lte 70>>
+                    <<set $fish_names to "Angelfish">>
+                <<elseif $rng1 lte 80>>
+                    <<set $fish_names to "Rainbowfish">>
+                <<elseif $rng1 lte 90>>
+                    <<set $fish_names to "Plecostomus">>
+                <<else>>
+                    <<set $fish_names to "Clownfish">>
+                <</if>>
+            <<case "large">>
+                <<if $rng1 lte 5>>
+                    <<set $fish_names to "Swordfish">>
+                <<elseif $rng1 lte 20>>
+                    <<set $fish_names to "Mahi-Mahi">>
+                <<elseif $rng1 lte 40>>
+                    <<set $fish_names to "Tuna">>
+                <<elseif $rng1 lte 60>>
+                    <<set $fish_names to "Trout">>
+                <<elseif $rng1 lte 75>>
+                    <<set $fish_names to "Barramundi">>
+                <<else>>
+                    <<set $fish_names to "Marlin">>
+                <</if>>
+            <<case "huge">>
+                <<if $rng1 lte 2>>
+                    <<set $fish_names to "Sunfish">>
+                <<elseif $rng1 lte 10>>
+                    <<set $fish_names to "Squid">>
+                <<elseif $rng1 lte 25>>
+                    <<set $fish_names to "Shark">>
+                <<elseif $rng1 lte 40>>
+                    <<set $fish_names to "Dolphin">>
+                <<elseif $rng1 lte 60>>
+                    <<set $fish_names to "Giant Trevally">>
+                <<else>>
+                    <<set $fish_names to "Blue Marlin">>
+                <</if>>
+        <</switch>>
+    <<elseif $fish_location is "lake">>
+        <<if $rng lte 45>>
+            <<set $fish_type to "small">>
+        <<elseif $rng lte 75>>
+            <<set $fish_type to "medium">>
+        <<elseif $rng lte 90>>
+            <<set $fish_type to "large">>
+        <<else>>
+            <<set $fish_type to "huge">>
+        <</if>>
+        <<set $rng1 to random(1, 100)>>
+        <<switch $fish_type>>
+            <<case "small">>
+                <<if $rng1 lte 30>>
+                    <<set $fish_names to "Bluegill">>
+                <<elseif $rng1 lte 55>>
+                    <<set $fish_names to "Perch">>
+                <<elseif $rng1 lte 70>>
+                    <<set $fish_names to "Crappie">>
+                <<elseif $rng1 lte 80>>
+                    <<set $fish_names to "Minnow">>
+                <<elseif $rng1 lte 90>>
+                    <<set $fish_names to "Carp">>
+                <<else>>
+                    <<set $fish_names to "Pike">>
+                <</if>>
+            <<case "medium">>         
+                <<if $rng1 lte 30>>
+                    <<set $fish_names to "Walleye">>
+                <<elseif $rng1 lte 50>>
+                    <<set $fish_names to "Trout">>
+                <<elseif $rng1 lte 65>>
+                    <<set $fish_names to "Perch">>
+                <<elseif $rng1 lte 80>>
+                    <<set $fish_names to "Catfish">>
+                <<else>>
+                    <<set $fish_names to "Medium Bass">>
+                <</if>>
+            <<case "large">>
+                <<if $rng1 lte 5>>
+                    <<set $fish_names to "Sturgeon">>
+                <<elseif $rng1 lte 20>>
+                    <<set $fish_names to "Bluefish">>
+                <<elseif $rng1 lte 40>>
+                    <<set $fish_names to "Muskie">>
+                <<elseif $rng1 lte 60>>
+                    <<set $fish_names to "Large Bass">>
+                <<elseif $rng1 lte 75>>
+                    <<set $fish_names to "Taimen">>
+                <<else>>
+                    <<set $fish_names to "Bowfin">>
+                <</if>>
+            <<case "huge">>
+                <<if $rng1 lte 2>>
+                    <<set $fish_names to "Alligator">>
+                <<elseif $rng1 lte 10>>
+                    <<set $fish_names to "Piranha">>
+                <<elseif $rng1 lte 25>>
+                    <<set $fish_names to "Muskellunge">>
+                <<elseif $rng1 lte 40>>
+                    <<set $fish_names to "Pike">>
+                <<elseif $rng1 lte 60>>
+                    <<set $fish_names to "Sturgeon">>
+                <<else>>
+                    <<set $fish_names to "Bream">>
+                <</if>>
+        <</switch>>
+  
 	<<set $fish_position to { x: random(4, 4), y: random(2, 5) }>>
 	<<set $fish_tiredness = 0>> 
 	<<set $fish_bait -= 1>> 
+    <<switch $fishing_line>>
+        <<case "monofilament">>
+            <<set $line_strength to 25>>
+        <<case "fluorocarbon">>
+            <<if $fish_location is "ocean">>
+                <<set $line_strength to 80>>
+            <<else>>
+                <<set $line_strength to 30>>
+            <</if>>
+        <<case "braided line">>
+            <<if $fish_location is "lake">>
+                <<set $line_strength to 80>>
+            <<else>>
+                <<set $line_strength to 30>>
+            <</if>>
+        <<case "copolymer">>
+            <<set $line_strength to 65>>
+    <</switch>>
+    <<switch $fishingrod>>
+        <<case "masterwork">>
+            <<set $rod_strength to 50>>
+        <<case "high-quality">>
+            <<set $rod_strength to 40>>
+        <<case "decent">>
+            <<set $rod_strength to 30>>
+        <<case "mediocre">>
+            <<set $rod_strength to 20>>
+        <<case "abysmal">>
+            <<set $rod_strength to 10>>
+    <</switch>>
 <</widget>>
+
 
 <<widget "fish_reel">>
 	/*the more tired a fish it the more chance to reel, if fish is not tired damage line alot*/
@@ -199,13 +288,15 @@ y _
 
 <<widget "fish_leave">>
 	<<print $total_fish>> /*say how many fish you caught*/
-	<<unset $total_fish>>
-	<<unset $fish_linebreak>>
-	<<unset $fish_movement>>
-	<<unset $fish_position>>
-	<<unset $fish_tiredness>>
-	<<unset $_maxfish_x>>
-	<<unset $_maxfish_y>>
+	<<run_delete $total_fish>>
+	<<run_delete $fish_linebreak>>
+	<<run_delete $fish_movement>>
+	<<run_delete $fish_position>>
+	<<run_delete $fish_tiredness>>
+	<<run_delete $fish_names>>
+	<<run_delete $rod_strength>>
+	<<run_delete $line_strength>>
+	<<run_delete $fish_location>>
 <</widget>>
 
 <<widget "fishing_display">>
@@ -244,7 +335,7 @@ y _
     <div class="fishing-container">
         <div class="fishing-row">
             <div class="fishing-cell">
-                <div> you have <<if $fish_bait gte 0>>a total of <<print $fish_bait>> pieces of bait <<else>>no more bait<</if>> <<print $fish_names>> <<print $rod_strength>> <<print $line_strength>> </div>
+                <div> you have <<if $fish_bait gte 0>>a total of <<print $fish_bait>> pieces of bait <<else>>no more bait<</if>></div>
             </div>
             <div class="fishing-cell">
                 <table class="fishing-grid">
@@ -252,7 +343,7 @@ y _
                         <tr>
                             <<for _col to 0; _col lt 12; _col++>>
                                 <td>
-									<<if _col is 0>>
+									<<if _col is 0 and _row is 3>>
 										█
                                     <<elseif $fish_position.x is _col and $fish_position.y is _row>>
                                         🐟
