@@ -628,6 +628,32 @@
 <</if>>
 <</widget>>
 
+<<widget "fishingdifficulty">>
+<<set _fishingdifficultymin to (_args[2] ? _args[2] : 1)>>
+<<set _fishingdifficultymax to (_args[3] ? _args[3] : 1000)>>
+<<if _fishingdifficultymin gte _fishingdifficultymax>>
+	<<set _fishingdifficultymax to _fishingdifficultymin + 1>>
+<</if>>
+	/* Note: willpower uses a different default value for skilldifficultymax */
+<<if _args[4] is undefined and $statdisable is "f">>
+	<<if $checkstyle is "skillname">>
+		| <span class="orange">Fishing<<print _args[1]>></span>
+	<<else>>
+		| <span class="orange">Fishing<<print _args[1]>></span>:
+		<<set _difficulty to Math.round(Math.clamp($_fishing - _fishingdifficultymin, 0, _fishingdifficultymax) / (_fishingdifficultymax - _fishingdifficultymin) * 100)>>
+		<<if _difficulty gt 100>>
+			<<set _difficulty to 100>>
+		<</if>>
+		<<skillDifficultyText _difficulty>>
+	<</if>>
+<</if>>
+<<if _fishing gte random(_fishingdifficultymin, _fishingdifficultymax)>>
+	<<set $fishingSuccess to 1>>
+<<else>>
+	<<set $fishingSuccess to 0>>
+<</if>>
+<</widget>>
+
 <<widget "difficulty">>
 	<<if _args[0] and $statdisable is "f">>
 	| Success Chance:

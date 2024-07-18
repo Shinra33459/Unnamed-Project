@@ -2,9 +2,7 @@
 of $fishlake/$fishocean and then you can set
 exact places plus links*/
 
-
-
-
+/*when you done and can release make sure to remove the memo marks on stuff called "fishing release" */
 :: Widgets fishing [widget]
 <<widget "fishing_init">> 
 	<<fish_reset>>
@@ -12,6 +10,7 @@ exact places plus links*/
 	<<set $fish_bait to 10>> 
 	<<set $total_fish to 0>>
 	<<set $fish_round to 0>>
+	<<set $reel_chance to 0>>
 <</widget>>
 x |
 y _
@@ -72,8 +71,6 @@ y _
 			<<set $line_strength -= 1>>
 		<<else>> /*fish isnt in danger zone*/
 		<</if>>
-
-
         <div style="text-align: center;">
             <style>
                 .line-container {
@@ -87,7 +84,7 @@ y _
    				    	<br><br>
    				    	Your fishing line broke. Do you want to keep fishing?
 					<<else>> 
-						fish name and type <<print $fish_names>> <<print $fish_type>>, rod strength <<print $rod_strength>>, line strength <<print $line_strength>>, fish tiredness <<print $fish_tiredness>> 
+						fish name and type <<print $fish_names>> <<print $fish_type>>, rod strength <<print $rod_strength>>, line strength <<print $line_strength>>, fish tiredness <<print $fish_tiredness>>, reel chance <<print $reel_chance>>
 					<</if>>
 				</div>
             </div>
@@ -95,9 +92,8 @@ y _
 <</widget>>
 	
 <<widget "fish_reset">>
-  <<set $rng to random(1, 100)>>
+    <<set $rng to random(1, 100)>>
     <<if $fish_location is "ocean">>
-
         <<if $rng lte 25>>
             <<set $fish_type to "small">>
         <<elseif $rng lte 60>>
@@ -237,7 +233,7 @@ y _
                     <<set $fish_names to "Bream">>
                 <</if>>
         <</switch>>
-  
+    <</if>>
 	<<set $fish_position to { x: random(4, 4), y: random(2, 5) }>>
 	<<set $fish_tiredness = 0>> 
 	<<set $fish_bait -= 1>> 
@@ -275,8 +271,16 @@ y _
 
 
 <<widget "fish_reel">>
-	/*the more tired a fish it the more chance to reel, if fish is not tired damage line alot*/
-	$line_strength - ($fish_tiredness)
+
+	/* The more tired a fish is, the more chance to reel it in. 
+	   If the fish is not tired, damage the line a lot.
+
+	   If you reel, check if the fish is tired.
+	   Then check if you are stronger than the fish (considering a combination of fish size, physique, athletics, technique, feet, and arms).
+	   The chance rating is based on the quality of your rod and line.
+	*/
+	/*when you done and can release make sure to remove the memo marks on stuff called "fishing release" */
+	<<set $reel_chance += Math.round($fish_tiredness / 10)>> 
 <</widget>>
 
 <<widget "fish_exhaust">>
@@ -288,15 +292,16 @@ y _
 
 <<widget "fish_leave">>
 	<<print $total_fish>> /*say how many fish you caught*/
-	<<run_delete $total_fish>>
-	<<run_delete $fish_linebreak>>
-	<<run_delete $fish_movement>>
-	<<run_delete $fish_position>>
-	<<run_delete $fish_tiredness>>
-	<<run_delete $fish_names>>
-	<<run_delete $rod_strength>>
-	<<run_delete $line_strength>>
-	<<run_delete $fish_location>>
+	<<run delete $total_fish>>
+	<<run delete $fish_linebreak>>
+	<<run delete $fish_movement>>
+	<<run delete $fish_position>>
+	<<run delete $fish_tiredness>>
+	<<run delete $fish_names>>
+	<<run delete $rod_strength>>
+	<<run delete $line_strength>>
+	<<run delete $fish_location>>
+	<<run delete $reel_chance>>
 <</widget>>
 
 <<widget "fishing_display">>
@@ -360,27 +365,27 @@ y _
             <div class="fishing-colome">
                 <div> 	
 						<<if $fish_tiredness gte 100>>
-							█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█
+							fish tiredness<br>█<br>█<br>█<br>█<br>█<br>█
 						<<elseif $fish_tiredness gte 90>>
-							█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█
+							fish tiredness<br>█<br>█<br>█<br>█<br>█
 						<<elseif $fish_tiredness gte 80>>
-							█<br>█<br>█<br>█<br>█<br>█<br>█<br>█<br>█
+							fish tiredness<br>█<br>█<br>█<br>█<br>█
 						<<elseif $fish_tiredness gte 70>>
-							█<br>█<br>█<br>█<br>█<br>█<br>█<br>█
+							fish tiredness<br>█<br>█<br>█<br>█
 						<<elseif $fish_tiredness gte 60>>
-							█<br>█<br>█<br>█<br>█<br>█<br>█
+							fish tiredness<br>█<br>█<br>█<br>█
 						<<elseif $fish_tiredness gte 50>>
-							█<br>█<br>█<br>█<br>█<br>█
+							fish tiredness<br>█<br>█<br>█
 						<<elseif $fish_tiredness gte 40>>
-							█<br>█<br>█<br>█<br>█
+							fish tiredness<br>█<br>█<br>█
 						<<elseif $fish_tiredness gte 30>>
-							█<br>█<br>█<br>█
+							fish tiredness<br>█<br>█
 						<<elseif $fish_tiredness gte 20>>
-							█<br>█<br>█
+							fish tiredness<br>█<br>█
 						<<elseif $fish_tiredness gte 10>>
-							█<br>█
+							fish tiredness<br>█
 						<<elseif $fish_tiredness gte 0>>
-							█
+							fish tiredness<br>█
 						<<else>>
 						<</if>>
 				</div>
@@ -389,3 +394,5 @@ y _
     </div>
 </div>
 <</widget>>
+
+/*when you done and can release make sure to remove the memo marks on stuff called "fishing release" */
