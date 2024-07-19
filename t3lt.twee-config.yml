@@ -817,6 +817,14 @@ sugarcube-2:
       name: audiencespeech
     autoTakePillCheck:
       name: autoTakePillCheck
+    avery_cards_drink_text:
+      name: avery_cards_drink_text
+    avery_cards_end:
+      name: avery_cards_end
+    avery_cards_init:
+      name: avery_cards_init
+    avery_cards_win:
+      name: avery_cards_win
     averyscore:
       name: averyscore
     awareness:
@@ -1907,6 +1915,8 @@ sugarcube-2:
       name: card_pot_collected
     card_pot_confiscated:
       name: card_pot_confiscated
+    card_skill:
+      name: card_skill
     cardImage:
       name: cardImage
     cards_arousal_check:
@@ -1954,7 +1964,7 @@ sugarcube-2:
     carriedClear:
       description: |-
         Sets provided clothing slot to naked
-        
+
         `<<carriedClear slot>>`
         - **slot**: `string` - carried clothing slot to erase
           - %clothesTypesDesc%
@@ -2049,24 +2059,11 @@ sugarcube-2:
       description: |-
         Prints the name Morgan gives the player based on appearance
       tags: ["text"]
-    charLight:
-      description: |-
-        Render and print light behind character model
-
-        `<<charLight xOffset yOffset className?>>`
-        - **xOffset**: `number` - CSS x offset
-          - Assumes px
-        - **yOffset**: `number` - CSS y offset
-          - Assumes px
-        - **className** _optional_: `string` - class or space-separated classes of div element to be inserted when placed in the DOM
-      parameters:
-        - number|text &+ number|text |+ text
-      tags: ["dom"]
     charLightCombat:
       description: |-
         Render and print light behind character model
 
-        `<<charLight position? prop?>>`
+        `<<charLightCombat position? prop?>>`
         - **position** _optional_: `string` - combat position
           - %combatPositionsDesc%
         - **prop** _optional_: `string` - prop being rendered in combat
@@ -2194,7 +2191,7 @@ sugarcube-2:
     childfeet:
       description: |-
         Prints feet appropriate to type of selected child
-        
+
         `<<childfeet childId?>>`
         - **childId** _optional_: `string` - childId to use in place of currently selected child
           - Defaults to currently selected
@@ -2204,7 +2201,7 @@ sugarcube-2:
     childfinger:
       description: |-
         Prints fingers appropriate to type of selected child
-        
+
         `<<childfinger childId?>>`
         - **childId** _optional_: `string` - childId to use in place of currently selected child
           - Defaults to currently selected
@@ -2285,7 +2282,7 @@ sugarcube-2:
         Prints singular noun of provided or selected child
 
         See `<childsons>` for plural
-        
+
         `<<childson childId?>>`
         - **childId** _optional_: `string` - childId to use in place of currently selected child
       parameters:
@@ -2296,7 +2293,7 @@ sugarcube-2:
         Prints plural noun of provided or selected child
 
         See `<childson>` for singular
-        
+
         `<<childsons childId?>>`
         - ...**childId** _optional_: `string|Array` - childId as separate params or array of ids
       parameters:
@@ -2305,7 +2302,7 @@ sugarcube-2:
     childtoes:
       description: |-
         Prints toes appropriate to type of selected child
-        
+
         `<<childtoes childId?>>`
         - **childId** _optional_: `string` - childId to use in place of currently selected child
           - Defaults to currently selected
@@ -5343,6 +5340,8 @@ sugarcube-2:
     gcamp_concealment:
       name: gcamp_concealment
       tags: ["unused", "text"]
+    gcardskill:
+      name: gcardskill
     gchaos:
       description: |-
         Prints `| + Chaos`
@@ -6266,6 +6265,8 @@ sugarcube-2:
       description: |-
         Prints `| + + Bodywriting`
       tags: ["unused", "text"]
+    ggcardskill:
+      name: ggcardskill
     ggchaos:
       description: |-
         Prints `| + + Chaos`
@@ -8170,6 +8171,8 @@ sugarcube-2:
       tags: ["text"]
     lcamp_concealment:
       name: lcamp_concealment
+    lcardskill:
+      name: lcardskill
     lchaos:
       description: |-
         Prints `| - Chaos`
@@ -8437,6 +8440,8 @@ sugarcube-2:
       description: |-
         Prints `| - Impatience`
       tags: ["unused", "text"]
+    linkinformation:
+      name: linkinformation
     linkradiogroup:
       name: linkradiogroup
     linterest:
@@ -10399,12 +10404,12 @@ sugarcube-2:
       tags: ["text"]
     optionsadvanced:
       name: optionsadvanced
-    optionsinformation:
-      name: optionsinformation
     optionsExportImport:
       name: optionsExportImport
     optionsgeneral:
       name: optionsgeneral
+    optionsinformation:
+      name: optionsinformation
     optionsperformance:
       name: optionsperformance
     optionstheme:
@@ -10497,19 +10502,22 @@ sugarcube-2:
         - `_underOutfit`:  under clothes are complete outfit
         - `_middleOutfit`: middle clothes are complete outfit
         - `_overOutfit`: over clothes are complete outfit
-
+        >
         - `_underNaked`: under clothes are completely naked
         - `_middleNaked`: middle clothes are completely naked
         - `_overNaked`: over clothes are completely naked
-
-        - `_shirtless`: no upperwear, underwear or chest is exposed
-        - `_bottomExposed`: no lowerwear, underwear or genitals are exposed
-        - `_skirtExposed`: lowerwear, skirt exposes underwear or genitals
+        >
+        - `_skirtExposed`: wearing lowerwear; skirt exposes underwear or genitals
+        - `_bottomExposed`: not wearing lowerwear; underwear or genitals are exposed
+        - `_shirtless`: not wearing upperwear; underwear or chest is exposed
         - `_bottomless`: bottom clothes are completely naked
         - `_topless`: top clothes are completely naked
-        - `_fullyNaked`: all clothes are completely naked
+        - `_fullyNaked`: top and bottom clothes are completely naked
+        >
+        - `_swimwear`: player is wearing swimwear
+        - `_underwear`: player is wearing underwear beneath clothes
 
-        Temporary $worn[slot] variables
+        Temporary $worn[slot] variables (example usage: `<<set _top.integrity to 0>>` to destroy outermost upperwear layer; `<<He>> pulls down your _bottom.name` to displace outermost lowerwear layer)
         - `_top`: first visible piece of upperwear
         - `_topUnder`: first visible piece beneath top
         - `_bottom`: first visible piece of lowerwear
@@ -11128,6 +11136,11 @@ sugarcube-2:
         Prints `boys and girls` unless player has mono-gendered the world
 
         See `<<people>>`
+      tags: ["text"]
+    peopleyv:
+      description: |-
+        Prints `boys and girls` unless player has mono-gendered victims
+
       tags: ["text"]
     peppersprays:
       name: peppersprays
@@ -12740,7 +12753,7 @@ sugarcube-2:
     silver_hunt_action_guard:
       description: |-
         Performs a guard's action during silver hunt
-        
+
         `<<silver_hunt_move_guard guardIndex>>`
         - **guardIndex**: `number` - index of guard to perform action for
       parameters:
@@ -12748,7 +12761,7 @@ sugarcube-2:
     silver_hunt_move_guard:
       description: |-
         Moves guard during silver hunt
-        
+
         `<<silver_hunt_move_guard guardIndex forceMove?>>`
         - **guardIndex**: `number` - index of guard to move
         - **forceMove** _optional_: `bool` - force guard to move even if not a legal move (truthy)
@@ -14707,8 +14720,6 @@ sugarcube-2:
       name: variablesVersionUpdate2
     versioninfo:
       name: versioninfo
-    linkinformation:
-      name: linkinformation
     veteran_guard:
       name: veteran_guard
     victimgirl:
