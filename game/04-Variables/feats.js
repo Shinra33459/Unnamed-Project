@@ -2062,6 +2062,14 @@ setup.feats = {
 		softLockable: true,
 		hint: "Hint: Win against the Ivory Wraith.",
 	},
+	"Demon of Purity": {
+		title: "Demon of Purity",
+		desc: "You fell into the depths of lewdity with your purity intact.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Special"],
+		softLockable: true,
+	},
 };
 
 async function featsMergePre() {
