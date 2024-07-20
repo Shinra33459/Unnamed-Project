@@ -37,6 +37,8 @@ for /L %%i in (0,1,%array_length%) do (
 
 	ren "!newName[%%i]!img" img
 
+	call compile.bat
+
 	cd ./devTools/apkbuilder/
 
 	call build_app_debug.bat
@@ -44,6 +46,8 @@ for /L %%i in (0,1,%array_length%) do (
 	cd ../../
 
 	git reset --hard
+
+	del "Degrees of Lewdity.html"
 )
 
 endlocal
