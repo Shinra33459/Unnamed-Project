@@ -37,6 +37,8 @@ for /L %%i in (0,1,%array_length%) do (
 
 	ren "!newName[%%i]!img" img
 
+	pause
+
 	call compile.bat
 
 	cd ./devTools/apkbuilder/
