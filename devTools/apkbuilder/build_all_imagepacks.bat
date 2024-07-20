@@ -14,7 +14,7 @@ set newName[8]=susato
 set newName[9]=mizz
 set newName[10]=mvcr
 
-set array_length=11
+set array_length=10
 
 cd ../../
 
