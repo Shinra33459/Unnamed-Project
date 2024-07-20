@@ -50,6 +50,8 @@ for /L %%i in (0,1,%array_length%) do (
 	git reset --hard
 
 	del "Degrees of Lewdity.html"
+
+	del ./img1
 )
 
 endlocal
