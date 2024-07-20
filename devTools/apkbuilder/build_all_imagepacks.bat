@@ -16,12 +16,12 @@ set newName[10]=mvcr
 
 set /a index=0
 
-if defined array[%index%] (
+if defined newName[%index%] (
     set /a index+=1
     goto find_length
 )
 
-set /a array_length=index-1
+set /a array_length=index
 
 echo The length of the array is %array_length%
 
