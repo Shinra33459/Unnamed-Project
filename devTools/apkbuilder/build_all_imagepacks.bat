@@ -16,7 +16,7 @@ set array_length=11
 
 cd ../../
 
-for /L %%i in (0,1,%array_length%) do (
+@REM for /L %%i in (0,1,%array_length%) do (
 	powershell -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
 
 	powershell -Command "(Get-Content -Path '.\devTools\androidsdk\image\cordova\config.xml') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
@@ -44,4 +44,4 @@ for /L %%i in (0,1,%array_length%) do (
 	git reset --hard
 
 	pause
-)
+@REM )
