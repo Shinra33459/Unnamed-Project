@@ -1,18 +1,18 @@
 set /p version=Enter the version number:
 
 set newName[0]=vanilla
-@REM set newName[1]=beeesss
-@REM set newName[2]=beeessshikarifemale
-@REM set newName[3]=beeessshikarimale
-@REM set newName[4]=beeesssparilhairstyleextended
-@REM set newName[5]=beeessswax
-@REM set newName[6]=beeesssokbd
-@REM set newName[7]=lllysmasc
-@REM set newName[8]=susato
-@REM set newName[9]=mizz
-@REM set newName[10]=mvcr
+set newName[1]=beeesss
+set newName[2]=beeessshikarifemale
+set newName[3]=beeessshikarimale
+set newName[4]=beeesssparilhairstyleextended
+set newName[5]=beeessswax
+set newName[6]=beeesssokbd
+set newName[7]=lllysmasc
+set newName[8]=susato
+set newName[9]=mizz
+set newName[10]=mvcr
 
-set array_length=1
+set array_length=11
 
 cd ../../
 
