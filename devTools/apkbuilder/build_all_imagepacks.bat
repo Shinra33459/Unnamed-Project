@@ -42,4 +42,6 @@ for /L %%i in (0,1,%array_length%) do (
 	cd ../../
 
 	git reset --hard
+
+	pause
 )
