@@ -1,3 +1,5 @@
+setlocal enabledelayedexpansion
+
 set /p version=Enter the version number:
 
 set newName[0]=vanilla
@@ -12,7 +14,16 @@ set newName[8]=susato
 set newName[9]=mizz
 set newName[10]=mvcr
 
-set array_length=11
+set /a index=0
+
+if defined array[%index%] (
+    set /a index+=1
+    goto find_length
+)
+
+set /a array_length=index-1
+
+echo The length of the array is %array_length%
 
 cd ../../
 
@@ -45,3 +56,5 @@ cd ../../
 
 	pause
 @REM )
+
+endlocal
