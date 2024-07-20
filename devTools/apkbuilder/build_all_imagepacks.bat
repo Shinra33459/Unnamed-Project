@@ -17,40 +17,19 @@ set array_length=11
 cd ../../
 
 for /L %%i in (0,1,%array_length%) do (
-	for /r .\version %%f in (*) do (
-		powershell -Command "(Get-Content -Path '%%f') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '%%f'"
-		echo Processed file: %%f
-	)
+	powershell -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
 
-	for /r .\devTools\androidsdk\image\cordova\config.xml %%f in (*) do (
-		powershell -Command "(Get-Content -Path '%%f') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '%%f'"
-		echo Processed file: %%f
-	)
+	powershell -Command "(Get-Content -Path '.\devTools\androidsdk\image\cordova\config.xml') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
 
-	for /r .\devTools\apkbuilder\config.xml %%f in (*) do (
-		powershell -Command "(Get-Content -Path '%%f') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '%%f'"
-		echo Processed file: %%f
-	)
+	powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\config.xml') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
 
-	for /r .\devTools\apkbuilder\platforms\android\app\src\main\AndroidManifest.xml %%f in (*) do (
-		powershell -Command "(Get-Content -Path '%%f') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '%%f'"
-		echo Processed file: %%f
-	)
+	powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\AndroidManifest.xml') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
 
-	for /r .\devTools\apkbuilder\platforms\android\app\src\main\assets\www\index.html %%f in (*) do (
-		powershell -Command "(Get-Content -Path '%%f') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '%%f'"
-		echo Processed file: %%f
-	)
+	powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\assets\www\index.html') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
 
-	for /r .\devTools\apkbuilder\platforms\android\app\src\main\res\xml\config.xml %%f in (*) do (
-		powershell -Command "(Get-Content -Path '%%f') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '%%f'"
-		echo Processed file: %%f
-	)
+	powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\res\xml\config.xml') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
 
-	for /r .\game\01-config\sugarcubeConfig.js %%f in (*) do (
-		powershell -Command "(Get-Content -Path '%%f') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '%%f'"
-		echo Processed file: %%f
-	)
+	powershell -Command "(Get-Content -Path '.\game\01-config\sugarcubeConfig.js') -replace 'DoLP version', 'DoLP v0.%version% !newName[%%i]!' | Set-Content -Path '.\version'"
 
 	ren img img1
 
