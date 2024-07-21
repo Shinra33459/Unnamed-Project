@@ -381,6 +381,11 @@ Renderer.CanvasModels["main"] = {
 			"fox_tail_layer": "front",
 			"fox_ears_type": "disabled",
 			"fox_cheeks_type": "disabled",
+			"bear_plumage_type": "disabled",
+			"bear_pubes_type": "disabled",
+			"bear_tail_type": "disabled",
+			"bear_tail_layer": "front",
+			"bear_ears_type": "disabled",
 			// body writings
 			"writing_forehead": "",
 			"writing_left_cheek": "",
@@ -2429,6 +2434,75 @@ Renderer.CanvasModels["main"] = {
 			z: ZIndices.lower,
 			animation: "idle"
 		},
+		/***
+		Bear
+		*/
+		"bear_ears": {
+			srcfn(options) {
+				return `img/transformations/bear/ears/${options.bear_ears_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bear_ears_type) && !options.hideAll;
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
+			filters: ["hair"],
+			zfn(options) {
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
+			},
+			animation: "idle"
+		},
+		"bear_tail": {
+			srcfn(options) {
+				return `img/transformations/bear/tail/${options.bear_tail_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bear_tail_type) && !options.hideAll;
+			},
+			filters: ["hair"],
+			zfn(options) {
+				if (options.bear_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
+			animation: "idle"
+		},	
+		"bear_plumage": {
+			srcfn(options) {
+				return `img/transformations/bear/plumage/${options.bear_plumage_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bear_plumage_type) && !options.hideAll;
+			},
+			filters: ["hair"],
+			z: ZIndices.lower,
+			animation: "idle"
+		},
+		"bear_pubes": {
+			srcfn(options) {
+				return `img/transformations/bear/pubes/${options.bear_pubes_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf
+				&& isPartEnabled(options.bear_pubes_type)
+				&& !options.belly_hides_under_lower
+				&& !options.hideAll;
+			},
+			filters: ["hair"],
+			z: ZIndices.hirsute,
+			animation: "idle"
+		},
+
+
+
+
 
 
 		/***

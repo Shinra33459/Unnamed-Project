@@ -1641,6 +1641,8 @@ function getHalloweenCostume() {
 		return "harpy TF";
 	} else if (T.tf.foxEars && T.tf.foxTail) {
 		return "fox TF";
+	} else if (T.tf.bearEars && T.tf.BearTail) {
+		return "bear TF";
 
 		/* Misc outcomes */
 	} else if (
