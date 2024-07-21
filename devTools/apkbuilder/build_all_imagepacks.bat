@@ -27,7 +27,6 @@ set imagepack[9]=mizz
 set imagepack[10]=mvcr
 
 set array_length=10
-set i=0
 
 cd ../../
 
