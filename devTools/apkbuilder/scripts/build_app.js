@@ -40,13 +40,7 @@
 			const javaDir = "platforms/android/app/src/main/java/";
 			const prevDir = path.resolve(javaDir, prevName.split(".").join("/"));
 			const targetDir = path.resolve(javaDir, targetName.split(".").join("/"))
-			// fs.moveSync(prevDir, targetDir);
-			if (fs.existsSync(targetDir)) {
-				fs.copySync(prevDir, targetDir, { overwrite: true }); // Merge directories
-				fs.removeSync(prevDir); // Remove the old directory after copying
-			} else {
-				fs.moveSync(prevDir, targetDir);
-			}
+			fs.moveSync(prevDir, targetDir, { overwrite: true });
 			const mainActivity = path.resolve(targetDir, "MainActivity.java");
 			fs.writeFileSync(mainActivity, fs.readFileSync(mainActivity).toString().replace(prevName, targetName));
 		}
