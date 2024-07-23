@@ -70,6 +70,8 @@ for /L %%i in (0,1,%array_length%) do (
 	cd ./dist/
 
 	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.1.3 DoLP v0.%version% !imagepack[%%i]!-debug.apk" "0.5.1.3 DoLP v0.%version% !imagepack[%%i]!-debug.apk"
+
+	cd ../
 )
 
 endlocal
