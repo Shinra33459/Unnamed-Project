@@ -531,6 +531,49 @@ build_upload_MVCR_job:
     only:
         - master
 
+build_upload_kitmint_job:
+    stage: compilation
+    variables:
+        GIT_STRATEGY: fetch
+    dependencies:
+        - init
+    script:
+        # - cd ./repo/
+        # - git fetch origin master
+        # - git reset --hard origin/master
+        - echo "Building DoLP kitmint v0.$CI_PIPELINE_IID"
+        # - find . -type f -exec sed -i "s/dolp_debug/dolp_kitmint_debug/g" {} +
+        - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/platforms/android/app/src/main/AndroidManifest.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/platforms/android/app/src/main/assets/www/index.html -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/platforms/android/app/src/main/res/xml/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - version=$(cat version)
+        - mkdir -p DoLP_kitmint/img/
+        - cp ./kitmintimg/style.css ./
+        - sh ./compile.sh
+        - cp "Degrees of Lewdity.html" ./DoLP_kitmint/
+        - cp -r -f ./kitmintimg/* ./DoLP_kitmint/img/
+        # - sh ./devTools/apkbuilder/setup_deps.sh
+        # - sh ./devTools/apkbuilder/build_app_debug.sh
+        # - cp ./dist/Degrees-of-Lewdity-Plus-$version-debug.apk ./
+        - echo "Finished Building kitmint v0.$CI_PIPELINE_IID"
+        - echo "Uploading DoLP kitmint v0.$CI_PIPELINE_IID"
+        - zip -r ./DoLP_kitmint_v0.$CI_PIPELINE_IID.zip ./DoLP_kitmint/ 1>NUL
+        - 'curl 
+            --header "JOB-TOKEN: $CI_JOB_TOKEN"
+            --upload-file ./DoLP_kitmint_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.zip"'
+        # - 'curl 
+        #     --header "JOB-TOKEN: $CI_JOB_TOKEN"
+        #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
+        #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.apk"'
+        - echo "Finished Uploading DoLP kitmint v0.$CI_PIPELINE_IID"
+    only:
+        - master
+
 build_upload_modloader_job:
     stage: compilation
     variables:
@@ -583,6 +626,7 @@ release_job:
         - job: build_upload_susato_job
         - job: build_upload_mizz_job
         - job: build_upload_MVCR_job
+        - job: build_upload_kitmint_job
         - job: build_upload_modloader_job
           artifacts: true
     rules:
@@ -643,6 +687,10 @@ release_job:
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_MVCR_v0.$CI_PIPELINE_IID.zip"
                 # - name: 'DoLP_MVCR_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_MVCR_v0.$CI_PIPELINE_IID.apk"
+                - name: 'DoLP_kitmint'
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.zip"
+                # - name: 'DoLP_kitmint_APK'
+                #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_Modloader'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_Modloader_v0.$CI_PIPELINE_IID.zip"
     after_script:
