@@ -606,20 +606,6 @@ statDisplay.create("ghousekeeping", (amount, silent = false) => {
 statDisplay.create("gghousekeeping", amount => statDisplay.statChange("Housekeeping", 2, "green", () => amount === undefined || V.housekeeping < amount));
 statDisplay.create("ggghousekeeping", amount => statDisplay.statChange("Housekeeping", 3, "green", () => amount === undefined || V.housekeeping < amount));
 
-statDisplay.create("gfishing", (amount, silent = false) => {
-	if (V.statsdisable === "t") return "";
-	if (amount === undefined || V.fishing < amount) {
-		return statDisplay.statChange("fishing", 1, "green");
-	} else if (silent === "silent") {
-		return "";
-	} else if (V.fishing >= amount) {
-		return " You're too skilled for this to improve your fishing.";
-	}
-	return "";
-});
-statDisplay.create("ggfishing", amount => statDisplay.statChange("Fishing", 2, "green", () => amount === undefined || V.fishing < amount));
-statDisplay.create("gggfishing", amount => statDisplay.statChange("Fishing", 3, "green", () => amount === undefined || V.fishing < amount));
-
 statDisplay.create("ldom", npc => {
 	let targetName = "";
 	if ((V.npc.includes("Robin") && !npc) || npc === "Robin") {

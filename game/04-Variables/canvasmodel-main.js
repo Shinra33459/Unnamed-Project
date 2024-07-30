@@ -911,6 +911,15 @@ Renderer.CanvasModels["main"] = {
 		} else {
 			options.handheld_position = null;
 		}
+		if (
+			options.worn_handheld_setup.name != "honey pouch"
+				&& options.worn_handheld_setup.name != "naked"
+				&& options.arm_right === "hold"
+		) {
+			options.handheld_position = true;
+		} else {
+			options.handheld_position = null;
+		}
 
 		options.genitals_chastity = options.worn_genitals_setup.type.includes("chastity");
 

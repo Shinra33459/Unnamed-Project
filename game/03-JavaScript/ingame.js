@@ -1157,7 +1157,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 	if (
 		// prettier-ignore
 		[
-			"skulduggery", "physique", "danceskill", "swimmingskill", "athletics", "willpower", "tending", "science", "maths", "english", "history", "housekeeping", "fishing"
+			"skulduggery", "physique", "danceskill", "swimmingskill", "athletics", "willpower", "tending", "science", "maths", "english", "history", "housekeeping"
 		].includes(skill) &&
 		V.moorLuck > 0
 	) {

@@ -1195,7 +1195,6 @@ function settingsObjects(type) {
 					athletics: { min: 1, max: 2, decimals: 0, displayName: "Tempered Athletics:" },
 					tending: { min: 1, max: 2, decimals: 0, displayName: "Tempered Tending:" },
 					housekeeping: { min: 1, max: 2, decimals: 0, displayName: "Tempered Housekeeping:" },
-					fishing: { min: 1, max: 2, decimals: 0, displayName: "Tempered Fishing:" },
 					brawling: { min: 1, max: 2, decimals: 0, displayName: "Tempered Brawling:" },
 					science: { min: 1, max: 2, decimals: 0, displayName: "Tempered Science:" },
 					maths: { min: 1, max: 2, decimals: 0, displayName: "Tempered Maths:" },
