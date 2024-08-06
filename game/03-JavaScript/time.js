@@ -985,7 +985,17 @@ function minutePassed(minutes) {
 	if (V.drunk > 0) statChange.alcohol(-minutes);
 	if (V.hallucinogen > 0) statChange.hallucinogen(-minutes);
 	if (V.drugged > 0) statChange.drugs(-minutes);
-	if (minutes < 1200) statChange.tiredness((minutes * (V.drunk > 0 ? 2 : 1)) / 15);
+	if (minutes < 1200) {
+		if (V.substanceRebalance == 1) {
+			if (V.drunk >= 120 && V.substanceRebalance == 1) {
+				statChange.tiredness(2 * (1 - (0.1 * (1 + Math.round(V.drunk / 120)))));
+			} else if (V.drunk >= 1 && V.substanceRebalance == 1) {
+				statChange.tiredness(2 * 0.95);
+			}
+		} else {
+			statChange.tiredness((minutes * (V.drunk > 0 ? 2 : 1)) / 15);
+		}
+	}
 	statChange.pain(minutes, -1);
 
 	// Arousal

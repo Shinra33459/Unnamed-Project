@@ -1194,6 +1194,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.worn.hands.type.includes("sticky_fingers")) result = Math.floor(result * 1.05);
 			if (V.transformationParts.traits.sharpEyes !== "disabled") result = Math.floor(result * 1.05);
 			if (V.fox >= 6) result = Math.floor(result * 1.1);
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "physique":
 			if (["forest", "moor", "farm"].includes(V.location)) {
@@ -1203,6 +1206,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				if (V.worn.feet.type.includes("rugged")) {
 					result = Math.floor(result * (1 + currentSkillValue("feetskill", disableModifiers + 1) / 10000));
 				}
+			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			break;
 		case "danceskill":
@@ -1216,6 +1222,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
+			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			break;
 		case "swimmingskill":
@@ -1237,6 +1246,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "athletics":
 			if (["forest", "moor", "farm"].includes(V.location)) {
@@ -1248,6 +1260,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				}
 			}
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "willpower":
 			if (numberOfEarSlime() >= 2 && V.earSlime.growth > 50) {
@@ -1255,10 +1270,16 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			} else if (numberOfEarSlime() >= 2) {
 				result = Math.floor(result * 0.9);
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "tending":
 			if (V.backgroundTraits.includes("plantlover")) {
 				result = Math.floor(result * (1 + V.trauma / (V.traumamax * 2)));
+			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			break;
 		case "housekeeping":
@@ -1274,6 +1295,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.worn.handheld.type.includes("maid")) {
 				result = Math.floor(result * 1.05);
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "vaginalskill":
 			if (V.earSlime.growth > 100) {
@@ -1285,6 +1309,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (playerHeatMinArousal()) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
+			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			break;
 		case "penileskill":
@@ -1298,6 +1325,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (playerRutMinArousal()) {
 				result = Math.floor(result * (1 + Math.clamp(playerRutMinArousal(), 0, 4000) / 20000));
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "analskill":
 			if (V.earSlime.growth > 100 && !V.player.vaginaExist && V.earSlime.focus === "pregnancy") {
@@ -1306,12 +1336,23 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (playerHeatMinArousal() && canBeMPregnant()) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "seductionskill":
 			if (V.earSlime.growth > 50 && !V.earSlime.defyCooldown) {
 				result = Math.floor(result * (1 + (V.earSlime.growth - 50) / 600));
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
+	}
+	if (V.drunk >= 120 && V.substanceRebalance == 1) {
+		result = Math.round(result * (1 - (0.1 * Math.round(V.drunk / 120))));
+	} else if (V.drunk >= 1 && V.substanceRebalance == 1) {
+		result = Math.round(result * 0.95);
 	}
 	return result;
 }
