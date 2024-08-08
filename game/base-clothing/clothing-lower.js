@@ -180,7 +180,7 @@ function initLower() {
 			vagina_exposed_base: 0,
 			anus_exposed: 0,
 			anus_exposed_base: 0,
-			type: ["normal"],
+			type: ["normal", "anti-transparent"],
 			set: "lower",
 			gender: "n",
 			warmth: 2,

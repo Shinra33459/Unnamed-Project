@@ -1519,6 +1519,11 @@ function waterproofCheck(clothing) {
 }
 window.waterproofCheck = waterproofCheck;
 
+function antitransparentCheck(clothing) {
+	return clothing.type.includesAny("anti-transparent");
+}
+window.antitransparentCheck = antitransparentCheck;
+
 function isLoveInterest(name) {
 	for (const l in V.loveInterest) if (V.loveInterest[l] === name) return true;
 	return false;
