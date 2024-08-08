@@ -1520,7 +1520,7 @@ function waterproofCheck(clothing) {
 window.waterproofCheck = waterproofCheck;
 
 function antitransparentCheck(clothing) {
-	return clothing.type.includesAny("anti-transparent");
+	return clothing.type.includesAny("antitransparent");
 }
 window.antitransparentCheck = antitransparentCheck;
 
