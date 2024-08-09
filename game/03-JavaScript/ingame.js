@@ -1210,7 +1210,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
-			if (V.TfBearphysique == 1 && V.dolptfbuffs == 1) {
+			if (V.TFBearPhysique == 1 && V.dolptfbuffs == 1) {
 				result = Math.round(result * 1.25);
 			}
 			break;
