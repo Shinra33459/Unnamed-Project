@@ -1210,8 +1210,10 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
-			if (V.TFBearPhysique == 1 && V.dolptfbuffs == 1) {
-				result = Math.round(result * 1.25);
+			if (V.DoLPTFBuffs == 1) {
+				if (V.TFBearBuffs == 1) {
+					result = Math.round(result * 1.5);
+				}
 			}
 			break;
 		case "danceskill":
@@ -1228,6 +1230,11 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.DoLPTFBuffs == 1) {
+				if (V.TFBearBuffs == 1) {
+					result = Math.round(result * 0.75);
+				}
 			}
 			break;
 		case "swimmingskill":
