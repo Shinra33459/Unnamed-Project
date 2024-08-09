@@ -237,7 +237,7 @@ const statChange = (() => {
 				} else {
 					if (V.substanceRebalance == 1) {
 						let drunkMod = Math.floor(V.drunk / 120);
-						stressMod = Math.clamp(1 - (0.15 * (1 + drunkMod)), 0);
+						stressMod = Math.max(1 - (0.15 * (1 + drunkMod)), 0);
 					} else {
 						let drunkMod = Math.clamp(Math.floor(V.drunk / 120), 0, 4);
 						stressMod = 30 - drunkMod * 5;
