@@ -36,6 +36,8 @@ cd ./dist/
 
 del *.apk
 
+cd ../
+
 for /L %%i in (0,1,%array_length%) do (
 	powershell -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\version'"
 
