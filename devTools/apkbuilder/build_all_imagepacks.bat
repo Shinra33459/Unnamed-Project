@@ -32,6 +32,10 @@ set array_length=11
 
 cd ../../
 
+cd ./dist/
+
+del *.apk
+
 for /L %%i in (0,1,%array_length%) do (
 	powershell -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\version'"
 
@@ -66,6 +70,10 @@ for /L %%i in (0,1,%array_length%) do (
 	call build_app_debug.bat
 
 	cd ../../
+
+	ren img "!target[%%i]!img"
+	
+	ren img1 img
 
 	git reset --hard
 
