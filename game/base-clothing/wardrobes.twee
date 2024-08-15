@@ -852,16 +852,19 @@
 <<widget "repairClothing">>
 	<div class="repairClothing">
 		<<if _wornItem.integrity lt _wornItemData.integrity_max>>
-			<<set _timeString to getTimeString(60 - (5 * Math.round($housekeeping / 200)))>>
-			<<link [["Repair your _wornItem.name (_timeString)"|$passage]]>>
-				<<set $tmp1 to $worn[_wardrobe_list].integrity>>
-				<<set $tmp2 to Math.round(setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max / 5)>>
-				<<set $worn[_wardrobe_list].integrity to Math.min($worn[_wardrobe_list].integrity + Math.round(setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max / 5), setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max)>>
-				<<set _gain to Math.max(6 - (2 * Math.round($housekeeping / 200)), 2)>>
-				<<housekeeping _gain 1000>>
-				<<updatesidebarimg>>
-				<<run Links.generateLinkNumbers($(".passage"))>>
-			<</link>><<ghousekeeping 1000>>
+			<<if $DoLPSpools gte 1>>
+				<<set _timeString to getTimeString(10 - (1 * Math.round($housekeeping / 250)))>>
+				<<link [["Repair your _wornItem.name (_timeString)"|$passage]]>>
+					<<set $worn[_wardrobe_list].integrity to Math.min($worn[_wardrobe_list].integrity + Math.round(setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max / 4), setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max)>>
+					<<set _gain to Math.max(6 - (2 * Math.round($housekeeping / 200)), 2)>>
+					<<housekeeping _gain 1000>>
+					<<updatesidebarimg>>
+					<<set $DoLPSpools -= 1>>
+					<<run Links.generateLinkNumbers($(".passage"))>>
+				<</link>><<ghousekeeping 1000>>
+			<<else>>
+				You don't have any spools to repair your _wornItem.name with.
+			<</if>>
 		<</if>>
 	</div>
 <</widget>>
@@ -967,6 +970,10 @@
 				<<set _temp_choice to $worn[_wardrobe_list]>>
 				<<shoptraits>>
 			</div>
+			<<if $DoLPSpools isnot undefined>>
+				<<shopicon "tailor">> You have <span class="green">$DoLPSpools</span> spools.
+				<div class="no-numberify"><<repairClothing>></div>
+			<</if>>
 
 			<<if isConnectedToHood(_wardrobe_list)>>
 				<!-- If selected item is a hood or selected item has a secondary hood piece -->
@@ -987,7 +994,6 @@
 			<<if _wardrobe_list is "face">>
 				<div class="no-numberify toggleAltLink"><<toggleFaceLayer "wardrobe">></div>
 			<</if>>
-			<div class="no-numberify"><<repairClothing>></div>
 		<</if>>
 		<br>
 		<<if $worn[_wardrobe_list].name isnot "naked">>
