@@ -608,13 +608,13 @@
 	<<set $_item to _args[0]>>
 	<<set $_integrityMax to clothingData(_args[1],$_item,'integrity_max')>>
 	<<if $_item.integrity gt ($_integrityMax * 9 / 10)>>
-		<<set $_output to "">>
+		<<set $_output to "($_item.integrity/$_integrityMax)">>
 	<<elseif $_item.integrity gt ($_integrityMax * 5 / 10)>>
-		<<set $_output to "<span>(frayed)</span>">>
+		<<set $_output to "<span>(frayed) ($_item.integrity/$_integrityMax)</span>">>
 	<<elseif $_item.integrity gt ($_integrityMax * 2 / 10)>>
-		<<set $_output to "<span>(torn)</span>">>
+		<<set $_output to "<span>(torn) ($_item.integrity/$_integrityMax)</span>">>
 	<<else>>
-		<<set $_output to "<span>(tattered)</span>">>
+		<<set $_output to "<span>(tattered) ($_item.integrity/$_integrityMax)</span>">>
 	<</if>>
 <</silently>><<print $_output>><</widget>>
 
@@ -855,7 +855,7 @@
 			<<if $DoLPSpools gte 1>>
 				<<set _timeString to getTimeString(10 - (1 * Math.round($housekeeping / 250)))>>
 				<<link [["Repair your _wornItem.name (_timeString)"|$passage]]>>
-					<<set $worn[_wardrobe_list].integrity to Math.min($worn[_wardrobe_list].integrity + Math.round(setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max / 4), setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max)>>
+					<<set $worn[_wardrobe_list].integrity to Math.min($worn[_wardrobe_list].integrity + 25, setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max)>>
 					<<set _gain to Math.max(6 - (2 * Math.round($housekeeping / 200)), 2)>>
 					<<housekeeping _gain 1000>>
 					<<updatesidebarimg>>
