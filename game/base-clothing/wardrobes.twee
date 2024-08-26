@@ -853,13 +853,15 @@
 	<div class="repairClothing">
 		<<if _wornItem.integrity lt _wornItemData.integrity_max>>
 			<<if $DoLPSpools gte 1>>
-				<<set _timeString to getTimeString(10 - (1 * Math.round($housekeeping / 250)))>>
+				<<set _timeNeeded to 10 - (1 * Math.round($housekeeping / 250))>>
+				<<set _timeString to getTimeString(_timeNeeded)>>
 				<<link [["Repair your _wornItem.name (_timeString)"|$passage]]>>
 					<<set $worn[_wardrobe_list].integrity to Math.min($worn[_wardrobe_list].integrity + 25, setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max)>>
 					<<set _gain to Math.max(6 - (2 * Math.round($housekeeping / 200)), 2)>>
 					<<housekeeping _gain 1000>>
 					<<updatesidebarimg>>
 					<<set $DoLPSpools -= 1>>
+					<<pass _timeNeeded>>
 					<<run Links.generateLinkNumbers($(".passage"))>>
 				<</link>><<ghousekeeping 1000>>
 			<<else>>
