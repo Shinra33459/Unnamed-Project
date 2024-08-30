@@ -3502,7 +3502,7 @@ function initUpper() {
 			colour_sidebar: 1,
 			exposed: 0,
 			exposed_base: 0,
-			type: ["normal", "antitransparent", "antitransparent"],
+			type: ["normal", "antitransparent"],
 			set: "upper",
 			gender: "n",
 			femininity: 0,
