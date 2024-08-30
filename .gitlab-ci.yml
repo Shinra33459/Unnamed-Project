@@ -411,6 +411,72 @@ build_upload_kitmint_job:
     only:
         - master
 
+build_upload_beeesss+mysterious_job:
+    stage: compilation
+    script:
+        - echo "Building DoLP beeesss+mysterious v0.$CI_PIPELINE_IID"
+        # - find . -type f -exec sed -i "s/dolp_debug/dolp_beeesss+mysterious_debug/g" {} +
+        - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - version=$(cat version)
+        - mkdir -p DoLP_beeesss+mysterious/img/
+        - cp ./beeesss+mysteriousimg/style.css ./
+        - sh ./compile.sh
+        - cp "Degrees of Lewdity.html" ./DoLP_beeesss+mysterious/
+        - cp -r -f ./beeesss+mysteriousimg/* ./DoLP_beeesss+mysterious/img/
+        # - sh ./devTools/apkbuilder/setup_deps.sh
+        # - sh ./devTools/apkbuilder/build_app_debug.sh
+        # - cp ./dist/Degrees-of-Lewdity-Plus-$version-debug.apk ./
+        - echo "Finished Building beeesss+mysterious v0.$CI_PIPELINE_IID"
+        - echo "Uploading DoLP beeesss+mysterious v0.$CI_PIPELINE_IID"
+        - zip -r ./DoLP_beeesss+mysterious_v0.$CI_PIPELINE_IID.zip ./DoLP_beeesss+mysterious/ 1>NUL
+        - 'curl 
+            --header "JOB-TOKEN: $CI_JOB_TOKEN"
+            --upload-file ./DoLP_beeesss+mysterious_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_beeesss+mysterious_v0.$CI_PIPELINE_IID.zip"'
+        # - 'curl 
+        #     --header "JOB-TOKEN: $CI_JOB_TOKEN"
+        #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
+        #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_beeesss+mysterious_v0.$CI_PIPELINE_IID.apk"'
+        - echo "Finished Uploading DoLP beeesss+mysterious v0.$CI_PIPELINE_IID"
+    only:
+        - master
+
+build_upload_hikfem+mysterious_job:
+    stage: compilation
+    script:
+        - echo "Building DoLP hikfem+mysterious v0.$CI_PIPELINE_IID"
+        # - find . -type f -exec sed -i "s/dolp_debug/dolp_hikfem+mysterious_debug/g" {} +
+        - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - version=$(cat version)
+        - mkdir -p DoLP_hikfem+mysterious/img/
+        - cp ./hikfem+mysteriousimg/style.css ./
+        - sh ./compile.sh
+        - cp "Degrees of Lewdity.html" ./DoLP_hikfem+mysterious/
+        - cp -r -f ./hikfem+mysteriousimg/* ./DoLP_hikfem+mysterious/img/
+        # - sh ./devTools/apkbuilder/setup_deps.sh
+        # - sh ./devTools/apkbuilder/build_app_debug.sh
+        # - cp ./dist/Degrees-of-Lewdity-Plus-$version-debug.apk ./
+        - echo "Finished Building hikfem+mysterious v0.$CI_PIPELINE_IID"
+        - echo "Uploading DoLP hikfem+mysterious v0.$CI_PIPELINE_IID"
+        - zip -r ./DoLP_hikfem+mysterious_v0.$CI_PIPELINE_IID.zip ./DoLP_hikfem+mysterious/ 1>NUL
+        - 'curl 
+            --header "JOB-TOKEN: $CI_JOB_TOKEN"
+            --upload-file ./DoLP_hikfem+mysterious_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_hikfem+mysterious_v0.$CI_PIPELINE_IID.zip"'
+        # - 'curl 
+        #     --header "JOB-TOKEN: $CI_JOB_TOKEN"
+        #     --upload-file ./Degrees-of-Lewdity-Plus-$version-debug.apk
+        #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_hikfem+mysterious_v0.$CI_PIPELINE_IID.apk"'
+        - echo "Finished Uploading DoLP hikfem+mysterious v0.$CI_PIPELINE_IID"
+    only:
+        - master
+
 build_upload_modloader_job:
     stage: compilation
     script:
@@ -454,6 +520,8 @@ release_job:
         - job: build_upload_mizz_job
         - job: build_upload_MVCR_job
         - job: build_upload_kitmint_job
+        - job: build_upload_beeesss+mysterious_job
+        - job: build_upload_hikfem+mysterious_job
         - job: build_upload_modloader_job
     rules:
     - if: $CI_COMMIT_TAG
@@ -514,6 +582,14 @@ release_job:
                 # - name: 'DoLP_MVCR_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_MVCR_v0.$CI_PIPELINE_IID.apk"
                 - name: 'DoLP_kitmint'
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.zip"
+                # - name: 'DoLP_kitmint_APK'
+                #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.apk"
+                - name: 'DoLP_beeesss+mysterious'
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.zip"
+                # - name: 'DoLP_kitmint_APK'
+                #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.apk"
+                - name: 'DoLP_hikfem+mysterious'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.zip"
                 # - name: 'DoLP_kitmint_APK'
                 #   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Content/1.0.0/DoLP_kitmint_v0.$CI_PIPELINE_IID.apk"
