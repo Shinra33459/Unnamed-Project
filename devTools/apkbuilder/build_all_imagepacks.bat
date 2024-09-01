@@ -83,6 +83,8 @@ for /L %%i in (0,1,%array_length%) do (
 
 	git reset --hard
 
+	git clean -fdx
+
 	del "Degrees of Lewdity.html"
 
 	rmdir /S /Q "./img1"
