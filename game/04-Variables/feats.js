@@ -1847,6 +1847,17 @@ setup.feats = {
 		softLockable: true,
 		hint: "Hint: Max housekeeping with tempered housekeeping.",
 	},
+	/* fishing release
+	"Master Baiter": {
+		title: "Menace to the Ecosystem",
+		desc: "women want me fish fear me",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max fishing with tempered fishing.",
+	},
+	*/
 	"Smarter than Einstein": {
 		title: "Smarter than Einstein",
 		desc: "You can create E=MC Cubed in your sleep.",
@@ -2286,6 +2297,7 @@ function earnHourlyFeats() {
 	if (V.fallenangel >= 2) earnFeat("Fallen Angel");
 	if (V.demon >= 6) earnFeat("Demon");
 	if (V.cow >= 6) earnFeat("Cattle");
+	if (V.bear >= 6) earnFeat("Bear");
 	if ((V.harpy >= 6  || V.transformationParts.bird.wings == "default")) earnFeat("Harpy");
 	if (V.fox >= 6) earnFeat("Fox");
 
@@ -2398,6 +2410,7 @@ function earnHourlyFeats() {
 	if (V.seductionskill >= 1000) earnFeat("Seductress");
 	if (V.tending >= 1000) earnFeat("Green Fingered");
 	if (V.housekeeping >= 1000) earnFeat("Majordomo");
+	/* fishing release if (V.fishing >= 1000) earnFeat("Profishional");*/
 	if (V.baseAllure >= 7000 && V.outside === 1 && !Time.isBloodMoon()) earnFeat("Alluring");
 	if (V.science >= 1000 && V.maths >= 1000 && V.english >= 1000 && V.history >= 1000) earnFeat("Perfect Record");
 	if (V.earSlime.corruption >= 100) earnFeat("Ear Slime Lover");
@@ -2411,6 +2424,7 @@ function earnHourlyFeats() {
 	if (V.athletics >= 2000) earnFeat("Ludicrous Speed");
 	if (V.tending >= 2000) earnFeat("Grass Toucher");
 	if (V.housekeeping >= 2000) earnFeat("Demolisher of Filth");
+	/*if fishing release (V.fishing >= 2000) earnFeat("Master Baiter");*/
 	if (V.sciencetrait >= 8) earnFeat("Smarter than Einstein");
 	if (V.mathstrait >= 8) earnFeat("Human Calculator");
 	if (V.englishtrait >= 8) earnFeat("Voice of All Things");

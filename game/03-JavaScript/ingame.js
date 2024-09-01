@@ -1210,6 +1210,11 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
+			if (V.DoLPTFBuffs == 1) {
+				if (V.TFBearBuffs == 1) {
+					result = Math.round(result * 1.5);
+				}
+			}
 			break;
 		case "danceskill":
 			if (
@@ -1225,6 +1230,11 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.DoLPTFBuffs == 1) {
+				if (V.TFBearBuffs == 1) {
+					result = Math.round(result * 0.75);
+				}
 			}
 			break;
 		case "swimmingskill":
@@ -1761,6 +1771,8 @@ function getHalloweenCostume() {
 		return "harpy TF";
 	} else if (T.tf.foxEars && T.tf.foxTail) {
 		return "fox TF";
+	} else if (T.tf.bearEars && T.tf.BearTail) {
+		return "bear TF";
 
 		/* Misc outcomes */
 	} else if (

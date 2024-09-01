@@ -880,6 +880,11 @@ Macro.add("canvasModelEditor", {
 						selectOption("fox_tail_layer", ["front", "back"]),
 						selectOption("fox_ears_type", ["disabled", "hidden", "default"]),
 						selectOption("fox_cheeks_type", ["disabled", "hidden", "default"]),
+						selectOption("bear_plumage_type", ["disabled", "hidden", "default"]),
+						selectOption("bear_pubes_type", ["disabled", "hidden", "default"]),
+						selectOption("bear_tail_type", ["disabled", "hidden", "default"]),
+						selectOption("bear_tail_layer", ["front", "back"]),
+						selectOption("bear_ears_type", ["disabled", "hidden", "default"]),
 
 						optionCategory("Body writings"),
 						selectOption("writing_forehead", bodyWritings),
