@@ -2221,7 +2221,37 @@ function initHead() {
 		Clothes that modders add go into this array, this should be empty in the base game at all times.
 		These items should have a `modder` variable with a the modders name in a short string
 	*/
-	setup.moddedClothes.head = [];
+	setup.moddedClothes.head = [
+		{
+			index: 65,
+			name: "honey hair clip",
+			name_cap: "Honey hair clip",
+			variable: "honeyhairclip",
+			integrity: 200,
+			integrity_max: 200,
+			fabric_strength: 30,
+			reveal: 1,
+			word: "a",
+			plural: 0,
+			colour: 0,
+			colour_options: [],
+			colour_sidebar: 0,
+			type: ["costume", "eerie"],
+			gender: "n",
+			femininity: 0,
+			warmth: 0,
+			cost: 6000,
+			description: "It gives off a sweet smell.",
+			shop: ["forest", "clothing"],
+			accessory: 0,
+			accessory_colour: 0,
+			accessory_colour_options: [],
+			back_img: 0,
+			cursed: 0,
+			location: 0,
+			iconFile: "honey_hair_clip.png",
+		},
+	];
 
 	setup.moddedClothes.head.forEach((x, i) => (x.index = setup.clothes.head.length + i));
 	setup.clothes.head.push(...setup.moddedClothes.head);

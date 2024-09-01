@@ -257,6 +257,7 @@ function beastTransform(mother, father) {
 	if (mother === "pc" || father === "pc") {
 		if (V.cat >= 10) return "cat";
 		if (V.cow >= 6) return "cow";
+		if (V.bear >= 6) return "bear";
 		if (V.wolfgirl >= 6) return "wolf";
 		if ((V.harpy >= 6  || V.transformationParts.bird.wings == "default")) return "bird";
 		if (V.fox >= 6) return "fox";
