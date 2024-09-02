@@ -1123,6 +1123,8 @@ function effects() {
 		C.tiredness.max = 2000;
 	}
 
+	if (V.trauma >= (V.traumamax * 0.9)) V.traumatized = true;
+
 	return fragment;
 }
 
