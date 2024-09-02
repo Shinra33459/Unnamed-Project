@@ -661,6 +661,13 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Transformation"],
 	},
+	Bear: {
+		title: "Unadulterated Power",
+		desc: "The apex predator.",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Transformation"],
+	},
 	Angel: {
 		title: "Walk Like an Angel",
 		desc: "Try not to fall.",
