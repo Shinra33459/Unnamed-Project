@@ -1197,6 +1197,23 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
+			if (V.DoLPTFBuffs == 1) {
+				if (V.TFWolfBuffs == 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCatBuffs == 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFCowBuffs == 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBirdBuffs == 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFFoxBuffs == 1) {
+					result = Math.round(result * 1.1);
+				}
+			}
 			break;
 		case "physique":
 			if (["forest", "moor", "farm"].includes(V.location)) {
@@ -1211,6 +1228,12 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.DoLPTFBuffs == 1) {
+				if (V.TFWolfBuffs == 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFCowBuffs == 1) {
+					result = Math.round(result * 1.3);
+				}
 				if (V.TFBearBuffs == 1) {
 					result = Math.round(result * 1.5);
 				}
@@ -1232,8 +1255,23 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.DoLPTFBuffs == 1) {
+				if (V.TFWolfBuffs == 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCatBuffs == 1) {
+					result = Math.round(result * 1.3);
+				}
+				if (V.TFCowBuffs == 1) {
+					result = Math.round(result * 0.9);
+				}
 				if (V.TFBearBuffs == 1) {
-					result = Math.round(result * 0.75);
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFBirdBuffs == 1) {
+					result = Math.round(result * 1.3);
+				}
+				if (V.TFFoxBuffs == 1) {
+					result = Math.round(result * 1.1);
 				}
 			}
 			break;
@@ -1259,6 +1297,15 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 0.8);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 1.3);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 0.8);
+			}
 			break;
 		case "athletics":
 			if (["forest", "moor", "farm"].includes(V.location)) {
@@ -1273,6 +1320,18 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
+			if (V.TFWolfBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
 			break;
 		case "willpower":
 			if (numberOfEarSlime() >= 2 && V.earSlime.growth > 50) {
@@ -1283,6 +1342,18 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
+			if (V.TFWolfBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFFoxBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
 			break;
 		case "tending":
 			if (V.backgroundTraits.includes("plantlover")) {
@@ -1290,6 +1361,15 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
+			if (V.TFCowBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFFoxBuffs == 1) {
+				result = Math.round(result * 0.9);
 			}
 			break;
 		case "housekeeping":
@@ -1307,6 +1387,15 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 0.8);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result *0.9);
 			}
 			break;
 		case "vaginalskill":
@@ -1357,7 +1446,26 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFCowBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFFoxBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
 			break;
+		case "english":
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFFoxBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
 	}
 	if (V.drunk >= 120 && V.substanceRebalance == 1) {
 		result = Math.round(result * (1 - (0.1 * Math.round(V.drunk / 120))));
