@@ -1198,20 +1198,17 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.DoLPTFBuffs == 1) {
-				if (V.TFWolfBuffs == 1) {
-					result = Math.round(result * 1.1);
-				}
 				if (V.TFCatBuffs == 1) {
 					result = Math.round(result * 1.2);
 				}
-				if (V.TFCowBuffs == 1) {
+				if (V.TFBearBuffs == 1) {
 					result = Math.round(result * 0.9);
 				}
 				if (V.TFBirdBuffs == 1) {
 					result = Math.round(result * 1.1);
 				}
 				if (V.TFFoxBuffs == 1) {
-					result = Math.round(result * 1.1);
+					result = Math.round(result * 1.3);
 				}
 			}
 			break;
@@ -1231,11 +1228,20 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				if (V.TFWolfBuffs == 1) {
 					result = Math.round(result * 1.2);
 				}
+				if (V.TFCatBuffs == 1) {
+					result = Math.round(result * 0.8);
+				}
 				if (V.TFCowBuffs == 1) {
-					result = Math.round(result * 1.3);
+					result = Math.round(result * 1.4);
 				}
 				if (V.TFBearBuffs == 1) {
 					result = Math.round(result * 1.5);
+				}
+				if (V.TFBirdBuffs == 1) {
+					result = Math.round(result * 0.7);
+				}
+				if (V.TFFoxBuffs == 1) {
+					result = Math.round(result * 0.9);
 				}
 			}
 			break;
@@ -1259,13 +1265,13 @@ function currentSkillValue(skill, disableModifiers = 0) {
 					result = Math.round(result * 1.1);
 				}
 				if (V.TFCatBuffs == 1) {
-					result = Math.round(result * 1.3);
+					result = Math.round(result * 1.4);
 				}
 				if (V.TFCowBuffs == 1) {
 					result = Math.round(result * 0.9);
 				}
 				if (V.TFBearBuffs == 1) {
-					result = Math.round(result * 0.8);
+					result = Math.round(result * 0.7);
 				}
 				if (V.TFBirdBuffs == 1) {
 					result = Math.round(result * 1.3);
@@ -1306,6 +1312,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.TFBirdBuffs == 1) {
 				result = Math.round(result * 0.8);
 			}
+			if (V.TFFoxBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
 			break;
 		case "athletics":
 			if (["forest", "moor", "farm"].includes(V.location)) {
@@ -1326,10 +1335,16 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.TFCatBuffs == 1) {
 				result = Math.round(result * 1.1);
 			}
+			if (V.TFCowBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
 			if (V.TFBearBuffs == 1) {
 				result = Math.round(result * 1.2);
 			}
 			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFFoxBuffs == 1) {
 				result = Math.round(result * 1.1);
 			}
 			break;
@@ -1345,14 +1360,14 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.TFWolfBuffs == 1) {
 				result = Math.round(result * 1.1);
 			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFCowBuffs == 1) {
+				result = Math.round(result * 0.8);
+			}
 			if (V.TFBearBuffs == 1) {
 				result = Math.round(result * 1.2);
-			}
-			if (V.TFBirdBuffs == 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFFoxBuffs == 1) {
-				result = Math.round(result * 1.1);
 			}
 			break;
 		case "tending":
@@ -1362,14 +1377,8 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
-			if (V.TFCatBuffs == 1) {
-				result = Math.round(result * 0.9);
-			}
 			if (V.TFCowBuffs == 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFFoxBuffs == 1) {
-				result = Math.round(result * 0.9);
+				result = Math.round(result * 1.4);
 			}
 			break;
 		case "housekeeping":
@@ -1388,6 +1397,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
+			if (V.TFWolfBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
 			if (V.TFCatBuffs == 1) {
 				result = Math.round(result * 0.9);
 			}
@@ -1395,7 +1407,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.round(result * 0.8);
 			}
 			if (V.TFBirdBuffs == 1) {
-				result = Math.round(result *0.9);
+				result = Math.round(result * 1.3);
 			}
 			break;
 		case "vaginalskill":
@@ -1452,6 +1464,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.TFCowBuffs == 1) {
 				result = Math.round(result * 1.1);
 			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
 			if (V.TFBirdBuffs == 1) {
 				result = Math.round(result * 1.1);
 			}
@@ -1459,13 +1474,6 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.round(result * 1.2);
 			}
 			break;
-		case "english":
-			if (V.TFBirdBuffs == 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFFoxBuffs == 1) {
-				result = Math.round(result * 1.2);
-			}
 	}
 	if (V.drunk >= 120 && V.substanceRebalance == 1) {
 		result = Math.round(result * (1 - (0.1 * Math.round(V.drunk / 120))));
