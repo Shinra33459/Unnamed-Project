@@ -159,7 +159,7 @@ function tannedCoverage() {
 }
 
 function tanned(amount, flag) {
-	if (amount === 0) return;
+	// if (amount === 0) return;
 	if (V.options.tanningEnabled) {
 		T.coverage = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 		if (flag === "ignoreCoverage") {
