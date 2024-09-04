@@ -1115,13 +1115,7 @@ Renderer.CanvasModels["main"] = {
 		},
 		"breasts": {
 			filters: ["breasts"],
-			// z: ZIndices.breasts,
-			zfn(options) {
-				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && V.passage != "Start")) {
-					return ZIndices.highBreasts;
-				}
-				return ZIndices.breasts;
-			},
+			z: ZIndices.breasts,
 			animation: "idle",
 
 			masksrcfn(options) {
@@ -1152,13 +1146,7 @@ Renderer.CanvasModels["main"] = {
 			},
 		},
 		"nipples_parasite": {
-			// z: ZIndices.breastsparasite + 0.1,
-			zfn(options) {
-				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && V.passage != "Start")) {
-					return ZIndices.breastsparasite + 80.1;
-				}
-				return ZIndices.breastsparasite + 0.1;
-			},
+			z: ZIndices.breastsparasite + 0.1,
 			animation: "idle",
 
 			showfn(options) {
@@ -1177,13 +1165,7 @@ Renderer.CanvasModels["main"] = {
 		},
 		"breasts_parasite": {
 			filters: ["breasts_parasite"],
-			// z: ZIndices.breastsparasite,
-			zfn(options) {
-				if ((V.worn.over_upper.type.includes("naked") && V.worn.upper.type.includes("naked") && V.worn.under_upper.type.includes("naked") && V.passage != "Start")) {
-					return ZIndices.breastsparasite + 80;
-				}
-				return ZIndices.breastsparasite;
-			},
+			z: ZIndices.breastsparasite,
 			animation: "idle",
 			showfn(options) {
 				return !!options.breasts_parasite;
@@ -2931,11 +2913,7 @@ Renderer.CanvasModels["main"] = {
 		 */
 
 		"drip_vaginal": {
-			// z: ZIndices.tears,
-			zfn(options) {
-				if (V.worn.over_lower.type.includes("naked") && V.worn.lower.type.includes("naked") && V.worn.under_lower.type.includes("naked")) return ZIndices.tears + 120;
-				return ZIndices.tears;
-			},
+			z: ZIndices.tears,
 			srcfn(options) {
 				return `img/body/cum/VaginalCumDrip${options.drip_vaginal}.png`;
 			},
@@ -2947,11 +2925,7 @@ Renderer.CanvasModels["main"] = {
 			},
 		},
 		"drip_anal": {
-			// z: ZIndices.tears,
-			zfn(options) {
-				if (!V.worn.over_upper.type.includes("naked") && !V.worn.upper.type.includes("naked") && !V.worn.under_upper.type.includes("naked")) return ZIndices.tears + 120;
-				return ZIndices.tears;
-			},
+			z: ZIndices.tears,
 			srcfn(options) {
 				return `img/body/cum/AnalCumDrip${options.drip_anal}.png`;
 			},
