@@ -420,7 +420,7 @@ function wardrobesUpdate() {
 		V.wardrobes.changingRoom.unlocked = true;
 		/* eden's */
 		V.wardrobes.edensCabin.name = "Eden's Cabin";
-		V.wardrobes.edensCabin.space = 10;
+		V.wardrobes.edensCabin.space = 10 * V.wardrobeMult;
 		if (V.syndromeeden) V.wardrobes.edensCabin.unlocked = true;
 		/* asylum */
 		V.wardrobes.asylum.locationRequirement.push("asylum");
