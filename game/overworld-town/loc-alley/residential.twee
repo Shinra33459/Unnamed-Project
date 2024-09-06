@@ -3,33 +3,33 @@
 <<set $outside to 1>><<set $location to "alley">><<effects>><<set $bus to "residential">><<getTarget true>>
 You are in an alleyway in the residential district.
 <<if Time.dayState is "day">>
-	<<if $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		Many people brave the rain.
-	<<elseif $weather is "snow">>
+	<<elseif Weather.precipitation is "snow">>
 		The snow is covered in footprints.
 	<<else>>
 		There are a lot of people around.
 	<</if>>
 <<elseif Time.dayState is "dusk">>
-	<<if $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		People hurry through the rain.
-	<<elseif $weather is "snow">>
+	<<elseif Weather.isSnow>>
 		Paths have been well-trodden through the snow.
 	<<else>>
 		You hear voices all around.
 	<</if>>
 <<elseif Time.dayState is "night">>
-	<<if $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		Rainwater fills the gutters.
-	<<elseif $weather is "snow">>
+	<<elseif Weather.precipitation is "snow">>
 		Snow covers rooftops.
 	<<else>>
 		You hear a dog barking.
 	<</if>>
 <<elseif Time.dayState is "dawn">>
-	<<if $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		People brave the rain, on their way to work or elsewhere.
-	<<elseif $weather is "snow">>
+	<<elseif Weather.isFreezing>>
 		People brave the cold, on their way to work or elsewhere.
 	<<else>>
 		There are already a lot of pedestrians and cyclists around.
@@ -99,12 +99,12 @@ Your home is nearby.
 		<</if>>
 		<<if Time.dayState isnot "night">>
 			<<if $exposed gte 2>>
-				<<if $exhibitionism gte 75>>
+				<<if hasSexStat("exhibitionism", 5)>>
 					<<connudatusicon>><<link [[Cross Connudatus Street (0:05)|Road Ex]]>><</link>><<if $daily.ex.road is undefined>><<exhibitionist5>><</if>>
 					<br>
 				<</if>>
 			<<elseif $exposed is 1>>
-				<<if $exhibitionism gte 35>>
+				<<if hasSexStat("exhibitionism", 3)>>
 					<<connudatusicon>><<link [[Cross Connudatus Street (0:05)|Road Ex]]>><</link>><<if $daily.ex.road is undefined>><<exhibitionist3>><</if>>
 					<br>
 				<</if>>
@@ -138,9 +138,9 @@ Your home is nearby.
 :: Residential Meow
 
 <<set $outside to 1>><<set $location to "town">><<effects>>
-<<if $weather is "rain">>
+<<if Weather.precipitation is "rain">>
 	You meow into the night, competing with the rain.
-<<elseif $weather is "snow">>
+<<elseif Weather.precipitation is "snow">>
 	You meow into the snowy night.
 <<else>>
 	You meow into the night.
@@ -156,7 +156,7 @@ Your home is nearby.
 	<<if $monster is 1 or $bestialitydisable is "f">>
 		<<link [[Tease|Residential Tease]]>><</link>><<deviant1>>
 		<br>
-		<<if $deviancy gte 75>>
+		<<if hasSexStat("deviancy", 5)>>
 			<<if playerAwareTheyAreInHeat() and $NPCList[0].penis isnot "none" and (($player.vaginaExist and !playerChastity("vagina")) or (canBeMPregnant() and !playerChastity("anus")))>>
 				<<link [[Flirt|Residential Flirt]]>><</link>><<deviant5>><<heat>>
 				<br>
@@ -181,7 +181,7 @@ Your home is nearby.
 	<<if $monster is 1 or $bestialitydisable is "f">><!-- Modified for Monster People -->
 		<<link [[Tease|Residential Big Tease]]>><</link>><<deviant1>>
 		<br>
-		<<if $deviancy gte 75>>
+		<<if hasSexStat("deviancy", 5)>>
 			<<if playerAwareTheyAreInHeat() and $NPCList[0].penis isnot "none" and (($player.vaginaExist and !playerChastity("vagina")) or (canBeMPregnant() and !playerChastity("anus")))>>
 				<<link [[Flirt|Residential Flirt]]>><</link>><<deviant5>><<heat>>
 				<br>
@@ -259,7 +259,7 @@ You drop to the ground and assume a mating posture. The <<beasttype>> steps towa
 <</if>>
 <br><br>
 <!-- Modified for Beast People -->
-<<if $deviancy gte 15>>
+<<if hasSexStat("deviancy", 2)>>
 	<<link [[Seduce|Residential Beast]]>><<set $sexstart to 1>><</link>><<deviant2>>
 	<br>
 <</if>>
@@ -389,15 +389,15 @@ The <<beasttype>> growls, but relents in <<bhis>> attempt to <<if $pregnancyspee
 You are in the thicket in the residential district.
 
 <<if Time.dayState is "night">>
-	<<if $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		Large drops of cold water fall from the canopy.
-	<<elseif $weather is "snow">>
+	<<elseif Weather.isSnow>>
 		The branches bow above, weighed down by snow.
 	<<else>>
 		The branches wave in the cool breeze.
 	<</if>>
 <<else>>
-	<<if $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		The rain is keeping people away.
 	<<elseif Time.season is "autumn">>
 		<<if Time.schoolDay and Time.hour gte 16>>
@@ -409,7 +409,7 @@ You are in the thicket in the residential district.
 		<<else>>
 			You see a squirrel run up a trunk.
 		<</if>>
-	<<elseif $weather is "snow">>
+	<<elseif Weather.isSnow>>
 		<<if Time.schoolDay and Time.hour gte 16>>
 			Students from school are chatting between the trees, nearby several snow angels.
 		<<elseif Time.hour is 12>>
@@ -467,11 +467,12 @@ The tunnel is pitch black, but straight, and you're able to make it to the other
 The lower <<icon "tending/blackberry.png">> blackberries have all been picked. You stand on tip-toe to reach the tops of the bramble bushes.
 <br><br>
 <<if $tendingSuccess>>
+	<<wearProp "blackberry">>
 	<span class="green">You manage to gather a number of juicy-looking specimens.</span>
 	<<tending_pick blackberry 60 180>>
 	<br><br>
 
-	<<link [[Next|Residential Thicket]]>><<set $eventskip to 1>><</link>>
+	<<link [[Next|Residential Thicket]]>><<handheldon>><<set $eventskip to 1>><</link>>
 	<br>
 <<else>>
 	<span class="red">Try as you might, you can't reach,</span> and you don't want to risk grazing yourself on a thorn.<<gtending>><<tending 2>>

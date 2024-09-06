@@ -2,7 +2,7 @@
 <<widget "lakeeffects">>
 	<<if Time.schoolDay>>
 		<<if Time.dayState is "day" or Time.dayState is "dusk">>
-			<<if Time.hour gte 15 and $weather isnot "rain" and $weather isnot "snow">>
+			<<if Time.hour gte 15 and Weather.precipitation is "none">>
 				<<set $laketeenspresent to 1>>
 			<<else>>
 				<<set $laketeenspresent to 0>>
@@ -12,7 +12,7 @@
 		<</if>>
 	<<else>>
 		<<if Time.dayState is "day" or Time.dayState is "dusk">>
-			<<if $weather isnot "rain" and $weather isnot "snow">>
+			<<if Weather.precipitation is "none">>
 				<<set $laketeenspresent to 1>>
 			<<else>>
 				<<set $laketeenspresent to 0>>
@@ -22,7 +22,7 @@
 		<</if>>
 	<</if>>
 
-	<<if $weather isnot "rain" and $weather isnot "snow" and Time.hour gte 18>>
+	<<if Weather.precipitation is "none" and Time.hour gte 18>>
 		<<set $laketeensfire to 1>>
 	<<else>>
 		<<set $laketeensfire to 0>>
@@ -60,8 +60,8 @@
 <</widget>>
 
 <<widget "passoutlake">>
-	<<if isPlayerNonparasitePregnancyEnding()>>
-		<<pregnancyWatersBrokenPassout "lake">>
+	<<if isPregnancyEnding()>>
+		<<pregnancyPassout "lake">>
 	<<else>>
 		You've pushed yourself too much.
 		<br><br>
@@ -69,10 +69,10 @@
 
 		<<set $danger to random(1, 10000)>>
 
-		<<if $exposed gte 1 and $exhibitionism lte 54 and isLoveInterest("Eden") and random(1,2) is 2>>
+		<<if $exposed gte 1 and random(1,2) is 2>>
 			<<link [[Next|Eden Passout Lake Rescue]]>><</link>>
 		<<elseif $danger gte (9900 - $allure)>>
-			<<if $laketeenspresent is 1 and Time.season isnot "winter">>
+			<<if $laketeenspresent is 1 and !Weather.isSnow>>
 				<<link [[Next|Lake Mermaid]]>><</link>>
 				<br>
 			<<else>>
@@ -97,7 +97,7 @@
 	<<bHe>> stands some way apart and watches.
 	<br><br>
 	<!-- Modified for Monster People -->
-	<<if $deviancy gte 15 and ($monster is 1 or $bestialitydisable is "f")>>
+	<<if hasSexStat("deviancy", 2) and ($monster is 1 or $bestialitydisable is "f")>>
 		<<link [[Deal with it|Lake Wolf Sex]]>><<set $sexstart to 1>><</link>><<deviant2>><<gcool>>
 		<br>
 	<</if>>
@@ -136,7 +136,7 @@
 			<br>
 			<<link [[Ignore|Lake Shallows]]>><<endevent>><<set $eventskip to 1>><</link>>
 			<br>
-			<<if $player.gender_appearance is "f" and $exhibitionism gte 35>>
+			<<if $player.gender_appearance is "f" and hasSexStat("exhibitionism", 3)>>
 				<<link [[Flash|Lake Flash]]>><</link>><<exhibitionist3>>
 				<br>
 			<</if>>
@@ -149,14 +149,14 @@
 			<br>
 		<</if>>
 	<<else>>
-		<<if $rng gte 91 and $weather is "rain" and $bestialitydisable is "f" and $voredisable is "f" and $hallucinations gte 2 and $controlled is 0>>
+		<<if $rng gte 91 and Weather.precipitation is "rain" and $bestialitydisable is "f" and $voredisable is "f" and $hallucinations gte 2 and $controlled is 0>>
 		Something large surges through the water beneath you. A gaping maw grips your thighs.
 		<br><br>
 
 		<<link [[Next|Lake Vore]]>><<set $molestationstart to 1>><</link>>
 		<br>
 		<<elseif $rng gte 81 and $swarmdisable is "f">>
-			<<if $slimedisable is "f" and isBloodmoon()>>
+			<<if $slimedisable is "f" and Time.isBloodMoon()>>
 				The water is agitated. Swarms of pale slimes encircle you.
 			<<else>>
 				The water is agitated. Swarms of small fish encircle you.
@@ -166,7 +166,7 @@
 			<<link [[Next|Lake Depths Swarm]]>><<set $molestationstart to 1>><</link>>
 			<br>
 		<<else>>
-			<<if Time.dayState is "night" and $weather is "rain">>
+			<<if Time.dayState is "night" and Weather.precipitation is "rain">>
 			Something brushes your leg and startles you. You look beneath the dark and violent water, but can't see anything. You feel strange.
 			<<garousal>><<arousal 600>><<gstress>><<stress 6>>
 			<br><br>
@@ -221,7 +221,7 @@
 		<<link [[Walk normally|Lake Ice Normal]]>><</link>>
 		<br>
 	<<elseif $rng gte 21>>
-		<<if $weather is "snow">>
+		<<if Weather.precipitation is "snow">>
 			The snow falls heavy, and conceals the trees around the lake.
 			<<if currentSkillValue('history') gte random(1, 1000)>>
 				<span class="green">It soon passes.</span>
@@ -230,9 +230,9 @@
 				Without the trees to orient yourself, <span class="red">you lose your direction,</span> though the heavy snow soon passes.<<gstress 6>>
 				<br><br>
 			<</if>>
-		<<elseif $weather is "clear">>
+		<<elseif Weather.is("clear")>>
 			<<if Time.dayState is "night">>
-				<<if isBloodmoon()>>
+				<<if Time.isBloodMoon()>>
 					The red moon reflects off the ice. Dread stabs at you.<<gtrauma>><<gstress>><<trauma 6>><<stress 6>>
 					<br><br>
 				<<else>>
@@ -280,7 +280,7 @@
 	<<elseif $rng gte 81>>
 		<!-- Modified for Monster People -->
 		<<beastNEWinit 1 boar>>
-		You see a <<beasttype>> rifling through litter at the base of a tree. It spots you.
+		You see a <<beasttype>> rifling through litter at the base of a tree. <<bHe>> spots you.
 		<br><br>
 		<<if $monster is 1 or $bestialitydisable is "f">>
 			<<link [[Stand your ground|Lake Boar Stand]]>><</link>>
@@ -571,7 +571,6 @@
 		//Swimming sets://
 		<br>
 		<<listswimoutfits $wardrobe_location _store_location true>>
-		<<temperature>>
 		<br>
 		<<unset $wearoutfittext>>
 	<</if>>
@@ -605,7 +604,7 @@
 	At <<his>> side, a <<person2>><<person>> is deep in a phone call. <<He>> mentions a Halloween party.
 	<br><br>
 
-	<<link [[Inquire|Lake Halloween Invite Inquire]]>><</link>>
+	<<link [[Enquire|Lake Halloween Invite Inquire]]>><</link>>
 	<br>
 	<<link [[Ignore|Lake Halloween Invite Ignore]]>><</link>>
 	<br>

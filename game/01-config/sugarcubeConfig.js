@@ -1,20 +1,24 @@
 /* eslint-disable prefer-const */
 Config.history.controls = false;
 Config.saves.slots = 9;
-Config.history.maxStates = 1;
+Config.history.maxStates = 5;
 
 /* LinkNumberify and images will enable or disable the feature completely */
 /* debug will enable or disable the feature only for new games */
 /* sneaky will enable the Sneaky notice banner on the opening screen and save display */
 /* versionName will be displayed in the top right of the screen, leave as "" to not display anything */
-window.StartConfig = {
+const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.4.5.3",
-	versionName: "",
+	version: "0.5.2.3",
+	versionName: `"Head in the Clouds" edition`,
 	sneaky: false,
+	socialMediaEnabled: true,
+	sourceLinkEnabled: false,
 };
+window.StartConfig = StartConfig;
+
 window.StartConfig.version += ".h"; //stands for Herm, don't change
 window.StartConfig.version += "0"; //how many times I've released a build of this mod for this version
 
@@ -28,25 +32,13 @@ let pageLoading = false;
 Config.saves.isAllowed = () => {
 	if (tags().includes("nosave") || V.replayScene) return false;
 	return true;
-}
+};
 
-idb.footerHTML = `
-	<div class="savesListRow">
-		<div class="saveGroup">
-			<span style="margin: 0;">
-				Special thanks to all those who <a target="_blank" class="link-external" href="https://subscribestar.adult/vrelnir" tabindex="0">Support Degrees of Lewdity</a>
-			</span>
-			<div class="saveId"></div>
-			<div class="saveButton"></div>
-			<div class="saveName"></div>
-			<div class="saveDetails"></div>
-		</div>
-		<div class="saveButton">
-			<input type="button" class="saveMenuButton right" value="Delete All" onclick="idb.saveList('confirm clear')">
-		</div>
-	</div>`
+idb.footerHTML = `Special thanks to all those who <a target="_blank" class="link-external" href="https://subscribestar.adult/vrelnir" tabindex="0">Support Degrees of Lewdity</a>`;
 
 function onLoad(save) {
+	$.event.trigger(":onloadsave", { save });
+
 	// some flags for version update. ideally, all updating should be done here in onLoad, but we don't live in an ideal world
 	pageLoading = true;
 	window.onLoadUpdateCheck = true;
@@ -57,6 +49,9 @@ function onLoad(save) {
 
 	// decompression should be the FIRST save modification
 	DoLSave.decompressIfNeeded(save);
+
+	// ironman is not currently supported with idb
+	if (save.state.history[save.state.index].variables.ironmanmode) idb.active = false;
 
 	// cache current date before assigning it to every frame in history
 	const date = new Date();
@@ -126,6 +121,10 @@ function onSave(save, details) {
 		State.setSessionState(session);
 	}
 
+	// Save time and weather to localStorage
+	localStorage.setItem("weather", Packer.packWeatherData());
+	localStorage.setItem("time", Time.date.timeStamp.toString(36));
+
 	// * legacy code for old saves system * //
 	if (!(window.idb && window.idb.active)) {
 		// eslint-disable-next-line no-undef
@@ -144,13 +143,6 @@ window.StartConfig.version_numeric = tmpver[0] * 1000000 + tmpver[1] * 10000 + t
 
 Config.saves.autosave = "autosave";
 
-Config.saves.isAllowed = function () {
-	if (tags().includes("nosave")) {
-		return false;
-	}
-	return true;
-};
-
 importStyles("style.css")
 	.then(function () {
 		console.log("External Style Sheet Active");
@@ -166,20 +158,6 @@ l10nStrings.errorTitle = StartConfig.version + " Error";
 // delete parser that adds unneeded line breaks -ng
 Wikifier.Parser.delete("lineBreak");
 Wikifier.Parser.delete("emdash");
-
-/* ToDo: implement the dolls system, uncomment during and when its setup
-importScripts([
-	"img/dolls/NameValueMaps.js",
-	"img/dolls/dollUpdater.js",
-	"img/dolls/dollLoader.js",
-	"img/dolls/DollHouse.js",
-	"img/dolls/FDoll.js",
-]).then(function () {
-	console.log("Dolls scripts running");
-})
-.catch(function (err) {
-	console.log(err);
-}); */
 
 // Runs before a passage load, returning a string redirects to the new passage name.
 Config.navigation.override = function (dest) {
@@ -485,17 +463,174 @@ Config.navigation.override = function (dest) {
 				return "Chalets Work One Sex";
 			case "Chalets Work One Rape Finish":
 				return "Chalets Work One Sex Finish";
-			
+
 			case "Whitney Bully Parasite Event Submit":
 			case "Whitney Bully Parasite Event Escape Attempt":
 				return "Bully Parasite";
-			
+
 			case "Whitney Bully Parasite Event Combat":
 				return "Bully Parasite Fight";
 
 			case "Whitney Bully Parasite Event Combat Loss":
 			case "Whitney Bully Parasite Event Combat Victory":
 				return "Bully Parasite Fight Finish";
+
+			case "Robin Kiyoura Start":
+				return "Canteen Robin Whitney";
+
+			case "Robin Kiyoura canteen oral":
+				return "Canteen Robin Whitney Oral";
+
+			case "Robin Kiyoura canteen oral Finish":
+				return "Canteen Robin Whitney Oral Finish";
+
+			case "Robin Kiyoura Back to Robin":
+				return "Canteen Robin Whitney Talk";
+
+			case "Robin Kiyoura canteen fight":
+				return "Canteen Robin Whitney Fight";
+
+			case "Robin Kiyoura after fight":
+				return "Canteen Robin Whitney Fight 2";
+
+			case "Robin Kiyoura weak":
+				return "Canteen Robin Whitney Trauma";
+
+			case "Robin Kiyoura cuddle":
+			case "Robin Kiyoura Secret":
+			case "Robin Kiyoura Didn't want to":
+			case "Robin Kiyoura Enjoyed it":
+				return "Canteen Robin Whitney End";
+
+			case "Livestock Field Centaur Friendly":
+			case "Livestock Field Centaur Firm":
+			case "Livestock Field Friendly":
+			case "Livestock Field Firm":
+				return "Livestock Field Horse Intro";
+
+			case "Livestock Field Centaur Brush":
+				return "Livestock Field Horse Brush";
+
+			case "Livestock Field Centaur Apples":
+				return "Livestock Field Horse Apples";
+
+			case "Livestock Field Horse Help 2":
+			case "Livestock Field Centaur Help":
+			case "Livestock Field Centaur Help 2":
+				return "Livestock Field Horse Help";
+
+			case "Livestock Field Centaur Female Vagina":
+			case "Livestock Field Centaur Female":
+			case "Livestock Field Centaur Male Vagina":
+			case "Livestock Field Centaur Male":
+			case "Livestock Field Centaur Female Vagina 2":
+			case "Livestock Field Centaur Female 2":
+			case "Livestock Field Centaur Male Vagina 2":
+			case "Livestock Field Centaur Male 2":
+			case "Livestock Field Horse Lewd":
+			case "Livestock Field Horse Lewd Female":
+			case "Livestock Field Horse Lewd 2":
+			case "Livestock Field Horse Lewd Female 2":
+			case "Livestock Field Horse Continue":
+				return "Livestock Field Deviancy";
+
+			case "Livestock Field Centaur Female Vagina 3":
+			case "Livestock Field Centaur Female 3":
+			case "Livestock Field Centaur Male Vagina 3":
+			case "Livestock Field Centaur Male 3":
+			case "Livestock Field Centaur Male Hand":
+			case "Livestock Field Centaur Male Hand Vagina":
+			case "Livestock Field Centaur Female Hand":
+			case "Livestock Field Centaur Female Hand Vagina":
+			case "Livestock Field Horse Lewd 3":
+			case "Livestock Field Horse Lewd Female 3":
+			case "Livestock Field Horse Lewd Hand":
+			case "Livestock Field Horse Lewd Female Hand":
+				return "Livestock Field Deviancy Hand";
+
+			case "Livestock Field Centaur Male Mouth":
+			case "Livestock Field Centaur Male Mouth Vagina":
+			case "Livestock Field Centaur Female Mouth":
+			case "Livestock Field Centaur Female Mouth Vagina":
+			case "Livestock Field Horse Lewd Mouth":
+			case "Livestock Field Horse Lewd Female Mouth":
+				return "Livestock Field Deviancy Mouth";
+
+			case "Livestock Field Centaur Male Seduce":
+			case "Livestock Field Centaur Male Sex":
+			case "Livestock Field Centaur Male Sex Finish":
+			case "Livestock Field Centaur Male Vagina Seduce":
+			case "Livestock Field Centaur Male Vagina Sex":
+			case "Livestock Field Centaur Male Vagina Sex Finish":
+			case "Livestock Field Centaur Female Vagina Seduce":
+			case "Livestock Field Centaur Female Vagina Sex":
+			case "Livestock Field Centaur Female Vagina Sex Finish":
+			case "Livestock Field Centaur Female Seduce ":
+			case "Livestock Field Centaur Female Sex":
+			case "Livestock Field Centaur Female Sex Finish":
+			case "Livestock Field Horse Lewd Seduce":
+			case "Livestock Field Horse Lewd Female Seduce":
+			case "Livestock Field Horse Lewd Sex":
+			case "Livestock Field Horse Lewd Female Sex":
+			case "Livestock Field Horse Lewd Sex Finish":
+			case "Livestock Field Horse Lewd Female Sex Finish":
+				return "Livestock Field Deviancy Sex";
+
+			case "Beach Cave Tentacle Under Top":
+				return "Beach Cave Tentacle Top";
+
+			case "Beach Cave Rope Under Top":
+			case "Beach Cave Rope Over Top":
+				return "Beach Cave Rope Top";
+
+			case "Prison Wren Intro Met":
+				return "Prison Wren Intro";
+
+			case "Museum Box":
+				return "Museum Waterlogged Ivory Box";
+			case "Museum Silver Ring":
+				return "Museum Worn Silver Ring";
+			case "Museum Gold Necklace":
+				return "Museum Ornate Gold Necklace";
+			case "Museum Gold Chastity Belt":
+				return "Museum Golden Chastity Belt";
+			case "Museum Ivory Necklace":
+				return "Museum Immaculate Ivory Necklace";
+			case "Museum Crystal":
+				return "Museum Arousing Crystal";
+			case "Museum Horn":
+				return "Museum Hunting Horn";
+			case "Museum Watch":
+				return "Museum Old Watch";
+			case "Museum Dildo":
+				return "Museum Odd Medical Aid";
+			case "Museum Candlestick":
+				return "Museum Noble Candle Stick";
+			case "Museum Arrow":
+				return "Museum Mossy Forest Arrow";
+			case "Museum Dagger":
+				return "Museum Rusted Forest Dagger";
+			case "Museum Gem":
+				return "Museum Pulsing Forest Gem";
+			case "Museum Hourglass":
+				return "Museum Inscribed Hourglass";
+			case "Museum Cup":
+				return "Museum Discarded Cup";
+			case "Museum Burner":
+				return "Museum Incense Burner";
+			case "Museum Brass Statuette":
+				return "Museum Forgotten Brass Statuette";
+			case "Museum Grenade":
+				return "Museum Old Grenade";
+			case "Museum Bell":
+				return "Museum Sonorous Bell";
+			case "Museum Shell":
+				return "Museum Artillery Shell";
+			case "Museum Mine Sign":
+				return "Museum Bailey Sign";
+			case "Museum Island Arrow":
+				return "Museum Islander Arrow";
+
 			default:
 				return false;
 		}
@@ -507,6 +642,20 @@ Config.navigation.override = function (dest) {
 	if (passageArgs.name !== dest) {
 		/* Return new passage dest. Will divert the processed passage to this. */
 		return passageArgs.name;
+	}
+
+	// Scene viewer redirect
+	if (V.replayScene) {
+		if (passageArgs.name === V.replayScene.startPassage) {
+			return false;
+		}
+		if (passageArgs.name === "Scene Viewer End") {
+			delete V.replayScene.startPassage;
+			return false;
+		}
+		if (!V.replayScene.passages.includes(passageArgs.name)) {
+			return "Scene Viewer End";
+		}
 	}
 
 	if (pageLoading) {

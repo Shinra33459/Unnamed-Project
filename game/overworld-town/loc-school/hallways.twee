@@ -46,11 +46,16 @@
 		<<elseif $whitneypantiescheck is 2>>
 			"I said you should wear panties, and I meant it. I'll have to take everything now."
 		<</if>>
-		<<if $forcedcrossdressingdisable is "t" or $whitneyskirtcheck isnot 1>>
+		<<set _maleClothes to Object.keys($worn).filter((slot) => {
+			return $worn[slot].gender is "m" and !["genitals", "under_upper"].includes(slot);
+		})>>
+		<<if $forcedcrossdressingdisable is "t" or !$whitneyskirtcheck>>
+		<<elseif $whitneyCrossdressSchool and _maleClothes.length>>
+			<<He>> sneers. "You're clearly wearing boy's clothes<<if clothingData('lower', $worn.lower, "skirt") isnot 1>> and not bothering with a skirt<</if>>."
 		<<elseif clothingData('lower', $worn.lower, "skirt") isnot 1>>
 			<<He>> sneers. "You're not even wearing a skirt."
-		<<elseif $worn.lower.reveal lt 200>>
-			<<He>> sneers. "You're not even wearing a short skirt."
+		<<elseif $worn.lower.reveal lte 200>>
+			<<He>> sneers. "That skirt isn't anywhere near short enough."
 		<</if>>
 		<br><br>
 
@@ -59,10 +64,25 @@
 		<<link [[Fight|Bully Panties Fight]]>><<set $fightstart to 1>><<def 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
 		<br>
 	<<elseif $whitneyskirtmaths>>
+		<<set _wearingSkirt to (clothingData('lower', $worn.lower, "skirt") is 1)>>
+		<<set _maleClothes to Object.keys($worn).filter((slot) => {
+			return $worn[slot].gender is "m" and !["genitals", "under_upper", "under_lower"].includes(slot);
+		})>>
+		<<set _whitneyMadAtSkirt to $whitneyskirtcheck gte 1 and (!_wearingSkirt or $worn.lower.reveal lte 200)>>
+		<<set _whitneyMadAtClothes to $whitneyCrossdressSchool gte 1 and _maleClothes.length>>
 		You've barely stepped into the hallway when <<npc Whitney>><<person1>>Whitney and <<his>> friends surround you. "You've been a bad <<girl>>," <<he>> grins. <<His>> friends look excited.
 
-		"Sluts don't dress like that. I said short skirts, and I meant it. I'll have to take everything now."
-		<br><br>
+		"Sluts don't dress like that.
+		<<if _whitneyMadAtClothes>>
+			I said no boy's clothes, and I meant it.
+			<<if _whitneyMatAtSkirt>>
+				I said short skirts, and I meant that too.
+			<</if>>
+		<<elseif _whitneyMadAtSkirt>>
+			I said short skirts, and I meant it.
+		<</if>>
+        I'll have to take everything now."
+        <br><br>
 
 		<<link [[Let it happen|Bully Panties]]>><<trauma 6>><<stress 3>><<sub 1>><<npcincr Whitney dom 1>><</link>><<gtrauma>><<gstress>><<garousal>><<gdom>>
 		<br>
@@ -95,7 +115,11 @@
 	<<unset $whitneypantiesmaths>>
 	<<unset $whitneyskirtmaths>>
 <<elseif $stress gte $stressmax>>
-	<<link [[Everything fades to black...|School Passout]]>><</link>>
+	<<if isPregnancyEnding()>>
+		<<pregnancyPassout "schoolHallways">>
+	<<else>>
+		<<link [[Everything fades to black...|School Passout]]>><</link>>
+	<</if>>
 
 <<elseif !["early", "late", "earlynoschool", "latenoschool", "daynoschool"].includes($schoolstate) and $danger gte (9900 - $allure) and $eventskip is 0>>
 	<<if $exposed gte 1>>
@@ -116,7 +140,7 @@
 		<<bathroomicon "toilet">><<link [[Sneak to toilets (0:05)|School Toilets]]>><<pass 5>><</link>>
 		<br>
 	<<else>>
-		<<if $schoolstate is "afternoon" and $detention gte 1 and $daily.school.detentionAttended isnot 1 and $pillory_tenant.special.name isnot "Leighton">>
+		<<if $schoolstate is "afternoon" and $detention gte 1 and $daily.school.detentionAttended isnot 1 and $pillory.tenant.special.name isnot "Leighton">>
 		<<schoolicon "headdesk">><<link [[Go to detention|School Detention]]>><</link>>
 		<br>
 			<<if $headdrive gte 1 and $headnodetention isnot 1 and $headmoney isnot 1 and $headphotoshoot isnot 1>>
@@ -135,6 +159,8 @@
 		<<exiticon>><<link [[Front courtyard (0:02)|School Front Courtyard]]>><<pass 2>><</link>>
 		<br>
 		<<schoolicon "courtyard">><<link [[Rear courtyard (0:02)|School Rear Courtyard]]>><<pass 2>><</link>>
+		<br>
+		<<stairsicon "up">><<link [[Roof (0:02)|School Roof]]>><<pass 2>><</link>>
 		<br><br>
 		Facilities
 		<br>
@@ -444,7 +470,7 @@ You slap the <<person>> before <<he>> can get away, wiping the smirk off <<his>>
 		<br><br>
 	<</if>>
 
-	<<if $promiscuity gte 15>>
+	<<if hasSexStat("promiscuity", 2)>>
 		<<link [[Accept|Hallways Encounter Sex]]>><<set $sexstart to 1>><</link>><<promiscuous2>>
 		<br>
 	<</if>>
@@ -550,7 +576,7 @@ You start checking the lockers, and soon find one that has been left unlocked. Y
 	<<gstress>><<garousal>><<stress 6>><<arousal 600>>
 	<br><br>
 
-	Once their voices subside, you gently push the door. It doesn't budge. You push harder. It still doesn't move. <<He>> locked it this time. Though your movement is restricted, you feel around the darkness for something that could help, and realise there's a cool draft around your feet. Investigating further, you find that the back of the locker is missing, and you can feel the brick wall of the school. The lower portion of which is coming loose.
+	Once their voices subside, you gently push the door. It doesn't budge. You push harder. It still doesn't move. <<He>> locked it this time. Though your movement is restricted, you feel around the darkness for something that could help, and realise there's a cool draught around your feet. Investigating further, you find that the back of the locker is missing, and you can feel the brick wall of the school. The lower portion of which is coming loose.
 	<br><br>
 	<<endevent>>
 
@@ -558,7 +584,7 @@ You start checking the lockers, and soon find one that has been left unlocked. Y
 		<<link [[Kick through|Hallways Exposed Tentacles]]>><<set $molestationstart to 1>><</link>>
 		<br>
 	<<else>>
-		You break away the brickwork, and the draft increases in strength. Knocking away all the loose bricks leaves a hole maybe just big enough for you. You put one leg through, then the other, then slowly wiggle your way further down.
+		You break away the brickwork, and the draught increases in strength. Knocking away all the loose bricks leaves a hole maybe just big enough for you. You put one leg through, then the other, then slowly wiggle your way further down.
 		<br><br>
 
 		<<link [[Next|Industrial Drain]]>><<set $eventskip to 1>><</link>>
@@ -653,7 +679,7 @@ You run to the window and throw it open. You don't have enough time to be sure, 
 
 	<<tentaclestart 4 15>>
 
-	You break away the brickwork, and the draft increases in strength. Knocking away all the loose bricks leaves a hole maybe just big enough for you. You put one leg through, then the other, then slowly wiggle your way further down. You're wondering if the school has a basement when something strokes your <<bottom>>.
+	You break away the brickwork, and the draught increases in strength. Knocking away all the loose bricks leaves a hole maybe just big enough for you. You put one leg through, then the other, then slowly wiggle your way further down. You're wondering if the school has a basement when something strokes your <<bottom>>.
 	<br><br>
 <</if>>
 
@@ -738,7 +764,7 @@ The <<person>> gawks, as if not believing <<his>> eyes. <<He>> glances around, t
 	<<link [[Next|Hallways]]>><<set $eventskip to 1>><</link>>
 	<br>
 <<elseif $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
-	<<if $exhibitionism gte 55 and $earSlime.growth lt 100>>
+	<<if hasSexStat("exhibitionism", 4) and $earSlime.growth lt 100>>
 		<<set $earSlime.defyCooldown += 4>>
 	<<else>>
 		<<set $earSlime.defyCooldown += 8>>
@@ -811,7 +837,7 @@ The <<person>> becomes more forceful.
 	<<link [[Next|Hallways]]>><<set $eventskip to 1>><</link>>
 	<br>
 <<elseif $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
-	<<if $exhibitionism gte 55 and $earSlime.growth lt 100>>
+	<<if hasSexStat("exhibitionism", 4) and $earSlime.growth lt 100>>
 		<<set $earSlime.defyCooldown += 4>>
 	<<else>>
 		<<set $earSlime.defyCooldown += 8>>
@@ -974,7 +1000,7 @@ The <<person>> becomes more forceful.
 
 	<<link [[Refuse|Hallways Cupboard Refuse]]>><</link>>
 	<br>
-	<<if $promiscuity gte 15>>
+	<<if hasSexStat("promiscuity", 2)>>
 		<<link [[Accept|Hallways Cupboard Sex]]>><<set $sexstart to 1>><<set $phase to 0>><</link>><<promiscuous2>>
 		<br>
 	<</if>>
@@ -1078,7 +1104,7 @@ You shove the <<person>> away from you. "Crazy fuck," <<he>> says. "I'm telling 
 
 	<<link [[Next|Hallways]]>><<set $eventskip to 1>><</link>>
 <<elseif $finish is 1>>
-	"Fucking tease," <<he>> says as <<he>> adjusts <<his>> clothing. <<He>> leave the cupboard.
+	"Fucking tease," <<he>> says as <<he>> adjusts <<his>> clothing. <<He>> leaves the cupboard.
 	<br><br>
 
 	<<clotheson>>
@@ -1130,7 +1156,7 @@ You lift the hem of your $worn.lower.name, giving the <<person>> a brief glimpse
 
 	<<link [[Refuse|Hallways Cupboard Refuse]]>><</link>>
 	<br>
-	<<if $promiscuity gte 15>>
+	<<if hasSexStat("promiscuity", 2)>>
 		<<link [[Accept|Hallways Cupboard Sex]]>><<set $sexstart to 1>><<set $phase to 0>><</link>><<promiscuous2>>
 		<br>
 	<</if>>
@@ -1160,7 +1186,7 @@ You lift the hem of your $worn.lower.name, giving the <<person>> a brief glimpse
 
 	<<link [[Refuse|Hallways Cupboard Refuse]]>><</link>>
 	<br>
-	<<if $promiscuity gte 15>>
+	<<if hasSexStat("promiscuity", 2)>>
 		<<link [[Accept|Hallways Cupboard Sex]]>><<set $sexstart to 1>><<set $phase to 0>><</link>><<promiscuous2>>
 		<br>
 	<</if>>
@@ -1278,7 +1304,7 @@ With a serene grace, you step out into the open. The students stop at the sight 
 	<span class="red">They follow,</span> surround you, and trap you against the wall. <<covered>>
 	<br><br>
 
-	<<if $promiscuity gte 75>>
+	<<if hasSexStat("promiscuity", 5)>>
 		<<link [[Goad|Hallways Exposed Goad]]>><</link>><<promiscuous5>>
 		<br>
 	<</if>>
@@ -1539,7 +1565,6 @@ The <<person>> makes the first move, stepping closer. You grasp <<his>> arm and 
 	<br>
 <<else>>
 	<<set $rescued += 1>>
-	<<endcombat>>
 	<<if $rescue gte 2>>
 		A shout from down the hall spurs the students into running. You're grabbed from behind before you can do the same, and find yourself face-to-face with Whitney. <<nnpc_He "Whitney">> looks mad.<<status 1>><<gcool>>
 		<br>
@@ -1553,6 +1578,8 @@ The <<person>> makes the first move, stepping closer. You grasp <<his>> arm and 
 
 		Whitney gapes at Doren, then sneers. "Whatever, <<if $pronoun is "m">>wolfman<<else>>you hairy old mop<</if>>. You deal with <<phim>>." <<nnpc_He "Whitney">> shoves you to Doren, who instinctively recoils. <<nnpc_He "Whitney">> leaves without looking back.
 		<<clotheson>>
+		<<endcombat>>
+		<<npc Doren>><<person1>>
 
 		<<link [[Next|Hallways Exposed Doren]]>><<set $phase to 1>><</link>>
 		<br>
@@ -1563,6 +1590,8 @@ The <<person>> makes the first move, stepping closer. You grasp <<his>> arm and 
 		<br><br>
 
 		<<clotheson>>
+		<<endcombat>>
+		<<npc Doren>><<person1>>
 		Doren stops at the sight of you, and averts <<his>> eyes.
 		<br><br>
 
@@ -1608,7 +1637,7 @@ You give the <<persons>> ass a swift spank as you pass, eliciting laughter from 
 	<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
 	<br>
 <<else>>
-	You grab the <<person1>><<persons>> and pulls as you kick at <<his>> shin. Your kicks fail to have much impact.
+	You grab the <<person1>><<persons>> arm and pull as you kick at <<his>> shin. <span class="red">Your kicks fail to have much impact.</span>
 	<<if !playerBellySize(true) gte 8>>
 		<<He>> delivers a solid punch to your gut, knocking the breath from you.<<gpain>><<pain 4>>
 	<</if>>
@@ -1688,7 +1717,7 @@ You let the <<person1>><<person>> shove you into the classroom, and bend you ove
 	<br><br>
 	"W-we can explain," the <<person1>><<person>> says, fumbling with <<his>> clothes. "We-"
 	<br><br>
-	Leighton ignores <<him>>. "Leave," <<he>> says, looking at you. <<tearful>> you shuffle past <<person3>><<him>>. The <<person2>><<person>> tries to follow, but is blocked by Leighton's outstretched arm. "You two stay."
+	Leighton ignores <<him>>. "Leave," <<person3>><<he>> says, looking at you. <<tearful>> you shuffle past <<him>>. The <<person2>><<person>> tries to follow, but is blocked by Leighton's outstretched arm. "You two stay."
 	<br><br>
 	The door thuds shut behind you.
 	<br><br>
@@ -1974,7 +2003,7 @@ You slap the grin off the <<person2>><<persons>> face, and shove by. "I'm tellin
 		<</if>>
 		<<stress 2>><<gstress>>
 		<br>
-		<<if $exhibitionism gte 35>>
+		<<if hasSexStat("exhibitionism", 3)>>
 			<<covered>>
 			<br>
 		<</if>>
@@ -1987,7 +2016,7 @@ You slap the grin off the <<person2>><<persons>> face, and shove by. "I'm tellin
 			<span class="red">Your $worn.under_lower.name <<underlowerplural>> still stuck to the locker!</span><<stress 5>><<gstress>>
 			<br><br>
 			<<set $phase to 0>>
-			<<if $exhibitionism gte 35>>
+			<<if hasSexStat("exhibitionism", 3)>>
 				<<covered>>
 				<br>
 			<</if>>
@@ -2015,7 +2044,16 @@ You slap the grin off the <<person2>><<persons>> face, and shove by. "I'm tellin
 
 :: Hallways Strip Locker Clothing
 <<effects>>
-<<if !$worn.lower.type.includes("naked")>>
+<<outfitChecks>>
+<<if _overOutfit>>
+	You <<nervously>> remove your stuck $worn.over_upper.name, leaving it attached to the locker. Many of the other students around watch you closely, while a few whistle at the sight.
+	<<overupperruined>><<overlowerruined>>
+	<<if $exposed gte 2>>
+		<<fameexhibitionism 40>>
+	<<else>>
+		<<fameexhibitionism 20>>
+	<</if>>
+<<elseif !$worn.lower.type.includes("naked")>>
 	You <<nervously>> remove your stuck $worn.lower.name, leaving it attached to the locker. Many of the other students around watch you closely, while a few whistle at the sight.
 	<<fameexhibitionism 20>><<exhibitionism1>>
 	<<lowerruined>>
@@ -2086,7 +2124,7 @@ You turn away from the group, making it clear that you'd rather be left alone. T
 <<if $enemyarousal gte $enemyarousalmax>>
 	<<ejaculation>>
 
-	"Fucking this bitch was so easy," the <<person3>> says. "No wonder she wound up pregnant!" You hear them laugh as they leave. <<tearful>> you gather yourself and get up.
+	"Fucking this bitch was so easy," the <<person3>><<person>> says. "No wonder she wound up pregnant!" You hear them laugh as they leave. <<tearful>> you gather yourself and get up.
 	<br><br>
 
 	<<clotheson>>
@@ -2103,7 +2141,6 @@ You turn away from the group, making it clear that you'd rather be left alone. T
 	<br>
 <<else>>
 	<<set $rescued += 1>>
-	<<endcombat>>
 	<<if $rescue gte 2>>
 		A shout from down the hall spurs the students into running. You're grabbed from behind before you can do the same, and find yourself face-to-face with Whitney. <<nnpc_He "Whitney">> looks mad.<<status 1>><<gcool>>
 		<br>
@@ -2117,6 +2154,8 @@ You turn away from the group, making it clear that you'd rather be left alone. T
 
 		Whitney gapes at Doren, then sneers. "Whatever, <<if $pronoun is "m">>wolfman<<else>>you hairy old mop<</if>>. You deal with <<phim>>." <<nnpc_He "Whitney">> shoves you to Doren, who instinctively recoils. <<nnpc_He "Whitney">> leaves without looking back.
 		<<clotheson>>
+		<<endcombat>>
+		<<npc Doren>><<person1>>
 
 		<<link [[Next|Hallways Exposed Doren]]>><<set $phase to 1>><</link>>
 		<br>
@@ -2127,6 +2166,8 @@ You turn away from the group, making it clear that you'd rather be left alone. T
 		<br><br>
 
 		<<clotheson>>
+		<<endcombat>>
+		<<npc Doren>><<person1>>
 		Doren stops at the sight of you, and averts <<his>> eyes.
 		<br><br>
 
@@ -2155,7 +2196,7 @@ The <<person>> grasps your collar tightly. "My parents took me to see a doc beca
 <<link [[Refuse|Hallways Pregnant Student Refuse]]>><<detention 50>><</link>><<gggdelinquency>>
 <br>
 <<if $submissive gte 1500>>
-	<<link [[Plead|Hallways PRegnant Student Plead]]>><<sub 1>><</link>><<submissivetext>>
+	<<link [[Plead|Hallways Pregnant Student Plead]]>><<sub 1>><</link>><<submissivetext>>
 	<br>
 <</if>>
 
@@ -2178,7 +2219,7 @@ The <<person>> grasps your collar tightly. "My parents took me to see a doc beca
 <</if>>
 <br><br>
 
-The <<person1>> looks at you with incredulity. "Are you fucking kidding me!?" <<His>> face goes red in anger. "Fine! I'll go tell the principal, then we'll see how much you really care!" <<He>> marches towards Leighton's office, angrily shoving anyone who gets in <<his>> way.
+The <<person1>><<person>> looks at you with incredulity. "Are you fucking kidding me!?" <<His>> face goes red in anger. "Fine! I'll go tell the principal, then we'll see how much you really care!" <<He>> marches towards Leighton's office, angrily shoving anyone who gets in <<his>> way.
 <br><br>
 
 <<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
@@ -2190,7 +2231,7 @@ The <<person1>> looks at you with incredulity. "Are you fucking kidding me!?" <<
 "Please no!" you beg. "I... I'm an orphan! Our caretaker makes us pay a lot. <<nnpc_He "Bailey">>'s very scary and I can't afford to spend a single penny if I want to make it through the day. Please understand!" your voice begins to sound shaky and fearful.
 <br><br>
 
-The <<person1>> looks at you with concern, <<his>> anger begins to turn into sadness. "Just... just go" <<he>> mutters. "You make me sick..." <<he>> says as tears begin to well in <<his>> eyes. <<He>> shoves you back and leaves without saying anything else.
+The <<person1>><<person>> looks at you with concern, <<his>> anger begins to turn into sadness. "Just... just go" <<he>> mutters. "You make me sick..." <<he>> says as tears begin to well in <<his>> eyes. <<He>> shoves you back and leaves without saying anything else.
 <br><br>
 
 <<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
@@ -2426,7 +2467,7 @@ The <<person1>> looks at you with concern, <<his>> anger begins to turn into sad
 			The <<person1>><<person>> looks you up and down and then tries to shove you, but you grab onto <<him>>.<br>
 			There are a few a moments of scuffle, but you're stronger and able to overpower <<him>>.
 			<br><br>
-			With a frustrated yell, the <<person>> twists free, scowls at you frustrated and walks away.<<gpain>><<pain 2>><<gcool>><<status 1>>
+			With a frustrated yell, the <<person>> twists free, scowls at you, and walks away.<<gpain>><<pain 2>><<gcool>><<status 1>>
 		<<elseif (currentSkillValue('athletics') gte 500 or currentSkillValue('danceskill') gte 500)>>
 			The <<person1>><<person>> looks you up and down and then tries to grab you. However, with your speed and dexterity, you slip away.<br>
 			You smile. "Let's dance."
@@ -2460,7 +2501,7 @@ The <<person1>> looks at you with concern, <<his>> anger begins to turn into sad
 		<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
 		<br>
 	<<elseif $delinquency gte 400>>
-		The teacher looks skeptical, given your reputation, but does go to help.
+		The teacher looks sceptical, given your reputation, but does go to help.
 		<br><br>
 		By the time you get back, the teacher is marching the <<person1>><<person>> down the hallway. <<lstress>><<stress -2>><<famegood 1>>
 		<br><br>
@@ -2567,7 +2608,7 @@ The group of students fight to pull down your <<if setup.clothes.lower[clothesIn
 		The pantser holds your torn clothes in <<his>> hand. "I guess I don't know my own strength." <<he>> says, laughing.
 		<br><br>
 
-		<<if $exhibitionism gte 75>>
+		<<if hasSexStat("exhibitionism", 5)>>
 			<<link [[Flaunt|Hallways Pantsed Flaunt]]>><<set $phase to 4>><</link>><<exhibitionist5>>
 			<br>
 		<</if>>
@@ -2601,7 +2642,7 @@ The group of students fight to pull down your <<if setup.clothes.lower[clothesIn
 		The pantser holds your torn underwear in <<his>> hand. "I guess I don't know my own strength." <<he>> says, laughing.
 		<br><br>
 
-		<<if $exhibitionism gte 75>>
+		<<if hasSexStat("exhibitionism", 5)>>
 			<<link [[Flaunt|Hallways Pantsed Flaunt]]>><<set $phase to 2>><</link>><<exhibitionist5>>
 			<br>
 		<</if>>
@@ -2637,7 +2678,7 @@ The group of students fight to pull down your <<if setup.clothes.lower[clothesIn
 		With your bottoms ripped off, there's no way to cover yourself. Several students in the crowd are pulling out phones, taking videos and pictures of your bottomless ordeal.
 		<br><br>
 
-		<<if $exhibitionism gte 55>>
+		<<if hasSexStat("exhibitionism", 4)>>
 			<<link [[Flaunt|Hallways Pantsed Flaunt]]>><<set $phase to 1>><</link>><<exhibitionist4>>
 			<br>
 		<</if>>
@@ -2665,7 +2706,7 @@ The group of students fight to pull down your <<if setup.clothes.lower[clothesIn
 		"Look, everyone!" your tormenter shouts. "<<pShes>> not wearing underwear!" Before you can do anything, the hallway erupts with cheers, screams, and laughter. You're surrounded by your classmates, who can all see your naked genitals and exposed ass.
 		<br><br>
 
-		<<if $exhibitionism gte 75>>
+		<<if hasSexStat("exhibitionism", 5)>>
 
 			<<link [[Flaunt|Hallways Pantsed Flaunt]]>><<set $phase to 3>><</link>><<exhibitionist5>>
 			<br>
@@ -2685,7 +2726,7 @@ The group of students fight to pull down your <<if setup.clothes.lower[clothesIn
 		Before you can react, the hallway erupts with cheers, screams, and laughter. You're surrounded by your classmates, who can all see your naked genitals and exposed ass.
 		<br><br>
 
-		<<if $exhibitionism gte 55>>
+		<<if hasSexStat("exhibitionism", 4)>>
 
 			<<link [[Flaunt|Hallways Pantsed Flaunt]]>><<set $phase to 3>><</link>><<exhibitionist4>>
 			<br>
@@ -2713,7 +2754,7 @@ The group of students fight to pull down your <<if setup.clothes.lower[clothesIn
 	You turn around, letting everyone get a look at your fully naked butt and exposed <<genitals>>.<<ggarousal>><<arousal 1200>>
 	<br><br>
 
-	Several students have their phones out, recording your whole display. You realize that most of the school will see this soon. You are surrounded by your peers, seeing you in this state of undress.
+	Several students have their phones out, recording your whole display. You realise that most of the school will see this soon. You are surrounded by your peers, seeing you in this state of undress.
 	<br><br>
 
 
@@ -2732,7 +2773,7 @@ The group of students fight to pull down your <<if setup.clothes.lower[clothesIn
 	<</if>>
 <<else>>
 
-	You put on your most innocent face. "What? Is there something on my face?"  you say. The crowd laughs.
+	You put on your most innocent face. "What? Is there something on my face?" you say. The crowd laughs.
 	<br><br>
 
 	You spin around in mock confusion, showing everyone your fully exposed <<genitals>> and naked butt.<<ggarousal>><<arousal 1200>>
@@ -2783,3 +2824,168 @@ The group of students fight to pull down your <<if setup.clothes.lower[clothesIn
 	<<link [[Next|Hallways]]>><<endevent>><<unset $pantsed>><<lowerruined>><<underlowerruined>><<set $eventskip to 1>><</link>>
 
 <</if>>
+
+:: Hallways Delinquent Lockers
+<<effects>>
+
+<<if $phase is 0>> /* Intervene */
+	<<if $speech_attitude is "meek">>
+		You take a deep breath and cautiously approach them from behind. "Um, excuse me? I don't... think that's your locker...?"
+	<<elseif $speech_attitude is "bratty">>
+		"Hey!" You stomp up to them from behind. "What the fuck do you think you're doing? That's not your locker."
+	<<else>>
+		"What are you two doing?" you ask as you approach them from behind. "That's not your locker."
+	<</if>>
+	<br><br>
+	The two delinquents simultaneously turn to look at you, then at each other.
+	<br><br>
+
+	<<link [[Next|Hallways Delinquent Lockers 2]]>><</link>>
+	<br>
+<<else>> /* Ignore them */
+	You simply give them a wide berth, and continue on your way.
+	<br><br>
+
+	<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><<clearNPC locker_key_owner>><</link>>
+	<br>
+<</if>>
+
+:: Hallways Delinquent Lockers 2
+<<effects>>
+
+<<if $whitneyromance is 1 and C.npc.Whitney.love gte 25>>
+	<<if $cool gte 240>>
+		The <<person1>><<person>> and <<person2>><<person>> look at you again with nervous, placating grins.
+		<br><br>
+		"Oh, wow, you're totally right! We must've gotten them mixed up, eh? Oops!"
+		<br><br>
+		The <<person1>><<person>> doesn't even bother to sound genuine, but the <<person2>><<person>> puts the dirty magazine back in the locker, and the <<person1>><<person>> shuts the door and locks it again.
+		<br><br>
+		<<He>> tosses the key to you, and they both immediately make themselves scarce.
+		<br><br>
+		You relax now that the delinquents have left. You look at the key in your hand, then at the locker it belongs to.
+		<br><br>
+
+		<<link [[Raid the locker yourself|Hallways Delinquent Lockers End]]>><<set $phase to 0>><<crimeUp 1 "petty">><</link>><<crime "petty">>
+		<br>
+		<<link [[Find the locker's owner and return their key|Hallways Delinquent Lockers End]]>><<endevent>><<set $phase to 1>><</link>>
+		<br>
+	<<else>>
+		They shoot you annoyed looks, and <<person2>><<person>> scoffs.
+		<br><br>
+		"Fucking killjoy," <<he>> mutters as <<he>> returns the dirty mag. The <<person1>><<person>> rolls <<his>> eyes and slams the locker shut. <<He>> doesn't bother locking it, and shoves the key into <<his>> pocket.
+		<br><br>
+		The two of them skulk off, glaring at you as they do, but at least they don't pick a fight.
+		<br><br>
+		You relax now that the delinquents have left, and continue on to your destination.
+		<br><br>
+
+		<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><<clearNPC locker_key_owner>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	They both start laughing.
+	<br><br>
+	"'That's not your locker'!" the <<person1>><<person>> mocks. "I've got the key for it, don't I? How do you know it's not mine, huh?"
+	<br><br>
+	"Seems like the <<girls>> trying to play at hero." The <<person2>><<person>> grabs you and shoves you against another locker. "Why don't we teach this goodie two-shoes a lesson about how <<pshe>> ought to be treating <<pher>> betters?"
+	<br><br>
+
+	<<saveNPC 0 key_bully_0>><<saveNPC 1 key_bully_1>>
+	<<endevent>>
+	<<loadNPC 0 key_bully_0>><<loadNPC 1 key_bully_1>>
+	<<clearNPC key_bully_0>><<clearNPC key_bully_1>>
+
+	<<link [[Next|Hallways Delinquent Lockers Rape]]>><<set $molestationstart to 1>><</link>>
+	<br>
+<</if>>
+
+:: Hallways Delinquent Lockers Rape
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<maninit>>
+	<<if $delinquency lt 400>><<enable_rescue>><</if>>
+	The delinquents close in on you.
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<<alarmstate "<span class='red'>No one comes to your aid, likely due to your reputation as a delinquent.</span>">>
+<<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if _combatend>>
+	<span id="next"><<link [[Next|Hallways Delinquent Lockers Rape Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Hallways Delinquent Lockers Rape]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Hallways Delinquent Lockers Rape Finish
+<<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	The two of them lean against a locker, still recovering from their orgasms.
+	<br><br>
+	<<tearful>> you wriggle away and attempt to make your escape. You notice the locker key lying on the floor. It must have fallen during the action.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Leave it there|Hallways Delinquent Lockers End]]>><<set $phase to 2>><</link>>
+	<br>
+	<<link [[Find the locker's owner and return their key|Hallways Delinquent Lockers End]]>><<set $phase to 1>><</link>>
+	<br>
+<<elseif $enemyhealth lte 0>>
+	"Fuck!"
+	<br><br>
+	The delinquents stagger away from you, looking surprised that you put up more of a fight than they expected.
+	<br><br>
+	"You stupid fucking slut...!"
+	<br><br>
+	The <<person1>><<person>> and the <<person2>><<person>> exchange frustrated looks, before running off down the hall.
+	<br><br>
+	<<tearful>> you notice the locker key on the floor, forgotten.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Raid the locker yourself|Hallways Delinquent Lockers End]]>><<set $phase to 0>><<crimeUp 1 "petty">><</link>><<crime "petty">>
+	<br>
+	<<link [[Find the locker's owner and return their key|Hallways Delinquent Lockers End]]>><<set $phase to 1>><</link>>
+	<br>
+<<else>>
+	Having heard your scream, a teacher comes rushing around a nearby corner. "What's going on here?"
+	<br><br>
+	The delinquents curse, and one of them gives you one last kick before they both run away.<<pain 4>><<gpain>>
+	<br><br>
+	The teacher makes sure you're alright before letting you go. <<tearful>> you gather yourself.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><<clearNPC locker_key_owner>><</link>>
+	<br>
+<</if>>
+
+:: Hallways Delinquent Lockers End
+<<effects>>
+
+<<if $phase is 0>> /* Raid the locker yourself */
+	You open the locker yourself and examine its contents. Besides the explicit magazine, there's not much besides a couple school textbooks and bits of rubbish. However, you do find some loose change that totals to <<rng 1 5>><<moneyGain $rng true true>>.
+<<elseif $phase is 1>> /* Find the locker's owner and return their key */
+	<<loadNPC 0 locker_key_owner>><<person1>>
+	You look for the <<person>> that the key belongs to and return it to <<him>>. <<Hes>> very grateful, and thanks you multiple times before going on <<his>> way. <<status 1>><<gcool>>
+<<else>> /* Leave it there */
+	You don't want to risk getting noticed and grabbed at again. You sneak away while you have the chance.
+<</if>>
+<br><br>
+
+<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><<clearNPC locker_key_owner>><</link>>
+<br>

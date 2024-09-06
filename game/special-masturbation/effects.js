@@ -1,7 +1,7 @@
-/* eslint-disable no-undef */
-
-// eslint-disable-next-line no-unused-vars
-function masturbationeffects() {
+/*
+	Old version can be found at https://gitgud.io/Vrelnir/degrees-of-lewdity/-/blob/master/game/special-masturbation/effects.twee?ref_type=7f47147b
+*/
+function masturbationEffects() {
 	const fragment = document.createDocumentFragment();
 	const br = () => document.createElement("br");
 	const span = (text, colour) => {
@@ -80,9 +80,8 @@ function masturbationeffects() {
 			delete V.corruptionMasturbationCount;
 		} else {
 			if (V.orgasmdown >= 2) {
-				if (V.corruptionMasturbationCount === undefined || V.corruptionMasturbationCount === null) V.corruptionMasturbationCount = random(2, 6);
-				V.corruptionMasturbationCount--;
-				if (V.corruptionMasturbationCount === 0) {
+				if (isNaN(V.corruptionMasturbationCount)) V.corruptionMasturbationCount = random(2, 6);
+				if (V.corruptionMasturbationCount <= 0) {
 					V.corruptionMasturbation = false;
 					delete V.corruptionMasturbationCount;
 					if (V.awareness < 200) {
@@ -118,6 +117,32 @@ function masturbationeffects() {
 							V.mouthactiondefault = "rest";
 							V.mouthaction = 0;
 							V.mouth = 0;
+						} else if (V.mouth === "mbreast" || V.leftarm === "mbreasthold" || V.rightarm === "mbreasthold") {
+							if (V.mouth === "mbreast") {
+								sWikifier(
+									'<span class="green">With the loss of the control from the slime in your ear, you move your mouth away from your <<breasts>>.</span>'
+								);
+							} else {
+								sWikifier(
+									'<span class="green">With the loss of the control from the slime in your ear, you stop squeezing your <<breasts>>.</span>'
+								);
+							}
+							fragment.append(" ");
+							if (V.mouth === "mbreast") {
+								V.mouthactiondefault = "rest";
+								V.mouthaction = 0;
+								V.mouth = 0;
+							}
+							if (V.leftarm === "mbreasthold") {
+								V.leftactiondefault = "rest";
+								V.leftaction = 0;
+								V.leftarm = 0;
+							}
+							if (V.rightarm === "mbreasthold") {
+								V.rightactiondefault = "rest";
+								V.rightaction = 0;
+								V.rightarm = 0;
+							}
 						}
 					}
 				}
@@ -131,12 +156,15 @@ function masturbationeffects() {
 		fragment.append(possessedMasturbation(span, br, sWikifier));
 	}
 
-	fragment.append(masturbationeffectsVaginaAnus(otherVariables));
+	// Reset the record of the players current actions
+	V.masturbationActions = {};
 
-	fragment.append(masturbationeffectsArms("left", V.leftaction === V.rightaction, otherVariables));
-	fragment.append(masturbationeffectsArms("right", false, otherVariables));
+	fragment.append(masturbationEffectsVaginaAnus(otherVariables));
 
-	fragment.append(masturbationeffectsMouth(otherVariables));
+	fragment.append(masturbationEffectsArms("left", V.leftaction === V.rightaction, otherVariables));
+	fragment.append(masturbationEffectsArms("right", false, otherVariables));
+
+	fragment.append(masturbationEffectsMouth(otherVariables));
 
 	if (otherVariables.additionalEffect.hands === "ballplayeffects" && V.worn.genitals.name !== "chastity parasite") {
 		if (V.arousal >= V.arousalmax * (4 / 5) || (V.earSlime.focus === "impregnation" && V.earSlime.growth >= 100)) {
@@ -154,6 +182,7 @@ function masturbationeffects() {
 		} else if (V.arousal >= V.arousalmax * (2 / 5)) {
 			sWikifier("The pressure makes your <<penis>> throb.");
 		} else {
+			T.penisStateDescribed = true;
 			sWikifier("The pressure makes your <<penis>> twitch.");
 		}
 		fragment.append(" ");
@@ -168,13 +197,21 @@ function masturbationeffects() {
 	) {
 		if (V.arousal >= V.arousalmax * (4 / 5) || (V.earSlime.focus === "impregnation" && V.earSlime.growth >= 100)) {
 			if (genitalsExposed()) {
-				sWikifier('Your <<penis "strap-on">> bucks eagerly, and <span class="pink">precum leaps from the tip.</span>');
+				sWikifier(
+					`Your <<penis "strap-on">> bucks eagerly, and <span class="pink">precum leaps from the tip${
+						V.bugsinside && V.player.penissize >= 0 ? " covering some of the insects crawling over you" : ""
+					}.</span>`
+				);
 			} else {
 				sWikifier('Your <<penis "strap-on">> bucks eagerly, and <span class="pink">precum seeps through your <<exposedlower>>.</span>');
 			}
 		} else {
 			if (genitalsExposed()) {
-				sWikifier('Your <<penis "strap-on">> bucks eagerly, and <span class="pink">precum beads at the tip.</span>');
+				sWikifier(
+					`Your <<penis "strap-on">> bucks eagerly, and <span class="pink">precum beads at the tip${
+						V.bugsinside && V.player.penissize >= 0 ? " covering some of the insects crawling over you" : ""
+					}.</span>`
+				);
 			} else {
 				sWikifier('Your <<penis "strap-on">> bucks eagerly, and <span class="pink">your precum creates a dark spot on your <<exposedlower>>.</span>');
 			}
@@ -255,10 +292,14 @@ function masturbationeffects() {
 	fragment.append(br());
 	fragment.append(br());
 
+	if (V.masturbationAudience) {
+		fragment.append(masturbationAudience());
+	}
+
 	return fragment;
 }
 
-function masturbationeffectsArms(
+function masturbationEffectsArms(
 	arm,
 	doubleAction,
 	{ span, otherElement, additionalEffect, selectedToy, toyDisplay, genitalsExposed, breastsExposed, hymenIntact, earSlimeDefy }
@@ -276,6 +317,7 @@ function masturbationeffectsArms(
 	const otherArmAction = otherArm + "action";
 
 	const clearAction = defaultAction => {
+		if (V[armAction] && V[armAction] !== "mrest") V.masturbationActions[armAction] = V[armAction];
 		V[armActionDefault] = defaultAction !== undefined ? defaultAction : V[armAction];
 		V[armAction] = 0;
 		if (doubleAction) {
@@ -537,7 +579,7 @@ function masturbationeffectsArms(
 	// End of Action Corrections
 
 	// Action setup
-	const handsOn = doubleAction ? 2 : 1;
+	let handsOn = doubleAction ? 2 : 1;
 	const altText = {};
 
 	wikifier("ballsize");
@@ -562,7 +604,17 @@ function masturbationeffectsArms(
 			// The text output currently does not care which hand is used or if both hands are used
 			if (V.worn.over_upper.exposed >= 2 && V.worn.upper.exposed >= 2 && V.worn.under_upper.exposed >= 1) {
 				wikifier("arousal", 100 * handsOn, "masturbationBreasts");
-				if (V.player.breastsize <= 2) {
+				if (V.lactating && V.breastfeedingdisable === "f" && V.bugsinside) {
+					if (V.arousal >= (V.arousalmax / 5) * 4) {
+						sWikifier(
+							"You squeeze your <<breasts>> as much as you can stand, milking yourself as much as you can for the insects crawling over you."
+						);
+					} else if (V.arousal >= (V.arousalmax / 5) * 3) {
+						sWikifier("You fondle your <<breasts>> while allowing access the many insects crawling over you, to your nipples.");
+					} else {
+						sWikifier("You stroke your <<breasts>>, feeling the lewd warmth grow even as insects crawl over you.");
+					}
+				} else if (V.player.breastsize <= 2) {
 					if (V.arousal >= (V.arousalmax / 5) * 4) {
 						fragment.append(
 							span(
@@ -657,12 +709,167 @@ function masturbationeffectsArms(
 			}
 			clearAction(); // Needs to run after any breastfeed widget
 			break;
-		case "mchastity":
-			clearAction();
+		case "mbreasthold":
+			clearAction("mbreastfondle");
+			V[arm + "arm"] = "mbreasthold";
+			if (doubleAction) V[otherArm + "arm"] = "mbreasthold";
+			wikifier("arousal", 50 * handsOn, "masturbationBreasts");
+			if (V.mouthaction === "mbreastentrance") {
+				// Should only be reachable with a single action
+				fragment.append(Wikifier.wikifyEval(`You hold onto your other <<breasts>> and bring it up to your mouth.`));
+			} else {
+				fragment.append(Wikifier.wikifyEval(`You hold onto ${doubleAction ? "both of your <<breasts>>" : "your <<breasts>>"}.`));
+			}
+			break;
+		case "mbreastfondle":
+			if (V.mouthaction === "mbreastentrance") {
+				// Player briefly stops fondling their breasts
+			} else {
+				wikifier("playWithBreasts", handsOn);
+				wikifier("milkvolume", handsOn);
+				wikifier("arousal", 100 * handsOn, "masturbationBreasts");
+				if (V.worn.over_upper.exposed >= 2 && V.worn.upper.exposed >= 2 && V.worn.under_upper.exposed >= 1) {
+					wikifier("arousal", 150 * handsOn, "masturbationBreasts");
+					if (V.lactating && V.breastfeedingdisable === "f" && V.bugsinside) {
+						if (V.arousal >= (V.arousalmax / 5) * 4) {
+							sWikifier(
+								"You squeeze your cupped <<breasts>> as much as you can stand, milking yourself as much as you can for the insects crawling over you."
+							);
+						} else if (V.arousal >= (V.arousalmax / 5) * 3) {
+							sWikifier("You fondle your cupped <<breasts>> while allowing access the many insects crawling over you, to your nipples.");
+						} else {
+							sWikifier("You stroke your cupped <<breasts>>, feeling the lewd warmth grow even as insects crawl over you.");
+						}
+					} else {
+						if (V.arousal >= (V.arousalmax / 5) * 4) {
+							fragment.append(
+								span(
+									"You squeeze your sensitive breasts and nipples as much as you can stand, each time sending jolts of excitement through you."
+								)
+							);
+						} else if (V.arousal >= (V.arousalmax / 5) * 3) {
+							sWikifier("You squeeze your cupped <<breasts>> while occasionally giving your nipples a little tweak.");
+						} else {
+							sWikifier("You fondle your cupped <<breasts>> and rub your nipples between your fingers, feeling the lewd warmth grow.");
+						}
+					}
+				} else {
+					if (V.arousal >= (V.arousalmax / 5) * 4) {
+						sWikifier(
+							"Your nipples stand erect against the fabric of your <<top>>, straining for attention. You cup your <<breasts>> and squeeze your sensitive <<breasts>> and nipples as much as you can bear."
+						);
+					} else if (V.arousal >= (V.arousalmax / 5) * 3) {
+						sWikifier("You squeeze your cupped <<breasts>> and tweak your nipples through your <<top>>.");
+					} else {
+						sWikifier(
+							"You fondle your cupped <<breasts>> and rub your nipples between your fingers. It feels good, even with your <<topaside>> in the way."
+						);
+					}
+				}
+
+				if (V.mouth !== "mbreast") {
+					fragment.append(" ");
+					if (V.lactating === 1 && V.breastfeedingdisable === "f" && handsOn > 0) {
+						if (V.milk_amount >= 1) {
+							if (V.worn.over_upper.exposed === 0 || V.worn.upper.exposed === 0 || V.worn.under_upper.exposed === 0) {
+								fragment.append(span("Milk leaks from your buds, flowing into your top.", "lewd"));
+								if (V.masturbation_bowl === 1) fragment.append(otherElement("i", " You should remove your top if you want to gather any."));
+							} else {
+								fragment.append(span("Milk leaks from your buds.", "lewd"));
+							}
+							fragment.append(" ");
+							fragment.append(wikifier("breastfeed", handsOn * 2));
+						} else {
+							fragment.append(span("No milk leaks from your buds. You must be dry."));
+						}
+					}
+				}
+			}
+			clearAction(); // Needs to run after any breastfeed widget
+			break;
+		case "mbreastpinch":
+			if (V.mouthaction !== "mbreastentrance") {
+				clearAction();
+				wikifier("playWithBreasts", handsOn);
+				wikifier("arousal", 100 * handsOn, "masturbationBreasts");
+				wikifier("pain", 1 * handsOn, 1);
+
+				if (V.parasite.nipples.name) {
+					wikifier("arousal", 50 * handsOn, "masturbationBreasts");
+					if (V.arousal >= (V.arousalmax / 5) * 4) {
+						fragment.append(
+							span(
+								`You pinch, twist and pull on the ${V.parasite.nipples.name} attached to your nipple${
+									handsOn > 1 ? "s" : ""
+								} as much as you can stand, enjoying both the pain and pleasure as ${handsOn > 1 ? "they bite" : "it bites"} harder onto you.`
+							)
+						);
+					} else if (V.arousal >= (V.arousalmax / 5) * 3) {
+						fragment.append(
+							span(`You pinch the ${V.parasite.nipples.name} attached to your nipple${handsOn > 1 ? "s" : ""} as much as you can stand.`)
+						);
+					} else {
+						fragment.append(span(`You lightly pinch the ${V.parasite.nipples.name} attached to your nipple${handsOn > 1 ? "s" : ""}.`));
+					}
+				} else {
+					if (V.arousal >= (V.arousalmax / 5) * 4) {
+						fragment.append(
+							span(
+								`You pinch, twist and pull on your nipple${
+									handsOn > 1 ? "s" : ""
+								} as much as you can stand, enjoying both the pain and pleasure${
+									V.pain >= 40 ? " while ignoring your tears the best you can" : ""
+								}.`
+							)
+						);
+					} else if (V.arousal >= (V.arousalmax / 5) * 3) {
+						fragment.append(span(`You pinch your nipple${handsOn > 1 ? "s" : ""} as much as you can stand.`));
+					} else {
+						fragment.append(span(`You lightly pinch your nipple${handsOn > 1 ? "s" : ""}.`));
+					}
+				}
+			} else {
+				clearAction("mbreastfondle");
+			}
+			break;
+		case "mbreaststop":
+			clearAction("mrest");
+			V[arm + "arm"] = 0;
+			if (doubleAction) {
+				V[otherArm + "arm"] = 0;
+				fragment.append(span(`You let go of both of your breasts.`));
+			} else {
+				fragment.append(span(`You let go of your ${arm} breast.`));
+			}
+
+			// Deal with the players mouth actions
+			if (V[otherArm + "arm"] !== "mbreasthold") {
+				if (V.mouth === "mbreast") {
+					V.mouth = 0;
+					V.mouthaction = "mrest";
+					V.mouthactiondefault = "mrest";
+				} else if (V.mouthaction === "mbreastentrance") {
+					V.mouthaction = "mrest";
+					V.mouthactiondefault = "mrest";
+				}
+			}
+			break;
+		case "mchastity": // Old usage
+		case "mpenischastity":
+		case "mvaginachastity":
+			if (arm === "left" && ["mchastity", "mpenischastity", "mvaginachastity"].includes(V[otherArmAction])) {
+				doubleAction = true;
+				handsOn = 2;
+			}
+			altText.target = "<<genitals 1>>";
+			if (V[armAction] !== "mchastity" && (!doubleAction || V[armAction] === V[otherArmAction])) {
+				altText.target = V[armAction] === "mpenischastity" ? "<<penis>>" : "<<pussy>>";
+			}
 			sWikifier(
-				`You try to dig your fingers beneath your ${V.worn.genitals.name}, but to no avail. Your <<genitals 1>> aches for your touch, but there's nothing you can do.<<gstress>>`
+				`You try to dig your fingers beneath your ${V.worn.genitals.name}, but to no avail. Your ${altText.target} aches for your touch, but there's nothing you can do.<<gstress>>`
 			);
 			wikifier("stress", handsOn);
+			clearAction();
 			break;
 		case "mpenisentrance":
 			clearAction("mpenisglans");
@@ -1033,11 +1240,10 @@ function masturbationeffectsArms(
 			if (
 				playerIsPregnant() &&
 				playerPregnancyProgress() >= 0.1 &&
-				V.player.penissize === -1 &&
-				random(0, 100) >= 75 &&
-				(!V.daily.chastityParasizeSizeReduction || V.daily.chastityParasizeSizeReduction < 400)
+				V.player.penissize <= -1 &&
+				(!V.daily.chastityParasizeSizeReduction || V.daily.chastityParasizeSizeReduction < 150)
 			) {
-				V.penisgrowthtimer++;
+				V.penisgrowthtimer += 3;
 				V.daily.chastityParasizeSizeReduction = (V.daily.chastityParasizeSizeReduction || 0) + 1;
 			}
 			break;
@@ -1070,7 +1276,6 @@ function masturbationeffectsArms(
 				sWikifier(`Your forced to roughtly grope your ${balls} to feel anything.`);
 			} else {
 				wikifier("arousal", 100 * handsOn, "masturbationPenis");
-				additionalEffect.hands = "ballplayeffects";
 				if (handsOn === 2) {
 					if (V.arousal >= V.arousalmax * (4 / 5)) {
 						fragment.append(
@@ -1092,13 +1297,14 @@ function masturbationeffectsArms(
 							`You grope ${altText.oneOfYour} with your ${arm} and enjoy the feeling of tightness as your balls clench up against the base of your <<penis>>.`
 						);
 					} else if (V.arousal >= V.arousalmax * (3 / 5)) {
-						fragment.append(span(`You fondle ${altText.oneOfYour} with your ${arm} and enjoy the tickling feeling.`));
+						fragment.append(span(`You fondle ${altText.oneOfYour} with your ${arm} hand and enjoy the tickling feeling.`));
 					} else if (V.arousal >= V.arousalmax * (2 / 5)) {
-						fragment.append(span(`You jiggle ${altText.oneOfYour} in your ${arm} and enjoy the feeling of gravity on it.`));
+						fragment.append(span(`You jiggle ${altText.oneOfYour} in your ${arm} hand and enjoy the feeling of gravity on it.`));
 					} else {
-						fragment.append(span(`You stroke ${altText.oneOfYour} with your ${arm}.`));
+						fragment.append(span(`You stroke ${altText.oneOfYour} with your ${arm} hand.`));
 					}
 				}
+				additionalEffect.hands = "ballplayeffects";
 			}
 			break;
 		case "mballssqueeze":
@@ -1110,7 +1316,6 @@ function masturbationeffectsArms(
 				sWikifier(`Your forced to roughtly squeeze your ${balls} to feel anything.`);
 			} else {
 				wikifier("arousal", 200 * handsOn, "masturbationPenis");
-				additionalEffect.hands = "ballplayeffects";
 				altText.gently = V.arousal >= V.arousalmax * (4 / 5) ? "urgently" : V.arousal >= V.arousalmax * (3 / 5) ? "" : "gently";
 				if (handsOn === 2) {
 					switch (V.ballssize) {
@@ -1146,6 +1351,7 @@ function masturbationeffectsArms(
 							break;
 					}
 				}
+				additionalEffect.hands = "ballplayeffects";
 			}
 			break;
 		case "mballsentrance":
@@ -1174,23 +1380,22 @@ function masturbationeffectsArms(
 					switch (V.ballssize) {
 						case 1:
 						case 2:
-							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm}`));
+							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm} hand.`));
 							break;
 						case 3:
-							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm}. It fills your palm nicely`));
+							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm} hand. It fills your palm nicely`));
 							break;
 						case 4:
-							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm}. You can barely get your hand around it`));
+							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm} hand. You can barely get your hand around it`));
 							break;
 						default:
-							fragment.append(span(`You easily grab both of your ${balls} with your ${arm}`));
+							fragment.append(span(`You easily grab both of your ${balls} with your ${arm} hand.`));
 							break;
 					}
 				}
-				fragment.append(span(`. You Briefly freeze. `));
+				fragment.append(span(`. You briefly freeze. `));
 				fragment.append(span(`You didn't feel anything.`, "red"));
 			} else {
-				additionalEffect.hands = "ballplayeffects";
 				wikifier("arousal", 100 * handsOn, "masturbationPenis");
 				if (handsOn === 2) {
 					switch (V.ballssize) {
@@ -1213,19 +1418,20 @@ function masturbationeffectsArms(
 					switch (V.ballssize) {
 						case 1:
 						case 2:
-							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm}.`, "blue"));
+							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm} hand.`, "blue"));
 							break;
 						case 3:
-							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm}. It fills your palm nicely.`, "blue"));
+							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm} hand. It fills your palm nicely.`, "blue"));
 							break;
 						case 4:
-							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm}. You can barely get your hand around it.`, "blue"));
+							fragment.append(span(`You take ${altText.oneOfYour} in your ${arm} hand. You can barely get your hand around it.`, "blue"));
 							break;
 						default:
-							fragment.append(span(`You easily grab both of your ${balls} with your ${arm}`, "blue"));
+							fragment.append(span(`You easily grab both of your ${balls} with your ${arm} hand.`, "blue"));
 							break;
 					}
 				}
+				additionalEffect.hands = "ballplayeffects";
 			}
 			break;
 		case "mpenisW":
@@ -1640,7 +1846,7 @@ function masturbationeffectsArms(
 			} else {
 				altText.toys = `You attempt to use your ${toyDisplay(altText.selectedToy)} on your <<breasts>>,`;
 			}
-			if (V.lactating === 1 && V.breastfeedingdisable === "f") {
+			if (V.lactating === 1) {
 				if (V.milk_amount >= 1 && V.earSlime.focus === "pregnancy" && V.earSlime.growth >= 100 && !V.earSlime.defyCooldown) {
 					wikifier("arousal", 100 * handsOn, "masturbationNipples");
 					sWikifier(`${altText.toys} <span class="lewd">and milk surges from your buds, quickly filling the bottle.</span>`);
@@ -2663,7 +2869,7 @@ function possessedMasturbation(span, br) {
 	return fragment;
 }
 
-function masturbationeffectsMouth({
+function masturbationEffectsMouth({
 	span,
 	otherElement,
 	additionalEffect,
@@ -2682,16 +2888,141 @@ function masturbationeffectsMouth({
 	};
 
 	const clearAction = defaultAction => {
+		if (V.mouthaction && V.mouthaction !== "mrest") V.masturbationActions.mouthaction = V.mouthaction;
 		V.mouthactiondefault = defaultAction !== undefined ? defaultAction : V.mouthaction;
 		V.mouthaction = 0;
 	};
 
 	if (V.mouthaction === 0 || V.mouthaction === "mrest") return fragment;
 
+	const breastsHeld = (V.leftarm === "mbreasthold" ? 1 : 0) + (V.rightarm === "mbreasthold" ? 1 : 0);
+	const breastsFondle = (V.leftactiondefault === "mbreastfondle" ? 1 : 0) + (V.rightactiondefault === "mbreastfondle" ? 1 : 0);
+
 	const altText = {};
 
 	// Dealing with the players actions
 	switch (V.mouthaction) {
+		case "mbreastentrance":
+			clearAction("mbreastlick");
+			V.mouth = "mbreast";
+
+			if (breastsHeld > 1) {
+				fragment.append(
+					Wikifier.wikifyEval(
+						`You ${breastsFondle ? "briefly stop fondling your breasts and lift them" : "lift both of your <<breasts>>"} up to your mouth.`
+					)
+				);
+			} else {
+				fragment.append(
+					Wikifier.wikifyEval(`You ${breastsFondle ? "briefly stop fondling your breast and lift it" : "lift your breast"} up to your mouth.`)
+				);
+			}
+			break;
+		case "mbreastlick":
+			wikifier("arousal", 100 * breastsHeld, "masturbationBreasts");
+
+			if (V.arousal >= (V.arousalmax / 5) * 4) {
+				fragment.append(
+					Wikifier.wikifyEval(
+						`You drag your quivering tongue across over your exposed ${
+							breastsHeld > 1 ? "<<nipples>>" : "<<nipple>>"
+						}. Jolts of shocking pleasure shoot through your body.`
+					)
+				);
+			} else if (V.arousal >= (V.arousalmax / 5) * 3) {
+				fragment.append(
+					Wikifier.wikifyEval(
+						`You circle the tip of your tongue around your exposed ${
+							breastsHeld > 1 ? "areolae. Your <<nipples>> stiffen" : "areola. Your <<nipple>> stiffens"
+						} in response.`
+					)
+				);
+			} else {
+				fragment.append(Wikifier.wikifyEval(`You lick your exposed ${breastsHeld > 1 ? "<<nipples>>" : "<<nipple>>"}.`));
+			}
+
+			if (V.lactating === 1 && V.breastfeedingdisable === "f") {
+				fragment.append(" ");
+				if (V.milk_amount >= 1) {
+					fragment.append(span("Milk leaks from your buds. It tastes sweet.", "lewd"));
+					fragment.append(" ");
+					fragment.append(wikifier("breastfeed", 1 + breastsHeld, undefined, false));
+					fragment.append(wikifier("breastfed", T.milk_released)); // PC is breastfed by, well, themselves
+				} else {
+					fragment.append(span("No milk leaks from your buds. You must be dry."));
+				}
+			}
+			clearAction(); // Needs to run after any breastfeed widget
+			break;
+		case "mbreastsuck":
+			wikifier("arousal", 200 * breastsHeld, "masturbationBreasts");
+			if (V.arousal >= (V.arousalmax / 5) * 4) {
+				fragment.append(
+					Wikifier.wikifyEval(
+						`You feverishly suck on ${
+							breastsHeld > 1 ? "both of your erect <<nipples>>" : "your erect <<nipple>>"
+						}. Your body jolts involuntarily with pleasure.`
+					)
+				);
+			} else if (V.arousal >= (V.arousalmax / 5) * 3) {
+				fragment.append(
+					Wikifier.wikifyEval(
+						`You tightly wrap your lips around your exposed ${
+							breastsHeld > 1 ? "<<nipples>> and suck on them. They feel" : "<<nipple>> and suck on it. It feels"
+						} stiff against your tongue.`
+					)
+				);
+			} else {
+				fragment.append(Wikifier.wikifyEval(`You suck on your exposed ${breastsHeld > 1 ? "<<nipples>>" : "<<nipple>>"}.`));
+			}
+			if (V.lactating === 1 && V.breastfeedingdisable === "f") {
+				fragment.append(" ");
+				if (V.milk_amount >= 1) {
+					fragment.append(wikifier("breastfeed", breastsHeld, "drunk", false));
+					if (T.milk_released <= 5) {
+						fragment.append(span(`A small dribble of milk leaks from your bud${breastsHeld > 1 ? "s" : ""} onto your tongue.`, "lewd"));
+					} else if (T.milk_released <= 10) {
+						fragment.append(span(`A steady stream of milk trickles from your bud${breastsHeld > 1 ? "s" : ""} into your mouth.`, "lewd"));
+					} else if (T.milk_released <= 15) {
+						fragment.append(
+							span(
+								`${breastsHeld > 1 ? "A couple thin streams of milk spray" : "A thin stream of milk sprays"} from your bud${
+									breastsHeld > 1 ? "s" : ""
+								}, filling your mouth.`,
+								"lewd"
+							)
+						);
+					} else {
+						fragment.append(
+							span(
+								`Several thin streams of milk spray from your bud${breastsHeld > 1 ? "s" : ""}, filling your mouth at an alarming speed.`,
+								"lewd"
+							)
+						);
+					}
+					fragment.append(" ");
+					if (T.milk_released >= 15) {
+						if (V.oralskill < 200) {
+							fragment.append(span("You struggle to swallow it all. The excess trickles out of your lips and dribbles down your chin."));
+						} else {
+							fragment.append(span("It's a lot to swallow, but you manage to get it all down. It's remarkably sweet."));
+						}
+					} else if (T.milk_released >= 10) {
+						if (V.oralskill < 100) {
+							fragment.append(span("It's tough to swallow all of it, but you barely manage to get it down."));
+						} else {
+							fragment.append(span("You swallow it all with ease. It's remarkably sweet."));
+						}
+					} else {
+						fragment.append(span("It's a small enough amount that it's simple to swallow. It's remarkably sweet."));
+					}
+					fragment.append(wikifier("breastfed", T.milk_released)); // PC is breastfed by, well, themselves
+				} else {
+					fragment.append(span("No milk leaks from your buds. You must be dry."));
+				}
+			}
+			clearAction(); // Needs to run after any breastfeed widget
+			break;
 		case "mpenisentrance":
 			if (V.penisuse === 0) {
 				clearAction("mpenislick");
@@ -2732,7 +3063,7 @@ function masturbationeffectsMouth({
 				}
 				if (genitalsExposed()) {
 					wikifier("arousal", 100, "masturbationGenital");
-					sWikifier(`<span class="blue">You get close enough to your chasitity parasite to reach out and it with your tongue.</span>`);
+					sWikifier(`<span class="blue">You get close enough to your chasitity parasite to reach out and lick it with your tongue.</span>`);
 				} else {
 					sWikifier(
 						`<span class="blue">You run your tongue over your chasitity parasite${
@@ -3022,7 +3353,7 @@ function masturbationeffectsMouth({
 			break;
 		case "maphropill":
 			clearAction("mrest");
-			if (V.mouth === 0) {
+			if ([0, "disabled"].includes(V.mouth)) {
 				wikifier("drugs", 300);
 				const pills = V.player.inventory.sextoys["aphrodisiac pills"][0];
 				pills.uses -= 1;
@@ -3205,7 +3536,7 @@ function deepthroateffects(span) {
 	return fragment;
 }
 
-function masturbationeffectsVaginaAnus({ span, otherElement, additionalEffect, selectedToy, toyDisplay, genitalsExposed, breastsExposed, hymenIntact }) {
+function masturbationEffectsVaginaAnus({ span, otherElement, additionalEffect, selectedToy, toyDisplay, genitalsExposed, breastsExposed, hymenIntact }) {
 	const fragment = document.createDocumentFragment();
 
 	const sWikifier = text => {
@@ -3294,7 +3625,7 @@ function masturbationeffectsVaginaAnus({ span, otherElement, additionalEffect, s
 			clearAction("vagina");
 			V.vaginause = "mpenisflowerrub";
 			V.moorPhallusPlant = 2;
-			if (genitalsExposed()) {
+			if (!genitalsExposed()) {
 				wikifier("arousal", 100, "anal");
 				fragment.append(span("You grind your crotch against the plant, although your clothing gets in the way."));
 			} else {
@@ -3391,7 +3722,7 @@ function masturbationeffectsVaginaAnus({ span, otherElement, additionalEffect, s
 			clearAction("anus");
 			V.anususe = "mpenisflowerrub";
 			V.moorPhallusPlant = 2;
-			if (genitalsExposed()) {
+			if (!genitalsExposed()) {
 				wikifier("arousal", 100, "anal");
 				fragment.append(span("You grind your ass against the plant, although your clothes get in the way."));
 			} else {
@@ -3484,7 +3815,7 @@ function masturbationeffectsVaginaAnus({ span, otherElement, additionalEffect, s
 
 Macro.add("masturbationeffects", {
 	handler() {
-		const fragment = masturbationeffects();
+		const fragment = masturbationEffects();
 		this.output.append(fragment);
 	},
 });

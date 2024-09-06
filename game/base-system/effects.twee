@@ -1,4 +1,4 @@
-:: Widgets Effects [widget]
+:: Widgets EffectsOld [widget]
 
 /* Deprecated */
 /* <<widget "effectstime">>
@@ -17,7 +17,8 @@
 	<</if>>
 <</widget>> */
 
-<<widget "effectswater">>
+/* Deprecated */
+<<widget "effectswaterold">>
 	<<set $wetintro to 0>>
 
 	<<if $squidcount is 1>>
@@ -131,7 +132,7 @@
 
 	<<if $wetintro gte 2 and !$possessed>>
 		<<exposure>>
-		<<if $exhibitionism gte 55>>
+		<<if hasSexStat("exhibitionism", 4)>>
 			<<if !$worn.face.type.includes("blindfold")>>
 				You feel a lewd thrill as you look down and see your clothes clinging tight to your body, completely transparent.
 			<<else>>
@@ -147,7 +148,7 @@
 		<<covered>>
 		<br><br>
 	<<elseif $wetintro gte 1 and !$possessed>>
-		<<if $exhibitionism gte 35>>
+		<<if hasSexStat("exhibitionism", 3)>>
 			<<if !$worn.face.type.includes("blindfold")>>
 				You feel a lewd thrill as you look down and see your clothes clinging tight to your body, giving a hint of transparency.
 			<<else>>
@@ -194,7 +195,8 @@
 	<</if>>
 <</widget>>
 
-<<widget "effects">>
+/* Deprecated
+<<widget "effectsold">>
 	<<if $newVersionData>>
 		<<newversionnotification>>
 	<</if>>
@@ -293,7 +295,7 @@
 			<<flashbackschool>>
 		<</if>>
 	<</if>>
-	<<if isPlayerNonparasitePregnancyEnding()>>
+	<<if isPregnancyEnding()>>
 		<span class="red">Your waters have broken.
 		<<if ["asylum","prison","hospital"].includes($location)>>
 			You need to find help, fast!
@@ -962,7 +964,7 @@
 		<<set $earSlime.event to "">>
 		<span class="green">The slime in your ear is pleased that you completed its task of getting your own sperm into your <<print $player.vaginaExist ? "vagina" : "anus">>.</span>
 		<<pain -4>><<stress -6>><<trauma -12>><<lpain>><<lltrauma>><<lstress>>
-		<<if $earSlime.growth gte 100 and $worn.genitals.name is "naked">>
+		<<if $earSlime.growth gte 100 and $earSlime.focus is "pregnancy" and $worn.genitals.name is "naked">>
 			<span class="purple">A new chastity parasite forms around your penis.</span>
 			<<genitalswear 8>>
 			<<set $worn.genitals.origin to "ear slime">>
@@ -1013,80 +1015,4 @@
 		<<run IronMan.scheduledSaves()>>
 	<</if>>
 <</widget>>
-
-<<widget "newversionnotification">>
-	<div id="new-version-notification" class="no-numberify">
-		New version is available! Degrees of Lewdity $newVersionData.version was released
-		<<print $newVersionData.hours >= 24 ? $newVersionData.days + " days" : $newVersionData.hours + " hours">> ago.
-
-		<div class="new-version-notification-buttons">
-			<a class="btn-update" href="https://vrelnir.blogspot.com" target="_blank">UPDATE!</a>
-
-			<div class="div-link btn-update">
-				<<link "Remind later">>
-					<<unset $newVersionData>>
-					<<run $('#new-version-notification').hide()>>
-				<</link>>
-			</div>
-			<div class="div-link btn-update">
-				<<link "Skip update">>
-					<<set $newVersionDismissed = true>>
-					<<unset $newVersionData>>
-					<<run $('#new-version-notification').hide()>>
-				<</link>>
-			</div>
-		</div>
-	</div>
-	<<run $(() => { linkifyDivs('#new-version-notification'); })>>
-<</widget>>
-
-<<widget "temperature">>
-	<<set $warmth to 0>>
-	<<for _active_clothes range Object.keys($worn)>>
-		<<if $inwater is 1>>
-			<<if $worn[_active_clothes].warmth isnot undefined and $worn[_active_clothes].type.includes("diving")>>
-				<<set $warmth += $worn[_active_clothes].warmth>>
-			<</if>>
-		<<else>>
-			<<if $worn[_active_clothes].warmth isnot undefined>>
-				<<if _active_clothes is "upper" and $worn.upper.warmth lte $upperwet or _active_clothes is "lower" and $worn.lower.warmth lte $lowerwet or _active_clothes is "under_upper" and $worn.under_upper.warmth lte $underupperwet or _active_clothes is "under_lower" and $worn.under_lower.warmth lte $underlowerwet>>
-					/*Do nothing*/
-				<<else>>
-					<<set $warmth += $worn[_active_clothes].warmth>>
-				<</if>>
-			<</if>>
-		<</if>>
-	<</for>>
-
-	<<if $inwater is 1>>
-		<<if Time.season is "winter" and !["sea", "beach", "school", "underground", "pool"].includes($location)>>
-			<<if $warmth gte 80>>
-				<<set $body_temperature_outside to "comfy">>
-			<<elseif $warmth gte 40>>
-				<<set $body_temperature_outside to "chilly">>
-			<<else>>
-				<<set $body_temperature_outside to "cold">>
-			<</if>>
-		<<else>>
-			<<set $body_temperature_outside to "comfy">>
-		<</if>>
-	<<else>>
-		<<if $warmth gte (($chill * 1.3) + 150)>>
-			<<set $body_temperature_outside to "hot">>
-		<<elseif $warmth gte (($chill * 1.3) + 70)>>
-			<<set $body_temperature_outside to "warm">>
-		<<elseif $warmth lte ($chill - 90)>>
-			<<set $body_temperature_outside to "cold">>
-		<<elseif $warmth lte $chill>>
-			<<set $body_temperature_outside to "chilly">>
-		<<else>>
-			<<set $body_temperature_outside to "comfy">>
-		<</if>>
-	<</if>>
-
-	<<if $outside is 1 or _water_warmth isnot undefined>>
-		<<set $body_temperature to $body_temperature_outside>>
-	<<else>>
-		<<set $body_temperature to "comfy">>
-	<</if>>
-<</widget>>
+*/

@@ -10,13 +10,13 @@
 
 <<widget "catacombs_torch_text">>
 	<<if $catacombs_torch gte 100>>
-		Your torch is <span class="green">radiant.</span>
+		Your torch is <span class="green">radiant.</span> <<set Weather.Temperature.override.increase.inside(5, "The burning torch is hot.")>>
 	<<elseif $catacombs_torch gte 80>>
-		Your torch <span class="teal">blazes.</span>
+		Your torch <span class="teal">blazes.</span> <<set Weather.Temperature.override.increase.inside(5, "The burning torch is hot.")>>
 	<<elseif $catacombs_torch gte 60>>
-		The flame on your torch has <span class="lblue">lost some of its vigour.</span>
+		The flame on your torch has <span class="lblue">lost some of its vigour.</span> <<set Weather.Temperature.override.increase.inside(3, "The waning fire of your torch is warm.")>>
 	<<elseif $catacombs_torch gte 40>>
-		Your torch is <span class="blue">burning lower.</span>
+		Your torch is <span class="blue">burning lower.</span><<set Weather.Temperature.override.increase.inside(1, "The dim fire of your torch is slightly warm.")>>
 	<<elseif $catacombs_torch gte 20>>
 		Your torch <span class="purple">won't last much longer.</span>
 	<<elseif $catacombs_torch gte 1>>
@@ -78,7 +78,7 @@
 			<<else>>
 				<<if random(1, 4) is 4 and !$worn.feet.type.includes("shackle")>>
 					You feel a stone slab give way underfoot. The ground trembles, <span class="red">and a set of iron cuffs clamp around your ankles.</span> They're connected to the ground by a chain, but the metal is so rusty that it crumbles at a little force. The chain connecting them proves sturdier.
-					<<feetwear 3>>
+					<<shackle_feet>>
 					<br><br>
 
 					<<destination_catacombs skip>>
@@ -314,7 +314,7 @@
 			You feel around for a gap wide enough to let you through. You think you've found the widest, <span class="red">but you can't tell for sure.</span>
 			<br><br>
 
-			<<link [[Squeeze through a gap|Catacombs Squeeze]]>><</link>>
+			<<link [[Squeeze through a gap|Catacombs Squeeze]]>><</link>><<small_text>>
 			<br>
 			<<link [[Take a detour (0:10)|Catacombs Detour]]>><<pass 10>><<catacombs_torch -5>><</link>><<ltorch>>
 			<br>
@@ -413,8 +413,8 @@
 <</widget>>
 
 <<widget "passoutcatacombs">>
-	<<if isPlayerNonparasitePregnancyEnding()>>
-		<<pregnancyWatersBrokenPassout "catacombs">>
+	<<if isPregnancyEnding()>>
+		<<pregnancyPassout "catacombs">>
 		<<if $worn.face.type.includes("blindfold")>>
 			<<set $worn.face.type.push("broken")>>
 			<<faceruined>>

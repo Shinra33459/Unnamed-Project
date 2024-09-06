@@ -94,8 +94,8 @@ window.rangeIterate = rangeIterate;
  *
  * @param {string} macroName
  * @param {Function} macroFunction
- * @param {object} tags
- * @param {boolean} skipArgs
+ * @param {object=} tags
+ * @param {boolean=} skipArgs
  */
 function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 	Macro.add(macroName, {
@@ -127,9 +127,9 @@ function DefineMacro(macroName, macroFunction, tags, skipArgs) {
  *
  * @param {string} macroName
  * @param {Function} macroFunction
- * @param {object} tags
- * @param {boolean} skipArgs
- * @param {boolean} maintainContext
+ * @param {object=} tags
+ * @param {boolean=} skipArgs
+ * @param {boolean=} maintainContext
  */
 function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext) {
 	DefineMacro(
@@ -141,6 +141,58 @@ function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext)
 		skipArgs
 	);
 }
+
+/**
+ * Creates and returns a keyword describing the wetness of a clothing article.
+ *
+ * @param {string} slot clothing article slot used
+ * @returns {string} condition key word ("drenched"|"torn|"frayed"|"full")
+ */
+
+function wetnessKeyword(slot) {
+	const i = V[`${slot.replace("_", "")}wet`];
+	if (i >= 100) {
+		return "drenched";
+	} else if (i >= 80) {
+		return "wet";
+	} else if (i >= 50) {
+		return "damp";
+	} else {
+		return "dry";
+	}
+}
+window.wetnessKeyword = wetnessKeyword;
+
+/**
+ * Returns an optional wetness prefix for the article of clothing.
+ 
+ * @param {string} slot clothing article slot used
+ * @returns {string} printable integrity prefix
+ */
+function wetnessWord(slot) {
+	const kw = wetnessKeyword(slot);
+	if (!kw) return "";
+	let colorClass;
+	switch (kw) {
+		case "dry":
+			colorClass = "green";
+			break;
+		case "damp":
+			colorClass = "teal";
+			break;
+		case "wet":
+			colorClass = "purple";
+			break;
+		case "drenched":
+			colorClass = "red";
+			break;
+		default:
+			colorClass = ""; // default without color
+	}
+	return `<span class="${colorClass}">${kw.trim()}</span> `;
+}
+window.wetnessWord = wetnessWord;
+DefineMacroS("wetnessWord", wetnessWord);
 
 /**
  * Creates and returns the keyword describing the integrity of a clothing article.
@@ -168,11 +220,11 @@ window.integrityKeyword = integrityKeyword;
  *
  * @param {object} worn clothing article, State.variables.worn.XXXX
  * @param {string} slot clothing article slot used
- * @param {string} alt alt version for metal/plastic devices
  * @returns {string} printable integrity prefix
  */
 function integrityWord(worn, slot) {
 	const kw = integrityKeyword(worn, slot);
+	// alt version for metal/plastic devices
 	const alt = setup.clothes[slot][clothesIndex(slot, worn)].altDamage;
 	if (alt === "parasite") {
 		switch (kw) {
@@ -216,27 +268,27 @@ function integrityWord(worn, slot) {
 				T.text_output = "";
 		}
 	}
-    let colorClass;
-    switch (kw) {
-        case "full":
-            colorClass = "green";
-            break;
-        case "tattered":
-            colorClass = "red";
-            break;
-        case "torn":
-            colorClass = "purple";
-            break;
-        case "frayed":
-            colorClass = "teal";
-            break;
-        default:
-            colorClass = ""; // default without color
-    }
-    if (T.text_output) {
-        T.text_output = `<span class="${colorClass}">${T.text_output.trim()}</span> `;
-    }
-    return T.text_output;
+	let colorClass;
+	switch (kw) {
+		case "full":
+			colorClass = "green";
+			break;
+		case "tattered":
+			colorClass = "red";
+			break;
+		case "torn":
+			colorClass = "purple";
+			break;
+		case "frayed":
+			colorClass = "teal";
+			break;
+		default:
+			colorClass = ""; // default without color
+	}
+	if (T.text_output) {
+		T.text_output = `<span class="${colorClass}">${T.text_output.trim()}</span> `;
+	}
+	return T.text_output;
 }
 window.integrityWord = integrityWord;
 DefineMacroS("integrityWord", integrityWord);
@@ -282,6 +334,39 @@ function faceintegrity() {
 DefineMacroS("faceintegrity", faceintegrity);
 
 /**
+ * @param {number} wetnessValue
+ */
+function getWetStage(wetnessValue) {
+	if (wetnessValue >= 100) return 3;
+	if (wetnessValue >= 80) return 2;
+	if (wetnessValue >= 40) return 1;
+	return 0;
+}
+
+/**
+ * Updates the wetstage for the given "wet" variable and the sidebar image to reflect the changes
+ *
+ * @param {string} wetVar
+ * @param {number} wetnessValue
+ */
+function cheatsShowWetness(wetVar, wetnessValue) {
+	V[wetVar + "stage"] = getWetStage(wetnessValue);
+	wikifier("<<updatesidebarimg false>>");
+}
+window.cheatsShowWetness = cheatsShowWetness;
+
+/**
+ * @param {string} id the slider's full id
+ * @param {number} value
+ */
+function cheatsUpdateSlider(id, value) {
+	const slider = $(id);
+	if (!slider.length) return;
+	slider.val(value).trigger("change");
+}
+window.cheatsUpdateSlider = cheatsUpdateSlider;
+
+/**
  * @param {object} worn clothing article, State.variables.worn.XXXX
  * @returns {string} printable clothing colour
  */
@@ -302,16 +387,58 @@ window.clothesColour = clothesColour;
  * @returns {void}
  */
 function outfitChecks() {
+	/* Boolean variables */
 	T.underOutfit = (V.worn.under_lower.outfitSecondary && V.worn.under_lower.outfitSecondary[1] === V.worn.under_upper.name) || false;
 	T.middleOutfit = (V.worn.lower.outfitSecondary && V.worn.lower.outfitSecondary[1] === V.worn.upper.name) || false;
 	T.overOutfit = (V.worn.over_lower.outfitSecondary && V.worn.over_lower.outfitSecondary[1] === V.worn.over_upper.name) || false;
 
-	T.underNaked = V.worn.under_lower.name === "naked" && V.worn.under_upper.name === "naked";
-	T.middleNaked = V.worn.lower.name === "naked" && V.worn.upper.name === "naked";
-	T.overNaked = V.worn.over_lower.name === "naked" && V.worn.over_upper.name === "naked";
-	T.topless = V.worn.over_upper.name === "naked" && V.worn.upper.name === "naked" && V.worn.under_upper.name === "naked" && V.worn.lower.covers_top !== 1;
+	T.skirtExposed =
+		(setup.clothes.over_lower[clothesIndex("over_lower", V.worn.over_lower)].skirt === 1 &&
+			setup.clothes.lower[clothesIndex("lower", V.worn.lower)].skirt === 1) ||
+		(setup.clothes.over_lower[clothesIndex("over_lower", V.worn.over_lower)].skirt === 1 && V.worn.lower.type.includes("naked")) ||
+		(V.worn.over_lower.type.includes("naked") && setup.clothes.lower[clothesIndex("lower", V.worn.lower)].skirt === 1);
+	T.bottomExposed = V.worn.over_lower.name === "naked" && V.worn.lower.name === "naked" && !V.worn.under_lower.type.includes("covered");
+	T.shirtless =
+		V.worn.over_upper.name === "naked" &&
+		V.worn.upper.name === "naked" &&
+		!V.worn.lower.type.includes("covered") &&
+		!V.worn.under_upper.type.includes("covered");
+
+	T.topless =
+		V.worn.over_upper.name === "naked" && V.worn.upper.name === "naked" && V.worn.under_upper.name === "naked" && !V.worn.lower.type.includes("covered");
 	T.bottomless = V.worn.over_lower.name === "naked" && V.worn.lower.name === "naked" && V.worn.under_lower.name === "naked";
+	T.overNaked = V.worn.over_lower.name === "naked" && V.worn.over_upper.name === "naked";
+	T.middleNaked = T.shirtless && T.bottomExposed;
+	T.underNaked = V.worn.under_lower.name === "naked" && V.worn.under_upper.name === "naked";
 	T.fullyNaked = T.topless && T.bottomless;
+
+	/* Temporary $worn[slot] variables. Generally called as _bottom.integrity or _top.name */
+	const topLayers = [V.worn.over_upper, V.worn.upper, V.worn.under_upper];
+	const bottomLayers = ["over_lower", "lower", "under_lower"];
+	T.top = topLayers.find(item => item.name !== "naked" && (!V.worn.lower || item !== V.worn.lower || item.type.includes("covered"))) || null;
+	T.topUnder = topLayers.slice(topLayers.indexOf(T.top) + 1).find(item => item.name !== "naked") || null;
+	T.bottom =
+		V.worn[
+			bottomLayers.find(item => {
+				return V.worn[item].name !== "naked" && ((T.bottomIsSkirt = setup.clothes[item][clothesIndex(item, V.worn[item])].skirt), true);
+			})
+		];
+	if (T.bottom !== V.worn.under_lower) {
+		T.bottomUnder =
+			V.worn[
+				bottomLayers.slice(bottomLayers.indexOf(T.bottom)).find(item => {
+					return V.worn[item].name !== "naked" && ((T.bottomUnderIsSkirt = setup.clothes[item][clothesIndex(item, V.worn[item])].skirt), true);
+				})
+			];
+	}
+	T.underwear = T.bottomUnder && V.worn.under_lower.name !== "naked";
+	T.swimwear =
+		((V.worn.under_lower.type.includes("swim") && V.worn.lower.type.includes("naked")) || V.worn.lower.type.includes("swim")) &&
+		(V.worn.under_upper.type.includes("swim") || V.worn.under_upper.type.includes("naked")) &&
+		(V.worn.upper.type.includes("swim") || V.worn.upper.type.includes("naked"));
+	T.outfit = (T.bottom?.outfitSecondary && T.bottom?.outfitSecondary[1] === T.top?.name) || null;
+	if (!T.top && !T.shirtless) T.top = T.bottom;
+	if (T.outfit) T.bottom = T.top;
 }
 window.outfitChecks = outfitChecks;
 DefineMacro("outfitChecks", outfitChecks);
@@ -435,73 +562,58 @@ function mobBtnShow() {
 window.mobBtnShow = mobBtnShow;
 
 /**
- * This function takes a value, and weights it by exponential curve.
+ * Selects a random item from an array of weighted options. Each option is an array with
+ * two elements: the item, and its weight.
+ * Works similar to eventpool, but more generic and lightweight, and works with any data types.
  *
- * Value should be between 0.0 and 1.0 (use normalise to get a percentage of a max).
+ * Options with a higher weight have a higher chance of being chosen.
  *
- * An exponent of 1.0 returns 1 every time.
- *
- * Exponents between 1.0 and 2.0 return a curve favoring higher results (closer to 1)
- *
- * An exponent of 2.0 will return a flat line distribution, and is identical to random()
- *
- * Exponents greater than 2.0 return a curve favoring lower results (closer to 0), reaching to 0 at infinity.
- *
- * For example, see:
- * https://www.desmos.com/calculator/87hhrjfixi
- *
- * @param {number} value Value to be weighted
- * @param {number} exp Exponent used to generate the curve
- * @returns {number} value weighted against exponential curve
+ * @param {Array} options Each option is an array where the first item is a value, and the second item is its weight.
+ * @returns {*} The selected item
+ * @example
+ *     console.log(weightedRandom(["apple", 1], ["banana", 2], ["cherry", 3]));  // Relative probability for these will be: apple: 16.67%, banana: 33.33%, cherry: 50%
  */
-function expCurve(value, exp) {
-	return value ** exp / value;
+function weightedRandom(...options) {
+	if (!Array.isArray(options) || options.length === 0) {
+		throw new Error("Options must be a non-empty array.");
+	}
+	let totalWeight = 0;
+	const processedOptions = options.map(([value, weight]) => {
+		if (typeof weight !== "number") {
+			throw new Error("Weight must be a number.");
+		}
+		totalWeight += weight;
+		return [value, totalWeight];
+	});
+
+	const random = State.random() * totalWeight;
+	for (const [value, cumulativeWeight] of processedOptions) {
+		if (cumulativeWeight >= random) {
+			return value;
+		}
+	}
+	console.error("weightedRandom: Unreachable code reached. Returning " + options[0][0]);
+	return options[0][0];
 }
-window.expCurve = expCurve;
+window.weightedRandom = weightedRandom;
 
 /**
- * This function creates a random float 0.0-1.0, weighted by exponential curve.
+ * Resolves the provided value by checking if it is a function or a direct value.
+ * If the value is a function, the function is invoked and its result is returned.
+ * If it is not a function, the value itself is returned.
+ * If the value is undefined, a specified default value is returned instead.
  *
- * A value of 1.0 returns 1 every time.
- *
- * Values between 1.0 and 2.0 return a curve favoring higher results (closer to 1)
- *
- * A value of 2.0 will return a flat line distribution, and is identical to random()
- *
- * Values greater than 2.0 return a curve favoring lower results (closer to 0), reaching to 0 at infinity.
- *
- * For example, see:
- * https://www.desmos.com/calculator/87hhrjfixi
- *
- * @param {number} exp Exponent used to generate the curve
- * @returns {number} random number weighted against exponential curve
+ * @param {Function|any} value The value to resolve, which can be a function or any value
+ * @param {number} defaultValue The default value to use if the provided value is undefined
+ * @returns {number} The resolved value, either from the function call or directly
  */
-function randomExp(exp) {
-	return expCurve(State.random(), exp);
-}
-window.randomExp = randomExp;
-
-/**
- * Normalises value to a decimal number 0.0-1.0, a percentage of the range specified in min and max.
- *
- * @param {number} value The value to be normalised
- * @param {number} max The highest value of the range
- * @param {number} min The lowest value of the range, default 0
- * @returns {number} Normalised value
- */
-function normalise(value, max, min = 0) {
-	const denominator = max - min;
-	if (denominator === 0) {
-		Errors.report("[normalise]: min and max params must be different.", { value, max, min });
-		return 0;
+function resolveValue(value, defaultValue = undefined) {
+	if (typeof value === "function") {
+		return value();
 	}
-	if (denominator < 0) {
-		Errors.report("[normalise]: max param must be greater than min param.", { value, max, min });
-		return 0;
-	}
-	return Math.clamp((value - min) / denominator, 0, 1);
+	return value ?? defaultValue;
 }
-window.normalise = normalise;
+window.resolveValue = resolveValue;
 
 /**
  * This macro sets $rng. If the variable $rngOverride is set, $rng will always be set to that.
@@ -547,13 +659,14 @@ window.nullable = nullable;
  * Files are all in img/misc/icon/
  * Example: <<icon "bed.png">>
  * <<icon "bed.png" "nowhitespace">> does not add a trailing whitespace for formatting.
+ * <<icon "bed.png" "infront">> will cause the icon to layer ontop of the next one
  */
 Macro.add("icon", {
 	handler() {
 		if (!V.options.images) return;
 		const name = typeof this.args[0] === "string" ? this.args[0] : "error";
 		const iconImg = document.createElement("img");
-		iconImg.className = "icon";
+		iconImg.className = "icon" + (this.args.includes("infront") ? " infront" : "");
 		iconImg.src = "img/misc/icon/" + name;
 		this.output.append(iconImg);
 		// append a whitespace for compatibility with old icon behavior
@@ -601,5 +714,26 @@ Macro.add("foldout", {
 			setFoldoutState(foldoutState, 100);
 		});
 		e.appendTo(this.output);
+	},
+});
+
+/* global ClothedSlots */
+
+/**
+ * @param {ClothedSlots} slot
+ */
+function carriedClear(slot) {
+	const slotFound = slot in V.carried;
+	if (!slotFound) {
+		return;
+	}
+
+	V.carried[slot] = clone(setup.clothes[slot][0]);
+}
+window.carriedClear = carriedClear;
+
+Macro.add("carriedClear", {
+	handler() {
+		carriedClear(this.args[0]);
 	},
 });

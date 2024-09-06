@@ -1,5 +1,5 @@
 :: Arcade Lock
-<<set $outside to 0>><<set $location to "arcade">><<effects>><<set $lock to 300>>
+<<set $outside to 1>><<set $location to "arcade">><<effects>><<set $lock to 300>>
 The arcade is closed. A glowing sign beside the door reads "Opens: <span class="gold"><<ampm 9 00>></span>"
 <br><br>
 <<if currentSkillValue('skulduggery') gte $lock>>
@@ -20,20 +20,20 @@ The arcade is closed. A glowing sign beside the door reads "Opens: <span class="
 You are in the amusement arcade on Starfish Street.
 
 <<if Time.dayState is "day" or Time.dayState is "dusk">>
-The games and gambling machines beep and whirr.
+	The games and gambling machines beep and whirr.
 <<else>>
-The games and gambling machines lie silent.
+	The games and gambling machines lie silent.
 <</if>>
 <br><br>
 <<if $stress gte $stressmax>>
-<<passoutarcade>>
+	<<passoutarcade>>
 <<else>>
 	<<if $arousal gte $arousalmax>>
 		<<orgasmLocation "arcade">>
 	<</if>>
 	<<if Time.hour is 21>>
-	It's closing time. Security is herding everyone outside. <<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should security find you in this state of dress.<</if>>
-	<br><br>
+		It's closing time. Security is herding everyone outside. <<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should security find you in this state of dress.<</if>>
+		<br><br>
 
 		<<if $exposed lte 0>>
 			<<starfishicon>><<link [[Go outside|Starfish Street]]>><</link>>
@@ -42,29 +42,27 @@ The games and gambling machines lie silent.
 			<<ind>><<link [[Hide until it's over (1:00)|Arcade]]>><<pass 1 hour>><</link>>
 		<</if>>
 	<<else>>
-
 		<<if Time.dayState is "night" or Time.dayState is "dawn">>
-		You are alone in the darkness.
-		<br><br>
+			You are alone in the darkness.
+			<br><br>
 		<<elseif $exposed gte 1>>
-		You hide beneath a pinball machine to protect your dignity.
-		<br><br>
+			You hide beneath a pinball machine to protect your dignity.
+			<br><br>
 		<</if>>
 		<<if $arousal gte $arousalmax>>
 			<<orgasmLocation "arcade">>
 		<</if>>
 		<<if $money gte 500 and (Time.dayState is "day" or Time.dayState is "dusk") and $exposed lte 0>>
-			<<ind>><<link [[Play (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
+			<<robinicon "controller">><<link [[Play (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
 			<br>
 		<</if>>
-		<<if $exposed lte 0 and $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and Time.dayState is "day" and $kylarwatched isnot 1>>
-			<<if !Time.schoolTime and (Time.dayState is "day" or Time.dayState is "night")>>
-				<br>
-				You see Kylar playing on one of the cabinets.
-				<br>
-				<<ind>><<link [[Approach|Kylar Arcade]]>><<set $kylar_text_trigger to true>><</link>>
-				<br>
-			<</if>>
+		<<set _kylarLocation to getKylarLocation()>>
+		<<if $exposed lte 0 and _kylarLocation.area is "arcade">>
+			<br>
+			You see Kylar playing on one of the cabinets.
+			<br>
+			<<ind>><<link [[Approach|Kylar Arcade]]>><<set $kylar_text_trigger to true>><</link>>
+			<br>
 		<</if>>
 		<<if ($tenyclusPlayCount is undefined or $tenyclusPlayCount is 0) and $hallucinations gte 1 and !$daily.tenyclusPlayed and $money gte 500 and (Time.dayState is "day" or Time.dayState is "dusk") and $exposed lte 0>>
 			<<set $tenyclusPlayCount to 0>><<set $daily.tenyclusPlayed to 0>>
@@ -82,7 +80,7 @@ The games and gambling machines lie silent.
 			<br>
 		<</if>>
 		<<starfishicon>><<link [[Leave|Starfish Street]]>><</link>>
-		<br><br>
+		<br>
 	<</if>>
 <</if>>
 
@@ -1128,7 +1126,7 @@ You keep playing, refusing to be distracted.
 		<br><br>
 	<<elseif $worn.genitals.name isnot "naked">>
 		<<if $arcadeExposure.underlower isnot "naked">>
-			He then grabs your $arcadeExposure.underlower and pulls them down too.
+			<<He>> then grabs your $arcadeExposure.underlower and pulls them down too.
 		<</if>>
 		Suddenly the entire arcade can see your <<print $worn.genitals.name>>. The crowd gasps, followed by muttering and nervous laughter.
 		<br><br>
@@ -1136,7 +1134,7 @@ You keep playing, refusing to be distracted.
 		"What kind of a freak are you?" your opponent's friend shouts. You ignore <<him>> and keep playing.
 		<br><br>
 	<<elseif $arcadeExposure.underlower isnot "naked">>
-		He then grabs your $arcadeExposure.underlower and pulls them down too.
+		<<He>> then grabs your $arcadeExposure.underlower and pulls them down too.
 		<br><br>
 	<</if>>
 
@@ -1152,7 +1150,7 @@ You keep playing, refusing to be distracted.
 		<br><br>
 	<<elseif $worn.genitals.name isnot "naked">>
 		<<if $arcadeExposure.underlower isnot "naked">>
-			He then grabs your $arcadeExposure.underlower and pulls them down too.
+			<<He>> then grabs your $arcadeExposure.underlower and pulls them down too.
 		<</if>>
 		Suddenly the entire arcade can see your <<print $worn.genitals.name>>. The crowd gasps, followed by muttering and nervous laughter.
 		<br><br>
@@ -1204,7 +1202,7 @@ The fight goes back and forth, and finally both your health bars are under ten p
 	<</if>>
 	<br><br>
 
-	<<if $exhibitionism gte 75>>
+	<<if hasSexStat("exhibitionism", 5)>>
 		<<link [[Flaunt|Arcade Exposure Flaunt]]>><</link>>
 		<br>
 	<</if>>
@@ -1225,7 +1223,7 @@ The fight goes back and forth, and finally both your health bars are under ten p
 		"Nice ass, you're better at showing it off than playing games."
 		<br><br>
 
-		You realize that your ass is still exposed to the whole arcade. The crowd has their phones out and pointed right at you.
+		You realise that your ass is still exposed to the whole arcade. The crowd has their phones out and pointed right at you.
 	<</if>>
 	<br>
 
@@ -1400,7 +1398,7 @@ You decide to ignore the <<person1>><<person>> and walk off into the arcade.
 
 		<<case "lower">>
 			<<if $worn.under_lower.type.includes("naked")>>
-				You hesitate, before slowly pulling your <<bottoms>> down. The crowd reacts favorably to seeing your lack of underwear.
+				You hesitate, before slowly pulling your <<bottoms>> down. The crowd reacts favourably to seeing your lack of underwear.
 			<<else>>
 				You pull down your <<bottoms>>, exposing your <<underbottoms>>. You step out of them, leaving only your <<underbottoms>> protecting any modesty.
 			<</if>>
@@ -1427,7 +1425,7 @@ After you've been going like this for fifteen minutes <<he>> speaks up.
 "Let's make this a little more interesting," <<he>> says. "You lose a round, you lose a piece of clothing. Whoever's naked first loses everything." <<He>> looks at you with barely concealed lust.
 <br><br>
 
-<<if $exhibitionism gte 15>>
+<<if hasSexStat("exhibitionism", 2)>>
 	<<link [[Agree|Arcade Hockey Agree 2]]>><<exhibitionism2>><</link>><<exhibitionist2>>
 	<br>
 <<else>>
@@ -1556,7 +1554,7 @@ You agree to bet your <<print $worn[$arcadeHockey.player_bet].name>>.
 	"Good game, I have no one to blame for this but myself. You could leave me like this, but maybe you could give me my clothes back if I go down on you?"
 	<br><br>
 
-	<<if $exhibitionism gte 75>>
+	<<if hasSexStat("exhibitionism", 5)>>
 		<<link [[Accept|Arcade Hockey Accept]]>><<arousal 600>><<exhibitionism5>><</link>><<garousal>><<exhibitionist5>>
 		<br>
 	<<else>>
@@ -1576,7 +1574,7 @@ You agree to bet your <<print $worn[$arcadeHockey.player_bet].name>>.
 	"Looks like you're in a bad way," your opponent says. "We could let you go like you are, completely naked, into that big bad world, or I could give you your clothes back. After I bend you over this table?"
 	<br><br>
 
-	<<if $exhibitionism gte 75>>
+	<<if hasSexStat("exhibitionism", 5)>>
 		<<link [[Agree|Arcade Hockey Sex]]>><<set $sexstart to 1>><<fameexhibitionism 2>><<exhibitionism5>><</link>><<exhibitionist5>>
 		<br>
 	<<else>>

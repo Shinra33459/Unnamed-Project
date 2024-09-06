@@ -222,6 +222,32 @@
 	<<set $monster to ($NPCList[0].monster is "monster" ? 1 : 0)>>
 <</widget>>
 
+<<widget "beastPARTNERinit">>
+	<!-- Widget to force a beast to generate as a partner for an NPC, whether it be a human or beast. -->
+	<!-- This will probably brick any combat it's called into. -->
+	<!-- Args are number of beasts(1-6), Type, Gender, Genitals and Monster status-->
+	<!-- Last three args are optional, and override generation based on settings. Use with care -->
+	<!-- Example: <<beastNEWinit 1 dog m>> would generate 1 male dog -->
+	<!-- Example: <<beastNEWinit 2 wolf f>> would generate 2 female wolves -->
+	<!-- Example: <<beastNEWinit 1 horse f penis monster>> would generate 1 dickgirl centaur -->
+
+	<<set _nn to _args[0]>> <!-- NPC Slot of beast -->
+	<<set _tpe to _args[1]>> <!-- Type -->
+	<<set _partner to _args[2]>> <!-- NPC slot of partner -->
+	<<set $active_enemy to 0>>
+	<<set _generate_partner to _partner || _nn -1>>
+	<!-- Error Checking -->
+	<<if !$BeastList.includes(_tpe)>>
+		<span class="red">ERROR: beastPARTNERinit unknown type</span>
+	<</if>>
+
+	<<set _xx to _nn +1>>
+	<<generateBEAST _xx _tpe>>
+	<<set $enemyno++>>
+
+	<<set $monster to ($NPCList[_partner].monster is "monster" ? 1 : 0)>>
+<</widget>>
+
 <<widget "beastNOGENinit">>
 	<!-- NEW beast initiation widget v2.6. Replaces beast(1-6)init widgets -->
 	<!-- This works like ManInit widget and requires prior beast initialisation, no args -->
@@ -462,40 +488,6 @@
 	<<if Time.dayState isnot "night">><<enable_rescue>><</if>>
 
 	<<hand_gag 0 left>>
-
-	<<combatinit>>
-<</widget>>
-
-<<widget "busmoveinit">>
-	<<set $enemyhealth to 200>>
-	<<set $enemyarousal to $allure / 50>>
-	<<set $enemyanger to 0>>
-	<<set $enemystrength to 20000>>
-	<<set $combat to 1>>
-	<<set $enemyarousalmax to 200>>
-	<<set $enemyangermax to 200>>
-	<<set $enemyhealthmax to 200>>
-	<<set $enemytrust to 0>>
-	<<if $dissociation gte 1>>
-		<<set $enemytrust -= 40>>
-	<</if>>
-	<<set $enemytype to "man">>
-
-	<<set $rapeavoid to 1>>
-	<<set $orgasmdown to 0>>
-	<<set $penisbitten to 0>>
-	<<set $apologised to 0>>
-	<<set $underlowerstruggle to 0>>
-	<<set $lowerstruggle to 0>>
-	<<set $upperstruggle to 0>>
-	<<set $leftaction to 0>>
-	<<set $rightaction to 0>>
-	<<set $traumasaved to $trauma>>
-	<<set $stresssaved to $stress>>
-	<<set $traumagain to 0>>
-	<<set $stressgain to 0>>
-
-	<<if Time.dayState isnot "night">><<enable_rescue>><</if>>
 
 	<<combatinit>>
 <</widget>>
@@ -940,29 +932,6 @@
 	<<wetnessCalculate>>
 <</widget>>
 
-<<widget "deactivateNPC">>
-	/* How to use:
-	* Call this widget as <<deactivateNPC _n>> where _n is any number between 0 and 5, and is an active NPC.
-	* This will prevent said NPC from entering combat plus deal with all the rest of the math.
-	* Optional arguments [1] and [2] for health and arousal respectivelly. If the original health or arousal values for the NPCs haven't been changed, no need to use those arguments.
-	*/
-	<<set $_hpToReduce to _args[1] || $NPCList[_args[0]].healthmax>>
-	<<set $_arousalToReduce to _args[2] || $enemyarousalmax/$enemyno>>
-	<<if _args[0] isnot undefined and $NPCList[_args[0]]>>
-		<<if $NPCList[_args[0]].active isnot "inactive">>
-			<<set $NPCList[_args[0]].active to "inactive">>
-			<<set $enemyhealth -= $_hpToReduce>>
-			<<set $enemyhealthmax to $enemyhealth>>
-			<<set $enemyarousalmax -= $_arousalToReduce>>
-			<<set $enemyno-->>
-		<<else>>
-			<span class="red">deactivateNPC ERROR: NPC _args[0] is already inactive.</span>
-		<</if>>
-	<<else>>
-		<span class="red">deactivateNPC ERROR: Invalid or missing index specified.</span>
-	<</if>>
-<</widget>>
-
 <<widget "man">>
 	<<if $finish isnot 1>>
 		<<if $setupMidOrgasm is true>>
@@ -1157,30 +1126,46 @@
 		<<set $_was to ($rightarm is "heldSexToy" and $leftarm is "heldSexToy" ? "were" : "was")>>
 
 		<<if $enemyno gte 2>>
-			/* if statements so we can fine tune the percentages for balance */
-			<<set _rng to random(0,99)>>
-			<<if _rng lt 20>>
-				Your $_sexToy $_was clearly unexpected, but they don't seem to mind.
-			<<elseif _rng lt 40>>
-				Their breath quickens at the sight of your $_sexToy.
-				<<set $enemyarousal += 50>><<set $speechsextoyaroused to 1>>
-			<<elseif _rng lt 60>>
-				They seem pleased to see your $_sexToy.
-				<<set $speechsextoyaroused to 1>>
-			<<elseif _rng lt 70>>
-				They look disappointed by your $_sexToy. It wasn't what they was expecting.
-				<<set $enemyarousal -= 100>><<set $enemytrust -= 50>><<set $speechsextoydisappointed to 1>>
-			<<elseif _rng lt 80>>
-				Their eyes widen in shock at the reveal of your $_sexToy.
-				<<set $enemyanger -= 50>><<set $enemytrust -= 50>><<set $speechsextoyshocked to 1>>
-			<<elseif _rng lt 90>>
-				They recoil in disgust at the sight of your $_sexToy.
-				<<set $enemyanger += 75>><<set $enemytrust -= 75>><<set $speechsextoyangry to 1>>
-			<<else>>
-				They're taken aback by your $_sexToy, but seem excited by it.
-				<<set $speechsextoyaroused to 1>>
-			<</if>>
-
+			<<set $speechSextoyState to $speechSextoyState || either("aroused", "neutral", "disappointed", "shocked", "angry")>>
+			<<cleareventpool>>
+			<<switch $speechSextoyState>>
+				<<case "aroused">>
+					<<addinlineevent>>
+						Their breath quickens at the sight of your $_sexToy.
+						<<set $enemyarousal += 50>>
+					<</addinlineevent>>
+					<<addinlineevent>>
+						They seem pleased to see your $_sexToy.
+					<</addinlineevent>>
+					<<addinlineevent>>
+						They're taken aback by your $_sexToy, but seem excited by it.
+					<</addinlineevent>>
+				<<case "neutral">>
+					<<addinlineevent>>
+						Your $_sexToy $_was clearly unexpected, but they don't seem to mind.
+					<</addinlineevent>>
+				<<case "disappointed">>
+					<<addinlineevent 0.5>>
+						They look disappointed by your $_sexToy. It wasn't what they was expecting.
+						<<set $enemyarousal -= 100>><<set $enemytrust -= 50>>
+					<</addinlineevent>>
+				<<case "shocked">>
+					<<addinlineevent 0.5>>
+						Their eyes widen in shock at the reveal of your $_sexToy.
+						<<set $enemyanger -= 50>><<set $enemytrust -= 50>>
+					<</addinlineevent>>
+				<<case "angry">>
+					<<addinlineevent 0.5>>
+						They recoil in disgust at the sight of your $_sexToy.
+						<<set $enemyanger += 75>><<set $enemytrust -= 75>>
+					<</addinlineevent>>
+				<<default>>
+					<<addinlineevent>>
+						They appear confused. Not sure what to think of your $_sexToy.
+						<span class="blue">You should inform Vrelnir.</span>
+					<</addinlineevent>>
+			<</switch>>
+			<<runeventpool>>
 		<<else>>
 			<<switch $NPCList[0].fullDescription>>
 				<<case "Robin">>
@@ -1201,28 +1186,46 @@
 				<<case "Leighton">>
 					<<set $speechsextoy to 1>>
 				<<default>>
-					<<set _rng to random(0,99)>>
-					<<if _rng lt 20>>
-						<<His>> breath quickens at the sight of your $_sexToy.
-						<<set $enemyarousal += 50>><<set $speechsextoyaroused to 1>>
-					<<elseif _rng lt 40>>
-						<<He>> seems pleased to see your $_sexToy.
-						<<set $speechsextoyaroused to 1>>
-					<<elseif _rng lt 60>>
-						Your $_sexToy $_was clearly unexpected, but <<he>> doesn't seem to mind.
-					<<elseif _rng lt 70>>
-						<<He>> looks disappointed by your $_sexToy. It wasn't what <<he>> was expecting.
-						<<set $enemyarousal -= 100>><<set $enemytrust -= 50>><<set $speechsextoydisappointed to 1>>
-					<<elseif _rng lt 80>>
-						<<His>> eyes widen in shock at the reveal of your $_sexToy.
-						<<set $enemyanger -= 50>><<set $enemytrust -= 50>><<set $speechsextoyshocked to 1>>
-					<<elseif _rng lt 90>>
-						<<He>> recoils in disgust at the sight of your $_sexToy.
-						<<set $enemyanger += 75>><<set $enemytrust -= 75>><<set $speechsextoyangry to 1>>
-					<<else>>
-						<<Hes>> taken aback by your $_sexToy, but seems excited by it.
-						<<set $speechsextoyaroused to 1>>
-					<</if>>
+					<<set $speechSextoyState to $speechSextoyState || either("aroused", "neutral", "disappointed", "shocked", "angry")>>
+					<<cleareventpool>>
+					<<switch $speechSextoyState>>
+						<<case "aroused">>
+							<<addinlineevent>>
+								<<His>> breath quickens at the sight of your $_sexToy.
+								<<set $enemyarousal += 50>>
+							<</addinlineevent>>
+							<<addinlineevent>>
+								<<He>> seems pleased to see your $_sexToy.
+							<</addinlineevent>>
+							<<addinlineevent>>
+								<<Hes>> taken aback by your $_sexToy, but seems excited by it.
+							<</addinlineevent>>
+						<<case "neutral">>
+							<<addinlineevent>>
+								Your $_sexToy $_was clearly unexpected, but <<he>> doesn't seem to mind.
+							<</addinlineevent>>
+						<<case "disappointed">>
+							<<addinlineevent 0.5>>
+								<<He>> looks disappointed by your $_sexToy. It wasn't what <<he>> was expecting.
+								<<set $enemyarousal -= 100>><<set $enemytrust -= 50>>
+							<</addinlineevent>>
+						<<case "shocked">>
+							<<addinlineevent 0.5>>
+								<<His>> eyes widen in shock at the reveal of your $_sexToy.
+								<<set $enemyanger -= 50>><<set $enemytrust -= 50>>
+							<</addinlineevent>>
+						<<case "angry">>
+							<<addinlineevent 0.5>>
+								<<He>> recoils in disgust at the sight of your $_sexToy.
+								<<set $enemyanger += 75>><<set $enemytrust -= 75>>
+							<</addinlineevent>>
+						<<default>>
+							<<addinlineevent>>
+								<<He>> appears confused. Not sure what to think of your $_sexToy.
+								<span class="blue">You should inform Vrelnir.</span>
+							<</addinlineevent>>
+					<</switch>>
+					<<runeventpool>>
 			<</switch>>
 		<</if>>
 	<</if>>

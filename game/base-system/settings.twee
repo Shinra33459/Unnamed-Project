@@ -79,6 +79,7 @@
 	<<set $wolfPregnancyWeeks to 4>>
 	<<set $playerPregnancyHumanDisable to "f">>
 	<<set $playerPregnancyBeastDisable to "f">>
+	<<set $playerPregnancyEggLayingDisable to "f">>
 	<<set $npcPregnancyDisable to "f">>
 	<<set $incompletePregnancyDisable to "t">>
 	<<set $cycledisable to "f">>
@@ -90,8 +91,8 @@
 	<<set $condomUseChanceCon to 83>>
 	<<set $multipleWardrobes to "isolated">>
 	<<set $tending_yield_factor to 5>>
-
 	<<set $notifyUpdate = true>>
+	<<set _tan to 0>>
 
 	<<startingPlayerImageReset>>
 <</widget>>
@@ -141,8 +142,6 @@
 	<</switch>>
 	<<run settingsDisableElement()>>
 <</widget>>
-
-<<widget "fa-icon">><span @class="'fa-icon fa-' + $args.raw" alt="' + $args.raw + '"></span><</widget>>
 
 <<widget "startOptionsComplexityButton">>
 	<div @class="_selectedStart is _args[1] ? 'gold buttonStartSelected' : 'buttonStart'" >
@@ -286,7 +285,6 @@
 			<<unset _maleChanceSplit>>
 			<<unset _beastMaleChanceSplit>>
 			<<unset _pregnancytype>>
-			<<unset _cycledisable>>
 			<<unset _incompletePregnancyDisable>>
 		<</button>>
 	</div>
@@ -390,6 +388,7 @@
 					<<set $wolfPregnancyWeeks to 4>>
 					<<set $playerPregnancyHumanDisable to "f">>
 					<<set $playerPregnancyBeastDisable to "f">>
+					<<set $playerPregnancyEggLayingDisable to "f">>
 					<<set $npcPregnancyDisable to "f">>
 					<<set $incompletePregnancyDisable to "t">>
 					<<set $cycledisable to "f">>
@@ -454,14 +453,15 @@
 					<<if _pregnancytype is "disabled">>
 						<<set $playerPregnancyHumanDisable to "t">>
 						<<set $playerPregnancyBeastDisable to "t">>
+						<<set $playerPregnancyEggLayingDisable to "t">>
 						<<set $npcPregnancyDisable to "t">>
 					<<else>>
 						<<set $pregnancytype to _pregnancytype or "realistic">>
 						<<set $playerPregnancyHumanDisable to "f">>
 						<<set $playerPregnancyBeastDisable to "f">>
+						<<set $playerPregnancyEggLayingDisable to "f">>
 						<<set $npcPregnancyDisable to "f">>
 					<</if>>
-					<<set $cycledisable to _cycledisable>>
 					<<if _incompletePregnancyDisable is "t" or (_incompletePregnancyDisable is "f" and !_foundPregnancy)>>
 						<<set $incompletePregnancyDisable to _incompletePregnancyDisable>>
 						<<npcPregnancyUpdater>>
@@ -628,9 +628,6 @@
 <</widget>>
 
 <<widget "settingsExitFunction">>
-	<<if $settingsExitPassage is "Start2">>
-		<<setSkinColorBase>>
-	<</if>>
 	<<if !$ironmanmode>>
 		<<set $cheatdisable to $cheatdisabletoggle>>
 	<</if>>
@@ -652,7 +649,6 @@
 	<<updatePersistentNPCs>>
 	<<hirsuteHideCheck>>
 	<<generateTipsList>>
-	<<tanned 0 "ignoreCoverage">>
 	<<if $player.freckles is "random">>
 		<<set $player.freckles to (random(1, 5) is 1)>>
 	<</if>>
@@ -661,7 +657,7 @@
 
 	/* this never worked as intended
 	<!-- check if specified face style is installed -->
-	<img id="testImage" class="hidden" @scr="'img/face/' + $facestyle + '/base.png'">
+	<img id="testImage" class="hidden" @src="'img/face/' + $facestyle + '/base.png'">
 	<<if $facestyle is "" or isImageOk("#testImage")>>
 		<<set $facestyle = "default">>
 	<</if>>
@@ -679,6 +675,11 @@
 	<<run State.display(_settingsExitPassage)>>
 	<<set $saveName to $saveName.replace(/[^a-zA-Z\u4e00-\u9fa5 0-9]+/g,"")>>
 	<<unset $importString>>
+
+	/* Updates the penis max size for females so its never below 1 */
+	<<if $player.gender is "f" && $penissizemax < 0>>
+		<<set $penissizemax to 0>>
+	<</if>>
 <</widget>>
 
 /*complete:{"Vrelnir (Default)":"vrelDefault","Lollipop Scythe":"lollipopScythe","PurityGuy":"purityGuy","Fangi":"fangi"},*/
@@ -968,7 +969,6 @@
 	<hr>
 
 	<<sizeLimitsSettings>>
-
 	<hr>
 
 	<div class="settingsGrid">
@@ -977,31 +977,30 @@
 		</div>
 		<div class="settingsToggleItem">
 			<span class="gold">Reddish:</span><br>
-			<label>Light <<radiobutton "$skinColor.natural" "light" autocheck>></label> |
-			<label>Medium <<radiobutton "$skinColor.natural" "medium" autocheck>></label> |
-			<label>Dark <<radiobutton "$skinColor.natural" "dark" autocheck>></label> |
-			<label>Gyaru <<radiobutton "$skinColor.natural" "gyaru" autocheck>></label>
+			<label>Light <<radiobutton "$player.skin.color" "light" autocheck>></label> |
+			<label>Medium <<radiobutton "$player.skin.color" "medium" autocheck>></label> |
+			<label>Dark <<radiobutton "$player.skin.color" "dark" autocheck>></label> |
+			<label>Gyaru <<radiobutton "$player.skin.color" "gyaru" autocheck>></label>
 		</div>
 		<div class="settingsToggleItem">
 			<span class="gold">Yellowish:</span><br>
-			<label>Light <<radiobutton "$skinColor.natural" "ylight" autocheck>></label> |
-			<label>Medium <<radiobutton "$skinColor.natural" "ymedium" autocheck>></label> |
-			<label>Dark <<radiobutton "$skinColor.natural" "ydark" autocheck>></label> |
-			<label>Gyaru <<radiobutton "$skinColor.natural" "ygyaru" autocheck>></label>
+			<label>Light <<radiobutton "$player.skin.color" "ylight" autocheck>></label> |
+			<label>Medium <<radiobutton "$player.skin.color" "ymedium" autocheck>></label> |
+			<label>Dark <<radiobutton "$player.skin.color" "ydark" autocheck>></label> |
+			<label>Gyaru <<radiobutton "$player.skin.color" "ygyaru" autocheck>></label>
 		</div>
 		<div class="settingsToggleItemWide">
 			<div class="numberslider-inline">
-			<label><span class="gold">Initial Tan Value:</span> <<numberslider "$skinColor.range" $skinColor.range 0 100 1>></label>
+			<label><span class="gold">Initial Tan Value:</span>
+			<<numberslider "_tan" _tan 0 100 1 {
+				onInputChange: value => {
+					 Skin.color.setTan(value);
+					 Wikifier.wikifyEval("<<startingPlayerImageUpdate>>");
+				},
+				value: v => `${v}%`
+			}>>
+			</label>
 			</div>
-			<<if StartConfig.enableImages is true>>
-				<<link "Test Colour">>
-					<<replace #test>>
-						<<print '<div style="height: 30px; width: 50px; background-color: red; filter: '
-						+skinColor(true, $skinColor.range, setup.skinColor[$skinColor.natural])+';"></div>'>>
-					<</replace>>
-				<</link>> (approximate)
-				<div id="test">/*<<print '<div style="height: 30px; width: 50px; background-color: red; filter: '+skinColor($options.tanImgEnabled, $skinColor.range,setup.skinColor[$skinColor.natural])+';"></div>'>>*/</div>
-			<</if>>
 		</div>
 	</div>
 
@@ -1179,7 +1178,7 @@
 	<br><br>
 	<span class="red">Changing settings in specific ways may prevent you from earning some feats, and coins, in your current game.</span> Enabling cheats at any point will prevent you from earning feats for the remainder of your current playthrough. You will be warned if you are about to change any setting that does this.
 	<br><br>
-	 Some feats display as earned as soon as you meet the requirements, while others won't trigger until the next in-game hour or at midnight. Happy hunting!
+	 Some feats display as earned as soon as you meet the requirements, while others won't trigger until the next in-game hour. Happy hunting!
 <</widget>>
 
 <<widget "featSettings">>
@@ -1504,7 +1503,7 @@
 					<span class="gold">Percentage of women that have only a penis:</span> <span id="numberslider-value-dgchance">$dgchance</span><br>
 				</div>
 
-				<<doubleslider "fregularchance" "fhermchance" "dgchance" "#fa0000" "#ab00fa" "#006cfa">>
+				<<doubleslider "fregularchance" "fhermchance" "dgchance" "var(--pink)" "var(--purple-secondary)" "var(--blue)">>
 			</div>
 			<div class="solidBorderContainer">
 				<<if $mregularchance is undefined>>
@@ -1522,7 +1521,7 @@
 					<span class="gold">Percentage of men that have only a vagina:</span> <span id="numberslider-value-cbchance">$cbchance</span><br>
 				</div>
 
-				<<doubleslider "mregularchance" "mhermchance" "cbchance" "#006cfa" "#ab00fa" "#fa0000">>
+				<<doubleslider "mregularchance" "mhermchance" "cbchance" "var(--blue)" "var(--purple-secondary)" "var(--pink)">>
 			</div>
 			<div class="settingsToggleItemWide numberslider-inline">
 				<span class="gold">Percentage of women that have strap-on penises
@@ -1781,7 +1780,7 @@
 				<<checkbox "$forcedcrossdressingdisable" "t" "f" autocheck>> Enable forced crossdressing
 			</label>
 		</div>
-		
+
 		<div class="settingsToggleItem">
 			<label>
 				<<checkbox "$ruinedorgasmdisable" "t" "f" autocheck>> Enable ruined orgasms
@@ -2062,6 +2061,12 @@
 			</div>
 			<div class="settingsToggleItem">
 				<label>
+					<<checkbox "$playerPregnancyEggLayingDisable" "t" "f" autocheck>> Enable egg laying
+					<mouse class="tooltip linkBlue">(?)<span>Required for Hawk and Harpy pregnancy.</span></mouse>
+				</label>
+			</div>
+			<div class="settingsToggleItem">
+				<label>
 					Pregnancy type:
 					<<pregnancyType>>
 				</label>
@@ -2150,29 +2155,31 @@
 		</div>
 		<<if $passage is "Start" or $player.penisExist>>
 			<div class="settingsToggleItem">
+				<!-- Not applicable to the parasite penis -->
 				<span class="gold" data-target="player.gender" data-disabledif="V.player.gender==='f'">Minimum penis size - if applicable:</span> <mouse class="tooltip linkBlue">(?)<span>Penises already below this size won't automatically grow.</span></mouse>
 				<br>
 				<<set _name to ["Micro","Mini", "Tiny"]>>
 				<<for _i to 0; _i lt _name.length; _i++>>
-					<span data-target="penissizemax" @data-disabledif="_i - 2 + ' > V.penissizemax'">
+					<span data-target="penissizemax" @data-disabledif="_i - 2 + ` > V.penissizemax||V.player.gender==='f'`">
 						<label data-target="player.gender" data-disabledif="V.player.gender==='f'"><<print _name[_i]>> <<radiobutton "$penissizemin" `(_i - 2)` autocheck>></label>
 						<<if _i lt _name.length - 1>>|<</if>>
 					</span>
 				<</for>>
 			</div>
-
-			<div class="settingsToggleItem">
-				<span class="gold" data-target="player.gender" data-disabledif="V.player.gender==='f'">Maximum penis size - if applicable:</span> <mouse class="tooltip linkBlue">(?)<span>Penises already above this size won't automatically shrink.</span></mouse>
-				<br>
-				<<set _name to ["Micro","Mini", "Tiny", "Small", "Normal", "Large", "Enormous"]>>
-				<<for _i to 0; _i lt _name.length; _i++>>
-					<span data-target='["penissizemin", "player.gender"]' @data-disabledif="_i - 2 + ' < V.penissizemin'||V.player.gender==='f'">
-						<label data-target="player.gender" data-disabledif="V.player.gender==='f'"><<print _name[_i]>> <<radiobutton "$penissizemax" `(_i - 2)` autocheck>></label>
-						<<if _i lt _name.length - 1>>|<</if>>
-					</span>
-				<</for>>
-			</div>
 		<</if>>
+
+		<div class="settingsToggleItem">
+			<!-- Not applicable to females without a parasite penis -->
+			<span class="gold" data-target="player.gender">Maximum penis size - if applicable:</span> <mouse class="tooltip linkBlue">(?)<span>Penises already above this size won't automatically shrink.</span></mouse>
+			<br>
+			<<set _name to ["Micro","Mini", "Tiny", "Small", "Normal", "Large", "Enormous"]>>
+			<<for _i to 0; _i lt _name.length; _i++>>
+				<span data-target='["penissizemin", "player.gender"]' @data-disabledif="_i - 2 + ` < V.penissizemin||(` + _i + `<2&&V.player.gender==='f')`">
+					<label data-target="player.gender" @data-disabledif="`(` + _i + `<2&&V.player.gender==='f')`"><<print _name[_i]>> <<radiobutton "$penissizemax" `(_i - 2)` autocheck>></label>
+					<<if _i lt _name.length - 1>>|<</if>>
+				</span>
+			<</for>>
+		</div>
 	</div>
 <</widget>>
 
@@ -2242,7 +2249,6 @@
 			<span class="bold">
 				<<link [[Character Viewer|Clothes Testing]]>>
 					<<set $lastPassage to $passage>>
-					<<set $gameTanImgSetting to clone($options.tanImgEnabled)>>
 				<</link>>
 			</span>
 			- This will allow you to have a play with the character sprites.
@@ -2357,14 +2363,14 @@
 						new Wikifier(null, '<<replace #perNPCSettingsMenu>><<perNPCSettingsMenu>><</replace>>');
 					});
 
-					T.keys = {};
-					T.keyNames = [];
+					T.npcKeys = {};
+					T.npcKeyNames = [];
 					const allowed_npcs = ["steed", "guard", "inmate", "panty_thief", "school_nurse", "tower_creature", "pinch", "black_dog", "hacker", "bishop", "bishop_right_hand", "bishop_left_hand"];
 					Object.keys(V.per_npc).forEach(k => {
 						for (const j of allowed_npcs){
 							if (k.includes(j)){
-								T.keyNames.push(k);
-								T.keys[k.toUpperFirst().replace(/_/g, ' ')] = k;
+								T.npcKeyNames.push(k);
+								T.npcKeys[k.toUpperFirst().replace(/_/g, ' ')] = k;
 								break
 							}
 						}
@@ -2372,7 +2378,7 @@
 					T.perNPCLock = true;
 				}
 			>>
-			<<if T.keyNames and T.keyNames.length>>
+			<<if T.npcKeyNames and T.npcKeyNames.length>>
 				<hr>
 				<div id="perNPCSettingsMenu">
 					<<perNPCSettingsMenu>>
@@ -2486,8 +2492,7 @@
 			</span>
 		</div>
 		<<if V.NPCName[T.npcId].pregnancy.type>>
-			<div class="settingsToggleItem">
-				<br><br>
+			<div class="settingsToggleItemWide">
 				This NPC is currently pregnant. You will not be able to change some settings for the duration of their pregnancy.
 			</div>
 		<</if>>
@@ -2613,7 +2618,7 @@
 	<span class="gold">Persistent NPCs:</span>
 	<br>
 	<<listbox "_pNPCId" autoselect>>
-		<<optionsfrom _keys>>
+		<<optionsfrom _npcKeys>>
 	<</listbox>>
 	<<switch _pNPCId>>
 		<<case "scarred_inmate">>
@@ -2627,15 +2632,15 @@
 				<<clearsinglenpc 0>>
 			<</if>>
 	<</switch>>
-	<<set _index to _keyNames.indexOf(_pNPCId)>>
+	<<set _npcIndex to _npcKeyNames.indexOf(_pNPCId)>>
 	| <<link "Previous">>
-		<<set _index to (_index is 0 ? _keyNames.length - 1 : --_index)>>
-		<<set _pNPCId to _keyNames[_index]>>
+		<<set _npcIndex to (_npcIndex is 0 ? _npcKeyNames.length - 1 : --_npcIndex)>>
+		<<set _pNPCId to _npcKeyNames[_npcIndex]>>
 		<<replace #perNPCSettingsMenu>><<perNPCSettingsMenu>><</replace>>
 	<</link>> |
 	<<link "Next">>
-		<<set _index++>>
-		<<set _pNPCId to _keyNames[_index]>>
+		<<set _npcIndex++>>
+		<<set _pNPCId to _npcKeyNames[_npcIndex]>>
 		<<replace #perNPCSettingsMenu>><<perNPCSettingsMenu>><</replace>>
 	<</link>>
 	<br><br>
@@ -2734,7 +2739,7 @@
 		Exported saves are excluded from this process, unless you first import and make a local save of them.
 		<br>
 		<<link "Begin">>
-			<<replace "#overlayButtons">><</replace>>
+			<<replace "#startCaption">><</replace>>
 			<<replace "#settingsStart">><<loadingAllFeats>><</replace>>
 		<</link>>
 	</div>
@@ -2754,7 +2759,7 @@
 	<div id="featsFinishButton" class="hidden">
 		<<link "Next">>
 			<<setupFeats true>>
-			<<replace "#overlayButtons">><<startCaption>><</replace>>
+			<<replace "#startCaption">><<startCaption>><</replace>>
 			<<replace "#settingsStart">><<settingsStart>><</replace>>
 		<</link>>
 	</div>

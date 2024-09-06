@@ -1,24 +1,24 @@
 :: PassageHeader
-<<set $passagePrev to $passage ? $passage : "none">>
+<<if !$cheatReload>>
+	<<set $passagePrev to $passage ? $passage : "none">>
+<</if>>
 <<set $passage to $passageOverride ? $passageOverride : passage()>>
 <<set $tags to tags()>>
 <<set l10nStrings.errorTitle = StartConfig.version + " Error" + ($passage ? ` (:: ${$passage})` : "")>>
 
 <<if !["Start", "Start2", "Clothes Testing", "Renderer Test Page", "Tips"].includes($passage) && !$bypassHeader>>
 	<<doVersionCheck>>
-	<<if !["Settings", "Asylum Settings", "Cabin Settings", "Wolf Cave Settings", "Farm Settings", "Livestock Settings", "Prison Settings"].includes($passage)>>
+	<<if !$passage.includes(" Settings") and !$cheatReload>>
 		<<if $passagePrev isnot $passage>>
-			<<set $passageChangesCount to $passageChangesCount ? $passageChangesCount + 1 : 1>>
+			<<set $passageChangesCount to ($passageChangesCount || 0) + 1>>
 		<</if>>
-		<<set $passageCount to $passageCount ? $passageCount + 1 : 1>>
+		<<set $passageCount to ($passageCount || 0) + 1>>
 	<</if>>
 <</if>>
 
-/* Set current time */
-<<set Time.set()>>
-
 <<unset $passageOverride>>
 <<unset $bypassHeader>>
+<<unset $cheatReload>>
 
 :: Widgets VersionCheck [widget]
 <<widget "doVersionCheck">>
@@ -33,12 +33,14 @@
 		<<set onLoadUpdateCheck to false>>
 
 		/* convert game version to numeric value for use in <<backComp>> */
-		<<set _version to ($saveVersions ? $saveVersions.last().replace(/[^0-9.]+/g, "").split(".") : 0)>>
-		<<set _version to (_version ? _version[0]*1000000 + _version[1]*10000 + _version[2]*100 + _version[3]*1 : 0)>>
+		<<set _version to (V.saveVersions?.last()?.match(/\d+/g) || [0]).map(Number).reduce((acc, num, index) => acc + num * Math.pow(100, 3 - index), 0)>>
 		<<backComp>>
 
 		<<updatehistorycontrols>>
 		<<set _preventUpdate to true>> /*prevent rewriting autosaves */
+		<<set _saveLoaded to true>>
+		<<set Time.set()>>
+		
 		<<setFont>>
 		<<run zoom($options.zoom)>>
 		<<run syncFavourites()>>

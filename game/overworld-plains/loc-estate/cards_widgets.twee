@@ -83,7 +83,7 @@ End conditions
    Bets: allowed to take the pot
    End Location: Estate
    Clothes: allowed to buy back (all states)
-   Reason: Wren realizes they've done a ton of favours already and didn't get much from you, so they must feel defeated enough to let you take the clothes you've lost back
+   Reason: Wren realises they've done a ton of favours already and didn't get much from you, so they must feel defeated enough to let you take the clothes you've lost back
 
 
 
@@ -443,6 +443,7 @@ Coverage:
 		<<if $blackjack.dealerScore is 21>>
 			<<set $blackjack.turn to "dealer">>
 		<</if>>
+		<<wearProp "cards">><<set $worn.handheld.colour to $cardcover.colour.replace("-", " ")>>
 	<<else>>
 		<<set $blackjack.isFirstTurn to false>>
 	<</if>>
@@ -501,7 +502,7 @@ more suspicion if you actually lose the round. -->
 	<<set $_lostGame to _args[0]>>
 	<!-- no decay if suspicion was gained (through seeing new cards or peeking at dealer card) -->
 	<<if !$blackjack.susRoseInThisRound and $estatePersistent.suspicion gte 1>>
-		<<set $_suspicionDecay to -(($_lostGame ? 4 : 2) + $NPCName[$NPCNameList.indexOf("Wren")].love * 0.05)>>
+		<<set $_suspicionDecay to -(($_lostGame ? 4 : 2) + C.npc.Wren.love * 0.05)>>
 
 		<<if $_lostGame>>
 			You've lost this round, fair and square.<<llsuspicion>>
@@ -581,7 +582,7 @@ more suspicion if you actually lose the round. -->
 		<<set _base_chance to 1-inverseLerp($estate._plead_required_points, $estate._plead_rng_min, $estate._plead_rng_max)>>
 		<<set _base_chance_str to formatDecimals(_base_chance*100, 1)>>
 		<!-- 0-200 points for love (proportionate to 0,50 love) (as in 50 love is always full 200 points)-->
-		<<set _extra_wren to lerp(Math.clamp($NPCName[$NPCNameList.indexOf("Wren")].love / 50, 0, 1), 0, 250)>>
+		<<set _extra_wren to lerp(Math.clamp(C.npc.Wren.love / 50, 0, 1), 0, 250)>>
 		<<set $estate._base_plead_points += _extra_wren>>
 		<<set _extra_wren_chance_str to formatDecimals((1-inverseLerp($estate._plead_required_points, $estate._plead_rng_min + _extra_wren, $estate._plead_rng_max + _extra_wren) - _base_chance)*100, 1)>>
 		<!-- 0-200 points for English (proportionate to 0,1000 english)-->
@@ -771,7 +772,7 @@ more suspicion if you actually lose the round. -->
 							<<case 2>>
 								Wren also notices the dealer's blunder and glances at you. "I hope you're keeping your eyes on your own hand," <<he>> says.
 							<<case 3>>
-								"Oh, come on," Wren says to the dealer. "Gotta be swifter when you deal the cards". <<He>> glances at you, but doesn't say anything else.
+								"Oh, come on," Wren says to the dealer. "Gotta be swifter when you deal the cards." <<He>> glances at you, but doesn't say anything else.
 						<</switch>>
 						<<gsuspicion>>
 					<<else>>
@@ -936,7 +937,7 @@ more suspicion if you actually lose the round. -->
 	<<if $estatePersistent.suspicion gt 0>>
 		<br><br>
 		Suspicion:
-		<<statbar $estatePersistent.suspicion 100 right>>
+		<<statbar 0 $estatePersistent.suspicion 100>>
 		<<set _consts__danger_zone_suspicion to 70>>
 		<<if $estatePersistent.suspicion gt _consts__danger_zone_suspicion>>
 			<br>
@@ -1081,14 +1082,14 @@ more suspicion if you actually lose the round. -->
 	<</if>>
 	<<fameexhibitionism 7>>
 
-	They lift you, and carry you naked through the estate, <<if $estate.chaos gte 100>>through all the chaos you've caused, <</if>> towards a small barn.
+	They lift you, and carry you naked through the estate, <<if $estate.chaos gte 100>>through all the chaos you've caused,<</if>> towards a small barn.
 	<br><br>
-	A couple of guard see you coming and smirk. Wren hands you to the guards.
+	A couple of guards see you coming and smirk. Wren hands you to the guards.
 	<br><br>
 	<<leash 21>>
 	One of the guards goes into the barn and comes back with a collar and chain, which are then fixed around your neck. The guards tug on the attached chain, forcing you along.
 	<br><br>
-	<<if $NPCName[$NPCNameList.indexOf('Wren')].love gte 20>>
+	<<if C.npc.Wren.love gte 20>>
 		"Looking forward to playing with you again," Wren says. "I know you'll be back soon, one way or another."
 	<<else>>
 		"Don't cause them too much trouble," Wren says.
@@ -1122,7 +1123,7 @@ more suspicion if you actually lose the round. -->
 	</ul>
 
 	<h3>Options</h3>
-	<<link [[Save and close|$passage]]>><</link>>
+	<<link [[Save and close|$passage]]>><<set $worn.handheld.colour to $cardcover.colour.replace("-", " ")>><</link>>
 	<br><br>
 	Back cover:
 	<br>
@@ -1477,7 +1478,7 @@ more suspicion if you actually lose the round. -->
 				<span class="lewd">You're unbothered by your bare <<bottom>> and <<genitals>>. They're under the table anyway.</span>
 				<br>
 			<</if>>
-		<<elseif $worn.over_lower.exposed gte 1 and $worn.lower.exposed gte 1>>
+		<<elseif $worn.over_lower.exposed gte 1 and $worn.lower.exposed gte 1 and !$worn.under_lower.type.includes("covered")>>
 			<<if $uncomfortable.underwear is true>>
 				<span class="lewd">Wearing so little beneath your waist makes you feel uncomfortable.</span>
 				<br>
@@ -1573,13 +1574,6 @@ more suspicion if you actually lose the round. -->
 <<widget "cards_underwear_cover">>
 	<<if $uncomfortable.underwear is true>>
 		<span class="lewd">You cover your $worn.under_upper.name with one arm, and make sure your $worn.under_lower.name <<underlowerplural>> on right.</span>
-		<br><br>
-	<</if>>
-<</widget>>
-
-<<widget "cards_panties_cover">>
-	<<if $uncomfortable.underwear is true>>
-		<span class="lewd">You anxiously make sure your $worn.under_lower.name <<underlowerplural>> on right.</span>
 		<br><br>
 	<</if>>
 <</widget>>
@@ -1791,6 +1785,7 @@ more suspicion if you actually lose the round. -->
 <</widget>>
 
 <<widget "blackjackResultText">>
+	<<handheldon>>
 	<<set $_playerWon to _args[0]>>
 
 	<<calculateBlackjackLuckStats>>
@@ -1937,7 +1932,7 @@ more suspicion if you actually lose the round. -->
 					<<case 2>>
 						"You're awfully lucky today," Wren says.
 					<<case 3>>
-						Wren crosses <<his>> as <<he>> leans back on the chair, giving you a resigned smile.
+						Wren crosses <<his>> arms as <<he>> leans back on the chair, giving you a resigned smile.
 					<<case 4>>
 						"A black cat must've crossed my path today," Wren says with a resigned chuckle.
 					<<case 5>>
@@ -1981,7 +1976,7 @@ more suspicion if you actually lose the round. -->
 	<<if $estate.cards.clothesRebuyTerms and $estate.cards.clothesRebuyTerms.price gt $money>>
 		<span class="blue">You don't have enough money to accept the deal.</span>
 		<br><br>
-	<<elseif $promiscuity gte 55>>
+	<<elseif hasSexStat("promiscuity", 4)>>
 		<<link [[Accept|Estate Cards Oral]]>><</link>><<promiscuous4>><<goralskill>>
 		<br>
 	<<else>>
@@ -2045,10 +2040,10 @@ more suspicion if you actually lose the round. -->
 		<br><br>
 	<</if>>
 	<<if $estate.cards.desire is "chastity">>
-		<<getouticon>><<link [[Leave|Estate Cards Leave]]>><</link>>
+		<<getouticon>><<link [[Leave|Estate Cards Leave]]>><<handheldon>><</link>>
 		<br>
 	<<else>>
-		<<link [[Play (0:01)|Estate Blackjack]]>><<pass 1>><</link>>
+		<<gameicon "cards">><<link [[Play (0:01)|Estate Blackjack]]>><<pass 1>><<handheldon>><</link>>
 		<<if $estate.cards.state is "ride">>
 			<span class="purple">Losing may increase arousal.</span> <<cards_virginity_all_warnings>>
 		<</if>>
@@ -2056,20 +2051,21 @@ more suspicion if you actually lose the round. -->
 			<span class="red">If you lose, Wren will take your first kiss.</span>
 		<</if>>
 		<br>
-		<<getouticon>><<link [[Leave|Estate Cards Leave]]>><<npcincr Wren love -1>><</link>><<llove>>
+		<<getouticon>><<link [[Leave|Estate Cards Leave]]>><<npcincr Wren love -1>><<handheldon>><</link>><<llove>>
 		<br>
 	<</if>>
 <</widget>>
 
 <<widget "cards_start_play_options">>
 	<<if $farm_stage gte 5>>
-		<<ind>><<link [[Play cards|Estate Cards Intro 2]]>><</link>>
+		<<gameicon "cards">><<link [[Play cards|Estate Cards Intro 2]]>><</link>>
 
 		<<if $estatePersistent.stakesRaised>>
 			<<set $_anteMaxNum to setup.estateBlackjack.anteSizes.length - 1>>
 
 			<<for _i to 0; _i lte $_anteMaxNum; _i++>>
 				<<set _anteAmount to setup.estateBlackjack.anteSizes[_i]>>
+				<<set _cards to "cards_" + _i>>
 				<<formatmoney _anteAmount>>
 
 				<<set $_confidenceMoney to setup.estateBlackjack.confidenceMoney[_i]>>
@@ -2084,7 +2080,7 @@ more suspicion if you actually lose the round. -->
 						<<set _linkText to "Play cards with betting (" + _printmoney + " upfront)">>
 						<br>
 						<<capture _linkText, _anteAmount, _i>>
-							<<ind>><<link [[_linkText|Estate Cards Intro 2]]>><<estate_betting_start _i>><</link>>
+							<<gameicon _cards>><<link [[_linkText|Estate Cards Intro 2]]>><<estate_betting_start _i>><</link>>
 						<</capture>>
 					<</if>>
 				<<else>>
@@ -2143,13 +2139,13 @@ more suspicion if you actually lose the round. -->
 <<widget "cards_lap_clothes">>
 	<<if $estate.cards.wren_bottoms is 1>>
 		<<if $estate.cards.wren_under_bottoms is 1>>
-			<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<if C.npc.Wren.pronoun is "f">>
 				<<He>> hitches up <<his>> skirt and pulls aside <<his>> panties.
 			<<else>>
 				<<He>> unzips <<his>> fly and pulls aside <<his>> briefs.
 			<</if>>
 		<<else>>
-			<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<if C.npc.Wren.pronoun is "f">>
 				<<He>> hitches up <<his>> skirt.
 			<<else>>
 				<<He>> unzips <<his>> fly.
@@ -2157,13 +2153,13 @@ more suspicion if you actually lose the round. -->
 		<</if>>
 	<<else>>
 		<<if $estate.cards.wren_under_bottoms is 1>>
-			<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<if C.npc.Wren.pronoun is "f">>
 				<<He>> pulls aside <<his>> panties.
 			<<else>>
 				<<He>> pulls aside <<his>> briefs.
 			<</if>>
 		<<else>>
-			<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<if C.npc.Wren.pronoun is "f">>
 				Wren grinds against you for good measure.
 			<<else>>
 				Wren grinds against you for good measure.
@@ -2175,7 +2171,7 @@ more suspicion if you actually lose the round. -->
 <<widget "cards_lap_clothes_intro">>
 	<<if $estate.cards.wren_bottoms is 1>>
 		<<if $estate.cards.wren_under_bottoms is 1>>
-			<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<if C.npc.Wren.pronoun is "f">>
 				Wren hitches up <<his>> skirt and pulls aside <<his>> panties,
 			<<else>>
 				Wren unzips <<his>> fly and pulls aside <<his>> briefs,
@@ -2186,7 +2182,7 @@ more suspicion if you actually lose the round. -->
 				<span class="lewd">revealing <<his>> <<print $NPCList[0].penisdesc>>.</span>
 			<</if>>
 		<<else>>
-			<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<if C.npc.Wren.pronoun is "f">>
 				Wren hitches up <<his>> skirt,
 			<<else>>
 				Wren unzips <<his>> fly,
@@ -2199,7 +2195,7 @@ more suspicion if you actually lose the round. -->
 		<</if>>
 	<<else>>
 		<<if $estate.cards.wren_under_bottoms is 1>>
-			<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<if C.npc.Wren.pronoun is "f">>
 				Wren pulls aside <<his>> panties,
 			<<else>>
 				Wren pulls aside <<his>> briefs,
@@ -2210,7 +2206,7 @@ more suspicion if you actually lose the round. -->
 				<span class="lewd">revealing <<his>> <<print $NPCList[0].penisdesc>>.</span>
 			<</if>>
 		<<else>>
-			<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<if C.npc.Wren.pronoun is "f">>
 
 			<<else>>
 

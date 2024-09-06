@@ -104,15 +104,52 @@ setup.colours = {
 		blendMode: "hard-light",
 	},
 
-	skin_gradients: {
-		light: ["#ffffff", "#ffd2ac"],
-		medium: ["#ffd2ac", "#8a614d"],
-		dark: ["#8a614d", "#39241a"],
-		gyaru: ["#ffffff", "#ffd2ac", "#8a614d", "#39241a"],
-		ylight: ["#f0ffe6", "#f0e4bc"],
-		ymedium: ["#f0e4bc", "#8e7f68"],
-		ydark: ["#8e7f68", "#483f35"],
-		ygyaru: ["#f0ffe6", "#f0e4bc", "#8e7f68", "#483f35"],
+	skin_options: {
+		light: {
+			gradient: ["#ffffff", "#ffd2ac"],
+			blendMode: "multiply",
+			desaturate: false,
+		},
+		medium: {
+			gradient: ["#ffd2ac", "#8a614d"],
+			blendMode: "multiply",
+			desaturate: false,
+		},
+		dark: {
+			gradient: ["#8a614d", "#39241a"],
+			blendMode: "multiply",
+			desaturate: false,
+		},
+		gyaru: {
+			gradient: ["#ffffff", "#ffd2ac", "#8a614d", "#39241a"],
+			blendMode: "multiply",
+			desaturate: false,
+		},
+		ylight: {
+			gradient: ["#f0ffe6", "#f0e4bc"],
+			blendMode: "multiply",
+			desaturate: false,
+		},
+		ymedium: {
+			gradient: ["#f0e4bc", "#8e7f68"],
+			blendMode: "multiply",
+			desaturate: false,
+		},
+		ydark: {
+			gradient: ["#8e7f68", "#483f35"],
+			blendMode: "multiply",
+			desaturate: false,
+		},
+		ygyaru: {
+			gradient: ["#f0ffe6", "#f0e4bc", "#8e7f68", "#483f35"],
+			blendMode: "multiply",
+			desaturate: false,
+		},
+		wraith: {
+			gradient: ["#ffffff", "#ffffff"],
+			blendMode: "multiply",
+			desaturate: true,
+		}
 	},
 	/**
 	 * Get canvas filter for skin of given type and tan progression (0..1).
@@ -121,19 +158,20 @@ setup.colours = {
 	 * @param {any} tan
 	 */
 	getSkinFilter(type, tan) {
+		const options = setup.colours.skin_options[type];
 		return {
-			blend: setup.colours.getSkinRgb(type, tan),
-			blendMode: "multiply",
+			blend: setup.colours.getSkinRgb(options, tan / 100),
+			blendMode: options.blendMode,
+			desaturate: options.desaturate,
 		};
 	},
 	getSkinRgb(type, tan) {
 		tan = Math.clamp(0, tan, 1);
-		const gradient = setup.colours.skin_gradients[type];
-		if (!gradient) {
+		if (!type.gradient) {
 			Errors.report("Unknown skin gradient " + type);
 			return "#ffffff";
 		}
-		return Renderer.lintRgbStaged(tan, gradient).toHexString();
+		return Renderer.lintRgbStaged(tan, type.gradient).toHexString();
 	},
 	/**
 	 * Get CSS style filter that, when applied, transforms #FF0000 colour to a skin colour.
@@ -145,7 +183,25 @@ setup.colours = {
 	 */
 	getSkinCSSFilter(type, tan = 0) {
 		const slidersValues = setup.skinColor[type];
-		return skinColor(true, tan, slidersValues);
+		const ranges = window.ensureIsArray(slidersValues || setup.skinColor.light);
+
+		const totalProgress = tan / 100;
+
+		const scaledProgress = ranges.length * totalProgress;
+		const rangeIndex = totalProgress === 1 ? ranges.length - 1 : Math.floor(scaledProgress);
+		const progress = totalProgress === 1 ? 1 : scaledProgress - rangeIndex;
+
+		const { hStart, hEnd, sStart, sEnd, bStart, bEnd } = ranges[rangeIndex];
+
+		const hue = (hEnd - hStart) * progress + hStart;
+		const saturation = (sEnd - sStart) * progress + sStart;
+		const brightness = (bEnd - bStart) * progress + bStart;
+
+		const hueCss = `hue-rotate(${hue}deg)`;
+		const saturationCss = `saturate(${saturation.toFixed(2)})`;
+		const brightnessCss = `brightness(${brightness.toFixed(2)})`;
+
+		return `${hueCss} ${saturationCss} ${brightnessCss}`;
 	},
 };
 
@@ -911,6 +967,13 @@ setup.colours.clothes = [
 		canvasfilter: { blend: "#559BC0" },
 	},
 	{
+		variable: "neon blue",
+		name: "neon blue",
+		name_cap: "Neon Blue",
+		csstext: "neon-blue",
+		canvasfilter: { blend: "#00d5ff" },
+	},
+	{
 		variable: "white",
 		name: "white",
 		name_cap: "White",
@@ -930,6 +993,13 @@ setup.colours.clothes = [
 		name_cap: "Red",
 		csstext: "red",
 		canvasfilter: { blend: "#ff0000" },
+	},
+	{
+		variable: "jewel red",
+		name: "jewel red",
+		name_cap: "Jewel red",
+		csstext: "jewel-red",
+		canvasfilter: { blend: "#d4273b" },
 	},
 	{
 		variable: "green",
@@ -974,6 +1044,13 @@ setup.colours.clothes = [
 		canvasfilter: { blend: "#8f09f3" },
 	},
 	{
+		variable: "lilac",
+		name: "lilac",
+		name_cap: "Lilac",
+		csstext: "lilac",
+		canvasfilter: { blend: "#d692fc" },
+	},
+	{
 		variable: "tangerine",
 		name: "tangerine",
 		name_cap: "Tangerine",
@@ -1014,6 +1091,13 @@ setup.colours.clothes = [
 		name_cap: "Brown",
 		csstext: "brown",
 		canvasfilter: { blend: "#703000" },
+	},
+	{
+		variable: "soft brown",
+		name: "soft brown",
+		name_cap: "Soft brown",
+		csstext: "brownish",
+		canvasfilter: { blend: "#6a4225" },
 	},
 	{
 		variable: "tan",
@@ -1065,6 +1149,13 @@ setup.colours.clothes = [
 		canvasfilter: { blend: "#16168d" },
 	},
 	{
+		variable: "denim",
+		name: "denim",
+		name_cap: "Denim",
+		csstext: "denim",
+		canvasfilter: { blend: "#4b6e85" },
+	},
+	{
 		variable: "olive",
 		name: "olive",
 		name_cap: "Olive",
@@ -1077,6 +1168,13 @@ setup.colours.clothes = [
 		name_cap: "Wine",
 		csstext: "wine",
 		canvasfilter: { blend: "#65252d" },
+	},
+	{
+		variable: "russet",
+		name: "russet",
+		name_cap: "Russet",
+		csstext: "russet",
+		canvasfilter: { blend: "#9f4033" },
 	},
 	{
 		variable: "apocalypse",
@@ -1119,6 +1217,13 @@ setup.colours.clothes = [
 		name_cap: "Silver",
 		csstext: "silver",
 		canvasfilter: { blend: "#C0C0C0" },
+	},
+	{
+		variable: "sterling silver",
+		name: "sterling silver",
+		name_cap: "Sterling silver",
+		csstext: "sterling-silver",
+		canvasfilter: { blend: "#8b9fc4" },
 	},
 ];
 /**

@@ -7,7 +7,7 @@
 	<<if _args[0]>>
 		<<set _passargs to _args[0]>>
 		<<set _leindex to $npc.indexOf(_passargs)>>
-		<<set $NPCName[$NPCNameList.indexOf(_passargs)].trust += ($enemytrust / 100)>>
+		<<set C.npc[_passargs].trust += ($enemytrust / 100)>>
 		<<for _temp to 0; _temp lt $NPCList.length; _temp++>>
 			<<if $NPCList[_temp].fullDescription is _passargs>>
 				<<set _ii to clone(_temp)>>
@@ -78,7 +78,7 @@
 		<!-- For each and every named NPC defined, we increase their trust. -->
 		<<for _temp to 0; _temp lt $npc.length; _temp++>>
 			<<set _nam to clone($npc[_temp])>>
-			<<set $NPCName[$NPCNameList.indexOf(_nam)].trust += ($enemytrust / 100)>>
+			<<set C.npc[_nam].trust += ($enemytrust / 100)>>
 		<</for>>
 		<<clearnpc>>
 		<<unset _temp>>
@@ -257,8 +257,10 @@ Zohar
 		<</if>>
 	<</if>>
 	<!-- Set Gender -->
-	<<if !$NPCName[_i].gender or $NPCName[_i].gender is "none" or _args[1] is "genders">>
-		<<set $rng to random(1, 100)>>
+	<<if $NPCName[_i].pregnancy.type>>
+		<<set $NPCName[_i].gender to "f">>
+	<<elseif !$NPCName[_i].gender or $NPCName[_i].gender is "none" or _args[1] is "genders">>
+		<<rng>>
 		<<if $NPCName[_i].pronoun is "m">>
 			<<if $rng lte $mregularchance>>
 				<<set $NPCName[_i].gender to "m">>
@@ -429,7 +431,7 @@ Zohar
 		<!-- Special Cases NNPC Variables, Introductions, Adjustments -->
 		<<switch _nam>>
 			<<case Kylar>>
-				<<set $NPCName[$NPCNameList.indexOf("Kylar")].state to 0>>
+				<<set C.npc.Kylar.state to 0>>
 			<<case Robin>>
 				<<set $robinSeen to []>>
 				<<set $NPCName[_i].cdquest to 0>>
@@ -493,9 +495,9 @@ Zohar
 					<<set $NPCName[_i].title to "priestess">>
 				<</if>>
 			<<case Whitney>>
-				<<set $NPCName[$NPCNameList.indexOf("Whitney")].dom to 10>>
+				<<set C.npc.Whitney.dom to 10>>
 			<<case "Great Hawk">>
-				<<set $NPCName[$NPCNameList.indexOf("Great Hawk")].dom to 50>>
+				<<set C.npc["Great Hawk"].dom to 50>>
 			<<case Sydney>>
 				<<set $NPCName[_i].purity to 100>>
 				<<set $NPCName[_i].chastity to {penis:"chastity belt", vagina:"chastity belt", anus:"anal shield"}>>
@@ -519,6 +521,18 @@ Zohar
 					<</if>>
 				<</if>>
 				<<set C.npc["Ivory Wraith"].skincolour to "ghost">>
+			<<case Remy>>
+				<<if $remySeen is undefined>>
+					<<set $remySeen to []>>
+				<</if>>
+			<<case Wren>>
+				<<if $wrenSeen is undefined>>
+					<<set $wrenSeen to []>>
+				<</if>>
+			<<case Niki>>
+				<<if $nikiSeen is undefined>>
+					<<set $nikiSeen to []>>
+				<</if>>
 			<<default>>
 		<</switch>>
 	<</if>>
@@ -985,7 +999,7 @@ Zohar
 		<<if $daily.bwMonsterRoll isnot undefined and $blackwolfmonster is 1>>
 			<<if $daily.bwMonsterRoll is true>>
 				<<set $NPCList[_npcno].monster to "monster">>
-				<<set $monster to 1>>
+				<<set $monster to 1>><<set _monsterOverride to true>>
 				<<set $NPCList[_npcno].type to ($NPCList[0].pronoun is "f" ? "wolfgirl" : "wolfboy")>>
 				<<set $NPCList[_npcno].lefthand to 0>>
 				<<set $NPCList[_npcno].righthand to 0>>
@@ -999,7 +1013,7 @@ Zohar
 			<<if ($monsterchance gte $rng and ($hallucinations gte 1 or $monsterhallucinations is "f")) or ($blackwolfmonster is 2)>>
 				<<set $daily.bwMonsterRoll to true>>
 				<<set $NPCList[_npcno].monster to "monster">>
-				<<set $monster to 1>>
+				<<set $monster to 1>><<set _monsterOverride to true>>
 				<<set $NPCList[_npcno].type to ($NPCList[0].pronoun is "f" ? "wolfgirl" : "wolfboy")>>
 				<<set $NPCList[_npcno].lefthand to 0>>
 				<<set $NPCList[_npcno].righthand to 0>>
@@ -1027,7 +1041,7 @@ Zohar
 		<<if $daily.ghMonsterRoll isnot undefined and $greathawkmonster is 1>>
 			<<if $daily.ghMonsterRoll is true>>
 				<<set $NPCList[_npcno].monster to "monster">>
-				<<set $monster to 1>>
+				<<set $monster to 1>><<set _monsterOverride to true>>
 				<<set $NPCList[_npcno].type to "harpy">>
 				<<set $NPCList[_npcno].lefthand to 0>>
 				<<set $NPCList[_npcno].righthand to 0>>
@@ -1041,7 +1055,7 @@ Zohar
 			<<if ($monsterchance gte $rng and ($hallucinations gte 1 or $monsterhallucinations is "f")) or ($greathawkmonster is 2) or ($bestialitydisable is "t")>>
 				<<set $daily.ghMonsterRoll to true>>
 				<<set $NPCList[_npcno].monster to "monster">>
-				<<set $monster to 1>>
+				<<set $monster to 1>><<set _monsterOverride to true>>
 				<<set $NPCList[_npcno].type to "harpy">>
 				<<set $NPCList[_npcno].lefthand to 0>>
 				<<set $NPCList[_npcno].righthand to 0>>
@@ -1062,7 +1076,7 @@ Zohar
 
 	<<if $enemyno lt 6>><<set $enemyno += 1>><</if>>
 
-	<<if $NPCList[0].monster is "monster">>
+	<<if $NPCList[0].monster is "monster" or _monsterOverride>>
 		<<set $monster to 1>>
 	<<else>>
 		<<set $monster to 0>>
@@ -1531,7 +1545,7 @@ Zohar
 						<<silently>><<speechWraith "lines">><</silently>>
 					<</if>>
 					_line1
-				<<elseif $bus isnot "lake_ruin_prison" and !$wraith.type and isBloodmoon()>>
+				<<elseif $bus isnot "lake_ruin_prison" and !$wraith.type and Time.isBloodMoon()>>
 					The Wraith
 					<<if $wraith.state is "haunt">>
 						<span class="red">is looking for you.</span>
@@ -1570,29 +1584,29 @@ Zohar
 			<<case "Great Hawk">>
 				Great Hawk
 			<<if $syndromebird is 1>>
-				<<if $NPCName[_i].love gte $npclovehigh>>
-					<<if $NPCName[_i].dom gte $npcdomhigh>>
+				<<if $NPCName[_i].love gte 60>>
+					<<if $NPCName[_i].dom gte 50>>
 						has <span class="lewd">claimed you as <<nnpc_his "Great Hawk">> <<wife>>.</span>
-					<<elseif $NPCName[_i].dom lte $npcdomlow>>
-						<span class="lewd">thinks you're a good <<wife>>.</span>
-					<<else>>
+					<<elseif $NPCName[_i].dom gte 20>>
 						<span class="lewd">thinks you're <<nnpc_his "Great Hawk">> <<wife>>.</span>
-					<</if>>
-				<<elseif $NPCName[_i].love lte $npclovelow>>
-					<<if $NPCName[_i].dom gte $npcdomhigh>>
-						<span class="red">wants you to return <<nnpc_his "Great Hawk">> affections.</span>
-					<<elseif $NPCName[_i].dom lte $npcdomlow>>
-						<span class="red">is desperate for your affection.</span>
 					<<else>>
+						<span class="lewd">thinks you're a good <<wife>>.</span>
+					<</if>>
+				<<elseif $NPCName[_i].love gte 20>>
+					<<if $NPCName[_i].dom gte 50>>
+						<span class="red">wants you to return <<nnpc_his "Great Hawk">> affections.</span>
+					<<elseif $NPCName[_i].dom gte 20>>
 						<span class="red">is distraught.</span>
+					<<else>>
+						<span class="red">is desperate for your affection.</span>
 					<</if>>
 				<<else>>
-					<<if $NPCName[_i].dom gte $npcdomhigh>>
+					<<if $NPCName[_i].dom gte 50>>
 						<span class="teal">wants you as a mate.</span>
-					<<elseif $NPCName[_i].dom lte $npcdomlow>>
-						<span class="teal">is smitten with you.</span>
-					<<else>>
+					<<elseif $NPCName[_i].dom gte 20>>
 						is lonely.
+					<<else>>
+						<span class="teal">is smitten with you.</span>
 					<</if>>
 				<</if>>
 			<<else>>
@@ -1700,19 +1714,19 @@ Zohar
 	<!-- When NPCs are updated and made compatible with statusCheck-style widgets, add them to here. Make a new if statement, NOT an elseif -->
 	<!-- Usage: call a SINGLE argument with every relevant NPC. <<NPCStatusCheck("Kylar Sydney")>> will call <<kylarStatusCheck>> and <<sydneyStatusCheck>> --> [DOES NOT WORK WITH statusCheck(name)]
 	<<if _args[0].includes("Robin")>>
-		<<set _robin to $NPCName[$NPCNameList.indexOf("Robin")]>>
+		<<set _robin to C.npc.Robin>>
 		<<if _robin.init is 1>>
 			<<robinStatusCheck>>
 		<</if>>
 	<</if>>
 	<<if _args[0].includes("Kylar")>>
-		<<set _kylar to $NPCName[$NPCNameList.indexOf("Kylar")]>>
+		<<set _kylar to C.npc.Kylar>>
 		<<if _kylar.init is 1>>
 			<<kylarStatusCheck>>
 		<</if>>
 	<</if>>
 	<<if _args[0].includes("Sydney")>>
-		<<set _sydney to $NPCName[$NPCNameList.indexOf("Sydney")]>>
+		<<set _sydney to C.npc.Sydney>>
 		<<if _sydney.init is 1>>
 			<<sydneyStatusCheck>>
 		<</if>>

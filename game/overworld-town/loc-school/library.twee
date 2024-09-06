@@ -123,7 +123,7 @@ Next to it is a small basket with returned and not yet sorted books.
 		<br>
 		"Yeah, it's a proven fact. The more you fuck, the more airheaded you get."
 		<br>
-		"I see...just like a certain student I could mention."
+		"I see... just like a certain student I could mention."
 	<<elseif $rng gte 31>>
 		"Hey, have you heard about masturbation? They say it's dangerous!"
 		<br>
@@ -131,11 +131,11 @@ Next to it is a small basket with returned and not yet sorted books.
 		<br>
 		"Yes. If you do it too often, you'll go blind!"
 		<br>
-		"Is that why you're wearing these colors?"
+		"Is that why you're wearing these colours?"
 	<<elseif $rng gte 26>>
 		"Did you see that student recently? You-know-who, the talk of the school."
 		<br>
-		"No...doesn't seem to attend class much."
+		"No... doesn't seem to attend class much."
 		<br>
 		"Not exactly the sharpest knife in the drawer, huh?"
 		<br>
@@ -151,9 +151,9 @@ Next to it is a small basket with returned and not yet sorted books.
 			Those weren't students.
 			<<trauma 6>><<gtrauma>>
 		<<else>>
-			"<<print either("If you think about it, neither of us are really here.","Hey, listen. You hear that? It's nothing.","Don't knock it 'till you try it. Jazz metal just works.","Winter's actually kinda hot, in a fossil kinda way.","I'd let a wolf knot me, to be honest.","If quizzes are quizzical, then what are tests?","You. Me. That bookshelf. Library dodgeball. You in?","I haven't seen a single recycling bin in this school. Unbelievable.","The canteen food is actually pretty good. It's a guilty pleasure of mine.","Oh, to be a caterpillar, unaware of the woes of the world.", "Someone said they saw a whale that had, like, tentacles, like a squid. Think squids and whales finally put their differences aside and got busy?")>>"
+			"?chatter1"
 			<br>
-			"<<print either ("Why am I friends with you?","I told you to stop hanging out with me.","What the fuck?","I'm out of here.","Can we please have a normal conversation for once?","...What?","Pretty sure you're not supposed to come to school drunk.","I'm calling the police.","I gotta get that restraining order. For real, this time.","Can I peg you?","Can you make like a tree and die for the winter?")>>"
+			"?chatter2"
 			<br>
 			They're just chattering. Nothing useful.
 		<</if>>
@@ -174,7 +174,7 @@ Next to it is a small basket with returned and not yet sorted books.
 <<sydneySchedule>>
 <<if $stress gte $stressmax>>
 	<<link [[Everything fades to black...|School Passout]]>><</link>>
-<<elseif _sydney_location is "library" and ($sydneyLeightonConfront is 1 or $leightonAssaulted is 1) and $exposed lte 0 and $NPCName[$NPCNameList.indexOf("Leighton")].init is 1 and $pillory_tenant.special.name isnot "Leighton" and !$sydneyLeightonConfrontTimer>>
+<<elseif _sydney_location is "library" and ($sydneyLeightonConfront is 1 or $leightonAssaulted is 1) and $exposed lte 0 and C.npc.Leighton.init is 1 and $pillory.tenant.special.name isnot "Leighton" and !$sydneyLeightonConfrontTimer>>
 	<<unset $sydneyLeightonConfront>><<set $sydneyLeightonConfrontTimer to 7>><<set $corruptionEvent to 1>>
 	<<if ($bookStolenKnown isnot undefined and $bookStolenKnown gte 3) or $libraryMoneyStolen gte 1000 or $leightonAssaulted is 1>>
 		<<if $leightonAssaulted is 1>>
@@ -226,40 +226,27 @@ Next to it is a small basket with returned and not yet sorted books.
 			<<icon "projectMaths.png">><<link [[Approach|Maths Library Student]]>><</link>>
 			<br><br>
 		<</if>>
-		<<if $exposed lte 0 and $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and ($weather is "rain" or $weather is "snow") and $schoolstate is "lunch" and $daily.school.lunchEaten is 1>>
-			Kylar sits at a desk, scribbling something.
-			<br>
-			<<furnitureicon "deskAntique.png">><<link [[Approach Kylar|Kylar Library]]>><<set $kylar_text_trigger to true>><</link>>
-			<br><br>
-		<<elseif $englishPlay is "ongoing" and $englishPlayRoles.Kylar isnot "none" and $englishPlayRoles.KylarKnown and $exposed lte 0 and ($weather is "rain" or $weather is "snow") and $schoolstate is "afternoon">>
-			<<if $englishPlayReadiness gte 56 and $englishPlayRoles.SydneyKnown and !$englishPlayDoubleRehearsal>>
-				Kylar isn't here. There's a note on the desk <<nnpc_he "Kylar">> usually sits at. It reads "<span class="gold">Meet me in the English classroom.</span>"
-				<br><br>
-			<<else>>
-				Kylar sits at a desk, scribbling something.
-				<br>
-				<<furnitureicon "deskAntique.png">><<link [[Approach|Kylar Library]]>><<set $kylar_text_trigger to true>><</link>>
-				<br><br>
-			<</if>>
-		<</if>>
+		<!-- Kylar in the library -->
+		<<kylarLibrary>>
+
 		<<projectoptions>>
 		<<if $exposed gte 1>>
-			<<scienceicon>><<link [[Study science (0:20)|Library Study Exposed]]>><<pass 20>><<set $phase to 1>><</link>><<gscience>>
+			<<scienceicon>><<link [[Study science (0:20)|Library Study Exposed]]>><<pass 20>><<set $phase to 1>><<wearProp "bookscience">><</link>><<gscience>>
 			<br>
-			<<mathicon>><<link [[Study maths (0:20)|Library Study Exposed]]>><<pass 20>><<set $phase to 2>><</link>><<gmaths>>
+			<<mathicon>><<link [[Study maths (0:20)|Library Study Exposed]]>><<wearProp "bookmaths">><<pass 20>><<set $phase to 2>><</link>><<gmaths>>
 			<br>
-			<<englishicon>><<link [[Study English (0:20)|Library Study Exposed]]>><<pass 20>><<set $phase to 3>><</link>><<genglish>>
+			<<englishicon>><<link [[Study English (0:20)|Library Study Exposed]]>><<pass 20>><<set $phase to 3>><<wearProp "bookenglish">><</link>><<genglish>>
 			<br>
-			<<historyicon>><<link [[Study history (0:20)|Library Study Exposed]]>><<pass 20>><<set $phase to 4>><</link>><<ghistory>>
+			<<historyicon>><<link [[Study history (0:20)|Library Study Exposed]]>><<pass 20>><<set $phase to 4>><<wearProp "bookhistory">><</link>><<ghistory>>
 			<br>
 		<<else>>
-			<<scienceicon>><<link [[Study science (0:20)|Library Study]]>><<pass 20>><<set $phase to 1>><</link>><<gscience>>
+			<<scienceicon>><<link [[Study science (0:20)|Library Study]]>><<pass 20>><<set $phase to 1>><<wearProp "bookscience">><</link>><<gscience>>
 			<br>
-			<<mathicon>><<link [[Study maths (0:20)|Library Study]]>><<pass 20>><<set $phase to 2>><</link>><<gmaths>>
+			<<mathicon>><<link [[Study maths (0:20)|Library Study]]>><<pass 20>><<set $phase to 2>><<wearProp "bookmaths">><</link>><<gmaths>>
 			<br>
-			<<englishicon>><<link [[Study English (0:20)|Library Study]]>><<pass 20>><<set $phase to 3>><</link>><<genglish>>
+			<<englishicon>><<link [[Study English (0:20)|Library Study]]>><<pass 20>><<set $phase to 3>><<wearProp "bookenglish">><</link>><<genglish>>
 			<br>
-			<<historyicon>><<link [[Study history (0:20)|Library Study]]>><<pass 20>><<set $phase to 4>><</link>><<ghistory>>
+			<<historyicon>><<link [[Study history (0:20)|Library Study]]>><<pass 20>><<set $phase to 4>><<wearProp "bookhistory">><</link>><<ghistory>>
 			<br>
 		<</if>>
 		/*indev - scarlet book possible to be taken. English 200+ required*/
@@ -267,7 +254,7 @@ Next to it is a small basket with returned and not yet sorted books.
 			<<scarleticon>><<link [[Take "Raul and Janet" from the basket (0:01)|ScarletBook1]]>><<pass 1>><<set $scarletExitPassage to "School Library">><</link>>
 			<br>
 		<<elseif currentSkillValue('english') gte 200>>
-			<<scarleticon>><<link [[Take the medium-sized scarlet book from the basket (0:01)|ScarletBook1]]>><<pass 1>><</link>>
+			<<scarleticon>><<link [[Take the medium-sized scarlet book from the basket (0:01)|ScarletBook1]]>><<pass 1>><<set $scarletExitPassage to "School Library">><</link>>
 			<br>
 		<</if>>
 		<<if (Time.monthName is "November" and Time.monthDay gte 24) or Time.monthName is "December">>
@@ -300,12 +287,12 @@ Next to it is a small basket with returned and not yet sorted books.
 		<<generatey1>><<generatey2>>While you are minding your own business, a <<fullGroup>> start harassing you.
 		<br><br>
 
-		<<link [[Ignore them|School Library Harass]]>><<set $phase to 0>><<trauma 2>><<stress 2>><</link>><<gtrauma>><<gstress>>
+		<<link [[Ignore them|School Library Harass]]>><<handheldon>><<set $phase to 0>><<trauma 2>><<stress 2>><</link>><<gtrauma>><<gstress>>
 		<br>
-		<<link [[Ask the librarian for help|School Library Harass]]>><<set $phase to 1>><<status -10>><</link>><<lcool>>
+		<<link [[Ask the librarian for help|School Library Harass]]>><<handheldon>><<set $phase to 1>><<status -10>><</link>><<lcool>>
 		<br>
-		<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and $sydneySeen.includes("library") and _sydney_location is "library">>
-			<<link [[Ask Sydney for help|School Library Harass]]>><<set $phase to 2>><</link>>
+		<<if C.npc.Sydney.init is 1 and $sydneySeen.includes("library") and _sydney_location is "library">>
+			<<link [[Ask Sydney for help|School Library Harass]]>><<handheldon>><<set $phase to 2>><</link>>
 			<br>
 		<</if>>
 	<<elseif _wraithEvent>>
@@ -316,26 +303,15 @@ Next to it is a small basket with returned and not yet sorted books.
 		<<link [[Next|School Library]]>><<endevent>><</link>>
 		<br>
 	<<else>>
-		<<if !$worn.over_lower.type.includes("naked")>>
-			<<set $worn.over_lower.integrity -= 10>>
-			<<if $worn.over_lower.integrity lte 0>>
-				As you rise from the chair, you hear a tear. Your $worn.over_lower.name <<overlowerplural>> caught on the desk. You try to free them, but <<overloweritis>> torn clean off your body<<if !$worn.lower.type.includes("naked")>>, exposing your <<undies>><</if>>.
-				<<overlowerruined>><<trauma 3>>
-				<br><br>
-			<<elseif $worn.over_lower.integrity gte 0>>
-				As you rise from the seat, you hear a tear. Your $worn.over_lower.name <<overlowerplural>> caught on the desk.
-				<br><br>
-			<</if>>
+		<<outfitChecks>>
+		<<set _bottom.integrity -= 10>>
+		<<if _bottom.integrity lte 0>>
+			As you rise from the chair, you hear a tear. Your <<bottoms>> <<is _bottom>> caught on the desk. You try to free <<= _bottom.plural ? "them" : "it">>, but <<= _bottom.plural ? "they are" : "it is">> torn clean off your body, exposing your <<= _bottomUnder?.name || "<<undies>>">>.
+			<<integritycheck no_text>>
+			<br><br>
 		<<else>>
-			<<set $worn.lower.integrity -= 10>>
-			<<if $worn.lower.integrity lte 0>>
-				As you rise from the chair, you hear a tear. Your $worn.lower.name <<lowerplural>> caught on the desk. You try to free them, but <<loweritis>> torn clean off your body, exposing your <<undies>>.
-				<<lowerruined>><<trauma 3>>
-				<br><br>
-			<<elseif $worn.lower.integrity gte 0>>
-				As you rise from the seat, you hear a tear. Your $worn.lower.name <<lowerplural>> caught on the desk.
-				<br><br>
-			<</if>>
+			As you rise from the seat, you hear a tear. Your <<bottoms>> <<is _bottom>> caught on the desk.
+			<br><br>
 		<</if>>
 		<<link [[Next|School Library]]>><<endevent>><</link>>
 		<br>
@@ -371,19 +347,19 @@ Next to it is a small basket with returned and not yet sorted books.
 		<<if $earSlime.growth gte 200 - ($earSlime.promiscuity * 10) and $exposed gte 1>>
 			<span class="lewd">You feel the slime in your head command you to expose yourself and ask <<him>> to rape you.</span> <span class="red">It expects to be obeyed.</span>
 			<br><br>
-			<<link [[Obey|Library Study Exposed Slime Obey]]>><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><<sub 2>><</link>><<gcorruption>><<lpain>><<lltrauma>><<lstress>>
+			<<link [[Obey|Library Study Exposed Slime Obey]]>><<handheldon>><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><<sub 2>><</link>><<gcorruption>><<lpain>><<lltrauma>><<lstress>>
 			<br>
-			<<link [[Defy|Library Study Exposed Slime Defy]]>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><<def 1>><</link>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>>
+			<<link [[Defy|Library Study Exposed Slime Defy]]>><<handheldon>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><<def 1>><</link>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>>
 			<br>
 		<<else>>
 			<<if $exposed gte 2>>
-				<<if $exhibitionism gte 75>>
-					<<link [[Show yourself|Library Study Show]]>><<set $phase to 0>><</link>><<exhibitionist5>>
+				<<if hasSexStat("exhibitionism", 5)>>
+					<<link [[Show yourself|Library Study Show]]>><<handheldon>><<set $phase to 0>><</link>><<exhibitionist5>>
 					<br>
 				<</if>>
 			<<elseif $exposed is 1>>
-				<<if $exhibitionism gte 15>>
-					<<link [[Show yourself|Library Study Show]]>><<set $phase to 1>><</link>><<exhibitionist2>>
+				<<if hasSexStat("exhibitionism", 2)>>
+					<<link [[Show yourself|Library Study Show]]>><<handheldon>><<set $phase to 1>><</link>><<exhibitionist2>>
 					<br>
 				<</if>>
 			<</if>>
@@ -433,8 +409,7 @@ Next to it is a small basket with returned and not yet sorted books.
 	<br><br>
 <</if>>
 
-<<endevent>>
-<<link [[Next|School Library]]>><</link>>
+<<link [[Next|School Library]]>><<endevent>><</link>>
 <br>
 
 :: Library Study Pair Hide
@@ -617,10 +592,15 @@ You follow <<him>> down the corridor toward the entrance. "H-here," <<he>> says 
 	The librarian interrupts. "I said OUT." The pair comply, leaving you in peace.
 	<br><br>
 
-	<<person3>>The librarian asks if you're okay, and you nod. Assured that you're fine, <<he>> returns to <<his>> duties.
-	<br><br>
+	<<person3>>The librarian asks if you're okay, and you <<= isPregnancyEnding() ? "shake your head" : "nod">>.
+	<<if isPregnancyEnding()>>
+		<<pregnancyPassout "schoolLibrarian">>
+	<<else>>
+		Assured that you're fine, <<he>> returns to <<his>> duties.
+		<br><br>
 
-	<<link [[Next|School Library]]>><<endevent>><</link>>
+		<<link [[Next|School Library]]>><<endevent>><</link>>
+	<</if>>
 <<elseif $phase is 2>>
 	<<run statusCheck("Sydney")>>
 	You shout for Sydney. The <<person2>><<person>> sneers. "Oh no, not Sydney, <<nnpc_he "Sydney">>'s gonna write on us, whatever will we do?" The two begin to laugh.
@@ -728,17 +708,17 @@ You follow <<him>> down the corridor toward the entrance. "H-here," <<he>> says 
 		Your consciousness is already slipping away, however.
 		<br><br>
 		<<endevent>>
-		<<if isPlayerNonparasitePregnancyEnding()>>
-			<<pregnancyWatersBrokenPassout "schoolLibrarian">>
+		<<if isPregnancyEnding()>>
+			<<pregnancyPassout "schoolLibrarian">>
 		<<else>>
 			<<ambulance>>
 		<</if>>
 	<<elseif $pain gte 100 and $willpowerpain is 0>>
-		You try to speak, but instead burst into tears. You feel the librarian's arms around you as you pass out.
+		You try to speak, but instead burst into tears. You feel the librarian's arms around you as your consciousness begins to slip away.
 		<br><br>
 		<<endevent>>
-		<<if isPlayerNonparasitePregnancyEnding()>>
-			<<pregnancyWatersBrokenPassout "schoolLibrarian">>
+		<<if isPregnancyEnding()>>
+			<<pregnancyPassout "schoolLibrarian">>
 		<<else>>
 			<<ambulance>>
 		<</if>>
@@ -823,8 +803,8 @@ You
 		<<switch $phase>>
 			<<case 6>>
 				<<if $per_npc.pinch isnot undefined>>
-					copy of "How <<if $per_npc.pinch.pronoun is "m">>Mr<<else>>Ms<</if>>. Pinch Groped Christmas"
-					<<clearNPC pinch>>
+					copy of "How <<if $per_npc.pinch.pronoun is "m">>Mr<<else>>Ms<</if>> Pinch Groped Christmas"
+					<<clearNPC "pinch">>
 				<<else>>
 					olive-coloured book.
 				<</if>>
@@ -836,7 +816,7 @@ You
 		<<set $studyBooks.rented to "none">>
 		<<if _sydney_location is "library">>
 			<<if $book_rent_timer lt 0>>
-				<<if $NPCName[$NPCNameList.indexOf("Sydney")].love lt 10>>
+				<<if C.npc.Sydney.love lt 10>>
 					"Late. But at least it isn't damaged. Please try to be more punctual on returns." Sydney writes something down, frowning. <<bookCriminal>>
 				<<elseif $sydneyromance is 1>>
 					<<if _sydneyStatus.includes("corrupt")>>
@@ -947,8 +927,8 @@ You
 You return the stolen
 <<if $phase is 6>>
 	<<if $per_npc.pinch isnot undefined>>
-		copy of "How <<if $per_npc.pinch.pronoun is "m">>Mr<<else>>Ms<</if>>. Pinch Groped Christmas"
-		<<clearNPC pinch>>
+		copy of "How <<if $per_npc.pinch.pronoun is "m">>Mr<<else>>Ms<</if>> Pinch Groped Christmas"
+		<<clearNPC "pinch">>
 	<<else>>
 		olive-coloured book.
 	<</if>>

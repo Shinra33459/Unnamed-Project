@@ -6,7 +6,7 @@
 		<<set _w to _args[0]>>
 	<</if>>
 	<<set _n to (_w -1)>>
-	<<if $NPCName[$NPCNameList.indexOf("Ivory Wraith")].init isnot 1>>
+	<<if C.npc["Ivory Wraith"].init isnot 1>>
 		<<set _strapIgnore to true>><<set _condomIgnore to true>>
 		<<generateNPC _w a n n 20>>
 		<<set $NPCList[_n].skincolour to "ghost">>
@@ -43,8 +43,8 @@
 				<<set $enemyhealthmax to _wraithHP>>
 				<<set $enemyhealth to _wraithHP>>
 				<<set $enemyarousalmax to 700>>
-				<<set $enemyanger += ($NPCName[$NPCNameList.indexOf("Ivory Wraith")].lust * 5)>>
-				<<set $enemytrust -= ($NPCName[$NPCNameList.indexOf("Ivory Wraith")].lust * 2)>>
+				<<set $enemyanger += (C.npc["Ivory Wraith"].lust * 5)>>
+				<<set $enemytrust -= (C.npc["Ivory Wraith"].lust * 2)>>
 				<<npcexpose>>
 			<<case "slimetentacles">>
 				<<if $debug is 1>>
@@ -94,8 +94,8 @@
 					<<set $enemyhealthmax to _wraithHP>>
 					<<set $enemyhealth to _wraithHP>>
 					<<set $enemyarousalmax to 1300>>
-					<<set $enemyanger += ($NPCName[$NPCNameList.indexOf("Ivory Wraith")].lust * 5)>>
-					<<set $enemytrust -= ($NPCName[$NPCNameList.indexOf("Ivory Wraith")].lust * 2)>>
+					<<set $enemyanger += (C.npc["Ivory Wraith"].lust * 5)>>
+					<<set $enemytrust -= (C.npc["Ivory Wraith"].lust * 2)>>
 					<<tentaclestart _wraithTentaclesAbomination 15 "tentacle" "pale">>
 					/* This felt a bit too powerful, partially disabled for now. */
 					<<for _i to 0; _i lt $tentacles.active; _i++>>
@@ -127,8 +127,8 @@
 				<<set $enemyhealthmax to _wraithHP>>
 				<<npcexpose>>
 				<<set $enemyarousalmax to 700>>
-				<<set $enemyanger += ($NPCName[$NPCNameList.indexOf("Ivory Wraith")].lust * 5)>>
-				<<set $enemytrust -= ($NPCName[$NPCNameList.indexOf("Ivory Wraith")].lust * 2)>>
+				<<set $enemyanger += (C.npc["Ivory Wraith"].lust * 5)>>
+				<<set $enemytrust -= (C.npc["Ivory Wraith"].lust * 2)>>
 			<<default>>
 				<<initWraith "man">>
 		<</switch>>
@@ -138,7 +138,7 @@
 	<<else>>
 		<<switch random(1, 6)>>
 			<<case 1>>
-				<<if $wraith.state is "haunt" or isBloodmoon()>>
+				<<if $wraith.state is "haunt" or Time.isBloodMoon()>>
 					<<initWraith "abomination">>
 				<<else>>
 					<<initWraith "man">>
@@ -159,7 +159,7 @@
 <</widget>>
 
 <<widget "statsWraith">>
-	<<set _wraithMod to (1 + (Math.floor($NPCName[$NPCNameList.indexOf("Ivory Wraith")].lust / 3)))>>
+	<<set _wraithMod to (1 + (Math.floor(C.npc["Ivory Wraith"].lust / 3)))>>
 	<<set _wraithHP to 600 + (50 * _wraithMod)>>
 	<<set _wraithSlimes to (1 + _wraithMod)>>
 	<<set _wraithTentacles to Math.clamp((4 + _wraithMod), 6, 10)>>
@@ -233,10 +233,6 @@
 	<<unset $wraithCount>>
 	<<unset $wraithMax>>
 	<<set $wraith.revealed to false>>
-	<<if $real_weather>>
-		<<set $weather to $real_weather>>
-		<<unset $real_weather>>
-	<</if>>
 	<<if $controlSaved>>
 		<<set $control to $controlSaved>>
 		<<unset $controlSaved>>
@@ -260,17 +256,11 @@
 <</widget>>
 
 <<widget "rainWraith">>
-	<<if $weather isnot "rain" and $weather isnot "snow">>
-		<<set $real_weather to $weather>>
-		<<if Time.season is "winter">>
-			<<set $weather to "snow">>
-		<<else>>
-			<<set $weather to "rain">>
-		<</if>>
-
+	<<if Weather.precipitation is "none">>
+		<<set Weather.set("heavyPrecipitation", true, 20)>>
 		<<if _args[0]>>
 			<<if $outside is 1>>
-				<<if $weather is "snow">>
+				<<if Weather.precipitation is "snow">>
 					<<print either(
 						"You don't remember when it started snowing. It's already hard to see.",
 						"The wind picks up, and visibility drops as a snow squall rolls in.",
@@ -295,32 +285,28 @@
 <</widget>>
 
 <<widget "endRainWraith">>
-	<<if $real_weather>>
-		<<if _args[0]>>
-			<<if $outside is 1>>
-				<<if $weather is "rain">>
-					<<print either(
-						"The sky begins to clear up.",
-						"The rain suddenly stops.",
-						"The rain relents."
-					)>>
-				<<else>>
-					<<print either(
-						"The sky begins to clear up.",
-						"The snow suddenly stops.",
-						"The snow relents."
-					)>>
-				<</if>>
+	<<if _args[0]>>
+		<<if $outside is 1>>
+			<<if Weather.precipitation is "rain">>
+				<<print either(
+					"The sky doesn't clear up.",
+					"The rain doesn't stop.",
+					"The rain refuses to relent."
+				)>>
 			<<else>>
 				<<print either(
-					"The surroundings begins to clear up.",
-					"The fog suddenly dissipates.",
-					"The fog relents."
+					"The sky doesn't clear up.",
+					"The snow doesn't stop.",
+					"The snow refuses to relent."
 				)>>
 			<</if>>
+		<<else>>
+			<<print either(
+				"The surroundings begins to clear up.",
+				"The fog suddenly dissipates.",
+				"The fog relents."
+			)>>
 		<</if>>
-		<<set $weather to $real_weather>>
-		<<unset $real_weather>>
 	<</if>>
 <</widget>>
 
@@ -381,10 +367,6 @@
 			<<unset $possessed>><<canvas-model-override "clear">>
 		<</if>>
 		<<set $wraith.revealed to false>>
-		<<if $real_weather>>
-			<<set $weather to $real_weather>>
-			<<unset $real_weather>>
-		<</if>>
 		<<unset $wraithWillMessage>>
 		<<unset $nextPassage>>
 		<<unset $nextPassageIntended>>
@@ -530,10 +512,10 @@
 				"How far would you go? How far can you run?",
 				"You've built your cage, songbird. Lie in it."
 			)>>
-			<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 20>>
+			<<if C.npc.Robin.trauma gte 20>>
 				<<run _linePool.pushUnique("I'm sorry that you put your trust in <<phim>>.")>>
 			<</if>>
-			<<if $NPCName[$NPCNameList.indexOf("Robin")].cdquest gte 7>>
+			<<if C.npc.Robin.cdquest gte 7>>
 				<<run _linePool.pushUnique("New skin. Same sin.")>>
 			<</if>>
 		<</if>>
@@ -541,7 +523,7 @@
 			<<run _linePool.pushUnique(
 				"Tormentor.",
 				"Drown in smoke. Drown in flame.",
-				"A suit of armor made of bodies. They're not here now."
+				"A suit of armour made of bodies. They're not here now."
 			)>>
 			<<if $whitneyrescued>>
 				<<run _linePool.pushUnique("Betrayed by your worst enemy. Do you love <<phim>>?")>>
@@ -631,7 +613,7 @@
 		Temp arrays don't work either. -->
 		<<if $npc[0]>>
 			<<set _npc0 to clone($npc[0])>>
-			<<set _title0 to $NPCName[$NPCNameList.indexOf($npc[0])].title.split(" ").pop()>>
+			<<set _title0 to C.npc[$npc[0]].title.split(" ").pop()>>
 			<<run _linePool.pushUnique(
 				"_npc0 _npc0 _npc0 _npc0 _npc0 _npc0 _npc0 _npc0.",
 				"Hie away, _title0 mine, hie away."
@@ -639,7 +621,7 @@
 		<</if>>
 		<<if $npc[1]>>
 			<<set _npc1 to clone($npc[1])>>
-			<<set _title1 to $NPCName[$NPCNameList.indexOf($npc[1])].title.split(" ").pop()>>
+			<<set _title1 to C.npc[$npc[1]].title.split(" ").pop()>>
 			<<run _linePool.pushUnique(
 				"_npc1 _npc1 _npc1 _npc1 _npc1 _npc1 _npc1 _npc1.",
 				"Hie away, _title1 mine, hie away."
@@ -647,7 +629,7 @@
 		<</if>>
 		<<if $npc[2]>>
 			<<set _npc2 to clone($npc[2])>>
-			<<set _title2 to $NPCName[$NPCNameList.indexOf($npc[2])].title.split(" ").pop()>>
+			<<set _title2 to C.npc[$npc[2]].title.split(" ").pop()>>
 			<<run _linePool.pushUnique(
 				"_npc2 _npc2 _npc2 _npc2 _npc2 _npc2 _npc2 _npc2.",
 				"Hie away, _title2 mine, hie away."
@@ -655,7 +637,7 @@
 		<</if>>
 		<<if $npc[3]>>
 			<<set _npc3 to clone($npc[3])>>
-			<<set _title3 to $NPCName[$NPCNameList.indexOf($npc[3])].title.split(" ").pop()>>
+			<<set _title3 to C.npc[$npc[3]].title.split(" ").pop()>>
 			<<run _linePool.pushUnique(
 				"_npc3 _npc3 _npc3 _npc3 _npc3 _npc3 _npc3 _npc3.",
 				"Hie away, _title3 mine, hie away."
@@ -663,7 +645,7 @@
 		<</if>>
 		<<if $npc[4]>>
 			<<set _npc4 to clone($npc[4])>>
-			<<set _title4 to $NPCName[$NPCNameList.indexOf($npc[4])].title.split(" ").pop()>>
+			<<set _title4 to C.npc[$npc[4]].title.split(" ").pop()>>
 			<<run _linePool.pushUnique(
 				"_npc4 _npc4 _npc4 _npc4 _npc4 _npc4 _npc4 _npc4.",
 				"Hie away, _title4 mine, hie away."
@@ -671,7 +653,7 @@
 		<</if>>
 		<<if $npc[5]>>
 			<<set _npc5 to clone($npc[5])>>
-			<<set _title5 to $NPCName[$NPCNameList.indexOf($npc[5])].title.split(" ").pop()>>
+			<<set _title5 to C.npc[$npc[5]].title.split(" ").pop()>>
 			<<run _linePool.pushUnique(
 				"_npc5 _npc5 _npc5 _npc5 _npc5 _npc5 _npc5 _npc5.",
 				"Hie away, _title5 mine, hie away."
@@ -820,8 +802,7 @@
 				"Carve your name. I'll wash it away.",
 				"Even if I have to drag you there myself.",
 				"You don't have enough. You never had enough.",
-				"Let's see how you like being the puppet, hmm?",
-				"Why don't you take off that pesky skin of yours?"
+				"Let's see how you like being the puppet, hmm?"
 			)>>
 		<</if>>
 		<<if $templePromised is "Sydney">>
@@ -924,7 +905,7 @@
 			<<run _linePool.pushUnique(
 				"Sapphire and brimstone.",
 				"All the world's to defile.",
-				"You wear a mask. Your face molds to fit it.",
+				"You wear a mask. Your face moulds to fit it.",
 				"You think you've found the bottom. You've barely breached the surface."
 			)>>
 			<<if $spear_vessel is "held">>
@@ -1354,7 +1335,7 @@
 				<<if $location is "lake_ruin">>
 					<<destinationlakeruin>>
 				<<else>>
-					<<if Time.season is "winter" and ($bus is "lakeshallows" or $bus is "lakedepths")>>
+					<<if Weather.isSnow and ($bus is "lakeshallows" or $bus is "lakedepths")>>
 						<<destination_lake_ice>>
 					<<else>>
 						<<destinationlake>>
@@ -1406,7 +1387,7 @@
 <</widget>>
 
 <<widget "wTimerProgress">>
-	<<if $wraith.state and $wraith.hunt is 0 and isBloodmoon()>>
+	<<if $wraith.state and $wraith.hunt is 0 and Time.isBloodMoon()>>
 		<<set $wraith.timer++>>
 		<<set $wraith.timer += Math.floor(C.npc["Ivory Wraith"].lust / 10)>>
 		<<if $rng gte 60 and numberOfEarSlime()>>
@@ -1447,7 +1428,7 @@
 			<<destinationlakeruin>>
 			<<endevent>><<set $eventskip to 1>>
 		<<case "lake">>
-			<<if Time.season is "winter" and ($bus is "lakedepths" or $bus is "lakeshallows")>>
+			<<if Weather.isSnow and ($bus is "lakedepths" or $bus is "lakeshallows")>>
 				<<destination_lake_ice>>
 			<<else>>
 				<<destinationlake>>
@@ -1485,7 +1466,7 @@
 
 <<widget "rngWraith">>
 	<<if $wraith.state>>
-		<<if _args[1] is "night" and Time.dayState isnot "night" or _args[1] is "noBlood" and isBloodmoon()>>
+		<<if _args[1] is "night" and Time.dayState isnot "night" or _args[1] is "noBlood" and Time.isBloodMoon()>>
 			<<set _wraithEvent to false>>
 		<<else>>
 			<<set _rngWraith to 2 + (Math.floor(C.npc["Ivory Wraith"].lust / 10))>>
@@ -1493,7 +1474,7 @@
 				<<set _rngWraith += 2>>
 			<</if>>
 			<<set _wraithHallucinations to (_args[0] is 1 or _args[0] is 2 ? _args[0] : 0)>>
-			<<if ($hallucinations gte _wraithHallucinations and _rngWraith gte random(1,100)) or isBloodmoon()>>
+			<<if ($hallucinations gte _wraithHallucinations and _rngWraith gte random(1,100)) or Time.isBloodMoon()>>
 				<<set _wraithEvent to true>>
 			<</if>>
 		<</if>>
@@ -1509,13 +1490,13 @@
 		<<if Time.dayState is "night">>
 			<<set _rngWraithSocial += 2>>
 		<</if>>
-		<<if ($hallucinations gte 1 and _rngWraithSocial gte Math.ceil(Math.random() * 100)) or isBloodmoon()>>
+		<<if ($hallucinations gte 1 and _rngWraithSocial gte Math.ceil(Math.random() * 100)) or Time.isBloodMoon()>>
 			<<set _wraithEventSocial to true>>
 		<</if>>
 		<<if $wraith.mimic isnot "" and $wraith.revealed>>
 			<<set _wraithTitle to "pretender">>
 		<<else>>
-			<<switch $wraith.type>>
+			<<switch $wraith.gen>>
 				<<case "tentacles">><<set _wraithTitle to "writhing">>
 				<<case "abomination">><<set _wraithTitle to "profane">>
 				<<case "arms">><<set _wraithTitle to "vain">>
@@ -1542,7 +1523,7 @@
 				<<addinlineevent "wraithClose1" 0.1>>
 				As you walk, your footfalls become lighter. You're having trouble breathing<<if $exposed lte 0>>, and your clothes feel heavy<</if>>. <<rainWraith true>>
 				<br><br>
-				Your ears begin to ring, and you see something taking shape in the $weather.
+				Your ears begin to ring, and you see something taking shape in the <<print Weather.precipitation>>.
 				A beautiful pale figure floats just above the ground, wearing translucent white robes that flow in the wind. Its eyes flash a bright <<wraithEyes>> as it sees you. Your mind feels cloudy as you see shapes dancing in the air and behind its eyes.
 				<br><br>
 				Before you can look away, it makes a hypnotic motion with its hands.
@@ -1598,7 +1579,7 @@
 						<br><br>
 						<<link [[Grab the tentacle|Wraith Tentacle Grab]]>><</link>><<physiquedifficulty 6000 16000>><<deviant1>>
 						<br>
-						<<if $deviancy gte 75>>
+						<<if hasSexStat("deviancy", 5)>>
 							<<link [[Offer yourself|Wraith Tentacle Rape]]>><<set $molestationstart to 1>><</link>><<deviant5>>
 							<br>
 						<</if>>
@@ -1752,7 +1733,7 @@
 						<br><br>
 						<<link [[Grab the tentacle|Wraith Tentacle Grab]]>><</link>><<physiquedifficulty 6000 16000>><<deviant1>>
 						<br>
-						<<if $deviancy gte 75>>
+						<<if hasSexStat("deviancy", 5)>>
 							<<link [[Offer yourself|Wraith Tentacle Rape]]>><<set $molestationstart to 1>><</link>><<deviant5>>
 							<br>
 						<</if>>
@@ -1813,13 +1794,13 @@
 	<br><br>
 	<<if $location is "forest" or $location is "lake">>
 		You steady yourself against a tree, panting. You look around, and notice that everything's gone quiet.
-		<<switch $weather>>
+		<<switch Weather.precipitation>>
 			<<case "snow">>
 				A cold breeze accompanies the snowfall. You look back, finding your footprints already covered. You've completely lost your sense of direction.
 			<<case "rain">>
 				Only the rain breaks the silence.
 			<<default>>
-				<<if Time.season is "winter">>
+				<<if Weather.isSnow>>
 					The snow falls quietly. You don't remember when it started snowing, though. <<rainWraith>>
 				<<else>>
 					Only the rain breaks the silence. You don't remember when it started raining, though. <<rainWraith>>
@@ -1827,23 +1808,23 @@
 		<</switch>>
 		Your ears begin to ring.
 		<br><br>
-		The shape of a person begins to form in the $weather, and your pulse quickens.
+		The shape of a person begins to form in the <<print Weather.precipitation>>, and your pulse quickens.
 	<<elseif $location is "sewers">>
 		<<rainWraith>>
-		The air around you chills. You swear you feel $weather on your skin, but there is no $weather in the sewers. Only a rapidly expanding fog.
+		The air around you chills. You swear you feel <<print Weather.precipitation>> on your skin, but there is no <<print Weather.precipitation>> in the sewers. Only a rapidly expanding fog.
 		<br><br>
 		Your ears begin to ring. An image starts to take shape in the fog, and your pulse quickens.
 	<<else>>
 		You look around. The area is completely devoid of people. You take a moment to steady yourself. The image of the robed figure slowly fades from your head. <<rainWraith true>>
 		<br><br>
-		Your ears begin to ring. An image starts to take shape in the $weather, and your pulse quickens.
+		Your ears begin to ring. An image starts to take shape in the <<print Weather.precipitation>>, and your pulse quickens.
 	<</if>>
 	You try to turn and run, but your legs won't move, and you can't help but look.
 	A beautiful pale figure floats just above the ground, wearing translucent white robes that flow in the wind. Its eyes flash a bright <<wraithEyes>> as it sees you.
 	<<if $wraith.state is "haunt">>
 		It raises a hand to its scarred neck, seemingly trying to grab something that isn't there.
 		<br><br>
-		"<span class="wraith">Thief. Give it back, or <<if $weather is "snow">>this blizzard will freeze you<<else>>this deluge will drown you<</if>>.</span>"
+		"<span class="wraith">Thief. Give it back, or <<if Weather.precipitation is "snow">>this blizzard will freeze you<<else>>this deluge will drown you<</if>>.</span>"
 		<br><br>
 		<<if numberOfEarSlime()>>
 			<span class="lewd">You feel the slime in your head command you to</span> <span class="red">give it back.</span>
@@ -1921,7 +1902,7 @@
 	<<elseif $location is "lake_ruin" or $bus is "lakedepths" or $bus is "lakeshallows">>
 		<<if $bus is "lakeshallows" or $bus is "lakedepths">>
 			<<set $location to "lake_ruin">>
-			<<if Time.season is "winter">>
+			<<if Weather.isSnow>>
 				You stumble forward, and feel your foot hit ice cold water. You didn't hear any ice break.
 				<br><br>
 				You look back, and see a pale hand sticking out of the ice without a breach. <span class="red">It pulls, and you begin to pass right through the ice.</span> You have nothing to grab onto, and are helplessly pulled under.

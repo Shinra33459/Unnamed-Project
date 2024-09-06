@@ -456,20 +456,15 @@
 
 /*temporarily equips a handheld "prop" for visual effect in scenes. props can be cleared earlier in a scene via <<handheldon>> or <<clotheson>>, and are cleared in <<endevent>>*/
 <<widget "wearProp">>
-	<<switch _args[0]>>
-		<<case "milkshake">><<set _propIndex to 10>>
-		<<case "cigarette">><<set _propIndex to 11>>
-		<<case "popcorn">><<set _propIndex to 16>>
-		<<case "gingerbread">><<set _propIndex to 17>>
-		<<case "lemonade">><<set _propIndex to 18>>
-		<<case "mug">><<set _propIndex to 19>>
-		<<default>><span class="red">ERROR: _args[0] is not a valid prop. Please report this bug.</span>
-	<</switch>>
-
-	<<set $propEquipped to 1>>
+	<<set _propIndex to setup.clothes.handheld.findIndex(item => item.variable is _args[0])>>
 	<<if !$worn.handheld.type.includes("prop")>>
+		<<set $propEquipped to 1>>
 		<<handheldstrip>>
-		<<handheldwear _propIndex>>
+		<<if _args[1]>>
+			<<handheldwear _propIndex _args[1]>>
+		<<else>>
+			<<handheldwear _propIndex>>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -689,7 +684,7 @@
 			<<elseif $money gte $_cost>>
 				<<generalSend $_return $_slot $_setupItem.index $_item.colour $_item.accessory_colour>>
 				<<if $_item.one_piece is "split">>
-					<<set $_selectedWardrobe to selectWardrobe($_return)>>
+					<<set $_selectedWardrobe to selectWardrobe($_return, "return")>>
 					<<set $_selectedWardrobe[$_slot].last().one_piece to "split">>
 					<<if $_item.outfitPrimary>>
 						<<for $_rangeSlot, $_value range $_selectedWardrobe[$_slot].last().outfitPrimary>>
@@ -723,12 +718,20 @@
 
 <<widget "upperruined">>
 	<<set _noRebuy to _args[0]>>
-	<<generalRuined "upper">>
+	<<if $worn.upper.name is "naked" and $worn.under_upper.type.includes("covered")>>
+		<<generalRuined "under_upper">>
+	<<else>>
+		<<generalRuined "upper">>
+	<</if>>
 <</widget>>
 
 <<widget "lowerruined">>
 	<<set _noRebuy to _args[0]>>
-	<<generalRuined "lower">>
+	<<if $worn.lower.name is "naked" and $worn.under_lower.type.includes("covered")>>
+		<<generalRuined "under_lower">>
+	<<else>>
+		<<generalRuined "lower">>
+	<</if>>
 <</widget>>
 
 <<widget "underupperruined">>
@@ -815,10 +818,11 @@
 		<<generalOn $_slot>>
 	<</for>>
 	<<buttplugon>>
-	<<if !($worn.upper.name is "naked" and $worn.lower.name is "naked" and $worn.under_lower.name is "naked" and $worn.under_upper.name is "naked")>>
-		You fix your clothing<<if $rightarm isnot "bound" and $worn.handheld.name isnot "naked">> and pick up your $worn.handheld.name<</if>>.<br><br>
+	<<outfitChecks>>
+	<<if !(_fullyNaked)>>
+		You fix your clothing<<if $rightarm isnot "bound" and $worn.handheld.name isnot "naked">> and <<= $worn.handheld.name.includes("balloon") ? "retrieve" : "pick up">> your $worn.handheld.name<</if>>.<br><br>
 	<<elseif $rightarm isnot "bound" and $worn.handheld.name isnot "naked">>
-		You pick up your $worn.handheld.name.
+		You <<= $worn.handheld.name.includes("balloon") ? "retrieve" : "pick up">> your $worn.handheld.name.
 	<</if>>
 
 	<<exposure>>
@@ -916,8 +920,16 @@
 	<<generalOn "hands">>
 <</widget>>
 
+<!-- [0] - if truthy, only run if player has a prop -->
 <<widget "handheldon">>
-	<<generalOn "handheld">>
+	<<if _args[0]>>
+		<<if $propEquipped is 1 and $worn.handheld.type.includes("prop")>>
+			<<generalOn "handheld">>
+			<<set $propEquipped to 0>>
+		<</if>>
+	<<else>>
+		<<generalOn "handheld">>
+	<</if>>
 <</widget>>
 
 <<widget "legson">>
@@ -1226,7 +1238,7 @@
 		<<set $store[$_slot].delete($_item)>>
 	<</if>>
 	<<if _makeTempClothing is 1>>
-		<<set _temp_clothing to ($worn[$_slot].name is "naked" ? {name: "naked"} : clone($worn[$_slot]))>>
+		<<set _temp_clothing to clone($worn[$_slot].name is "naked" ? {name: "naked"} : clone($worn[$_slot]))>>
 		<<set _temp_clothing.temp to 1>>
 		<<set _temp_clothing.location to _args[0]>>
 		<<set $store[$_slot].push(clone(_temp_clothing))>>
@@ -1388,7 +1400,7 @@
 				<<if $_item isnot undefined>>
 					<<set $_storedIndex to $store[$_slot].findIndex(item => item.name is $_item.name and item.location is _args[0])>>
 					<<if $_storedIndex isnot -1>>
-						<<if $worn[$_slot].name is "naked" and !_cursedSlots.includes($_slot)>>
+						<<if ($worn[$_slot].name is "naked" and !_cursedSlots.includes($_slot)) or (!_cursedSlots.includes($_slot) and _args[0] is "lockers")>>
 							<<set $worn[$_slot] to clone($store[$_slot][$_storedIndex])>>
 							<<set $worn[$_slot].location to 0>>
 							<<set $store[$_slot].deleteAt($_storedIndex)>>
@@ -1449,6 +1461,7 @@
 	<<if _args[0] and _args[1]>>
 		<<set $_location to _args[0]>>
 		<<set $_slot to _args[1]>>
+		<<if $store[$_slot] is undefined>>/* Slot not found */<<exit>><</if>>
 		<<set $_item to $store[$_slot].find(item => item.location is $_location)>>
 		<<if $_item isnot undefined>>
 			<<set $_index to $store[$_slot].indexOf($_item)>>
@@ -1477,7 +1490,7 @@
 				<<elseif _args[2] is "delete">>
 					<<set $store[$_slot].deleteAt($_index)>>
 				<<elseif _args[2] is "return">>
-					<<if !setup.wardrobeSkip.includes($_item.name)>>
+					<<if !setup.wardrobeSkip.includes($_item.name) and $_item.temp is undefined>>
 						<<set $wardrobe[$_slot].push(clone($_item))>>
 					<</if>>
 					<<set $store[$_slot].deleteAt($_index)>>
@@ -1806,11 +1819,44 @@
 	<</if>>
 <</widget>>
 
+<<widget "getDressedList">>
+	<<set _slots to []>>
+	<<for _slot range setup.clothes_all_slots>>
+		<<if $carried[_slot].name isnot "naked">>
+			<<if $carried[_slot].outfitSecondary>>
+				<<if $carried[_slot].outfitSecondary[0].name is $carried[_slot].outfitSecondary[1]>>
+					<<set _slots.pushUnique(_slot)>>
+				<</if>>
+			<<else>>
+				<<set _slots.pushUnique(_slot)>>
+			<</if>>
+		<</if>>
+	<</for>>
+
+	<<for _item range _slots>>
+		<<capture _item, _slots>>
+			<<link [[`Put on your ${$carried[_item].name}`|$passage]]>>
+				<<if $worn.upper.outfitSecondary and $worn.upper.outfitSecondary[0] is $worn.upper.outfitSecondary[1] and _item is "upper" or _item is "lower">>
+					<<upperruined>>
+				<</if>>
+				<<run _slots.delete(_item)>>
+				<<generalOn _item $carried[_item].index>>
+			<</link>>
+		<</capture>>
+		<br>
+	<</for>>
+	<br>
+	<<if _slots.length gt 1>>
+		<<link [[Get fully dressed|$passage]]>><<clotheson>><</link>>
+		<br>
+	<</if>>
+<</widget>>
+
 <<widget "peppersprays">>
 	<<if $options.pepperSprayDisplay isnot "none">>
-		<div id="pepper-sprays" class="pepper-sprays">
+		<div tooltip="<span class='def'>Pepper sprays: $spray / $spraymax</span>" id="pepper-sprays" class="pepper-sprays">
 			<!-- Compact style (dots) -->
-			<<if $spraymax gt 1 and ($options.pepperSprayDisplay is "compact" or $spraymax gt 7 or ($spraymax gt 5 and $options.sidebarRenderer is "both"))>>
+			<<if $spraymax gt 1 and ($options.pepperSprayDisplay is "compact" or $spraymax gt 7)>>
 				<div class="pepper-sprays-dots">
 					<<for _i to 1; _i lte $spraymax; _i++>>
 						<<if $spray gte _i>>
@@ -1824,12 +1870,11 @@
 			<<else>>
 				<<for _i to 1; _i lte $spraymax; _i++>>
 					<<if $spray gte _i>>
-						<img src="img/ui/pepperspray.png">
+						<img draggable="false" src="img/ui/pepperspray.png">
 					<<else>>
-						<img src="img/ui/emptyspray.png">
+						<img draggable="false" src="img/ui/emptyspray.png">
 					<</if>>
 				<</for>>
-
 			<</if>>
 		</div>
 	<</if>>
@@ -1837,8 +1882,8 @@
 
 <<widget "condomsSidebar">>
 	<<if $condomLvl gte 1 and $options.condomsDisplay isnot "none" and $condoms isnot null and $condoms isnot undefined>>
-		<div id="condoms-sidebar" class="condoms-sidebar">
-			<img src="img/ui/condom.png">
+		<div tooltip="<span class='meek'>Total condoms: $condoms</span>" id="condoms-sidebar" class="condoms-sidebar">
+			<img draggable="false" src="img/ui/condom.png">
 		</div>
 		<div id="condoms-sidebar-text" class="condoms-sidebar-text">
 			$condoms x

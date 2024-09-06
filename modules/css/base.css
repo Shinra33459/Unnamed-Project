@@ -191,8 +191,14 @@ button:disabled {
 	border-right: 1px solid var(--300);
 }
 
-.tab .tab-selected button {
+.tab button.tab-selected {
 	background-color: var(--850);
+	border: none;
+	cursor: default;
+	border-right: 1px solid var(--300);
+	border-bottom: 1px solid var(--850);
+	margin-bottom: -1px;
+	position: relative;
 }
 
 .tab button.tab-close {
@@ -249,6 +255,10 @@ button:disabled {
 		min-width: 50px;
 		width: calc(var(--max-width) + 10px);
 	}
+}
+
+.toTop {
+	width: fit-content;
 }
 
 /* Foldout */
@@ -331,11 +341,11 @@ mouse.tooltip-tiny span:last-of-type {
 	padding: 0 4px;
 	margin-top: 25px;
 	margin-left: -20px;
+	width: 350px;
 	min-width: 20px;
 	max-width: 450px !important;
 	line-height: 20px;
 	border-radius: 1px;
-	white-space: nowrap;
 	box-shadow: 0 0 8px 4px var(--900);
 }
 
@@ -602,7 +612,7 @@ mouse.tooltip-image:hover span:last-of-type {
 	width: auto;
 	max-width: 1000px;
 	height: auto;
-	line-height: 1.32em;
+	line-height: 1.5em;
 	text-align: left;
 }
 
@@ -613,7 +623,7 @@ mouse.tooltip-image:hover span:last-of-type {
 }
 
 .customOverlay[data-overlay="journal"] #customOverlayContent {
-	padding-left: 1rem;
+	padding: 0 1.25rem 0 1rem;
 }
 
 .customOverlay[data-overlay="journal"] #customOverlayContent h4 {
@@ -973,6 +983,7 @@ input.heart:hover {
 }
 
 .childrenUi > div,
+#towerUpgrades > div,
 #islandUpgrades > div {
 	border: 1px solid var(--200);
 	margin: 2px;
@@ -1013,8 +1024,15 @@ input.heart:hover {
 	width: 100%;
 }
 
+#ui-bar.stowed > #ui-bar-body > #story-caption > #mobileStats {
+	visibility: visible !important;
+	transition: ease-in 0s 0.2s;
+}
+
 #mobileStats {
+	visibility: hidden;
 	position: fixed;
+	text-align: left;
 	left: 0;
 	top: 50px;
 	z-index: 299;
@@ -1033,14 +1051,25 @@ input.heart:hover {
 }
 
 #mobileStats .time {
-	font-size: 1.2em;
-	height: 85px;
-	padding: 0 0.3em;
+	padding: 0.5em 0;
+}
+
+#mobileStats .vertical {
+	padding: 0.2em;
 	writing-mode: vertical-rl;
-	transform: rotate(180deg);
-	/* writing-mode: vertical-lr;
-	text-orientation: upright;
-	padding: 0 .3em; */
+}
+
+#mobileStats #weatherIcon {
+	font-weight: 500;
+	font-size: 1.2em;
+	line-height: 1;
+	padding: 0.2em 0;
+	height: 24px;
+	position: relative;
+}
+
+#mobileStats #weatherIcon img {
+	position: absolute;
 }
 
 #mobileStats .time .ampm {
@@ -1298,7 +1327,8 @@ body.no-images #ui-bar-body {
 
 #ui-bar-history {
 	display: none;
-	position: relative;
+	position: absolute;
+	right: 0;
 	z-index: 499;
 	text-align: right;
 	padding-right: 3em;
@@ -1515,15 +1545,6 @@ body.has-images #storyCaptionContent {
 	list-style: none;
 }
 
-.shopCustomColors {
-	float: left;
-	width: 48%;
-	min-width: 375px;
-	border: solid 2px var(--700);
-	padding: 4px;
-	height: 310px;
-}
-
 .shopImg {
 	height: 192px;
 	width: 128px;
@@ -1616,32 +1637,6 @@ body.has-images #storyCaptionContent {
 	}
 }
 
-/* Furniture shop UI */
-#furnitureDetails {
-	display: inline-block;
-	padding: 2px;
-	border: solid 1px var(--300);
-	height: 100%;
-	width: 90%;
-	min-width: 400px;
-	margin: 0 30px;
-	overflow: hidden;
-}
-
-#furnitureContainer {
-	display: flex;
-	flex-wrap: wrap;
-}
-
-.furnitureBlock {
-	padding: 2px;
-	border: solid 1px var(--300);
-	height: 100%;
-	width: 48%;
-	min-width: 400px;
-	margin: 1px 3px;
-}
-
 /* Wardrobe UI */
 
 .wardrobeSubSection {
@@ -1657,6 +1652,39 @@ body.has-images #storyCaptionContent {
 	padding: 2px;
 	border: solid 1px var(--300);
 	width: 47%;
+	margin: 0 3px 3px;
+}
+
+.outfitContainer {
+	display: grid;
+	grid-gap: 4px;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.outfitContainer button {
+	border: 1px solid var(--300);
+	background-color: var(--900);
+	color: var(--link);
+	font-size: 100%;
+	word-wrap: break-word;
+}
+
+.outfitContainer button:hover {
+	border: 1px solid var(--150);
+	background-color: var(--750);
+	color: var(--gold);
+}
+
+.outfitContainer button:focus {
+	border: 1px solid var(--gold);
+}
+
+.wardrobeOutfit {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	text-align: center;
+	padding: 2px;
+	border: solid 1px var(--300);
 	margin: 0 3px 3px;
 }
 
@@ -1702,6 +1730,10 @@ body.has-images #storyCaptionContent {
 }
 
 .wardrobeItem span.spanIcon::before {
+	content: "";
+}
+
+.wardrobeItem span.noDivider::before {
 	content: "";
 }
 
@@ -1753,6 +1785,24 @@ body.has-images #storyCaptionContent {
 	content: " weeks";
 }
 
+.img-txt {
+	display: flex;
+	flex-flow: row nowrap;
+	border: 1px solid var(--150);
+	margin-bottom: 20px;
+	max-width: 600px;
+}
+
+#locket {
+	margin-right: 15px;
+	background-color: var(--800);
+	border-right: 1px solid var(--150);
+}
+
+#locket-txt {
+	margin: 5px 10px 0 0;
+}
+
 /* Wetness Stages */
 .wetstage2 {
 	opacity: 0.9;
@@ -1777,20 +1827,48 @@ body.has-images #storyCaptionContent {
 	border-bottom: var(--150) 2px solid;
 	padding-top: 1px;
 	position: absolute;
-	/* top: 120px; */
 	left: -10px;
 	background-color: var(--850);
 	z-index: 45;
+	cursor: pointer;
+	display: grid;
 }
 
-#stats > * {
-	top: 228px;
-	left: 0;
+#stats .content {
+	grid-column: 2 / span 2;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 }
 
-/* .statsExtended {
-	height: 2.5em !important;
-} */
+#stats .first-row,
+#stats .second-row {
+	display: flex;
+	width: 100%;
+	align-items: center;
+}
+
+#stats .first-row {
+	justify-content: flex-start;
+}
+
+#stats .second-row {
+	justify-content: center;
+	gap: 20px;
+}
+
+#stats .expanded {
+	grid-row: 1 / 3;
+	align-self: center;
+	scale: 1.5;
+}
+
+#stats .centered-elements {
+	display: flex;
+	flex: 1;
+	justify-content: center;
+	gap: 20px;
+}
 
 #storyCaptionDiv.statsExtended > #stats {
 	height: 2.5em;
@@ -1804,8 +1882,8 @@ body.has-images #storyCaptionContent {
 }
 
 #img {
-	height: 192px;
-	width: 256px;
+	height: 200px;
+	width: 280px;
 	overflow: hidden;
 	position: fixed;
 	top: 0;
@@ -1819,7 +1897,21 @@ body.has-images #storyCaptionContent {
 #img > * {
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: 24px;
+}
+
+#img > canvas {
+	transform: translateZ(0);
+	backface-visibility: hidden;
+}
+
+#characterTooltip {
+	position: absolute;
+	width: 90px;
+	height: 180px;
+	top: 5px;
+	left: 100px;
+	z-index: -1;
 }
 
 .noAnimations img {
@@ -1923,18 +2015,17 @@ body.has-images #storyCaptionContent {
 }
 
 #startingPlayerImage {
-	margin-top: 130px;
+	position: relative;
+	height: 150px;
 }
 
-#startingPlayerImage #img {
-	top: 5.44em;
-	left: 20px;
+#startImg {
+	position: absolute;
+	top: -45px;
 }
 
-.icon_ui {
-	position: static !important;
-	height: 14px;
-	width: 14px;
+#startImg > canvas {
+	position: absolute;
 }
 
 .icon_entity_ui {
@@ -2002,6 +2093,7 @@ body.has-images #storyCaptionContent {
 }
 
 #childViewer .childrenUi,
+#towerUpgrades,
 #islandUpgrades {
 	display: flex;
 	flex-wrap: wrap;
@@ -2020,6 +2112,7 @@ body.has-images #storyCaptionContent {
 
 @media only screen and (max-width: 650px) {
 	.childrenUi > div,
+	#towerUpgrades > div,
 	#islandUpgrades > div {
 		width: 100%;
 	}
@@ -2300,35 +2393,6 @@ body.has-images #storyCaptionContent {
 	max-width: 175px;
 }
 
-/* ! <<numberpool>> macro set for SugarCube v2 */
-div[id|="numberbox-body"] {
-	display: inline-block;
-}
-
-div[id|="numberbox-body"] input {
-	min-width: 3em;
-	width: 3em;
-	text-align: center;
-}
-
-div[id|="numberbox-body"] button {
-	font-family: tme-fa-icons;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: normal;
-	padding: 0.4em 0.6em;
-}
-
-div[id|="numberbox-body"] button[id|="numberbox-minus"] {
-	margin-right: 0.4em;
-}
-
-div[id|="numberbox-body"] button[id|="numberbox-plus"] {
-	margin-left: 0.4em;
-}
-
 div[id|="numberslider-body"] {
 	display: inline-block;
 	width: 100%;
@@ -2339,7 +2403,7 @@ div[id|="numberslider-body"] span {
 	/* font-size: 1.25em; */
 	margin-left: 0.25em;
 	min-width: 3em;
-	text-align: center;
+	/* text-align: center; */
 	vertical-align: middle;
 }
 
@@ -2475,6 +2539,27 @@ label {
 	z-index: -10;
 }
 
+.meterMin {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	z-index: 0;
+	max-width: 100%;
+	filter: saturate(0.7) contrast(0.5);
+	border-right: var(--000) 2px solid;
+}
+
+.meterPin {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	z-index: 0;
+	max-width: 100%;
+	border-right: var(--000) 2px solid;
+}
+
 .rightMeterText {
 	width: 44%;
 	float: left;
@@ -2605,6 +2690,39 @@ label {
 	height: 0.375em;
 }
 
+.glowbar {
+	box-shadow: 0 0 16px var(--silver);
+}
+
+.whitebar {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 0.25em;
+	background-color: var(--000);
+	z-index: 0;
+	max-width: 100%;
+}
+
+.rightMeter .whitebar {
+	height: 0.375em;
+}
+
+.fadingbar {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 0.25em;
+	background-color: var(--150);
+	box-shadow: 0 0 16px var(--purple-secondary);
+	z-index: 0;
+	max-width: 100%;
+}
+
+.rightMeter .fadingbar {
+	height: 0.375em;
+}
+
 #journalNotesTextarea {
 	height: 80%;
 	height: calc(100% - 150px);
@@ -2708,9 +2826,9 @@ label {
 }
 
 a[target="_blank"]::after {
-	content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==");
 	margin: 0 3px 0 5px;
 	line-height: unset;
+	font-size: 0.75em;
 }
 
 #action-popup {
@@ -2964,6 +3082,21 @@ a[target="_blank"]::after {
 
 .icon.infront {
 	position: absolute;
+	z-index: 1;
+}
+
+.icon-container {
+	width: 30px;
+	height: 30px;
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.icon-container * {
+	position: absolute;
+	top: 0;
+	right: 0;
 }
 
 #hairDresserDiv {
@@ -3108,7 +3241,7 @@ a[target="_blank"]::after {
 #imgInv {
 	position: absolute;
 	top: 123px;
-	right: 0;
+	right: 3px;
 	z-index: 50;
 }
 
@@ -3118,6 +3251,11 @@ a[target="_blank"]::after {
 }
 
 .condoms-sidebar {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 	position: absolute;
 	right: 0;
 }
@@ -3135,6 +3273,11 @@ a[target="_blank"]::after {
 	display: inline-flex;
 	flex-direction: row-reverse;
 	float: right;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 .pepper-sprays img {

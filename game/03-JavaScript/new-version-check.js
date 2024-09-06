@@ -1,4 +1,6 @@
 window.checkNewVersion = function () {
+	// Not working as of current, completely disabled for now
+	if (!window.testCheckNewVersion) return;
 	const apiKey = "AIzaSyCu0F1pUOocM6R0wJ4tmug6SPTX19JRVQc"; // Google API key, restricted to Blogspot
 	const dolBlogId = "7051760000701686365"; // Blogspot BlogID
 
@@ -15,6 +17,8 @@ window.checkNewVersion = function () {
 };
 
 function handleVersionResponse(response) {
+	// Not working as of current, completely disabled for now
+	if (!window.testCheckNewVersion) return;
 	const titleRE = /Degrees of Lewdity\.*? version (\d+\.\d+(?:\.\d+(?:\.\d+)?)?)/;
 	let version, postDate;
 

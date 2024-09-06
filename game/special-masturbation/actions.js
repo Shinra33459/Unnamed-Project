@@ -1,4 +1,6 @@
-/* eslint-disable no-undef */
+/*
+	Old version can be found at https://gitgud.io/Vrelnir/degrees-of-lewdity/-/blob/master/game/special-masturbation/actions.twee?ref_type=0c2b0126
+*/
 function masturbationActions() {
 	const fragment = document.createDocumentFragment();
 
@@ -109,11 +111,13 @@ function masturbationActions() {
 		fragment.append(wikifier("orgasm"));
 		fragment.append(wikifier("promiscuity1"));
 		V.masturbationorgasmstat++;
+		V.masturbationOrgasmTimeStat = Time.date.timeStamp;
 		V.masturbationorgasm++;
 		if (V.femaleclimax !== 1 && !T.deniedOrgasm && V.worn.genitals.name !== "chastity parasite" && V.mouth !== "mpenis") {
 			V.masturbationorgasmsemen++;
 		}
 		fragment.append(wikifier("purity", -1));
+		if (V.corruptionMasturbation) V.corruptionMasturbationCount--;
 	}
 	fragment.append(wikifier("pass", 10, "seconds"));
 	V.secondsSpentMasturbating += 10;
@@ -194,7 +198,7 @@ function masturbationActionsHands(arm, { playerToys, selectedToy, toyDisplay, ge
 					});
 				} else {
 					result.options.push({
-						action: "mchastity",
+						action: "mpenischastity",
 						text:
 							V.player.gender === "f" && V.parasite.clit.name === "parasite" ? "Try to fondle your parasitic penis" : "Try to fondle your penis",
 						colour: "sub",
@@ -217,13 +221,20 @@ function masturbationActionsHands(arm, { playerToys, selectedToy, toyDisplay, ge
 					});
 				} else {
 					result.options.push({
-						action: "mchastity",
+						action: "mvaginachastity",
 						text: "Try to fondle your pussy",
 						colour: "sub",
 					});
 				}
 			}
-			if (V.awareness >= 100) {
+			if (V.awareness >= 200 && V.player.breastsize >= 3) {
+				result.options.push({
+					action: "mbreasthold",
+					text: `Hold your${V[otherArm + "arm"] === "mbreasthold" ? " other" : ""} breast`,
+					colour: "sub",
+					otherElements: "<<combataware 3>>",
+				});
+			} else if (V.awareness >= 100) {
 				result.options.push({
 					action: "mchest",
 					text: "Fondle your chest",
@@ -442,6 +453,27 @@ function masturbationActionsHands(arm, { playerToys, selectedToy, toyDisplay, ge
 				colour: "sub",
 			});
 			result.options.push(stop("mvaginastopdildo"));
+			break;
+		case "mbreasthold":
+			result.text = `You hold your ${arm} breast with your ${arm} hand.`;
+			result.options.push({
+				action: "mbreastfondle",
+				text: "Fondle your breast",
+				colour: "sub",
+			});
+			if (
+				breastsExposed() &&
+				(V.masochism >= 100 || (V.corruptionMasturbation && actiondefault === "mbreastpinch")) &&
+				V.mouth !== "mbreast" &&
+				!V.bugsinside
+			) {
+				result.options.push({
+					action: "mbreastpinch",
+					text: "Pinch your nipple",
+					colour: "sub",
+				});
+			}
+			result.options.push(stop("mbreaststop"));
 			break;
 		case "manusentrance":
 			result.text = `You tease your anus with your ${arm} hand.`;
@@ -767,7 +799,7 @@ function masturbationActionsHands(arm, { playerToys, selectedToy, toyDisplay, ge
 	return result;
 }
 
-function masturbationActionsMouth({ selectedToy, toyDisplay, genitalsExposed }) {
+function masturbationActionsMouth({ selectedToy, toyDisplay, genitalsExposed, breastsExposed }) {
 	const result = {
 		text: "",
 		options: [],
@@ -795,6 +827,17 @@ function masturbationActionsMouth({ selectedToy, toyDisplay, genitalsExposed }) 
 	const hasAphrodisiac = !!listUniqueCarriedSextoys().find(item => item.type.includes("aphrodisiacpill"));
 
 	switch (V.mouth) {
+		case "disabled":
+			result.text = "Your mouth is free.";
+			if (V.awareness >= 200 && hasAphrodisiac) {
+				result.options.push({
+					action: "maphropill",
+					text: "Swallow an aphrodisiac pill",
+					otherElements: "<<combataware 3>>",
+				});
+			}
+			result.options.push(rest());
+			break;
 		case 0:
 			result.text = "Your mouth is free.";
 			if (V.awareness >= 200) {
@@ -802,6 +845,20 @@ function masturbationActionsMouth({ selectedToy, toyDisplay, genitalsExposed }) 
 					result.options.push({
 						action: "maphropill",
 						text: "Swallow an aphrodisiac pill",
+						otherElements: "<<combataware 3>>",
+					});
+				}
+				if (
+					breastsExposed() &&
+					(V.leftarm === "mbreasthold" || V.rightarm === "mbreasthold") &&
+					V.player.breastsize >= 8 &&
+					!V.parasite.nipples.name &&
+					!V.bugsinside
+				) {
+					result.options.push({
+						action: "mbreastentrance",
+						text: `Take your nipple${V.leftarm === "mbreasthold" && V.rightarm === "mbreasthold" ? "s" : ""} into your mouth`,
+						colour: "sub",
 						otherElements: "<<combataware 3>>",
 					});
 				}
@@ -986,6 +1043,20 @@ function masturbationActionsMouth({ selectedToy, toyDisplay, genitalsExposed }) 
 			});
 			result.options.push({
 				action: "mdildosuck",
+				text: "Suck",
+				colour: "sub",
+			});
+			result.options.push(rest());
+			break;
+		case "mbreast":
+			result.text = `Your ${V.leftarm === "mbreastmouthhold" && V.rightarm === "mbreastmouthhold" ? "<<nipples>> are" : "<<nipple>> is"} in your mouth.`;
+			result.options.push({
+				action: "mbreastlick",
+				text: "Lick",
+				colour: "sub",
+			});
+			result.options.push({
+				action: "mbreastsuck",
 				text: "Suck",
 				colour: "sub",
 			});

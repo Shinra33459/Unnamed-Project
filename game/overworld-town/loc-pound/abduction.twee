@@ -145,7 +145,7 @@ They continue to pull you towards the door.
 	<<link [[Next|Starfish Street]]>><<set $eventskip to 1>><</link>>
 
 <<else>>
-	<<tearful>> you fall to the <<if $weather is "snow" or $weather is "rain">>mud<<else>>dust<</if>>. You're too hurt to continue fighting.
+	<<tearful>> you fall to the <<if Weather.precipitation isnot "none">>mud<<else>>dust<</if>>. You're too hurt to continue fighting.
 	<br><br>
 	"Get this bitch inside," the <<person2>><<person>> says. The <<person1>><<person>> yanks your leash once more, dragging you into the building.
 	<br><br>
@@ -193,8 +193,8 @@ You are imprisoned in the pound on Starfish Street. <<pound_text cap>> fill the 
 <<pound_stats>>
 <br><br>
 
-<<if isPlayerNonparasitePregnancyEnding()>>
-	<<pregnancyWatersBrokenPassout "pound">>
+<<if isPregnancyEnding()>>
+	<<pregnancyPassout "pound">>
 <<elseif Time.hour is 8>>
 	<<generate1>><<person1>>
 	A <<person>> walks from cage to cage, releasing the <<pound_text>> within. "Feeding time," <<he>> says. There's a door open at the far side of the hall, leading outside.
@@ -228,7 +228,7 @@ You are imprisoned in the pound on Starfish Street. <<pound_text cap>> fill the 
 <<else>>
 
 
-	<<link [[Exercise (1:00)|Pound Exercise]]>><<pass 60>><<tiredness 6>><</link>><<gtiredness>>
+	<<link [[Exercise (1:00)|Pound Exercise]]>><<tiredness 6>><</link>><<gtiredness>>
 	<br>
 	<<link [[Door|Pound Door]]>><</link>>
 	<br><br>
@@ -305,7 +305,10 @@ You try to force the door open with all your might.
 :: Pound Exercise
 <<effects>>
 
-You exercise within the limited space, performing squats and push-ups. The <<pound_text>> sometimes watch with curiosity, but more often ignore you.<<physique 6>>
+You exercise within the limited space, performing squats and push-ups. The <<pound_text>> sometimes watch with curiosity, but more often ignore you.
+<<athletics 1>>
+<<physique 6>>
+<<pass 60>>
 <br><br>
 
 <<link [[Next|Pound Cage]]>><</link>>
@@ -433,8 +436,8 @@ Sated, the more dominant <<pound_text>> laze around the yard, while others hunt 
 		<span class="lewd">You feel the slime in your head command you to give yourself to <<bhim>>.</span> It promises rewards if you comply, and threatens consequences if you do not.
 		<br><br>
 
-		<<if $deviancy gte 55 and $submissive gte 1900>>
-			<<link [[Submit willingly|Pound Food Event Slime Submit willingly]]>><<corruption 3>><<pain -8>><<stress -12>><<trauma -24>><<sub 2>><</link>><<promiscuous4>><<ggcorruption>><<llpain>><<llltrauma>><<llstress>>
+		<<if hasSexStat("deviancy", 4) and $submissive gte 1900>>
+			<<link [[Submit willingly|Pound Food Event Slime Submit willingly]]>><<corruption 3>><<pain -8>><<stress -12>><<trauma -24>><<sub 2>><</link>><<deviant4>><<ggcorruption>><<llpain>><<llltrauma>><<llstress>>
 			<br>
 		<</if>>
 		<<link [[Obey|Pound Food Event Slime Obey]]>><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><<sub 1>><</link>><<gcorruption>><<lpain>><<lltrauma>><<lstress>>
@@ -578,7 +581,7 @@ It steps towards you, sniffs you, then mounts.
 :: Pound Food Event Slime Obey
 <<effects>>
 
-Your forced to crawl to the <<beasttype>>, then drop to a submissive position. <<bHe>> growls, and bares <<bhis>> fangs. <<llpound_status>>
+You're forced to crawl to the <<beasttype>>, then drop to a submissive position. <<bHe>> growls, and bares <<bhis>> fangs. <<llpound_status>>
 <br><br>
 "Love is in the air," says a member of staff. Several are watching.
 
@@ -599,7 +602,7 @@ Your forced to crawl to the <<beasttype>>, then drop to a submissive position. <
 	<<link [[Next|Pound Food End]]>><<endevent>><</link>>
 	<br>
 <<elseif $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
-	<<if $deviancy gte 55 and $earSlime.growth lt 100>>
+	<<if hasSexStat("deviancy", 4) and $earSlime.growth lt 100>>
 		<<set $earSlime.defyCooldown += 4>>
 	<<else>>
 		<<set $earSlime.defyCooldown += 8>>
@@ -740,7 +743,7 @@ You endure as the <<person>> pats your head. "Who's a good <<girl>>," <<he>> say
 :: Pound Food Whack
 <<effects>>
 
-You whack the <<person>> arm away. <<He>> laughs, <span class="red">then delivers a stinging backhand to your face.</span> "You'll soon learn your place, <<bitch>>."
+You whack the <<persons>> arm away. <<He>> laughs, <span class="red">then delivers a stinging backhand to your face.</span> "You'll soon learn your place, <<bitch>>."
 <br><br>
 
 <<link [[Next|Pound Food End]]>><<endevent>><</link>>
@@ -1322,6 +1325,7 @@ You lie on the hard floor.
 <<effects>>
 <<wakingEffects $sleepHoursTotal>>
 <<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+	<br><br>
 	You slept soundly, but now feel a little rough.
 	<br><br>
 <<elseif $nightmares gte 1 and $controlled is 0>>
@@ -1484,7 +1488,7 @@ A tunnel is up next.
 
 You weave between the poles as fast as you can,
 <<if $danceSuccess>>
-	<span class="green">overtaking a struggling <<beasttype 0>></span>
+	<span class="green">overtaking a struggling <<beasttype 0>>.</span>
 	<<set $pound.compete += 1>>
 <<else>>
 	<span class="red">but not fast enough to catch up with the others.</span>
@@ -1931,7 +1935,7 @@ The <<person>> holds your arm as you hurry towards the gate. The servants don't 
 <<faceruined>>
 <<detach_leash>>
 <<pass 5>>
-The <<person>> insists on escorting you back to the orphanage. "Bailey said to take you home. <<person6>><<He>><<person2>> used to work with that <<person1>><<personsimple>><<person2>> who brought you in, but they fell out. I knew Bailey would want to hear about it."
+The <<person>> insists on escorting you back to the orphanage. "Bailey said to take you home. <<person6>><<He>> used to work with that <<person1>><<personsimple>> who brought you in, but they fell out. I knew Bailey would want to hear about it."
 <br><br>
 
 <<if $bailey_pound is 1>>
@@ -1948,7 +1952,7 @@ The <<person>> insists on escorting you back to the orphanage. "Bailey said to t
 :: Pound Show End 8
 <<set $outside to 0>><<set $location to "home">><<effects>>
 
-You arrive at the orphanage. "I'm glad you're okay," the <<person>> says. "I think I need to find a new job." <<He>> walks back outside once you're safely indoors.
+You arrive at the orphanage. "I'm glad you're okay," the <<person2>><<person>> says. "I think I need to find a new job." <<He>> walks back outside once you're safely indoors.
 <br><br>
 
 <<link [[Next|Orphanage]]>><<endevent>><</link>>

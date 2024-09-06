@@ -8,11 +8,14 @@
 	<</if>>
 <</widget>>
 
+/* min, current, max, rightMeter */
 <<widget "statbar">>
-	<div @class="(_args[2] is true ? 'rightMeter' : 'meter')">
-		<<if _args[0] is 0>>
+	<div @class="(_args[3] is true ? 'rightMeter' : 'meter')">
+		<<if _args[1] is 0>>
 		<<else>>
-			<<set _percent=Math.floor((_args[0]/_args[1])*100)>>
+			<<set _percent to Math.floor((_args[1]/_args[2])*100)>>
+			<<set _minPercent to Math.clamp(Math.floor((_args[0]/_args[2])*100), 0, _percent)>>
+			<<set _pin to Math.clamp(Math.floor((_args[4]/_args[2])*100), 0, _args[2])>>
 			<<switch Math.floor(_percent/10)>>
 				<<case 8 9>><<set _statColor to "pinkbar">>
 				<<case 6 7>><<set _statColor to "purplebar">>
@@ -22,6 +25,11 @@
 				<<default>><<set _statColor to "redbar">>
 			<</switch>>
 			<div @class="_statColor" @style="'width:' + _percent + '%'"></div>
+			<<if _minPercent>>
+				<div @class="_statColor + ' meterMin'" @style="'width:' + _minPercent + '%'"></div>
+			<<elseif _pin>>
+				<div class="meterPin" @style="'width:' + _pin + '%'"></div>
+			<</if>>
 		<</if>>
 	</div>
 <</widget>>
@@ -31,7 +39,7 @@
 	<div @class="(_args[2] is true ? 'rightMeter' : 'meter')">
 		<<if _args[0] is 0>>
 		<<else>>
-			<<set _percent=Math.floor((_args[0]/_args[1])*100)>>
+			<<set _percent to Math.floor((_args[0]/_args[1])*100)>>
 			<<switch Math.floor(_percent/10)>>
 				<<case 8 9>><<set _statColor to "tealbar">>
 				<<case 6 7>><<set _statColor to "lbluebar">>
@@ -40,7 +48,7 @@
 				<<case 0 1>><<set _statColor to "pinkbar">>
 				<<default>><<set _statColor to "greenbar">>
 			<</switch>>
-			<div @class="_statColor" @style="'width:' + _percent + '%'"></div>
+				<div @class="_statColor" @style="'width:' + _percent + '%'"></div>
 		<</if>>
 	</div>
 <</widget>>
@@ -565,6 +573,13 @@
 				<<if $averyCrimeTracker neq null>>
 					<<set $averyCrimeTracker += $_crimemod>>
 				<</if>>
+				<<if $exposed gte 1 and _crimeType isnot "exposure">>
+					<<set C.crime.exposure += $_crimemod>>
+					<<set C.crime.exposureHistory += $_crimemod>>
+					<<set C.crime.exposureDaily += $_crimemod>>
+					<<set C.crime.exposureCount += 1>>
+					<<set C.crime.exposureCountHistory += 1>>
+				<</if>>
 
 				<<if ["thievery", "petty"].includes(_crimeType) and
 				$foxbuild gte 1 and
@@ -578,6 +593,7 @@
 					<<set $_foxCrimeRequired = Math.floor(50 * (1 + $foxbuild))>>
 					<<if $foxCrimeProgress gte $_foxCrimeRequired>>
 						<<transform fox 1>>
+						<<set $effectsmessage to true>>
 						<<set $foxCrimeMessage to true>>
 						<<set $foxCrimeProgress to Math.clamp($foxCrimeProgress, 0, ($foxCrimeProgress - $_foxCrimeRequired))>>
 					<</if>>
@@ -939,17 +955,28 @@
 <</widget>>
 
 <<widget "athletics">>
-	<<if _args[0] and $statFreeze isnot true>>
-		<<set _temp to _args[0]>>
-		<<if $exposed gte 2>>
-			<<set $athletics += 2>>
-		<<elseif $exposed is 1>>
-			<<set $athletics += 1>>
-		<</if>>
-		<<set $athletics += Math.trunc(_temp * 1.4)>>
-		<<set $athletics to Math.clamp($athletics, 0, 1000)>>
-		<<set $tending to Math.clamp($tending, 0, 1000)>>
+	<<if !_args[0] or $statFreeze is true>>
+		<<exit>>
 	<</if>>
+
+	<<set _temp to _args[0] || 1>>
+	<<set _temp *= ($exposed gte 2 ? 1.2 : $exposed is 1 ? 1.1 : 1)>>
+
+	<<for _slot range ["upper", "lower", "feet", "legs"]>>
+		<<if $worn[_slot].type.includes("athletic")>>
+			<<set _temp *= 1.1>>
+		<</if>>
+	<</for>>
+
+	<<if $worn.under_upper.type.includes("athletic") and $player.breastsize gte 6>>
+		<<set _temp *= 1.1>>
+	<<elseif $player.breastsize gte 6>>
+		<<set _temp /= 1.1>>
+	<</if>>
+
+	<<set $athletics += Math.trunc(_temp * 1.3)>>
+	<<set $athletics to Math.clamp($athletics, 0, 1000)>>
+	<<set Weather.BodyTemperature.addActivity("athletics")>>
 <</widget>>
 
 <<widget "tending">>
@@ -974,29 +1001,32 @@
 <</widget>>
 
 <<widget "physique">>
-	<<if $statFreeze isnot true>>
-		<<if _args[0]>><<set _temp to _args[0]>><<set $workouts += _args[0]>><<else>><<set _temp to 1>><<set $workouts += 1>><</if>>
-		<<if $exposed gte 2>>
-			<<set _temp *= 1.2>>
-		<<elseif $exposed is 1>>
-			<<set _temp *= 1.1>>
-		<</if>>
-		<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>>
-		<<if _args[1]>>
-			<<if _args[1] isnot "noMessage">>
-				<<if ($combat is 1 and _args[1] isnot "workout") or _args[1] is "invig">>
-					<span class="gold"> It invigorates you.</span>
-				<<else>>
-					<span class="gold"> You get a good workout.</span>
-				<</if>>
-			<</if>>
-		<<elseif $combat is 1>>
-			<span class="gold"> It invigorates you.</span>
-		<<else>>
-			<span class="gold"> You get a good workout.</span>
-		<</if>>
-		<<set $physique = Math.clamp($physique, 0, $physiquesize)>>
+	<<if $statFreeze is true>>
+		<<exit>>
 	<</if>>
+
+	<<if _args[0]>><<set _temp to _args[0]>><<set $workouts += _args[0]>><<else>><<set _temp to 1>><<set $workouts += 1>><</if>>
+	<<if $exposed gte 2>>
+		<<set _temp *= 1.2>>
+	<<elseif $exposed is 1>>
+		<<set _temp *= 1.1>>
+	<</if>>
+	<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>>
+	<<if _args[1]>>
+		<<if _args[1] isnot "noMessage">>
+			<<if ($combat is 1 and _args[1] isnot "workout") or _args[1] is "invig">>
+				<span class="gold"> It invigorates you.</span>
+			<<else>>
+				<span class="gold"> You get a good workout.</span>
+			<</if>>
+		<</if>>
+	<<elseif $combat is 1>>
+		<span class="gold"> It invigorates you.</span>
+	<<else>>
+		<span class="gold"> You get a good workout.</span>
+	<</if>>
+	<<set $physique = Math.clamp($physique, 0, $physiquesize)>>
+	<<set Weather.BodyTemperature.addActivity("physique")>>
 <</widget>>
 
 <<widget "physique_loss">>
@@ -1066,21 +1096,25 @@
 	<</if>>
 <</widget>>
 
-<<widget "rapestat">><<if $statFreeze isnot true>><<set $rapestat += 1>><</if>><</widget>>
+<<widget "rapestat">><<if $statFreeze isnot true>><<set $rapestat += 1>><<set $rapeTimeStat to Time.date.timeStamp>><</if>><</widget>>
 
-<<widget "moleststat">><<if $statFreeze isnot true>><<set $moleststat += 1>><</if>><</widget>>
+<<widget "moleststat">><<if $statFreeze isnot true>><<set $moleststat += 1>><<set $molestTimeStat to Time.date.timeStamp>><</if>><</widget>>
 
-<<widget "vaginalstat">><<if $statFreeze isnot true>><<set $vaginalstat += 1>><</if>><</widget>>
+<<widget "vaginalstat">><<if $statFreeze isnot true>><<set $vaginalstat += 1>><<set $vaginalTimeStat to Time.date.timeStamp>><</if>><</widget>>
 
-<<widget "vaginalejacstat">><<if $statFreeze isnot true>><<set $vaginalejacstat += 1>><<purity -1>><<internalejac>><<fertiliseParasites "vagina">><<creampie "self" "vagina">><</if>><</widget>>
+<<widget "vaginalejacstat">><<if $statFreeze isnot true>><<set $vaginalejacstat += 1>><<purity -1>><<internalejac>><<fertiliseParasites "vagina">><<creampie "self" "vagina">><<set $vaginalEjacTimeStat to Time.date.timeStamp>><</if>><</widget>>
 
-<<widget "analstat">><<if $statFreeze isnot true>><<set $analstat += 1>><</if>><</widget>>
+<<widget "analstat">><<if $statFreeze isnot true>><<set $analstat += 1>><<set $analTimeStat to Time.date.timeStamp>><</if>><</widget>>
 
-<<widget "analejacstat">><<if $statFreeze isnot true>><<set $analejacstat += 1>><<purity -1>><<internalejac>><<fertiliseParasites>><<creampie "self" "anus">><</if>><</widget>>
+<<widget "analejacstat">><<if $statFreeze isnot true>><<set $analejacstat += 1>><<purity -1>><<internalejac>><<fertiliseParasites>><<creampie "self" "anus">><<set $analEjacTimeStat to Time.date.timeStamp>><</if>><</widget>>
 
 <<widget "oralstat">><<if $statFreeze isnot true>><<set $oralstat += 1>><</if>><</widget>>
 
 <<widget "oralejacstat">><<if $statFreeze isnot true>><<set $oralejacstat += 1>><<purity -1>><<internalejac>><<creampie "self" "mouth">><</if>><</widget>>
+
+<<widget "cunnilingusstat">><<if $statFreeze isnot true>><<set $cunnilingusstat += 1>><</if>><</widget>>
+
+<<widget "cunnilingusejacstat">><<if $statFreeze isnot true>><<set $cunnilingusejacstat += 1>><</if>><</widget>>
 
 <<widget "handstat">><<if $statFreeze isnot true>><<set $handstat += 1>><</if>><</widget>>
 
@@ -1104,17 +1138,21 @@
 
 <<widget "penilestat">><<silently>>
 <<if $statFreeze isnot true>>
-	<<if $player.penisExist and !playerHasStrapon()>><<set $penilestat += 1>>
-	<<elseif playerHasStrapon()>><<set $straponstat += 1>><</if>>
+	<<if $player.penisExist and !playerHasStrapon()>>
+		<<set $penilestat += 1>>
+		<<set $penileTimeStat to Time.date.timeStamp>>
+	<<elseif playerHasStrapon()>>
+		<<set $straponstat += 1>>
+	<</if>>
 <</if>><</silently>><</widget>>
 
-<<widget "penileejacstat">><<if $statFreeze isnot true>><<set $penileejacstat += 1>><</if>><</widget>>
+<<widget "penileejacstat">><<if $statFreeze isnot true>><<set $penileejacstat += 1>><<set $penileEjacTimeStat to Time.date.timeStamp>><</if>><</widget>>
 
 <<widget "clothesstripstat">><<if $statFreeze isnot true>><<set $clothesstripstat += 1>><</if>><</widget>>
 
 <<widget "clothesruinstat">><<if $statFreeze isnot true>><<set $clothesruinstat += 1>><</if>><</widget>>
 
-<<widget "orgasmstat">><<if $statFreeze isnot true>><<set $orgasmstat += 1>><</if>><</widget>>
+<<widget "orgasmstat">><<if $statFreeze isnot true>><<set $orgasmstat += 1>><<set $orgasmTimeStat to Time.date.timeStamp>><</if>><</widget>>
 
 <<widget "ejacstat">><<if $statFreeze isnot true>><<set $ejacstat += 1>><</if>><</widget>>
 
@@ -1223,7 +1261,7 @@
 
 			<<set $tiredness = Math.clamp($tiredness, 0, C.tiredness.max)>>
 			<<set _showCaptionText to !$options.showCaptionText>>
-			<<statbar $tiredness `C.tiredness.max` _showCaptionText>>
+			<<statbar 0 $tiredness `C.tiredness.max` _showCaptionText>>
 			<div style="clear:both;"></div>
 		</div>
 	<</if>>
@@ -1272,7 +1310,7 @@
 			</div>
 			<<set $stress = Math.clamp($stress, 0, $stressmax)>>
 			<<set _showCaptionText to !$options.showCaptionText>>
-			<<statbar $stress $stressmax _showCaptionText>>
+			<<statbar 0 $stress $stressmax _showCaptionText>>
 			<div style="clear:both;"></div>
 		</div>
 	<</if>>
@@ -1302,7 +1340,7 @@
 				<</if>>
 			</div>
 			<<set _showCaptionText to !$options.showCaptionText>>
-			<<statbar $trauma $traumamax _showCaptionText>>
+			<<statbar 0 $trauma $traumamax _showCaptionText>>
 			<div style="clear:both;"></div>
 		</div>
 	<</if>>
@@ -1401,14 +1439,44 @@
 					<<elseif $arousal gte $arousalmax / 5>>
 						<span class="lblue">You feel aroused.</span>
 					<<elseif $arousal gte 1>>
-						<span class="teal">You feel sensual.</span>
+						<span class="teal">You feel stimulated.</span>
 					<<else>>
 						<span class="green">You feel cold.</span>
 					<</if>>
 				<</if>>
 			</div>
 			<<set _showCaptionText to !$options.showCaptionText>>
-			<<statbar $arousal $arousalmax _showCaptionText>>
+			<<statbar `statChange.minArousal()` $arousal $arousalmax _showCaptionText>>
+			<div style="clear:both;"></div>
+		</div>
+	<</if>>
+<</widget>>
+
+<<widget "lewditycaption">>
+	<<if Number.isFinite($lewdity)>>
+		<div id="lewditycaption" @title="'lewdity: ' + $lewdity.toFixed(2)">
+			<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
+				lewdity:
+				<<if $options.showCaptionText is true>>
+					<<if $lewdity gte $lewditymax>>
+						<span class="red">You shiver with energy.</span>
+					<<elseif $lewdity gte ($lewditymax / 5) * 4>>
+						<span class="pink">You feel a trembling.</span>
+					<<elseif $lewdity gte ($lewditymax / 5) * 3>>
+						<span class="purple">You feel exhilarated.</span>
+					<<elseif $lewdity gte ($lewditymax / 5) * 2>>
+						<span class="blue">You feel sensual.</span>
+					<<elseif $lewdity gte $lewditymax / 5>>
+						<span class="lblue">You feel excited.</span>
+					<<elseif $lewdity gte 1>>
+						<span class="teal">You feel tingly.</span>
+					<<else>>
+						<span class="green">You feel steady.</span>
+					<</if>>
+				<</if>>
+			</div>
+			<<set _showCaptionText to !$options.showCaptionText>>
+			<<statbar 0 $lewdity $lewditymax _showCaptionText `restLewdity)`>>
 			<div style="clear:both;"></div>
 		</div>
 	<</if>>
@@ -1431,21 +1499,21 @@
 				<</if>>
 			</div>
 			<div @class="($options.showCaptionText is true ? 'meter' : 'rightMeter')">
-				<<set $percent=Math.floor(($allure/(8000 * $alluremod))*100)>>
+				<<set _percent=Math.floor(($allure/(8000 * $alluremod))*100)>>
 				<<if $allure gte (6000 * $alluremod)>>
-				<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
+				<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
 				<<elseif $allure gte (4000 * $alluremod)>>
-				<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
+				<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
 				<<elseif $allure gte (3000 * $alluremod)>>
-				<<print '<div class="purplebar" style="width:' + $percent + '%"></div>'>>
+				<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
 				<<elseif $allure gte (2000 * $alluremod)>>
-				<<print '<div class="bluebar" style="width:' + $percent + '%"></div>'>>
+				<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
 				<<elseif $allure gte (1500 * $alluremod)>>
-				<<print '<div class="lbluebar" style="width:' + $percent + '%"></div>'>>
+				<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
 				<<elseif $allure gte (1000 * $alluremod)>>
-				<<print '<div class="tealbar" style="width:' + $percent + '%"></div>'>>
+				<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
 				<<else>>
-				<<print '<div class="greenbar" style="width:' + $percent + '%"></div>'>>
+				<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
 				<</if>>
 			</div>
 
@@ -1518,7 +1586,7 @@
 		<<set $_percent to Math.floor(($drunk/1000)*100)>>
 		<<set $_barWidth to `width:${$_percent}%`>>
 
-		<div id="drunkcaption">
+		<div id="drunkcaption" @title="'Drunk: ' + $drunk.toFixed(2)">
 			<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
 				<<if $options.showCaptionText is true>>
 					<<set $_drunk_level to Math.clamp(Math.floor($drunk / 120), 0, 4) * 120>>
@@ -1548,7 +1616,7 @@
 		<<set $_percent to Math.floor(($drugged/1000)*100)>>
 		<<set $_barWidth to `width:${$_percent}%`>>
 
-		<div id="druggedcaption">
+		<div id="druggedcaption" @title="'Drugged: ' + $drugged.toFixed(2)">
 			<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
 				<<if $options.showCaptionText is true>>
 					<span class="pink">A lewd warmth fills you.</span>
@@ -1571,7 +1639,7 @@
 		<<set $_percent to Math.floor(($hallucinogen/1000)*100)>>
 		<<set $_barWidth to `width:${$_percent}%`>>
 
-		<div id="hallucinogencaption">
+		<div id="hallucinogencaption" @title="'Hallucinogens: ' + $hallucinogen.toFixed(2)">
 			<div @class="($options.showCaptionText is true ? '' : 'rightMeterText')">
 				<<if $options.showCaptionText is true>>
 					<span class="purple">Your perception is altered.</span>
@@ -1604,21 +1672,28 @@
 				<</if>>
 			</div>
 			<div @class="($options.showCaptionText is true ? 'meter' : 'rightMeter')">
-				<<set $percent=Math.floor(($pain/100)*100)>>
+				<<set _percent to Math.floor(($pain/100)*100)>>
+				<<set _minPercent to Math.clamp(Math.floor((statChange.minPain() / 100)*100), 0, _percent)>>
 				<<if $pain gte 100 and $willpowerpain is 0>>
-				<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
+					<<set _statColor to "redbar">>
 				<<elseif $pain gte 80>>
-				<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
+					<<set _statColor to "pinkbar">>
 				<<elseif $pain gte 60>>
-				<<print '<div class="purplebar" style="width:' + $percent + '%"></div>'>>
+					<<set _statColor to "purplebar">>
 				<<elseif $pain gte 40>>
-				<<print '<div class="bluebar" style="width:' + $percent + '%"></div>'>>
+					<<set _statColor to "bluebar">>
 				<<elseif $pain gte 20>>
-				<<print '<div class="lbluebar" style="width:' + $percent + '%"></div>'>>
+					<<set _statColor to "lbluebar">>
 				<<elseif $pain gte 1>>
-				<<print '<div class="tealbar" style="width:' + $percent + '%"></div>'>>
+					<<set _statColor to "tealbar">>
 				<<else>>
-				<<print '<div class="greenbar" style="width:' + $percent + '%"></div>'>>
+					<<set _statColor to "greenbar">>
+				<</if>>
+				<div @class="_statColor" @style="'width:' + _percent + '%'"></div>
+				<<if statChange.minPain()>>
+					<<if _minPercent>>
+						<div @class="_statColor + ' meterMin'" @style="'width:' + _minPercent + '%'"></div>
+					<</if>>
 				<</if>>
 			</div>
 			<div style="clear:both;"></div>
@@ -1712,7 +1787,10 @@
 		<</if>>
 	<</if>>
 	<<set $trueconsensual to 1>>
-	<<if $npc.length is 1 and ($npc[0] is "Robin" and $NPCName[$NPCNameList.indexOf("Robin")].dom lte 10 and $debug is 1) or ($npc[0] is "Sydney" and $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 50)>>
+	<<if _args[0]>>
+		<<set $consensualGuaranteed to 1>>
+	<</if>>
+	<<if $npc.length is 1 and ($npc[0] is "Robin" and C.npc.Robin.dom lte 10 and $debug is 1) or ($npc[0] is "Sydney" and C.npc.Sydney.purity gte 50)>>
 		<<npc_submissive>>
 	<</if>>
 <</widget>>
@@ -1760,7 +1838,7 @@
 	<<set _season to (Time.season == "winter" ? "_winter" : "")>>
 	<<set _weather_display to (Time.season == "winter" ? "winter" : "normal")>>
 	<<if $options.images is 1>>
-		<<if Time.dayState is "night" and (isBloodmoon() or $forcedBloodmoon)>>
+		<<if Time.dayState is "night" and (Time.isBloodMoon() or $forcedBloodmoon)>>
 			<<set _dayStateWithBloodMoon to "_bloodmoon">>
 		<<else>>
 			<<set _dayStateWithBloodMoon to "_"+Time.dayState>>
@@ -1768,12 +1846,10 @@
 		<<set _dayState to "_"+Time.dayState>>
 
 		<<set _imgLoc to 'img/misc/'>>
-		<<set _imgSky to 'img/misc/sky/'>>
+		<<set _imgSky to 'img/misc/old/'>>
 
 		/* sky (upmost part) */
-		<<if $skyHidden is true>>
-			<<set _skybox to "skybox_blank">>
-		<<elseif $location is "tentworld">>
+		<<if $location is "tentworld">>
 			<<set _skybox to "skybox" + _dayState + "_tentacle">>
 		<<else>>
 			<<set _skybox to "skybox" + _dayStateWithBloodMoon>>
@@ -1786,211 +1862,90 @@
 		</div>
 
 		/* weather (middle part) */
-		<<if $location is "tentworld" or $skyHidden is true>>
-		<<else>>
-			<<switch $weather>>
-				<<case "clear">>
-				<<case "overcast">> <img id="weather" @src="_imgSky + 'overcast' + _dayState + _season + '.png'">
-				<<case "rain">>		<img id="weather" @src="_imgSky + 'rain' + _dayState + '.gif'">
-				<<case "snow">>		<img id="weather" @src="_imgSky + 'snow' + _dayState + '.gif'">
-			<</switch>>
+		<<if $location isnot "tentworld">>
+			<<if Weather.precipitation is "rain">>
+				<img id="weather" @src="_imgSky + 'rain' + _dayState + '.gif'">
+			<<elseif Weather.precipitation is "snow">>
+				<img id="weather" @src="_imgSky + 'snow' + _dayState + '.gif'">
+			<<elseif Weather.isOvercast>>
+				<img id="weather" @src="_imgSky + 'overcast' + _dayState + _season + '.png'">
+			<</if>>
 		<</if>>
 
 		/* location (bottom part) */
-		<<switch $location>>
-			<<case "adult_shop">>
-				<<getadultshopstate>>
-				<<if Time.dayState is "day" and $adultshopstate isnot "closed">>
-					<img id="location" @src="_imgLoc + _weather_display + '/sex_shop'+_dayState+'_open.gif'">
-				<<elseif Time.dayState is "night" or Time.dayState is "dusk">>
-					<img id="location" @src="_imgLoc + _weather_display + '/sex_shop'+_dayState+'.gif'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/sex_shop'+_dayState+'.png'">
-				<</if>>
-			<<case "alex_cottage">>
-				<img id="location" @src="_imgLoc + _weather_display + '/alex_cottage'+_dayState+'.png'">
-			<<case "alex_farm">>
-				<<if $bus is "woodland">>
-					<img id="location" @src="_imgLoc + _weather_display + '/forest'+_dayStateWithBloodMoon+'.gif'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/alex_farm'+_dayState+'.png'">
-				<</if>>
-			<<case "alley">>
-				<<if $bus is "industrial">>
-					<img id="location" @src="_imgLoc + _weather_display + '/indust_alley'+_dayStateWithBloodMoon+'.gif'">
-				<<elseif $bus is "residential">>
-					<img id="location" @src="_imgLoc + _weather_display + '/resi_alley'+_dayStateWithBloodMoon+'.gif'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/alley'+_dayStateWithBloodMoon+'.gif'">
-				<</if>>
-			<<case "arcade">>
-				<img id="location" @src="_imgLoc + _weather_display + '/arcade'+_dayState+'.png'">
-			<<case "asylum">>
-				<<if $hallucinations gte 1>>
-					<img id="location" @src="_imgLoc + _weather_display + '/asylum'+_dayState+'vfast.gif'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/asylum'+_dayState+'slow.gif'">
-				<</if>>
-			<<case "beach" "chalets">>
-				<img id="location" @src="_imgLoc + _weather_display + '/beach'+_dayState+'.gif'">
-			<<case "bog">>
-				<img id="location" @src="_imgLoc + _weather_display + '/bog'+_dayStateWithBloodMoon+'.gif'">
-			<<case "brothel">>
-				<img id="location" @src="_imgLoc + _weather_display + '/brothel'+_dayState+'.png'">
-			<<case "cabin">>
-				<img id="location" @src="_imgLoc + _weather_display + '/cabin'+_dayState+'.png'">
-			<<case "cafe">>
-				<<if $chef_state gte 9>>
-					<img id="location" @src="_imgLoc + _weather_display + '/cafe_renovated'+_dayState+'.png'">
-				<<elseif $chef_state gte 7>>
-					<img id="location" @src="_imgLoc + _weather_display + '/cafe_construction'+_dayState+'.png'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/cafe'+_dayState+'.png'">
-				<</if>>
-			<<case "canal">>
-				<img id="location" @src="_imgLoc + _weather_display + '/canal'+_dayState+'.gif'">
-			<<case "churchyard">>
-				<img id="location" @src="_imgLoc + _weather_display + '/churchyard'+_dayState+'.png'">
-			<<case "compound">>
-				<img id="location" @src="_imgLoc + _weather_display + '/compound'+_dayState+'.gif'">
-			<<case "dance_studio">>
-				<img id="location" @src="_imgLoc + _weather_display + '/dance_studio'+_dayState+'.png'">
-			<<case "dilapidated_shop">>
-				<img id="location" @src="_imgLoc + _weather_display + '/dilapidated_shop'+_dayState+'.png'">
-			<<case "docks">>
-				<img id="location" @src="_imgLoc + _weather_display + '/docks'+_dayState+'.png'">
-			<<case "drain">>
-				<img id="location" @src="_imgLoc + _weather_display + '/drain.gif'">
-			<<case "estate">>
-				<img id="location" @src="_imgLoc + _weather_display + '/remy_farm'+_dayState+'.png'">
-			<<case "factory">>
-				<<if Time.dayState is "night">>
-					<img id="location" @src="_imgLoc + _weather_display + '/factory'+_dayState+'.png'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/factory'+_dayState+'.gif'">
-				<</if>>
-			<<case "farm">>
-				<img id="location" @src="_imgLoc + _weather_display + '/farm'+_dayState+'.png'">
-			<<case "flats">>
-				<img id="location" @src="_imgLoc + _weather_display + '/flats'+_dayState+'.png'">
-			<<case "forest">>
-				<img id="location" @src="_imgLoc + _weather_display + '/forest'+_dayStateWithBloodMoon+'.gif'">
-			<<case "forest_shop">>
-				<img id="location" @src="_imgLoc + _weather_display + '/forest_shop'+_dayState+'.png'">
-			<<case "home">>
-				<img id="location" @src="_imgLoc + _weather_display + '/home'+_dayStateWithBloodMoon+'.gif'">
-			<<case "hospital">>
-				<img id="location" @src="_imgLoc + _weather_display + '/hospital'+_dayState+'.png'">
-			<<case "island">>
-				<img id="location" @src="_imgLoc + _weather_display + '/island'+_dayState+'.gif'">
-			<<case "kylar_manor">>
-				<img id="location" @src="_imgLoc + _weather_display + '/kylar_manor'+_dayState+'.png'">
-			<<case "lake">>
-				<img id="location" @src="_imgLoc + _weather_display + '/lake'+_dayStateWithBloodMoon+'.gif'">
-			<<case "lake_ruin">>
-				<img id="location" @src="_imgLoc + _weather_display + '/ruins'+_dayStateWithBloodMoon+'.gif'">
-			<<case "landfill">>
-				<img id="location" @src="_imgLoc + _weather_display + '/landfill'+_dayState+'.png'">
-			<<case "meadow">>
-				<img id="location" @src="_imgLoc + _weather_display + '/meadow'+_dayState+'.gif'">
-			<<case "mines">>
-				<img id="location" @src="_imgLoc + _weather_display + '/underground'+_dayState+'.png'">
-			<<case "moor">>
-				<img id="location" @src="_imgLoc + _weather_display + '/moor'+_dayState+'.gif'">
-			<<case "museum">>
-				<img id="location" @src="_imgLoc + _weather_display + '/museum'+_dayState+'.png'">
-			<<case "night_monster_lair">>
-				<img id="location" @src="_imgLoc + _weather_display + '/night_monster_lair'+_dayState+'.gif'">
-			<<case "office_building">>
-				<img id="location" @src="_imgLoc + _weather_display + '/office'+_dayState+'.png'">
-			<<case "park">>
-				<<if Time.season is "winter">>
-					<img id="location" @src="_imgLoc + _weather_display + '/park'+_dayState+'.png'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/park'+_dayState+'.gif'">
-				<</if>>
-			<<case "police_station">>
-				<img id="location" @src="_imgLoc + _weather_display + '/police_station'+_dayState+'.png'">
-			<<case "pound">>
-				<img id="location" @src="_imgLoc + _weather_display + '/dog_pound'+_dayState+'.gif'">
-			<<case "pool">>
-				<img id="location" @src="_imgLoc + _weather_display + '/pool'+_dayState+'.gif'">
-			<<case "prison">>
-				<img id="location" @src="_imgLoc + _weather_display + '/prison'+_dayStateWithBloodMoon+'.gif'">
-			<<case "promenade">>
-				<img id="location" @src="_imgLoc + _weather_display + '/promenade_beach'+_dayState+'.gif'">
-			<<case "pub">>
-				<img id="location" @src="_imgLoc + _weather_display + '/pub'+_dayState+'.png'">
-			<<case "riding_school">>
-				<img id="location" @src="_imgLoc + _weather_display + '/riding_school'+_dayState+'.gif'">
-			<<case "school">>
-				<img id="location" @src="_imgLoc + _weather_display + '/school'+_dayState+'.png'">
-			<<case "sea">>
-				<img id="location" @src="_imgLoc + _weather_display + '/ocean'+_dayState+'.gif'">
-			<<case "seapirates">>
-				<img id="location" @src="_imgLoc + _weather_display + '/boat'+_dayState+'.gif'">
-			<<case "sepulchre">>
-				<img id="location" @src="_imgLoc + _weather_display + '/sepulchre'+_dayState+'.png'">
-			<<case "sewers">>
-				<img id="location" @src="_imgLoc + _weather_display + '/sewers'+_dayState+'.gif'">
-			<<case "shopping_centre">>
-				<img id="location" @src="_imgLoc + _weather_display + '/shopping_centre'+_dayState+'.png'">
-			<<case "spa">>
-				<img id="location" @src="_imgLoc + _weather_display + '/spa'+_dayState+'.gif'">
-			<<case "strip_club">>
-				<img id="location" @src="_imgLoc + _weather_display + '/strip_club'+_dayState+'.png'">
-			<<case "temple">>
-				<<if Time.year is 361>>
-					<img id="location" @src="_imgLoc + _weather_display + '/temple'+_dayState+'_old.png'">
-				<<else>>
-					<img id="location" @src="_imgLoc + _weather_display + '/temple'+_dayState+'.png'">
-				<</if>>
-			<<case "tentworld">>
-				<img id="location" @src="_imgLoc + _weather_display + '/tentacles'+_dayState+'.gif'">
-			<<case "tower" "castle">>
-				<img id="location" @src="_imgLoc + _weather_display + '/tower'+_dayStateWithBloodMoon+'.gif'">
-			<<case "town">>
-				<img id="location" @src="_imgLoc + _weather_display + '/town'+_dayState+'.gif'">
-			<<case "underground">>
-				<img id="location" @src="_imgLoc + _weather_display + '/underground'+_dayState+'.png'">
-			<<case "wolf_cave">>
-				<img id="location" @src="_imgLoc + _weather_display + '/wolf_cave'+_dayState+'.png'">
+		/* For backward compatibility during transition period */
+		<<script>>
+			const path = "img/misc/locations/";
+			const location = setup.Locations.get();
+			const loc = setup.LocationImages[location];
+			T.images = [];
 
-		<</switch>>
+			const imagesToCheck = loc.base ? Object.values(loc.base) : Object.entries(loc.reflective).filter(([key]) => key !== "mask").map(([key, value]) => value);
+			imagesToCheck.forEach(item => {
+				if (item.condition && !item.condition()) return;
+
+				const imagePath = typeof item === "string" ? item : item.image;
+				T.images.push(imagePath instanceof Image ? imagePath.src : `${path}${loc.folder}/${imagePath}`);
+			});
+		<</script>>
+
+		<div id="oldlocation">
+			<<for _img range _images>>
+				<img id="oldlocationimg" @src="_img">
+			<</for>>
+		</div>
+
 	<<else>>
 		<<switch Time.dayState>>
 			<<case "day">>
-				<<switch $weather>>
-					<<case "clear">>It's a bright and sunny day.
-					<<case "rain">>It's a rainy day.
-					<<case "overcast">>Clouds are hiding the sun.
-					<<case "snow">>It's a snowy day.
+				<<switch Weather.name>>
+					<<case "clear" "lightClouds">>It's a bright and sunny day.
+					<<case "lightPrecipitation" "heavyPrecipitation" "thunderStorm">>
+						<<if Weather.precipitation is "rain">>
+							It's a rainy day.
+						<<else>>
+							It's a snowy day.
+						<</if>>
+					<<case "heavyClouds">>Clouds are hiding the sun.
 				<</switch>>
 			<<case "night">>
-				<<switch $weather>>
-					<<case "clear">>The stars are shining.
-					<<case "rain">>It's a rainy night.
-					<<case "overcast">>All starlight is blocked by the clouds.
-					<<case "snow">>It's a snowy night.
+				<<switch Weather.name>>
+					<<case "clear" "lightClouds">>The stars are shining.
+					<<case "lightPrecipitation" "heavyPrecipitation" "thunderStorm">>
+						<<if Weather.precipitation is "rain">>
+							It's a rainy night.
+						<<else>>
+							It's a snowy night.
+						<</if>>
+					<<case "heavyClouds">>All starlight is blocked by the clouds.
 				<</switch>>
 			<<case "dawn">>
-				<<switch $weather>>
-					<<case "clear">>The sun is rising.
-					<<case "rain">>It's a rainy morning.
-					<<case "overcast">>It's a cloudy morning.
-					<<case "snow">>It's a snowy morning.
+				<<switch Weather.name>>
+					<<case "clear" "lightClouds">>The sun is rising.
+					<<case "lightPrecipitation" "heavyPrecipitation" "thunderStorm">>
+					<<if Weather.precipitation is "rain">>
+						It's a rainy morning.
+					<<else>>
+						It's a snowy morning.
+					<</if>>
+					<<case "heavyClouds">>It's a cloudy morning.
 				<</switch>>
 			<<case "dusk">>
-				<<switch $weather>>
-					<<case "clear">>The sun is setting.
-					<<case "rain">>It's a rainy evening.
-					<<case "overcast">>It's cloudy evening.
-					<<case "snow">>It's a snowy evening.
+				<<switch Weather.name>>
+					<<case "clear" "lightClouds">>The sun is setting.
+					<<case "lightPrecipitation" "heavyPrecipitation" "thunderStorm">>
+					<<if Weather.precipitation is "rain">>
+						It's a rainy evening.
+					<<else>>
+						It's a snowy evening.
+					<</if>>
+					<<case "heavyClouds">>It's cloudy evening.
 				<</switch>>
 		<</switch>>
 		<br>
 	<</if>>
 <</widget>>
+
 
 <<widget "wearandtear">>
 	<<if _args[0] is "dance">>
@@ -2027,15 +1982,15 @@
 
 <<widget "towelup">>
 	<<if $exposed gte 1>>
-		<<if $upperwetstage gte 3>>
+		<<if $upperwetstage gte 3 and !$worn.under_upper.type.includes("covered") or $underupperwetstage gte 3 and $worn.under_upper.type.includes("covered")>>
 			<<upperwear 3>>
 		<</if>>
-		<<if $lowerwetstage gte 3>>
+		<<if $lowerwetstage gte 3 and !$worn.under_lower.type.includes("covered") or $underlowerwetstage gte 3 and $worn.under_lower.type.includes("covered")>>
 			<<lowerwear 3>>
 		<</if>>
-		<<if $worn.upper.exposed gte 1>>
+		<<if $worn.upper.exposed gte 1 and !$worn.under_upper.type.includes("covered")>>
 			<<upperwear 14>>
-		<<elseif $worn.lower.exposed gte 1>>
+		<<elseif $worn.lower.exposed gte 1 and !$worn.under_lower.type.includes("covered")>>
 			<<lowerwear 3>>
 		<</if>>
 	<</if>>
@@ -2043,10 +1998,10 @@
 
 <<widget "towelupm">>
 	<<if $exposed gte 1>>
-		<<if $lowerwetstage gte 3>>
+		<<if $lowerwetstage gte 3 and !$worn.under_lower.type.includes("covered")>>
 			<<lowerwear 3>>
 		<</if>>
-		<<if $worn.lower.exposed gte 1>>
+		<<if $worn.lower.exposed gte 1 and !$worn.under_lower.type.includes("covered")>>
 			<<lowerwear 3>>
 		<</if>>
 	<</if>>
@@ -2114,14 +2069,21 @@
 <</widget>>
 
 <<widget "exposure">>
-	<<if !["beach","pool","sea","lake","lake_ruin"].includes($location)>>
-		<<set $libertine to 0>>
+	<!-- In safe locations, while alone, the player won't cover up. Love interest check is likely not hitting everywhere it should be due to NPCs generating after this check. -->
+	<<if ["Wardrobe", "Bedroom", "Sleep", "Bird Tower", "Bird Hunt", "Spa Tan Underwear", "Spa Tan Curtains", "Spa Tan Naked"].some(keyword => V.passage.includes(keyword)) and !($NPCList.some(obj => Object.hasOwn(obj, "type")) and !$NPCList.find(({fullDescription:fd}) => fd && Object.values($loveInterest).includes(fd)))>>
+		<<set $libertine to 2>>
 	<<else>>
-		<<set $libertine to 1>>
+		<<set $libertine to 0>>
+		<<if !["beach","pool","sea","lake","lake_ruin"].includes($location)>>
+			<<set $libertine to 0>>
+		<<else>>
+			<<set $libertine to 1>>
+		<</if>>
+		<<if $location is "dance_studio" and $worn.under_lower.type.includes("dance") and $worn.under_upper.type.includes("dance")>>
+			<<set $libertine to 1>>
+		<</if>>
 	<</if>>
-	<<if $location is "dance_studio" and $worn.under_lower.type.includes("dance") and $worn.under_upper.type.includes("dance")>>
-		<<set $libertine to 1>>
-	<</if>>
+
 
 	<<set $worn.over_upper.exposedcarry to $worn.over_upper.exposed>>
 	<<set $worn.over_lower.exposedcarry to $worn.over_lower.exposed>>
@@ -2148,14 +2110,14 @@
 	<<set $exposed to 0>>
 	<<if $worn.upper.exposed gte 1 and $worn.over_upper.exposed gte 1>>
 		<<if $player.gender_appearance is "m">>
-		<<elseif $libertine gte 1 or $possessed or ["plaid school pinafore","school pinafore","shortalls"].includes($worn.lower.name)>>
+		<<elseif $libertine gte 1 or $possessed or $worn.under_upper.type.includes("covered") or $worn.lower.type.includes("covered")>>
 		<<else>>
 			<<set $exposed to 1>>
 		<</if>>
 	<</if>>
 	<<if $worn.upper.exposed gte 2 and $worn.over_upper.exposed gte 2 and $player.gender_appearance isnot "m">>
 		<<if $possessed>>
-		<<elseif ["plaid school pinafore","school pinafore","shortalls"].includes($worn.lower.name)>>
+		<<elseif $worn.under_upper.type.includes("covered") or $worn.lower.type.includes("covered")>>
 		<<elseif $libertine is 1>>
 			<<set $topless to 1>>
 		<<else>>
@@ -2165,7 +2127,7 @@
 		<<set $topless to 0>>
 	<</if>>
 	<<if $worn.lower.exposed gte 1 and $worn.over_lower.exposed gte 1>>
-		<<if $libertine gte 1 or $possessed>>
+		<<if $libertine gte 1 or $possessed or $worn.under_lower.type.includes("covered")>>
 		<<else>>
 			<<set $exposed to 1>>
 		<</if>>
@@ -2175,7 +2137,7 @@
 		<<if $possessed>>
 		<<elseif $worn.under_lower.exposed gte 1>>
 			<<set $exposed to 2>>
-		<<elseif $libertine gte 1>>
+		<<elseif $libertine gte 1 or $worn.under_lower.type.includes("covered")>>
 		<<else>>
 			<<set $exposed to 1>>
 		<</if>>
@@ -2190,11 +2152,12 @@
 <</widget>>
 
 <<widget "integritycheck">>
+	<<outfitChecks>>
 	<<if $worn.over_upper.name isnot "naked">>
 		<<if $worn.over_upper.integrity lte 0>>
 			<<set $worn.over_upper.type.push("broken")>>
 			<<if _args[0] isnot "no_text">>
-				<span class="lewd">Your $worn.over_upper.name <<upperplural>> ripped into scraps<<if $worn.upper.exposed gte 2>>, exposing your <<breasts>><</if>>.</span>
+				<span class="lewd">Your $worn.over_upper.name <<overupperplural>> ripped into scraps<<if $worn.upper.exposed gte 2>>, exposing your <<undertop>><</if>>.</span>
 				<br>
 			<</if>>
 		<<overupperruined>><<clothesruinstat>><<if $worn.upper.exposed gte 2>><<set $upperoff to 0>><</if>>
@@ -2214,7 +2177,7 @@
 		<<if $worn.upper.integrity lte 0>>
 			<<set $worn.upper.type.push("broken")>>
 			<<if _args[0] isnot "no_text">>
-				<span class="lewd">Your $worn.upper.name <<upperplural>> ripped into scraps, exposing your <<breasts>>.</span>
+				<span class="lewd">Your $worn.upper.name <<upperplural>> ripped into scraps, exposing your <<undertop>>.</span>
 				<br>
 			<</if>>
 		<<upperruined>><<clothesruinstat>><<set $upperoff to 0>>
@@ -2301,7 +2264,7 @@
 
 <<widget "unbind">>
 	/*<<unbind>> is only used for the player unbinding their arms after they've been tied with rope. it will destroy handheld items. do not use it for unbinding arms after they've been temporarily restrained; use <<unbindtemp>> instead*/
-	<<if $worn.handheld.name isnot "naked">>
+	<<if $rightarm is "bound" and $worn.handheld.name isnot "naked">>
 		<<handheldruined>>
 	<</if>>
 	<<set $rightboundcarry to 0>>
@@ -2398,6 +2361,10 @@
 <</widget>>
 
 <<widget "water">>
+	<<set _inWater to true>>
+	<<if !waterproofCheck($worn.over_upper) and !$worn.over_upper.type.includes("naked") and _args[0] isnot "waist">>
+		<<set $upperwet to 200>>
+	<</if>>
 	<<if !waterproofCheck($worn.upper) and !$worn.upper.type.includes("naked") and _args[0] isnot "waist">>
 		<<set $upperwet to 200>>
 	<</if>>
@@ -2412,18 +2379,6 @@
 	<</if>>
 
 	<<waterwash>>
-	<<set $inwater to 1>>
-	<<set _water_warmth to 0>>
-	<<if $location isnot "sea" and $outside is 1 and Time.season is "winter">>
-		<<if $worn.upper.type.includes("diving") or $worn.under_upper.type.includes("diving")>>
-			<<set _water_warmth += 1>>
-		<</if>>
-		<<if $worn.lower.type.includes("diving") or $worn.under_lower.type.includes("diving")>>
-			<<set _water_warmth += 1>>
-		<</if>>
-	<<else>>
-		<<set _water_warmth to 2>>
-	<</if>>
 <</widget>>
 
 <<widget "wet_all">>
@@ -2682,7 +2637,7 @@
 	<<set $_part to $_part_text.replace(" ","")>>
 	<<set $player.bodyliquid[$_part].semen += 1>>
 
-	It <<print either("splatters onto your", "coats your", "lands on your", "splashes your")>>
+	It <<print either("splatters onto your", "coats your", "lands on your", "splashes your","covering your")>>
 	<span class="purple">$_part_text.</span>
 <</widget>>
 
@@ -2771,12 +2726,12 @@
 		<<removeparasite bottom>>
 	<</if>>
 
-<<for _active_bodypart range setup.bodyparts>>
-	<<if $skin[_active_bodypart].pen is "pen" or $skin[_active_bodypart].pen is "lipstick" or $skin[_active_bodypart].pen is "mud">>
-		<<bodywriting_clear _active_bodypart>>
-	<</if>>
-<</for>>
-<<washmakeup>>
+	<<for _active_bodypart range setup.bodyparts>>
+		<<if $skin[_active_bodypart].pen is "pen" or $skin[_active_bodypart].pen is "lipstick" or $skin[_active_bodypart].pen is "mud">>
+			<<bodywriting_clear _active_bodypart>>
+		<</if>>
+	<</for>>
+	<<washmakeup>>
 <</widget>>
 
 <<widget "wash_face">>
@@ -2861,6 +2816,7 @@
 <<widget "passout">>
 	<<set $stress -= 5000>>
 	<<set $passoutstat += 1>>
+	<<set $passoutTimeStat to Time.date.timeStamp>>
 	<<ruffleHair>>
 <</widget>>
 
@@ -3032,7 +2988,7 @@
 
 <<widget "roomoptions">>
 	<<if $sexStats.pills.boughtOnce is true or $sexStats.pills["pills"]["Dr Harper\'s prescription"].owned gte 1 or $sexStats.pills["pills"]["asylum\'s prescription"].owned gte 1>>
-		<<pillicon>><<link [[Check your Medicine Drawer|PillCollection]]>><<set $pillsExitPassage to $passage>><<endevent>><</link>>
+		<<pillicon>><<link [[Check your medicine drawer|PillCollection]]>><<set $pillsExitPassage to $passage>><<endevent>><</link>>
 		<br>
 	<</if>>
 <</widget>>
@@ -3064,9 +3020,6 @@
 			<br>
 		<</if>>
 	<</if>>
-	<<if $christmas is 1 and !$christmas_wraith>>
-		<<rngWraith 1>>
-	<</if>>
 <</widget>>
 
 
@@ -3088,6 +3041,14 @@
 			<span class="green">You find a stick.</span><<set $island.wood += 1>>
 		<<elseif (currentSkillValue("skulduggery") gte 800 and $rng gte 80) or $rng gte 90>>
 			<span class="green">You find a handful of walnuts.</span><<set $island.walnut += 1>>
+		<<else>>
+			<span class="red">You find nothing to steal.</span>
+		<</if>>
+	<<elseif $location is "farm">>
+		<<if $rng gte 90 and !$farm_key>>
+			<<set $farm_key to true>>
+			<<set $farmCellUnlk to false>>
+			You pull a <span class="green">ring of keys</span> from the <<persons>> pocket and hide it in the straw.<<combatskulduggeryskilluse>><<combatcontrol 10>><<gcombatcontrol>>
 		<<else>>
 			<span class="red">You find nothing to steal.</span>
 		<</if>>
@@ -3263,7 +3224,25 @@
 			<<if $options.images is 1 and _config.icon>>
 				<img class="characteristic-icon" @src="'img/' + _config.icon + '.png'" />
 			<</if>>
-			<span class="characteristic-title">_config.name<<characteristic-box-modifier `clone(_config.modifier)` `clone(_config.modTypes)` `clone(_config.name)`>></span>
+			<span class="characteristic-title">
+				_config.name<<characteristic-box-modifier `clone(_config.modifier)` `clone(_config.modTypes)` `clone(_config.name)`>>
+				<<if _config.sensitivity gte 4>>
+					<mouse class = "pink tooltip-small">
+						!!!
+						<span class="pink"><i>Sensitivity: <<print _config.sensitivity>></i></span>
+					</mouse>
+				<<elseif _config.sensitivity gte 3>>
+					<mouse class = "purple tooltip-small">
+						!!
+						<span class="purple"><i>Sensitivity: <<print _config.sensitivity>></i></span>
+					</mouse>
+				<<elseif _config.sensitivity gte 2>>
+					<mouse class = "blue tooltip-small">
+						!
+						<span class="blue"><i>Sensitivity: <<print _config.sensitivity>></i></span>
+					</mouse>
+				<</if>>
+			</span>
 			<<if _config.states>>
 				<<if _config.displayType eq "level">>
 					<span @class="'characteristic-level ' + _config.color">
@@ -3437,7 +3416,7 @@
 				"love" : {
 					name : "Love",
 					value : T.npcData.love,
-					activeIcon : 'img/ui/heart.png',
+					activeIcon : 'img/ui/sym_love.png',
 					inactiveIcon: 'img/ui/emptyheart.png',
 					color: 'red'
 				},
@@ -3445,39 +3424,39 @@
 					name : "Lust",
 					value : T.npcData.lust,
 					iconOrientation : 'vertical',
-					activeIcon : 'img/ui/vial.png',
+					activeIcon : 'img/ui/sym_lust.png',
 					inactiveIcon : 'img/ui/emptyvial.png',
 					color: 'pink'
 				},
 				"dom" : {
 					name : "Dominance",
 					value : T.npcData.dom,
-					activeIcon : "img/ui/collar.png",
+					activeIcon : "img/ui/sym_dominance.png",
 					color: 'purple'
 				},
 				"trauma" : {
 					name : "Trauma",
 					value : T.npcData.trauma,
-					activeIcon : "img/ui/redbolt.png",
+					activeIcon : "img/ui/sym_trauma.png",
 					color: 'teal'
 				},
 				"rage" : {
 					name : "Rage",
 					value : T.npcData.rage,
-					activeIcon : "img/ui/rage.png",
+					activeIcon : "img/ui/sym_rage.png",
 					color: 'gold'
 				},
 				"purity" : {
 					name: "Purity",
 					value: T.npcData.purity,
-					activeIcon: (T.npcData.virginity.vaginal == false || T.npcData.virginity.penile == false ? "img/ui/sym_fallen_purity.png" : "img/ui/sym_purity.png"),
+					activeIcon: (T.npcData.virginity.vaginal == false || T.npcData.virginity.penile == false ? "img/misc/icon/tf_fallen.png" : "img/misc/icon/tf_angel.png"),
 					color: 'white'
 				},
 				"corruption" : {
 					name: "Corruption",
 					value: T.npcData.corruption,
 					iconOrientation : 'horizontal-inverted',
-					activeIcon: "img/ui/sym_demon_purity.png",
+					activeIcon: "img/misc/icon/tf_demon.png",
 					color: 'purple'
 				},
 				"harmony" : {
@@ -3557,10 +3536,15 @@
 						<<npcrelationship "Ivory Wraith">>
 					</div>
 					<div @class="'relation-stat-list' + ($options.images ? '' : ' no-images')">
+						<<set $_statCount to 0>>
 						<<for _j = 0; _j lt _importantNpcStats.length-2; _j++>>
 							<<if _npcData[_importantNpcStats[_j]] gt 0 and _checkRequirements(_importantNpcStats[_j])>>
+								<<set $_statCount++>>
 								<<relation-box-stat _getStatConfig(_importantNpcStats[_j]) true>>
 							<</if>>
+						<</for>>
+						<<for _j to $_statCount; _j lt 3; _j++>>
+							<div class="relation-stat-block"></div>
 						<</for>>
 					</div>
 				</div>
@@ -3582,13 +3566,18 @@
 					<<npcrelationship _npcData.nam>>
 				</div>
 				<div @class="'relation-stat-list' + ($options.images ? '' : ' no-images')">
+					<<set $_statCount to 0>>
 					<<if _importantNPCs[_k].nam is "Black Wolf">><<set _npcStats to _importantNpcStats.length>>
 						<<else>><<set _npcStats to _importantNpcStats.length-2>>
 					<</if>>
 					<<for _j = 0; _j lt _npcStats; _j++>>
 						<<if _npcData[_importantNpcStats[_j]] gt 0 and _checkRequirements(_importantNpcStats[_j])>>
+							<<set $_statCount++>>
 							<<relation-box-stat _getStatConfig(_importantNpcStats[_j]) true>>
 						<</if>>
+					<</for>>
+					<<for _j to $_statCount; _j lt 3; _j++>>
+						<div class="relation-stat-block"></div>
 					<</for>>
 				</div>
 			</div>
@@ -3707,10 +3696,10 @@
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -50, 50)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
 	<<set _i to $NPCNameList.indexOf("Wren")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
+	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -50, 50)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
 	<<set _i to $NPCNameList.indexOf("Charlie")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
+	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -50, 50)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
 	<<set _i to $NPCNameList.indexOf("Bailey")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
@@ -3754,6 +3743,9 @@
 	<<set _i to $NPCNameList.indexOf("Zephyr")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
+	<<set _i to $NPCNameList.indexOf("Sirris")>>
+	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, -100, 100)>>
+	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, -50, 50)>>
 
 	<<set _i to $NPCNameList.indexOf("Ivory Wraith")>>
 	<<if $wraith.state is "haunt">>
@@ -3762,12 +3754,6 @@
 	<<else>>
 		<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 20)>>
 		<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 20)>>
-	<</if>>
-<</widget>>
-
-<<widget "fringecheck">>
-	<<if $fringetype is "default">>
-		<<set $fringetype to "messy">>
 	<</if>>
 <</widget>>
 
@@ -3864,7 +3850,7 @@
 	<<if (!$worn.over_lower.type.includes("naked") or !$worn.lower.type.includes("naked")) and $worn.under_lower.type.includes("naked") and ["notWorn", "notBought", "sold", "given"].includes($worn.under_lower.exposedType) and $exposed lte 0 and $exhibitionism lt 19 and !$daily.no_underwear>>
 		<<set $no_underwear += 1>>
 	<</if>>
-	<<if $no_underwear gte 20>>
+	<<if $no_underwear gte 8>>
 		<<set $daily.no_underwear to true>>
 		<<set $no_underwear to 0>>
 		<<set $effectsmessage to 1>>
@@ -3873,7 +3859,7 @@
 <</widget>>
 
 <<widget "breastfed">>
-	<<set $milk_drank_stat += random(1, 5)>>
+	<<set $milk_drank_stat += _args[0] or random(1, 5)>>
 	<<if random(1, 100) gte 70>>
 		<<if $NPCList[0].type and $NPCList[0].type is "wolfgirl">>
 			<<transform wolf 1>>
@@ -3915,43 +3901,43 @@
 <</widget>>
 
 <<widget "setup_pillory">>
-	<<set $pillory_tenant to {person : clone($baseNPC), exists : 0, duration : 0, served : 0, startday: 0, starthour : 0, endDate : 0, endhour : 0,
-								crowd : 0, wet : 0, upperexposed : 0 , lowerexposed : 0, fruit : 0, fruitstock: 0, face : 0, ass : 0, genital : 0, broken : 0,
-								lastviewed : { day : 0, hour: 0}, special : {name : "", desc : ""}}>>
+	<<set $pillory.tenant to {person : clone($baseNPC), exists : 0, duration : 0, served : 0, startTime: 0, endTime : 0,
+		crowd : 0, wet : 0, upperexposed : 0 , lowerexposed : 0, fruit : 0, fruitstock: 0, face : 0, ass : 0, genital : 0, broken : 0,
+		lastviewed : 0, special : {name : "", desc : ""}}>>
 <</widget>>
 
 <<widget "new_npc_pillory">>
 	<<if not _args[0]>>
-		<<if $rng gte 20>><<generate1>><<else>><<generatec1>><</if>>
-		<<set _already_served to random(0,2)>>
+		<<if $rng gte 20>><<generate1>><<else>><<generatey1>><</if>>
+		<<set $_already_served to random(0,2)>>
 	<<else>>
-		<<set _already_served to 0>>
+		<<set $_already_served to 0>>
 	<</if>>
-	<<set $pillory_tenant.exists to 1>>
-	<<set $pillory_tenant.person to clone($NPCList[0])>>
-	<<set $pillory_tenant.duration to random(4,27)>>
-	<<set $pillory_tenant.startday to Time.days>>
-	<<set $pillory_tenant.starthour to (Time.hour - _already_served)>>
-	/*set $endDate to timestamp and compare to $timeStamp*/
-	<<set $pillory_tenant.endDate to ($pillory_tenant.startday * Time.secondsPerDay + ($pillory_tenant.starthour + $pillory_tenant.duration - 7) * Time.secondsPerHour)>>
-	<<set $pillory_tenant.endhour to (($pillory_tenant.endDate % Time.secondsPerDay) / Time.secondsPerHour)>>
-	<<set $pillory_tenant.crowd to 1>>
-	<<set $pillory_tenant.wet to 0>>
-	<<set $pillory_tenant.upperexposed to 0>>
-	<<set $pillory_tenant.lowerexposed to 0>>
-	<<set $pillory_tenant.fruit to 0>>
-	<<set $pillory_tenant.fruitstock to 3>>
-	<<set $pillory_tenant.spank to 0>>
-	<<set $pillory_tenant.face to 0>>
-	<<set $pillory_tenant.ass to 0>>
-	<<set $pillory_tenant.genital to 0>>
-	<<set $pillory_tenant.broken to 0>>
-	<<set $pillory_tenant.lastviewed.day to Time.days>>
-	<<set $pillory_tenant.lastviewed.hour to Time.hour>>
+	<<set $pillory.tenant.exists to 1>>
+	<<set $pillory.tenant.person to clone($NPCList[0])>>
+	<<set $pillory.tenant.duration to random(4,27)>>
+
+	<<set $_duration to random(4,27)>>
+	<<set $_endTime to new DateTime(Time.date).addHours($_duration)>>
+	<<set $pillory.tenant.startTime to Time.date.timeStamp>>
+	<<set $pillory.tenant.endTime to $_endTime.timeStamp>>
+
+	<<set $pillory.tenant.crowd to 1>>
+	<<set $pillory.tenant.wet to 0>>
+	<<set $pillory.tenant.upperexposed to 0>>
+	<<set $pillory.tenant.lowerexposed to 0>>
+	<<set $pillory.tenant.fruit to 0>>
+	<<set $pillory.tenant.fruitstock to 3>>
+	<<set $pillory.tenant.spank to 0>>
+	<<set $pillory.tenant.face to 0>>
+	<<set $pillory.tenant.ass to 0>>
+	<<set $pillory.tenant.genital to 0>>
+	<<set $pillory.tenant.broken to 0>>
+	<<set $pillory.tenant.lastViewed to Time.date.timeStamp>>
 
 	<<person1>>
-	<<if $pillory_tenant.special.name is "">>
-		A <<person>> <<if _already_served is 0>>is currently being locked into the pillory.<<else>>has recently been locked in the pillory.<</if>>
+	<<if $pillory.tenant.special.name is "">>
+		A <<person>> <<if $_already_served is 0>>is currently being locked into the pillory.<<else>>has recently been locked in the pillory.<</if>>
 		<<endevent>>
 		<<npc_pillory_release_schedule>>
 		<br><br>
@@ -3966,8 +3952,8 @@
 	<<clear_pillory>>
 	<<npc Whitney>>
 	<<set C.npc.Whitney.state to "pillory">>
-	<<set $pillory_tenant.special.name to "Whitney">>
-	<<set $pillory_tenant.special.desc to C.npc.Whitney.title>>
+	<<set $pillory.tenant.special.name to "Whitney">>
+	<<set $pillory.tenant.special.desc to C.npc.Whitney.title>>
 	<<new_npc_pillory $NPCList[0]>>
 	<<endevent>>
 	<<set $framed to 0>>
@@ -3976,8 +3962,8 @@
 <<widget "imprison_leighton">>
 	<<clear_pillory>>
 	<<npc Leighton>>
-	<<set $pillory_tenant.special.name to "Leighton">>
-	<<set $pillory_tenant.special.desc to C.npc.Leighton.title>>
+	<<set $pillory.tenant.special.name to "Leighton">>
+	<<set $pillory.tenant.special.desc to C.npc.Leighton.title>>
 	<<new_npc_pillory $NPCList[0]>>
 	<<endevent>>
 	<<set $framed to 0>>
@@ -3991,23 +3977,23 @@
 		<<set _id to _args[0]>>
 	<</if>>
 	<<if _args[1]>>
-		<<set $pillory_tenant.special.desc to _args[1]>>
+		<<set $pillory.tenant.special.desc to _args[1]>>
 	<</if>>
 	<<new_npc_pillory $NPCList[_id]>>
 	<<endevent>>
 <</widget>>
 
 <<widget "get_pillory_npc">>
-	<<set $NPCList[0] to clone($pillory_tenant.person)>><<person1>>
+	<<set $NPCList[0] to clone($pillory.tenant.person)>><<person1>>
 <</widget>>
 
 <<widget "A_pillory_person">>  /* Can't simplify to <<pillory_person>> because: 'a thin man', but not 'a Whitney') */
 	<<silently>><<set _out to "">>
 	<<get_pillory_npc>>
-	<<if $pillory_tenant.special.name is "">>
+	<<if $pillory.tenant.special.name is "">>
 		<<set _out += "A <<person>>">>
 	<<else>>
-		<<set _out += $pillory_tenant.special.name>>
+		<<set _out += $pillory.tenant.special.name>>
 	<</if>>
 	<</silently>><<print _out>>
 <</widget>>
@@ -4015,10 +4001,10 @@
 <<widget "The_pillory_person">>
 	<<silently>><<set _out to "">>
 	<<get_pillory_npc>>
-	<<if $pillory_tenant.special.name is "">>
+	<<if $pillory.tenant.special.name is "">>
 		<<set _out += "The <<person>>">>
 	<<else>>
-		<<set _out += $pillory_tenant.special.name>>
+		<<set _out += $pillory.tenant.special.name>>
 	<</if>>
 	<</silently>><<print _out>>
 <</widget>>
@@ -4026,10 +4012,10 @@
 <<widget "a_pillory_person">>
 	<<silently>><<set _out to "">>
 	<<get_pillory_npc>>
-	<<if $pillory_tenant.special.name is "">>
+	<<if $pillory.tenant.special.name is "">>
 		<<set _out += "a <<person>>">>
 	<<else>>
-		<<set _out += $pillory_tenant.special.name>>
+		<<set _out += $pillory.tenant.special.name>>
 	<</if>>
 	<</silently>><<print _out>>
 <</widget>>
@@ -4037,10 +4023,10 @@
 <<widget "the_pillory_person">>
 	<<silently>><<set _out to "">>
 	<<get_pillory_npc>>
-	<<if $pillory_tenant.special.name is "">>
+	<<if $pillory.tenant.special.name is "">>
 		<<set _out += "the <<person>>">>
 	<<else>>
-		<<set _out += $pillory_tenant.special.name>>
+		<<set _out += $pillory.tenant.special.name>>
 	<</if>>
 	<</silently>><<print _out>>
 <</widget>>
@@ -4048,10 +4034,10 @@
 <<widget "pillory_type">>
 	<<silently>><<set _out to "">>
 	<<get_pillory_npc>>
-	<<if $pillory_tenant.special.name is "">>
+	<<if $pillory.tenant.special.name is "">>
 		<<set _out += "<<person>>">>
 	<<else>>
-		<<set _out += $pillory_tenant.special.desc>>
+		<<set _out += $pillory.tenant.special.desc>>
 	<</if>>
 	<</silently>><<print _out>>
 <</widget>>
@@ -4077,184 +4063,193 @@
 	<<update_npc_pillory_appearance>>
 	/*Desc*/
 	<<if Time.dayState is "night">>
-		<<if $pillory_tenant.crowd gte 10>>A huge, drunken mob surround
-		<<elseif $pillory_tenant.crowd gte 6>>A large, rowdy mob crowd around
-		<<elseif $pillory_tenant.crowd gte 4>>A sinister crowd huddle around
+		<<if $pillory.tenant.crowd gte 10>>A huge, drunken mob surround
+		<<elseif $pillory.tenant.crowd gte 6>>A large, rowdy mob crowd around
+		<<elseif $pillory.tenant.crowd gte 4>>A sinister crowd huddle around
 		<<else>>A small but sinister group lurk around
 		<</if>>
 	<<else>>
-		<<if $pillory_tenant.crowd gte 10>>An excited, jeering crowd surround
-		<<elseif $pillory_tenant.crowd gte 6>>A large crowd press around
-		<<elseif $pillory_tenant.crowd gte 4>>A curious group hang around
+		<<if $pillory.tenant.crowd gte 10>>An excited, jeering crowd surround
+		<<elseif $pillory.tenant.crowd gte 6>>A large crowd press around
+		<<elseif $pillory.tenant.crowd gte 4>>A curious group hang around
 		<<else>>A small group watch
 		<</if>>
 	<</if>>the <<pillory_type>> locked prone in the pillory.
-	<<if $pillory_tenant.broken gte 32>><<He>> looks traumatised, perhaps permanently broken by the abuse <<hes>> already suffered.
-	<<elseif $pillory_tenant.broken gte 16>><<He>> is weeping from the abuse <<hes>> already suffered.
-	<<elseif $pillory_tenant.broken gte 8>><<He>> is sobbing from the abuse.
-	<<elseif $pillory_tenant.broken gte 4>><<He>> is visibly upset, but trying hard to hide it.
+	<<if $pillory.tenant.broken gte 32>><<He>> looks traumatised, perhaps permanently broken by the abuse <<hes>> already suffered.
+	<<elseif $pillory.tenant.broken gte 16>><<He>> is weeping from the abuse <<hes>> already suffered.
+	<<elseif $pillory.tenant.broken gte 8>><<He>> is sobbing from the abuse.
+	<<elseif $pillory.tenant.broken gte 4>><<He>> is visibly upset, but trying hard to hide it.
 	<<else>><<He>> is defiant, showing a brave face.
 	<</if>>
 	<br>
 
 	/*describe exposure*/
-	<<if $pillory_tenant.upperexposed gte 3>>
-		<<His>> $pillory_tenant.person.breastsdesc are fully exposed to the crowd.
-		<<if $pillory_tenant.spank gte 8>><<His>> nipples are red from being pinched, slapped, sucked, bitten and pulled.
-		<<elseif $pillory_tenant.spank gte 4>><<His>> nipples looks sore from abuse.
+	<<if $pillory.tenant.upperexposed gte 3>>
+		<<His>> $pillory.tenant.person.breastsdesc are fully exposed to the crowd.
+		<<if $pillory.tenant.spank gte 8>><<His>> nipples are red from being pinched, slapped, sucked, bitten and pulled.
+		<<elseif $pillory.tenant.spank gte 4>><<His>> nipples looks sore from abuse.
 		<</if>>
-	<<elseif $pillory_tenant.upperexposed gte 2>>
+	<<elseif $pillory.tenant.upperexposed gte 2>>
 		<<if $pronoun is "f">>
-			<<His>> top has been bared, with only <<his>> bra hiding <<his>> $pillory_tenant.person.breastsdesc from the crowd.
+			<<His>> top has been bared, with only <<his>> bra hiding <<his>> $pillory.tenant.person.breastsdesc from the crowd.
 		<<else>>
-			<<His>> top has been bared, fully exposing <<his>> $pillory_tenant.person.breastsdesc to the crowd.
-			<<if $pillory_tenant.spank gte 8>><<His>> nipples are red from being pinched, slapped, bitten and pulled.
-			<<elseif $pillory_tenant.spank gte 4>><<His>> nipples looks sore from abuse.
+			<<His>> top has been bared, fully exposing <<his>> $pillory.tenant.person.breastsdesc to the crowd.
+			<<if $pillory.tenant.spank gte 8>><<His>> nipples are red from being pinched, slapped, bitten and pulled.
+			<<elseif $pillory.tenant.spank gte 4>><<His>> nipples looks sore from abuse.
 			<</if>>
 		<</if>>
-	<<elseif $pillory_tenant.upperexposed gte 1>><<His>> upper clothes have been mauled, partially exposing <<his>> <<if $pronoun is "f">>bra<<else>>$pillory_tenant.person.breastsdesc<</if>> to the crowd.
+	<<elseif $pillory.tenant.upperexposed gte 1>><<His>> upper clothes have been mauled, partially exposing <<his>> <<if $pronoun is "f">>bra<<else>>$pillory.tenant.person.breastsdesc<</if>> to the crowd.
 	<</if>>
-	<<if $pillory_tenant.lowerexposed gte 2>><<His>> ass has <<if $pillory_tenant.upperexposed gte 1>>also<</if>> been exposed, making
-		<<if $pillory_tenant.person.gender is "f">><<his>> pussy
-		<<else>><<his>> $pillory_tenant.person.penisdesc
+	<<if $pillory.tenant.lowerexposed gte 2>><<His>> ass has <<if $pillory.tenant.upperexposed gte 1>>also<</if>> been exposed, making
+		<<if $pillory.tenant.person.gender is "f">><<his>> pussy
+		<<else>><<his>> $pillory.tenant.person.penisdesc
 		<</if>>visible to all.
-		<<if $pillory_tenant.spank gte 5>><<His>> ass shows signs of rough
-			<<if $pillory_tenant.fruit gte 5>>spanking, and <<his>> <<if $pillory_tenant.face gte 2>>cum<<if $pillory_tenant.face gte 4>>-coated<<else>>-stained<</if>><</if>> face is a mess of bruises and broken fruit.
+		<<if $pillory.tenant.spank gte 5>><<His>> ass shows signs of rough
+			<<if $pillory.tenant.fruit gte 5>>spanking, and <<his>> <<if $pillory.tenant.face gte 2>>cum<<if $pillory.tenant.face gte 4>>-coated<<else>>-stained<</if>><</if>> face is a mess of bruises and broken fruit.
 			<<else>>spanking.
 			<</if>>
-		<<elseif $pillory_tenant.fruit gte 6>><<His>> <<if $pillory_tenant.face gte 2>>cum<<if $pillory_tenant.face gte 4>>-coated<<else>>-stained<</if>><</if>> face is a mess of bruises and broken fruit.
-		<<elseif $pillory_tenant.fruit gte 2>><<His>> <<if $pillory_tenant.face gte 2>>cum<<if $pillory_tenant.face gte 4>>-coated<<else>>-stained<</if>><</if>> face is marked by bruises and broken fruit.
+		<<elseif $pillory.tenant.fruit gte 6>><<His>> <<if $pillory.tenant.face gte 2>>cum<<if $pillory.tenant.face gte 4>>-coated<<else>>-stained<</if>><</if>> face is a mess of bruises and broken fruit.
+		<<elseif $pillory.tenant.fruit gte 2>><<His>> <<if $pillory.tenant.face gte 2>>cum<<if $pillory.tenant.face gte 4>>-coated<<else>>-stained<</if>><</if>> face is marked by bruises and broken fruit.
 		<</if>>
-		<<if $pillory_tenant.ass gte 2>><<His>> ass has been raped more than
-			<<if $pillory_tenant.genital gte 2>>once, and
-				<<if $pillory_tenant.person.gender is "m">>slime coats <<his>> <<print either("raw","abused","sorry")>> penis.
-				<<else>>semen <<if $pillory_tenant.genital gte 4>>pours<<else>>drips<</if>> from <<his>> <<print either("raw","reddened","abused")>> pussy.
+		<<if $pillory.tenant.ass gte 2>><<His>> ass has been raped more than
+			<<if $pillory.tenant.genital gte 2>>once, and
+				<<if $pillory.tenant.person.gender is "m">>slime coats <<his>> <<print either("raw","abused","sorry")>> penis.
+				<<else>>semen <<if $pillory.tenant.genital gte 4>>pours<<else>>drips<</if>> from <<his>> <<print either("raw","reddened","abused")>> pussy.
 				<</if>>
 			<<else>>once.
 			<</if>>
-		<<elseif $pillory_tenant.genital gte 5>><<His>> <<if $pillory_tenant.person.gender is "m">>penis<<else>>pussy<</if>> has been raped raw.
-		<<elseif $pillory_tenant.genital gte 2>><<He>> has been raped more than once.
+		<<elseif $pillory.tenant.genital gte 5>><<His>> <<if $pillory.tenant.person.gender is "m">>penis<<else>>pussy<</if>> has been raped raw.
+		<<elseif $pillory.tenant.genital gte 2>><<He>> has been raped more than once.
 		<</if>>
-	<<elseif $pillory_tenant.lowerexposed gte 1>>
+	<<elseif $pillory.tenant.lowerexposed gte 1>>
 		<<His>> <<if $pronoun is "f">>dress has been pulled up over <<his>> waist,<<else>>trousers have been pulled down,<</if>>
 		exposing <<his>> underwear to the crowd.
-	<<elseif $pillory_tenant.wet is 2>><<His>> clothes are see-through from the rain.
-	<<elseif $pillory_tenant.wet is 1>><<His>> clothes are semi-translucent from damp, but are drying out.
+	<<elseif $pillory.tenant.wet is 2>><<His>> clothes are see-through from the rain.
+	<<elseif $pillory.tenant.wet is 1>><<His>> clothes are semi-translucent from damp, but are drying out.
 	<</if>>
-	<<if $pillory_tenant.upperexposed is 0 and $pillory_tenant.lowerexposed is 0 and $pillory_tenant.face is 0 and $pillory_tenant.fruit gte 1>>
-		<<if $pillory_tenant.fruit gte 6>><<His>> face is a mess of bruises and broken fruit.
-		<<elseif $pillory_tenant.fruit gte 2>><<His>> face is marked by bruises and broken fruit.
+	<<if $pillory.tenant.upperexposed is 0 and $pillory.tenant.lowerexposed is 0 and $pillory.tenant.face is 0 and $pillory.tenant.fruit gte 1>>
+		<<if $pillory.tenant.fruit gte 6>><<His>> face is a mess of bruises and broken fruit.
+		<<elseif $pillory.tenant.fruit gte 2>><<His>> face is marked by bruises and broken fruit.
 		<</if>>
 	<</if>>
 <</widget>>
 
 <<widget "update_npc_pillory_appearance">>
-	<<if ($pillory_tenant.lastviewed.day isnot Time.days) or (Time.hour gte $pillory_tenant.lastviewed.hour + 2)>>
+	<<set $_lastViewed to new DateTime($pillory.tenant.lastViewed)>>
+	<<set $_timeLeft to Time.date.compareWith($_lastViewed, true)>>
+	<<if $_timeLeft / TimeConstants.secondsPerHour lte -2>>
 		/* last viewed time tracked to avoid this firing on every viewing */
-		<<set $pillory_tenant.lastviewed.day to Time.days>>
-		<<set $pillory_tenant.lastviewed.hour to Time.hour>>
+		<<set $pillory.tenant.lastViewed to Time.date.timeStamp>>
 
 		/*Weather effects*/
-		<<if $weather is "rain">><<set $pillory_tenant.wet to 2>>
-		<<elseif $pillory_tenant.wet is 2>><<set $pillory_tenant.wet to 1>>
-		<<else>><<set $pillory_tenant.wet to 0>>
+		<<if Weather.precipitation is "rain">>
+			<<set $pillory.tenant.wet to 2>>
+		<<elseif $pillory.tenant.wet is 2>>
+			<<set $pillory.tenant.wet to 1>>
+		<<else>>
+			<<set $pillory.tenant.wet to 0>>
 		<</if>>
 
 		/*Chance of abuse based on crowd and time passed*/
-		<<if Time.days - $pillory_tenant.startday is 2>><<set _chance to 24>>
-		<<elseif Time.days - $pillory_tenant.startday is 1>><<set _chance to 12>>
-		<<else>><<set _chance to (Time.hour - $pillory_tenant.starthour)>>
-		<</if>>
-		<<set _chance *= $pillory_tenant.crowd>>
+		<<set _totalSeconds to Time.date.compareWith(new DateTime($pillory.tenant.startTime), true) / TimeConstants.secondsPerHour>>
+		<<set $_chance to Math.clamp(_totalSeconds / TimeConstants.secondsPerHour, 0, 24)>>
+		<<set $_chance *= $pillory.tenant.crowd>>
+
 		/*increased by spectacle*/
-		<<set _factor to ($pillory_tenant.upperexposed + $pillory_tenant.lowerexposed + $pillory_tenant.fruit
-							+ $pillory_tenant.spank + $pillory_tenant.face + $pillory_tenant.ass + $pillory_tenant.genital)>>
-		<<if Time.dayState is "night">><<set _factor += 3>><</if>>
-		<<if $pillory_tenant.wet is 2>><<set _factor += 4>><</if>>
-		<<set _prob to (_chance * _factor)>>
+		<<set $_factor to ($pillory.tenant.upperexposed + $pillory.tenant.lowerexposed + $pillory.tenant.fruit
+			+ $pillory.tenant.spank + $pillory.tenant.face + $pillory.tenant.ass + $pillory.tenant.genital)>>
+
+		<<if Time.dayState is "night">>
+			<<set $_factor += 3>>
+		<</if>>
+		<<if $pillory.tenant.wet is 2>>
+			<<set $_factor += 4>>
+		<</if>>
+		<<set $_prob to ($_chance * $_factor)>>
 
 		/*Out of sight changes to tenant */
 		<<rng>>
-		<<if $rng gte (40 - _prob)>><<set $pillory_tenant.fruit += 1>><</if>>
+		<<if $rng gte (40 - $_prob)>><<set $pillory.tenant.fruit += 1>><</if>>
 		<<rng>>
-		<<if $rng gte (60 - _prob)>><<set $pillory_tenant.crowd += 2>><</if>>
+		<<if $rng gte (60 - $_prob)>><<set $pillory.tenant.crowd += 2>><</if>>
 		<<rng>>
-		<<if $rng gte (60 - _prob)>><<set $pillory_tenant.upperexposed += 1>><</if>>
+		<<if $rng gte (60 - $_prob)>><<set $pillory.tenant.upperexposed += 1>><</if>>
 		<<rng>>
-		<<if $rng gte (80 - _prob)>><<set $pillory_tenant.lowerexposed += 1>><</if>>
+		<<if $rng gte (80 - $_prob)>><<set $pillory.tenant.lowerexposed += 1>><</if>>
 		<<rng>>
-		<<if $rng gte (100 - _prob)>><<set $pillory_tenant.crowd += 2>><</if>>
+		<<if $rng gte (100 - $_prob)>><<set $pillory.tenant.crowd += 2>><</if>>
 		<<rng>>
-		<<if $rng gte (100 - _prob)>><<set $pillory_tenant.fruit += 2>><<set $pillory_tenant.face += 1>><</if>>
+		<<if $rng gte (100 - $_prob)>><<set $pillory.tenant.fruit += 2>><<set $pillory.tenant.face += 1>><</if>>
 		<<rng>>
-		<<if $rng gte (100 - _prob) and $pillory_tenant.lowerexposed gte 2>><<set $pillory_tenant.spank += 2>><<else>><<set $pillory_tenant.spank += 1>><</if>>
+		<<if $rng gte (100 - $_prob) and $pillory.tenant.lowerexposed gte 2>><<set $pillory.tenant.spank += 2>><<else>><<set $pillory.tenant.spank += 1>><</if>>
 		<<rng>>
-		<<if $rng gte (100 - _prob) and $pillory_tenant.lowerexposed gte 2>><<set $pillory_tenant.genital += 1>><</if>>
+		<<if $rng gte (100 - $_prob) and $pillory.tenant.lowerexposed gte 2>><<set $pillory.tenant.genital += 1>><</if>>
 		<<rng>>
-		<<if $rng gte (100 - _prob) and $pillory_tenant.lowerexposed gte 2>><<set $pillory_tenant.ass += 1>><</if>>
+		<<if $rng gte (100 - $_prob) and $pillory.tenant.lowerexposed gte 2>><<set $pillory.tenant.ass += 1>><</if>>
 
 		/*lock down exposure and replenish fruit */
-		<<if $pillory_tenant.upperexposed gte 3>><<if $pillory_tenant.person.gender is "f" or $pillory_tenant.person.pronoun is "f">><<set $pillory_tenant.upperexposed to 3>><<else>><<set $pillory_tenant.upperexposed to 2>><</if>><</if>>
-		<<if $pillory_tenant.lowerexposed gt 2>><<set $pillory_tenant.lowerexposed to 2>><</if>>
-		<<set $pillory_tenant.fruitstock to 3>>
-		<<set $pillory_tenant.broken += ($pillory_tenant.ass + $pillory_tenant.genital + $pillory_tenant.face + $pillory_tenant.fruit + $pillory_tenant.spank)>>
+		<<if $pillory.tenant.upperexposed gte 3>><<if $pillory.tenant.person.gender is "f" or $pillory.tenant.person.pronoun is "f">><<set $pillory.tenant.upperexposed to 3>><<else>><<set $pillory.tenant.upperexposed to 2>><</if>><</if>>
+		<<if $pillory.tenant.lowerexposed gt 2>><<set $pillory.tenant.lowerexposed to 2>><</if>>
+		<<set $pillory.tenant.fruitstock to 3>>
+		<<set $pillory.tenant.broken += ($pillory.tenant.ass + $pillory.tenant.genital + $pillory.tenant.face + $pillory.tenant.fruit + $pillory.tenant.spank)>>
 	<</if>>
 <</widget>>
 
 <<widget "npc_pillory_abuse">>
-	<br>
-	<<if ($pillory_tenant.lastviewed.day isnot Time.days) or (Time.hour gte $pillory_tenant.lastviewed.hour + 1)>>
-		<<set $pillory_tenant.lastviewed.hour to Time.hour>>
+	<<set $_lastViewed to new DateTime($pillory.tenant.lastViewed)>>
+	<<set $_timeLeft to Time.date.compareWith($_lastViewed, true)>>
+	<<if $_timeLeft / TimeConstants.secondsPerHour lte -2>>
+		<<set $pillory.tenant.lastViewed to Time.date.timeStamp>>
 		<<rng>><<generate2>><<person2>>
-		<<set _ly to either("violently","openly","angrily","furiously","cheekily","repeatedly","clumsily","roughly","theatrically","dutifully","merrily","gleefully","drunkenly","ineptly")>>
+		<<set $_ly to either("violently","openly","angrily","furiously","cheekily","repeatedly","clumsily","roughly","theatrically","dutifully","merrily","gleefully","drunkenly","ineptly")>>
 		<<if Time.dayState isnot "night">>
 			<<if $rng gte 56>> /* 45% chance of jeer and shout only, 55% chance of something active */
 				A number of people, led by a <<person>> jeer and shout abuse at the prisoner.
 			<<elseif $rng gte 41>> /* 15% */
 				<<rng>>
-				<<if $pillory_tenant.person.pronoun is "f" and $rng gte 40>> /* 60% if upper-exposed F */
+				<<if $pillory.tenant.person.pronoun is "f" and $rng gte 40>> /* 60% if upper-exposed F */
 					A <<person>> in rough farmer clothes approaches the pillory with a bucket.
 					Setting the bucket underneath the <<pillory_type>>'s chest, <<person2>><<he>>
-					<<if $pillory_tenant.upperexposed lte 1>>displaces the prisoner's top,<</if>>
-					<<if $pillory_tenant.upperexposed lte 2>><<set $pillory_tenant.upperexposed to 3>> slips off her bra,<</if>>
-					grabs the <<pillory_type>>'s $pillory_tenant.person.breastsdesc and sets about trying to milk her into the bucket.
+					<<if $pillory.tenant.upperexposed lte 1>>displaces the prisoner's top,<</if>>
+					<<if $pillory.tenant.upperexposed lte 2>><<set $pillory.tenant.upperexposed to 3>> slips off her bra,<</if>>
+					grabs the <<pillory_type>>'s $pillory.tenant.person.breastsdesc and sets about trying to milk her into the bucket.
 					<br><br>
 					<<if $rng % 3 is 0>>
 						<<if $rng % 2>>
 							Milk bursts from her breasts. Smiling, the farmer soon builds up a rhythm, adeptly milking both breasts.
 							<br>
 							"Good cow," the farmer ruffles <<the_pillory_person>>'s hair before leaving with an almost full bucket.
-						<<else>><<set $pillory_tenant.spank += 1>>
+						<<else>><<set $pillory.tenant.spank += 1>>
 							Milk dribbles from the <<pillory_type>>'s breasts. With a lot of persistent squeezing and nipple pulling the farmer is eventually
-							able to	get a fair amount of milk from the prisoner. Her $pillory_tenant.person.breastsdesc look raw and painful afterward.
+							able to	get a fair amount of milk from the prisoner. Her $pillory.tenant.person.breastsdesc look raw and painful afterward.
 							<br>
 							The farmer pats the prisoner's head before leaving with <<person2>><<his>> half-filled bucket.
 						<</if>>
-					<<else>><<set $pillory_tenant.spank += 1>>
+					<<else>><<set $pillory.tenant.spank += 1>>
 						Despite increasingly rough squeezing and pulling on her nipples, no milk is forthcoming.
 						<<if $rng % 2>>
 							Finally giving up, the <<person2>><<person>> pats her head. "Poor girl. You're all dried up."
 							<br>
 							<<He>> walks behind the <<pillory_type>> and
-							<<if $pillory_tenant.lowerexposed lte 1>>strips <<his>> <<print either("silk panties","plain panties","tattered undies","boyshorts")>>,
-							<<else>>holds <<his>> butt-cheeks spread apart<</if>> exposing <<if $pillory_tenant.person.gender is "f">><<his>> pussy <<else>><<his>> ass <</if>>to all.
+							<<if $pillory.tenant.lowerexposed lte 1>>strips <<his>> <<print either("silk panties","plain panties","tattered undies","boyshorts")>>,
+							<<else>>holds <<his>> butt-cheeks spread apart<</if>> exposing <<if $pillory.tenant.person.gender is "f">><<his>> pussy <<else>><<his>> ass <</if>>to all.
 							<br>
-							"This cow's dry," <<person2>><<he>> calls out to the crowd. <<if $pillory_tenant.person.gender is "f">>"Wants someone to put a calf in her."<<else>>"Wants someone to fill her up."<</if>>
+							"This cow's dry," <<person2>><<he>> calls out to the crowd. <<if $pillory.tenant.person.gender is "f">>"Wants someone to put a calf in her."<<else>>"Wants someone to fill her up."<</if>>
 							<br>
 							<<He>> walks away with <<his>> empty bucket.
-							<<set $pillory_tenant.lowerexposed to 2>>
+							<<set $pillory.tenant.lowerexposed to 2>>
 						<<else>>
 							Finally giving up, the farmer walks away with <<his>> empty bucket.
 						<</if>>
 						<br>
 					<</if>>
-				<<elseif $pillory_tenant.person.gender is "m" and $rng gte 40>>
+				<<elseif $pillory.tenant.person.gender is "m" and $rng gte 40>>
 					A <<person>> in rough farmer clothes approaches the pillory with a clear glass.
 					<br>
 					Setting the glass underneath the <<pillory_type>>'s groin, <<person2>><<he>>
-					<<if $pillory_tenant.lowerexposed lte 0>><<if $pillory_tenant.person.pronoun is "m">>pulls down the prisoner's trousers,<<else>>hitches up the prisoner's skirt,<</if>><</if>>
-					<<if $pillory_tenant.lowerexposed lte 1>><<set $pillory_tenant.lowerexposed to 2>><<if $pillory_tenant.person.pronoun is "m">> removes his underpants, <<else>> pulls down her panties, <</if>><</if>>
-					grabs the prisoner's $pillory_tenant.person.penisdesc and starts to rub.
+					<<if $pillory.tenant.lowerexposed lte 0>><<if $pillory.tenant.person.pronoun is "m">>pulls down the prisoner's trousers,<<else>>hitches up the prisoner's skirt,<</if>><</if>>
+					<<if $pillory.tenant.lowerexposed lte 1>><<set $pillory.tenant.lowerexposed to 2>><<if $pillory.tenant.person.pronoun is "m">> removes his underpants, <<else>> pulls down her panties, <</if>><</if>>
+					grabs the prisoner's $pillory.tenant.person.penisdesc and starts to rub.
 					The prisoner looks shocked, then angry, then conflicted, and then shocked again as <<person1>><<he>> cums into a glass in front of a jeering crowd.
 					<<person2>>
 					<<if $rng % 3>>
@@ -4263,7 +4258,7 @@
 						<br>
 						Ten minutes later, the farmer is walking off with a glassful of ejaculate, while <<the_pillory_person>> hangs in the pillory, <<his>> face
 						flickering between shock, shame, pain and satiation.
-					<<else>><<set $pillory_tenant.spank += 1>>
+					<<else>><<set $pillory.tenant.spank += 1>>
 						The farmer browses <<his>> phone with one hand, while trying to bring the <<pillory_type>> back to orgasm with the other.
 						<br>
 						After a minute or so, the farmer looks confused, then annoyed at <<the_pillory_person>>'s lack of response.
@@ -4278,12 +4273,12 @@
 						glassful of ejaculate, while <<the_pillory_person>> hangs limp in the pillory, <<his>> face twitching with pain, shame and a strange satiation.
 					<</if>>
 					<br>
-				<<elseif $pillory_tenant.person.gender is "f" and $rng gte 20>>
+				<<elseif $pillory.tenant.person.gender is "f" and $rng gte 20>>
 					A <<person>> in rough farmer clothes approaches the pillory with a glass beaker.
 					<br>
 					Setting the beaker underneath the <<pillory_type>>'s groin, <<person2>><<he>>
-					<<if $pillory_tenant.lowerexposed lte 0>><<if $pillory_tenant.person.pronoun is "f">>hitches up the prisoner's skirt,<<else>>pulls down the prisoner's trousers,<</if>><</if>>
-					<<if $pillory_tenant.lowerexposed lte 1>><<set $pillory_tenant.lowerexposed to 2>><<if $pillory_tenant.person.pronoun is "f">> pulls down her panties,<<else>> removes his underpants,<</if>><</if>>
+					<<if $pillory.tenant.lowerexposed lte 0>><<if $pillory.tenant.person.pronoun is "f">>hitches up the prisoner's skirt,<<else>>pulls down the prisoner's trousers,<</if>><</if>>
+					<<if $pillory.tenant.lowerexposed lte 1>><<set $pillory.tenant.lowerexposed to 2>><<if $pillory.tenant.person.pronoun is "f">> pulls down her panties,<<else>> removes his underpants,<</if>><</if>>
 					grabs the prisoner's pussy and starts to rub.
 					After a moment's shock, <<the_pillory_person>> pouts and resigns <<himself>> to this debasement. That's when <<he>> feels cold metal shoved up
 					<<his>> pussy. A moment later panic crosses <<his>> face as something is clamped to <<his>> clit, and almost instantly waves of electricity hit <<him>>.
@@ -4304,13 +4299,13 @@
 						<<elseif $rng % 3 is 1>>
 							The crowd jeer and laugh. Eventually the _bug loses interest and flies away.
 						<<else>>
-							<<if $pillory_tenant.lowerexposed is 2 and $rng % 2>>
+							<<if $pillory.tenant.lowerexposed is 2 and $rng % 2>>
 								<<if $pronoun is "m">><<set _part to either("butt","upper leg","inner thigh","dick","balls","hip")>>
 								<<else>><<set _part to either("ass","leg","inner thigh","pussy","hip")>>
 								<</if>>
-							<<elseif $pillory_tenant.upperexposed gte 3 and $pronoun is "f">>
+							<<elseif $pillory.tenant.upperexposed gte 3 and $pronoun is "f">>
 								<<set _part to either("breast","nipple","armpit","ribs","midriff","back")>>
-							<<elseif $pillory_tenant.upperexposed gte 2>>
+							<<elseif $pillory.tenant.upperexposed gte 2>>
 								<<set _part to either("chest","armpit","ribs","belly","back")>>
 							<<else>>
 								<<set _part to either("arm","shoulder","cheek","leg","waist","wrist","elbow")>>
@@ -4320,9 +4315,9 @@
 					<<else>>
 						A furious <<monk>> from the temple scolds the crowd for preying on the morally sick.
 						Many people look ashamed and some leave.
-						<<set $pillory_tenant.crowd -= 1>>
-						<<if $pillory_tenant.upperexposed + $pillory_tenant.lowerexposed gte 1>>
-							<<set $pillory_tenant.upperexposed to 0>><<set $pillory_tenant.lowerexposed to 0>>
+						<<set $pillory.tenant.crowd -= 1>>
+						<<if $pillory.tenant.upperexposed + $pillory.tenant.lowerexposed gte 1>>
+							<<set $pillory.tenant.upperexposed to 0>><<set $pillory.tenant.lowerexposed to 0>>
 							The <<monk>> finally restores the <<pillory_type>>'s dignity by replacing <<his>> clothes.
 						<</if>>
 					<</if>>
@@ -4330,25 +4325,25 @@
 			<<elseif $rng gte 36>> /* 5% */
 				A <<person>> throws fruit at the <<pillory_type>>. Unable to move or defend, it hits <<him>> directly in the face.
 				It looks painful, especially as <<he>> cannot wipe the acids out of <<his>> eyes.
-				<<set $pillory_tenant.fruit += 1>>
+				<<set $pillory.tenant.fruit += 1>>
 			<<elseif $rng gte 26>> /* 10% */
 				A <<person>> throws fruit at the <<pillory_type>> but misses completely.
 			<<elseif $rng gte 16>> /* 10% */
-				A <<person>> walks up to the pillory and _ly fondles the <<pillory_type>>'s <<if $pronoun is "f">>breasts.<<else>>balls.<</if>>
-			<<elseif $rng gte 11 and $pillory_tenant.upperexposed lt 3>>/* 5% */
+				A <<person>> walks up to the pillory and $_ly fondles the <<pillory_type>>'s <<if $pronoun is "f">>breasts.<<else>>balls.<</if>>
+			<<elseif $rng gte 11 and $pillory.tenant.upperexposed lt 3>>/* 5% */
 				A <<person>> walks up to the <<pillory_type>> and
-				<<if $pillory_tenant.upperexposed is 2>>
+				<<if $pillory.tenant.upperexposed is 2>>
 					<<if $pronoun is "f">>
-					_ly removes <<his>> bra, fully exposing <<his>> $pillory_tenant.person.breastsdesc to a jeering crowd.
+					$_ly removes <<his>> bra, fully exposing <<his>> $pillory.tenant.person.breastsdesc to a jeering crowd.
 					<<else>>
-					_ly twists <<his>> nipples.
-					<<set $pillory_tenant.spank += 1>>
+					$_ly twists <<his>> nipples.
+					<<set $pillory.tenant.spank += 1>>
 					<</if>>
-				<<elseif $pillory_tenant.upperexposed is 1>>
+				<<elseif $pillory.tenant.upperexposed is 1>>
 					<<if $pronoun is "f">>
 					fully removes <<his>> top, leaving <<him>> with <<his>> bra exposed to the jeering crowd.
 					<<else>>
-					fully removes <<his>> top, exposing <<his>> naked $pillory_tenant.person.breastsdesc to the jeering crowd.
+					fully removes <<his>> top, exposing <<his>> naked $pillory.tenant.person.breastsdesc to the jeering crowd.
 					<</if>>
 				<<else>>
 					<<if $pronoun is "f">>
@@ -4356,17 +4351,17 @@
 					<<else>>
 					lifts <<his>> top, exposing much of <<his>> chest to the jeering crowd.
 					<</if>>
-				<</if>><<set $pillory_tenant.upperexposed += 1>>
-			<<elseif $rng gte 6 and $pillory_tenant.lowerexposed lt 2>>/* 5% */
+				<</if>><<set $pillory.tenant.upperexposed += 1>>
+			<<elseif $rng gte 6 and $pillory.tenant.lowerexposed lt 2>>/* 5% */
 				A <<person>> walks up to <<the_pillory_person>> and
-				<<if $pillory_tenant.lowerexposed is 1>>
-					<<if $pillory_tenant.person.gender is "f">>removes the <<pillory_type>>'s underwear, fully exposing <<his>> ass and pussy to the jeering crowd.
-					<<else>>fully removes the <<pillory_type>>'s underwear, exposing <<his>> ass and <<his>> $pillory_tenant.person.penisdesc to the jeering crowd.
+				<<if $pillory.tenant.lowerexposed is 1>>
+					<<if $pillory.tenant.person.gender is "f">>removes the <<pillory_type>>'s underwear, fully exposing <<his>> ass and pussy to the jeering crowd.
+					<<else>>fully removes the <<pillory_type>>'s underwear, exposing <<his>> ass and <<his>> $pillory.tenant.person.penisdesc to the jeering crowd.
 					<</if>>
 				<<else>>
 					<<if $pronoun is "f">>lifts the <<pillory_type>>'s skirt,<<else>>pulls down <<his>> trousers,<</if>> exposing <<his>> underwear to a jeering crowd.
-				<</if>><<set $pillory_tenant.lowerexposed += 1>>
-			<<else>><<set $pillory_tenant.spank += 1>>/* 5% */
+				<</if>><<set $pillory.tenant.lowerexposed += 1>>
+			<<else>><<set $pillory.tenant.spank += 1>>/* 5% */
 				A <<person>> walks up to the <<pillory_type>> and spanks <<him>> hard on the ass. The thwack echoes across the street.
 			<</if>>
 		<<else>> /*night*/
@@ -4375,34 +4370,34 @@
 			<<elseif $rng gte 81>> /* 5% */
 				A <<person>> throws fruit at the <<pillory_type>>. Unable to move or defend <<himself>>, it hits <<the_pillory_person>> directly in the face. There is a loud cheer.
 				It looks painful, especially as <<he>> cannot wipe the acids out of <<his>> eyes.
-				<<set $pillory_tenant.fruit += 1>>
+				<<set $pillory.tenant.fruit += 1>>
 			<<elseif $rng gte 76>> /* 5% */
 				A <<person>> throws fruit at the <<pillory_type>> but misses completely.
-			<<elseif $pillory_tenant.person.pronoun is "f" and $pillory_tenant.upperexposed lt 3>>
-				<<set $pillory_tenant.upperexposed to 3>>
-				A <<person>> walks up to the helpless <<pillory_type>> and displaces all <<his>> upper clothes, fully baring <<his>> <<if $pronoun is "f">>$pillory_tenant.person.breastsdesc<<else>>chest<</if>> to the crowd.
-			<<elseif $pillory_tenant.person.pronoun is "m" and $pillory_tenant.upperexposed lt 2>>
-				<<set $pillory_tenant.upperexposed to 2>>
-				A <<person>> walks up to the helpless <<pillory_type>> and displaces all <<his>> upper clothes, fully baring <<his>> <<if $pronoun is "f">>$pillory_tenant.person.breastsdesc<<else>>chest<</if>> to the crowd.
-			<<elseif $pillory_tenant.lowerexposed lt 2>>
-				<<set $pillory_tenant.lowerexposed to 2>>
-				A <<person>> walks up to the helpless <<pillory_type>> and displaces all <<his>> lower clothes, fully baring <<his>> <<if $pillory_tenant.person.gender is "f">>pussy<<else>>$pillory_tenant.person.penisdesc<</if>> to the crowd. There is a loud cheer.
+			<<elseif $pillory.tenant.person.pronoun is "f" and $pillory.tenant.upperexposed lt 3>>
+				<<set $pillory.tenant.upperexposed to 3>>
+				A <<person>> walks up to the helpless <<pillory_type>> and displaces all <<his>> upper clothes, fully baring <<his>> <<if $pronoun is "f">>$pillory.tenant.person.breastsdesc<<else>>chest<</if>> to the crowd.
+			<<elseif $pillory.tenant.person.pronoun is "m" and $pillory.tenant.upperexposed lt 2>>
+				<<set $pillory.tenant.upperexposed to 2>>
+				A <<person>> walks up to the helpless <<pillory_type>> and displaces all <<his>> upper clothes, fully baring <<his>> <<if $pronoun is "f">>$pillory.tenant.person.breastsdesc<<else>>chest<</if>> to the crowd.
+			<<elseif $pillory.tenant.lowerexposed lt 2>>
+				<<set $pillory.tenant.lowerexposed to 2>>
+				A <<person>> walks up to the helpless <<pillory_type>> and displaces all <<his>> lower clothes, fully baring <<his>> <<if $pillory.tenant.person.gender is "f">>pussy<<else>>$pillory.tenant.person.penisdesc<</if>> to the crowd. There is a loud cheer.
 			<<elseif $rng gte 66>> /* 10% */
 				A <<person>> tries to incite a nearby dog to mount the prisoner's naked backside. It
 				<<if $rng % 2>>gives <<the_pillory_person>>'s ass a few tentative sniffs, but
 				<</if>>is not interested.
 			<<elseif $rng gte 58>> /* 8% */
-				<<set $pillory_tenant.spank += 1>>
-				A <<person>> sneaks up behind the pillory and _ly slaps the <<pillory_type>>'s exposed <<if $pillory_tenant.person.gender is "f">>cunt.<<else>>balls.<</if>> The crowd jeer and laugh as <<he>> howls in pain.
+				<<set $pillory.tenant.spank += 1>>
+				A <<person>> sneaks up behind the pillory and $_ly slaps the <<pillory_type>>'s exposed <<if $pillory.tenant.person.gender is "f">>cunt.<<else>>balls.<</if>> The crowd jeer and laugh as <<he>> howls in pain.
 			<<elseif $rng gte 51>> /* 7% */
-				<<set $pillory_tenant.spank += 2>><br>
+				<<set $pillory.tenant.spank += 2>><br>
 				Some teacher you've seen around the school but never had classes with, walks drunkenly toward the pillory.
-				<<if $pillory_tenant.special.name is "Whitney">>
-					<br><<set $pillory_tenant.spank += 1>>
+				<<if $pillory.tenant.special.name is "Whitney">>
+					<br><<set $pillory.tenant.spank += 1>>
 					"Well, hello, Whitney! <<print either("Fancy seeing you here!","Look who it is!","Are you stuck there? How unfortunate!","Isn't this quite the turnaround!?","Such a nice surprise to see you here!")>>" <<he>> slurs, grinning.
 					"<<print either("We both know that you've earned this.","We both know how richly you deserve this.","And today's lesson will be about consequences.","Do remember that mean little nickname you made up for me?","Do remember what you did in my class the other day?")>>"
-				<<elseif $pillory_tenant.special.name is "Leighton">>
-					<br><<set $pillory_tenant.spank += 1>>
+				<<elseif $pillory.tenant.special.name is "Leighton">>
+					<br><<set $pillory.tenant.spank += 1>>
 					"Well, hello there. Is that you, boss?" <<he>> says, staying out of sight behind the pillory.
 					"<<print either("I think it's time for some 'anonymous staff feedback'.","Remember what you said about 'cruel to be kind?'","So I guess it's your turn for some 'frank and honest feedback'?","So is this the 'right forum' to air staff grievances?")>>"
 				<<else>><br>
@@ -4411,32 +4406,32 @@
 				<</if>><br>
 				<<He>> spanks the <<pillory_type>>'s ass until <<person2>><<his>> arm tires. The crowd jeer and laugh as the <<person1>><<person>> howls in pain.
 			<<elseif $rng gte 41>> /* 10% */
-				<<set $pillory_tenant.face += 1>>
-				A <<person>> walks in front of the pillory and _ly masturbates in front of the <<pillory_type>>.
+				<<set $pillory.tenant.face += 1>>
+				A <<person>> walks in front of the pillory and $_ly masturbates in front of the <<pillory_type>>.
 				<<person2>><<if $pronoun is "m">>Cum soon splatters across <<the_pillory_person>>'s face.
 				<<else>><<He>> grinds <<his>> cunt against <<the_pillory_person>>'s<<person2>> face as <<he>> orgasms.
 				<</if>> The crowd cheer and laugh.
 			<<elseif $rng gte 31>> /* 10% */
-				<<set $pillory_tenant.ass += 1>>
-				A <<person>> walks behind the pillory and _ly <<if $pronoun is "m">>rapes<<else>>fingers<</if>> the <<pillory_type>>'s asshole. The crowd cheer <<person2>><<him>> on.
+				<<set $pillory.tenant.ass += 1>>
+				A <<person>> walks behind the pillory and $_ly <<if $pronoun is "m">>rapes<<else>>fingers<</if>> the <<pillory_type>>'s asshole. The crowd cheer <<person2>><<him>> on.
 			<<elseif $rng gte 21>> /* 10% */
-				<<set $pillory_tenant.genital += 1>>
-				A <<person>> walks behind the pillory and _ly rapes <<if $pronoun is "m">><<the_pillory_person>>.<<else>><<the_pillory_person>> with a strap-on.<</if>><<person2>> The crowd take pictures and cheer <<him>> on.
+				<<set $pillory.tenant.genital += 1>>
+				A <<person>> walks behind the pillory and $_ly rapes <<if $pronoun is "m">><<the_pillory_person>>.<<else>><<the_pillory_person>> with a strap-on.<</if>><<person2>> The crowd take pictures and cheer <<him>> on.
 			<<elseif $rng gte 11>> /* 10% */
-				<<set $pillory_tenant.genital += 1>><<set $pillory_tenant.ass += 1>>
+				<<set $pillory.tenant.genital += 1>><<set $pillory.tenant.ass += 1>>
 				The crowd watch and photograph as a stray dog rapes <<the_pillory_person>>. A <<person2>><<person>> rewards the dog with a <<print either("biscuit.","pat on the head.","sweet.","cream bun.")>>
 				<br>
 				The crowd enjoys such a perverted spectacle.
-			<<elseif $rng gte 6 and maleChance() gt 0 and (maleChance() lt 100 or $pillory_tenant.person.gender isnot "m")>> /* 5% - with men allowed */
-				<<set $pillory_tenant.ass += 1>><<set $pillory_tenant.face += 1>>
+			<<elseif $rng gte 6 and maleChance() gt 0 and (maleChance() lt 100 or $pillory.tenant.person.gender isnot "m")>> /* 5% - with men allowed */
+				<<set $pillory.tenant.ass += 1>><<set $pillory.tenant.face += 1>>
 				<<if $rng % 3 is 0>>A couple of off-duty policemen approach. They make a <<person>> record as they<<else>>Two men approach. Together they<</if>>
-				<<if $pillory_tenant.person.gender is "m">>anally-<<else>>_ly <</if>>spit-roast <<the_pillory_person>>. The crowd enjoys the spectacle.
-			<<elseif $rng gte 6 and maleChance() lt 100 and (maleChance() gt 0 or $pillory_tenant.person.gender isnot "f")>> /* 5% - with women allowed */
-				<<set $pillory_tenant.ass += 1>><<set $pillory_tenant.face += 1>>
+				<<if $pillory.tenant.person.gender is "m">>anally-<<else>>$_ly <</if>>spit-roast <<the_pillory_person>>. The crowd enjoys the spectacle.
+			<<elseif $rng gte 6 and maleChance() lt 100 and (maleChance() gt 0 or $pillory.tenant.person.gender isnot "f")>> /* 5% - with women allowed */
+				<<set $pillory.tenant.ass += 1>><<set $pillory.tenant.face += 1>>
 				<<if $rng % 3 is 0>>A couple of off-duty policewomen approach. They make a <<person>> record as they<<else>>Two women approach. Together they<</if>>
-				<<if $pillory_tenant.person.gender is "m">>anally-<<else>>_ly <</if>>spit-roast <<the_pillory_person>> with strap-ons. The crowd enjoys the spectacle.
+				<<if $pillory.tenant.person.gender is "m">>anally-<<else>>$_ly <</if>>spit-roast <<the_pillory_person>> with strap-ons. The crowd enjoys the spectacle.
 			<<else>> /* 5% */
-				<<set $pillory_tenant.spank += 1>>
+				<<set $pillory.tenant.spank += 1>>
 				A <<person>> walks up to the <<pillory_type>> and spanks <<him>> hard on the ass. The thwack echoes across the street.
 			<</if>>
 		<</if>>
@@ -4444,10 +4439,10 @@
 		The people around <<print either("jeer at","laugh at","point at","shout abuse at","taunt","mock","leer at")>>
 		<<if Time.schoolDay and ((Time.hour gte 7 and Time.hour lte 8) or Time.hour is 15) and $rng lte 34>>
 			the <<pillory_type>>. A group of students from the nearby school pass by, gaping at
-			<<if $pillory_tenant.lowerexposed gte 2 or $pillory_tenant.upperexposed gte 3>>the lewdly exposed prisoner.
+			<<if $pillory.tenant.lowerexposed gte 2 or $pillory.tenant.upperexposed gte 3>>the lewdly exposed prisoner.
 				<<if $rng % 3 is 0>>
 				An outraged bystander runs up to the pillory and replaces the <<pillory_type>>'s clothes.
-				<<set $pillory_tenant.lowerexposed to 0>><<set $pillory_tenant.upperexposed to 0>><</if>>
+				<<set $pillory.tenant.lowerexposed to 0>><<set $pillory.tenant.upperexposed to 0>><</if>>
 			<<else>>the prisoner.
 			<</if>>
 		<<elseif Time.dayState isnot "night">>
@@ -4455,45 +4450,47 @@
 				the <<pillory_type>> and <<print either("mutter among themselves.","take photos.","amuse themselves.")>>
 			<<elseif $rng lte 93>>
 				the <<pillory_type>>. Some get bored and leave.
-				<<set $pillory_tenant.crowd -= 1>>
+				<<set $pillory.tenant.crowd -= 1>>
 			<<else>>
 				the <<pillory_type>>. A bus drops some people off nearby. A few join the crowd around the pillory.
-				<<set $pillory_tenant.crowd += 1>>
+				<<set $pillory.tenant.crowd += 1>>
 			<</if>>
 		<<else>>
 			<<if $rng lte 67>>
-				<<if $pillory_tenant.lowerexposed gte 2 and $rng % 4 is 0>>the <<pillory_type>> and take selfies posing around <<his>> exposed, naked ass.
+				<<if $pillory.tenant.lowerexposed gte 2 and $rng % 4 is 0>>the <<pillory_type>> and take selfies posing around <<his>> exposed, naked ass.
 				<<else>>the <<pillory_type>> and <<print either("mutter darkly.","drink.","throw empty beer cans.","make sinister threats.","take selfies with the prisoner.","tell dirty jokes.")>>
 				<</if>>
 			<<elseif $rng lte 85>>
 				the <<pillory_type>>. Some get tired and leave.
-				<<set $pillory_tenant.crowd -= 1>>
+				<<set $pillory.tenant.crowd -= 1>>
 			<<else>>
 				the <<pillory_type>>. A few people passing by join the crowd around the pillory.
-				<<set $pillory_tenant.crowd += 1>>
+				<<set $pillory.tenant.crowd += 1>>
 			<</if>>
 		<</if>>
 	<</if>>
-	<<if $pillory_tenant.upperexposed gte 3>><<if $pillory_tenant.person.gender is "f" or $pillory_tenant.person.pronoun is "f">><<set $pillory_tenant.upperexposed to 3>><<else>><<set $pillory_tenant.upperexposed to 2>><</if>><</if>>
-	<<if $pillory_tenant.lowerexposed gt 2>><<set $pillory_tenant.lowerexposed to 2>><</if>>
+	<<if $pillory.tenant.upperexposed gte 3>><<if $pillory.tenant.person.gender is "f" or $pillory.tenant.person.pronoun is "f">><<set $pillory.tenant.upperexposed to 3>><<else>><<set $pillory.tenant.upperexposed to 2>><</if>><</if>>
+	<<if $pillory.tenant.lowerexposed gt 2>><<set $pillory.tenant.lowerexposed to 2>><</if>>
 <</widget>>
 
 <<widget "npc_pillory_release_schedule">>
 	<<get_pillory_npc>>
 	<br>
-	<<if ($pillory_tenant.endDate - $timeStamp) lte Time.secondsPerDay>>
-	<<set _a_few to Math.floor(($pillory_tenant.endDate - $timeStamp) / Time.secondsPerHour)>>
+	<<set $_endTime to new DateTime($pillory.tenant.endTime)>>
+	<<set $_timeLeft to Time.date.compareWith($_endTime)>>
+	<<if $_timeLeft.days lt 1>>
 		<<He>> will be released
-		<<if _a_few gt 0>>in _a_few hours.
-		<<else>>imminently.
+		<<if $_timeLeft.hours gt 0>>
+			in $_timeLeft.hours hours.
+		<<else>>
+			imminently.
 		<</if>>
 	<<else>>
-		<<set _days_left to Math.floor(($pillory_tenant.endDate - $timeStamp) / Time.secondsPerDay)>>
-		<<He>> is scheduled for release <<if _days_left is 1>>tomorrow<<else>>in two days<</if>> at
-		<<switch $pillory_tenant.endhour>>
+		<<He>> is scheduled for release <<if $_timeLeft.days is 1>>tomorrow<<else>>in two days<</if>> at
+		<<switch $_endTime.hour>>
 			<<case 0>>midnight.
 			<<case 12>>noon.
-			<<default>><<ampm $pillory_tenant.endhour>>.
+			<<default>><<ampm $_endTime.hour>>.
 		<</switch>>
 	<</if>>
 	<<endevent>>
@@ -4503,22 +4500,24 @@
 	<<get_pillory_npc>>
 	<<if Time.minute lte 15>>
 		A police officer <<print either("is releasing","has just released","is struggling to release","is about to release")>>
-		<<the_pillory_person>> from the pillory. <<if $weather is "rain">><<His>> clothes are see-through from the rain.<<elseif $weather is "snow">><<He>> shivers in the cold.<</if>>
+		<<the_pillory_person>> from the pillory. <<if Weather.precipitation is "rain">><<His>> clothes are see-through from the rain.<<elseif Weather.isFreezing>><<He>> shivers in the cold.<</if>>
 	<<elseif Time.minute lte 30>>
 		<<The_pillory_person>> staggers away from the pillory with <<print either("tears","defiance","signs of trauma","fury")>> in <<his>> eyes.
-		<<if $weather is "rain">><<His>> clothes are see-through from the rain.<</if>>
+		<<if Weather.precipitation is "rain">><<His>> clothes are see-through from the rain.<</if>>
 	<<else>>
 		<<The_pillory_person>> was released and has left. A couple of civil servants clean the pillory.
 	<</if>>
-	<<set $rng += $pillory_tenant.duration>>
-	<<if $rng gte 67 or $rng gte 33 and $weather is "rain">>A large crowd jeers and shouts.<</if>>
+	<<set _totalSeconds to Time.date.compareWith(new DateTime($pillory.tenant.startTime), true) / TimeConstants.secondsPerHour>>
+	<<set $_hours to _totalSeconds / TimeConstants.secondsPerHour>>
+	<<set $rng += $_hours>>
+	<<if $rng gte 67 or $rng gte 33 and Weather.precipitation is "rain">>A large crowd jeers and shouts.<</if>>
 	<br><br>
 	<<clear_pillory>>
 	<<endevent>>
 <</widget>>
 
 <<widget "clear_pillory">>
-	<<if $pillory_tenant and $pillory_tenant.special.name is "Whitney">>
+	<<if $pillory.tenant and $pillory.tenant.special.name is "Whitney">>
 		<<set C.npc.Whitney.state to "active">>
 	<</if>>
 	<<setup_pillory>>
@@ -4623,7 +4622,7 @@
 	<<if _args[0] is "icon">>
 		<<if _table>>
 			<br>
-			<<bedroomtablechairicon>> Your _table.name <<if _chair and _chair.name isnot "chair">>and another _chair.nameSolo are <<else>>is <</if>> situated next to a wall.
+			<<bedroomtablechairicon>> Your _table.name <<if _chair and _chair.name isnot "chair">>and a _chair.nameSolo are <<else>>is <</if>> situated next to a wall.
 		<<elseif _chair and _chair.name isnot "chair">>
 			<br>
 			<<bedroomtablechairicon>> A second _chair.nameSolo is situated next to a wall.
@@ -4682,6 +4681,24 @@
 	($worn.under_upper.type.includes("naked") or $worn.under_upper.type.includes("swim")) and
 	($worn.under_lower.type.includes("naked") or $worn.under_lower.type.includes("swim"))>>
 		<<set _swim_check to 1>>
+	<</if>>
+<</widget>>
+
+<<widget "pantsable">>
+	<!-- check if lowerwear allows for player to be pantsed or upskirted
+	_pantsable: lowerwear can be pulled down; _upskirt: skirt can be flipped up -->
+	<<if setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1 and ($worn.lower.set is $worn.upper.set)>>
+		<<set _upskirt to 1>>
+		<<set _pantsable to 0>>
+	<<elseif setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
+		<<set _upskirt to 1>>
+		<<set _pantsable to 1>>
+	<<elseif ["shortalls"].includes($worn.lower.name) or ($worn.lower.set is $worn.upper.set)>>
+		<<set _upskirt to 0>>
+		<<set _pantsable to 0>>
+	<<else>>
+		<<set _upskirt to 0>>
+		<<set _pantsable to 1>>
 	<</if>>
 <</widget>>
 
@@ -4782,7 +4799,8 @@
 	<<if !playerChastity("hidden")>>
 		<<if $player.penisExist and $player.vaginaExist>>
 			<<schoolrep herm 1>>
-		<<elseif $player.gender isnot $player.gender_appearance>>
+		<<elseif $player.gender isnot $player.gender_appearance and $NudeGenderDC gt 0>>
+			/*increases crossdressing fame if NPCs judge gender based on genitals*/
 			<<schoolrep crossdress 1>>
 		<<elseif $player.gender is $player.gender_appearance and $schoolrep.crossdress gt 0 and !$daily.crossdressingFameReduction and !$weekly.crossdressingFameReduction and random(0,100) gte 100 - ($schoolrep.crossdress * 3)>>
 			<<schoolrep crossdress -1>>
@@ -4910,20 +4928,14 @@
 	<<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
 <</silently>><<printmoney _money_gain>><</widget>>
 
-<<widget "formatmoney">>
-	<<set _printargs to Math.floor(Math.abs(_args[0]/100)).toLocaleString("en-GB")>>
-	<<set _printargs to _printargs + (_args[0] % 100 ? "." + ("0" + Math.floor(Math.abs(_args[0] % 100))).slice(-2) : "")>>
-	<<set _printmoney to (_args[0] gte 0 ? "" : "-") + "£" + _printargs>>
-<</widget>>
-
 <<widget "printmoney">><<silently>><!-- (amount in pennies, highlight toggle) -->
 	<<if _args.length gt 2 or typeof(_args[0]) isnot "number">><!-- sanity checks -->
-		<<set _printmoney to '<span class="red">printmoney error: invalid arguments: _args</span>'>>
+		<<set $_printmoney to '<span class="red">printmoney error: invalid arguments: _args</span>'>>
 	<<else>>
-		<<formatmoney _args[0]>>
+		<<set $_printmoney to formatMoney(_args[0])>>
 	<</if>>
-	<<set _text_output to `<span @class='_args[1]?_args[1]:"gold"'>` + _printmoney + '</span>'>>
-<</silently>><<print _text_output>><</widget>>
+	<<set $_text_output to `<span @class='_args[1]?_args[1]:"gold"'>` + $_printmoney + '</span>'>>
+<</silently>><<print $_text_output>><</widget>>
 
 <<widget "sadism">>
 	<<if _args[0]>>
@@ -5056,13 +5068,70 @@
 
 
 <<widget "semenswallowedstat">>
-	<<if $statFreeze isnot true and $args[0] isnot undefined>>
-		<<set $semenswallowedstat += $args[0]>>
+	<<if $statFreeze isnot true and _args[0] isnot undefined>>
+		<<set $semenswallowedstat += _args[0]>>
 	<</if>>
 <</widget>>
 
 <<widget "animalsemenswallowedstat">>
-	<<if $statFreeze isnot true and $args[0] isnot undefined>>
-		<<set $animalsemenswallowedstat += $args[0]>>
+	<<if $statFreeze isnot true and _args[0] isnot undefined>>
+		<<set $animalsemenswallowedstat += _args[0]>>
 	<</if>>
+<</widget>>
+
+<<widget "visionPrepMorph">>
+	/*
+	!!!!! Should be used after <<freezePlayerStats>> !!!!!!
+	Resets stats to a default state in preparation to transform player into another character.
+	*/
+	<<if !$frozenValues>>
+		<<error {message:"<<visionPrepMorph>> was called, but player stats are not frozen!"}>>
+		<<exitAll>>
+	<</if>>
+
+	<<set $worn.genitals to clone(setup.clothes.genitals[0])>>
+	<<run delete V.worn.butt_plug>>
+	<<set $clothingrebuy to 0>>
+
+	<<for _bodypart range $parasite.bodyparts>>
+		<<set $parasite[_bodypart] to {}>>
+	<</for>>
+	<<bodyliquid "clear">>
+	<<bodywriting_init>>
+	<<set $player.virginity to {anal:true,oral:true,penile:true,vaginal:true,temple:false,handholding:true,kiss:true}>>
+
+	<<set $pain to 0>>
+	<<set $arousal to 0>>
+	<<set $tiredness to 0>>
+	<<set $stress to 0>>
+	<<set $trauma to 0>>
+	<<set $control to 500>>
+
+	<<set $angel to 0>>
+	<<set $angelbuild to 0>>
+	<<set $fallenangel to 0>>
+	<<set $fallenbuild to 0>>
+	<<set $demon to 0>>
+	<<set $demonbuild to 0>>
+	<<set $wolfgirl to 0>>
+	<<set $wolfbuild to 0>>
+	<<set $cat to 0>>
+	<<set $catbuild to 0>>
+	<<set $cow to 0>>
+	<<set $cowbuild to 0>>
+	<<set $harpy to 0>>
+	<<set $birdbuild to 0>>
+	<<set $fox to 0>>
+	<<set $foxbuild to 0>>
+	<<run Object.keys(V.transformationParts).forEach((tf) => {
+		Object.entries(V.transformationParts[tf]).forEach(([part, value]) => {
+			if (value !== 'disabled' && value !== 'hidden') {
+				V.transformationParts[tf][part] = 'hidden';
+			}
+		});
+	})>>
+	<<set $skulduggery to 0>>
+	<<set $spray to 0>>
+	<<set Skin.color.natural to "light">>
+	<<set Skin.color.tan to 0>>
 <</widget>>

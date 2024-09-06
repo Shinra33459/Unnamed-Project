@@ -22,9 +22,8 @@ You are on the docks.
 	<<if $id is 1>>
 		<<set $idDocksReveal to 1>>
 		<br>
-		<span class="blue">Maybe they'd let you work today if you showed them the ID you purchased from Briar?</span>
+		<span class="blue">Maybe they'd let you work on school days if you showed them the ID you purchased from Briar?</span>
 		<br>
-	
 	<</if>>
 <</if>>
 
@@ -33,16 +32,12 @@ You are on the docks.
 	<br>
 <</if>>
 <br>
-<<if $dockwork is 2 and Time.hour is 7 and Time.schoolDay and $idDocksReveal isnot 1>>
+<<if $dockwork is 2 and Time.hour is 7 and Time.schoolDay and !($idDocksReveal gte 1)>>
 	Dockers arrive for work. They won't let you join them on a school day.
 	<br><br>
 <</if>>
-<<if $robindebtevent gte 1 and $docksrobinintro isnot 1>>
+<<if $robindebtevent gte 1 and $docksrobinintro isnot 1 and $robinmissing is "docks">>
 	<<investigateicon>><<link [[Look for Robin (0:20)|Docks_Robin]]>><<pass 20>><</link>>
-	<br>
-<</if>>
-<<if $id is 1 and $dockwork gte 1 and Time.hour is 7 and $idDocksReveal is 1>>
-	<<ind>><<link [[Use fake ID (0:02)|Docks Fake ID]]>><</link>>
 	<br>
 <</if>>
 <<if $dockwork is 1 and Time.dayState isnot "night" and $exposed lte 0>>
@@ -68,15 +63,18 @@ You are on the docks.
 	<<dressasyouwereicon>><<link [[Get dressed|Docks]]>><<storeon "docks">><</link>>
 	<br>
 <</if>>
+<<if $id is 1 and $dockwork gte 1 and Time.hour is 7 and $idDocksReveal is 1>>
+	<<ind>><<link [[Use fake ID (0:02)|Docks Fake ID]]>><</link>>
+<</if>>
 
 <br>
 <<mericon>><<link [[Leave|Mer Street]]>><</link>>
 <br>
 
 <<if $debug is 1>>
-	<<link [[Max dock status|Docks]]>><<set $dockstatus to 100>><</link>>
+	<<link [[(debug) Max dock status|Docks]]>><<set $dockstatus to 100>><</link>>
 	<br>
-	<<link [[Min dock status|Docks]]>><<set $dockstatus to 0>><</link>>
+	<<link [[(debug) Min dock status|Docks]]>><<set $dockstatus to 0>><</link>>
 	<br>
 <</if>>
 
@@ -191,8 +189,8 @@ The door is open. A <<generate2>><<person2>><<person>> looks up from <<his>> des
 You pass security and report to a manager for work. <<dockstatustext>>
 <br><br>
 <<dockoptions>>
-<<if $exhibitionism gte 75>>
-	<<link [[Strip and work (1:00)|Docks Work]]>><<undressclothes "docks">><<set $phase to 2>><<pass 60>><<dockstatus 1>><</link>><<if $daily.dockExhibitionism isnot 1>><<exhibitionist5>><</if>><<gcool>>
+<<if hasSexStat("exhibitionism", 5)>>
+	<<link [[Strip and work (1:00)|Docks Work]]>><<undressclothes "docks">><<set $phase to 2>><<dockstatus 1>><</link>><<if $daily.dockExhibitionism isnot 1>><<exhibitionist5>><</if>><<gcool>>
 	<br>
 <</if>>
 
@@ -213,9 +211,7 @@ You pass security and report to a manager for work. <<dockstatustext>>
 		<<gstress>><<garousal>><<stress 6>><<arousal 600>>
 		<br><br>
 	<</if>>
-
 <<elseif $phase is 1>>
-
 	You do as little work as you can get away with. Your colleagues grumble about you.
 	<br><br>
 
@@ -224,9 +220,7 @@ You pass security and report to a manager for work. <<dockstatustext>>
 		<<gstress>><<garousal>><<stress 6>><<arousal 600>>
 		<br><br>
 		<</if>>
-
 <<elseif $phase is 2>>
-
 	You strip naked behind some cargo containers. <<flaunting>> you take a deep breath and step out onto the dock.
 	<<if $daily.dockExhibitionism isnot 1>>
 		<<set $daily.dockExhibitionism to 1>><<exhibitionism5>>
@@ -239,9 +233,8 @@ You pass security and report to a manager for work. <<dockstatustext>>
 
 	A supervisor tells everyone to get back to work. They do so, though reluctant to take their eyes off you. <<generate1>><<person1>>The supervisor doesn't tell you to get dressed. The longing look <<he>> gives your body suggests why.<<endevent>>
 	<br><br>
-
 <</if>>
-
+<<pass 60>>
 <<dockwork>>
 
 :: Docks Rape Capsize
@@ -977,7 +970,7 @@ The pair cheer their colleague on.
 <<set $stress -= 2000>>
 
 :: Docks Pub Crawl
-<<set $outside to 0>><<set $location to "pub">><<dockeffects>><<effects>>
+<<set $outside to 0>><<set $location to "pub">><<dockeffects>><<effects>><<silently>><<handheldon>><</silently>>
 <<set $dockpubcount += 1>>
 <<if Time.hour gte 3 and Time.hour lte 18>>
 
@@ -998,7 +991,7 @@ The pair cheer their colleague on.
 	"You lot talk big," the <<person>> says after much back and forth. <<He>> pulls £60 from <<his>> pocket. <<His>> fellow sailors do likewise. "That's £360 says we win the quiz." Despite their previous bluster, the dockers seem unsure.
 	<br><br>
 
-	<<if $promiscuity gte 35>>
+	<<if hasSexStat("promiscuity", 3)>>
 		<<link [[Bet your body|Docks Pub Crawl Body]]>><<dockstatus 1>><</link>><<promiscuous3>><<gcool>>
 		<br>
 	<</if>>
@@ -1201,7 +1194,7 @@ You ignore the flirters, finish your drink and leave with your colleagues.
 		<br><br>
 	<</if>>
 
-	<<foodicon "beer">><<link [[Drink|Docks Pub Crawl Contest]]>><<alcohol 180>><</link>>
+	<<foodicon "beer">><<link [[Drink|Docks Pub Crawl Contest]]>><<wearProp "shotglass">><<alcohol 180>><</link>>
 	<br>
 	<<getouticon>><<link [[Stop|Docks Pub Crawl Contest Stop]]>><<dockstatus -1>><</link>><<lcool>>
 	<br>
@@ -1291,7 +1284,7 @@ You ignore the flirters, finish your drink and leave with your colleagues.
 <</if>>
 
 :: Docks Pub Crawl Contest Stop
-<<set $outside to 0>><<set $location to "pub">><<dockeffects>><<effects>>
+<<set $outside to 0>><<set $location to "pub">><<dockeffects>><<effects>><<silently>><<handheldon>><</silently>>
 
 <<if $phase is 4>>
 
@@ -2129,7 +2122,7 @@ You flag down a manager.
 "Need something?" <<he>> asks, only partially paying attention to you. "You know we can't let you work today."
 <br><br>
 
-"I'm not actually a student anymore <<if $speech_attitude is "meek">>...," you mumble,<<else>>," you say,<</if>> handing <<him>> the fake ID you purchased from Briar.
+"I'm not actually a student anymore<<if $speech_attitude is "meek">>..." you mumble,<<else>>," you say,<</if>> handing <<him>> the fake ID you purchased from Briar.
 <br><br>
 
 <<He>> examines it briefly, then hands it back to you. "So you aren't," <<he>> says, making a note of something on <<his>> clipboard. "In that case, you're allowed to work during the week, starting now."

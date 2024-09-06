@@ -1,5 +1,5 @@
 :: Eden Cabin
-<<set $outside to 0>><<set $location to "cabin">><<effects>><<set $bus to "edencabin">><<getTarget true>>
+<<set $outside to 0>><<set $location to "cabin">><<effects>><<set $bus to "edencabin">><<getTarget true>><<edenFluidsCheck>>
 /* make sure that all links that lead here have <<endevent>> */
 <<npc Eden>><<person1>>
 
@@ -25,8 +25,12 @@ You are in Eden's cabin.
 	<</if>>
 <</if>>
 
-<<if isPlayerNonparasitePregnancyEnding() and !$possessed>>
-	<<pregnancyWatersBrokenPassout "edencabin">>
+There is a thermometer outside the window. It reads <span class="teal"><<print Weather.toSelectedString(Weather.temperature, 0)>></span>.
+<<print setup.WeatherDescriptions.extremeTemperature()>>
+<br><br>
+
+<<if isPregnancyEnding() and !$possessed>>
+	<<pregnancyPassout "edencabin">>
 <<elseif $stress gte $stressmax and !$possessed>>
 	<br><br>
 
@@ -105,7 +109,7 @@ You are in Eden's cabin.
 	<<link [[Next|Eden Wardrobe]]>><<endevent>><</link>>
 	<br><br>
 <<else>>
-	<<if $exposed is 1 and $exhibitionism gte 55 or $exposed is 2 and $exhibitionism gte 75>>
+	<<if $exposed is 1 and hasSexStat("exhibitionism", 4) or $exposed is 2 and hasSexStat("exhibitionism", 5)>>
 		<span class="lewd">You feel a primal thrill from your displayed <<lewdness>>.</span>
 	<<elseif $exposed is 1 or $exposed is 2>>
 		<span class="lewd">Your <<lewdness>> embarrasses you, though no one but Eden can see you here.</span>
@@ -113,25 +117,15 @@ You are in Eden's cabin.
 
 	<<if Time.dayState is "night">>
 		Embers burn in the hearth.
-	<<elseif Time.dayState is "dawn">>
-
-	<<elseif Time.dayState is "dusk">>
-
-	<<else>>
-
 	<</if>>
 
-	<<if $weather is "clear">>
-
-	<<elseif $weather is "overcast">>
-
-	<<elseif $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		<<if $edenroof gte 5>>
 			Rain pours down on the cabin's roof with a soothing sound.
 		<<else>>
 			Droplets of rainwater seep through the wooden ceiling and patter on the ground.
 		<</if>>
-	<<elseif $weather is "snow">>
+	<<elseif Weather.precipitation is "snow">>
 		Snow settles on the window sills.
 	<</if>>
 
@@ -323,7 +317,7 @@ You are in Eden's cabin.
 
 			<<noClothingCheck>>
 			<<if _nude is false>>
-				<<link [[Strip and get in (0:30)|Eden Bath]]>><<pass 30>><<npcincr Eden dom 1>><<npcincr Eden love 1>><<set $phase to 0>><<strip>><<set $edenClothes to true>><</link>><<gdom>><<glove>>
+				<<link [[Strip and get in (0:30)|Eden Bath]]>><<pass 30>><<npcincr Eden dom 1>><<npcincr Eden love 1>><<set $phase to 0>><<strip>><<set $edenClothes to true>><<set $edenFluidsCheck to "clean">><</link>><<gdom>><<glove>>
 			<<else>>
 				<<link [[Get in (0:30)|Eden Bath]]>><<pass 30>><<npcincr Eden dom 1>><<npcincr Eden love 1>><<set $phase to 0>><<strip>><</link>><<gdom>><<glove>>
 			<</if>>
@@ -359,7 +353,7 @@ You are in Eden's cabin.
 
 		<<link [[Next|Eden Christmas Meal 2]]>><<pass 20>><</link>>
 
-	<<elseif Time.hour lte 18 and $daily.eden.dinner isnot 1 and $NPCName[$NPCNameList.indexOf("Eden")].love gte 100>>
+	<<elseif Time.hour lte 18 and $daily.eden.dinner isnot 1 and C.npc.Eden.love gte 100>>
 		<<set $daily.eden.dinner to 1>>
 		Eden finishes cooking and sets the table for dinner. "I ask you to make breakfast every day," <<he>> says. "It's fair that I help with dinner."
 		<br><br>
@@ -370,7 +364,15 @@ You are in Eden's cabin.
 		<br>
 
 	<<else>>
-		<<if Time.days % 2 is 0>>
+		<<if $rng gte 11 and $syndromeeden is 1 and C.npc.Eden.love gte 100 and C.npc.Eden.dom gte 75 and Weather.dayState is "night" and (Weather.precipitation is "rain" or Weather.name is "thunderStorm") and !$weekly.edenStory>>
+            <<set $weekly.edenStory to true>>
+            The weather's getting harsher, beating down against the roof. Bolts of lightning periodically illuminate the cabin. You find Eden at the kitchen table, cleaning <<his>> gun.
+            <br><br>
+            A clap of thunder rings out, causing you to flinch involuntarily.
+            <br><br>
+            <<link [[Next|Eden Story]]>><</link>>
+
+		<<elseif Time.days % 2 is 0>>
 			Eden is cleaning <<his>> gun beside the fire. <span class="blue"> <<He>> looks a bit lonely.</span>
 			<br><br>
 
@@ -381,7 +383,7 @@ You are in Eden's cabin.
 			<</if>>
 			<<getinicon>><<link [[Approach Eden|Cabin Eden Actions]]>><</link>>
 			<br><br>
-			<<if checkSextoysGift("Eden") and $NPCName[$NPCNameList.indexOf("Eden")].penis is "none" and checkIfNPCHasCategorySextoy("Eden","strap-on").length <= 5>>
+			<<if checkSextoysGift("Eden") and C.npc.Eden.penis is "none" and checkIfNPCHasCategorySextoy("Eden","strap-on").length <= 5>>
 				<<sextoysicon "strap-on">><<link [[Gift Eden a strap-on|Eden Gift Strap-on]]>><</link>>
 				<br><br>
 			<</if>>
@@ -404,7 +406,7 @@ You are in Eden's cabin.
 			<</if>>
 			<<getinicon>><<link [[Approach Eden|Cabin Eden Actions]]>><</link>>
 			<br><br>
-			<<if checkSextoysGift("Eden") and $NPCName[$NPCNameList.indexOf("Eden")].penis is "none" and checkIfNPCHasCategorySextoy("Eden","strap-on").length <= 5>>
+			<<if checkSextoysGift("Eden") and C.npc.Eden.penis is "none" and checkIfNPCHasCategorySextoy("Eden","strap-on").length <= 5>>
 				<<sextoysicon "strap-on">><<link [[Gift Eden a strap-on|Eden Gift Strap-on]]>><</link>>
 				<br><br>
 			<</if>>
@@ -423,21 +425,21 @@ You are in Eden's cabin.
 <<effects>>
 <<if Time.hour lte 20>>/* if hour >= 21 and it's the last day of october, passing 3h will make it november, which unsets the variables, making nans */
 	<<if $edenwall lt 5>>
-		<<edenicon "fix">><<link [[Fix the cracks in the walls (3:00)|Eden Wall]]>><<pass 3 hours>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<housekeeping 1 1000>><</link>><<glove>><<gdom "Eden">><<ghousekeeping 1000>>
+		<<edenicon "fix">><<link [[Fix the cracks in the walls (3:00)|Eden Wall]]>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<housekeeping 1 1000>><</link>><<glove>><<gdom "Eden">><<ghousekeeping 1000>>
 	<<else>>
 		<span class="green">The walls are fully repaired.</span>
 	<</if>>
 	<br>
 
 	<<if $edenchimney lt 5>>
-		<<edenicon "broom">><<link [[Clean the chimney (3:00)|Eden Chimney]]>><<pass 3 hours>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<housekeeping 1 1000>><</link>><<glove>><<gdom "Eden">><<ghousekeeping 1000>>
+		<<edenicon "broom">><<link [[Clean the chimney (3:00)|Eden Chimney]]>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<housekeeping 1 1000>><</link>><<glove>><<gdom "Eden">><<ghousekeeping 1000>>
 	<<else>>
 		<span class="green">The chimney is clean.</span>
 	<</if>>
 	<br>
 
 	<<if $edenroof lt 5>>
-		<<edenicon "fix">><<link [[Fix the roof (3:00)|Eden Roof]]>><<pass 3 hours>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<housekeeping 1 1000>><</link>><<glove>><<gdom "Eden">><<ghousekeeping 1000>>
+		<<edenicon "fix">><<link [[Fix the roof (3:00)|Eden Roof]]>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<housekeeping 1 1000>><</link>><<glove>><<gdom "Eden">><<ghousekeeping 1000>>
 	<<else>>
 		<span class="green">The roof is fixed.</span>
 	<</if>>
@@ -447,14 +449,18 @@ You are in Eden's cabin.
 	<br>
 <</if>>
 <br>
-
-<<getouticon>><<link [[Go back|Eden Clearing]]>><<endevent>><</link>>
+<<if $outside is 0>>
+	<<getouticon>><<link [[Go back|Eden Cabin]]>><<endevent>><</link>>
+<<else>>
+	<<getouticon>><<link [[Go back|Eden Clearing]]>><<endevent>><</link>>
+<</if>>
+<br>
 
 :: Cabin Eden Actions
 <<effects>>
 Eden glances at you.
 <br><br>
-
+<<edenFluidsCheck>>
 <<if Time.hour gte 18 and Time.hour lte 23>>
 	<<if $edencushions is 2 and $edenloveseat is 9>>
 		<<couchicon>><<link [[Cuddle on the loveseat (0:30)|Eden Cuddle]]>><<trauma -3>><<stress -3>><<pass 30>><<npcincr Eden love 1>><<npcincr Eden lust 1>><</link>><<glove>><<glust>><<ltrauma>><<lstress>>
@@ -522,7 +528,7 @@ Eden glances at you.
 	<<bathroomicon>><<link [[Ask to join Eden in the bath (0:30)|Eden Bath Join]]>><<npcincr Eden love 1>><<pass 30>><</link>><<glove>>
 	<br>
 <</if>>
-<<if $worn.neck.collared isnot 1 and $NPCName[$NPCNameList.indexOf("Eden")].dom gte 100>>
+<<if $worn.neck.collared isnot 1 and C.npc.Eden.dom gte 100>>
 	<<edenicon "collar">><<link [[Ask Eden for a collar|Eden Collar]]>><<npcincr Eden love 5>><<npcincr Eden lust 5>><<npcincr Eden dom 5>><</link>><<gglove>><<gglust>><<ggdom>>
 	<br>
 <</if>>
@@ -530,7 +536,7 @@ Eden glances at you.
 	<<lakeicon>><<link [[Ask Eden to accompany you to the lake|Eden Lake]]>><</link>>
 	<br>
 <</if>>
-<<if $daily.eden.search is undefined or $daily.eden.search lt ($NPCName[$NPCNameList.indexOf("Eden")].love / 40)>>
+<<if $daily.eden.search is undefined or $daily.eden.search lt (C.npc.Eden.love / 40)>>
 	<<foresticon>><<link [[Ask Eden to help search the forest (0:30)|Eden Search]]>><<if $daily.eden.search is undefined>><<set $daily.eden.search to 1>><<else>><<set $daily.eden.search += 1>><</if>><</link>>
 	<br>
 <</if>>
@@ -545,7 +551,7 @@ Eden glances at you.
 	<br>
 <</if>>
 
-<<if $leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound">>
+<<if $leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound" or $worn.feet.name is "ankle cuffs">>
 	<<undobindingsicon>><<link [[Ask Eden to undo your bindings (0:01)|Eden Bindings]]>><<pass 1>><<unbind>><</link>>
 	<br>
 <</if>>
@@ -607,7 +613,7 @@ You take a moment to look around the cabin.
 	<i>You could visit the shopping centre to buy cushion materials for your loveseat</i>
 	<br>
 <</if>>
-<<if $edencushions is 2 and $edenloveseat is 9 and $edenblanket is 0>>
+<<if $edencushions is 2 and $edenloveseat is 9 and !$edenblanket>>
 	<<shopicon "tailor">><<link [[Sew a fur blanket (0:30)|Eden Blanket One]]>><<pass 30>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $edenblanket to 1>><</link>><<glove>><<gdom "Eden">>
 	<br>
 <</if>>
@@ -619,7 +625,7 @@ You take a moment to look around the cabin.
 	<<shopicon "tailor">><<link [[Sew a fur blanket (0:30)|Eden Blanket Three]]>><<pass 30>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $edenblanket to 3>><</link>><<glove>><<gdom "Eden">>
 	<br>
 <</if>>
-<<if $edenpillow is 2 and $edendesign lt 9>>
+<<if $edenpillow is 2 and ($edendesign lt 9 or !$edendesign)>>
 	<<if !$edendesign>><<set $edendesign to 0>><</if>>
 	<<shopicon "tailor">><<link [[Sew designs in the pillows (0:30)|Eden Design]]>><<pass 30>><<npcincr Eden love 1>><<npcincr Eden dom 1>><<set $edendesign += 1>><</link>><<glove>><<gdom "Eden">>
 	<br>
@@ -773,7 +779,7 @@ Your clothes are kept in the corner.
 <<sleep>>
 <<effects>>
 
-<<if $wraith.nightmare is 2 and isBloodmoon()>>
+<<if $wraith.nightmare is 2 and Time.isBloodMoon()>>
 	<<sleepeffects>>
 	You dream of a beautiful figure, cloaked in white, standing under the red moon. It has its arms spread out to you in a welcoming gesture. You can feel its gaze boring into your mind as you step closer.
 	<br><br>
@@ -791,6 +797,7 @@ Your clothes are kept in the corner.
 
 	<<wakingEffects $sleepHoursTotal>>
 	<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+		<br><br>
 		You slept soundly, but now feel a little rough.
 		<br><br>
 	<<elseif $nightmares gte 1 and $controlled is 0>>
@@ -878,7 +885,7 @@ Your clothes are kept in the corner.
 <<set $outside to 0>><<set $location to "cabin">><<effects>>
 
 You shove <<him>> away from you.
-<<if $NPCName[$NPCNameList.indexOf("Eden")].love - ($NPCName[$NPCNameList.indexOf("Eden")].lust * 2) gte 1>>
+<<if C.npc.Eden.love - (C.npc.Eden.lust * 2) gte 1>>
 	<<He>> grumbles something and rolls over. <<Hes>> asleep within moments.
 	<br><br>
 
@@ -967,7 +974,7 @@ Without a word, Eden picks up a knife and slashes your bindings.
 <<effects>>
 
 You set the new rug by the fireplace and arrange the pillows around it. When you're done, you step back and take a look at your work.
-The setup looks quite cozy, and you feel a sense of accomplishment. You're sure that Eden would be satisfied with your choice.
+The setup looks quite cosy, and you feel a sense of accomplishment. You're sure that Eden would be satisfied with your choice.
 <br><br>
 
 <<link [[Next|Eden Cabin]]>><<endevent>><</link>>
@@ -1100,6 +1107,9 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 	<br><br>
 	<<set $foresthunt to 0>>
 <</if>>
+<<if Time.hour gte 7>>
+	<<edenFluidsCheck>>
+<</if>>
 
 <<if $edenCagedEscape and Time.hour gte 7>>
 	Eden looks up as you approach the cabin. <<He>> does a double take when <<he>> sees you. "There you are!" <<he>> shouts, quickly making <<his>> way over to you. "You're in so much trouble, you disobedient whore."
@@ -1169,8 +1179,8 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 	<<link [[Just say you removed it|Eden Collar Remove]]>><</link>>
 
 <<elseif $stress gte $stressmax>>
-	<<if isPlayerNonparasitePregnancyEnding()>>
-		<<pregnancyWatersBrokenPassout "edencabin">>
+	<<if isPregnancyEnding()>>
+		<<pregnancyPassout "edencabin">>
 	<<else>>
 		<<link [[Everything fades to black...|Eden Cabin Passout]]>><</link>>
 	<</if>>
@@ -1190,7 +1200,7 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 	<<link [[Next|Eden Wardrobe]]>><<endevent>><</link>>
 
 <<else>>
-	<<if $exposed is 1 and $exhibitionism gte 55 or $exposed is 2 and $exhibitionism gte 75>>
+	<<if $exposed is 1 and hasSexStat("exhibitionism", 4) or $exposed is 2 and hasSexStat("exhibitionism", 5)>>
 		<span class="lewd">With your <<lewdness>> on display, you can't help but feel a primal thrill.</span>
 		<br><br>
 	<<elseif $exposed gte 1>>
@@ -1204,13 +1214,12 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 		<br><br>
 	<</if>>
 
-	<<if $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		Rainwater drips from the branches above.
-		<br><br>
-	<<elseif $weather is "snow">>
+	<<elseif Weather.precipitation is "snow">>
 		Snow weighs down the branches above.
-		<br><br>
 	<</if>>
+	<br><br>
 
 	<<if ($edenfreedom is 2 and $edendays lt 8) or ($edenfreedom is 1 and $edendays lt 2)>>
 		<<set $edendays to 0>>
@@ -1335,9 +1344,9 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 		<</if>>
 
 	<<elseif Time.hour is 16>>
-		<<if $NPCName[$NPCNameList.indexOf("Eden")].lust gte 26 and $daily.eden.chopLust isnot 1>><<set $daily.eden.chopLust to 1>>
+		<<if C.npc.Eden.lust gte 26 and $daily.eden.chopLust isnot 1>><<set $daily.eden.chopLust to 1>>
 			<!-- <<npc Eden>><<person1>> -->Eden is chopping firewood. <<He>> stretches <<his>> back and spots you watching <<him>>. "I could use a break," <<he>> says. <<He>> marches towards you, covered in sweat and axe still in hand. <<He>> can't realise how menacing <<he>> looks.
-			<<if $NPCName[$NPCNameList.indexOf("Eden")].dom gte 75>>
+			<<if C.npc.Eden.dom gte 75>>
 				<<He>> drops the axe and pulls you into a deep kiss. <<takeKissVirginity "Eden" `($syndromeeden gte 1?"loveInterest":"romantic")`>>
 			<<else>>
 				<<He>> drops the axe and tries to pull you close to <<him>>.
@@ -1425,7 +1434,7 @@ You nod, and <<he>> gives you one last look before walking off.
 <</if>>
 <br><br>
 
-<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 20>><<set $edenfreedom to 1>><<set $edenshopping to 0>><<set $edendays to 0>>
+<<if C.npc.Eden.love gte 20>><<set $edenfreedom to 1>><<set $edenshopping to 0>><<set $edendays to 0>>
 	<<He>> seems conflicted. "I suppose it was too much to hope you'd be content stuck here. Fine, you can go back to town. Make sure you get your little bottom back here though. <span class="gold">If you're gone longer than a day you'll worry me sick.</span> I'd have to come find you."
 	<br><br>
 
@@ -1497,7 +1506,7 @@ You nod, and <<he>> gives you one last look before walking off.
 You walk to the edge of the clearing and gaze into the darkness of the forest. Are you sure you want to escape?
 <br><br>
 
-<<link [[Yes|Forest]]>><<endevent>><</link>>
+<<link [[Yes|Forest]]>><<endevent>><<if $edenFluidsCheck is "clean">><<set $edenFluidsCheck to "cleanLeave">><</if>><</link>>
 <br>
 <<link [[No|Eden Clearing]]>><<endevent>><</link>>
 <br>
@@ -1517,7 +1526,7 @@ You walk to the edge of the clearing and gaze into the darkness of the forest. A
 <</if>>
 <br><br>
 
-<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 100>><<set $edenfreedom to 2>><<set $edendays to 0>>
+<<if C.npc.Eden.love gte 100>><<set $edenfreedom to 2>><<set $edendays to 0>>
 	<<He>> looks about to argue, but sighs in resignation. "Fine. I'm used to being alone. <span class="gold">You can leave for up to a week.</span> If you're gone longer, I'll hunt you down."
 	<br><br>
 
@@ -1565,7 +1574,7 @@ Eden leads you back to the safety of <<his>> cabin.
 <</if>>
 <br><br>
 
-<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 60>><<set $edenfurniture to 1>>
+<<if C.npc.Eden.love gte 60>><<set $edenfurniture to 1>>
 	/* eden is already generated
 	<<npc Eden>><<person1>> */
 
@@ -1585,7 +1594,7 @@ Eden leads you back to the safety of <<his>> cabin.
 	Eden narrows <<his>> eyes, looking annoyed. "There's nothing wrong with my cabin."
 	<br><br>
 
-	<<He>> turns away from you, signaling that the conversation is over.
+	<<He>> turns away from you, signalling that the conversation is over.
 	<br><br>
 
 	<i>If <<he>> liked you more <<he>> might be more amenable to your request.</i>
@@ -1610,7 +1619,7 @@ Eden leads you back to the safety of <<his>> cabin.
 <</if>>
 <br><br>
 
-<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 120>><<set $edenfurniture to 2>>
+<<if C.npc.Eden.love gte 120>><<set $edenfurniture to 2>>
 	/* eden is already generated
 	<<npc Eden>><<person1>>*/
 
@@ -1655,7 +1664,7 @@ Eden leads you back to the safety of <<his>> cabin.
 <</if>>
 <br><br>
 
-<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 180>><<set $edenfurniture to 3>><<set $edenloveseat to 1>>
+<<if C.npc.Eden.love gte 180>><<set $edenfurniture to 3>><<set $edenloveseat to 1>>
 	/* eden is already generated
 	<<npc Eden>><<person1>>*/
 
@@ -1749,27 +1758,28 @@ Eden leads you back to the safety of <<his>> cabin.
 You grab a few animal pelts and start sewing. It's slow work, but you get some of the blanket done.
 <br><br>
 
-<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><</link>>
 
 :: Eden Blanket Two
 <<effects>>
 You grab more pelts and sew them together. The blanket's getting bigger now.
 <br><br>
 
-<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><</link>>
 
 :: Eden Blanket Three
 <<effects>>
 /* eden is already generated
 <<npc Eden>><<person1>>*/
 You sew on the remaining pelts and look over your work. Running your hands over the soft fur, you think about where to place it.
-Looking around the cabin, your eyes are drawn to the loveseat. You drape it over, stepping back and nodding in satisfaction at your work. Eden will be happy when <<he>> sees this.
+Looking around the cabin, your eyes are drawn to the loveseat. You drape it over, stepping back and nodding in satisfaction at your work. Eden will be happy when <<nnpc_he "Eden">> sees this.
 <br><br>
 
-<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><</link>>
 
 :: Eden Design
 <<effects>>
+<<endevent>><<npc "Eden">><<person1>>
 <<switch $edendesign>>
 	<<case 1>>
 		You grab one of the pillows and start sewing a pattern into its fabric.
@@ -1827,7 +1837,7 @@ Eden grabs your arm and pushes you in front of <<him>>. <<He>> pushes you throug
 :: Eden Recaptured Seduction
 <<effects>>
 
-<<set $seductiondifficulty to (10000 - ($NPCName[$NPCNameList.indexOf("Eden")].lust * 50))>>
+<<set $seductiondifficulty to (10000 - (C.npc.Eden.lust * 50))>>
 <<seductioncheck>>
 <br><br>
 
@@ -1841,7 +1851,7 @@ You climb to your knees.
 <<else>>
 	"Let me make it up to you," you say.
 <</if>>
-You <<npcUndressText $NPCName[$NPCNameList.indexOf("Eden")] "lower">>.
+You <<npcUndressText `C.npc.Eden` "lower">>.
 
 <<if $seductionrating gte $seductionrequired>>
 	"This is a good way to start making it up to me," <<he>> says, pressing a hand against the back of your head and pushing you closer.
@@ -2212,7 +2222,7 @@ The song leads you two into a slow waltz. You stare into Eden's eyes and feel a 
 <br><br>
 
 Eden seems to have trouble maintaining your gaze, but holds you tight nonetheless. You can feel the nervousness settle in <<his>> shoulders, causing them to feel stiff at your touch.
-In fact, the vulnerability of the moment seems to have exposed <<him>>, somehow. Let you see the part of <<him>> that <<he>> tries so hard to hide from the world.
+In fact, the vulnerability of the moment seems to have exposed <<him>>, somehow. It lets you see the part of <<him>> that <<he>> tries so hard to hide from the world.
 <br><br>
 
 You feel glad that <<hes>> showing this to you now, even if it's through uncertain and awkward movements. Maybe, that's what makes it special.
@@ -2354,7 +2364,7 @@ Using the broom and dustpan, you sweep the cabin floor until it's clean.
 <<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Salve
-<<effects>>
+<<effects>><<wearProp "salve">>
 <!-- <<npc Eden>><<person1>> -->
 You gather the ingredients for your salve and melt the mixture on the stove. When you're done, you leave your salve on the table to cool and dry.
 <br><br>
@@ -2369,7 +2379,7 @@ You gather the ingredients for your salve and melt the mixture on the stove. Whe
 <<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Soap
-<<effects>>
+<<effects>><<wearProp "soap">>
 <!-- <<npc Eden>><<person1>> -->
 You gather the ingredients for your soap and melt the mixture on the stove. When you're done, you leave your soap on the table to cool and set.
 <br><br>
@@ -2394,7 +2404,7 @@ You take stock of Eden's supplies, noting what needs to be replenished and how m
 :: Eden Mirror
 
 <<effects>>
-<<link [[Step away|Eden Cabin]]>><<unset $mirrorMenu>><<unset $bodywritingSet>><<postMirror>><</link>>
+<<edenicon>><<link [[Step away|Eden Cabin]]>><<handheldon>><<unset $mirrorMenu>><<unset $bodywritingSet>><<postMirror>><</link>>
 <br>
 <<mirror>>
 <br><br>
@@ -2411,7 +2421,7 @@ You take stock of Eden's supplies, noting what needs to be replenished and how m
 <<display_plot eden>>
 
 <<if !$plants_known.includes("poppy")>>
-	<<icon "tending/poppy.png">> <<link [[Search for seeds (0:30)|Eden Plots Seeds]]>><<set $plants_known.push("poppy")>><<pass 30>><</link>>
+	<<icon "tending/poppy.png">> <<link [[Search for seeds (0:30)|Eden Plots Seeds]]>><<set $plants_known.push("poppy")>><<pass 30>><<handheldon>><</link>>
 	<br>
 <</if>>
 <br>
@@ -2591,17 +2601,22 @@ You slip in and out of consciousness. You feel something carry you, and hear the
 You wake up some time later on a bed. It feels familiar. You look around, and realise that you are in the cabin in the forest. Eden sits beside you, drinking from a mug. <<He>> glances at you, and puts down <<his>> drink.
 <br><br>
 
-"You're awake. I was worried," <<he>> says, looking relieved as <<he>> reaches for you, and folds you in a firm hug. You hug <<him>> back, though you're still weak.
-<br><br>
+"You're awake. I was worried," <<he>> says, looking relieved as <<he>> reaches for you, and folds you in a firm hug. 
 
-<<if $speech_attitude is "meek">>
-	"Thank you!" you say. "I don't know what would've happened to me if you didn't rescue me."
-<<elseif $speech_attitude is "bratty">>
-	"Thanks for the help," you say. "I owe you one."
+<<if isLoveInterest("Eden")>>
+	You hug <<him>> back, though you're still weak.
+	<br><br>
+	<<if $speech_attitude is "meek">>
+		"Thank you!" you say. "I don't know what would've happened to me if you didn't rescue me."
+	<<elseif $speech_attitude is "bratty">>
+		"Thanks for the help," you say. "I owe you one."
+	<<else>>
+		"Thank you!" you say. "I appreciate you bringing me back."
+	<</if>>
+	<br><br>
 <<else>>
-	"Thank you!" you say. "I appreciate you bringing me back."
+	<br><br>
 <</if>>
-<br><br>
 
 "You're safe here now. You're home. It's alright." Eden holds you for a few more moments, before releasing you and looking you over. "No harm done. I think you'll live." <<He>> smiles as <<he>> stands up and stretches.
 <br><br>
@@ -2636,8 +2651,10 @@ You awaken on the cabin bed. Turning your head to the side, you see Eden sitting
 You feel yourself being lifted into the air and someone wrapping an arm around your waist.
 <br><br>
 
-You bury your face into your rescuer's chest. They smell familiar and comforting.
-<br><br>
+<<if isLoveInterest("Eden")>>
+	You bury your face into your rescuer's chest. They smell familiar and comforting.
+	<br><br>
+<</if>>
 
 You pass out again.
 <br><br>

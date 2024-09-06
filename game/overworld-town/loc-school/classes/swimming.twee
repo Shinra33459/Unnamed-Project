@@ -3,7 +3,7 @@
 
 <<set _masonCanUnlock to playerChastity() and $worn.genitals.origin is "Winter" and C.npc.Mason.chastityKeyCarried and !$weekly.masonChastityRemovalDeclined and !$daily.masonChastityRemovalDeclined
 	and getVisibleClothesList().find(o => o === V.worn.genitals) and (C.npc.Mason.love gte 10 or C.npc.Mason.lust gte 15)>>
-<<if Time.minute lt 45>>
+<<if Time.minute lt 45 and $schoolstate is "fifth">>
 	<<classRoomEarSlime "swimming">>
 <</if>>
 <<if $poolroomstate is "own">>
@@ -78,8 +78,8 @@
 	<<elseif $exposed gte 2 and $swimall isnot 1>>
 		<<npc Mason>><<person1>>
 		<<schoolpoolexposed>>
-		<<if $exhibitionism gte 75 and $swimall isnot 1>>
-			<<link [[Ask to swim naked|School Pool Ask Naked]]>><<fameexhibitionism 15>><<endevent>><<set $swimnudecounter += 1>><</link>><<exhibitionist5>>
+		<<if hasSexStat("exhibitionism", 5) and $swimall isnot 1>>
+			<<askicon>><<link [[Ask to swim naked|School Pool Ask Naked]]>><<fameexhibitionism 15>><<endevent>><<set $swimnudecounter += 1>><</link>><<exhibitionist5>>
 			<br>
 		<</if>>
 	<<elseif $swimall is 1>>
@@ -171,19 +171,20 @@
 			Go get changed."
 			<br><br>
 
-			<<if $exhibitionism gte 75 and $swimall isnot 1>>
-				<<link [[Ask to swim naked|School Pool Ask Naked]]>><<fameexhibitionism 15>><<endevent>><<set $swimnudecounter += 1>><</link>><<exhibitionist5>>
+			<<if hasSexStat("exhibitionism", 5) and $swimall isnot 1>>
+				<<askicon>><<link [[Ask to swim naked|School Pool Ask Naked]]>><<fameexhibitionism 15>><<endevent>><<set $swimnudecounter += 1>><</link>><<exhibitionist5>>
 				<br>
 			<</if>>
 			<<if $player.gender is "f" or ($player.gender is "h" and $player.gender_appearance is "f")>>
 				<<if !$daily.swimCrossdressPermission>>
-					<<link [[Say you only have a boy's swimming costume|School Pool Wrong]]>><</link>>
+					<<socialiseicon>><<link [[Say you only have a boy's swimming costume|School Pool Wrong]]>><</link>>
 					<br>
 				<</if>>
-				<<link [[Say you don't have anything to change into|School Pool Spare]]>><</link>>
+				<<socialiseicon>><<link [[Say you don't have anything to change into|School Pool Spare]]>><</link>>
 				<br>
 			<<else>>
 				<<if !$daily.swimCrossdressPermission>>
+					<<socialiseicon>>
 					<<if ($worn.upper.type.includes("naked") and $worn.under_upper.type.includes("naked")) and
 					($worn.lower.type.includes("swim") or ($worn.lower.type.includes("naked") and $worn.under_lower.type.includes("swim")))>>
 						<<link [[Say you only have a boy's swimming costume|School Pool Wrong]]>><<set $phase to 1>><</link>>
@@ -192,7 +193,7 @@
 					<</if>>
 					<br>
 				<</if>>
-				<<link [[Say you don't have anything to change into|School Pool Spare]]>><</link>>
+				<<socialiseicon>><<link [[Say you don't have anything to change into|School Pool Spare]]>><</link>>
 				<br>
 			<</if>>
 			<br>
@@ -304,7 +305,7 @@
 	<<elseif $speech_attitude is "bratty">>
 		"Looks like you're outnumbered," you say.
 	<<else>>
-		"I'm not the only one who hates these swimsuits" you say.
+		"I'm not the only one who hates these swimsuits," you say.
 	<</if>>
 <<elseif $swimnudecounter lte 4>>
 	<<npc Mason>><<generatey2>><<generatey3>><<generatey4>>
@@ -337,8 +338,8 @@
 		<<flaunting>> you feel their eyes on you as you slip into the water.
 	<<else>>
 		<<flaunting>> you feel their eyes on you as you <<nervously>> strip down to your <<lewdness>>, before slipping into the water. <<covered>>
-	<</if>><<exhibitionism5>>
-	<br><br>
+	<</if>>
+	<<exhibitionism5>>
 
 	<<link [[Next|Swimming Lesson]]>><<endevent>><</link>>
 <</if>>
@@ -366,6 +367,9 @@ Once done, Leighton takes the swimwear and puts it in a hamper.
 :: Swimming Lesson
 <<set $outside to 0>><<set $location to "pool">><<schooleffects>><<effects>><<set $phase to 0>>
 <<set $daily.school.attended.swimming to true>>
+<<if $daily.whitney.whitneyCrossdressSwimwear and Object.values($worn).find(item => item.type.includes("swim") and item.gender is "m")>>
+	<<run $daily.whitney.whitneyCrossdressSwimwear.push("boys swimwear")>>
+<</if>>
 
 <<if $swimnudecounter gte 10 and $swimall isnot 1>>
 	<<npc Leighton>><<person1>> Leighton storms into the pool room, furious. "Mason!" <<he>> shouts. "Explain this! Why is this class swimming naked?"
@@ -380,6 +384,8 @@ Once done, Leighton takes the swimwear and puts it in a hamper.
 	<br><br>
 
 	<<link [[Next|Pool Leighton Nude Punishment]]>><<pass 5>><</link>>
+<<elseif $stress gte $stressmax and isPregnancyEnding()>>
+	<<pregnancyPassout "schoolPool">>
 <<else>>
 	<<if Time.minute lte 5>>
 		<<if $swimall is 1 and $exposed gte 2>>
@@ -393,7 +399,7 @@ Once done, Leighton takes the swimwear and puts it in a hamper.
 		<<if $arousal gte $arousalmax>>
 			<<orgasmLocation "swimClassroom">>
 		<</if>>
-		The swimming lesson begins, how do you want to conduct yourself?
+		The swimming lesson begins. How do you want to conduct yourself?
 		<br><br>
 	<<else>>
 		<<if $swimall is 1 and $exposed gte 2>>
@@ -406,22 +412,22 @@ Once done, Leighton takes the swimwear and puts it in a hamper.
 		<<if $arousal gte $arousalmax>>
 			<<orgasmLocation "swimClassroom">>
 		<</if>>
-		The swimming lesson continues, how do you want to conduct yourself?
+		The swimming lesson continues. How do you want to conduct yourself?
 		<br><br>
 	<</if>>
-
+	<<water>>
 	<<swimmingicon>><<link [[Focus on the lesson|Swimming Lesson Focus]]>><</link>><<gstress>><<gswimming>><<gtiredness>>
 	<br>
 	<<socialiseicon>><<link [[Socialise with classmates|Swimming Lesson Socialise]]>><</link>><<gcool>><<ltrauma>><<lstress>><<gharass>>
 	<br>
-	<<if $exposed gte 2 and $exhibitionism gte 75>>
+	<<if $exposed gte 2 and hasSexStat("exhibitionism", 5)>>
 		<<swimicon "back">><<link [[Practise your backstroke|Swimming Lesson Naked Backstroke]]>><</link>><<gswimming>><<gtiredness>><<exhibitionist5>>
 		<br>
 	<</if>>
 	<<daydreamicon>><<link [[Daydream|Swimming Lesson Daydream]]>><</link>><<lstress>> <<lharass>>
 	<br>
-	<<if $exhibitionism gte 55>>
-		<<ind>><<link [[Masturbate|Swimming Lesson Masturbate]]>><<set $masturbationstart to 1>><</link>><<exhibitionist4>>
+	<<if hasSexStat("exhibitionism", 4)>>
+		<<skinicon "masturbate">><<link [[Masturbate|Swimming Lesson Masturbate]]>><<set $masturbationstart to 1>><</link>><<exhibitionist4>>
 		<br>
 	<</if>>
 <</if>>

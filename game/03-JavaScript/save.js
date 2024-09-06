@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const DoLSave = ((Story, Save) => {
 	"use strict";
 
@@ -15,7 +14,7 @@ const DoLSave = ((Story, Save) => {
 	// see game/00-framework-tools/03-compression/dictionaries.js
 	const COMPRESSOR_DICTIONARIES = DoLCompressorDictionaries;
 	// id of the dictionary to use for saving
-	const COMPRESSOR_CURRENT_DICTIONARY_ID = "v1";
+	const COMPRESSOR_CURRENT_DICTIONARY_ID = "v2";
 	/**
 	 * When saving, decompress and compare with the original.
 	 * If results differ, report an error and save the uncompressed version instead.
@@ -333,7 +332,7 @@ const DoLSave = ((Story, Save) => {
 	 * Compress a game state (not delta-encoded: {title, variables, prng, pull}) using most recent dictionary.
 	 * Can throw an error.
 	 *
-	 * @param state
+	 * @param {object} state
 	 */
 	function compressState(state) {
 		DOL.Perflog.logWidgetStart("__DoLSave.compressState");
@@ -362,7 +361,7 @@ const DoLSave = ((Story, Save) => {
 	 * Decompress the saved state using the dictionary it was compressed with.
 	 * Can throw an error.
 	 *
-	 * @param zstate
+	 * @param {object} zstate
 	 */
 	function decompressState(zstate) {
 		DOL.Perflog.logWidgetStart("__DoLSave.decompressState");
@@ -399,7 +398,7 @@ const DoLSave = ((Story, Save) => {
 	 * If compression fails, report and error and do nothing.
 	 * This function returns nothing, it modifies the saveObj parameter.
 	 *
-	 * @param saveObj
+	 * @param {object} saveObj
 	 */
 	function compressIfNeeded(saveObj) {
 		if (!saveObj.metadata) saveObj.metadata = {};
@@ -420,7 +419,7 @@ const DoLSave = ((Story, Save) => {
 	/**
 	 * Decompress a SaveObject (the one with metadata and delta-encoded history), if it is compressed.
 	 *
-	 * @param saveObj
+	 * @param {object} saveObj
 	 */
 	function decompressIfNeeded(saveObj) {
 		const isCompressed = (saveObj.metadata && saveObj.metadata.jsoncompressed === 1) || looksLikeCompressedSave(saveObj.state.history[0]);
@@ -577,7 +576,7 @@ const importSettingsData = function (data) {
 		if (V.passage === "Start" && S.starting != null) {
 			const listObject = settingsObjects("starting");
 			const listKey = Object.keys(listObject);
-			const namedObjects = ["player", "skinColor"];
+			const namedObjects = ["player"];
 
 			for (let i = 0; i < listKey.length; i++) {
 				if (namedObjects.includes(listKey[i]) && S.starting[listKey[i]] != null) {
@@ -602,7 +601,7 @@ const importSettingsData = function (data) {
 		if (S.general != null) {
 			const listObject = settingsObjects("general");
 			const listKey = Object.keys(listObject);
-			const namedObjects = ["map", "skinColor", "shopDefaults", "options"];
+			const namedObjects = ["map", "shopDefaults", "options"];
 			// correct swapped min/max values
 			if (S.general.breastsizemin > S.general.breastsizemax) {
 				const temp = S.general.breastsizemin;
@@ -645,10 +644,18 @@ const importSettingsData = function (data) {
 					// eslint-disable-next-line no-var
 					for (let j = 0; j < listKey.length; j++) {
 						// Overwrite to allow for "none" default value in the start passage to allow for rng to decide
-						if (V.passage === "Start" && ["pronoun", "gender"].includes(listKey[j]) && S.npc[V.NPCNameList[i]][listKey[j]] === "none") {
+						if (
+							V.passage === "Start" &&
+							["pronoun", "gender", "skincolour"].includes(listKey[j]) &&
+							S.npc[V.NPCNameList[i]][listKey[j]] === "none"
+						) {
 							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
 						} else if (validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])) {
 							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
+						}
+						// Prevent the changing of gender with pregnant npc's
+						if (V.NPCName[i].pregnancy.type) {
+							V.NPCName[i].gender = "f";
 						}
 					}
 				}
@@ -698,7 +705,6 @@ function exportSettings(data, type) {
 	const S = {
 		general: {
 			map: {},
-			skinColor: {},
 			shopDefaults: {},
 			options: {},
 		},
@@ -710,11 +716,10 @@ function exportSettings(data, type) {
 	if (V.passage === "Start") {
 		S.starting = {
 			player: {},
-			skinColor: {},
 		};
 		listObject = settingsObjects("starting");
 		listKey = Object.keys(listObject);
-		namedObjects = ["player", "skinColor"];
+		namedObjects = ["player"];
 
 		for (let i = 0; i < listKey.length; i++) {
 			if (namedObjects.includes(listKey[i]) && V[listKey[i]] != null) {
@@ -738,7 +743,7 @@ function exportSettings(data, type) {
 
 	listObject = settingsObjects("general");
 	listKey = Object.keys(listObject);
-	namedObjects = ["map", "skinColor", "shopDefaults", "options"];
+	namedObjects = ["map", "shopDefaults", "options"];
 
 	for (let i = 0; i < listKey.length; i++) {
 		if (namedObjects.includes(listKey[i]) && V[listKey[i]] != null) {
@@ -764,7 +769,7 @@ function exportSettings(data, type) {
 		S.npc[V.NPCNameList[i]] = {};
 		for (let j = 0; j < listKey.length; j++) {
 			// Overwrite to allow for "none" default value in the start passage to allow for rng to decide
-			if (V.passage === "Start" && ["pronoun", "gender"].includes(listKey[j]) && V.NPCName[i][listKey[j]] === "none") {
+			if (V.passage === "Start" && ["pronoun", "gender", "skincolour"].includes(listKey[j]) && V.NPCName[i][listKey[j]] === "none") {
 				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
 			} else if (validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])) {
 				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
@@ -884,7 +889,6 @@ function settingsObjects(type) {
 					randomize: "characterTrait",
 				},
 				gamemode: { strings: ["normal", "soft", "hard"], displayName: "Game difficulty:" },
-				startingseason: { strings: ["autumn", "winter", "spring", "summer", "random"], displayName: "Starting season:", randomize: "gameplay" },
 				ironmanmode: { bool: false, displayName: "Ironman mode:" },
 				player: {
 					gender: {
@@ -931,14 +935,13 @@ function settingsObjects(type) {
 						textMap: { 0: "Slender", 1: "Slim", 2: "Modest", 3: "Cushioned" },
 						randomize: "characterAppearance",
 					},
-				},
-				skinColor: {
-					natural: {
-						strings: ["light", "medium", "dark", "gyaru", "ylight", "ymedium", "ydark", "ygyaru"],
-						randomize: "characterAppearance",
-						displayName: "Natural Skintone:",
+					skin: {
+						color: {
+							strings: ["light", "medium", "dark", "gyaru", "ylight", "ymedium", "ydark", "ygyaru"],
+							randomize: "characterAppearance",
+							displayName: "Natural Skintone:",
+						},
 					},
-					range: { min: 0, max: 100, decimals: 0, randomize: "characterAppearance", displayName: "Initial Tan Value:" },
 				},
 			};
 			break;
@@ -1107,10 +1110,10 @@ function settingsObjects(type) {
 				},
 				bottomsizemax: {
 					min: 0,
-					max: 9,
+					max: 8,
 					decimals: 0,
 					displayName: "Maximum bottom size:",
-					textMap: { 0: "Slender", 1: "Slim", 2: "Modest", 3: "Cushioned", 4: "Soft", 5: "Round", 6: "Plump", 7: "Large", 8: "Huge", 9: "Huge" },
+					textMap: { 0: "Slender", 1: "Slim", 2: "Modest", 3: "Cushioned", 4: "Soft", 5: "Round", 6: "Plump", 7: "Large", 8: "Huge" },
 				},
 				penissizemin: { min: -2, max: 0, decimals: 0, displayName: "Minimum penis size:", textMap: { "-2": "Micro", "-1": "Mini", 0: "Tiny" } },
 				penissizemax: {
@@ -1155,6 +1158,7 @@ function settingsObjects(type) {
 				options: {
 					neverNudeMenus: { bool: true, displayName: "Hide player nudity in menus:" },
 					showCaptionText: { bool: true, displayName: "Show caption text in sidebar:" },
+					clothingCaption: { bool: true, displayName: "Show clothing description in sidebar:" },
 					sidebarStats: { strings: ["disabled", "limited", "all"], displayName: "Closed sidebar stats:" },
 					sidebarTime: { strings: ["disabled", "top", "bottom"], displayName: "Closed sidebar time:" },
 					combatControls: { strings: ["radio", "columnRadio", "lists", "limitedLists"], displayName: "Combat controls:" },
@@ -1166,7 +1170,6 @@ function settingsObjects(type) {
 					bodywritingImages: { bool: true, displayName: "Bodywriting images:" },
 					silhouetteEnabled: { bool: true, displayName: "NPC silhouettes:" },
 					tanImgEnabled: { bool: true, displayName: "Visual representation of skin colours:" },
-					tanningEnabled: { bool: true, displayName: "Tanning due to sun exposure:" },
 					sidebarAnimations: { bool: true, displayName: "Sidebar images:" },
 					blinkingEnabled: { bool: true, displayName: "Animated blinking:" },
 					combatAnimations: { bool: true, displayName: "Combat animations:" },
@@ -1179,7 +1182,7 @@ function settingsObjects(type) {
 					lightCombat: { min: 0, max: 1, decimals: 2, displayName: "Combat light:" },
 					lightTFColor: { min: 0, max: 1, decimals: 2, displayName: "Angel/Devil TF colour components:" },
 					maxStates: { min: 1, max: 20, decimals: 0, displayName: "History depth:" },
-					newWardrobeStyle: { bool: true, displayName: "Use the new wardrobe style:" },
+					historyControls: { bool: true, displayName: "Show history controls:" },
 					useNarrowMarket: { bool: true, displayName: "Use 'narrow screen' version of market inventory:" },
 					skipStatisticsConfirmation: { bool: true, displayName: "Skip confirmation when viewing extra stats:" },
 					passageCount: { strings: ["disabled", "changes", "total"], displayName: "Display passage count:" },
@@ -1190,7 +1193,6 @@ function settingsObjects(type) {
 					pepperSprayDisplay: { strings: ["none", "sprays", "compact"], displayName: "Pepper spray display:" },
 					condomsDisplay: { strings: ["none", "standard"], displayName: "Condom display:" },
 					closeButtonMobile: { bool: true, displayName: "Items per page:" },
-					oldclock: { bool: true, displayName: "Use old clock style:" },
 					showDebugRenderer: { bool: true, displayName: "Enable renderer debugger:" },
 					numpad: { bool: true, displayName: "Enable numpad:" },
 					traitOverlayFormat: { strings: ["table", "reducedTable", "list"], displayName: "Display traits:" },
@@ -1231,6 +1233,11 @@ function settingsObjects(type) {
 			result = {
 				pronoun: { strings: ["m", "f"], displayName: "Pronoun: ", textMap: { none: "N/A", m: "Male", f: "Female" } },
 				gender: { strings: ["m", "f"], displayName: "Genitalia: ", textMap: { none: "N/A", m: "Penis", f: "Vagina" } },
+				skincolour: {
+					strings: ["white", "black", "ghost"],
+					displayName: "Skin colour: ",
+					textMap: { none: "N/A", white: "Pale", black: "Dark", ghost: "Ghostly Pale" },
+				},
 				penissize: { min: 0, max: 4, decimals: 0, displayName: "Penis size: ", textMap: { 0: "N/A", 1: "Tiny", 2: "Average", 3: "Thick", 4: "Huge" } },
 				breastsize: {
 					min: 0,
@@ -1268,7 +1275,7 @@ function settingsConvert(exportType, type, settings) {
 	const keys = Object.keys(listObject);
 	for (let i = 0; i < keys.length; i++) {
 		if (result[keys[i]] === undefined) continue;
-		if (["map", "skinColor", "player", "shopDefaults", "options"].includes(keys[i])) {
+		if (["map", "player", "shopDefaults", "options"].includes(keys[i])) {
 			const itemKey = Object.keys(listObject[keys[i]]);
 			for (let j = 0; j < itemKey.length; j++) {
 				if (result[keys[i]][itemKey[j]] === undefined) continue;
@@ -1331,7 +1338,7 @@ window.loadExternalExportFile = function () {
 
 window.randomizeSettings = function (filter) {
 	const settingsResult = {};
-	const settingContainers = ["player", "skinColor"];
+	const settingContainers = ["player"];
 	const randomizeSettingLoop = function (settingsObject, mainObject, subObject) {
 		if (mainObject && !settingsResult[mainObject]) {
 			settingsResult[mainObject] = {};

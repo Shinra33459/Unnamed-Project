@@ -16,7 +16,7 @@ You are in the garden behind the orphanage.
 			It's hard to tell in the dark, but the spring is finished.
 		<</if>>
 	<<else>>
-		<<if $weather is "rain">>
+		<<if Weather.precipitation is "rain">>
 			<<if $mason_pond_timer gte 7>>
 				The rain prevents work from commencing.
 			<<elseif $mason_pond_timer gte 4>>
@@ -24,7 +24,7 @@ You are in the garden behind the orphanage.
 			<<elseif $mason_pond_timer gte 1>>
 				The pond is taking shape. The workers must be getting close to breaching the spring. For now, it fills with rainwater.
 			<</if>>
-		<<elseif $weather is "snow">>
+		<<elseif Weather.precipitation is "snow">>
 			<<if $mason_pond_timer gte 7>>
 				The snow prevents work from commencing.
 			<<elseif $mason_pond_timer gte 4>>
@@ -70,7 +70,7 @@ You are in the garden behind the orphanage.
 			The greenhouse looks finished.
 		<</if>>
 	<<else>>
-		<<if $weather is "rain">>
+		<<if Weather.precipitation is "rain">>
 			<<if $alex_greenhouse_timer gte 6>>
 				The earth has been dug, but workers wait for the rain to pass before continuing.
 			<<elseif $alex_greenhouse_timer gte 3>>
@@ -80,7 +80,7 @@ You are in the garden behind the orphanage.
 			<<else>>
 				The greenhouse looks finished.
 			<</if>>
-		<<elseif $weather is "snow">>
+		<<elseif Weather.precipitation is "snow">>
 			<<if $alex_greenhouse_timer gte 6>>
 				The earth has been dug, but workers wait for the snow to stop falling before continuing.
 			<<elseif $alex_greenhouse_timer gte 3>>
@@ -129,7 +129,7 @@ As you sneak through the garden, you hear strange, muffled sounds coming from a 
 <<link [[Ignore|Garden Voyeurism Ignore]]>><</link>>
 <<else>>
 
-	<<if Time.hour gte 7 and Time.hour lt 20 and $weather is "rain">>
+	<<if Time.hour gte 7 and Time.hour lt 20 and Weather.precipitation is "rain">>
 		Some orphans are playing.
 		<br><br>
 	<</if>>
@@ -142,31 +142,32 @@ As you sneak through the garden, you hear strange, muffled sounds coming from a 
 		<br>
 	<</if>>
 
-	<<if $weather is "clear" and Time.dayState is "day">>
-		<<baskicon>><<link [[Bask in the sun (0:10)|Bask]]>><<pass 10>><<tanned 10>><<set $stress -= 20>><</link>><<lstress>><<gtanned>>
+	<<if !Weather.isOvercast and Time.dayState is "day">>
+		<<set _tanning to Skin.getTanningFactor()>>
+		<<baskicon>><<link [[Bask in the sun (0:10)|Bask]]>><<pass 10>><<set $stress -= 5>><</link>><<lstress>><<tanningGainOutput _tanning.result 10>>
 		<br>
 	<</if>>
 
 	<<if $exposed gte 2>>
 		<<if Time.dayState is "night">>
-			<<if $exhibitionism gte 55>>
+			<<if hasSexStat("exhibitionism", 4)>>
 				<<fenceicon>><<link [[Climb over the fence (0:05)|Garden Fence Naked Night]]>><<pass 5>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist4>><</if>>
 				<br>
 			<</if>>
 		<<else>>
-			<<if $exhibitionism gte 75>>
+			<<if hasSexStat("exhibitionism", 5)>>
 				<<fenceicon>><<link [[Climb over the fence (0:05)|Garden Fence Naked Day]]>><<pass 5>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist5>><</if>>
 				<br>
 			<</if>>
 		<</if>>
 	<<elseif $exposed gte 1>>
 		<<if Time.dayState is "night">>
-			<<if $exhibitionism gte 15>>
+			<<if hasSexStat("exhibitionism", 2)>>
 				<<fenceicon>><<link [[Climb over the fence (0:05)|Garden Fence Undies Night]]>><<pass 5>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist2>><</if>>
 				<br>
 			<</if>>
 		<<else>>
-			<<if $exhibitionism gte 35>>
+			<<if hasSexStat("exhibitionism", 3)>>
 				<<fenceicon>><<link [[Climb over the fence (0:05)|Garden Fence Undies Day]]>><<pass 5>><</link>><<if $daily.ex.fence isnot 1>><<exhibitionist3>><</if>>
 				<br>
 			<</if>>
@@ -209,7 +210,7 @@ You watch the couple hump away with reckless abandon. Their panting and stifled 
 <<link [[Keep watching|Garden Voyeurism Keep]]>><</link>>
 <br>
 
-<<if $exhibitionism gte 55>>
+<<if hasSexStat("exhibitionism", 4)>>
 		<<link [[Masturbate|Garden Voyeurism Masturbate]]>><<set $masturbationstart to 1>><</link>><<exhibitionist4>>
 		<br>
 	<</if>>
@@ -280,7 +281,7 @@ You watch the couple hump away with reckless abandon. Their panting and stifled 
     The orphans start up and scan the surroundings.
     <br><br>
 
-    "Did you hear something?," the <<person1>><<person>> asks. "I think I did," the <<person2>><<person>> answers. "We'd better dip."
+    "Did you hear something?" the <<person1>><<person>> asks. "I think I did," the <<person2>><<person>> answers. "We'd better dip."
     <br><br>
 
     With that, the orphans hastily pull up their clothes and scramble inside.
@@ -291,7 +292,7 @@ You watch the couple hump away with reckless abandon. Their panting and stifled 
     As you are busy pleasuring yourself, you suddenly feel a hand grabbing you by the shoulder. You turn around in surprise. It's Bailey!<<gstress>><<stress 12>>
     <br><br>
 
-    Bailey scowls. "I thought I was hearing strange sounds coming from this direction. Should've known I'd find you here. Now if you don't mind, conduct your business inside, before the neighbors get strange ideas about this place."
+    Bailey scowls. "I thought I was hearing strange sounds coming from this direction. Should've known I'd find you here. Now if you don't mind, conduct your business inside, before the neighbours get strange ideas about this place."
     <br><br>
 
     With that, Bailey huffs off. When you look back over your shoulder, you find the couple gone.
@@ -494,7 +495,7 @@ You look over your shoulder to make sure you aren't being watched, then hoist yo
 		<br>
 	<</if>>
 	<br>
-	<<getouticon>><<link [[Leave|Garden]]>><</link>>
+	<<getouticon>><<link [[Leave|Garden]]>><<handheldon>><</link>>
 	<br>
 <</if>>
 
@@ -537,7 +538,7 @@ You find some seeding daisies growing within a tuft of wild grass near the back 
 
 <br><br>
 
-<<generatec1>><<person1>>A <<person>> steps out from behind a bush, grinning ear to ear. "Alright, but first let me see you properly."
+<<generatey1>><<person1>>A <<person>> steps out from behind a bush, grinning ear to ear. "Alright, but first let me see you properly."
 <br><br>
 
 <<link [[Do as asked|Bask Call Move]]>><<stress 6>><<trauma 6>><</link>><<gtrauma>><<gstress>>
@@ -828,7 +829,7 @@ You squeeze <<his>> hips between your thighs for a moment and lean closer. "You'
 
 :: Garden Robin Help
 <<effects>>
-<<set _robin to statusCheck("Robin")>>
+<<set _robin to statusCheck("Robin")>><<wearProp "watering can">>
 
 <<for _plot range $plots["garden"]>>
 	<<set _plot.water to 1>>
@@ -845,9 +846,9 @@ You hand Robin your watering can, and <<he>> gets to work while you find another
 Job well done, Robin sits on the grass and watches the flowers sway in the breeze.
 <br><br>
 
-<<link [[Sit with Robin (0:05)|Garden Robin Sit]]>><<pass 5>><<npcincr Robin love 1>><</link>><<glove>>
+<<link [[Sit with Robin (0:05)|Garden Robin Sit]]>><<handheldon>><<pass 5>><<npcincr Robin love 1>><</link>><<glove>>
 <br>
-<<link [[Make Robin a flower crown (0:10)|Garden Robin Crown]]>><<pass 10>><</link>><<tendingdifficulty 1 200>>
+<<link [[Make Robin a flower crown (0:10)|Garden Robin Crown]]>><<handheldon>><<pass 10>><</link>><<tendingdifficulty 1 200>>
 <br>
 
 
@@ -916,7 +917,7 @@ You wrap your arms around Robin. <<He>> rests <<his>> head on your shoulder, and
 	"Thank you for offering," you say. "But I've just finished."
 <</if>>
 <br><br>
-<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
+<<if C.npc.Robin.trauma gte 40>>
 	Robin nods, and walks back towards the orphanage.
 <<else>>
 	Robin nods. "Okay. I'll be inside if you need me."
@@ -1035,7 +1036,7 @@ You call for help as the shoots tighten around you.
 	<br>
 <<else>>
 	<<run statusCheck("Robin")>>
-	<<if $rng gte 51 and _robin_location is "orphanage" and $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $daily.robin.tending isnot 1>>
+	<<if $rng gte 51 and _robin_location is "orphanage" and C.npc.Robin.trauma lt 80 and $daily.robin.tending isnot 1>>
 		<<npc Robin>><<person1>>
 		"I'm coming!" shouts a voice in response. It's Robin. <<He>> emerges from the orphanage, and gasps when <<he>> sees you. "You're all tangled. Here." <<He>> drops to <<his>> knees and loosens the entangling shoots. <<Hes>> careful not to damage any.
 		<br><br>
