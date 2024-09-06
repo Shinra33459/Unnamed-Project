@@ -5,6 +5,11 @@ You are in your bedroom.
 /* Wallpaper */
 <<set _furniture to $furniture.bedroom>>
 <<if _furniture.wallpaper>>
+	<br>
+	<<set _premadeWall to ["vines", "tentacles", "plainwhite", "cowgirls", "cow_girls", "hearts", "trees", "crosses"].includes(_furniture.wallpaper.name)>>
+	<<set _wallpaper to _premadeWall ? "wallpaper_" + _furniture.wallpaper.name + ".png" : ['dol', 'degrees of lewdity'].some(e => _furniture.wallpaper.name.toLowerCase().includes(e)) ? "wallpaper_dol.png" : "wallpaper_custom.png">>
+
+	<<furnitureicon _wallpaper>>
 	<<switch _furniture.wallpaper.name>>
 		<<case "vines">>
 			Lewd green vines writhe on the walls.
@@ -17,12 +22,12 @@ You are in your bedroom.
 				Thoughts of pleasure cross your mind.
 			<</if>>
 		<<case "plainwhite">>
-			Plain white wallpapers cover the walls.
+			Plain white wallpaper covers the walls.
 		<<case "wavywhite">>
-			The white wallpapers gradient to black in a wavy pattern. Is there a lewd subtext?
+			The white wallpaper gradients to black in a wavy pattern. Is there a lewd subtext?
 		<<case "hearts">>
 			Pink hearts cover the walls.
-		<<case "cowgirls">>
+		<<case "cowgirls" "cow_girls">>
 			Cowgirls dance on the walls.
 		<<case "trees">>
 			Green trees bring you a feeling of being in a forest.
@@ -30,7 +35,7 @@ You are in your bedroom.
 			Golden crosses cover the walls.
 		<<default>> /* Custom */
 			Images of _furniture.wallpaper.name cover the walls.
-			<<if ['dol', 'degrees of lewdity'].some(e => _furniture.wallpaper.name === e)>>
+			<<if _wallpaper is "wallpaper_dol.png">>
 				Somehow, they look familiar.
 			<<elseif _furniture.wallpaper.name.startsWith('&lt;&lt')>>
 				<span class="black">You feel like you got caught cheating.</span>
@@ -105,17 +110,21 @@ You are in your bedroom.
 <</if>>
 
 <<if _furniture.poster>>
+	<<set _premadePoster to ["cowgirl", "cow_girl", "cat", "puppy"].includes(_furniture.poster.name)>>
+	<<set _poster to _premadePoster ? "poster_" + _furniture.poster.name + ".png" : ['dol', 'degrees of lewdity'].some(e => _furniture.poster.name.toLowerCase().includes(e)) ? "poster_dol.png" : "poster.png">>
 	<br>
+
+	<<furnitureicon _poster>>
 	<<switch _furniture.poster.name>>
-		<<case "cowgirl">>
-			<<furnitureicon _poster.iconFile>>A cowgirl poster hangs on a wall.
+		<<case "cowgirl" "cow_girl">>
+			A cowgirl poster hangs on a wall.
 		<<case "cat">>
-			<<furnitureicon _poster.iconFile>>A poster of a cat hangs on a wall. The text below reads, "Hang in there!"
+			A poster of a cat hangs on a wall. The text below reads, "Hang in there!"
 		<<case "puppy">>
-			<<furnitureicon _poster.iconFile>>A puppy poster hangs on a wall.
+			A puppy poster hangs on a wall.
 		<<default>> /* Custom */
-			<<furnitureicon _poster.iconFile>>A poster of _furniture.poster.name hangs on a wall.
-			<<if ['dol', 'degrees of lewdity'].some(e => _furniture.poster.name === e)>>
+			A poster of _furniture.poster.name hangs on a wall.
+			<<if _poster is "poster_dol.png">>
 				You feel an odd sense of familiarity.
 			<<elseif _furniture.poster.name.startsWith('&lt;&lt;')>>
 				<span class="black">You feel like you got caught cheating.</span>
@@ -231,8 +240,10 @@ Your bed takes up most of the room.
 	<br>
 <</if>>
 
-<<furnitureicon _bed.iconFile>><<link [[Masturbate in bed|Home Masturbation]]>><<set $masturbationstart to 1>><</link>>
-<br>
+<<if _bed.type.includes("comfy")>>
+	<<furnitureicon _bed.iconFile>><<link [[Masturbate in bed|Home Masturbation]]>><<set $masturbationstart to 1>><</link>>
+	<br>
+<</if>>
 
 <<roomoptions>>
 <br>
@@ -1364,7 +1375,7 @@ You scream. The trio recoil and scramble for the door handle. They flee into the
 <<tearful>> you climb from the bath.
 <br><br>
 <<endevent>>
-<<link [[Next|Bath Finish]]>><<clotheson>><</link>>
+<<link [[Next|Bath Finish]]>><</link>>
 
 :: Bath Ask
 <<effects>><<set $location to "home">><<set $outside to 0>>
@@ -1590,16 +1601,16 @@ The water's getting cold. "I'm squeaky clean," you say. "Thanks for the help." T
 		<</if>>
 	<</if>>
 <<elseif $danger gte (9900 - $allure / 3) and $hallucinations gte 2 and $slimedisable is "f" and $swarmdisable is "f" and $controlled is 0>>
-	You wash until you're squeaky clean.<<wash>>
+	You wash until you're squeaky clean.<<wash>><<wearProp "soap">>
 	<br><br>
 
 	As you remove the plug to drain the water, you feel something probe your <<genitals>>. You look between your legs, but you don't see anything abnormal. When you try to stand up however, translucent tendrils rise from the water and force you back down.
 	<br><br>
 
-	<<link [[Next|Bath Slime]]>><<set $molestationstart to 1>><</link>>
+	<<link [[Next|Bath Slime]]>><<handheldon>><<set $molestationstart to 1>><</link>>
 <<elseif ($danger gte (9900 - $allure / 2) and $rng gte 30 and Time.dayState isnot "night") or _DEBUGTIMEBOIS is 1>>
 	<<generatey1>><<generatey2>><<generatey3>><<fameexhibitionism 3>>
-	You wash until you're squeaky clean.<<wash>>
+	You wash until you're squeaky clean.<<wash>><<wearProp "soap">>
 	<br><br>
 
 	As you remove the plug to drain the water, you hear voices from the hallway. They stop outside the door, before flinging it open. A <<fullGroup>> barge in.
@@ -1619,16 +1630,16 @@ The water's getting cold. "I'm squeaky clean," you say. "Thanks for the help." T
 
 		The <<person2>><<person>> blushes. "S-sorry," <<he>> says, not taking <<his>> eyes off you. "We didn't know you were in here."
 		<br><br>
-		<<link [[Scream|Bath Scream]]>><</link>>
+		<<link [[Scream|Bath Scream]]>><<handheldon>><</link>>
 		<br>
-		<<link [[Ask them to leave|Bath Ask]]>><</link>>
+		<<link [[Ask them to leave|Bath Ask]]>><<handheldon>><</link>>
 		<br>
 		<<if hasSexStat("exhibitionism", 5)>>
-			<<link [[Let them watch (0:05)|Bath Watch]]>><<pass 5>><</link>><<exhibitionist5>>
+			<<link [[Let them watch (0:05)|Bath Watch]]>><<handheldon>><<pass 5>><</link>><<exhibitionist5>>
 			<br>
 		<</if>>
 		<<if hasSexStat("promiscuity", 5)>>
-			<<link [[Goad|Bath Sex]]>><<set $sexstart to 1>><</link>><<promiscuous5>>
+			<<link [[Goad|Bath Sex]]>><<set $sexstart to 1>><<handheldon>><</link>><<promiscuous5>>
 			<br>
 		<</if>>
 	<<else>>
@@ -1651,7 +1662,7 @@ The water's getting cold. "I'm squeaky clean," you say. "Thanks for the help." T
 			<br><br>
 		<</if>>
 
-		<<link [[Finish up->Bath Finish]]>><</link>>
+		<<link [[Finish up->Bath Finish]]>><<handheldon>><</link>>
 		<<endevent>>
 	<</if>>
 
@@ -1668,12 +1679,12 @@ The water's getting cold. "I'm squeaky clean," you say. "Thanks for the help." T
     <br>
     <<link [[Shove Kylar Away|Kylar Bath Shove]]>><<npcincr Kylar love -1>><<npcincr Kylar rage 3>><</link>><<llove>><<gksuspicion>>
 <<else>>
-You wash until you're squeaky clean.<<wash>>
+You wash until you're squeaky clean.<<wash>><<wearProp "soap">>
 <br><br>
 
-<<getouticon>><<link [[Get out->Bath Finish]]>><</link>>
+<<getouticon>><<link [[Get out->Bath Finish]]>><<handheldon>><</link>>
 <br>
-<<ind>><<link [[Masturbate|Bath Masturbation]]>><<set $masturbationstart to 1>><</link>>
+<<skinicon "masturbate">><<link [[Masturbate|Bath Masturbation]]>><<handheldon>><<set $masturbationstart to 1>><</link>>
 <</if>>
 
 :: Kylar Bath Help
@@ -2877,15 +2888,15 @@ The warmth feels wonderful on your bare skin.
 <</if>>
 
 <<if Time.dayState is "day">>
-	<<link [[Continue (0:20)|Nude Bask]]>><<set $stress -= 10>><<pass 20>><</link>><<lstress>><<run tanningGainOutput(Weather.getTanningFactor().result, 10)>>
+	<<baskicon>><<link [[Continue (0:20)|Nude Bask]]>><<set $stress -= 10>><<pass 20>><</link>><<lstress>><<run Skin.tanningGainOutput(Skin.getTanningFactor().result, 10)>>
 	<br>
-	<<link [[Masturbate|Nude Masturbation]]>><<set $masturbationstart to 1>><</link>>
+	<<skinicon "masturbate">><<link [[Masturbate|Nude Masturbation]]>><<set $masturbationstart to 1>><</link>>
 	<br>
-	<<link [[Stop|Garden]]>><<clotheson>><</link>>
+	<<refuseicon>><<link [[Stop|Garden]]>><<clotheson>><</link>>
 <<else>>
 	The sun starts to disappear behind the rooftops.
 	<br><br>
-	<<link [[Get dressed|Garden]]>><<clotheson>><</link>>
+	<<dressasyouwereicon>><<link [[Get dressed|Garden]]>><<clotheson>><</link>>
 <</if>>
 
 :: Widget Passout Home [widget]
@@ -2944,7 +2955,6 @@ The warmth feels wonderful on your bare skin.
 The last of the water drains from the bath, taking the slime with it. <<tearful>> you climb out the bath.
 <br><br>
 
-<<clotheson>>
 <<endcombat>>
 
 <<link [[Next|Bath Finish]]>><</link>>
@@ -3093,7 +3103,7 @@ Attitudes
 :: Mirror
 <<effects>>
 
-<<link [[Step away|Bedroom]]>><<unset $mirrorMenu>><<unset $bodywritingSet>><<postMirror>><</link>>
+<<bedicon>><<link [[Step away|Bedroom]]>><<handheldon>><<unset $mirrorMenu>><<unset $bodywritingSet>><<postMirror>><</link>>
 <br>
 
 <<mirror>>
@@ -3106,7 +3116,7 @@ Attitudes
 <<if $previousPassage is undefined>>
 	<<set $previousPassage = "Bedroom">>
 <</if>>
-<<link [[Step away|$previousPassage]]>><<unset $mirrorMenu>><<unset $simpleMirror>><<unset $bodywritingSet>><<postMirror>><</link>>
+<<ind>><<link [[Step away|$previousPassage]]>><<handheldon>><<unset $mirrorMenu>><<unset $simpleMirror>><<unset $bodywritingSet>><<postMirror>><</link>>
 <br>
 
 <<mirror>>
@@ -3323,7 +3333,7 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 <</if>>
 <<link [[Strip (0:02)|Orphanage Hacker Strip]]>><<stress 1>><<pass 2>><<if $pubfame and $pubfame.intro lte 2>><<set $pubfame.intro to 3>><</if>><<if $pub_hack_job lte 2>><<set $pub_hack_job to 3>><</if>><<undress "mickey">><</link>><<gstress>>
 <br>
-<<link [[Refuse|Orphanage Hacker Strip Refuse]]>><<if $pubfame and $pubfame.intro lte 2>><<set $pubfame.intro to 2>><</if>><<if $pub_hack_job lte 2>><<set $pub_hack_job to 3>><</if>><</link>>
+<<link [[Refuse|Orphanage Hacker Strip Refuse]]>><<if $pubfame and $pubfame.intro lte 2>><<set $pubfame.intro to 2>><</if>><<if $pub_hack_job lte 2>><<set $pub_hack_job to 2>><</if>><</link>>
 
 :: Orphanage Hacker Strip Refuse
 <<set $outside to 0>><<set $location to "town">><<effects>>
@@ -3413,6 +3423,7 @@ You grab your clothes and dress with haste.
 <</if>>
 
 <<shavestrip>>
+<<wearProp "razor">>
 You take off your clothes and look at your <<genitals>>.
 <br>
 <<if $worn.genitals.name is "chastity belt" or $worn.genitals.name is "gold chastity belt">>
@@ -3515,13 +3526,14 @@ You sit down, spread your legs, and start carefully trimming your pubes. After a
 <<link [[Next|Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
 
 :: Dye pubic hair
-<<effects>>
+<<effects>><<handheldon>>
 
 <<set _ownedColours = $makeup.owned.hairdye.filter(x => x.count > 0)>>
 <<if _ownedColours.length == 0>>
 	You don't own any hair dyes. Maybe you should visit a cosmetics shop to buy some.
 	<br>
 <<else>>
+	<<wearProp "hairdye">>
 	What colour will it be?
 	<br>
 	<<set _choice = _ownedColours[0].colour>>
