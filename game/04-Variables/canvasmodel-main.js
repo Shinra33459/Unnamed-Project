@@ -158,12 +158,12 @@ replace (?<!["'\w])_(?=\w) with T.
  * CLOTHING OPTIONS:
  * ----------------
  * For each clothing SLOT (key in $worn)
- * - "worn.SLOT.index":number - index of the worn item; 0 for no item
- * - "worn.SLOT.alpha":0..1 - opacity, default 1
- * - "worn.SLOT.integrity":"tattered"|"torn|"frayed"|"full" - integrity suffix attached to file name
- * - "worn.SLOT.colour":string - colour name, key from setup.colours.clothes_map
+ * - "worn_SLOT.index":number - index of the worn item; 0 for no item
+ * - "worn_SLOT.alpha":0..1 - opacity, default 1
+ * - "worn_SLOT.integrity":"tattered"|"torn|"frayed"|"full" - integrity suffix attached to file name
+ * - "worn_SLOT.colour":string - colour name, key from setup.colours.clothes_map
  *                               or "custom" (need to configure "worn_SLOT_custom" filter manually)
- * - "worn.SLOT.accColour":string - accessory colour name, key from setup.colours.clothes_map
+ * - "worn_SLOT.accColour":string - accessory colour name, key from setup.colours.clothes_map
  *                                   or "custom" (need to configure "worn_SLOT_acc_custom" filter manually)
  *
  * MISC OPTIONS:
@@ -685,13 +685,13 @@ Renderer.CanvasModels.main = {
 		if (options.worn.upper.setup.mask_img === 1 && options.worn.upper.setup.name === "cocoon") {
 			options.head_mask_src = "img/clothes/upper/cocoon/mask.png";
 		} else if (
-			options.worn_over_head_setup.mask_img === 1
-				&& !(options.hood_down && options.worn_over_head_setup.hood && options.worn_over_head_setup.outfitSecondary !== undefined)  && V.tfearshatposition == "under"
+			options.worn.over_head.setup.mask_img === 1
+				&& !(options.hood_down && options.worn.over_head.setup.hood && options.worn.over_head.setup.outfitSecondary !== undefined)  && V.tfearshatposition == "under"
 		) {
 			options.head_mask_src = `img/clothes/head/${options.worn.over_head.setup.variable}/mask.png`;
 		} else if (
-			options.worn_head_setup.mask_img === 1
-				&& !(options.hood_down && options.worn_head_setup.hood && options.worn_head_setup.outfitSecondary !== undefined && V.tfearshatposition == "under")
+			options.worn.head.setup.mask_img === 1
+				&& !(options.hood_down && options.worn.head.setup.hood && options.worn.head.setup.outfitSecondary !== undefined && V.tfearshatposition == "under")
 		) {
 			if (
 				options.worn.head.setup.mask_img_ponytail === 1
@@ -810,8 +810,8 @@ Renderer.CanvasModels.main = {
 			options.handheld_position = null;
 		}
 		if (
-			options.worn_handheld_setup.name != "honey pouch"
-				&& options.worn_handheld_setup.name != "naked"
+			options.worn_handheld.setup.name != "honey pouch"
+				&& options.worn_handheld.setup.name != "naked"
 				&& options.arm_right === "hold"
 		) {
 			options.handheld_position = true;
@@ -2653,9 +2653,9 @@ Renderer.CanvasModels.main = {
 			},
 			zfn(options) {
 				// return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.1 : ZIndices.armsidle + 0.1;
-				if (options.worn_over_upper) {
+				if (options.worn.over_upper) {
 					T.zarms = ZIndices.over_upper_arms;
-				} else if (options.worn_upper) {
+				} else if (options.worn.upper) {
 					if (options.arm_left === "cover") {
 						if (options.upper_tucked) {
 							T.zarms = ZIndices.upper_arms_tucked;
@@ -2665,15 +2665,15 @@ Renderer.CanvasModels.main = {
 					} else {
 						T.zarms = ZIndices.under_upper_arms;
 					}
-				} else if (options.worn_under_upper) {
+				} else if (options.worn.under_upper) {
 					T.zarms = ZIndices.under_upper_arms;
 				} else {
 					T.zarms = ZIndices.armsidle
 				}
 				// Do not put skin above sleeves
-				if (options.worn_under_upper_setup.sleeve_img === 1) {
+				if (options.worn.under_upper.setup.sleeve_img === 1) {
 					T.zarms = ZIndices.under_upper_arms;
-				} else if (options.worn_upper_setup.sleeve_img === 1) {
+				} else if (options.worn.upper.setup.sleeve_img === 1) {
 					if (options.arm_left === "cover") {
 						if (options.upper_tucked) {
 							T.zarms = ZIndices.upper_arms_tucked;
