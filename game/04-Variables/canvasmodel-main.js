@@ -1187,7 +1187,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				const iris = options.trauma ? "irisempty" : "iris";
+				const iris = options.trauma || V.traumatized ? "irisempty" : "iris";
 				const half = options.eyes_half ? "_halfclosed" : "";
 				return `img/face/${options.facestyle}/${iris}${half}_left.png`;
 			},
@@ -1201,7 +1201,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				const iris = options.trauma ? "irisempty" : "iris";
+				const iris = options.trauma || V.traumatized ? "irisempty" : "iris";
 				const half = options.eyes_half ? "_halfclosed" : "";
 				return `img/face/${options.facestyle}/${iris}${half}_right.png`;
 			},
