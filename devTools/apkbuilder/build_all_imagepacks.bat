@@ -32,7 +32,7 @@ set imagepack[11]=kitmint
 @REM set imagepack[12]=b3s_mys
 @REM set imagepack[13]=hikfem_mys
 
-set array_length=13
+set array_length=11
 
 cd ../../
 
@@ -55,7 +55,7 @@ for /L %%i in (0,1,%array_length%) do (
 
 	powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\AndroidManifest.xml') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\AndroidManifest.xml'"
 
-	powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\assets\www\index.html') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\assets\www\index.html'"
+	@REM powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\assets\www\index.html') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\assets\www\index.html'"
 
 	powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\res\xml\config.xml') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\devTools\apkbuilder\platforms\android\app\src\main\res\xml\config.xml'"
 
@@ -91,7 +91,7 @@ for /L %%i in (0,1,%array_length%) do (
 
 	cd ./dist/
 
-	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.2.3 DoLP v0.%version% !imagepack[%%i]!-debug.apk" "0.5.2.3 DoLP v0.%version% !imagepack[%%i]!-debug.apk"
+	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.2.4 DoLP v0.%version% !imagepack[%%i]!-debug.apk" "0.5.2.4 DoLP v0.%version% !imagepack[%%i]!-debug.apk"
 
 	cd ../
 )
