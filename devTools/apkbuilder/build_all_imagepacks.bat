@@ -14,8 +14,8 @@ set target[8]=susato
 set target[9]=mizz
 set target[10]=mvcr
 set target[11]=kitmint
-set target[12]=beeesss_mysterious
-set target[13]=hikfem_mysterious
+@REM set target[12]=beeesss_mysterious
+@REM set target[13]=hikfem_mysterious
 
 set imagepack[0]=vanilla
 set imagepack[1]=beeesss
@@ -29,8 +29,8 @@ set imagepack[8]=susato
 set imagepack[9]=mizz
 set imagepack[10]=mvcr
 set imagepack[11]=kitmint
-set imagepack[12]=b3s_mys
-set imagepack[13]=hikfem_mys
+@REM set imagepack[12]=b3s_mys
+@REM set imagepack[13]=hikfem_mys
 
 set array_length=13
 
