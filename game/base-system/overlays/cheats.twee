@@ -258,7 +258,7 @@
 					},
 					step: 10,
 					valueFormat: value => Math.round(value) + "ml",
-					percentage: false, min: 24, max: 3000
+					percentage: false, min: 24, max: $milk_max * $AMCTraits.milk
 				}>>
 			<<if $player.penisExist>>
 				<<numberStepper "Semen Volume" $semen_volume
@@ -270,7 +270,7 @@
 					},
 					step: 10,
 					valueFormat: value => Math.round(value) + "ml",
-					percentage: false, max: 3000
+					percentage: false, max: $semen_max * $AMCTraits.semen
 				}>>
 			<</if>>
 		</div>
@@ -546,7 +546,7 @@
 			|
 			<<link "Set all to max">>
 				<<for _i range _core>>
-					<<set V[_i] to 20000>><<clamp>>
+					<<set V[_i] to 50000>><<clamp>>
 				<</for>>
 				<<replace "#characteristics">><<cheatSection "characteristics">><</replace>>
 			<</link>>
@@ -565,7 +565,7 @@
 			<</if>>
 		</div>
 		<div class="settingsToggleItem">
-			<<set _skills to ["skulduggery", "skulduggeryday", "danceskill", "swimmingskill", "athletics", "tending", "housekeeping"]>>
+			<<set _skills to ["skulduggery", "skulduggeryday", "danceskill", "swimmingskill", "athletics", "tending", "housekeeping", "brawling"]>>
 			<span class="gold">Core Skills</span>
 			<br>
 			<<link "Set all to 0">>
@@ -598,7 +598,7 @@
 			|
 			<<link "Set all to max">>
 				<<for _i range _subjects>>
-					<<set V[_i] to 1000>><<clamp>>
+					<<set V[_i] to 2000>><<clamp>>
 				<</for>>
 				<<replace "#schoolSkills">><<cheatSection "school">><</replace>>
 			<</link>>
@@ -621,7 +621,7 @@
 			|
 			<<link "Set all to max">>
 				<<for _i range _sexSkills>>
-					<<set V[`${_i}skill`] to 1000>><<clamp>>
+					<<set V[`${_i}skill`] to 2000>><<clamp>>
 				<</for>>
 				<<replace "#cheatsSex">><<cheatSection "sex">><</replace>>
 			<</link>>
@@ -2592,53 +2592,54 @@
 			<</for>>
 			<<unset _cr>>
 		<<case "negative">>
-			<<numberStepper "Sex" $fame.sex { callback: value => V.fame.sex = value, max: 2000, reverse: true}>>
-			<<numberStepper "Prostitution" $fame.prostitution { callback: value => V.fame.prostitution = value, max: 2000, reverse: true}>>
-			<<numberStepper "Rape" $fame.rape { callback: value => V.fame.rape = value, max: 2000, reverse: true}>>
-			<<numberStepper "Bestiality" $fame.bestiality { callback: value => V.fame.bestiality = value, max: 2000, reverse: true}>>
-			<<numberStepper "Pregnancy" $fame.pregnancy { callback: value => V.fame.pregnancy = value, max: Math.clamp(playerNormalPregnancyTotal(),1,8) * 250, step: 2000 / 100,  percentage: false, reverse: true, valueFormat: (value) => `<b>${Math.round(((value - 0) / (2000 - 0)) * 100)}%</b>`}>>
-			<<numberStepper "Impregnation" $fame.impreg { callback: value => V.fame.impreg = value, max: 2000, reverse: true}>>
-			<<numberStepper "Exhibitionism" $fame.exhibitionism { callback: value => V.fame.exhibitionism = value, max: 2000, reverse: true}>>
+			<<numberStepper "Sex" $fame.sex { callback: value => V.fame.sex = value, max: 2000 * $AMCTraits.sexFame, reverse: true, percentage: false}>>
+			<<numberStepper "Prostitution" $fame.prostitution { callback: value => V.fame.prostitution = value, max: 2000 * $AMCTraits.prostitutionFame, reverse: true, percentage: false}>>
+			<<numberStepper "Rape" $fame.rape { callback: value => V.fame.rape = value, max: 2000 * $AMCTraits.rapeFame, reverse: true, percentage: false}>>
+			<<numberStepper "Bestiality" $fame.bestiality { callback: value => V.fame.bestiality = value, max: 2000 * $AMCTraits.bestialityFame, reverse: true, percentage: false}>>
+			<<numberStepper "Pregnancy" $fame.pregnancy { callback: value => V.fame.pregnancy = value, max: Math.clamp(playerNormalPregnancyTotal() * $AMCTraits.pregnancyFame,1,8) * 250, step: 2000 / 100,  percentage: false, reverse: true, valueFormat: (value) => `<b>${Math.round(((value - 0) / (2000 - 0)) * 100)}%</b>`, percentage: false}>>
+			<<numberStepper "Impregnation" $fame.impreg { callback: value => V.fame.impreg = value, max: 2000 * $AMCTraits.impregFame, reverse: true, percentage: false}>>
+			<<numberStepper "Exhibitionism" $fame.exhibitionism { callback: value => V.fame.exhibitionism = value, max: 2000 * $AMCTraits.exhibitionismFame, reverse: true, percentage: false}>>
 			<<if playerNormalPregnancyTotal() lt 8>>
 				<span class="description"><<set _pregsNeeded to Math.trunc(8-playerNormalPregnancyTotal())>>
 				Your pregnancy fame is capped by the amount of pregnancies you've had. You need to get pregnant <span class="gold"><<number _pregsNeeded>></span> more <<= _pregsNeeded is 1 ? "time" : "times">> to reach maximum pregnancy fame.</span>
 			<</if>>
 		<<case "positive">>
-			<<numberStepper "Combat" $fame.scrap { callback: value => V.fame.scrap = value, max: 2000}>>
-			<<numberStepper "Kindness" $fame.good { callback: value => V.fame.good = value, max: 2000}>>
-			<<numberStepper "Business" $fame.business { callback: value => V.fame.business = value, max: 2000}>>
-			<<numberStepper "Socialite" $fame.social { callback: value => V.fame.social = value, max: 2000}>>
-			<<numberStepper "Model" $fame.model { callback: value => V.fame.model = value, max: 2000}>>
+			<<numberStepper "Combat" $fame.scrap { callback: value => V.fame.scrap = value, max: 2000 * $AMCTraits.scrapFame, percentage: false}>>
+			<<numberStepper "Kindness" $fame.good { callback: value => V.fame.good = value, max: 2000 * $AMCTraits.goodFame, percentage: false}>>
+			<<numberStepper "Business" $fame.business { callback: value => V.fame.business = value, max: 2000 * $AMCTraits.businessFame, percentage: false}>>
+			<<numberStepper "Socialite" $fame.social { callback: value => V.fame.social = value, max: 2000 * $AMCTraits.socialFame, percentage: false}>>
+			<<numberStepper "Model" $fame.model { callback: value => V.fame.model = value, max: 2000 * $AMCTraits.modelFame, percentage: false}>>
 		<<case "skills">>
-			<<numberStepper "Skulduggery" $skulduggery "skulduggery" {max: 1000}>>
-			<<numberStepper "Dance" $danceskill "danceskill" {max: 1000}>>
-			<<numberStepper "Swimming" $swimmingskill "swimmingskill" {max: 1000}>>
-			<<numberStepper "Athletics" $athletics "athletics" {max: 1000}>>
-			<<numberStepper "Tending" $tending "tending" {max: 1000}>>
-			<<numberStepper "Housekeeping" $housekeeping "housekeeping" {max: 1000}>>
+			<<numberStepper "Skulduggery" $skulduggery "skulduggery" {max: 1000 * $AMCTraits.skulduggery, percentage: false}>>
+			<<numberStepper "Dance" $danceskill "danceskill" {max: 1000 * $AMCTraits.dancing, percentage: false}>>
+			<<numberStepper "Swimming" $swimmingskill "swimmingskill" {max: 1000 * $AMCTraits.swimming, percentage: false}>>
+			<<numberStepper "Athletics" $athletics "athletics" {max: 1000 * $AMCTraits.athletics, percentage: false}>>
+			<<numberStepper "Tending" $tending "tending" {max: 1000 * $AMCTraits.tending, percentage: false}>>
+			<<numberStepper "Housekeeping" $housekeeping "housekeeping" {max: 1000 * $AMCTraits.housekeeping, percentage: false}>>
+			<<numberStepper "Brawling" $brawling "brawling" {max: 1000 * $AMCTraits.brawling, percentage: false}>>
 		<<case "school">>
 			/* normally, school traits are adjusted by the widget "school_skill_change" */
 			<<numberStepper "<<scienceicon>> Science" $science "science" {
 				callback: (value) => wikifier('adjust_school_traits'),
-				max: 1000
+				max: 1000 * $AMCTraits.science, percentage: false
 			}>>
 			<<numberStepper "<<mathicon>> Maths" $maths "maths" {
 				callback: (value) => wikifier('adjust_school_traits'),
-				max: 1000
+				max: 1000 * $AMCTraits.maths, percentage: false
 			}>>
 			<<numberStepper "<<englishicon>> English" $english "english" {
 				callback: (value) => wikifier('adjust_school_traits'),
-				max: 1000
+				max: 1000 * $AMCTraits.english, percentage: false
 			}>>
 			<<numberStepper "<<historyicon>> History" $history "history" {
 				callback: (value) => wikifier('adjust_school_traits'),
-				max: 1000
+				max: 1000 * $AMCTraits.history, percentage: false
 			}>>
 		<<case "characteristics">>
 			<<numberStepper "<<tficon angel>> Purity" $purity "purity" {max: 1000}>>
-			<<numberStepper "<<symbol beauty>> Beauty" $beauty "beauty" {max: 10000}>>
-			<<numberStepper "<<symbol physique>> Physique" $physique "physique" {max: $physiquesize}>>
-			<<numberStepper "<<symbol willpower>> Willpower" $willpower "willpower" {max: 1000}>>
+			<<numberStepper "<<symbol beauty>> Beauty" $beauty "beauty" {max: 10000 * $AMCTraits.beauty, percentage: false}>>
+			<<numberStepper "<<symbol physique>> Physique" $physique "physique" {max: $physiquesize * $AMCTraits.physique, percentage: false}>>
+			<<numberStepper "<<symbol willpower>> Willpower" $willpower "willpower" {max: 1000 * $AMCTraits.willpower, percentage: false}>>
 			<<numberStepper "<<symbol awareness>> Awareness" $awareness "awareness" {max: 1000, reverse: true}>>
 			<<numberStepper "<<symbol promiscuity>> Promiscuity" $promiscuity "promiscuity" {reverse: true}>>
 			<<numberStepper "<<symbol exhibitionism>> Exhibitionism" $exhibitionism "exhibitionism" {reverse: true}>>
@@ -2647,16 +2648,16 @@
 				<<numberStepper "<<symbol corruption>> Corruption" $earSlime.corruption { callback: value => {V.earSlime.corruption = value; Wikifier.wikifyEval("<<updatesidebarimg>>")}, reverse: true}>>
 			<</if>>
 		<<case "sex">>
-			<<numberStepper "Seduction" $seductionskill "seductionskill" {max: 1000}>>
-			<<numberStepper "Chest" $chestskill "chestskill" {max: 1000}>>
-			<<numberStepper "Buttocks" $bottomskill "bottomskill" {max: 1000}>>
-			<<if $player.vaginaExist>><<numberStepper "Vaginal" $vaginalskill "vaginalskill" {max: 1000}>><</if>>
-			<<if $player.penisExist>><<numberStepper "Penile" $penileskill "penileskill" {max: 1000}>><</if>>
-			<<numberStepper "Thighs" $thighskill "thighskill" {max: 1000}>>
-			<<numberStepper "Oral" $oralskill "oralskill" {max: 1000}>>
-			<<numberStepper "Hands" $handskill "handskill" {max: 1000}>>
-			<<numberStepper "Anal" $analskill "analskill" {max: 1000}>>
-			<<numberStepper "Feet" $feetskill "feetskill" {max: 1000}>>
+			<<numberStepper "Seduction" $seductionskill "seductionskill" {max: 1000 * $AMCTraits.seductionskill, percentage: false}>>
+			<<numberStepper "Chest" $chestskill "chestskill" {max: 1000 * $AMCTraits.chestskill, percentage: false}>>
+			<<numberStepper "Buttocks" $bottomskill "bottomskill" {max: 1000 * $AMCTraits.bottomskill, percentage: false}>>
+			<<if $player.vaginaExist>><<numberStepper "Vaginal" $vaginalskill "vaginalskill" {max: 1000 * $AMCTraits.vaginalskill, percentage: false}>><</if>>
+			<<if $player.penisExist>><<numberStepper "Penile" $penileskill "penileskill" {max: 1000 * $AMCTraits.penileskill, percentage: false}>><</if>>
+			<<numberStepper "Thighs" $thighskill "thighskill" {max: 1000 * $AMCTraits.thighskill, percentage: false}>>
+			<<numberStepper "Oral" $oralskill "oralskill" {max: 1000 * $AMCTraits.oralskill, percentage: false}>>
+			<<numberStepper "Hands" $handskill "handskill" {max: 1000 * $AMCTraits.handskill, percentage: false}>>
+			<<numberStepper "Anal" $analskill "analskill" {max: 1000 * $AMCTraits.analskill, percentage: false}>>
+			<<numberStepper "Feet" $feetskill "feetskill" {max: 1000 * $AMCTraits.feetskill, percentage: false}>>
 		<<default>>
 			ERROR: Skill issue.
 	<</switch>>
