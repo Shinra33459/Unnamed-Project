@@ -20,9 +20,6 @@ const StartConfig = {
 };
 window.StartConfig = StartConfig;
 
-window.StartConfig.version += ".h"; //stands for Herm, don't change
-window.StartConfig.version += "0"; //how many times I've released a build of this mod for this version
-
 State.prng.init();
 
 window.versionUpdateCheck = true;
