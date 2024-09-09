@@ -567,7 +567,11 @@
 			<br>
 			<<link "Set all to 0">>
 				<<for _i range _skills>>
-					<<set V[_i] to 0>><<clamp>>
+					<<if _i isnot "brawling">>
+						<<set V[_i] to 0>><<clamp>>
+					<<else>>
+						<<set $combatExtended[_i] to 0>><<clamp>>
+					<</if>>
 				<</for>>
 				<<replace "#coreSkills">><<cheatSection "skills">><</replace>>
 			<</link>>
@@ -575,6 +579,10 @@
 			<<link "Set all to max">>
 				<<for _i range _skills>>
 					<<set V[_i] to 20000>><<clamp>>
+						<<set V[_i] to 20000>><<clamp>>
+					<<else>>
+						<<set $combatExtended[_i] to 20000>><<clamp>>
+					<</if>>
 				<</for>>
 				<<replace "#coreSkills">><<cheatSection "skills">><</replace>>
 			<</link>>
@@ -2602,7 +2610,7 @@
 			<<numberStepper "Athletics" $athletics "athletics" {max: 1000 * $AMCTraits.athletics, percentage: false}>>
 			<<numberStepper "Tending" $tending "tending" {max: 1000 * $AMCTraits.tending, percentage: false}>>
 			<<numberStepper "Housekeeping" $housekeeping "housekeeping" {max: 1000 * $AMCTraits.housekeeping, percentage: false}>>
-			<<numberStepper "Brawling" $brawling "brawling" {max: 1000 * $AMCTraits.brawling, percentage: false}>>
+			<<numberStepper "Brawling" $combatExtended.brawling { callback: value => { V.combatExtended.brawling = value },max: 1000 * $AMCTraits.brawling, percentage: false}>>
 		<<case "school">>
 			/* normally, school traits are adjusted by the widget "school_skill_change" */
 			<<numberStepper "<<scienceicon>> Science" $science "science" {
