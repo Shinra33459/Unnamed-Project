@@ -29,10 +29,10 @@ set imagepack[8]=susato
 set imagepack[9]=mizz
 set imagepack[10]=mvcr
 set imagepack[11]=kitmint
-@REM set imagepack[12]=b3s_mys
-@REM set imagepack[13]=hikfem_mys
+set imagepack[12]=b3s_mys
+set imagepack[13]=hikfem_mys
 
-set array_length=11
+set array_length=13
 
 cd ../../
 
