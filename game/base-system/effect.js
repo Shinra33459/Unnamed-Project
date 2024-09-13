@@ -1093,6 +1093,7 @@ function effects() {
 	sWikifier("<<integritycheck>><<exposure>>");
 
 	V.orgasmdown -= 1;
+	V.orgasmCum -= 1;
 
 	if (V.exposed >= 1 && V.exposedcheck === 1) {
 		V.exposedcheck = 0;
