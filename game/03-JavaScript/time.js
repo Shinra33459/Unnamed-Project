@@ -870,6 +870,11 @@ function dayPassed() {
 
 	V.daily.clearProperties();
 
+	if (V.stallDeposit >= 3000) {
+		V.stallDeposit -= 3000;
+		V.daily.stallRented = 1;
+	}
+
 	return fragment;
 }
 
