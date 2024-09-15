@@ -69,6 +69,8 @@ for /L %%i in (0,1,%array_length%) do (
 
 	call compile.bat
 
+	ren "Degrees of Lewdity VERSION.html" "Degrees of Lewdity.html"
+
 	call .\devTools\apkbuilder\build_app_debug.bat
 
 	call .\devTools\apkbuilder\imagepack_builds\reset.bat
