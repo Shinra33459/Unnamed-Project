@@ -3,19 +3,19 @@ setlocal enabledelayedexpansion
 set /p version=Enter the version number:
 
 set target[0]=vanilla
-set target[1]=beeesss
-set target[2]=beeessshikarifemale
-set target[3]=beeessshikarimale
-set target[4]=beeesssparilhairstyleextended
-set target[5]=beeessswax
-set target[6]=beeesssokbd
-set target[7]=lllysmasc
+set target[1]=b3s
+set target[2]=b3s_hikfem
+set target[3]=b3s_hikmale
+set target[4]=b3s_paril
+set target[5]=b3s_wax
+set target[6]=b3s_okbd
+set target[7]=b3s_lllysmasc
 set target[8]=susato
-set target[9]=mizz
-set target[10]=mvcr
+set target[9]=b3s_mizz
+set target[10]=b3s_mvcr
 set target[11]=kitmint
-set target[12]=beeesss_mysterious
-set target[13]=hikfem_mysterious
+set target[12]=b3s_mys
+set target[13]=b3s_hikfem_mys
 
 set imagepack[0]=vanilla
 set imagepack[1]=beeesss
@@ -34,7 +34,9 @@ set imagepack[13]=hikfem_mys
 
 set array_length=13
 
-del ../../dist/*.apk
+del ..\..\dist\*.apk
+
+cd ..\..\
 
 for /L %%i in (0,1,%array_length%) do (
 	powershell -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\version'"
@@ -55,39 +57,33 @@ for /L %%i in (0,1,%array_length%) do (
 
 	powershell -Command "(Get-Content -Path '.\game\01-config\sugarcubeConfig.js') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\game\01-config\sugarcubeConfig.js'"
 
-	ren img img1
-
-	ren "!target[%%i]!img" img
+	call ".\imagepack_builds\!target[%%i]!.bat"
 
 	if %%i==11 (
-		move ./img/style.css ../
+		move .\img\style.css ..\
 	)
 
 	call compile.bat
 
-	cd ./devTools/apkbuilder/
+	cd .\devTools\apkbuilder\
 
 	call build_app_debug.bat
 
-	cd ../../
+	cd ..\..\
 
-	ren img "!target[%%i]!img"
+	del "!target[%%i]!img"
 
 	ren img1 img
 
 	git reset --hard
 
-	git clean -fd
-
 	del "Degrees of Lewdity.html"
 
-	rmdir /S /Q "./img1"
-
-	cd ./dist/
+	cd .\dist\
 
 	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.2.8 DoLP v0.%version% !imagepack[%%i]!-debug.apk" "0.5.2.8 DoLP v0.%version% !imagepack[%%i]!-debug.apk"
 
-	cd ../
+	cd ..\
 )
 
 endlocal
