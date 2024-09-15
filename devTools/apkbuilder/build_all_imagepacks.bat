@@ -34,13 +34,7 @@ set imagepack[13]=hikfem_mys
 
 set array_length=13
 
-cd ../../
-
-cd ./dist/
-
-del *.apk
-
-cd ../
+del ../../dist/*.apk
 
 for /L %%i in (0,1,%array_length%) do (
 	powershell -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\version'"
