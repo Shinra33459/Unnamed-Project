@@ -760,12 +760,17 @@
 		<</if>>
 	<</if>>
 	<<set _timeString to getTimeString(_baseTime)>>
-	<<if $farm_stage isnot 12 and $farm_work.alex is "clearing" and ($exposed lt 2 or hasSexStat("exhibitionism", 5)) and Time.dayState isnot "night">>
-		<<farmicon "clear yard">><<link [["Help Alex clear a field ("+ _timeString +")"|Farm Clearing]]>><<physique 2>><<farm_clear>><</link>><<gtiredness>><<run _actions++>>
+	<<if $farm.waterField is 1 and !$farm.build_finished.includes("water field 2")>>
+		<<set _string to "the water">>
+	<<else>>
+		<<set _string to "a">>
+	<</if>>
+	<<if ($farm_stage isnot 12 or ($farm.waterField is 1 and !$farm.build_finished.includes("water field 2"))) and $farm_work.alex is "clearing" and ($exposed lt 2 or hasSexStat("exhibitionism", 5)) and Time.dayState isnot "night">>
+		<<farmicon "clear yard">><<link [["Help Alex clear " + _string + " field ("+ _timeString +")"|Farm Clearing]]>><<physique 2>><<farm_clear>><</link>><<gtiredness>><<run _actions++>>
 		<br>
 	<</if>>
-	<<if $farm_stage isnot 12 and $farm_stage gte 2 and _actions lt 2 and $farm_work.alex isnot "clearing" and ($exposed lt 2 or hasSexStat("exhibitionism", 5))>>
-		<<farmicon "clear yard">><<link [["Clear a field alone ("+ _timeString +")"|Farm Clearing Alone]]>><<physique 4>><<farm_clear>><</link>><<ggtiredness>><<run _actions++>>
+	<<if ($farm_stage isnot 12 or ($farm.waterField is 1 and !$farm.build_finished.includes("water field 2"))) and $farm_stage gte 2 and _actions lt 2 and $farm_work.alex isnot "clearing" and ($exposed lt 2 or hasSexStat("exhibitionism", 5))>>
+		<<farmicon "clear yard">><<link [["Clear " + _string + " field alone ("+ _timeString +")"|Farm Clearing Alone]]>><<physique 4>><<farm_clear>><</link>><<ggtiredness>><<run _actions++>>
 		<br>
 	<</if>>
 
@@ -2574,6 +2579,16 @@
 					<<set $farm.cooler to 2>>
 				<<case "cooler 3">>
 					<<set $farm.cooler to 3>>
+				<<case "water field 1">>
+					<<set $farm.waterField to 1>>
+					<<set $farm.clearing to 1200>>
+				<<case "water field 2">>
+					<<set $farm.waterField to 2>>
+					<<set $farm.clearing to 100>>
+				<<case "water field 3">>
+					<<set $farm.waterField to 3>>
+				<<case "water field 4">>
+					<<set $farm.waterField to 4>>
 			<</switch>>
 			<<if $farm.build_finished is undefined or $farm.build_finished is 0>>
 				<<set $farm.build_finished to []>>
@@ -2962,6 +2977,14 @@
 				The industrial cooler is being installed.
 			<<case "cooler 2" "cooler 3">>
 				The industrial cooler is being upgraded.
+			<<case "water field 1">>
+				A fence is being build around the water field site.
+			<<case "water field 2">>
+				The water field is being excavated.
+			<<case "water field 3">>
+				Synethetic liners is being installed on the water field.
+			<<case "water field 4">>
+				The water source and water control structures are being installed on the water field.
 		<</switch>>
 		<<if $farm.build_timer is 1>>
 			It'll be finished tomorrow.
@@ -3201,6 +3224,30 @@
 		<<else>>
 			<<link [[Purchase|Farm Upgrades Cooler 1]]>><</link>>
 			<br>
+		<</if>>
+		<<if $farm_stage gte 12>>
+			Water field:
+			<<if $farm isnot undefined>>
+				<<if $farm.waterField is undefined>>
+					<<set $farm.waterField = 0>>
+				<</if>>
+			<</if>>
+			<<if $farm.waterField gte 4 or $farm.build is "water field 4">>
+				<span class="green">Completed</span>
+				<br>
+			<<elseif $farm.waterField gte 3 or $farm.build is "water field 3">>
+				<<link [[Install the water infrastructure|Farm Upgrades Water Field 4]]>><</link>>
+				<br>
+			<<elseif $farm.waterField gte 2 or $farm.build is "water field 2">>
+				<<link [[Install synthetic lining|Farm Upgrades Water Field 3]]>><</link>>
+				<br>
+			<<elseif $farm.waterField gte 1 or $farm.build is "water field 1">>
+				<<link [[Hire an excavation team|Farm Upgrades Water Field 2]]>><</link>>
+				<br>
+			<<else>>
+				<<link [[Purchase land|Farm Upgrades Water Field 1]]>><</link>>
+				<br>
+			<</if>>
 		<</if>>
 		Farm Irrigation:
 		<<if $farm.irrigation gte 9>>
