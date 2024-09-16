@@ -2,7 +2,7 @@
 
 <<widget "bike">>
 	<<if ($bikeLocation is $bikeStart and $bikePersistentLocation is 1) or $bikePersistentLocation is 0>>
-		<<if (($exposed gte 1 and Time.dayState is "night") or $exposed is 0) and $bike gte 1 and $bikeDurability gt 0 and $bikeStolen is undefined>>
+		<<if (($exposed gte 1 and Time.dayState is "night") or $exposed is 0) and $bike gte 1 and $bikeBroken is undefined and $bikeStolen is undefined>>
 			<<bikeicon>><<link [[Get on your bike (0:01)|Bike]]>><<pass 1>><</link>>
 		<<elseif $bikeStolen isnot undefined>>
 			<span class="red">Your bike was stolen!</span>
@@ -26,8 +26,9 @@
 			<</if>>
 			<<unset $bikeStolen>>
 			<<unset $bikeSecurityGearStolen>>
-		<<elseif $bikeDurability lte 0>>
+		<<elseif $bikeBroken isnot undefined>>
 			<span class="red">Your bike is broken!</span> It's unusable until you repair it back at the bike depot.
+			<<unset $bikeBroken>>
 		<</if>>
 		<br>
 	<</if>>
@@ -157,6 +158,7 @@
 		<</if>>
 	<<else>>
 		<<set $bikeDurability to Math.max($bikeDurability - _time, 0)>>
+		<<if $bikeDurability is 0>><<set $bikeBroken to 1>><</if>>
 		<<set $bikeLocation to $bikeDestination>>
 		<<set $bikeLocationCategory to $bikeEndCategory>>
 		<<set _timeString to getTimeString(_time)>>
