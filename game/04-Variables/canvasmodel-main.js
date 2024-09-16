@@ -2543,6 +2543,7 @@ Renderer.CanvasModels.main = {
 		*/
 		"decoration_foreground": {
 			srcfn(options) {
+				if (options.foreground_image_type == "" || options.foreground_image_type == "none") return;
 				return `img/decorations/foreground/${options.foreground_image_type}.png`;
 			},
 			showfn(options) {
