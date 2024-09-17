@@ -904,7 +904,7 @@ function dayPassed() {
 		} else {
 			T.bikeTheftChance = 0;
 		}
-		if (random(1, 1000) <= T.bikeTheftChance) {
+		if ((random(1, 1000) <= T.bikeTheftChance) && V.bikeSecurity == 1) {
 			V.bikeStolen = 1;
 			V.bike = 0;
 			if (V.bikeSecurityGear >= 1) V.bikeSecurityGearStolen = 1;
