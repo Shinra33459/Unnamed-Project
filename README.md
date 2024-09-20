@@ -8,7 +8,7 @@ The bunny transformation mod adds a bunny TF to the game along with ~~work in pr
 ## Features List
 
 - Bunny transformation
-   - Strong Feet trait; Increases your kicking power and dancing skill
+   - Strong Feet trait; Increases your kicking power, dancing skill and athletics skill
    - Bunny boy/girl; You become more submissive overtime
    - Prey Animal; [WORK IN PROGRESS] 
 - Different sprite options!
@@ -25,6 +25,7 @@ The bunny transformation mod adds a bunny TF to the game along with ~~work in pr
 - Thanks to Mellows for making the Bunny TF combat sprites! [Check out their own mod!](https://gitgud.io/melllow/m-v-c-r)
 - Thanks to Phreia on Discord for making the carrot pin, default bunny ears and tail for beeesss!
 - Thanks to Frostberg for making the auto-releases! [Check out his mod DoL+](https://gitgud.io/Andrest07/degrees-of-lewdity-plus/)
+- Thanks to Pinzya for making the tf icon!
 
 ## Support
 
