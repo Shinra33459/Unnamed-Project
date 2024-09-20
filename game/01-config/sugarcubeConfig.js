@@ -11,7 +11,7 @@ const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.5.2.8 DoLB version 0.1.5",
+	version: "0.5.2.8 DoLB version 0.1.5.1",
 	versionName: `"Head in the Clouds" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
