@@ -912,6 +912,10 @@ function dayPassed() {
 		}
 	}
 
+	if (V.dailySunscreen == true) {
+		V.effectsmessage = 1;
+	}
+
 	return fragment;
 }
 
