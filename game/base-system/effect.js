@@ -1110,7 +1110,7 @@ function effects() {
 
 	sWikifier("<<heelsUpdate>>");
 
-	if (V.combat) sWikifier("<<pass 10 seconds>>");
+	if (V.combat) sWikifier("<<pass $combatTimePass seconds>>");
 
 	if (fragment.children.length) br();
 
