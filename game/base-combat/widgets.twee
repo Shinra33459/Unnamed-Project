@@ -329,21 +329,23 @@
 <<widget "combatTrainAdvance">>/*For use after a beast/monster in a train is finished with their turn. Loads next in line into $NPCList[0]. Loads them all back into $NPCList if at the end of the train.*/
 	<<if $beastGroupFight is 0>>
 		<<clearnpc>>
-		<<if $combatTrain.length gt 0>>
-			<<set $combatTrain.length-->>
-			<<set $combatTrain.active += 1>>
-			<<loadNPC 0 `"beast_" + $combatTrain.active`>>
-			<<if $NPCList[0].monster is "monster">>
-				<<set $monster to 1>>
-			<<else>>
-				<<set $monster to 0>>
-			<</if>>
+	<</if>>
+	<<if $combatTrain.length gt 0>>
+		<<set $combatTrain.length-->>
+		<<set $combatTrain.active += 1>>
+		<<loadNPC 0 `"beast_" + $combatTrain.active`>>
+		<<if $NPCList[0].monster is "monster">>
+			<<set $monster to 1>>
 		<<else>>
-			<<for _e_n to 0; _e_n lt $combatTrain.total_length + 1; _e_n++>>
-				<<loadNPC _e_n `"beast_" + _e_n`>>
-				<<clearNPC `"beast_" + _e_n`>>
-			<</for>>
+			<<set $monster to 0>>
 		<</if>>
+	<<else>>
+		<<for _e_n to 0; _e_n lt $combatTrain.total_length + 1; _e_n++>>
+			<<loadNPC _e_n `"beast_" + _e_n`>>
+			<<clearNPC `"beast_" + _e_n`>>
+		<</for>>
+		<<set $enemyhealth to 1>>
+		<<set $enemyarousal to 0>>
 	<</if>>
 	<<if $combatExtended.reverseRapeStart is 1>>
 		<<set $consensual to 0>>
@@ -374,8 +376,8 @@
 	<</for>>
 	<<if $beastGroupFight is 0>>
 		<<clearnpc>>
-		<<loadNPC 0 beast_0>>
 	<</if>>
+	<<loadNPC 0 beast_0>>
 <</widget>>
 
 
