@@ -1,3 +1,3 @@
 ren ..\..\..\img img1
 
-xcopy /E /Y ..\..\..\imagepacks\vanillaCombat\* ..\..\..\img\
+xcopy /E /Y ..\..\..\imagepacks\hikfemCombat\* ..\..\..\img\
