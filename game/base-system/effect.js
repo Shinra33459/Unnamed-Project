@@ -890,6 +890,22 @@ function effects() {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a second love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 1;
+		} else if (V.loveInterest_message === 3 && V.loveInterestAwareMessage == 1) {
+			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a third love interest.", "pink");
+			delete V.loveInterest_message;
+			V.loveInterestAwareMessage = 2;
+		} else if (V.loveInterest_message === 4 && V.loveInterestAwareMessage == 2) {
+			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a fourth love interest.", "pink");
+			delete V.loveInterest_message;
+			V.loveInterestAwareMessage = 3;
+		} else if (V.loveInterest_message === 5 && V.loveInterestAwareMessage == 3) {
+			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a fifth love interest.", "pink");
+			delete V.loveInterest_message;
+			V.loveInterestAwareMessage = 4;
+		} else if (V.loveInterest_message === 6 && V.loveInterestAwareMessage == 4) {
+			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a sixth love interest.", "pink");
+			delete V.loveInterest_message;
+			V.loveInterestAwareMessage = 5;
 		}
 
 		if (V.fallenangelmessage) {
