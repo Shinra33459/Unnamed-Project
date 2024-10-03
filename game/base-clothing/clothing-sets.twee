@@ -12,20 +12,20 @@
 	<label><<radiobutton "$delete_outfit" "none" checked>> Wear</label> |
 	<label><<radiobutton "$delete_outfit" 1>> Delete</label> |
 	<label><<radiobutton "$delete_outfit" 2>> Overwrite with current clothing</label>
-	<br>
+	<br><br>
 
 	<!-- List the currently saved outfits -->
-	<<for _index, $_outfit range $outfit>>
-		<<if $_outfit.location and $_outfit.location isnot $wardrobe_location>>
-			<<continue>>
-		<</if>>
-		<<set _outfitname to $_outfit.name + ($_outfit.colors is false ? "" : " [C]") + ($_outfit.location is undefined ? "" : " [L]")>>
-		<<capture _index>>
-			<div class = "wardrobe-action">
-				<<link _outfitname>><<set $wear_outfit to _index>><<updatewardrobe "outfits">><</link>> |
-			</div>
-		<</capture>>
-	<</for>>
+	<div class="outfitContainer no-numberify">
+		<<for _index, $_outfit range $outfit>>
+			<<if $_outfit.location and $_outfit.location isnot $wardrobe_location>>
+				<<continue>>
+			<</if>>
+			<<set _outfitname to $_outfit.name + ($_outfit.colors is false ? "" : " [C]") + ($_outfit.location is undefined ? "" : " [L]")>>
+			<<capture _index>>
+				<<button _outfitname>><<set $wear_outfit to _index>><<updatewardrobe "outfits">><</button>>
+			<</capture>>
+		<</for>>
+	</div>
 <</widget>>
 
 <<widget "listoutfitsPassage">>
@@ -92,11 +92,19 @@
 	<<if $earSlime.alwaysSleepNaked is false>>
 		<<for _index, $_outfit range $outfit>>
 			<<if $_outfit.type.includes("sleep")>>
-				<<set _bed to Furniture.get('bed')>>
-				<<if _bed is undefined or _bed is null>>
-					<<set _bed to Furniture.get('bed','bed')>>
+				<<if _passage is "Bed">>
+					<<set _bed to Furniture.get('bed')>>
+					<<if _bed is undefined or _bed is null>>
+						<<set _bed to Furniture.get('bed','bed')>>
+					<</if>>
+					<<furnitureicon _bed.iconFile>>
+				<<elseif _passage is "Prison Bed">>
+					<<prisonicon "bed">>
+				<<elseif _passage is "Asylum Bed">>
+					<<bedicon "hospital">>
+				<<else>>
+					<<bedicon>>
 				<</if>>
-				<<furnitureicon _bed.iconFile>>
 				<<capture _index>>
 					<<set _outfitname to $_outfit.name + ($_outfit.colors is false ? "" : " [C]")>>
 					<<link [["Wear "+_outfitname+" and climb in bed"|_passage]]>><<set $wear_outfit to _index>><<saveTempHairStyle>><</link>>
@@ -108,6 +116,10 @@
 		<<icon "cross.png" "infront">>
 		<<if _passage is "Bed">>
 			<<furnitureicon _bed.iconFile>>
+		<<elseif _passage is "Prison Bed">>
+			<<prisonicon "bed">>
+		<<elseif _passage is "Asylum Bed">>
+			<<bedicon "hospital">>
 		<<else>>
 			<<bedicon>>
 		<</if>>

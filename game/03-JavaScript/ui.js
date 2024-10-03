@@ -94,14 +94,12 @@ window.getTimeNumber = getTimeNumber;
 
 function extendStats() {
 	V.extendedStats = !V.extendedStats;
-	const captionDiv = document.getElementById("storyCaptionDiv");
-	if (captionDiv === null) return;
-	if (V.extendedStats === true) {
-		captionDiv.classList.add("statsExtended");
-	} else {
-		captionDiv.classList.remove("statsExtended");
-	}
+	const $captionDiv = $("#storyCaptionDiv");
+	if ($captionDiv.length === 0) return;
+
+	$captionDiv.toggleClass("statsExtended", V.extendedStats);
 	Wikifier.wikifyEval("<<replace #stats>><<statsCaption>><</replace>>");
+	initializeTooltips();
 }
 window.extendStats = extendStats;
 
@@ -622,10 +620,11 @@ window.onInputChanged = onInputChanged;
 function closeOverlay() {
 	wikifier("journalNotesTextareaSave");
 	updateOptions();
-	delete T.currentOverlay;
-	delete V.tempDisable;
 	T.buttons.reset();
 	$("#customOverlay").addClass("hidden").parent().addClass("hidden");
+	$.event.trigger(":oncloseoverlay", [T.currentOverlay]);
+	delete T.currentOverlay;
+	delete V.tempDisable;
 }
 window.closeOverlay = closeOverlay;
 
@@ -642,10 +641,6 @@ function updatehistorycontrols() {
 	// enable fast rng re-roll on "keypad *" for debug and testing
 	if (V.debug || V.cheatdisable === "f" || V.testing) Links.disableRNGReload = false;
 	else Links.disableRNGReload = true;
-
-	// option to reduce the number of states going into sessionStorage, for better performance
-	if (V.options.maxSessionStates === undefined) V.options.maxSessionStates = Config.history.maxSessionStates;
-	else Config.history.maxSessionStates = V.options.maxSessionStates;
 
 	// option to still record history without showing the controls, for better debugging
 	if (V.options.maxStates === 1 || !V.options.historyControls || V.ironmanmode) {
@@ -674,7 +669,6 @@ function updateOptions() {
 
 		if (!State.restore(true)) return; // don't do anything if state couldn't be restored
 		V.options = optionsData;
-		tanned(0, "ignoreCoverage");
 		State.show();
 
 		T.key = tmpKey;
@@ -683,6 +677,7 @@ function updateOptions() {
 		if (T.key !== "options") {
 			T.buttons.setActive(T.buttons.activeTab);
 		}
+		Weather.Observables.checkForUpdate();
 	}
 }
 window.updateOptions = updateOptions;
@@ -727,8 +722,89 @@ window.loadCharacterViewerDate = () => {
 	}
 };
 
+function updateCaptionTooltip() {
+	const elementId = "#characterTooltip";
+	const element = $(elementId);
+	const content = $("<div>");
+	const canvas = $("#img canvas");
+	const fragment = document.createDocumentFragment();
+	const updateTooltip = () => {
+		if (V.intro) return;
+		fragment.append(wikifier("clothingCaptionText"));
+		content.append(fragment);
+		element.tooltip({
+			message: content,
+			delay: 200,
+			position: "cursor",
+		});
+	};
+
+	let isMouseOverElement = false;
+
+	// Workaround for trickle-through on the canvas
+	// So that the contextmenu works while having tooltips in an element below it (to define the area where tooltip shows up)
+	const checkMousePosition = e => {
+		if (!e || typeof e.clientX !== "number" || typeof e.clientY !== "number") {
+			return;
+		}
+		const isCurrentlyOverElement = $(document.elementsFromPoint(e.clientX, e.clientY)).is("#characterTooltip");
+
+		// Only trigger events if the status has changed
+		if (isCurrentlyOverElement && !isMouseOverElement) {
+			element.trigger("mouseenter");
+			canvas.css("cursor", "help");
+			isMouseOverElement = true;
+		} else if (!isCurrentlyOverElement && isMouseOverElement) {
+			element.trigger("mouseleave");
+			$(".tooltip-popup").remove();
+			canvas.css("cursor", "");
+			isMouseOverElement = false;
+		}
+
+		// If the mouse is currently over the element, trigger mousemove as well
+		if (isCurrentlyOverElement) {
+			element.trigger({
+				type: "mousemove",
+				pageX: e.pageX,
+				pageY: e.pageY,
+			});
+		}
+	};
+
+	updateTooltip();
+	$(document).off(":passageend", updateCaptionTooltip);
+	$(document).on(":passageend", updateCaptionTooltip);
+	// Add event listeners only when the mouse is over the canvas
+	canvas.on("mouseenter", () => {
+		$(document).on("mousemove", checkMousePosition);
+	});
+
+	canvas.on("mouseleave", () => {
+		$(document).off("mousemove", checkMousePosition);
+		if (isMouseOverElement) {
+			// Cleanup if mouse leaves the canvas while over the tooltip element
+			element.trigger("mouseleave");
+			$(".tooltip-popup").remove();
+			canvas.css("cursor", "");
+			isMouseOverElement = false;
+		}
+	});
+}
+$(() => updateCaptionTooltip());
+window.updateCaptionTooltip = updateCaptionTooltip;
+
 function returnTimeFormat() {
 	if (!V || !V.options) return "en-GB";
 	return V.options.dateFormat;
 }
 window.returnTimeFormat = returnTimeFormat;
+
+/* Temporary until npc rework */
+function sensitivityString(value) {
+	if (value >= 3.5) return "sensitive";
+	if (value >= 2.5) return "tender";
+	if (value >= 1.5) return "receptive";
+	return "normal";
+};
+
+window.sensitivityString = sensitivityString;

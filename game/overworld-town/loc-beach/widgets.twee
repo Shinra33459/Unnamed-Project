@@ -6,36 +6,21 @@
 <</widget>>
 
 <<widget "beachday2">>
-	<<if !$worn.over_upper.type.includes("naked")>>
-		<<set _slot to "over_lower">>
-	<<else>>
-		<<set _slot to "lower">>
-	<</if>>
+	<<outfitChecks>>
 	<<beastNEWinit 1 dog>>
-	You feel something yanking at your <<print $worn[_slot].name>>. Looking over your shoulder, you see a small <<beasttype>> with your clothes between <<bhis>> teeth.
+	You feel something yanking at your _bottom.name. Looking over your shoulder, you see a small <<beasttype>> with your clothes between <<bhis>> teeth.
 
-	<<if $worn.over_lower.integrity lte 20 and !$worn.over_upper.type.includes("naked")>>
-		<<set $worn.over_lower.integrity -= 20>>
-		You try to wrestle your clothes free from its maw, but your $worn.over_lower.name <<overlowerplural>> torn from your body!
-		<<if $worn.under_lower.type.includes("naked") and $worn.lower.type.includes("naked")>>
+	<<if _bottom.integrity lte 20>>
+		<<set _bottom.integrity -= 20>>
+		You try to wrestle your clothes free from its maw, but your _bottom.name <<is _bottom>> torn from your body!
+		<<if !_bottomUnder>>
 			The <<beasttype>> scampers away, leaving you humiliated with your <<genitals>> on display.
 			<<gtrauma>><<trauma 1>><<stress 1>><<gstress>>
 		<<else>>
-			The <<beasttype>> scampers away, leaving you humiliated with your $worn.over_lower.name on display.
+			The <<beasttype>> scampers away, leaving you humiliated with your _bottomUnder.name on display.
 			<<stress 1>><<gstress>>
 		<</if>>
-		<<overlowerruined>><<trauma 6>>
-	<<elseif $worn.lower.integrity lte 20 and $worn.over_upper.type.includes("naked")>>
-		<<set $worn.lower.integrity -= 20>>
-		You try to wrestle your clothes free from its maw, but your $worn.lower.name <<lowerplural>> torn from your body!
-		<<if $worn.under_lower.type.includes("naked")>>
-			The <<beasttype>> scampers away, leaving you humiliated with your <<genitals>> on display.
-			<<gtrauma>><<trauma 1>><<stress 1>><<gstress>>
-		<<else>>
-			The <<beasttype>> scampers away, leaving you humiliated with your $worn.under_lower.name on display.
-			<<stress 1>><<gstress>>
-		<</if>>
-		<<lowerruined>><<trauma 6>>
+		<<integritycheck>><<trauma 6>>
 	<<else>>
 		You manage to wrestle your clothes free from <<bhis>> maw, though the ordeal has left them a little worse for wear.
 	<</if>>
@@ -122,7 +107,7 @@
 			<</if>>
 		<</if>>
 
-		<<if $uncomfortable.nude and $exhibitionism gte 75 and _trauma_gain>>
+		<<if $uncomfortable.nude and hasSexStat("exhibitionism", 5) and _trauma_gain>>
 			Your stomach churns horribly at having been exposed in such a public place, and you do your best to put it out of your mind as you try and recover some of your dignity.
 			<<set _trauma_gain += 1>>
 		<<else>>
@@ -144,10 +129,10 @@
 			<<link [[Next|Beach]]>><<set $eventskip to 1>><</link>>
 		<<else>>
 			<<link [[Try to hold your skirt down|Beach Skirt Flare Stop]]>><</link>>
-			<<if $exhibitionism gte 35 and !$worn.under_lower.type.includes("naked")>>
+			<<if hasSexStat("exhibitionism", 3) and !$worn.under_lower.type.includes("naked")>>
 				<br>
 				<<link [[Let it happen|Beach Skirt Flare Allow]]>><</link>><<exhibitionist2>>
-			<<elseif $exhibitionism gte 55>>
+			<<elseif hasSexStat("exhibitionism", 4)>>
 				<br>
 				<<link [[Let it happen|Beach Skirt Flare Allow]]>><</link>><<exhibitionist4>>
 			<</if>>
@@ -179,7 +164,7 @@
 	<br><br>
 	You do your best to shake the sand out of your clothing. Some of it inevitably becomes lodged in your butt crack, where it chafes and annoys you. <<gpain>><<gstress>><<pain 1>><<stress 2>>
 	<br><br>
-	<<link [[Next|Beach]]>><<set $eventskip to 1>><</link>>
+	<<link [[Next|Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
 <<else>>
 	A gust of wind blows in from the ocean, pleasantly caressing your skin.
 	<<lstress>><<stress -2>>
@@ -235,7 +220,7 @@
 	<<generatey1>>A <<person1>><<person>> spots you in your fragile state and calls out to <<his>> friends. You quickly find yourself surrounded. The <<person>> speaks, "You know this isn't a nudist beach right? In fact, I think I should report you." You tense as <<he>> visibly inhales as if to shout, anticipating even more attention drawn to your predicament. Instead however, <<he>> and <<his>> friends burst into derisive laughter. "Or, you know, I could help you out, give you something to cover up with. Of course, I'll want something in return. Get on your knees."
 	<<fameexhibitionism 20>>
 	<br><br>
-	<<if $promiscuity gte 35>>
+	<<if hasSexStat("promiscuity", 3)>>
 		<<link [[Comply|Beach Exhibit Molestation]]>><<set $phase to 1>><<set $sexstart to 1>><</link>>
 		<br>
 	<</if>>
@@ -284,8 +269,12 @@
 :: Widgets Passout Beach [widget]
 
 <<widget "passoutbeach">>
-	<<if isPlayerNonparasitePregnancyEnding()>>
-		<<pregnancyWatersBrokenPassout "beach">>
+	<<if isPregnancyEnding()>>
+		<<if $location is "beach">>
+			<<pregnancyPassout "beach">>
+		<<else>>
+			<<pregnancyPassout "sea">>
+		<</if>>
 	<<else>>
 		<<link [[Everything fades to black...->Passout Beach]]>><</link>>
 	<</if>>
@@ -333,7 +322,7 @@
 			"Hey," you say back, suppressing an urge to cover yourself. You've been proudly showing off for everyone on the beach, but you can't help but feel self-conscious at being approached.
 			<br><br>
 
-			"You seem pretty cool," he says. "Why don't you come join us for some beer and food?"
+			"You seem pretty cool," <<he>> says. "Why don't you come join us for some beer and food?"
 			<br><br>
 
 			You look past <<him>> to <<his>> friends. They're all looking at you expectantly. You can't tell if any of them have ill intentions.
@@ -356,7 +345,7 @@
 		<br>
 		<<link [[Refuse (1:00)|Beach Strip Refuse]]>><<stress -12>><<trauma -6>><<crimeUp 50 "exposure">><<pass 1 hour>><</link>><<crime "exposure">><<ltrauma>><<lstress>>
 		<br>
-		<<if $promiscuity gte 15>>
+		<<if hasSexStat("promiscuity", 2)>>
 		<<link [[Seduce|Beach Strip Seduce]]>><</link>><<promiscuous2>>
 		<br>
 		<</if>>

@@ -196,6 +196,7 @@
 					You take note of <<his>> <<npcClothesText _robin "upper">>.
 				<</if>>
 			<</if>>
+			<br><br>
 
 		<<elseif $robinconsole is 0>>
 			You knock on the door. <<robinOpen>> <<He>> sits on the bed and stares at the spot <<his>> console used to fill.
@@ -365,6 +366,8 @@
 		Robin looks at the clock on the wall.
 		<<if $robin.timer.hurt gte 1>>
 			"<<print _robin.trauma lte 30 ? "It's past my bed time," : "I-I should probably go to sleep,">>" <<he>> says. "<<print $robin.timer.hurt gte 1 ? "I'd rather sleep alone tonight, if you don't mind" : "You should get some sleep too">>."
+		<<elseif $robin.stayup is 1>>
+			"It's late," <<he>> says. <<He>> hugs you. "You should get some sleep." <<He>> closes the door somewhat anxiously, as if <<he>> has something else to do.
 		<<elseif _robin.trauma lte 30>>
 			"It's past my bed time," <<he>> says. <<He>> hugs you. "Goodnight."
 		<<elseif _robin.trauma lte 60>>
@@ -378,16 +381,27 @@
 		<br><br>
 		<<if _robinrequest is 1>>
 			<<bedroomicon>><<link [[Stay with Robin|Robin Room Bed Intro]]>><<npcincr Robin trauma -3>><<npcincr Robin love 1>><<handheldon 1>><</link>><<glove>><<lrtrauma>>
-		<<elseif $robin.timer.hurt is 0 and ($robinromance or _robin.trauma gt 30)>>
+		<<elseif $robin.timer.hurt is 0 and $robin.stayup isnot 1 and ($robinromance or _robin.trauma gt 30)>>
 			<<bedroomicon>><<link [[Ask to stay|Robin Room Bed Intro]]>><<handheldon 1>><</link>>
 		<</if>>
 		<br>
 		<<if _robinrequest is 1>>
-			<<getouticon>><<link [[Leave|Orphanage]]>><<npcincr Robin trauma 1>><<npcincr Robin love -1>><<set $fromRobinRoom to true>><<endevent>><</link>><<grtrauma>><<llove>>
+			<<getouticon>><<link [[Leave|Orphanage]]>><<npcincr Robin trauma 1>><<npcincr Robin love -1>><<set $fromRobinRoom to true>><<if $exposed gte 1 and _anyItemsInRoom>><<storeon "Robin's Room">><</if>><<endevent>><</link>><<grtrauma>><<llove>>
 		<<else>>
-			<<getouticon>><<link [[Leave|Orphanage]]>><<set $fromRobinRoom to true>><<endevent>><</link>>
+			<<getouticon>><<link [[Leave|Orphanage]]>><<set $fromRobinRoom to true>><<if $exposed gte 1 and _anyItemsInRoom>><<storeon "Robin's Room">><</if>><<endevent>><</link>>
 		<</if>>
 		<br>
+	<<elseif Time.hour is 17 and C.npc.Robin.trauma lte 60 and $daily.robin.studycompany isnot 1 and $robin.stayup isnot 1>>
+		Robin looks at the clock on the wall.
+		<br><br>
+		"I should work on Winter's assignment now," <<he>> says. <<if C.npc.Robin.trauma gte 20>><<He>> looks weary at the idea. <</if>>"Would you like to join me?"
+		<br><br>
+		<<if C.npc.Robin.trauma gte 20>>
+			<<link[[Help Robin study|Robin Study]]>><<set $study_inside to 1>><<stress 3>><<npcincr Robin love 1>><<npcincr Robin trauma -3>><<npcincr Robin dom -1>><</link>><<gstress>><<glove>><<lrtrauma>><<ldom>><br>
+		<<else>>
+			<<link[[Agree|Robin Study]]>><<npcincr Robin love 1>><<set $study_inside to 1>><</link>><<glove>><br>
+		<</if>>
+		<<getouticon>><<link[[Leave|Orphanage]]>><<endevent>><</link>>
 	<<elseif $englishPlay is "ongoing" and $englishPlayDays is 0 and ((Time.hour gte 16 and Time.minute gte 40) or Time.hour gte 17)>>
 		Robin looks at the clock on the wall.
 		"It's almost time for the school plays," <<he>> says. <<if $exposed lte 0>>"Would you like to walk with me?"<</if>>
@@ -404,7 +418,7 @@
 		<</if>>
 
 		<<link [[Leave|Orphanage]]>><<endevent>><</link>>
-	<<elseif Time.isWeekEnd() and Time.hour gte 9 and Time.hour lte 16 and _robin.trauma lt 80>>
+	<<elseif Time.isWeekEnd() and Time.hour gte 9 and Time.hour lt 16 and _robin.trauma lt 80>>
 		<<set _standType to Time.season is "winter" ? "Chocolate" : "Lemonade">>
 		<<if _robin.cdquest is 3 and !$daily.robin.cdevent and _robin.trauma lte 20>>
 			<<if _standType is "Chocolate">>
@@ -550,7 +564,7 @@
 			<<loveicon>><<link [[Kiss|Robin Romance]]>><<set $robinroomentered to 1>><<set $robinromance to 1>><<handheldon 1>><</link>>
 			<br>
 		<</if>>
-		<<if $exhibitionism gte 75 and $exposed lte 0 and _store_check isnot 1>>
+		<<if hasSexStat("exhibitionism", 5) and $exposed lte 0 and _store_check isnot 1>>
 			<<skinicon "strip">><<link [[Ask to take off your clothes|Robin Room Naked Request]]>><<handheldon 1>><</link>><<exhibitionist5>>
 			<br>
 		<<elseif _store_check is 1>>
@@ -604,10 +618,10 @@
 		<</if>>
 		<<if _robin.trauma lt 80 and ($harpy gte 6 or $transformationParts.bird.wings is "default")>>
 			<<if $halloween is 1>>
-				<<mooricon "sing">><<link [[Sing with Robin (0:20)|Robin Harpy]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom -2>><<handheldon 1>><</link>><<harpy>><<ldom>><<glove>><<ltrauma>><<lstress>>
+				<<birdicon "sing">><<link [[Sing with Robin (0:20)|Robin Harpy]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom -2>><<handheldon 1>><</link>><<harpy>><<ldom>><<glove>><<ltrauma>><<lstress>>
 				<br>
 			<<else>>
-				<<mooricon "sing">><<link [[Sing with Robin (0:20)|Robin Harpy]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom 1>><<handheldon 1>><</link>><<harpy>><<gdom>><<glove>><<ltrauma>><<lstress>>
+				<<birdicon "sing">><<link [[Sing with Robin (0:20)|Robin Harpy]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom 1>><<handheldon 1>><</link>><<harpy>><<gdom>><<glove>><<ltrauma>><<lstress>>
 				<br>
 			<</if>>
 		<</if>>
@@ -624,11 +638,11 @@
 			<br>
 		<</if>>
 		<<if _robin.lovestage gte 1 and $milkshake gte 2>>
-			<<foodicon "milkshake">><<link [[Offer milkshake (0:20)|Robin Give Milkshake]]>> <<set $milkshake -= 2>><<stress -5>> <<handheldon 1>><</link>><<lstress>><<glove>>
+			<<foodicon "milkshake">><<link [[Offer milkshake (0:20)|Robin Give Milkshake]]>><<pass 20>><<set $milkshake -= 2>><<stress -5>> <<handheldon 1>><</link>><<lstress>><<glove>>
 			<br>
 		<</if>>
 		<<if _robin.lovestage gte 2 and $milkshake gte 1>>
-			<<foodicon "milkshake">><<link [[Share milkshake (0:20)|Robin Share Milkshake]]>> <<set $milkshake -= 1>><<stress -10>><<handheldon 1>><</link>><<lstress>><<gglove>>
+			<<foodicon "milkshake">><<link [[Share milkshake (0:20)|Robin Share Milkshake]]>><<pass 20>><<set $milkshake -= 1>><<stress -10>><<handheldon 1>><</link>><<lstress>><<gglove>>
 			<br>
 		<</if>>
 		<<if checkSextoysGift("Robin") and checkIfNPCHasCategorySextoy("Robin","strap-on").length <= 5>>
@@ -652,6 +666,7 @@
 <<widget "robinhug">>
 	<<if $robin.timer.hurt gte 1>>
 		Robin lets you hug <<him>> for a moment before gently untangling <<himself>> from you. "I'm sorry," <<he>> says. "I'm still a little upset with you. I need some space."
+		<br><br>
 	<<else>>
 		<<if $daily.robin.hugCry isnot 1 and $robinpaid isnot 1 and $trauma gte ($traumamax / 7) * 2>>
 			<<link [[Cry (0:05)|Robin Hug Cry]]>><<pass 5>><<set $daily.robin.hugCry to 1>><<stress -12>><<trauma -6>><<tearup>><<npcincr Robin love 1>><<npcincr Robin dom 1>><</link>><<lstress>><<ltrauma>><<glove>><<gdom>>
@@ -762,7 +777,7 @@
 		<<case "landfill">>
 			<<set $robindebtevent to 7>>
 		<<case "pillory">>
-			<<set $robindebtevent to 30>> <!-- Robin stays imprisoned for a month because UFarm might take a while -->
+			<<set $robindebtevent to 30>> <!-- Robin stays imprisoned for upto a month because UFarm might take a while -->
 			<<set $robinPillory to {}>>
 			<<set $robinPillory.locks to 3>>
 			<<set $robinPillory.danger to 0>>
@@ -816,6 +831,12 @@
 	<</if>>
 	<<if C.npc.Robin.vagina isnot "none">>
 		<<NPCVirginityTakenByOther "Robin" "vaginal" "pillory">>
+		<<if false>>
+			/*
+				Included the expected check and widget call if it's decided that Robin can get pregnant this way
+				<<recordSperm `{target: "Robin", spermOwner: "pillory", spermType: "human", quantity: random(2,5)}`>>
+			*/
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -845,11 +866,11 @@
 <<widget "robinroom_link">>
 	<<if C.npc.Robin.init is 1>>
 		<<if Time.dayState isnot "night" and $exposed gte 1 and getRobinLocation() is "orphanage">>
-			<<if $exhibitionism gte 75 and $exposed is 2>>
+			<<if hasSexStat("exhibitionism", 5) and $exposed is 2>>
 				<<bedroomicon>><<link [[Robin's room (0:01)|Robin Room Naked]]>><<pass 1>><</link>><<exhibitionist5>>
 				<br>
 
-			<<elseif $exhibitionism gte 55 and $exposed is 1>>
+			<<elseif hasSexStat("exhibitionism", 4) and $exposed is 1>>
 				<<bedroomicon>><<link [[Robin's room (0:01)|Robin Room Naked]]>><<pass 1>><</link>><<exhibitionist4>>
 				<br>
 			<</if>>

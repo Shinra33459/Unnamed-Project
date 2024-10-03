@@ -298,7 +298,6 @@
 	<div id="action-popup">Don't look here.</div>
 	<<unset $tempDisable>>
 
-	<<temperature>>
 	<hr>
 	<span>Warmth:</span>
 	<<warmthscale>>
@@ -306,7 +305,6 @@
 		<<warmth_description>>
 	</div>
 	<br>
-	<hr>
 	<div id="clotheson"><<clotheson>></div> /*Fixes perma pulled aside clothes introduced by 0.2.3.0 bug.*/
 	<<if $upperwet gte 1 or $lowerwet gte 1 or $underlowerwet gte 1 or $underupperwet gte 1>>
 		<div class="wardrobe-dry">
@@ -423,14 +421,8 @@
 	__Clothing__
 	<br>
 
-	<<if $options.newWardrobeStyle>>
-		<<dynamic "wardrobeLinks" "wardrobeLinks">>
-		<<dynamic "wardrobeContents" "wardrobeList">>
-	<<else>>
-		<div id="oldWardrobeListDisplay">
-			<<oldWardrobeListDisplay>>
-		</div>
-	<</if>>
+	<<dynamic "wardrobeLinks" "wardrobeLinks">>
+	<<dynamic "wardrobeContents" "wardrobeList">>
 
 	<br>
 
@@ -616,13 +608,13 @@
 	<<set $_item to _args[0]>>
 	<<set $_integrityMax to clothingData(_args[1],$_item,'integrity_max')>>
 	<<if $_item.integrity gt ($_integrityMax * 9 / 10)>>
-		<<set $_output to "">>
+		<<set $_output to "($_item.integrity/$_integrityMax)">>
 	<<elseif $_item.integrity gt ($_integrityMax * 5 / 10)>>
-		<<set $_output to "<span>(frayed)</span>">>
+		<<set $_output to "<span>(frayed) ($_item.integrity/$_integrityMax)</span>">>
 	<<elseif $_item.integrity gt ($_integrityMax * 2 / 10)>>
-		<<set $_output to "<span>(torn)</span>">>
+		<<set $_output to "<span>(torn) ($_item.integrity/$_integrityMax)</span>">>
 	<<else>>
-		<<set $_output to "<span>(tattered)</span>">>
+		<<set $_output to "<span>(tattered) ($_item.integrity/$_integrityMax)</span>">>
 	<</if>>
 <</silently>><<print $_output>><</widget>>
 
@@ -702,8 +694,8 @@
 <</widget>>
 
 <<widget "toggleUpperTuck">>
-	<<set _linkOption1 to _args[0] || "Untuck">>
-	<<set _linkOption2 to _args[1] || "Tuck in">>
+	<<set _linkOption1 to _args[0] || `Untuck from ${$worn.lower.name}`>>
+	<<set _linkOption2 to _args[1] || `Tuck into ${$worn.lower.name}`>>
 	<div class="toggleUpperTuck">
 		<<link `($upperTucked ? _linkOption1 : _linkOption2)`>>
 			<<set $upperTucked to +!$upperTucked>>
@@ -715,8 +707,8 @@
 <</widget>>
 
 <<widget "toggleLowerTuck">>
-	<<set _linkOption1 to _args[0] || "Untuck">>
-	<<set _linkOption2 to _args[1] || "Tuck in">>
+	<<set _linkOption1 to _args[0] || `Untuck from ${$worn.feet.name}`>>
+	<<set _linkOption2 to _args[1] || `Tuck into ${$worn.feet.name}`>>
 	<div class="toggleLowerTuck">
 		<<link `($lowerTucked ? _linkOption1 : _linkOption2)`>>
 			<<set $lowerTucked to +!$lowerTucked>>
@@ -728,13 +720,13 @@
 <</widget>>
 
 <<widget "toggleLeash">>
-	<<if ["collar", "free use collar", "leather collar", "spiked collar"].includes($worn.neck.name)>>
+	<<if ["collar", "free use collar", "leather collar", "spiked collar", "Whitney's collar"].includes($worn.neck.name)>>
 		<<link "Attach Leash">>
 			<<attach_leash true true>>
 			<<updatesidebarimg>>
 			<<replace "#wardrobeLeash">><<toggleLeash>><</replace>>
 		<</link>>
-	<<elseif ["collar with leash", "free use collar with leash", "leather collar with leash", "spiked collar with leash"].includes($worn.neck.name)>>
+	<<elseif ["collar with leash", "free use collar with leash", "leather collar with leash", "spiked collar with leash", "Whitney's collar with leash"].includes($worn.neck.name)>>
 		<<link "Detach Leash">>
 			<<detach_leash true true>>
 			<<updatesidebarimg>>
@@ -748,11 +740,11 @@
 		<<case "upper">>
 			<<switch $worn.upper.variable>>
 				<<case "schoolcardigan">><<set _altLink to ["Tie cardigan around waist", "Wear cardigan normally"]>>
-				<<case "brownleather" "blackleather" "leathercropjacket">><<set _altLink to ["Zip jacket", "Unzip jacket"]>>
+				<<case "brownleather" "blackleather" "leathercropjacket" "winterjacket">><<set _altLink to ["Zip jacket", "Unzip jacket"]>>
 				<<case "waistcoat" "waistcoatlapel" "blazershirt">><<set _altLink to ["Tuck in", "Untuck"]>>
-				<<case "dress">><<set _altLink to ["Unbutton shirt", "Button up shirt"]>>
-				<<case "kimono">><<set _altLink to ["Loosen", "Tighten"]>>
-				<<case "kimonomini">><<set _altLink to ["Loosen", "Tighten"]>>
+				<<case "dress" "buttondown" "oversizedbuttondown">><<set _altLink to ["Unbutton shirt", "Button up shirt"]>>
+				<<case "catsuit">><<set _altLink to ["Unzip", "Zip"]>>
+				<<case "kimono" "kimonomini">><<set _altLink to ["Loosen", "Tighten"]>>
 				<<default>><<exit>>
 			<</switch>>
 		<<case "neck">>
@@ -858,6 +850,27 @@
 	<br>
 <</widget>>
 
+<<widget "repairClothing">>
+	<div class="repairClothing">
+		<<if _wornItem.integrity lt _wornItemData.integrity_max>>
+			<<if $DoLPSpools gte 1>>
+				<<set _timeNeeded to 10 - (1 * Math.round($housekeeping / 250))>>
+				<<set _timeString to getTimeString(_timeNeeded)>>
+				<<link [["Repair your _wornItem.name (_timeString)"|$passage]]>>
+					<<set $worn[_wardrobe_list].integrity to Math.min($worn[_wardrobe_list].integrity + 25, setup.clothes[_wardrobe_list][clothesIndex(_wardrobe_list,_wornItem)].integrity_max)>>
+					<<set _gain to Math.max(6 - (2 * Math.round($housekeeping / 200)), 2)>>
+					<<housekeeping _gain 1000>>
+					<<updatesidebarimg>>
+					<<set $DoLPSpools -= 1>>
+					<<pass _timeNeeded>>
+				<</link>><<ghousekeeping 1000>>
+			<<else>>
+				You don't have any spools to repair your _wornItem.name with.
+			<</if>>
+		<</if>>
+	</div>
+<</widget>>
+
 <<widget "wardrobeList">>
 	<<wardrobeClothingOptions>>
 	<<set _wardrobe_list to _args[0]>>
@@ -954,18 +967,21 @@
 				<</if>>
 				<<print _wornItemData.description>>
 				<br>
-				<<warmth _wornItem.warmth>>
+				<<print setup.WeatherDescriptions.clothingWarmth(getTrueWarmth(_wornItem))>>
 				<br><br>
 				<<set _temp_choice to $worn[_wardrobe_list]>>
 				<<shoptraits>>
 			</div>
+			<<if $DoLPSpools isnot undefined>>
+				<<shopicon "tailor">> You have <span class="green">$DoLPSpools</span> spools.
+				<div class="no-numberify"><<repairClothing>></div>
+			<</if>>
 
 			<<if isConnectedToHood(_wardrobe_list)>>
 				<!-- If selected item is a hood or selected item has a secondary hood piece -->
 				<div class="no-numberify"><<toggleHoodLink>></div>
-				<br>
 			<</if>>
-			<<if _wardrobe_list is "upper" and $worn.lower.name isnot "naked" and !_wornItemData.notuck>>
+			<<if _wardrobe_list is "upper" and $worn.lower.name isnot "naked" and !_wornItemData.notuck and V.worn.upper.outfitPrimary is undefined>>
 				<div class="no-numberify"><<toggleUpperTuck>></div>
 			<<elseif _wardrobe_list is "lower" and $worn.feet.name isnot "naked" and !_wornItemData.notuck and !setup.clothes.feet[clothesIndex("feet",$worn.feet)].notuck>>
 				<div class="no-numberify"><<toggleLowerTuck>></div>
@@ -1001,52 +1017,51 @@
 				<</if>>
 			<</if>>
 			<div class="wardrobeItem wardrobe-action no-numberify">
-			<<clothingicon _item _wardrobe_list>>
-			<<wearlink_norefresh _itemData.name_cap _i>>
-			<<if _item.gender is "m">>
-				<span class="blue">♂</span>
-			<<elseif _item.gender is "f">>
-				<span class="pink">♀</span>
-			<<else>>
+				<<clothingicon _item _wardrobe_list>>
+				<<wearlink_norefresh _itemData.name_cap _i>>
+				<<if _item.gender is "m">>
+					<span class="blue">♂</span>
+				<<elseif _item.gender is "f">>
+					<span class="pink">♀</span>
+				<<else>>
 
-			<</if>>
-			<<if _item.colour isnot 0>>
-				<span @class="_selectedWardrobe[_wardrobe_list][_i].colour">(_item.colour)</span>
-			<</if>>
-			<<if _item.outfitPrimary isnot undefined>>
-				<<set _keys to Object.keys(_item.outfitPrimary)>>
-				<<set _broken to 0>>
-				<<for _j to 0; _j lt _keys.length; _j++>>
-					<<if _item.outfitPrimary[_keys[_j]] is "broken">>
-						<<set _broken++>>
+				<</if>>
+				<<if _item.colour isnot 0>>
+					<span @class="_selectedWardrobe[_wardrobe_list][_i].colour">(_item.colour)</span>
+				<</if>>
+				<<if _item.outfitPrimary isnot undefined>>
+					<<set _keys to Object.keys(_item.outfitPrimary)>>
+					<<set _broken to 0>>
+					<<for _j to 0; _j lt _keys.length; _j++>>
+						<<if _item.outfitPrimary[_keys[_j]] is "broken">>
+							<<set _broken++>>
+						<</if>>
+					<</for>>
+					<<if _broken is 0>>
+						<span class="gold">(Outfit)</span>
+					<<elseif _broken lt _keys.length>>
+						<span class="red">(Partly Broken)</span>
+					<<else>>
+						<span class="red">(Broken)</span>
 					<</if>>
-				<</for>>
-				<<if _broken is 0>>
-					<span class="gold">(Outfit)</span>
-				<<elseif _broken lt _keys.length>>
-					<span class="red">(Partly Broken)</span>
-				<<else>>
-					<span class="red">(Broken)</span>
+					<<if _item.one_piece is "split">>
+						<span class="separated-indicator">(Separated)</span>
+					<</if>>
 				<</if>>
-				<<if _item.one_piece is "split">>
-					<span class="separated-indicator">(Separated)</span>
+				<<if _item.outfitSecondary isnot undefined>>
+					<<if _item.one_piece is "split">>
+						<span class="separated-indicator">(Separated)</span>
+					<<else>>
+						<span class="red">(Broken)</span>
+					<</if>>
 				<</if>>
-			<</if>>
-			<<if _item.outfitSecondary isnot undefined>>
-				<<if _item.one_piece is "split">>
-					<span class="separated-indicator">(Separated)</span>
-				<<else>>
-					<span class="red">(Broken)</span>
-				<</if>>
-			<</if>>
-			<<wardrobeintegrity _item _wardrobe_list>>
+				<<wardrobeintegrity _item _wardrobe_list>>
 				<<reveal _item.reveal>>
-				</div>
-			<</for>>
-			<div style="clear:both;"></div>
-		<</if>>
-
-	<<temperature>>
+				| <span class="cold-resist-icon noDivider"><<print getTrueWarmth(_item)>></span>
+			</div>
+		<</for>>
+		<div style="clear:both;"></div>
+	<</if>>
 <</widget>>
 
 <<widget "wearlink_norefresh">>
@@ -1125,7 +1140,7 @@
 			<!-- If selected item is a hood or selected item has a secondary hood piece -->
 			<<toggleHoodLink>>
 		<</if>>
-		<<if ["collar", "free use collar", "leather collar", "spiked collar", "collar with leash", "free use collar with leash", "leather collar with leash", "spiked collar with leash"].includes($worn.neck.name)>>
+		<<if ["collar", "free use collar", "leather collar", "spiked collar", "collar with leash", "free use collar with leash", "leather collar with leash", "spiked collar with leash", "Whitney's collar", "Whitney's collar with leash"].includes($worn.neck.name)>>
 			<div id="wardrobeLeash" class="no-numberify"><<toggleLeash>></div>
 		<</if>>
 	</div>
@@ -1485,22 +1500,24 @@
 <</widget>>
 
 <<widget "warmth_description">>
-	<<switch $body_temperature_outside>>
-	<<case "hot">>
-		<span class="red">You'll be far too hot outside.</span>
-	<<case "warm">>
-		<span class="purple">You'll be too warm outside.</span>
-	<<case "cold">>
-		<span class="red">You'll be cold outside.</span>
-	<<case "chilly">>
-		<span class="purple">You'll be a bit chilly outside.</span>
-	<<default>>
-		<span class="green">You'll be a comfortable temperature outside.</span>
-	<</switch>>
+	<<print setup.WeatherDescriptions.shop()>>
 	<br>
-	$warmth warmth versus $chill chill
+	Your clothing warmth is currently <span class="orange"><<print Weather.BodyTemperature.getWarmth()>></span>.
 	<br>
-	Comfortable warmth range: <<print ($chill + 1)>> - <<print Math.trunc(($chill * 1.3) + 69)>>
+
+	<<set $_minWarmth to getTargetWarmth(36.4)>>
+	<<set $_maxWarmth to getTargetWarmth(37.6)>>
+	To be comfortable you'll need
+	<<if $_minWarmth and $_maxWarmth>>
+		a clothing warmth between <span class="orange"><<print getTargetWarmth(36.5)>></span> and <span class="orange"><<print getTargetWarmth(37.5)>></span>.
+	<<elseif $_minWarmth>>
+		at least a clothing warmth of <span class="orange"><<print getTargetWarmth(36.5)>></span>.
+	<<elseif $_maxWarmth>>
+		at most a clothing warmth of <span class="orange"><<print getTargetWarmth(37.5)>></span>.
+	<<else>>
+		to stay indoors.
+	<</if>>
+	<hr />
 <</widget>>
 
 <<widget "wardrobeSelection">>
@@ -1539,7 +1556,7 @@
 		<<case "Changing Room">>
 			<<if $exposed lte 1>>
 				<<getouticon>><<link [[Leave|Beach]]>><<cleanupOnWardrobeExit>><</link>>
-			<<elseif $exhibitionism gte 75>>
+			<<elseif hasSexStat("exhibitionism", 5)>>
 				<<sneakicon>><<link [[Sneak outside|Beach Changing Room Sneak]]>><<cleanupOnWardrobeExit>><</link>><<exhibitionist5>>
 			<<else>>
 				You can't go out like this!
@@ -1561,37 +1578,37 @@
 				You can't go out like this!
 			<</if>>
 		<<case "Eden Wardrobe">>
-			<<if isLoveInterest("Eden") or $exhibitionism gte 75 or $exposed lte 0 or ($exhibitionism gte 55 and $exposed lte 1)>>
+			<<if isLoveInterest("Eden") or hasSexStat("exhibitionism", 5) or $exposed lte 0 or (hasSexStat("exhibitionism", 4) and $exposed lte 1)>>
 				<<link [[Done|Eden Cabin]]>><<cleanupOnWardrobeExit>><</link>>
 			<<else>>
 				You can't remain undressed like this!
 			<</if>>
 		<<case "Eden Night Wardrobe">>
-			<<if isLoveInterest("Eden") or $exhibitionism gte 75 or $exposed lte 0 or ($exhibitionism gte 55 and $exposed lte 1)>>
+			<<if isLoveInterest("Eden") or hasSexStat("exhibitionism", 5) or $exposed lte 0 or (hasSexStat("exhibitionism", 4) and $exposed lte 1)>>
 				<<link [[Done|Eden Cabin Bed]]>><<cleanupOnWardrobeExit>><</link>>
 			<<else>>
 				You can't remain undressed like this!
 			<</if>>
 		<<case "Asylum Wardrobe">>
-			<<if $exhibitionism gte 75 or $exposed lte 0 or ($exhibitionism gte 55 and $exposed lte 1)>>
+			<<if hasSexStat("exhibitionism", 5) or $exposed lte 0 or (hasSexStat("exhibitionism", 4) and $exposed lte 1)>>
 				<<link [[Done|Asylum Cell]]>><<cleanupOnWardrobeExit>><</link>>
 			<<else>>
 				You can't remain undressed like this!
 			<</if>>
 		<<case "Farm Wardrobe">>
-			<<if $exhibitionism gte 75 or $exposed lte 0 or ($exhibitionism gte 55 and $exposed lte 1)>>
+			<<if hasSexStat("exhibitionism", 5) or $exposed lte 0 or (hasSexStat("exhibitionism", 4) and $exposed lte 1)>>
 				<<link [[Done|Farm Bedroom]]>><<cleanupOnWardrobeExit>><</link>>
 			<<else>>
 				You can't remain undressed like this!
 			<</if>>
 		<<case "Strip Club Wardrobe">>
-			<<if $exhibitionism gte 55 or $exposed lte 0 or ($exhibitionism gte 15 and $exposed lte 1)>>
+			<<if hasSexStat("exhibitionism", 4) or $exposed lte 0 or (hasSexStat("exhibitionism", 2) and $exposed lte 1)>>
 				<<link [[Step away|Strip Club Dressing Room]]>><<cleanupOnWardrobeExit>><</link>>
 			<<else>>
 				You can't go out like this!
 			<</if>>
 		<<case "Brothel Wardrobe">>
-			<<if $exhibitionism gte 55 or $exposed lte 0 or ($exhibitionism gte 15 and $exposed lte 1)>>
+			<<if hasSexStat("exhibitionism", 4) or $exposed lte 0 or (hasSexStat("exhibitionism", 2) and $exposed lte 1)>>
 				<<link [[Step away|Brothel Dressing Room]]>><<cleanupOnWardrobeExit>><</link>>
 			<<else>>
 				You can't go out like this!
@@ -1603,7 +1620,7 @@
 				<<getouticon>><<link [[Leave|School Girl Changing Room]]>><<cleanupOnWardrobeExit>><</link>>
 			<</if>>
 		<<case "Farm Assault Wardrobe">>
-			<<if $exhibitionism gte 75 or $exposed lte 0 or ($exhibitionism gte 55 and $exposed lte 1)>>
+			<<if hasSexStat("exhibitionism", 5) or $exposed lte 0 or (hasSexStat("exhibitionism", 4) and $exposed lte 1)>>
 				<<link [[Done|Farm Assault Intro]]>><<cleanupOnWardrobeExit>><</link>>
 			<<else>>
 				You can't remain undressed like this!
@@ -1617,11 +1634,13 @@
 		<<case "Office Agency Changing Room">>
 			<<if $exposed lte 1>>
 				<<getouticon>><<link [[Leave|Office Agency]]>><<cleanupOnWardrobeExit>><</link>>
-			<<elseif $exhibitionism gte 55>>
+			<<elseif hasSexStat("exhibitionism", 4)>>
 				<<sneakicon>><<link [[Sneak outside|Office Agency Streak]]>><<cleanupOnWardrobeExit>><</link>><<exhibitionist4>>
 			<<else>>
 				You can't go out like this!
 			<</if>>
+		<<case "Bird Tower Wardrobe">>
+			<<link [[Close|Bird Tower]]>><<cleanupOnWardrobeExit>><</link>>
 	<</switch>>
 	<br><br>
 <</widget>>
@@ -1635,7 +1654,7 @@
 	<<else>>
 		<<set $_text_output to "underwear">>
 	<</if>>
-<</silently>><<if $_text_output>><</if>>
+<</silently>><<if $_text_output>><<print $_text_output>><</if>>
 <</widget>>
 
 :: Wardrobe [exitCheckBypass]
@@ -1755,6 +1774,19 @@ You are in the small storage room sanctioned for temps to use for changing.
 <br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
 <div id="wardrobeExits"><<wardrobeExits>></div>
+
+<<wardrobe>>
+
+:: Bird Tower Wardrobe [exitCheckBypass]
+
+<<effects>>
+You look through the wardrobe you built.
+<br><br>
+<<set $wardrobe_location to "birdTower">>
+<<wardrobeSelection>>
+<div id="wardrobewear"><<wardrobewear>></div>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+
 <<wardrobe>>
 
 :: Wardrobe Sale Crate

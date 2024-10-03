@@ -106,8 +106,14 @@
 
 			<<if _plantbed.stage gte 1>>
 				<<set $_plantedPlant to setup.plants[_plantbed.plant]>>
+				<<if $_plantedPlant is undefined>>
+					<<error {
+						message	: `Could not access property from modded save. (${_plantbed.plant})`,
+					}>>
+					<<exitAll>>
+				<</if>>
 
-				<<if $weather is "rain">>
+				<<if Weather.precipitation is "rain">>
 					<<set _plantbed.water to 1>>
 				<</if>>
 			<</if>>
@@ -229,6 +235,7 @@
 	<<if $leftarm is "bound" and $rightarm is "bound">>
 		<span class="red">Can't water when your arms are bound.</span>
 	<<else>>
+		<<wearProp "watering can">>
 		<<gardenicon "water">>
 		<<link "Water ($_time)" $passage>>
 			<<tending _tStatup>><<pass _tPass>><<set _plantbed.water to 1>><<set $tendingvars.plot_watered to true>>
@@ -238,6 +245,7 @@
 <</widget>>
 
 <<widget "tendingWaterAllDryBeds">>
+	<<wearProp "watering can">>
 	<<set $_plotsToWater to _args[0]>>
 
 	<<for $_plot range $_plotsToWater>>
@@ -442,7 +450,7 @@
 		You plant the seeds in the cool earth.
 		<br>
 	<</if>>
-	<<if $weather is "rain">>
+	<<if Weather.precipitation is "rain">>
 		<span class="green">The rain soaks the ground.</span>
 		<br>
 	<</if>>
@@ -465,7 +473,7 @@
 			<</if>>
 
 			/* should this check really happen AFTER the growth check? */
-			<<if $weather is "rain">>
+			<<if Weather.precipitation is "rain">>
 				<<set $_plot.water to 1>>
 			<<elseif _irrigation gte 1>>
 				<<set $_plot.water to 1>>
@@ -497,7 +505,7 @@
 		<<case 3>> <<set _tending_amount *= 1.4>>
 		<<case 2>> <<set _tending_amount *= 1.2>>
 	<</switch>>
-	<<if !$backgroundTraits.includes("greenthumb") and $tending is 1000 and $plants_known.length gte 16 and
+	<<if !$backgroundTraits.includes("greenthumb") and $tending gte 1000 and $plants_known.length gte 16 and
 	($fertiliser.used gte 40 or ($fertiliser.used gte 25 and $farm_stage gte 6))>>
 		<<run $backgroundTraits.pushUnique("greenthumb")>>
 		<span class="gold">Spending a large amount of time in the dirt has given you a green thumb.</span>

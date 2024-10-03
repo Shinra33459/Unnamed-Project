@@ -157,10 +157,10 @@
 		<br>
 		<<if !($weekly.theft.pub || $weekly.pubMusic)>>
 			<<if !$per_npc.pubMusic>>
-				<<generate2>><<person2>><<saveNPC 1 pubMusic>>
+				<<generatev2>><<person2>><<saveNPC 1 pubMusic>>
 			<</if>>
 			You see a <<loadNPC 1 pubMusic>><<person2>><<person>> playing music in the corner.<br>
-			<<mooricon "sing">><<link [[Approach|Pub Music]]>><<handheldon>><<set $pubdrink to 0>><</link>>
+			<<birdicon "sing">><<link [[Approach|Pub Music]]>><<handheldon>><<set $pubdrink to 0>><</link>>
 			<br><br>
 		<</if>>
 		<<generate1>><<person1>>You see a <<person>> sitting alone.
@@ -276,8 +276,8 @@ You put the money on the table. Landry swaps it with a small canister.
 	You put the goods on the table. Landry appraises them with the relaxed demeanour of someone accustomed to their work. "This is quite the haul, I hope you haven't bitten off more than you can chew. You know where to find me if you need help covering your tracks."
 	<br><br>
 <</if>>
-You make <<printmoney `$blackmoney * 100 * (1 + ($mathstrait/4))`>>.
-<<set $money += $blackmoney * 100 * (1 + ($mathstrait/4))>><<set $blackmoney to 0>>
+You make <<if $mathsTraitBuffs.stolen is 1>><<printmoney `$blackmoney * 100 * (1 + ($mathstrait/4))`>><<else>><<printmoney `$blackmoney * 100`>><</if>>.
+<<if $mathsTraitBuffs.stolen is 1>><<set $money += $blackmoney * 100 * (1 + ($mathstrait/4))>><<else>><<set $money += $blackmoney * 100>><</if>><<set $blackmoney to 0>>
 <br><br>
 <<getouticon>><<link [[Pub]]>><<endevent>><</link>>
 <br>
@@ -614,7 +614,7 @@ You scan the room for anything you can cover up with.
 		Your efforts are cut short by an approaching <<person>>. You pull your head back in as <<he>> loads the trolley with dirty dishes. Miraculously, <<he>> doesn't notice you.
 		<br><br>
 
-		A bundle of cleaning rags land in your lap. They smell of whiskey, but they're better than nothing. You wrap them around your body and sneak to safety.
+		A bundle of cleaning rags land in your lap. They smell of whisky, but they're better than nothing. You wrap them around your body and sneak to safety.
 		<<towelup>>
 		<br><br>
 
@@ -706,7 +706,7 @@ They can't tell you're exposed from behind the bar, but you'll look suspicious i
 <br>
 
 :: Pub Exposed Bar Serve
-<<set $outside to 0>><<set $location to "pub">><<effects>>
+<<set $outside to 0>><<set $location to "pub">><<effects>><<wearProp "tray">>
 
 <<if $player.gender_appearance is "f" and $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1>>
 	You top off a tray of drinks, holding it to your chest as you make your way over. The froth ought to hide your <<breasts>>. You hope.
@@ -791,35 +791,35 @@ You continue your scan over the room. Before you can find anything suitable, <sp
 <br><br>
 
 <<if $lockpickTrainingSet lt 5 and $money gte 800000>>
-	<<link [["Buy the Lockpick Lawyer Training Set (£8000)"|Pub Landry]]>><<set $lockpickTrainingSet to 5>><<set $money -= 800000>><</link>>
+	<<link [["Buy the Lockpick Lawyer Training Set (£8000)"|Pub Landry]]>><<set $lockpickTrainingSet to 5>><<set $money -= 800000>><</link>><<note "Trains up to SSS">>
 	<br>
 <<elseif $lockpickTrainingSet lt 5>>
 	You don't have the £8000 to afford the Lockpick Lawyer Training Set.
 	<br>
 <</if>>
 <<if $lockpickTrainingSet lt 4 and $money gte 400000>>
-	<<link [["Buy the Master Training Set (£4000)"|Pub Landry]]>><<set $lockpickTrainingSet to 4>><<set $money -= 400000>><</link>>
+	<<link [["Buy the Master Training Set (£4000)"|Pub Landry]]>><<set $lockpickTrainingSet to 4>><<set $money -= 400000>><</link>><<note "Trains up to A+">>
 	<br>
 <<elseif $lockpickTrainingSet lt 4>>
 	You don't have the £4000 to afford the Master Training Set.
 	<br>
 <</if>>
 <<if $lockpickTrainingSet lt 3 and $money gte 200000>>
-	<<link [["Buy the Advanced Training Set (£2000)"|Pub Landry]]>><<set $lockpickTrainingSet to 3>><<set $money -= 200000>><</link>>
+	<<link [["Buy the Advanced Training Set (£2000)"|Pub Landry]]>><<set $lockpickTrainingSet to 3>><<set $money -= 200000>><</link>><<note "Trains up to B+">>
 	<br>
 <<else>>
 	You don't have the £2000 to afford the Advanced Training Set.
 	<br>
 <</if>>
 <<if $lockpickTrainingSet lt 2 and $money gte 100000>>
-	<<link [["Buy the Intermediate Training Set (£1000)"|Pub Landry]]>><<set $lockpickTrainingSet to 2>><<set $money -= 100000>><</link>>
+	<<link [["Buy the Intermediate Training Set (£1000)"|Pub Landry]]>><<set $lockpickTrainingSet to 2>><<set $money -= 100000>><</link>><<note "Trains up to C+">>
 	<br>
 <<elseif $lockpickTrainingSet lt 2>>
 	You don't have the £1000 to afford the Intermediate Training Set.
 	<br>
 <</if>>
 <<if $lockpickTrainingSet lt 1 and $money gte 50000>>
-	<<link [["Buy the Basic Training Set (£500)"|Pub Landry]]>><<set $lockpickTrainingSet to 1>><<set $money -= 50000>><</link>>
+	<<link [["Buy the Basic Training Set (£500)"|Pub Landry]]>><<set $lockpickTrainingSet to 1>><<set $money -= 50000>><</link>><<note "Trains up to D+">>
 	<br>
 <<elseif $lockpickTrainingSet lt 1>>
 	You don't have the £500 to afford the Basic Training Set.
@@ -892,7 +892,7 @@ You withdraw your hand and give <<him>> a scandalised look.
 <br><br>
 
 <<if $englishsuccess>>
-	The <<person>> looks at you and stutters. "S-sorry, then."  <<He>> goes back to playing, but <<he>> keeps <<his>> eye on the jar.
+	The <<person>> looks at you and stutters. "S-sorry, then." <<He>> goes back to playing, but <<he>> keeps <<his>> eye on the jar.
 	<<clearNPC pubMusic>>
 	<br><br>
 	<<link [[Next|Pub]]>><</link>>
@@ -935,7 +935,7 @@ You withdraw your hand and give <<him>> a scandalised look.
 	The <<person>> shudders in pleasure, a wet spot forming on <<his>> trousers. The crowd snaps pictures as you wrest yourself free from <<his>> grip. <<tearful>> you flee through the back door.
 
 <<elseif $enemyhealth lte 0>>
-	The <<person>> loses his grip on you as <<he>> yells out in pain. The crowd moves out of your way as you grab the jar from <<him>>. <<tearful>> you flee through the back door.
+	The <<person>> loses <<his>> grip on you as <<he>> yells out in pain. The crowd moves out of your way as you grab the jar from <<him>>. <<tearful>> you flee through the back door.
 	<br><br>
 
 	You count the tips in the jar. You make <<set $_tip to random(5,100)>><<moneyGain $_tip true true>>. <<crime "thievery">>

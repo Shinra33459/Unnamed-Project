@@ -1,13 +1,17 @@
 :: Moor Widgets [widget]
 <<widget "eventsmoorlow">>
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+	<<if $moorLessDangerAll>>
+		<<set $danger -= $moorLessDangerAll>>
+	<</if>>
 	<<if random(1, 8) is 8 or ($moormove is "quick_search" or $moormove is "normal_search" or $moormove is "careful_search" or $moormove is "fly_search") and random(1, 4) is 4>>
 		<<rng 3>>
 		<<if $rng is 3>>
+			<<wearProp "bullet">>
 			You see a bullet lying at the edge of a trail. It looks old. A collector might pay for it.
 			<br><br>
 			<<set $antiquemoney += 50>><<museumAntiqueStatus "antiquebullet" "found">>
-			<<link [[Next|Moor]]>><<set $eventskip to 1>><</link>>
+			<<link [[Next|Moor]]>><<handheldon>><<set $eventskip to 1>><</link>>
 			<br>
 		<<elseif $rng is 2>>
 			Tufts of small yellow flowers grow among the heather.
@@ -24,7 +28,7 @@
 				<span class="blue">You need a higher tending skill to identify them.</span>
 				<br><br>
 			<</if>>
-			<<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
+			<<mooricon>><<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
 			<br>
 		<<else>>
 			Tufts of small white flowers grow among the heather.
@@ -41,7 +45,7 @@
 				<span class="blue">You need a higher tending skill to identify them.</span>
 				<br><br>
 			<</if>>
-			<<ind>><<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
+			<<mooricon>><<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
 			<br>
 		<</if>>
 	<<elseif $danger gte (9900 - ($allure * $forestmod))>>
@@ -58,12 +62,12 @@
 				<br>
 
 				<<if $exposed gte 2>>
-					<<if $exhibitionism gte 55>>
+					<<if hasSexStat("exhibitionism", 4)>>
 						<<link [[Keep walking|Moor Exposed Naked]]>><</link>><<exhibitionist4>>
 						<br>
 					<</if>>
 				<<else>>
-					<<if $exhibitionism gte 15>>
+					<<if hasSexStat("exhibitionism", 2)>>
 						<<link [[Keep walking|Moor Exposed Undies]]>><</link>><<exhibitionist2>>
 						<br>
 					<</if>>
@@ -167,10 +171,10 @@
 				<<set $skulduggerydifficulty to 600>>
 				<<link [[Hide until they pass|Moor Youths Hide]]>><</link>><<skulduggerydifficulty>>
 				<br>
-				<<if $exposed gte 2 and $exhibitionism gte 75>>
+				<<if $exposed gte 2 and hasSexStat("exhibitionism", 5)>>
 					<<link [[Walk past them|Moor Youths Exhibitionism]]>><</link>><<exhibitionist5>>
 					<br>
-				<<elseif $exhibitionism gte 35>>
+				<<elseif hasSexStat("exhibitionism", 3)>>
 					<<link [[Walk past them|Moor Youths Exhibitionism]]>><</link>><<exhibitionist3>>
 					<br>
 				<</if>>
@@ -200,7 +204,7 @@
 		<<rng 6>>
 		<<switch $rng>>
 		<<case 1>>
-			<<if $weather is "rain">>
+			<<if Weather.precipitation is "rain">>
 				The heather bows as a breeze rushes towards you, stinging your skin with raindrops.
 			<<else>>
 				The heather bows as a breeze rushes towards you, caressing your skin.<<lstress>><<stress -6>>
@@ -257,9 +261,13 @@
 
 <<widget "eventsmoormid">>
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+	<<if $moorLessDangerAll>>
+		<<set $danger -= $moorLessDangerAll>>
+	<</if>>
 	<<if random(1, 8) is 8 or ($moormove is "quick_search" or $moormove is "normal_search" or $moormove is "careful_search" or $moormove is "fly_search") and random(1, 4) is 4>>
 		<<rng 2>>
 		<<if $rng is 2>>
+			<<wearProp "artillery">>
 			You spot a black shape, half-buried in mud. It's an artillery shell. It looks old.
 
 			<<if currentSkillValue('history') gte 500>>
@@ -272,7 +280,7 @@
 
 			<</if>>
 
-			<<link [[Next|Moor]]>><<set $eventskip to 1>><</link>>
+			<<link [[Next|Moor]]>><<handheldon>><<set $eventskip to 1>><</link>>
 			<br>
 		<<else>>
 			Green shoots erupt from the earth in clusters.
@@ -286,11 +294,11 @@
 				<span class="blue">You need a higher tending skill to identify them.</span>
 				<br><br>
 			<</if>>
-			<<getinicon>><<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
+			<<mooricon>><<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
 			<br>
 		<</if>>
 	<<elseif $danger gte (9900 - ($allure * $forestmod))>>
-		<<rng 10>>
+		<<rng 11>>
 		<<switch $rng>>
 		<<case 1>>
 			<<beastNEWinit 1 cat>>
@@ -348,7 +356,7 @@
 			You're walking along the top of a cliff, <span class="red">when the earth shakes.</span> You're knocked off your feet, and roll towards the precipice.
 			<br><br>
 
-			<<if ($harpy gte 6 or $transformationParts.bird.wings is "default") or ($angel gte 6 or $transformationParts.angel.wings is "default") or ($demon gte 6 or $transformationParts.demon.wings is "default" or $transformationParts.demon.wings is "succubus") or ($fallenangel gte 2 or $transformationParts.fallenAngel.wings is "default")>>
+			<<if ($harpy gte 6 or $transformationParts.bird.wings is "default") or ($angel gte 6 or $transformationParts.angel.wings is "default" or $transformationParts.angel.wings is "classic") or ($demon gte 6 or $transformationParts.demon.wings is "default" or $transformationParts.demon.wings is "succubus") or ($fallenangel gte 2 or $transformationParts.fallenAngel.wings is "default" or $transformationParts.fallenAngel.wings is "classic")>>
 				Your wings flare as you hurtle over the edge. The wind catches you, and you are carried to a gentle landing.
 				<br><br>
 
@@ -389,7 +397,7 @@
 				"Good thing I was in the area," the <<person>> says. "Wouldn't want you falling victim to these little things. So..." <<He>> leans forward, licking <<his>> lips. "Don't I deserve a reward for saving you?"
 				<br><br>
 
-				<<if $deviancy gte 35 or $backgroundTraits.includes("plantlover")>>
+				<<if hasSexStat("deviancy", 3) or $backgroundTraits.includes("plantlover")>>
 					<<link [[Reward|Moor Plant Sex]]>><<set $sexstart to 1>><</link>><<deviant3>>
 				<<else>>
 					<span class="blue">You are not deviant enough to "reward" <<him>></span>.
@@ -416,9 +424,13 @@
 			<</if>>
 			<<link [[Ignore|Moor]]>><<set $eventskip to 1>><</link>>
 			<br>
-		<<case 9>>
-			<<moor_hunt_start>>
-		<<case 10>>
+		<<case 9 10>>
+			<<if $bird and $bird.injured gt 1>>
+				<<moor_fox>>
+			<<else>>
+				<<moor_hunt_start>>
+			<</if>>
+		<<case 11>>
 			<<moor_fox>>
 		<</switch>>
 	<<else>>
@@ -535,6 +547,9 @@
 
 <<widget "eventsmoorhigh">>
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+	<<if $moorLessDangerAll>>
+		<<set $danger -= $moorLessDangerAll>>
+	<</if>>
 	<<if random(1, 8) is 8 or ($moormove is "quick_search" or $moormove is "normal_search" or $moormove is "careful_search" or $moormove is "fly_search") and random(1, 4) is 4>>
 		<<rng 2>>
 		<<if $rng is 2>>
@@ -557,11 +572,11 @@
 				<span class="blue">You need a higher tending skill to identify them.</span>
 				<br><br>
 			<</if>>
-			<<ind>><<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
+			<<mooricon>><<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
 			<br>
 		<</if>>
 	<<elseif $danger gte (9900 - ($allure * $forestmod))>>
-		<<rng 9>>
+		<<rng 10>>
 		<<switch $rng>>
 		<<case 1>>
 			The ground lurches, staggering you. A crack opens beneath, widening with staggering speed.
@@ -585,7 +600,7 @@
 			<</if>>
 		<<case 2>>
 			You follow a trail between two ponds.
-			<<if $weather is "clear">>
+			<<if !Weather.isOvercast>>
 				<<if Time.dayState is "night">>
 					They reflect no moonlight.
 				<<else>>
@@ -624,7 +639,7 @@
 			<<link [[Next|Moor]]>><<set $eventskip to 1>><</link>>
 			<br>
 		<<case 5>>
-			The ground rumbles, and you slip, landing on your <<bottom>><<gpain>><<gstress>><<pain 1>><<stress 6>>
+			The ground rumbles, and you slip, landing on your <<bottom>>.<<gpain>><<gstress>><<pain 1>><<stress 6>>
 			<br><br>
 
 			<<link [[Next|Moor]]>><<set $eventskip to 1>><</link>>
@@ -645,7 +660,6 @@
 			<<else>>
 				<<if $worn.feet.type.includes("naked")>>
 					Your feet sink into the mud, <span class="pink">and hear a click.</span> Metal restraints have clamped around your ankles, binding them together. There's a keyhole on one side.
-					<br><br>
 				<<else>>
 					Your feet sink into the mud, and won't budge. <span class="pink">You hear a click.</span> You pull your legs free and stumble forward, but your $worn.feet.name have been left behind. Instead, metal restraints have clamped around your ankles, binding them together. There's a keyhole on one side.
 					<<feetruined>>
@@ -660,7 +674,7 @@
 			<</if>>
 		<<case 7>>
 			<<set $plantMoney to 10*random(20,100)>>
-			<<if $weather is "clear">>
+			<<if !Weather.isOvercast>>
 				A glint of light
 			<<else>>
 				Something shiny
@@ -684,10 +698,57 @@
 				<<set $money += $plantMoney>><<unset $plantMoney>>
 				<<link [[Next|Moor]]>><<set $eventskip to 1>><</link>>
 			<</if>>
-		<<case 8>>
-			<<moor_hunt_start>>
-		<<case 9>>
-			<<moor_fox>>
+		<<case 8 9>>
+			<<if $bird and $bird.injured gt 1>>
+				<<moor_fox>>
+			<<else>>
+				<<moor_hunt_start>>
+			<</if>>
+		<<case 10>>
+			<<if random(1,5) is 1 and $wrenSeen?.length and !$daily.moorhighWren>>
+				<<npc Wren>><<person1>>
+				<<set $daily.moorhighWren to true>>
+
+				As you're about to step forward, someone grabs your wrist from behind. You're pulled roughly backwards. You stumble and fall on your ass.<<pain 4>><<gpain>>
+				<br><br>
+				<<if $wrenSeen.includes("moorhigh")>>
+					"I thought I told you it was dangerous here," a voice says. <span class="gold">It's Wren.</span> <<He>> sounds exasperated. "I shouldn't be surprised. I often seem to find you in these kinds of places. Want me to lead you out again?"
+					<br><br>
+
+					<<link [[Accept (0:45)|Moor Wren Meeting End]]>><<set $phase to 0>><<pass 45>><</link>>
+					<br>
+					<<link [[Decline|Moor Wren Meeting End]]>><<set $phase to 1>><</link>>
+					<br>
+				<<else>>
+					"Careful, <<girl>>," a voice warns. "It's dangerous here."
+					<br><br>
+					<span class="gold">It's Wren.</span>
+					<br><br>
+					<<if $lurkerdisable is "f">>
+						As if to prove <<his>> point, a shadow scuttles out of the bush right in front of you. It hurries away before you can get a good look.
+					<<else>>
+						<<He>> picks up a stone and tosses it where you were going to step. You watch the ground swallow it without a ripple.
+					<</if>>
+					<br><br>
+					<<if $speech_attitude is "meek">>
+						"Thanks for s-saving me," you say.
+					<<elseif $speech_attitude is "bratty">>
+						"I can take care of myself, you know," you say.
+					<<else>>
+						"I appreciate it," you say. "But I could have handled it."
+					<</if>>
+					<br><br>
+					"You're welcome," <<he>> says. "What are you even doing here?"
+					<br><br>
+
+					<<link [[Be honest|Moor Wren Meeting]]>><<set $phase to 0>><</link>>
+					<br>
+					<<link [[Lie|Moor Wren Meeting]]>><<set $phase to 1>><</link>>
+					<br>
+				<</if>>
+			<<else>>
+				<<moor_fox>>
+			<</if>>
 		<</switch>>
 	<<else>>
 		<<rng 6>>
@@ -696,7 +757,7 @@
 			You find a clear spring, elevated above the surrounding pools. The water looks clean.
 			<br><br>
 
-			<<ind>><<link [[Wash (0:20)|Moor Wash]]>><<pass 20>><<strip>><<stress -2>><<if $moor_hunt gte 1>><<set $moor_hunt += 1.5>><</if>><</link>><<lstress>>
+			<<skinicon "wash">><<link [[Wash (0:20)|Moor Wash]]>><<pass 20>><<strip>><<stress -2>><<if $moor_hunt gte 1>><<set $moor_hunt += 1.5>><</if>><</link>><<lstress>>
 			<br>
 			<<getouticon>><<link [[Leave|Moor]]>><<set $eventskip to 1>><</link>>
 			<br>
@@ -794,6 +855,7 @@
 	<<unset $quicksand_depth>>
 	<<unset $quicksand_learn>>
 	<<unset $quicksandWraith>>
+	<<unset $quicksand_escape>>
 <</widget>>
 
 <<widget "quicksand_pull">>
@@ -845,8 +907,8 @@
 <</widget>>
 
 <<widget "passout_moor">>
-	<<if isPlayerNonparasitePregnancyEnding()>>
-		<<pregnancyWatersBrokenPassout "moor">>
+	<<if isPregnancyEnding()>>
+		<<pregnancyPassout "moor">>
 	<<else>>
 		<<passout>>
 		<<set $danger to random(1, 10000)>>
@@ -861,6 +923,9 @@
 		<<else>>
 			<<ambulance>>
 		<</if>>
+	<</if>>
+	<<if $bird.hunts>>
+		<<flight_hunt_end>>
 	<</if>>
 <</widget>>
 
@@ -923,10 +988,10 @@
 <</widget>>
 
 <<widget "moor_hunt_start">>
-	<<if $weather is "clear">>
+	<<if !Weather.isOvercast>>
 		A shadow passes over you.
 	<<else>>
-		You hear a terrible shriek.
+		You hear a <<hawkScreechDesc>>.
 	<</if>>
 	<<if $syndromebird is 1>>
 		<<npc "Great Hawk">>
@@ -938,15 +1003,23 @@
 			<<link [[Screech back|Moor Bird Screech]]>><</link>><<harpy>>
 			<br>
 		<</if>>
-		<<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
+		<<mooricon>><<link [[Continue|Moor]]>><<set $eventskip to 1>><</link>>
 		<br>
 	<<else>>
-		Terror circles overhead.
+		<<if $birdescaped gte 1>>
+			<<npc "Great Hawk">>
+			A familiar <<beasttype>> circles overhead.
+			<<endevent>>
+		<<else>>
+			Terror circles overhead.
+		<</if>>
 		<<if $moor_hunt is undefined>>
 			<span class="red">You are being hunted.</span><<ggstress>><<stress 12>>
 			<<set $moor_hunt to 1>>
+		<<else>>
+			<span class="red">Your pursuer approaches rapidly.</span><<gstress>><<stress 6>>
+			<<set $moor_hunt += 3>>
 		<</if>>
-
 		<br><br>
 
 		<<link [[Next|Moor]]>><<set $eventskip to 1>><</link>>
@@ -956,15 +1029,26 @@
 
 <<widget "moor_hunt">>
 	<<npc "Great Hawk">>
-	<span class="red">You hear another screech.</span> This one from behind you. It's close.
-	<<if $monster is 1>>
-		You turn, and see a winged <<nnpc_gendery "Great Hawk">> with claws instead of feet. <<bHe>> swoops towards you, talons outstretched.
+	<span class="red">You hear another screech.</span> This one from behind you. It's close. You turn, and see
+	<<if $birdescaped gte 1>>
+		the <<beasttype>>
+	<<elseif $monster is 1>>
+		a feathered <<nnpc_gendery "Great Hawk">> with wings that dwarf <<bhis>> body and talons in place of feet
 	<<else>>
-		You turn, and see a colossal hawk swooping towards you, talons outstretched.
+		a colossal <<beasttype>>
 	<</if>>
-	<<bHis>> eyes pierce yours. Terror roots you to the spot.
+	swooping down through the air towards you, talons extended to grab you.
+	<<if $birdescaped gte 1>>
+		Your eyes meet <<bhis>>, and terror seizes your limbs.
+		<<if $monster is 1 or understandsBirdBehaviour()>>
+			Despite the intensity of <<bhis>> gaze, you can see concern underneath.
+		<</if>>
+	<<else>>
+		<<bHis>> gaze roots you to the spot in terror.
+	<</if>>
 	<br><br>
-	<<link [[Stay still|Moor Bird Still]]>><</link>>
+
+	<<link [[Stay still|Moor Bird Still]]>><<sub 1>><<unset $phase>><</link>>
 	<br>
 	<<link [[Resist|Moor Bird Resist]]>><</link>><<willpowerdifficulty 1 300>>
 	<br>

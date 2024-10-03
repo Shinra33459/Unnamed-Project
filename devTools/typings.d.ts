@@ -5,6 +5,27 @@
  * and, should TypeScript rewrite become a thing in future, would work as a static type check.
  */
 
+/* Declare commonly used aliases or functions */
+declare var V: any;
+declare var T: any;
+declare var random: any;
+
+// Add our extensions
+interface ObjectConstructor {
+    hasOwn(object: any, property: any): boolean;
+    deepMerge(...objects): object;
+    find(objects: any): object;
+}
+interface NumberConstructor {
+    shuffle();
+	select(index: number): any;
+	except(): any;
+	formatList(options: any): any;
+}
+interface ArrayConstructor {
+    between(min: number, max: number): boolean;
+}
+
 declare interface ClothesItem {
 	index: number;
 	name: string;
@@ -58,10 +79,6 @@ declare interface ClothesItem {
 	 * if 1, then accessory files are integrity-dependent "acc_(tattered|torn|frayed|full).png"
 	 */
 	accessory_integrity_img?: 0|1;
-	/**
-	 * if 1, then accessory files layer under breast sprites
-	 */
-	accessory_layer_under?: 0|1;
 	high_img: 0|1;
 	back_img: 0|1;
 	/**
@@ -94,15 +111,7 @@ declare interface ClothesItem {
 	 * * "secondary" - use secondary/accessory colour
 	 */
 	sleeve_colour?: ""|"no"|"primary"|"secondary";
-	/**
-	 * * 1 if has breast sprites and a unique image for every breast sprite
-	 * * 0 if no breast sprites
-	 * * Key represents breast size tier 0..6.
-	 * * Value represents the image used:
-	 *     - null if no clothed breast image exists for that breast size.
-	 *     - 0..6 for clothed breast image used for that breast size.
- 	 */
-	breast_img: object|1|0;
+	breast_img: number;
 	cursed: number;
 	location: number;
 	iconFile: string;

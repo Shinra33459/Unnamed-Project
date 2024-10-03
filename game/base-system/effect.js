@@ -44,7 +44,7 @@ function effectsWater() {
 			break;
 	}
 	if (!V.worn.upper.type.includes("naked") && !waterproofCheck(V.worn.upper)) {
-		if (V.upperwet >= 100 && V.upperwetstage < 3) {
+		if (V.upperwet >= 100 && V.upperwetstage < 3 && !antitransparentCheck(V.worn.upper)) {
 			V.upperwetstage = 3;
 			wetIntro = 2;
 			sWikifier(`<span class="lewd">Water soaks through your ${V.worn.upper.name}, exposing your <<undertop>>.</span>`);
@@ -68,7 +68,7 @@ function effectsWater() {
 	}
 
 	if (!V.worn.lower.type.includes("naked") && !waterproofCheck(V.worn.lower)) {
-		if (V.lowerwet >= 100 && V.lowerwetstage < 3) {
+		if (V.lowerwet >= 100 && V.lowerwetstage < 3 && !antitransparentCheck(V.worn.lower)) {
 			V.lowerwetstage = 3;
 			wetIntro = 2;
 			sWikifier(`<span class="lewd">Water soaks through your ${V.worn.lower.name}, exposing your <<undies>>.</span>`);
@@ -92,7 +92,7 @@ function effectsWater() {
 	}
 
 	if (!V.worn.under_lower.type.includes("naked") && !playerChastity() && !waterproofCheck(V.worn.under_lower)) {
-		if (V.underlowerwet >= 100 && V.underlowerwetstage < 3 && V.pantiesSoaked) {
+		if (V.underlowerwet >= 100 && V.underlowerwetstage < 3 && V.pantiesSoaked && !antitransparentCheck(V.worn.under_lower)) {
 			V.underlowerwetstage = 3;
 			if (V.lowerwetstage === 3 || V.worn.lower.type.includes("naked")) {
 				// If clothing above underwear is also wet, or missing
@@ -105,7 +105,7 @@ function effectsWater() {
 			} else {
 				span(`Your bodily fluids soak through your ${V.worn.under_lower.name}.`, "lewd");
 			}
-		} else if (V.underlowerwet >= 100 && V.underlowerwetstage < 3) {
+		} else if (V.underlowerwet >= 100 && V.underlowerwetstage < 3 && !antitransparentCheck(V.worn.under_lower)) {
 			V.underlowerwetstage = 3;
 			wetIntro = 2;
 			sWikifier(`<span class="lewd">Water soaks through your ${V.worn.under_lower.name}, exposing your <<genitals>>.</span>`);
@@ -129,7 +129,7 @@ function effectsWater() {
 	}
 
 	if (!V.worn.under_upper.type.includes("naked") && !V.worn.under_upper.type.includes("chastity") && !waterproofCheck(V.worn.under_upper)) {
-		if (V.underupperwet >= 100 && V.underupperwetstage < 3) {
+		if (V.underupperwet >= 100 && V.underupperwetstage < 3 && !antitransparentCheck(V.worn.under_upper)) {
 			V.underupperwetstage = 3;
 			wetIntro = 2;
 			sWikifier(`<span class="lewd">Water soaks through your ${V.worn.under_upper.name}, exposing your <<breasts>>.</span>`);
@@ -246,16 +246,22 @@ function effects() {
 	sWikifier("<<autoTakePillCheck>>");
 	fragment.append(effectsWater());
 	fragment.append(effectsMakeup());
-	wikifier("temperature");
 
 	V.speechcycle++;
 	if (V.speechcycle >= 7) V.speechcycle = 0;
 
-	if (!V.inwater && V.squidcount) {
+	if (Weather.bodyTemperature < setup.WeatherTemperature.minTemperature + 1 && !Weather.BodyTemperature.isIncreasing()) {
+		element("span", `You're very cold, and about to get hypothermia!`, "red");
+		br();
+	} else if (Weather.bodyTemperature > setup.WeatherTemperature.maxTemperature - 1 && !Weather.BodyTemperature.isDecreasing()) {
+		element("span", `You're extremely hot, and about to get heatstroke!`, "red");
+		br();
+	}
+
+	if (!T.inWater && V.squidcount) {
 		element("span", `The squid${V.squidcount > 1 ? "s" : ""} drop${V.squidcount > 1 ? "" : "s"} off you, seeking water.`, "blue");
 		V.squidcount = 0;
 	}
-	V.inwater = 0;
 
 	if (V.scienceproject === "ongoing" && V.scienceprojectdays === 0 && !V.scienceprojectwarning) {
 		V.scienceprojectwarning = 1;
@@ -324,8 +330,8 @@ function effects() {
 			}
 			break;
 	}
-
-	if (isPlayerNonparasitePregnancyEnding()) {
+	// eslint-disable-next-line no-undef
+	if (isPregnancyEnding()) {
 		sWikifier(
 			`<span class="red">Your waters have broken.</span> ${
 				["asylum", "prison", "hospital"].includes(V.location) ? "You need to find help, fast!" : "You need to head to the hospital, fast!"
@@ -334,7 +340,7 @@ function effects() {
 		br();
 	}
 
-	if (V.effectsmessage) {
+	if (V.effectsmessage && !V.statFreeze) {
 		delete V.effectsmessage;
 
 		if (V.recovered_from_pregnancy) {
@@ -624,6 +630,15 @@ function effects() {
 			if (V.pillsTakenLast) element("span", "You have run out of some of them.", "red");
 			delete V.pillsTaken;
 			delete V.pillsTakenLast;
+		}
+
+		if (V.dailySunscreen == true) {
+			if (Skin.Sunscreen.usesLeft > 0) {
+				Skin.Sunscreen.apply();
+				element("span", "You apply sunscreen for the day.", "purple");
+			} else {
+				element("span", "You don't have any sunscreen to apply.", "red");
+			}
 		}
 
 		if (V.hairGrowthApplied) {
@@ -934,7 +949,7 @@ function effects() {
 						? ` and clit. It ${looks} like you have your own penis now`
 						: `A new parasite forms around the base of your clit, it ${looks} similar to a penis`;
 				}
-				sWikifier(`<span class="blue">A satisfied warmth fills you. ${parasiteMessage}</span>`);
+				sWikifier(`<span class="blue">A satisfied warmth fills you. ${parasiteMessage}.</span>`);
 				element("span", `You can tell that ${parasiteCount > 1 ? "they are" : "it's"} from the slimes in your ears.`);
 				if (V.earSlimePenisParasite && V.earSlimePenisParasite !== 1) {
 					element("span", `The previous ${V.earSlimePenisParasite} falls off shortly after it finishes growing.`, "red");
@@ -951,7 +966,7 @@ function effects() {
 		if (V.penisslimebrokenchastitymessage) {
 			element(
 				"span",
-				`The parasite at the base of your genitals frees you from the${
+				`The parasite at the base of your genitals frees you from the ${V.penisslimebrokenchastitymessage}${
 					V.penisslimecagemessage === 1 ? ", and almost just as quickly, a new chastity parasite forms around your penis" : ""
 				}.`,
 				"purple"
@@ -1047,7 +1062,7 @@ function effects() {
 		}
 	}
 
-	if (numberOfEarSlime() && V.earSlime.event) {
+	if (numberOfEarSlime() && V.earSlime.event && !V.statFreeze) {
 		if (V.earSlime.event.includes("get sperm into your") && V.earSlime.event.includes("completed") && V.earSlime.eventTimer <= 2) {
 			element(
 				"span",
@@ -1087,6 +1102,7 @@ function effects() {
 	sWikifier("<<integritycheck>><<exposure>>");
 
 	V.orgasmdown -= 1;
+	V.orgasmCum -= 1;
 
 	if (V.exposed >= 1 && V.exposedcheck === 1) {
 		V.exposedcheck = 0;
@@ -1103,7 +1119,7 @@ function effects() {
 
 	sWikifier("<<heelsUpdate>>");
 
-	if (V.combat) sWikifier("<<pass 10 seconds>>");
+	if (V.combat) sWikifier("<<pass $combatTimePass seconds>>");
 
 	if (fragment.children.length) br();
 
@@ -1112,10 +1128,18 @@ function effects() {
 	if (V.combat === 0 && V.ironmanmode === true) IronMan.scheduledSaves();
 
 	if (V.tirednessMaxScalingToggle) {
-		C.tiredness.max = 2000 + Math.floor(V.physique / 32) + Math.floor(V.willpower / 2);
+		C.tiredness.max = 2000 + Math.floor(V.physique / 32);
 	} else {
 		C.tiredness.max = 2000;
 	}
+
+	if (V.stressMaxScalingToggle) {
+		V.stressmax = 10000 + Math.floor(V.willpower * 5);
+	} else {
+		V.stressmax = 10000;
+	}
+
+	if (V.trauma >= (V.traumamax * 0.9)) V.traumatized = true;
 
 	return fragment;
 }

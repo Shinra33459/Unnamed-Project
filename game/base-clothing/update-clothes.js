@@ -23,20 +23,26 @@ function updateClothingColours(item, itemRef) {
 		case "leather dress":
 		case "round shades":
 		case "witch shoes":
+		case "mesh shirt":
+		case "fishnet stockings":
+		case "fishnet tights":
 			if (item.colour === 0) item.colour = "black";
 			break;
 		case "square shades":
 		case "shield shades":
 		case "punk shades":
 			if (item.colour === 0) item.colour = "black";
-			if (item.accessory_colour === 0) item.colour = "black";
+			if (item.accessory_colour === 0) item.accessory_colour = "black";
 			break;
 		case "aviators":
 			if (item.colour === 0) item.colour = "grey";
-			if (item.accessory_colour === 0) item.colour = "original";
+			if (item.accessory_colour === 0) item.accessory_colour = "original";
 			break;
 		case "glasses":
 			if (item.colour === 0) item.colour = "silver";
+			break;
+		case "checkered shirt":
+			if (item.colour === 0) item.colour = "russet";
 			break;
 		case "lace choker":
 			if (item.colour === 0) item.colour = "black";
@@ -57,12 +63,6 @@ function updateClothingColours(item, itemRef) {
 			if (item.colour === 0) item.colour = "black";
 			if (item.accessory_colour === 0) item.accessory_colour = "silver";
 			break;
-		case "ballgown":
-		case "ballgown skirt":
-		case "short ballgown":
-		case "short ballgown skirt":
-			if (item.accessory_colour === 0) item.accessory_colour = item.colour;
-			break;
 		case "overall bottoms":
 		case "overalls":
 			if (item.colour === 0 || item.colour === "original") item.colour = "denim";
@@ -77,19 +77,26 @@ function updateClothingColours(item, itemRef) {
 		case "loose socks":
 			if (item.colour === 0) item.colour = "white";
 			break;
-		case "argyle sweater vest":
-			if (item.accessory_colour === 0) {
-				item.accessory_colour = item.colour !== "custom" ? item.colour : "black";
-			}
-			break;
 		case "cowboy hat":
 			if (item.colour === 0) item.colour = "sand";
 			if (item.accessory_colour === 0) item.accessory_colour = "black";
 			break;
+		case "ballgown":
+		case "ballgown skirt":
+		case "short ballgown":
+		case "short ballgown skirt":
+		case "school swim shorts":
 		case "futuristic bodysuit":
-			if (item.accessory_colour === 0) {
-				item.accessory_colour = item.colour !== "custom" ? item.colour : "black";
-			}
+		case "argyle sweater vest":
+			if (item.accessory_colour === 0) item.accessory_colour = item.colour;
+			if (item.colourCustom) item.accessory_colourCustom = item.colourCustom;
+			break;
+		case "karate jacket":
+			if (item.colour === 0) item.colour = "white";
+			if (item.accessory_colour === 0) item.accessory_colour = "red";
+			break;
+		case "karate trousers":
+			if (item.colour === 0) item.colour = "white";
 			break;
 		default:
 			// Catch-all case if people forget to adjust this widget for whatever clothing item is updated. Can make weird looking clothes if "custom" is selected.
@@ -191,6 +198,10 @@ function updateClothesItem(slot, item, debug) {
 		(item.accessory_colour === 0 && itemRef.accessory_colour_options.length > 0)
 	)
 		updateClothingColours(item, itemRef);
+
+	// Clothing warmth
+	if (item.warmth !== itemRef.warmth) item.warmth = itemRef.warmth;
+
 	// Fix for 0.2.21.x issue
 	if (item.colour_combat !== undefined && itemRef.colour_options.length === 0) item.colour = 0;
 	if (item.accessory_colour_combat !== undefined && itemRef.colour_options.length === 0) item.accessory_colour = 0;
@@ -309,6 +320,9 @@ function updateClothesItem(slot, item, debug) {
 		case "kittycat hat":
 			item.name_cap = "Kittycat hat";
 			break;
+		case "doggy muzzle":
+			item.name_cap = "Doggy muzzle";
+			break;
 	}
 	if (debug) console.log("updateClothesItem:", slot, itemOld, clone(item));
 }
@@ -324,6 +338,14 @@ function updateClothes() {
 		updateClothesItem(slot, carried);
 
 		/* === $wardrobes section === */
+
+		// Check for empty wardrobe items - and remove them
+		Object.keys(V.wardrobe).forEach(key => {
+			if (Array.isArray(V.wardrobe[key])) {
+				V.wardrobe[key] = V.wardrobe[key].filter(item => item !== undefined && item !== null && item !== "");
+			}
+		});
+
 		if (V.wardrobe[slot]) {
 			for (const item of V.wardrobe[slot]) updateClothesItem(slot, item);
 		}
@@ -407,7 +429,7 @@ function wardrobesUpdate() {
 		V.wardrobes.changingRoom.unlocked = true;
 		/* eden's */
 		V.wardrobes.edensCabin.name = "Eden's Cabin";
-		V.wardrobes.edensCabin.space = 10;
+		V.wardrobes.edensCabin.space = 10 * V.wardrobeMult;
 		if (V.syndromeeden) V.wardrobes.edensCabin.unlocked = true;
 		/* asylum */
 		V.wardrobes.asylum.locationRequirement.push("asylum");
@@ -417,15 +439,15 @@ function wardrobesUpdate() {
 		/* alex's */
 		V.wardrobes.alexFarm.name = "Alex's Farm";
 		V.wardrobes.alexFarm.shopSend = true;
-		V.wardrobes.alexFarm.space = 40;
+		V.wardrobes.alexFarm.space = 40 * V.wardrobeMult;
 		if (V.farm_stage >= 7) V.wardrobes.alexFarm.unlocked = true;
 		/* strip club */
 		V.wardrobes.stripClub.name = "Strip Club";
-		V.wardrobes.stripClub.space = 10;
+		V.wardrobes.stripClub.space = 10 * V.wardrobeMult;
 		if (V.stripclubdancingintro) V.wardrobes.stripClub.unlocked = true;
 		/* brothel */
 		V.wardrobes.brothel.name = "Brothel";
-		V.wardrobes.brothel.space = 10;
+		V.wardrobes.brothel.space = 10 * V.wardrobeMult;
 		if (V.brotheljob) V.wardrobes.brothel.unlocked = true;
 		/* school pool boys */
 		V.wardrobes.schoolBoys.name = "Schools boy's locker";
@@ -480,7 +502,7 @@ function wardrobesUpdate() {
 	if (!V.wardrobes.temple) {
 		V.wardrobes.temple = clone(defWardrobe);
 		V.wardrobes.temple.unlocked = V.temple_rank === "monk";
-		V.wardrobes.temple.space = 20;
+		V.wardrobes.temple.space = 20 * V.wardrobeMult;
 	}
 	if (!V.wardrobes.temple.name) {
 		V.wardrobes.temple.name = "Temple";
@@ -488,7 +510,7 @@ function wardrobesUpdate() {
 	if (!V.wardrobes.pirate) {
 		V.wardrobes.pirate = clone(defWardrobe);
 		V.wardrobes.pirate.unlocked = V.pirate_rank >= 0;
-		V.wardrobes.pirate.space = 5;
+		V.wardrobes.pirate.space = 5 * V.wardrobeMult;
 	}
 	if (!V.wardrobes.pirate.name) {
 		V.wardrobes.pirate.name = "Pirate Ship";
@@ -498,11 +520,28 @@ function wardrobesUpdate() {
 			if (wardrobe && Array.isArray(wardrobe.upper) && !wardrobe.handheld) wardrobe.handheld = [];
 		});
 	}
+
 	if (!V.wardrobes.officeBuilding) {
 		V.wardrobes.officeBuilding = clone(defWardrobe);
 		V.wardrobes.officeBuilding.name = "Office agency changing room";
 		V.wardrobes.officeBuilding.unlocked = V.officejobintro === 1;
-		V.wardrobes.officeBuilding.space = 5;
+		V.wardrobes.officeBuilding.space = 5 * V.wardrobeMult;
+	}
+
+	if (!V.wardrobes.birdTower) {
+		/* Great Hawk's tower */
+		V.wardrobes.birdTower = clone(defWardrobe);
+		V.wardrobes.birdTower.name = "Great Hawk's Tower";
+		V.wardrobes.birdTower.unlocked = false;
+		V.wardrobes.birdTower.isolated = true;
+		V.wardrobes.birdTower.space = 15 * V.wardrobeMult;
+	}
+	if (!V.wardrobes.birdTower.locationRequirement?.length) {
+		V.wardrobes.birdTower.locationRequirement = ["tower", "moor"];
+	}
+
+	if (!V.wardrobes.prison.locationRequirement?.length) {
+		V.wardrobes.prison.locationRequirement = ["prison"];
 	}
 }
 DefineMacro("wardrobesUpdate", wardrobesUpdate);

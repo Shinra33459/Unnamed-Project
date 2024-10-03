@@ -20,6 +20,8 @@
 						<<case "Black Wolf">><<displayFeatFake "Great Wolf the Alpha">>
 						<<case "Harper">><<displayFeatFake "Harper the Hypnotist">>
 						<<case "Morgan">><<displayFeatFake "Morgan the Lost">>
+						<<case "Bailey">><<displayFeatFake "Bailey the 'caretaker'">>
+						<<case "Zephyr">><<displayFeatFake "Zephyr the captain">>
 					<</switch>>
 					<<if !$activeNightmare>>
 						<<set _args[0] to "Ivory Wraith">>
@@ -38,6 +40,8 @@
 						<<case "Black Wolf">><<earnFeat "Great Wolf the Alpha">>
 						<<case "Harper">><<earnFeat "Harper the Hypnotist">>
 						<<case "Morgan">><<earnFeat "Morgan the Lost">>
+						<<case "Bailey">><<earnFeat "Bailey the 'caretaker'">>
+						<<case "Zephyr">><<earnFeat "Zephyr the captain">>
 					<</switch>>
 				<</if>>
 				<<if _args[0] isnot undefined and _args[0] isnot 0>>
@@ -167,7 +171,7 @@
 		<<case "Sydney">>     <<set $_isLoveInterest to ($sydneyromance is 1)>>
 		<<case "Eden">>       <<set $_isLoveInterest to ($syndromeeden is 1)>>
 		<<case "Avery">>      <<set $_isLoveInterest to ($dateCount.Avery gte 3)>>
-		<<case "Black Wolf">> <<set $_isLoveInterest to ($syndromewolves is 1 and $deviancy gte 35)>>
+		<<case "Black Wolf">> <<set $_isLoveInterest to ($syndromewolves is 1 and hasSexStat("deviancy", 3))>>
 		<<case "Great Hawk">> <<set $_isLoveInterest to ($syndromebird is 1)>>
 		<<case "Alex">>       <<set $_isLoveInterest to ($farm_stage gte 7 and $alex_countdown is undefined)>>
 		<<default>>           <<run $NPCNameList.includes(_args[0]) ? $_isLoveInterest = false : Errors.report("wrong argument passed to takeKissVirginityNamed: ", _args)>>
@@ -323,7 +327,9 @@
 <</widget>>
 
 <<widget "combatTrainAdvance">>/*For use after a beast/monster in a train is finished with their turn. Loads next in line into $NPCList[0]. Loads them all back into $NPCList if at the end of the train.*/
-	<<clearnpc>>
+	<<if $beastGroupFight is 0 or $ejaculatingMid>>
+		<<clearnpc>>
+	<</if>>
 	<<if $combatTrain.length gt 0>>
 		<<set $combatTrain.length-->>
 		<<set $combatTrain.active += 1>>
@@ -336,13 +342,19 @@
 	<<else>>
 		<<for _e_n to 0; _e_n lt $combatTrain.total_length + 1; _e_n++>>
 			<<loadNPC _e_n `"beast_" + _e_n`>>
-			<<clearNPC `"beast_" + _e_n`>>
+			<<if $beastGroupFight is 0 or $ejaculatingMid>>
+				<<clearNPC `"beast_" + _e_n`>>
+			<</if>>
 		<</for>>
 	<</if>>
 	<<if $combatExtended.reverseRapeStart is 1>>
 		<<set $consensual to 0>>
 		<<set $combatExtended.reverseRapeStart to 0>>
 		<<set $combatExtended.standingFightStart to 1>>
+	<</if>>
+	<<if $finish is 1>>
+		<<set $enemyhealth to 1>>
+		<<set $enemyarousal to 0>>
 	<</if>>
 	<<set $active_enemy to 0>>
 	<<unset $hypnosis_deviancy_check>>
@@ -366,7 +378,9 @@
 		<<set $combatTrain.pronouns.push($NPCList[_e_n].pronoun)>>
 		<<set $combatTrain.monsters.push($NPCList[_e_n].monster)>>
 	<</for>>
-	<<clearnpc>>
+	<<if $beastGroupFight is 0>>
+		<<clearnpc>>
+	<</if>>
 	<<loadNPC 0 beast_0>>
 <</widget>>
 
@@ -605,7 +619,7 @@
 <</widget>>
 
 <<widget "pickupSexToy">>
-	<<if $consensual is 1 and $promiscuity gt 34 and $enemytype is "man">>
+	<<if $consensual is 1 and hasSexStat("promiscuity", 3) and $enemytype is "man">>
 		<<set $_hand to _args[0]>>
 		<<set $_items to window.listUniqueCarriedSextoys()>>
 
@@ -648,10 +662,6 @@
 <<widget "alongsideButtPlug">><<silently>>
 	<<set $_alongside to either("alongside","heedless of","pushing aside")>>
 	<<set _text_output to (playerHasButtPlug() ? ", "+$_alongside+" your "+$worn.butt_plug.name : "")>>
-<</silently>><<print _text_output>><</widget>>
-
-<<widget "commaButtPlug">><<silently>>
-	<<set _text_output to (playerHasButtPlug() ? ", your $worn.butt_plug.name, " : "")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "combatExtendedCheck">>
@@ -845,12 +855,20 @@
 		<<set $enemyhealth to Math.round($enemyhealth * ($npcHealthMult / 100))>>
 	<</if>>
 	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
-	<<if $combatExtended.enemyHealthDayScaling is 1 and (_buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1)>>
-		<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
+	<<if $combatExtended.enemyHealthDayScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
+		<<else>>
+			<<set _buff += _buffAmount * $combatExtended.enemyDayScalingLimit>>
+		<</if>>
 	<</if>>
 	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
-	<<if $combatExtended.enemyHealthDefeatScaling is 1 and (_buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1)>>
-		<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
+	<<if $combatExtended.enemyHealthDefeatScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
+		<<else>>
+			<<set _buff += _buffAmount * $combatExtended.enemyDefeatScalingLimit>>
+		<</if>>
 	<</if>>
 	<<set $enemyhealth to  Math.round($enemyhealth * (1 + (_buff / 100)))>>
 	<<set $enemyhealthmax to $enemyhealth>>
@@ -858,7 +876,7 @@
 <</widget>>
 
 <<widget "npcStealMoney">>
-	<<if $npcStealMoneyToggle is 1>>
+	<<if $npcStealMoneyToggle is 1 and $npcStolenMoney is undefined>>
 		<br>
 		<<set _stolenMoney to $money * ($npcStealMoneyPercentage/100)>>
 		<<He>> rifles through your pockets and take <<printmoney _stolenMoney>>.
@@ -874,5 +892,64 @@
 			"This is peanuts..."
 		<</if>>
 		<<set $money to $money - _stolenMoney>>
+		<<set $npcStolenMoney to 1>>
 	<</if>>
+<</widget>>
+
+<<widget "struggle_defense_init">>
+	<<if _args[0] is "guard">>
+		<<if currentSkillValue("handskill") gte 800>>
+			but you redirect its momentum with a well-timed blow,
+		<<elseif currentSkillValue("handskill") gte 200>>
+			but you bat it aside,
+		<<else>>
+			but your flailing knocks it aside,
+		<</if>>
+	<<elseif _args[0] is "dodge">>
+		<<set $dodging -= 1>>
+		<<if $drunk gte 60>>
+			but you drunkenly stagger out of the way<<if !random(100)>> like the drunk master you are<</if>>,
+		<<elseif currentSkillValue("feetskill") gte 800 or currentSkillValue('danceskill') gte 400>>
+			but you dance aside,
+		<<elseif currentSkillValue("feetskill") gte 200>>
+			but you step aside,
+		<<else>>
+			but you stumble aside,
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "struggle_defense_result">>
+	<<if _args[0] is "guard">>
+		<<if _left_guard_chance gte _hit_chance>>
+			<<unset $left_guard>>
+		<<elseif _right_guard_chance gte _hit_chance>>
+			<<unset $right_guard>>
+		<</if>>
+		<<if $struggle.enemy[_i].health gt 0>>
+			<span class="teal">It's hurt. </span>
+		<<else>>
+			<span class="green">It's too hurt. </span>
+		<</if>>
+	<<elseif _args[0] is "dodge">>
+		<<if $struggle.enemy[_i].dodge is undefined>>
+			<<set $struggle.enemy[_i].dodge to 1>>
+		<<elseif $struggle.enemy[_i].dodge lt 3>>
+			<<set $struggle.enemy[_i].dodge ++>>
+		<<else>>
+			<<set $struggle.enemy[_i].dodge to 0>>
+			<<set $struggle.enemy[_i].health -= 1>>
+			<<if $struggle.enemy[_i].health gt 0>>
+				<span class="teal">It's running out of steam. </span>
+			<<else>>
+				<span class="green">It ran out of steam. </span>
+			<</if>>
+		<</if>>
+	<</if>>
+	<<if $struggle.enemy[_i].health lte 0>>
+		<span class="green">It won't return.</span>
+		<<set $struggle.done += 1>>
+		<<set $struggle.enemy[_i].location to "fled">>
+	<</if>>
+	<<unset _struggleDefenseResult>>
 <</widget>>

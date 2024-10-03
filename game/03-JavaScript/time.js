@@ -50,7 +50,6 @@
 
 */
 
-/* eslint-disable jsdoc/require-description-complete-sentence */
 const Time = (() => {
 	const moonPhases = {
 		new: {
@@ -102,9 +101,16 @@ const Time = (() => {
 
 	let currentDate = {};
 
-	function set(timeStamp = V.timeStamp) {
-		currentDate = new DateTime((V.startDate || 0) + (timeStamp || 0));
-		V.timeStamp = timeStamp;
+	function set(time = V.timeStamp) {
+		V.startDate ??= new DateTime(2022, 9, 4, 7).timeStamp;
+
+		if (time instanceof DateTime) {
+			currentDate = time;
+			V.timeStamp = time.timeStamp - V.startDate;
+		} else {
+			currentDate = new DateTime(V.startDate + time);
+			V.timeStamp = time;
+		}
 	}
 	/*
 	 * Changes date without "passing time"
@@ -234,9 +240,13 @@ const Time = (() => {
 		}
 	}
 	// Date of previous occurrence of a specific moon phase
+	// Example: Time.previousMoonPhase("full")
 	function previousMoonPhase(targetPhase) {
+		if (!(targetPhase in moonPhases)) {
+			throw new Error(`Invalid moon phase: ${targetPhase}`);
+		}
+
 		const date = new DateTime(currentDate.year, currentDate.month, currentDate.day, 0, 0);
-		date.setTime(0, 0);
 		do {
 			date.addDays(-1);
 			const currentPhase = currentMoonPhase(date);
@@ -247,7 +257,12 @@ const Time = (() => {
 	}
 
 	// Date of next occurrence of a specific moon phase
+	// Example: Time.nextMoonPhase("full")
 	function nextMoonPhase(targetPhase) {
+		if (!(targetPhase in moonPhases)) {
+			throw new Error(`Invalid moon phase: ${targetPhase}`);
+		}
+
 		const date = new DateTime(currentDate.year, currentDate.month, currentDate.day, 0, 0);
 		do {
 			date.addDays(1);
@@ -259,8 +274,12 @@ const Time = (() => {
 	}
 
 	function isBloodMoon(date) {
-		date = date ?? currentDate;
+		date ??= currentDate;
 		return (date.day === date.lastDayOfMonth && date.hour >= 21) || (date.day === 1 && date.hour < 6);
+	}
+
+	function getSeason(date) {
+		return date.month > 11 || date.month < 3 ? "winter" : date.month > 8 ? "autumn" : date.month > 5 ? "summer" : "spring";
 	}
 
 	return Object.create({
@@ -298,10 +317,10 @@ const Time = (() => {
 			return currentDate.year;
 		},
 		get days() {
-			return Math.floor((currentDate.timeStamp - this.startDate.timeStamp) / TimeConstants.secondsPerDay);
+			return Math.floor((currentDate.timeStamp - Time.startDate.timeStamp) / TimeConstants.secondsPerDay);
 		},
 		get season() {
-			return this.month > 11 || this.month < 3 ? "winter" : this.month > 8 ? "autumn" : this.month > 5 ? "summer" : "spring";
+			return getSeason(currentDate);
 		},
 		set startDate(value) {
 			V.startDate = value.timeStamp;
@@ -327,7 +346,7 @@ const Time = (() => {
 			return isSchoolTime(currentDate);
 		},
 		get dayState() {
-			const hour = this.hour;
+			const hour = currentDate.hour;
 			if (hour < 6 || hour >= 21) {
 				return "night";
 			}
@@ -335,16 +354,6 @@ const Time = (() => {
 				return "dusk";
 			}
 			return hour >= 9 ? "day" : "dawn";
-		},
-		get nightState() {
-			const hour = this.hour;
-			if (hour < 6) {
-				return "morning";
-			}
-			if (hour >= 9) {
-				return "evening";
-			}
-			return undefined;
 		},
 		get nextSchoolTermStartDate() {
 			return getNextSchoolTermStartDate(currentDate);
@@ -377,13 +386,12 @@ const Time = (() => {
 		nextMoonPhase,
 		previousMoonPhase,
 		isBloodMoon,
-
+		getSeason,
+		getNextSchoolTermStartDate,
+		getNextSchoolTermEndDate,
 		moonPhases,
 		monthNames,
 		daysOfWeek,
-
-		getNextSchoolTermStartDate,
-		getNextSchoolTermEndDate,
 		getNextWeekdayDate: weekDay => currentDate.getNextWeekdayDate(weekDay),
 		getPreviousWeekdayDate: weekDay => currentDate.getPreviousWeekdayDate(weekDay),
 		isWeekEnd: () => currentDate.weekEnd,
@@ -391,9 +399,13 @@ const Time = (() => {
 })();
 window.Time = Time;
 
+$(document).on(":passageinit", () => {
+	/* Set current time */
+	Time.set();
+});
+
 /* Local functions */
 
-// Replaces <<year>>
 function yearPassed() {
 	const fragment = document.createDocumentFragment();
 
@@ -401,49 +413,50 @@ function yearPassed() {
 	V.mathsproject = "none";
 	V.englishPlay = "none";
 
+	V.yearly.clearProperties();
+
 	return fragment;
 }
 
-// Replaces <<week>>
 function weekPassed() {
 	const fragment = document.createDocumentFragment();
 
-	if (V.science_exam >= 200 && V.sciencetrait < 4 * V.AMCTraits.science) {
-		V.effectsmessage = 1;
-		V.science_up_message = 1;
-		fragment.append(wikifier("school_skill_up", "science"));
-	} else if (V.science_exam <= -100 && V.sciencetrait >= 0) {
-		V.effectsmessage = 1;
-		V.science_down_message = 1;
-		fragment.append(wikifier("school_skill_down", "science"));
-	}
-	if (V.maths_exam >= 200 && V.mathstrait < 4 * V.AMCTraits.maths) {
-		V.effectsmessage = 1;
-		V.maths_up_message = 1;
-		fragment.append(wikifier("school_skill_up", "maths"));
-	} else if (V.maths_exam <= -100 && V.mathstrait >= 0) {
-		V.effectsmessage = 1;
-		V.maths_down_message = 1;
-		fragment.append(wikifier("school_skill_down", "maths"));
-	}
-	if (V.english_exam >= 200 && V.englishtrait < 4 * V.AMCTraits.english) {
-		V.effectsmessage = 1;
-		V.english_up_message = 1;
-		fragment.append(wikifier("school_skill_up", "english"));
-	} else if (V.english_exam <= -100 && V.englishtrait >= 0) {
-		V.effectsmessage = 1;
-		V.english_down_message = 1;
-		fragment.append(wikifier("school_skill_down", "english"));
-	}
-	if (V.history_exam >= 200 && V.historytrait < 4 * V.AMCTraits.history) {
-		V.effectsmessage = 1;
-		V.history_up_message = 1;
-		fragment.append(wikifier("school_skill_up", "history"));
-	} else if (V.history_exam <= -100 && V.historytrait >= 0) {
-		V.effectsmessage = 1;
-		V.history_down_message = 1;
-		fragment.append(wikifier("school_skill_down", "history"));
-	}
+	// if (V.science_exam >= 200 && V.sciencetrait < 4 * V.AMCTraits.science) {
+	// 	V.effectsmessage = 1;
+	// 	V.science_up_message = 1;
+	// 	fragment.append(wikifier("school_skill_up", "science"));
+	// } else if (V.science_exam <= -100 && V.sciencetrait >= 0) {
+	// 	V.effectsmessage = 1;
+	// 	V.science_down_message = 1;
+	// 	fragment.append(wikifier("school_skill_down", "science"));
+	// }
+	// if (V.maths_exam >= 200 && V.mathstrait < 4 * V.AMCTraits.maths) {
+	// 	V.effectsmessage = 1;
+	// 	V.maths_up_message = 1;
+	// 	fragment.append(wikifier("school_skill_up", "maths"));
+	// } else if (V.maths_exam <= -100 && V.mathstrait >= 0) {
+	// 	V.effectsmessage = 1;
+	// 	V.maths_down_message = 1;
+	// 	fragment.append(wikifier("school_skill_down", "maths"));
+	// }
+	// if (V.english_exam >= 200 && V.englishtrait < 4 * V.AMCTraits.english) {
+	// 	V.effectsmessage = 1;
+	// 	V.english_up_message = 1;
+	// 	fragment.append(wikifier("school_skill_up", "english"));
+	// } else if (V.english_exam <= -100 && V.englishtrait >= 0) {
+	// 	V.effectsmessage = 1;
+	// 	V.english_down_message = 1;
+	// 	fragment.append(wikifier("school_skill_down", "english"));
+	// }
+	// if (V.history_exam >= 200 && V.historytrait < 4 * V.AMCTraits.history) {
+	// 	V.effectsmessage = 1;
+	// 	V.history_up_message = 1;
+	// 	fragment.append(wikifier("school_skill_up", "history"));
+	// } else if (V.history_exam <= -100 && V.historytrait >= 0) {
+	// 	V.effectsmessage = 1;
+	// 	V.history_down_message = 1;
+	// 	fragment.append(wikifier("school_skill_down", "history"));
+	// }
 	if (Time.schoolTerm) {
 		V.science_exam = Math.clamp(V.science_exam - 7, -107, 200);
 		V.maths_exam = Math.clamp(V.maths_exam - 7, -107, 200);
@@ -463,7 +476,8 @@ function weekPassed() {
 		fragment.append(wikifier("robinPunishment", "docks"));
 		V.robineventnote = 1;
 	}
-	V.robinmoney += 300 + V.robin.moneyModifier;
+	V.robinmoney += (V.robin.stayup >= 1 ? 250 : 300) + V.robin.moneyModifier;
+	if (V.robinmoney > 4000) V.robinmoney = 4000;
 	V.compoundcentre = 0;
 	if (V.edenfreedom >= 1 && V.edenshopping === 2) V.edenshopping = 0;
 	if (V.loft_kylar) V.loft_spray = 0;
@@ -484,7 +498,7 @@ function weekPassed() {
 		if (V.photo.silly === "paid") V.photo.silly = 0;
 		V.photo.shoot = 0;
 	}
-	if (V.nightmareTimer > 0) {
+	if (V.nightmareTimer && V.nightmareTimer > 0) {
 		V.nightmareTimer--;
 		if (V.nightmareTimer <= 0) delete V.nightmareTimer;
 	}
@@ -496,22 +510,24 @@ function weekPassed() {
 
 	statChange.worldCorruption("soft", V.world_corruption_hard);
 
-	delete V.weekly;
-	V.weekly = clone(setup.weeklyObject);
+	V.weekly.clearProperties();
 
 	return fragment;
 }
 
-// Replaces <<day>>
 function dayPassed() {
 	const fragment = document.createDocumentFragment();
+
+	Weather.sky.initSun();
+
+	// Lose one day of tanning
+	Skin.applyTanningLoss(1440);
 
 	if (V.statFreeze) return fragment;
 
 	fragment.append(wikifier("seenPassageChecks"));
 	fragment.append(wikifier("prison_day"));
 	fragment.append(wikifier("clearNPC", "pharmNurse"));
-	fragment.append(wikifier("weather_select"));
 
 	V.physiquechange = 1;
 	V.home_event_timer--;
@@ -598,6 +614,8 @@ function dayPassed() {
 	if (V.robin.timer.customer >= 1) V.robin.timer.customer--;
 	if (V.robin.timer.hurt >= 1) V.robin.timer.hurt--;
 	if (V.robin.timer.hurt === 0) V.robin.hurtReason = "nothing";
+
+	V.robin.stayup = V.robin.stayup === 1 ? 2 : 0;
 
 	if (numberOfEarSlime()) {
 		// Daily Corruption
@@ -686,6 +704,13 @@ function dayPassed() {
 		if (V.farm.milking.catchChance > random(10, 1000) / 10) V.farm.milking.caught = true;
 		if (V.farm.milking.catchChance >= 4) V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.9, 0, 100).toFixed(3);
 		else V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.95, 0, 100).toFixed(3);
+	}
+
+	if (Weather.precipitation === "rain" && V.bird.upgrades?.firepit && !V.bird.upgrades.shelter) {
+		const burnTime = getBirdBurnTime() * 60; // seconds
+		if (burnTime > 0) {
+			Cooker.addBurnTime(V.bird.firepit, Math.floor(-burnTime / 2) + Time.minute * 30);
+		}
 	}
 
 	if (V.moorLuck > 0) V.moorLuck--;
@@ -778,14 +803,15 @@ function dayPassed() {
 	fragment.append(wikifier("physicalAdjustments"));
 
 	fragment.append(dailyPlayerEffects());
-	fragment.append(dailyMasochismSadismEffects());
+	dailyMasochismSadismEffects();
 	fragment.append(dailySchoolEffects());
 	fragment.append(dailyFarmEvents());
-	fragment.append(dailyLiquidEffects());
+	dailyLiquidEffects();
 	fragment.append(dailyTransformationEffects());
 	fragment.append(dailyNPCEffects());
 	fragment.append(yearlyEventChecks());
-	fragment.append(moonState());
+
+	moonState();
 
 	parasiteProgressDay();
 	parasiteProgressDay("vagina");
@@ -793,11 +819,6 @@ function dayPassed() {
 	fragment.append(wikifier("creatureContainersProgressDay"));
 
 	fragment.append(dailyBaileyHQ());
-
-	if (V.pillory_tenant.exists && V.pillory_tenant.endDate < V.timeStamp) fragment.append(wikifier("clear_pillory"));
-
-	delete V.daily;
-	V.daily = clone(setup.dailyObject);
 
 	if (Number.isInteger(V.challengetimer)) {
 		V.challengetimer--;
@@ -825,6 +846,12 @@ function dayPassed() {
 	if (V.pirate_attack) {
 		delete V.pirate_attack;
 	}
+	if (V.moorLessDangerAll > 1) {
+		V.moorLessDangerAll -= 1000;
+	} else {
+		delete V.moorLessDangerAll;
+	}
+	if (V.bird.clean >= 1) V.bird.clean = Math.clamp(V.bird.clean - (10 - V.bird.upgrades.shelter), 0, 100);
 
 	/* Set flag to determine Kylar's position at lunch */
 	V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
@@ -833,10 +860,67 @@ function dayPassed() {
 		delete V.whitney_roof;
 	}
 
+	// daysTillLaying only applies to unfertilised eggs
+	if (V.harpyEggs) V.harpyEggs.daysTillLaying--;
+	if (V.harpyEggsPrevent) {
+		V.harpyEggsPrevent--;
+		if (V.harpyEggsPrevent <= 0) delete V.harpyEggsPrevent;
+	}
+
+	// Activate the robin pillory
+	if (V.robinPillory && V.robinPillory.danger !== undefined && (V.robindebtevent <= 1 || !V.baileySold)) V.robinPillory.active = true;
+
+	V.daily.clearProperties();
+
+	if (V.stallDeposit >= 3000) {
+		V.stallDeposit -= 3000;
+		V.daily.stallRented = 1;
+	}
+
+	if (V.bike >= 1) {
+		if (V.bikeSecurityGear == 5) {
+			T.bikeTheftProtection = 999;
+		} else if (V.bikeSecurityGear == 4) {
+			T.bikeTheftProtection = 750;
+		} else if (V.bikeSecurityGear == 3) {
+			T.bikeTheftProtection = 500;
+		} else if (V.bikeSecurityGear == 2) {
+			T.bikeTheftProtection = 300;
+		} else if (V.bikeSecurityGear == 1) {
+			T.bikeTheftProtection = 100;
+		} else {
+			T.bikeTheftProtection = 0;
+		}
+		if (V.bikeLocationCategory == "lake") {
+			T.bikeTheftChance = 500 - T.bikeTheftProtection;
+		} else if (V.bikeLocationCategory == "left" || V.bikeLocationCategory == "mid" || V.bikeLocationCategory == "right") {
+			if (V.baileydefeatedchain >= 1) {
+				T.bikeTheftChanceBonus = 250;
+			} else {
+				T.bikeTheftChanceBonus = 0;
+			}
+			T.bikeTheftChance = 750 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
+		} else if (V.bikeLocationCategory == "farm") {
+			if (V.farm?.aggro) T.bikeTheftChanceBonus = 900 * (V.farm.aggro / 100);
+			T.bikeTheftChance = 100 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
+		} else {
+			T.bikeTheftChance = 0;
+		}
+		if ((random(1, 1000) <= T.bikeTheftChance) && V.bikeSecurity == 1) {
+			V.bikeStolen = 1;
+			V.bike = 0;
+			if (V.bikeSecurityGear >= 1) V.bikeSecurityGearStolen = 1;
+			V.bikeSecurityGear = 0;
+		}
+	}
+
+	if (V.dailySunscreen == true) {
+		V.effectsmessage = 1;
+	}
+
 	return fragment;
 }
 
-// Replaces <<hour>>
 function hourPassed(hours) {
 	const fragment = document.createDocumentFragment();
 
@@ -882,13 +966,13 @@ function hourPassed(hours) {
 	const feats = earnHourlyFeats();
 	if (feats) fragment.append(feats);
 
-	temperatureHour();
-
 	if (!V.wolfevent) V.wolfevent = 1;
 	if (V.wolfpatrolsent >= 24) delete V.wolfpatrolsent;
 	else if (V.wolfpatrolsent >= 1) V.wolfpatrolsent++;
-	if (V.robinPillory && V.robinPillory.danger !== undefined) fragment.append(wikifier("robinPilloryHour"));
-	if (V.pillory_tenant.exists && V.pillory_tenant.endDate < V.timeStamp) fragment.append(wikifier("clear_pillory"));
+
+	if (V.robinPillory && V.robinPillory.danger !== undefined && V.robinPillory.active) fragment.append(wikifier("robinPilloryHour"));
+	if (V.pillory.tenant.exists && V.pillory.tenant.endTime < V.timeStamp) fragment.append(wikifier("clear_pillory"));
+
 	if (C.npc.Sydney.init === 1) {
 		fragment.append(wikifier("sydneySchedule"));
 		if (T.sydney_location === "temple" && V.temple_rank !== undefined && V.temple_rank !== "prospective") {
@@ -912,6 +996,7 @@ function hourPassed(hours) {
 
 function minutePassed(minutes) {
 	const fragment = document.createDocumentFragment();
+
 	// Stress
 	// decay/rise and crossdresser trait
 	const isCrossdresser = V.backgroundTraits.includes("crossdresser");
@@ -921,22 +1006,35 @@ function minutePassed(minutes) {
 
 	parasiteProgressTime(minutes);
 	parasiteProgressTime(minutes, "vagina");
-	if (isPlayerNonparasitePregnancyEnding()) {
+	// eslint-disable-next-line no-undef
+	if (isPregnancyEnding()) {
 		// To prevent new events from occurring, allowing players to more easily go to the hospital or similar locations
 		V.eventskip = 1;
 		V.stress += Math.floor(minutes * 40);
 	}
 
-	if (V.body_temperature === "cold") V.stress += minutes * 2;
-	else if (V.body_temperature === "chilly") V.stress += minutes;
+	// Tanning
+	Skin.applyTanningGain(minutes);
 
-	V.stress = Math.min(V.stress, V.stressmax);
+	// Body temperature
+	const temperature = V.outside ? Weather.temperature : Weather.insideTemperature;
+	if (!V.possessed) Weather.BodyTemperature.update(temperature, minutes);
+	V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
+
+	// Snow & ice
+	Weather.setAccumulatedSnow(minutes);
+	Weather.setIceThickness(minutes);
+
+	// Overcast
+	Weather.sky.updateFade();
+	V.weatherObj.overcast = round(Weather.sky.fadables.overcast.factor, 2);
 
 	// Effects
+	V.stress = Math.min(V.stress, V.stressmax);
 	if (V.drunk > 0) statChange.alcohol(-minutes);
 	if (V.hallucinogen > 0) statChange.hallucinogen(-minutes);
 	if (V.drugged > 0) statChange.drugs(-minutes);
-	if (minutes < 1200) statChange.tiredness(minutes * (V.drunk > 0 ? 2 : 1), "pass");
+	if (minutes < 1200) statChange.tiredness((minutes * (V.drunk > 0 ? 2 : 1)) / 15);
 	statChange.pain(minutes, -1);
 
 	// Arousal
@@ -945,20 +1043,7 @@ function minutePassed(minutes) {
 	V.timeSinceArousal = V.arousal < V.arousalmax / 4 ? V.timeSinceArousal + minutes : 1;
 	if (V.player.vaginaExist) fragment.append(passArousalWetness(minutes));
 
-	// Tanning
-	if (
-		Time.dayState === "day" &&
-		V.weather === "clear" &&
-		V.outside &&
-		V.location !== "forest" &&
-		!V.worn.head.type.includes("shade") &&
-		!V.worn.handheld.type.includes("shade")
-	) {
-		fragment.append(wikifier("tanned", minutes / (Time.season === "winter" ? 4 : Time.season === "summer" ? 1 : 2)));
-	}
-
-	const waterFragment = passWater(minutes);
-	fragment.append(waterFragment);
+	passWater(minutes);
 
 	if (V["ob" + "j" + "ec" + "tVe" + "rs" + "ion"]["t" + "e" + "st"] !== undefined || V["ch" + "ea" + "td" + "isa" + "" + "bl" + "e"] === "f") {
 		V["f" + "ea" + "" + "t" + "s"]["lo" + "ck" + "ed"] = true;
@@ -970,6 +1055,9 @@ function minutePassed(minutes) {
 
 function noonCheck() {
 	const fragment = document.createDocumentFragment();
+
+	Weather.sky.initMoon();
+	Weather.sky.setMoonPhase();
 
 	if (V.statFreeze) return fragment;
 
@@ -1008,6 +1096,8 @@ function dawnCheck() {
 	delete V.alexwake;
 	delete V.alex_bed;
 	delete V.alex_bed_spurned;
+	delete V.alexSomno;
+	delete V.alexSomnoAngry;
 	delete V.connudatus_stripped;
 	delete V.robin_kicked_out;
 
@@ -1027,7 +1117,6 @@ function dawnCheck() {
 function dailyNPCEffects() {
 	const fragment = document.createDocumentFragment();
 
-	delete V.bird.satisfied;
 	delete V.robinlocationoverride;
 
 	// Winter
@@ -1069,7 +1158,7 @@ function dailyNPCEffects() {
 
 	// Mason
 	if (V.mason_pond === 3) {
-		if (V.weather !== "rain" && V.weather !== "snow") V.mason_pond_timer--;
+		if (Weather.precipitation === "none") V.mason_pond_timer--;
 		if (V.mason_pond_timer < 1) {
 			delete V.mason_pond_timer;
 			V.mason_pond = 4;
@@ -1169,6 +1258,15 @@ function dailyNPCEffects() {
 		}
 	}
 
+	// Great Hawk
+	if (C.npc["Great Hawk"].init === 1) {
+		delete V.bird.satisfied;
+		if (V.bird.injured > 1) V.bird.injured--;
+		if (V.birdSilverHuntCooldown) {
+			V.birdSilverHuntCooldown--;
+		}
+	}
+
 	// Wraith
 	if (V.wraith.state) {
 		if (V.wraithAngerCooldown) {
@@ -1222,10 +1320,6 @@ function dailyPlayerEffects() {
 		if (V.farm_stage >= 6) V.physique = V.physique - V.physique / 3000;
 		else V.physique = V.physique - V.physique / 2500;
 	}
-
-	/* PC loses 60 minutes of tanning every day */
-	fragment.append(wikifier("tanned", -60, true));
-	V.skinColor.sunBlock = false;
 
 	V.hairlength += 3;
 	V.fringelength += 3;
@@ -1374,8 +1468,6 @@ function dailyTransformationEffects() {
 }
 
 function dailyLiquidEffects() {
-	const fragment = document.createDocumentFragment();
-
 	if (V.player.penisExist) {
 		let amount = V.player.penissize - 1;
 		if (V.semen_volume <= 24) amount++;
@@ -1431,8 +1523,6 @@ function dailyLiquidEffects() {
 			V.nectar_timer = 21;
 		}
 	}
-
-	return fragment;
 }
 
 function yearlyEventChecks() {
@@ -1501,27 +1591,61 @@ function yearlyEventChecks() {
 }
 
 function moonState() {
-	const fragment = document.createDocumentFragment();
-
 	if (Time.monthDay === Time.lastDayOfMonth) {
 		V.moonstate = "evening";
 		V.moonEvent = true;
-		fragment.append(wikifier("checkWraith", true));
+		wikifier("checkWraith", true);
 	} else if (Time.monthDay === 1) {
 		V.moonstate = "morning";
-		fragment.append(wikifier("checkWraith", true));
+		wikifier("checkWraith", true);
 	} else if (V.moonstate !== 0) {
 		V.moonstate = 0;
 		delete V.moonEvent;
-		fragment.append(wikifier("clearWraith"));
+		wikifier("clearWraith");
 		delete V.noEarSlime;
 	}
-
-	return fragment;
 }
+window.moonState = moonState;
 
 function dailySchoolEffects() {
 	const fragment = document.createDocumentFragment();
+
+	if (V.science_exam >= 200 && V.sciencetrait < 4 * V.AMCTraits.science) {
+		V.effectsmessage = 1;
+		V.science_up_message = 1;
+		fragment.append(wikifier("school_skill_up", "science"));
+	} else if (V.science_exam <= -100 && V.sciencetrait >= 0) {
+		V.effectsmessage = 1;
+		V.science_down_message = 1;
+		fragment.append(wikifier("school_skill_down", "science"));
+	}
+	if (V.maths_exam >= 200 && V.mathstrait < 4 * V.AMCTraits.maths) {
+		V.effectsmessage = 1;
+		V.maths_up_message = 1;
+		fragment.append(wikifier("school_skill_up", "maths"));
+	} else if (V.maths_exam <= -100 && V.mathstrait >= 0) {
+		V.effectsmessage = 1;
+		V.maths_down_message = 1;
+		fragment.append(wikifier("school_skill_down", "maths"));
+	}
+	if (V.english_exam >= 200 && V.englishtrait < 4 * V.AMCTraits.english) {
+		V.effectsmessage = 1;
+		V.english_up_message = 1;
+		fragment.append(wikifier("school_skill_up", "english"));
+	} else if (V.english_exam <= -100 && V.englishtrait >= 0) {
+		V.effectsmessage = 1;
+		V.english_down_message = 1;
+		fragment.append(wikifier("school_skill_down", "english"));
+	}
+	if (V.history_exam >= 200 && V.historytrait < 4 * V.AMCTraits.history) {
+		V.effectsmessage = 1;
+		V.history_up_message = 1;
+		fragment.append(wikifier("school_skill_up", "history"));
+	} else if (V.history_exam <= -100 && V.historytrait >= 0) {
+		V.effectsmessage = 1;
+		V.history_down_message = 1;
+		fragment.append(wikifier("school_skill_down", "history"));
+	}
 
 	V.schooleventtimer--;
 	if (V.scienceproject === "ongoing") {
@@ -1571,6 +1695,7 @@ function dailySchoolEffects() {
 		V.schoolLessonsMissed.history += !Number(V.daily.school.attended.history);
 		V.schoolLessonsMissed.swimming += !Number(V.daily.school.attended.swimming);
 		V.lessonmissed += 5 - attended * 2; // Reduce lessonmissed if lessons are attended
+		V.lessonmissed = Math.max(0, V.lessonmissed);
 		V.lessonmissedtext = 5 - attended;
 	}
 
@@ -1679,8 +1804,6 @@ function dailySchoolEffects() {
 }
 
 function dailyMasochismSadismEffects() {
-	const fragment = document.createDocumentFragment();
-
 	const effects = (level, stat) => {
 		switch (level) {
 			case 0:
@@ -1708,13 +1831,12 @@ function dailyMasochismSadismEffects() {
 	if (!V.featsSadismBoost && V.uncomfortable.sadoMaso === true) V.sadism *= 0.985;
 	if (!V.featsMasochismBoost && V.uncomfortable.sadoMaso === true) V.masochism *= 0.985;
 
-	let dailySadism = 0;
-		if (V.featsSadismBoost) dailySadism += V.featsSadismBoost;
-		fragment.append(wikifier("sadism", dailySadism));
-	let dailyMasochism = 0;
-		if (V.featsMasochismBoost) dailyMasochism += V.featsMasochismBoost;
-		fragment.append(wikifier("masochism", dailyMasochism));
-
+	V.dailySadism = 0;
+		if (V.featsSadismBoost) V.dailySadism += V.featsSadismBoost;
+		Wikifier.wikifyEval("<<sadism $dailySadism>>");
+	V.dailyMasochism = 0;
+		if (V.featsMasochismBoost) V.dailyMasochism += V.featsMasochismBoost;
+		Wikifier.wikifyEval("<<masochism $dailyMasochism>>");
 
 	const masochism = effects(V.masochism_level, V.masochism);
 	if (masochism) {
@@ -1728,8 +1850,6 @@ function dailyMasochismSadismEffects() {
 		V.sadism_message = sadism.message;
 		V.effectsmessage = 1;
 	}
-
-	return fragment;
 }
 
 
@@ -1738,7 +1858,7 @@ function dailyFarmEvents() {
 	const fragment = document.createDocumentFragment();
 
 	if (V.alex_greenhouse === 1) {
-		if (V.weather !== "rain" && V.weather !== "snow") V.alex_greenhouse_timer--;
+		if (Weather.precipitation === "none") V.alex_greenhouse_timer--;
 		if (V.alex_greenhouse_timer < 1) {
 			delete V.alex_greenhouse_timer;
 			V.alex_greenhouse = 2;
@@ -1755,26 +1875,75 @@ function dailyFarmEvents() {
 		V.farm_attack_timer--;
 		if (V.farm_attack_timer < 0) fragment.append(wikifier("farm_attack_auto"));
 		if (V.farm.stock) {
-			V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.8);
-			V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.8);
-			V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.8);
+			if (V.farm.cooler >= 3) {
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.99);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.99);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.99);
+			} else if (V.farm.cooler >= 2) {
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.95);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.95);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.95);
+			} else if (V.farm.cooler >= 1) {
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.9);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.9);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.9);
+			} else {
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.8);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.8);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.8);
+			}
 		}
-		if (V.farm.woodland >= 3) {
-			fragment.append(wikifier("farm_stock", "truffles", 6, 12));
+		if (V.farm.woodland >= 7) {
+			fragment.append(wikifier("farm_stock", "truffles", 192, 384));
+			fragment.append(wikifier("farm_pigs", -4));
+		} else if (V.farm.woodland >= 6) {
+			fragment.append(wikifier("farm_stock", "truffles", 96, 192));
+			fragment.append(wikifier("farm_pigs", -3));
+		} else if (V.farm.woodland >= 5) {
+			fragment.append(wikifier("farm_stock", "truffles", 48, 96));
+			fragment.append(wikifier("farm_pigs", -3));
+		} else if (V.farm.woodland >= 4) {
+			fragment.append(wikifier("farm_stock", "truffles", 24, 48));
 			fragment.append(wikifier("farm_pigs", -2));
+		} else if (V.farm.woodland >= 3) {
+			fragment.append(wikifier("farm_stock", "truffles", 12, 24));
+			fragment.append(wikifier("farm_pigs", -2));
+		} else if (V.farm.woodland >= 2) {
+			fragment.append(wikifier("farm_stock", "truffles", 6, 12));
+			fragment.append(wikifier("farm_pigs", -1));
 		} else if (V.farm.woodland >= 1) {
 			fragment.append(wikifier("farm_stock", "truffles", 3, 6));
 			fragment.append(wikifier("farm_pigs", -1));
 		}
-		if (V.farm.barn >= 2) {
-			fragment.append(wikifier("farm_stock", "milk", 12, 24));
+		if (V.farm.barn >= 7) {
+			fragment.append(wikifier("farm_stock", "milk", 1280, 2560));
+		} else if (V.farm.barn >= 6) {
+			fragment.append(wikifier("farm_stock", "milk", 640, 1280));
+		} else if (V.farm.barn >= 5) {
+			fragment.append(wikifier("farm_stock", "milk", 320, 640));
+		} else if (V.farm.barn >= 4) {
+			fragment.append(wikifier("farm_stock", "milk", 160, 320));
+		} else if (V.farm.barn >= 3) {
+			fragment.append(wikifier("farm_stock", "milk", 80, 160));
+		} else if (V.farm.barn >= 2) {
+			fragment.append(wikifier("farm_stock", "milk", 40, 80));
 		} else if (V.farm.barn >= 1) {
-			fragment.append(wikifier("farm_stock", "milk", 6, 12));
+			fragment.append(wikifier("farm_stock", "milk", 20, 40));
 		}
-		if (V.farm.coop >= 2) {
-			fragment.append(wikifier("farm_stock", "eggs", 12, 24));
+		if (V.farm.coop >= 7) {
+			fragment.append(wikifier("farm_stock", "eggs", 1280, 2560));
+		} else if (V.farm.coop >= 6) {
+			fragment.append(wikifier("farm_stock", "eggs", 640, 1280));
+		} else if (V.farm.coop >= 5) {
+			fragment.append(wikifier("farm_stock", "eggs", 320, 640));
+		} else if (V.farm.coop >= 4) {
+			fragment.append(wikifier("farm_stock", "eggs", 160, 320));
+		} else if (V.farm.coop >= 3) {
+			fragment.append(wikifier("farm_stock", "eggs", 80, 160));
+		} else if (V.farm.coop >= 2) {
+			fragment.append(wikifier("farm_stock", "eggs", 40, 80));
 		} else if (V.farm.coop >= 1) {
-			fragment.append(wikifier("farm_stock", "eggs", 6, 12));
+			fragment.append(wikifier("farm_stock", "eggs", 20, 40));
 		}
 		if (V.farm.kennel >= 1) {
 			fragment.append(wikifier("farm_dogs", -1));
@@ -1831,24 +2000,21 @@ function dailyFarmEvents() {
 	return fragment;
 }
 
-function temperatureHour() {
-	V.chill = V.chill_day;
-	if (Time.dayState === "night") V.chill += V.weather === "clear" ? 50 : 30;
-	else if (Time.dayState === "dusk") V.chill = V.weather === "clear" ? V.chill - 5 : V.chill + 15;
-	else if (Time.dayState === "day") V.chill = V.weather === "clear" ? V.chill - 10 : V.chill + 10;
-	else V.chill += V.weather === "clear" ? 20 : 0;
-}
-
-// (Directly converted from passWater widget)
 function passWater(passMinutes) {
-	const fragment = document.createDocumentFragment();
-
-	if (V.outside && V.weather === "clear") {
-		if (V.upperwet) statChange.wet("upper", -passMinutes * 2);
-		if (V.lowerwet) statChange.wet("lower", -passMinutes * 2);
-		if (V.underlowerwet) statChange.wet("underlower", -passMinutes * (V.worn.lower.type.includes("naked") ? 2 : 1));
-		if (V.underupperwet) statChange.wet("underupper", -passMinutes * (V.worn.upper.type.includes("naked") ? 2 : 1));
-	} else if (V.outside && V.weather === "rain" && !V.worn.head.type.includes("rainproof") && !V.worn.handheld.type.includes("rainproof")) {
+	/* To be reworked */
+	/* Tie wetness to clothing items - can dry differently depending on their warmth
+	   dryingFactor, sun/no sun, temperature
+	   change wetness to 0-1 (0-100%)
+	*/
+	if (!V.outside || (V.outside && Weather.precipitation === "none")) {
+		const temperature = V.outside ? Weather.temperature : Weather.insideTemperature;
+		const dryingFactor = 0.1 + (temperature / 25) * ((1 + Weather.sunIntensity) * 2);
+		if (V.upperwet) statChange.wet("upper", -passMinutes * dryingFactor);
+		if (V.lowerwet) statChange.wet("lower", -passMinutes * dryingFactor);
+		if (V.underlowerwet) statChange.wet("underlower", -passMinutes * (V.worn.lower.type.includes("naked") ? dryingFactor : dryingFactor * 0.5));
+		if (V.underupperwet) statChange.wet("underupper", -passMinutes * (V.worn.upper.type.includes("naked") ? dryingFactor : dryingFactor * 0.5));
+	} else if (V.outside && Weather.precipitation === "rain" && !V.worn.head.type.includes("rainproof") && !V.worn.handheld.type.includes("rainproof")) {
+		passMinutes *= Weather.precipitationIntensity;
 		if (!V.worn.upper.type.includes("naked") && !waterproofCheck(V.worn.upper) && !waterproofCheck(V.worn.over_upper)) {
 			statChange.wet("upper", passMinutes);
 		}
@@ -1863,14 +2029,7 @@ function passWater(passMinutes) {
 		if (!V.worn.under_upper.type.includes("naked") && !waterproofCheck(V.worn.under_upper) && !waterproofCheck(V.worn.upper) && !waterproofCheck(V.worn.over_upper)) {
 			statChange.wet("underupper", passMinutes);
 		}
-	} else {
-		if (V.upperwet) statChange.wet("upper", -passMinutes);
-		if (V.lowerwet) statChange.wet("lower", -passMinutes);
-		if (V.underlowerwet) statChange.wet("underlower", -passMinutes);
-		if (V.underupperwet) statChange.wet("underupper", -passMinutes);
 	}
-
-	return fragment;
 }
 
 // (Directly converted from passArousalWetness widget - included comments)
@@ -1929,6 +2088,7 @@ function getArousal(passMinutes) {
 	if (V.parasite.nipples.name) addedArousal += minuteMultiplier * V.breastsensitivity;
 	if (V.parasite.penis.name && V.parasite.penis.name !== "parasite") addedArousal += minuteMultiplier * V.genitalsensitivity;
 	if (V.parasite.clit.name && V.parasite.clit.name !== "parasite") addedArousal += minuteMultiplier * V.genitalsensitivity;
+	if (V.parasite.tummy.name) addedArousal += minuteMultiplier / 4;
 	if (V.parasite.bottom.name) addedArousal += minuteMultiplier * V.bottomsensitivity;
 	if (V.analchastityparasite) addedArousal += minuteMultiplier;
 	if (V.parasite.tummy.name) addedArousal += minuteMultiplier;
@@ -2070,6 +2230,26 @@ function earSlimeDaily(passageEffects = false) {
 	}
 }
 DefineMacro("earSlimeDaily", earSlimeDaily);
+
+/**
+ * Overloads:
+ *
+ * 	 (minutes)
+ * 	getTimeString(hours, minutes)
+ * Examples:
+ *
+ * 	getTimeString(20) returns "0:20"
+ * 	getTimeString(1,5) returns "1:05".
+ *
+ * @param {...any} args
+ */
+function getTimeString(...args) {
+	if (args[0] == null) return;
+	const hours = args[1] != null ? args[0] : 0;
+	const minutes = Math.max(args[1] != null ? args[1] : args[0], 0) + hours * 60;
+	return Math.trunc(minutes / 60) + ":" + ("0" + Math.trunc(minutes % 60)).slice(-2);
+}
+window.getTimeString = getTimeString;
 
 function dailyBaileyHQ() {
 	const fragment = document.createDocumentFragment();

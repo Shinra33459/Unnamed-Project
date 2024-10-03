@@ -94,8 +94,8 @@ window.rangeIterate = rangeIterate;
  *
  * @param {string} macroName
  * @param {Function} macroFunction
- * @param {object} tags
- * @param {boolean} skipArgs
+ * @param {object=} tags
+ * @param {boolean=} skipArgs
  */
 function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 	Macro.add(macroName, {
@@ -127,9 +127,9 @@ function DefineMacro(macroName, macroFunction, tags, skipArgs) {
  *
  * @param {string} macroName
  * @param {Function} macroFunction
- * @param {object} tags
- * @param {boolean} skipArgs
- * @param {boolean} maintainContext
+ * @param {object=} tags
+ * @param {boolean=} skipArgs
+ * @param {boolean=} maintainContext
  */
 function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext) {
 	DefineMacro(
@@ -141,6 +141,58 @@ function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext)
 		skipArgs
 	);
 }
+
+/**
+ * Creates and returns a keyword describing the wetness of a clothing article.
+ *
+ * @param {string} slot clothing article slot used
+ * @returns {string} condition key word ("drenched"|"torn|"frayed"|"full")
+ */
+
+function wetnessKeyword(slot) {
+	const i = V[`${slot.replace("_", "")}wet`];
+	if (i >= 100) {
+		return "drenched";
+	} else if (i >= 80) {
+		return "wet";
+	} else if (i >= 50) {
+		return "damp";
+	} else {
+		return "dry";
+	}
+}
+window.wetnessKeyword = wetnessKeyword;
+
+/**
+ * Returns an optional wetness prefix for the article of clothing.
+ 
+ * @param {string} slot clothing article slot used
+ * @returns {string} printable integrity prefix
+ */
+function wetnessWord(slot) {
+	const kw = wetnessKeyword(slot);
+	if (!kw) return "";
+	let colorClass;
+	switch (kw) {
+		case "dry":
+			colorClass = "green";
+			break;
+		case "damp":
+			colorClass = "teal";
+			break;
+		case "wet":
+			colorClass = "purple";
+			break;
+		case "drenched":
+			colorClass = "red";
+			break;
+		default:
+			colorClass = ""; // default without color
+	}
+	return `<span class="${colorClass}">${kw.trim()}</span> `;
+}
+window.wetnessWord = wetnessWord;
+DefineMacroS("wetnessWord", wetnessWord);
 
 /**
  * Creates and returns the keyword describing the integrity of a clothing article.
@@ -168,11 +220,11 @@ window.integrityKeyword = integrityKeyword;
  *
  * @param {object} worn clothing article, State.variables.worn.XXXX
  * @param {string} slot clothing article slot used
- * @param {string} alt alt version for metal/plastic devices
  * @returns {string} printable integrity prefix
  */
 function integrityWord(worn, slot) {
 	const kw = integrityKeyword(worn, slot);
+	// alt version for metal/plastic devices
 	const alt = setup.clothes[slot][clothesIndex(slot, worn)].altDamage;
 	if (alt === "parasite") {
 		switch (kw) {
@@ -282,6 +334,39 @@ function faceintegrity() {
 DefineMacroS("faceintegrity", faceintegrity);
 
 /**
+ * @param {number} wetnessValue
+ */
+function getWetStage(wetnessValue) {
+	if (wetnessValue >= 100) return 3;
+	if (wetnessValue >= 80) return 2;
+	if (wetnessValue >= 40) return 1;
+	return 0;
+}
+
+/**
+ * Updates the wetstage for the given "wet" variable and the sidebar image to reflect the changes
+ *
+ * @param {string} wetVar
+ * @param {number} wetnessValue
+ */
+function cheatsShowWetness(wetVar, wetnessValue) {
+	V[wetVar + "stage"] = getWetStage(wetnessValue);
+	wikifier("<<updatesidebarimg false>>");
+}
+window.cheatsShowWetness = cheatsShowWetness;
+
+/**
+ * @param {string} id the slider's full id
+ * @param {number} value
+ */
+function cheatsUpdateSlider(id, value) {
+	const slider = $(id);
+	if (!slider.length) return;
+	slider.val(value).trigger("change");
+}
+window.cheatsUpdateSlider = cheatsUpdateSlider;
+
+/**
  * @param {object} worn clothing article, State.variables.worn.XXXX
  * @returns {string} printable clothing colour
  */
@@ -338,17 +423,22 @@ function outfitChecks() {
 				return V.worn[item].name !== "naked" && ((T.bottomIsSkirt = setup.clothes[item][clothesIndex(item, V.worn[item])].skirt), true);
 			})
 		];
-	T.bottomUnder =
-		V.worn[
-			bottomLayers.slice(bottomLayers.indexOf(T.bottom)).find(item => {
-				return V.worn[item].name !== "naked" && ((T.bottomUnderIsSkirt = setup.clothes[item][clothesIndex(item, V.worn[item])].skirt), true);
-			})
-		];
+	if (T.bottom !== V.worn.under_lower) {
+		T.bottomUnder =
+			V.worn[
+				bottomLayers.slice(bottomLayers.indexOf(T.bottom)).find(item => {
+					return V.worn[item].name !== "naked" && ((T.bottomUnderIsSkirt = setup.clothes[item][clothesIndex(item, V.worn[item])].skirt), true);
+				})
+			];
+	}
+	T.underwear = T.bottomUnder && V.worn.under_lower.name !== "naked";
 	T.swimwear =
 		((V.worn.under_lower.type.includes("swim") && V.worn.lower.type.includes("naked")) || V.worn.lower.type.includes("swim")) &&
 		(V.worn.under_upper.type.includes("swim") || V.worn.under_upper.type.includes("naked")) &&
 		(V.worn.upper.type.includes("swim") || V.worn.upper.type.includes("naked"));
 	T.outfit = (T.bottom?.outfitSecondary && T.bottom?.outfitSecondary[1] === T.top?.name) || null;
+	if (!T.top && !T.shirtless) T.top = T.bottom;
+	if (T.outfit) T.bottom = T.top;
 }
 window.outfitChecks = outfitChecks;
 DefineMacro("outfitChecks", outfitChecks);
@@ -479,14 +569,22 @@ window.mobBtnShow = mobBtnShow;
  * Options with a higher weight have a higher chance of being chosen.
  *
  * @param {Array} options Each option is an array where the first item is a value, and the second item is its weight.
+ * @param {Object} [rngInstance] Optional rngInstance. Otherwise it uses State.random.
  * @returns {*} The selected item
  * @example
  *     console.log(weightedRandom(["apple", 1], ["banana", 2], ["cherry", 3]));  // Relative probability for these will be: apple: 16.67%, banana: 33.33%, cherry: 50%
+ *     console.log(weightedRandom(["apple", 1], ["banana", 2], ["cherry", 3], rngInstance));  // Optional rngInstance
  */
 function weightedRandom(...options) {
 	if (!Array.isArray(options) || options.length === 0) {
 		throw new Error("Options must be a non-empty array.");
 	}
+
+	let rngInstance;
+	if (options[options.length - 1] instanceof PRNG) {
+		rngInstance = options.pop();
+	}
+
 	let totalWeight = 0;
 	const processedOptions = options.map(([value, weight]) => {
 		if (typeof weight !== "number") {
@@ -496,7 +594,7 @@ function weightedRandom(...options) {
 		return [value, totalWeight];
 	});
 
-	const random = Math.random() * totalWeight;
+	const random = (rngInstance ? rngInstance.random() : State.random()) * totalWeight;
 	for (const [value, cumulativeWeight] of processedOptions) {
 		if (cumulativeWeight >= random) {
 			return value;
@@ -506,6 +604,24 @@ function weightedRandom(...options) {
 	return options[0][0];
 }
 window.weightedRandom = weightedRandom;
+
+/**
+ * Resolves the provided value by checking if it is a function or a direct value.
+ * If the value is a function, the function is invoked and its result is returned.
+ * If it is not a function, the value itself is returned.
+ * If the value is undefined, a specified default value is returned instead.
+ *
+ * @param {Function|any} value The value to resolve, which can be a function or any value
+ * @param {number} defaultValue The default value to use if the provided value is undefined
+ * @returns {number} The resolved value, either from the function call or directly
+ */
+function resolveValue(value, defaultValue = undefined) {
+	if (typeof value === "function") {
+		return value();
+	}
+	return value ?? defaultValue;
+}
+window.resolveValue = resolveValue;
 
 /**
  * This macro sets $rng. If the variable $rngOverride is set, $rng will always be set to that.
@@ -606,5 +722,26 @@ Macro.add("foldout", {
 			setFoldoutState(foldoutState, 100);
 		});
 		e.appendTo(this.output);
+	},
+});
+
+/* global ClothedSlots */
+
+/**
+ * @param {ClothedSlots} slot
+ */
+function carriedClear(slot) {
+	const slotFound = slot in V.carried;
+	if (!slotFound) {
+		return;
+	}
+
+	V.carried[slot] = clone(setup.clothes[slot][0]);
+}
+window.carriedClear = carriedClear;
+
+Macro.add("carriedClear", {
+	handler() {
+		carriedClear(this.args[0]);
 	},
 });

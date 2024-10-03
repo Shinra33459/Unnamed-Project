@@ -26,9 +26,9 @@
 
 <<widget "dockoptions">>
 	<<endevent>>
-	<<ind>><<link [[Work (1:00)|Docks Work]]>><<set $phase to 0>><<pass 60>><<tiredness 6>><</link>><<gtiredness>>
+	<<ind>><<link [[Work (1:00)|Docks Work]]>><<set $phase to 0>><<tiredness 6>><</link>><<gtiredness>>
 	<br>
-	<<ind>><<link [[Slack (1:00)|Docks Work]]>><<set $phase to 1>><<pass 60>><<dockstatus -1>><</link>><<lcool>>
+	<<ind>><<link [[Slack (1:00)|Docks Work]]>><<set $phase to 1>><<dockstatus -1>><</link>><<lcool>>
 	<br>
 
 	<<docksicon>><<link [[Leave|Docks]]>><<storeon "docks">><</link>>
@@ -62,8 +62,8 @@
 <<widget "dockwork">>
 	<<set $dockhours += 1>>
 	<<if $stress gte $stressmax>>
-		<<if isPlayerNonparasitePregnancyEnding()>>
-			<<pregnancyWatersBrokenPassout "docks">>
+		<<if isPregnancyEnding()>>
+			<<pregnancyPassout "docks">>
 		<<else>>
 			You've pushed yourself too much.
 			<br><br>
@@ -122,7 +122,7 @@
 			You're tasked with inspecting the contents of the containers after they're lifted from the deck.
 			<<rng>>
 			<<if $rng gte 81 and $money gte 12000 and $dockslave isnot 1>>
-				<<generatey1>><<generate2>><<person2>>You hear a muffled cry from one of them.
+				<<generateyv1>><<generate2>><<person2>>You hear a muffled cry from one of them.
 				<br><br>
 				You enter the keycode, but it doesn't unlock. "Not that one," another docker says. <<He>> points at the initials printed on the door. "We don't inspect these." If <<he>> hears the crying, <<he>> ignores it.
 				<br><br>
@@ -194,7 +194,7 @@
 			<br><br>
 			<<link [[Return to dock|Docks Tourist Return]]>><</link>>
 			<br>
-			<<if $promiscuity gte 55>>
+			<<if hasSexStat("promiscuity", 4)>>
 				<<link [[Seduce|Docks Tourist Seduce]]>><</link>><<promiscuous4>>
 				<br>
 			<</if>>
@@ -729,7 +729,7 @@
 			<<link [[Try to stay upright|Docks Upright]]>><</link>><<dancedifficulty 400 1200>>
 			<br>
 		<<elseif $rng is 2>>
-			<<if $weather is "clear">>
+			<<if !Weather.isOvercast>>
 				Moonlight reflects off the ocean. It captures you for a moment.<<lstress>><<stress -6>>
 				<br><br>
 			<<else>>

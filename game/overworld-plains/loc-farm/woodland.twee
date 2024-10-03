@@ -6,17 +6,17 @@
 You are in the woodland within the farm grounds.
 
 <<if Time.dayState is "night">>
-	<<if $weather is "snow">>
+	<<if Weather.precipitation is "snow">>
 		Snow weighs down the dark boughs above.
-	<<elseif $weather is "rain">>
+	<<elseif Weather.precipitation is "rain">>
 		The trees shield you from the icy rain.
 	<<else>>
 		The chill night breeze is lessened here.
 	<</if>>
 <<else>>
-	<<if $weather is "snow">>
+	<<if Weather.precipitation is "snow">>
 		Snow weighs down the boughs above.
-	<<elseif $weather is "rain">>
+	<<elseif Weather.precipitation is "rain">>
 		The trees shield you from the worst of the rain.
 	<<else>>
 		You are surrounded by the chirping of birds.
@@ -27,7 +27,7 @@ You are in the woodland within the farm grounds.
 <</if>>
 <br><br>
 
-<<if $stress gte 10000>>
+<<if $stress gte $stressmax>>
 	<<passoutfarmroad>>
 <<elseif $farm_attack_timer is 0 and Time.hour gte 21>>
 	<<npc Alex>><<person1>>
@@ -46,10 +46,10 @@ You are in the woodland within the farm grounds.
 	<br>
 <<else>>
 	<<if $farm_work.alex is "woodland">>
-			<<foresticon>><<link [[Help Alex tend the woodland (0:20)|Farm Woodland Tend Alex]]>><<set $farm_work.woodland += 1>><<farm_count 20>><<pass 20>><<tending 2>><<tiredness 2>><<physique 2>><<set $farm_work.tending += 1>><</link>><<gtiredness>><<gtending>>
+			<<link [[Help Alex tend the woodland (0:20)|Farm Woodland Tend Alex]]>><<set $farm_work.woodland += 1>><<farm_count 20>><<physique 2>><<pass 20>><<tending 2>><<tiredness 2>><<set $farm_work.tending += 1>><</link>><<gtiredness>><<gtending>>
 			<br>
 	<<elseif $farm_work.woodland lt $farm.woodland>>
-		<<foresticon>><<link [[Tend the woodland (0:20)|Farm Woodland Tend]]>><<set $farm_work.woodland += 1>><<farm_count 20>><<pass 20>><<tending 2>><<tiredness 2>><<physique 2>><<set $farm_work.tending += 1>><</link>><<gtiredness>><<gtending>>
+		<<link [[Tend the woodland (0:20)|Farm Woodland Tend]]>><<set $farm_work.woodland += 1>><<farm_count 20>><<physique 2>><<pass 20>><<tending 2>><<tiredness 2>><<set $farm_work.tending += 1>><</link>><<gtiredness>><<gtending>>
 		<br>
 	<</if>>
 	<<if $farm_work.forage isnot 1 and $farm.woodland gte 2>>
@@ -140,7 +140,7 @@ You help Alex remove dead wood, and trim the branches of the wildest trees.
 			<br>
 			<<link [[Call out|Farm Woodland Tend Alex Call]]>><<stress -6>><<npcincr Alex love -1>><</link>><<llove>><<lstress>>
 			<br>
-			<<if $exhibitionism gte 35>>
+			<<if hasSexStat("exhibitionism", 3)>>
 				<<link [[Flaunt|Farm Woodland Tend Alex Flaunt]]>><</link>><<exhibitionist3>><<npcincr Alex lust 5>>
 				<br>
 			<</if>>
@@ -296,29 +296,65 @@ You take a basket into the woodland, and search the boughs and floor for ripe ed
 <br><br>
 
 <<if $rng gte 75>>
+	<<wearProp "strawberry">>
 	<span class="green">You find some ripe <<icon "tending/strawberry.png">> strawberries.</span>
-	<<if $farm.woodland gte 3>>
+	<<if $farm.woodland gte 7>>
+		<<tending_pick strawberry 400 800>>
+	<<elseif $farm.woodland gte 6>>
+		<<tending_pick strawberry 200 400>>
+	<<elseif $farm.woodland gte 5>>
+		<<tending_pick strawberry 100 200>>
+	<<elseif $farm.woodland gte 4>>
+		<<tending_pick strawberry 50 100>>
+	<<elseif $farm.woodland gte 3>>
 		<<tending_pick strawberry 10 50>>
 	<<else>>
 		<<tending_pick strawberry 5 25>>
 	<</if>>
 <<elseif $rng gte 50>>
+	<<wearProp "peach">>
 	<span class="green">You find some ripe <<icon "tending/peach.png">> peaches.</span>
-	<<if $farm.woodland gte 3>>
+	<<if $farm.woodland gte 7>>
+		<<tending_pick peach 400 800>>
+	<<elseif $farm.woodland gte 6>>
+		<<tending_pick peach 200 400>>
+	<<elseif $farm.woodland gte 5>>
+		<<tending_pick peach 100 200>>
+	<<elseif $farm.woodland gte 4>>
+		<<tending_pick peach 50 100>>
+	<<elseif $farm.woodland gte 3>>
 		<<tending_pick peach 10 50>>
 	<<else>>
 		<<tending_pick peach 5 25>>
 	<</if>>
 <<elseif $rng gte 25>>
+	<<wearProp "plum">>
 	<span class="green">You find some ripe <<icon "tending/plum.png">> plums.</span>
-	<<if $farm.woodland gte 3>>
+	<<if $farm.woodland gte 7>>
+		<<tending_pick plum 400 800>>
+	<<elseif $farm.woodland gte 6>>
+		<<tending_pick plum 200 400>>
+	<<elseif $farm.woodland gte 5>>
+		<<tending_pick plum 100 200>>
+	<<elseif $farm.woodland gte 4>>
+		<<tending_pick plum 50 100>>
+	<<elseif $farm.woodland gte 3>>
 		<<tending_pick plum 10 50>>
 	<<else>>
 		<<tending_pick plum 5 25>>
 	<</if>>
 <<else>>
+	<<wearProp "mushroom">>
 	<span class="green">You find some <<icon "tending/mushroom.png">> mushrooms.</span>
-	<<if $farm.woodland gte 3>>
+	<<if $farm.woodland gte 7>>
+		<<tending_pick mushroom 400 800>>
+	<<elseif $farm.woodland gte 6>>
+		<<tending_pick mushroom 200 400>>
+	<<elseif $farm.woodland gte 5>>
+		<<tending_pick mushroom 100 200>>
+	<<elseif $farm.woodland gte 4>>
+		<<tending_pick mushroom 50 100>>
+	<<elseif $farm.woodland gte 3>>
 		<<tending_pick mushroom 10 50>>
 	<<else>>
 		<<tending_pick mushroom 5 25>>
@@ -330,12 +366,16 @@ You take a basket into the woodland, and search the boughs and floor for ripe ed
 	You smell a mesmerising sweetness. It leads you to a strange purple flower.
 	<br><br>
 
-	<<icon "tending/strange_flower.png">> <<link [[Pick|Farm Woodland Harvest]]>><<drugs 60>><</link>><<garousal>>
+	<<icon "tending/strange_flower.png">> <<link [[Pick|Farm Woodland Harvest]]>><<handheldon>><<drugs 60>><</link>><<garousal>>
 	<br>
-	<<link [[Ignore|Farm Woodland]]>><</link>>
+	<<link [[Ignore|Farm Woodland]]>><<handheldon>><</link>>
 	<br>
 <<else>>
-	<<link [[Next|Farm Woodland]]>><</link>>
+	<<if $rng gte 75>>
+		<<link [[Pop one in your mouth|Farm Woodland]]>><<transform fox 1>><<set $plants.strawberry.amount -= 1>><<endevent>><<stress -3>><</link>><<lstress>>
+		<br>
+	<</if>>
+	<<link [[Next|Farm Woodland]]>><<handheldon>><</link>>
 	<br>
 <</if>>
 
@@ -706,4 +746,3 @@ You smirk, toss the branch aside, and hop off the ladder. You press your body ag
 	<<endcombat>>
 	<<link [[Next|Farm Woodland]]>><</link>>
 <</if>>
-
