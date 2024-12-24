@@ -542,6 +542,9 @@ const Furniture = (() => {
 						desk: {
 							id: "desk",
 						},
+						chair: {
+							id: "chair",
+						},
 					},
 				};
 				wardrobeSpaceUpdater();
