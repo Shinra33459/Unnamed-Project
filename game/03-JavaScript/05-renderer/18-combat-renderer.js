@@ -59,9 +59,9 @@
  * @property {83} frontHorns
  * @property {82} frontEars
  * @property {40} frontTail
- * @property {80} frontEyes
- * @property {80} frontCheeks
- * @property {80} frontMalar
+ * @property {73} frontEyes
+ * @property {73} frontCheeks
+ * @property {73} frontMalar
  * @property {50} frontPubes
  * @property {50} frontPits
  * @property {50} frontPlumage
@@ -207,9 +207,9 @@ class CombatRenderer {
 			frontEars: 82,
 			frontTail: 40,
 
-			frontEyes: 80,
-			frontCheeks: 80,
-			frontMalar: 80,
+			frontEyes: 73,
+			frontCheeks: 73,
+			frontMalar: 73,
 			frontPlumage: 50,
 			frontPubes: 50,
 			frontPits: 50,
@@ -425,7 +425,7 @@ class CombatRenderer {
 	 * @param {CombatPlayerOptions} options
 	 */
 	static generateBodyFilters(options) {
-		options.skinType = V.player.skin.color;
+		options.skinType = Skin.color.natural;
 		options.skinTone = options.skinType !== "custom" ? Skin.color.tan : 0;
 
 		const skinFilter = setup.colours.getSkinFilter(options.skinType, options.skinTone);
@@ -506,6 +506,10 @@ class CombatRenderer {
 		}
 		const setupCategory = setup.clothes[slot];
 		const defaults = setupCategory == null ? CombatRenderer.emptyClothing : setupCategory[active.index];
+		if (defaults == null) {
+			// Player likely used a modded item ported back to vanilla.
+			return CombatRenderer.emptyClothing;
+		}
 		const combat = Object.assign({}, defaults.combat, active.combat);
 		const result = Object.assign({}, defaults, active);
 		result.combat = combat;
@@ -760,21 +764,31 @@ class CombatRenderer {
 	 * @returns {boolean}
 	 */
 	static isPenileReceptorActive() {
+		// PC penetrating NPC vagina
+		if (V.penisuse === "othervagina" && V.penisstate === "penetrated") {
+			return true;
+		}
+		// PC penetrating NPC anus
+		if (V.penisuse === "otheranus" && V.penisstate === "penetrated") {
+			return true;
+		}
 		if (V.penisstate === "othermouth") {
 			return true;
 		}
-		if (V.enemytype === "beast") {
-			return false;
-		}
-		const result = V.penisstate && ["penetrated", "otheranus"].includes(V.penisstate);
-		return !!result;
+		return false;
 	}
 
 	static isPenileReceptorEjaculationActive() {
-		if (!this.isPenileReceptorActive()) {
+		if (!CombatRenderer.isPenileReceptorActive()) {
 			return false;
 		}
-		return V.orgasmdown >= 1 && V.orgasmcount <= 24 && V.femaleclimax !== 1 && wearingCondom("player") !== "worn" && !playerHasStrapon();
+		if (playerHasStrapon()) {
+			return false;
+		}
+		if (wearingCondom("player") === "worn") {
+			return false;
+		}
+		return V.orgasmdown >= 1 && V.orgasmcount < 25 && V.femaleclimax !== 1;
 	}
 
 	/**
