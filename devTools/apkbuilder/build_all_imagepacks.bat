@@ -11,7 +11,7 @@ set target[5]=b3s_wax
 set target[6]=b3s_okbd
 set target[7]=b3s_lllysmasc
 set target[8]=susato
-set target[9]=b3s_mizz
+set target[9]=mizz
 set target[10]=b3s_mvcr
 set target[11]=kitmint
 set target[12]=b3s_mys
@@ -26,7 +26,7 @@ set imagepack[5]=wax
 set imagepack[6]=okbd
 set imagepack[7]=lllysmasc
 set imagepack[8]=susato
-set imagepack[9]=mizz
+set imagepack[9]=mizzfem
 set imagepack[10]=mvcr
 set imagepack[11]=kitmint
 set imagepack[12]=b3s_mys
@@ -85,7 +85,7 @@ for /L %%i in (0,1,%array_length%) do (
 
 	cd .\dist\
 
-	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.2.8 DoLP v0.%version% !imagepack[%%i]!-debug.apk" "0.5.2.8 DoLP v0.%version% !imagepack[%%i]!-debug.apk"
+	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.3.4 DoLP v0.%version% !imagepack[%%i]!-debug.apk" "0.5.3.4 DoLP v0.%version% !imagepack[%%i]!-debug.apk"
 
 	cd ..\
 )
