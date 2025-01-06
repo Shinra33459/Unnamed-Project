@@ -473,7 +473,25 @@ const Furniture = (() => {
 			description: "A 'rent' friendly shelf. Its the only one that would fit in your room.",
 			iconFile: "shelf",
 		});
-		mapper.set("tfplush", {
+		mapper.set("moonplush", {
+			name: "moon plush",
+			nameCap: "Moon plush",
+			category: ["plush"],
+			type: [],
+			cost: 40,
+			description: "A small plush of the moon.",
+			iconFile: "",
+		});
+		mapper.set("frostplush", {
+			name: "snowman plush",
+			nameCap: "Snowman plush",
+			category: ["plush"],
+			type: [],
+			cost: 40,
+			description: "A small plush of a snowman.",
+			iconFile: "",
+		});
+		mapper.set("tfplushes", {
 			name: "collection of animal plushes",
 			nameCap: "Collection of Animal Plushes",
 			category: ["plush"],
@@ -489,7 +507,7 @@ const Furniture = (() => {
 			type: [],
 			cost: 1,
 			description: "A small lemon coloured axolotl plush. You don't see a price tag on it, only the name 'Monsieur Citron' is written.",
-			iconFile: "tfplushes",
+			iconFile: "",
 		});
 	}
 
