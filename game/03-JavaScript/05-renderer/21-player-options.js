@@ -1393,7 +1393,7 @@ class PlayerCombatMapper {
 			if (V.feetuse === "penis" || V.feetstate === "tentacle") {
 				return "up";
 			}
-			if (V.NPCList.some(a => a.type === "horse" && NpcCombatMapper.isUnderPositioned(a))) {
+			if (V.NPCList.some((npc, index) => npc.type === "horse" && NpcCombatMapper.isUnderPositioned(index, npc))) {
 				return "down";
 			}
 			if (V.NPCList.some(a => ["horse", "centaur", "dog", "pig", "boar"].includes(a.type))) {
@@ -1553,6 +1553,10 @@ class PlayerCombatMapper {
 			return PlayerCombatMapper.defaultClothing;
 		}
 		const defaults = setup.clothes[slot][V.worn[slot].index];
+		if (defaults == null) {
+			// Player likely used a modded item ported back to vanilla.
+			return PlayerCombatMapper.defaultClothing;
+		}
 		const clothing = CombatRenderer.getClothingBySlot(slot);
 		const source = CombatRenderer.getSourceClothing(slot, defaults);
 
@@ -2288,6 +2292,28 @@ class PlayerCombatMapper {
 		 * @param {Bodywriting} bodywriting
 		 * @returns {BodywritingOption?}
 		 */
+		function complexText(id, bodywriting) {
+			if (bodywriting.type !== "text" && bodywriting.special !== "islander") {
+				return null;
+			}
+			if (["up", "down"].includes(options.legBackPosition)) {
+				id += "-" + options.legBackPosition;
+			}
+			if (bodywriting.arrow === 1) {
+				id += "-arrow";
+			}
+			return {
+				show: true,
+				area: "text",
+				type: sanitise(id),
+			};
+		}
+
+		/**
+		 * @param {string} id
+		 * @param {Bodywriting} bodywriting
+		 * @returns {BodywritingOption?}
+		 */
 		function hidden(id, bodywriting) {
 			return {
 				show: false,
@@ -2366,36 +2392,10 @@ class PlayerCombatMapper {
 					}
 					return null;
 				});
-				options.bodywriting.frontThigh = getState("right_thigh", (id, bodywriting) => {
-					if (bodywriting.type === "text" || bodywriting.special === "islander") {
-						let type = id;
-						if (["up", "down"].includes(options.legBackPosition)) {
-							type += "-" + options.legBackPosition;
-						}
-						if (bodywriting.arrow === 1) {
-							type += "-arrow";
-						}
-						return {
-							show: true,
-							area: "text",
-							type: sanitise(type),
-						};
-					}
-					if (bodywriting.writing === "cross") {
-						return null;
-					}
-					if (bodywriting.type === "object") {
-						return {
-							show: true,
-							area: bodywriting.writing,
-							type: sanitise(id),
-						};
-					}
-					return null;
-				});
+				options.bodywriting.frontThigh = getState("right_thigh", complexText);
 				options.bodywriting.backThigh = getState("left_thigh", (id, bodywriting) => {
+					let type = id;
 					if (bodywriting.type === "text" || bodywriting.special === "islander") {
-						let type = id;
 						if (["up", "down"].includes(options.legBackPosition)) {
 							type += "-" + options.legBackPosition;
 						}
@@ -2409,10 +2409,13 @@ class PlayerCombatMapper {
 						};
 					}
 					if (bodywriting.type === "object") {
+						if (["up", "footjob"].includes(options.legBackPosition)) {
+							type += "-raised";
+						}
 						return {
 							show: true,
 							area: bodywriting.writing,
-							type: sanitise(id),
+							type: sanitise(type),
 						};
 					}
 					return null;

@@ -864,15 +864,16 @@
 	<</if>>
 
 <<set _plant_keys to Object.keys($plants)>>
+<<set _hasProduce to Object.keys($plants).some(key => $plants[key].amount >= 1)>>
 <<set _carrying to [$antiquemoney, $blackmoney, $phials_held, $lurkers_held, $popcorn, $milkshake, $panties_held].some(i => i >= 1)>>
-<<if _carrying or _plant_keys.length gt 0>>
+<<if _carrying or _hasProduce>>
 	<hr>
 		<h1 class="header gold bold">Inventory</h1>
 	<</if>>
 	<<if $farm_key is true and $location is "farm" and !$bus.includes("farm")>>
 		You have stored:
 		<ul class="journal carry">
-			<li><<lakeicon "key">> <span class="green">A ring of keys</span> in your stall. You can use them to escape, but be careful not to get caught with them.</li>
+			<li><<lockicon "bronze key">> <span class="green">A ring of keys</span> in your stall. You can use them to escape, but be careful not to get caught with them.</li>
 		</ul>
 		<br>
 	<</if>>
@@ -906,7 +907,7 @@
 		<<if $panties_held gt 0>>
 			<li><span class="clothes-white"><<icon "clothes/plain_panties.png">></span> <<print $panties_held is 1 ? "a pair" : "<span class='green'>$panties_held</span> pairs">> of stolen underwear. You can sell <<print $panties_held is 1 ? "it" : "them">> during lunchtime in the school rear courtyard.</li>
 		<</if>>
-		<<if _plant_keys.length gt 0>>
+		<<if _hasProduce>>
 			<li><<tendingicon "basket">> <span class="green">Produce</span>. You can sell it by renting a stand on Connudatus Street at dawn.</li>
 		<</if>>
 		<<if $DoLPSpools isnot undefined>>
@@ -914,7 +915,7 @@
 		<</if>>
 	</ul>
 
-	<<if _plant_keys.length gt 0>>
+	<<if _hasProduce>>
 		<br>
 		<details class="journal">
 			<summary class="journal">Produce</summary>
@@ -972,7 +973,7 @@
 			<<elseif $_antiquesFound is $museumAntiques.maxCount>>
 				You've found <span class="green">every</span> item for the museum.
 			<<else>>
-				You've found <span class="gold"><<= $_antiquesFound>></span> items for the museum. You're missing <span class="gold"><<= $museumAntiques.maxCount - $_antiquesFound>></span> antiques.
+				You've found <span class="gold"><<= $_antiquesFound>></span> items for the museum. You're missing <span class="gold"><<= $museumAntiques.maxCount - $_antiquesFound>></span> <<= $museumAntiques.maxCount - $_antiquesFound is 1 ? "antique" : "antiques">>.
 			<</if>>
 			<br><br>
 			<details class="journal">
