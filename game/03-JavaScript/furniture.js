@@ -21,6 +21,7 @@ const Furniture = (() => {
 		poster: "poster",
 		wallpaper: "wallpaper",
 		shelf: "shelf",
+		plush: "plush",
 		/* Special category for Kylar event */
 		owlplushie: "owlplushie",
 	});
@@ -374,14 +375,14 @@ const Furniture = (() => {
 			iconFile: "owlplushie",
 			showCheck: "disabled",
 		});
-		mapper.set("bunplush", {
-			name: "small bunny plushie",
-			nameCap: "Small bunny plushie",
+		mapper.set("bunplushie", {
+			name: "large bunny plushie",
+			nameCap: "Large bunny plushie",
 			category: ["decoration"],
 			type: [],
 			cost: 1380,
-			description: "A small. white bunny plush. Small enough to fit on your shelf and several others.",
-			iconFile: "bunplush",
+			description: "Soft and cuddly",
+			iconFile: "bunplushie",
 		});
 		/* ------------- WARDROBES ------------- */
 		/*	starter - 20 clothing slots for every type
@@ -462,7 +463,7 @@ const Furniture = (() => {
 			description: "The wallpaper is currently empty.",
 			iconFile: "wallpaper",
 		});
-		/* ------------- SHELF -------------- */
+		/* ------------- BUNNY MOD -------------- */
 		mapper.set("shelf", {
 			name: "small shelf",
 			nameCap: "Small shelf",
@@ -471,6 +472,24 @@ const Furniture = (() => {
 			cost: 3200,
 			description: "A 'rent' friendly shelf. Its the only one that would fit in your room.",
 			iconFile: "shelf",
+		});
+		mapper.set("tfplush", {
+			name: "collection of animal plushes",
+			nameCap: "Collection of Animal Plushes",
+			category: ["plush"],
+			type: [],
+			cost: 1480,
+			description: "A collection of small animal plushes. Includes a fox, bunny, cat, wolf, cow and bird.",
+			iconFile: "tfplushes",
+		});
+		mapper.set("axoplush", {
+			name: "yellow axolotl plush",
+			nameCap: "Yellow axolotl plush",
+			category: ["plush"],
+			type: [],
+			cost: 1,
+			description: "A small lemon coloured axolotl plush. You don't see a price tag on it, only the name 'Monsieur Citron' is written.",
+			iconFile: "tfplushes",
 		});
 	}
 
