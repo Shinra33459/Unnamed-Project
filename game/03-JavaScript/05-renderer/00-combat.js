@@ -546,23 +546,26 @@ class CombatSystem {
 			return false;
 		}
 		const npc = V.NPCList[index];
+		if (npc == null) {
+			return false;
+		}
 		return npc.active != null;
 	}
 
 	/**
-	 * @param {Npc} npc
+	 * @param {number} index
 	 * @returns {boolean}
 	 */
-	isNpcWearingCondom(npc) {
-		return wearingCondom(npc.index || 0) !== false;
+	isNpcWearingCondom(index) {
+		return wearingCondom(index || 0) !== false;
 	}
 
 	/**
-	 * @param {Npc} npc
+	 * @param {number} index
 	 * @returns {boolean}
 	 */
-	isNpcCondomDefective(npc) {
-		const state = wearingCondom(npc.index);
+	isNpcCondomDefective(index) {
+		const state = wearingCondom(index);
 		return state && ["defective", "sabotaged"].includes(state);
 	}
 }

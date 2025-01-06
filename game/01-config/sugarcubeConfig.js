@@ -11,7 +11,7 @@ const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.5.3.2 DoLB version 0.1.5.1",
+	version: "0.5.3.4 DoLB version 0.1.5.1",
 	versionName: `"Houses Kept, Virginity Sold" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
@@ -35,8 +35,6 @@ if (idb.updateSettings) idb.updateSettings("useDelta", true);
 idb.footerHTML = `Special thanks to all those who <a target="_blank" class="link-external" href="https://subscribestar.adult/vrelnir" tabindex="0">Support Degrees of Lewdity</a>`;
 
 function onLoad(save) {
-	$.event.trigger(":onloadsave", { save });
-
 	// some flags for version update. ideally, all updating should be done here in onLoad, but we don't live in an ideal world
 	pageLoading = true;
 	window.onLoadUpdateCheck = true;
@@ -67,6 +65,7 @@ function onLoad(save) {
 			details.loadCount++;
 		}
 	});
+	$.event.trigger(":onloadsave", { save });
 }
 window.onLoad = onLoad;
 Save.onLoad.add(onLoad);

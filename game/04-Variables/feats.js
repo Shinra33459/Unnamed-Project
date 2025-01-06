@@ -534,9 +534,16 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Social"],
 	},
+	"Great Hawk the Terror": {
+		title: "Great Hawk the Terror",
+		desc: "You'll make an excellent spouse.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Social"],
+	},
 	"Return the Favour": {
 		title: "Return the Favour",
-		desc: "You gifted the great hawk a favourite food.",
+		desc: "You gifted the Great Hawk a favourite food.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -564,7 +571,7 @@ setup.feats = {
 	},
 	"Encroaching Civilisation": {
 		title: "Encroaching Civilisation",
-		desc: "You gifted the black wolf a favourite food.",
+		desc: "You gifted the Black Wolf a favourite food.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -576,7 +583,7 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Social"],
 	},
-	"Communion": {
+	Communion: {
 		title: "Communion",
 		desc: "You gifted Sydney a favourite food.",
 		difficulty: 2,
@@ -1967,14 +1974,14 @@ function featsMerge() {
 		idb.getAllSaves()
 			.then(saves =>
 				saves.forEach((slot, index) => {
-					if (slot.data && Array.isArray(slot.data.history)) {
-						slot.data.history.forEach(saveData => {
-							if (saveData.variables && saveData.variables.feats) {
-								loadFeats(saveData.variables.feats.allSaves);
-								loadFeats(saveData.variables.feats.currentSave);
-							}
-						});
-					}
+					// auto-detect between uncompressed and compressed saves
+					const history = slot.data.history || State.deltaDecode(slot.data.delta);
+					history.forEach(saveData => {
+						if (saveData.variables.feats) {
+							loadFeats(saveData.variables.feats.allSaves);
+							loadFeats(saveData.variables.feats.currentSave);
+						}
+					});
 					loadingBar.css("width", `${((localSavesChecked + index + 1) / savesToLoad) * 100}%`);
 					loadingText.html(`${index + 1} out of ${savesToLoad} saves checked.`);
 				})
