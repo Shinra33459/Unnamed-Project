@@ -673,9 +673,25 @@ function dayPassed() {
 		V.pound.tasks = [];
 	}
 
+	T.rentstage = V.rentstage;
+
+	for (T.baileyDeposit = V.baileyDeposit; 
+		T.baileyDeposit >= V.rentmoney + (V.babyRent || 0); 
+		T.baileyDeposit -= V.rentmoney + (V.babyRent || 0)) {
+		
+		V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][
+			Math.min(Math.max(T.rentstage - 1, 0), 6)
+		];
+
+		if (V.robinpaid === 1) {
+			V.rentmoney *= 2;
+		}
+		T.rentstage += 1;
+	}
+
 	V.renttime--;
 	if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
-		if (V.renttime = 0) {
+		if (V.renttime <= 0) {
 			V.renttime = 7;
 			V.baileyDeposit -= V.rentmoney + (V.babyRent || 0);
 		}
