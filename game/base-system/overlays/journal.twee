@@ -36,14 +36,27 @@
 		<hr>
 		<h1 class="header gold bold">Time-Sensitive</h1>
 		<ul class="journal">
-			<<if $rentday isnot undefined>>
-				<<if $renttime lte 0>>
-					<li>Bailey is looking for you, and wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
-				<<else>>
-					<li>Bailey wants <<printmoney $rentmoney>> on <<rentday>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
+			<<if $baileyDeposit gte $rentmoney + ($babyRent or 0)>>
+				<<set _rentstage to $rentstage>>
+				<<set _baileyDepositDays to 0>>
+				<<set _baileyDepositWorth to 0>>
+				<<for _baileyDeposit = $baileyDeposit; _baileyDeposit >= $rentmoney + ($babyRent or 0); _baileyDeposit -= $rentmoney + ($babyRent or 0)>>
+					<<set $rentmoney to [10000,30000,50000,70000,100000,150000,200000][Math.clamp(_rentstage - 1,0,6)]>>
+					<<set _rentstage += 1>>
+					<<set _baileyDepositDays += 1>>
+					<<set _baileyDepositWorth += $rentmoney + ($babyRent or 0)>>
+				<</for>>
+				<li>You still have enough deposit for Bailey for <span class="gold">_baileyDepositDays</span> weeks which is worth <<printmoney _baileyDepositWorth>>.</li>
+			<<else>>
+				<<if $rentday isnot undefined>>
+					<<if $renttime lte 0>>
+						<li>Bailey is looking for you, and wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
+					<<else>>
+						<li>Bailey wants <<printmoney $rentmoney>> on <<rentday>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
+					<</if>>
+				<<elseif $rentmoney isnot undefined>>
+					<li>Bailey wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
 				<</if>>
-			<<elseif $rentmoney isnot undefined>>
-				<li>Bailey wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
 			<</if>>
 
 			<<if $averydate is 1 and Time.hour lte 21 and $averydatedone isnot 1>>

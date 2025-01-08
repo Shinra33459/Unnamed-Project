@@ -913,3 +913,50 @@
 		<<He>> gives you a smile and a quick hug. "Thanks," <<he>> says. "You're the best."
 	<</if>>
 <</widget>>
+
+<<widget "depositBaileyExitConfirm">>
+	<<if _args[0] is 0>>
+		<<set _rentstage to $rentstage - 1>>
+		<<set _baileyDepositMax to 0>>
+		<<for _i to 1; _i <= $depositMax; _i++>>
+			<<set $rentmoney to [10000,30000,50000,70000,100000,150000,200000][Math.clamp(_rentstage,0,6)]>>
+			<<set _rentstage += 1>>
+			<<set _baileyDepositMax += $rentmoney + ($babyRent or 0)>>
+		<</for>>
+		<<if $baileyDeposit + _depositAmount gte _baileyDepositMax and $depositMax gt 0>>
+			You can only deposit for <span class="gold">$depositMax</span> weeks which is worth <<printmoney _baileyDepositMax>>.
+			<br>
+			<<if $baileyDeposit gt 0>>
+				<<set _depositAmount to _baileyDepositMax - $baileyDeposit>>
+				You already had <<printmoney $baileyDeposit>> in deposit. 
+			<</if>>
+			Your deposit has been adjusted to <<printmoney _depositAmount>>. Would you like to continue?
+			<br>
+		<<else>>
+			You are depositing <<printmoney _depositAmount>>. Would you like to continue?
+		<br>
+		<</if>>
+		<<link [[Confirm|Orphanage]]>>
+			<<set $baileyDeposit += _depositAmount>>
+			<<money `-_depositAmount` "baileyRent">>
+			<<set $daily.baileyVisit-->>
+		<</link>>
+	<<else>>
+		<<if $baileyDeposit gte _depositAmount + ((_depositAmount / 100) * $depositWithdrawalFee)>>
+			You are withdrawing <<printmoney _depositAmount>>. <<if $depositWithdrawalFee gt 0>>An additional <<printmoney `(_depositAmount / 100) * $depositWithdrawalFee`>> will be charged as withdrawal fee, bringing it up to <<printmoney `_depositAmount + ((_depositAmount / 100) * $depositWithdrawalFee)`>>.<</if>> Would you like to continue?
+			<br>
+			<<link [[Confirm|Orphanage]]>>
+				<<money `_depositAmount` "baileyRent">>
+				<<set $baileyDeposit -= _depositAmount>>
+			<</link>>
+		<<else>>
+			<<set _withdrawalMax to Math.round($baileyDeposit / ((100 + $depositWithdrawalFee) / 100))>>
+			You can only withdraw <<printmoney _withdrawalMax>> due to the additional <<printmoney `$baileyDeposit - _withdrawalMax`>> withdrawal fee. Would you like to continue?
+			<br>
+			<<link [[Confirm|Orphanage]]>>
+				<<money `_withdrawalMax` "baileyRent">>
+				<<set $baileyDeposit -= $baileyDeposit>>
+			<</link>>
+		<</if>>
+	<</if>>
+<</widget>>
