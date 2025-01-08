@@ -550,8 +550,14 @@ DefineMacroS("updateAskColour", updateAskColour);
 function bulkProduceValue(plant, quantity = 250) {
 	if (plant != null) {
 		const baseCost = (plant.plant_cost * quantity) / 2;
+
 		const seasonBoost = !plant.season.includes(Time.season) ? 1.1 : 1;
-		return Math.floor(baseCost * seasonBoost);
+
+		const qualityControlBoost = $factoryUpgrades.qualityControl ? $factoryUpgrades.qualityControl * 0.05 : 0; // +5% per level
+		const packagingBoost = $factoryUpgrades.packaging ? $factoryUpgrades.packaging * 0.05 : 0; // +5% per level
+
+		const totalBoost = 1 + qualityControlBoost + packagingBoost;
+		return Math.floor(baseCost * seasonBoost * totalBoost);
 	}
 }
 window.bulkProduceValue = bulkProduceValue;
