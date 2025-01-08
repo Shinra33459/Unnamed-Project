@@ -289,7 +289,7 @@ function hawkChildActivity(childId) {
 		activity.push("flap");
 	}
 	if (child.localVariables.farewell != false) {
-        activity = activity["dismissed"];
+        activity = ["dismissed"];
 	}
 
 	if (activity.length) {
