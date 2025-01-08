@@ -553,8 +553,8 @@ function bulkProduceValue(plant, quantity = 250) {
 
 		const seasonBoost = !plant.season.includes(Time.season) ? 1.1 : 1;
 
-		const qualityControlBoost = $factoryUpgrades.qualityControl ? $factoryUpgrades.qualityControl * 0.05 : 0; // +5% per level
-		const packagingBoost = $factoryUpgrades.packaging ? $factoryUpgrades.packaging * 0.05 : 0; // +5% per level
+		const qualityControlBoost = V.factoryUpgrades.qualityControl ? V.factoryUpgrades.qualityControl * 0.05 : 0; // +5% per level
+		const packagingBoost = V.factoryUpgrades.packaging ? V.factoryUpgrades.packaging * 0.05 : 0; // +5% per level
 
 		const totalBoost = 1 + qualityControlBoost + packagingBoost;
 		return Math.floor(baseCost * seasonBoost * totalBoost);
