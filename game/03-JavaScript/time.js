@@ -1497,7 +1497,13 @@ function dailyLiquidEffects() {
 	if (V.player.penisExist) {
 		let amount = V.player.penissize - 1;
 		if (V.semen_volume <= 24) amount++;
-		amount -= Math.floor(V.semen_volume / 250);
+		if (V.semen_volume >= 6000) {
+			amount -= Math.floor(V.semen_volume / 600);
+		} else if (V.semen_volume >= 3000) {
+			amount -= Math.floor(V.semen_volume / 450);
+		} else {
+			amount -= Math.floor(V.semen_volume / 300);
+		}
 		statChange.semenvolume(amount);
 	} else {
 		V.semen_volume = 0;
