@@ -672,11 +672,19 @@ function dayPassed() {
 		fragment.append(wikifier("stray_happiness", -1));
 		V.pound.tasks = [];
 	}
+
 	V.renttime--;
-	// Not seen bailey for more than 2 weeks, tracks missed rent
-	if (V.renttime < 0 && V.renttime % 7 === 0) {
-		V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
-		V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
+	if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
+		if (V.renttime = 0) {
+			V.renttime = 7;
+			V.baileyDeposit -= V.rentmoney + (V.babyRent || 0);
+		}
+	} else {
+		// Not seen bailey for more than 2 weeks, tracks missed rent
+		if (V.renttime < 0 && V.renttime % 7 === 0) {
+			V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
+			V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
+		}
 	}
 
 	if (V.flashbacktown > 0) V.flashbacktown--;
@@ -1489,7 +1497,13 @@ function dailyLiquidEffects() {
 	if (V.player.penisExist) {
 		let amount = V.player.penissize - 1;
 		if (V.semen_volume <= 24) amount++;
-		amount -= Math.floor(V.semen_volume / 250);
+		if (V.semen_volume >= 6000) {
+			amount -= Math.floor(V.semen_volume / 600);
+		} else if (V.semen_volume >= 3000) {
+			amount -= Math.floor(V.semen_volume / 450);
+		} else {
+			amount -= Math.floor(V.semen_volume / 300);
+		}
 		statChange.semenvolume(amount);
 	} else {
 		V.semen_volume = 0;
