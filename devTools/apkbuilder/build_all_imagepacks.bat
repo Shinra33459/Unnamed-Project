@@ -14,6 +14,7 @@ set target[8]=mizz
 set target[9]=kitmint
 set target[10]=b3s_mys
 set target[11]=b3s_hikfem_mys
+set target[12]=goosefem
 
 set imagepack[0]=vanilla
 set imagepack[1]=beeesss
@@ -27,6 +28,7 @@ set imagepack[8]=mizzfem
 set imagepack[9]=kitmint
 set imagepack[10]=b3s_mys
 set imagepack[11]=hikfem_mys
+set imagepack[12]=goosefem
 
 set array_length=11
 
