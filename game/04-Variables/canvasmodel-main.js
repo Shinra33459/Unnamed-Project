@@ -687,7 +687,11 @@ Renderer.CanvasModels.main = {
 
 		options.zupper = (options.upper_tucked) ? ZIndices.upper_tucked : ZIndices.upper;
 		options.zupperleft = (options.upper_tucked) ? ZIndices.upper_arms_tucked : ZIndices.upper_arms;
-		options.zupperright = (options.upper_tucked) ? ZIndices.upper_arms_tucked + 3.5 : ZIndices.upper_arms + 3.5;
+		if (V.rightArmPosition == "above") {
+			options.zupperright = (options.upper_tucked) ? ZIndices.upper_arms_tucked + 3.5 : ZIndices.upper_arms + 3.5;
+		} else {
+			options.zupperright = (options.upper_tucked) ? ZIndices.upper_arms_tucked : ZIndices.upper_arms;
+		}	
 
 		if (options.arm_right === "cover" || options.arm_right === "hold") options.zupperright = ZIndices.upper_arms_cover;
 		if (options.arm_left === "cover") options.zupperleft = ZIndices.upper_arms_cover;
@@ -1097,10 +1101,7 @@ Renderer.CanvasModels.main = {
 			filters: ["tan"],
 			animation: "idle",
 			zfn(options) {
-				if (options.arm_left === "cover") {
-					return ZIndices.arms_cover;
-				}
-				return options.zarms;
+				return (options.arm_left === "cover") ? ZIndices.arms_cover : options.zarms;
 			},
 			showfn(options) {
 				return options.arm_left !== "none";
@@ -1116,10 +1117,8 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold"){
-					return ZIndices.arms_cover;
-				}
-				return ZIndices.under_upper_arm_right - 0.1;
+				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.arms_cover;
+				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right - 0.1 : options.zarms;
 			},
 			showfn(options) {
 				return options.arm_right !== "none";
@@ -2772,7 +2771,7 @@ Renderer.CanvasModels.main = {
 				return 0;
 			},
 			zfn(options) {
-				// return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.1 : ZIndices.armsidle + 0.1;
+				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.1 : ZIndices.armsidle + 0.1;
 				if (options.worn.over_upper) {
 					T.zarms = ZIndices.over_upper_arms;
 				} else if (options.worn.upper) {
@@ -3736,8 +3735,8 @@ Renderer.CanvasModels.main = {
 		"under_upper_back": genlayer_clothing_back_img('under_upper'),
 		"under_upper_rightarm": genlayer_clothing_arm("right", "under_upper", {
 			zfn(options) {
-				return options.arm_right === "cover" || options.arm_right === "hold" ?
-					ZIndices.under_upper_arms_cover : ZIndices.under_upper_arm_right;
+				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.under_upper_arms_cover;
+				return V.rightArmPosition == "above" ? ZIndices.under_upper_arm_right : ZIndices.under_upper_arms;
 			},
 		}),
 		"under_upper_leftarm": genlayer_clothing_arm("left", "under_upper", {
@@ -3833,8 +3832,8 @@ Renderer.CanvasModels.main = {
 					&& options.arm_right !== "none";
 			},
 			zfn(options) {
-				return (options.arm_right === "cover" || options.arm_right === "hold") ?
-					ZIndices.hands : ZIndices.under_upper_arm_right + 0.2;
+				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
+				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
 			},
 		},
 		"hands_right_acc": {
@@ -3855,8 +3854,8 @@ Renderer.CanvasModels.main = {
 					&& options.arm_right !== "none";
 			},
 			zfn(options) {
-				return (options.arm_right === "cover" || options.arm_right === "hold") ?
-					ZIndices.hands : ZIndices.under_upper_arm_right + 0.2;
+				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
+				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
 			},
 		},
 		/***
@@ -4785,8 +4784,6 @@ function genlayer_clothing_breasts_acc(slot, overrideOptions) {
 			if (breastAccImg === 1 && typeof breastImg === 'object' && breastImg[options.breast_size] !== null)
 				breastAcc = 1;
 			else if (typeof breastAccImg === 'object' && options.worn[slot].setup.breast_acc_img[options.breast_size] !== null)
-				breastAcc = 1;
-			else if (breastAccImg === 1)
 				breastAcc = 1;
 
 			return options.show_clothes
