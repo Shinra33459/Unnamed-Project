@@ -39,6 +39,30 @@ setup.feats = {
 		filter: ["All", "General"],
 		softLockable: true,
 	},
+	Decamillionaire: {
+		title: "Decamillionaire",
+		desc: "Have £10,000,000.",
+		difficulty: 4,
+		series: "money",
+		filter: ["All", "General"],
+		softLockable: true,
+	},
+	Hectomillionaire: {
+		title: "Hectomillionaire",
+		desc: "Have £100,000,000.",
+		difficulty: 4,
+		series: "money",
+		filter: ["All", "General"],
+		softLockable: true,
+	},
+	Billionaire: {
+		title: "Billionaire",
+		desc: "Have £1,000,000,000.",
+		difficulty: 5,
+		series: "money",
+		filter: ["All", "General"],
+		softLockable: true,
+	},
 	"It Belongs in a Museum": {
 		title: "It Belongs in a Museum!",
 		desc: "Find all the artefacts.",
@@ -295,6 +319,20 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Stats"],
 	},
+	Powerful: {
+		title: "Powerful",
+		desc: "You've reached the peak fitness of humanity.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Stats"],
+	},
+	Disciplined: {
+		title: "Disciplined",
+		desc: "Your mind is solid.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Stats"],
+	},
 	Thief: {
 		title: "Thief",
 		desc: "You know how to acquire things.",
@@ -399,6 +437,48 @@ setup.feats = {
 		desc: "Dominate the market.",
 		difficulty: 2,
 		series: "market",
+		filter: ["All", "Stats"],
+	},
+	Peddler: {
+		title: "Peddler",
+		desc: "Start small, sell local.",
+		difficulty: 1,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	Supplier: {
+		title: "Supplier",
+		desc: "Meet growing demand.",
+		difficulty: 2,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	Distributor: {
+		title: "Distributor",
+		desc: "Expand your reach.",
+		difficulty: 3,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	Wholesaler: {
+		title: "Wholesaler",
+		desc: "Control the bulk market.",
+		difficulty: 3,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	Agronomist: {
+		title: "Agronomist",
+		desc: "Master the art of farming.",
+		difficulty: 4,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	"Agricultural Tycoon": {
+		title: "Agricultural Tycoon",
+		desc: "Rule the farming empire.",
+		difficulty: 5,
+		series: "factorySale",
 		filter: ["All", "Stats"],
 	},
 	"Twisted Desire": {
@@ -2536,6 +2616,9 @@ function earnHourlyFeats() {
 	if (V.money >= 1000000) earnFeat("Money Maker");
 	if (V.money >= 10000000) earnFeat("Tycoon");
 	if (V.money >= 100000000) earnFeat("Millionaire");
+	if (V.money >= 1000000000) earnFeat("Decamillionaire");
+	if (V.money >= 10000000000) earnFeat("Hectomillionaire");
+	if (V.money >= 100000000000) earnFeat("Billionaire");
 
 	if (
 		V.liquidoutsidecount >= 100 &&
@@ -2546,6 +2629,8 @@ function earnHourlyFeats() {
 		earnFeat("Fully Covered");
 	}
 
+	if (V.physique >= 16000) earnFeat("Powerful");
+	if (V.willpower >= 1000) earnFeat("Disciplined");
 	if (V.skulduggery >= 1000) earnFeat("Thief");
 	if (V.danceskill >= 1000) earnFeat("May I have this Dance?");
 	if (V.swimmingskill >= 1000) earnFeat("Aquanaut");
@@ -2595,6 +2680,15 @@ function earnHourlyFeats() {
 	if ((V.demon >= 6 || V.transformationParts.demon.wings == "default" || V.transformationParts.demon.wings == "succubus" || V.demontf == 1) && V.player.virginity.vaginal == true && V.player.virginity.penile == true) earnFeat("Demon of Purity");
 
 	if (V.whitneycollar == 1) earnFeat("Owned");
+
+	if (V.farmersProduce) {
+		if (V.farmersProduce.totalSold >= 5000) earnFeat("Peddler");
+		if (V.farmersProduce.totalSold >= 10000) earnFeat("Supplier");
+		if (V.farmersProduce.totalSold >= 50000) earnFeat("Distributor");
+		if (V.farmersProduce.totalSold >= 100000) earnFeat("Wholesaler");
+		if (V.farmersProduce.totalSold >= 500000) earnFeat("Agronomist");
+		if (V.farmersProduce.totalSold >= 1000000) earnFeat("Agricultural Tycoon");
+	}
 
 	// To earn the feat "Curious Attire"
 	fragment.append(wikifier("specialClothesUpdate"));
