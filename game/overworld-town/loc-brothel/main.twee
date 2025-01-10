@@ -443,7 +443,7 @@ You enter a large crowded room. The smell of sweat is palpable. Several stages d
 	<<danceinit>>
 	<<robinbrothelappear>>
 	<<set $dancing to 1>>
-	<<set $venuemod to 3>>
+	<<set $venuemod to 3 * (1 + (0.4 * (C.npc.Briar.love / 100)))>>
 	<<set $dancelocation to "brothel">>
 <</if>>
 <<if $stress gte $stressmax>>
@@ -535,7 +535,7 @@ You enter a large crowded room. The smell of sweat is palpable. Several stages d
 	"There's our little star," <<he>> says. Briar walks over to <<his>> sofa and sits down.
 	<br><br>
 
-	"It seems your performances made the rounds. You have admirers that would pay a fortune to spend some time with you." <<he>> says. <<He>> taps on the sofa, inviting you to sit next to <<him>>.
+	"It seems your performances made the rounds. You have admirers that would pay a fortune to spend some time with you," <<he>> says. <<He>> taps on the sofa, inviting you to sit next to <<him>>.
 	<br><br>
 
 	<<link [[Sit|Brothel Escort Job Intro]]>><<set $phase to 1>><</link>><<glove>><<npcincr Briar love 1>>
@@ -777,7 +777,7 @@ You've made <<moneyGain 2000>>.
 
 <<if $phase is 0>>
 
-<<set $tipmod to Math.round(3 + (fameTotal() / 2000))>><<tipset>>
+<<set $tipmod to Math.round((3 + (fameTotal() / 2000)) * (1 + (0.4 * (C.npc.Briar.love / 100))))>><<tipset>>
 
 <<promiscuity3>>You lead the <<person>> into one of the back rooms. It's well-lit compared to the main room, it takes a moment for your eyes to adjust. There's a small stage with a pole in one corner. There's also a sofa, contoured to allow an extensive range of positions.
 <br><br>
@@ -2006,7 +2006,7 @@ Two police officers lead you towards the main part of the brothel. They stop nea
 <<if crimeSumCurrent() lte 900>>
 	One opens the door.
 	<br><br>
-	"You seem like a decent fellow," he says. "No need for you to get caught up in this. Get out of here."
+	"You seem like a decent <<lass>>," he says. "No need for you to get caught up in this. Get out of here."
 	<<set _bribe to 0>>
 <<elseif crimeSumCurrent() lte 2000>><<set _bribe to 800>>
 	One puts a hand on the door handle.
@@ -2545,7 +2545,12 @@ You ask Briar if <<he>> has already checked your vending machine's stock and col
 	<<set _productProfit to Math.max(0, _productProfit - $brothelVending.weeksRent * 5000)>>
 	<<if _productProfit>>
 		<<set _pcProfit to _productProfit * .4>>
-		and my 60% cut. Here's your profit of <span class="green"><<formatmoney _pcProfit>>_printmoney</span>, plus the <span class="blue"><<formatmoney _productCost>>_printmoney</span> you spent stocking the machine." <<He>> hands you your earnings. You make <<printmoney `_productCost + _pcProfit`>>. "Pleasure doing business with you."
+		<<set _pcProfit to _pcProfit + ((_productCost / 100) * C.npc.Briar.love)>>
+		<<set _briarCut to 60 * ((100 - C.npc.Briar.love) / 100)>>
+		<<if _briarCut gt 0>>
+			and my _briarCut% cut.
+		<</if>>
+		Here's your profit of <span class="green"><<formatmoney _pcProfit>>_printmoney</span>, plus the <span class="blue"><<formatmoney _productCost>>_printmoney</span> you spent stocking the machine." <<He>> hands you your earnings. You make <<printmoney `_productCost + _pcProfit`>>. "Pleasure doing business with you."
 		<<famebusiness 2>>
 		<<money _pcProfit "brothelVendingMachine">>
 	<<else>>
