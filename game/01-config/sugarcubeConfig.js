@@ -11,7 +11,7 @@ const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.5.3.4 DoLB version 0.1.5.1",
+	version: "0.5.3.5 DoLB version 0.1.5.1",
 	versionName: `"Houses Kept, Virginity Sold" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
