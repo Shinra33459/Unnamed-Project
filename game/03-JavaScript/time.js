@@ -690,8 +690,8 @@ function dayPassed() {
 	} else {
 		// Not seen bailey for more than 2 weeks, tracks missed rent
 		if (V.renttime < 0 && V.renttime % 7 === 0) {
-			V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
-			V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
+			V.baileyRefusedToPayTotal += (V.rentmoney * V.rentmod) + (V.babyRent || 0);
+			V.baileyRefusedToPayTotalStat += (V.rentmoney * V.rentmod) + (V.babyRent || 0);
 		}
 	}
 
