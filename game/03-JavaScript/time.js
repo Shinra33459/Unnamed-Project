@@ -673,33 +673,25 @@ function dayPassed() {
 		V.pound.tasks = [];
 	}
 
-	T.rentstage = V.rentstage;
+	V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][
+		Math.min(Math.max(V.rentstage - 1, 0), 6)
+	];
 
-	for (T.baileyDeposit = V.baileyDeposit; 
-		T.baileyDeposit >= V.rentmoney + (V.babyRent || 0); 
-		T.baileyDeposit -= V.rentmoney + (V.babyRent || 0)) {
-		
-		V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][
-			Math.min(Math.max(T.rentstage - 1, 0), 6)
-		];
-
-		if (V.robinpaid === 1) {
-			V.rentmoney *= 2;
-		}
-		T.rentstage += 1;
+	if (V.robinpaid === 1) {
+		V.rentmoney *= 2;
 	}
 
 	V.renttime--;
 	if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
 		if (V.renttime <= 0) {
 			V.renttime = 7;
-			V.baileyDeposit -= V.rentmoney + (V.babyRent || 0);
+			V.baileyDeposit -= (V.rentmoney * V.rentmod) + (V.babyRent || 0);
 		}
 	} else {
 		// Not seen bailey for more than 2 weeks, tracks missed rent
 		if (V.renttime < 0 && V.renttime % 7 === 0) {
-			V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
-			V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
+			V.baileyRefusedToPayTotal += (V.rentmoney * V.rentmod) + (V.babyRent || 0);
+			V.baileyRefusedToPayTotalStat += (V.rentmoney * V.rentmod) + (V.babyRent || 0);
 		}
 	}
 
