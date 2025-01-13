@@ -36,20 +36,20 @@
 		<hr>
 		<h1 class="header gold bold">Time-Sensitive</h1>
 		<ul class="journal">
-			<<if $baileyDeposit gte $rentmoney + ($babyRent or 0)>>
+			<<if $baileyDeposit gte ($rentmoney * $rentmod) + ($babyRent or 0)>>
 				<<set _rentstage to $rentstage>>
 				<<set _baileyDepositDays to 0>>
 				<<set _baileyDepositWorth to 0>>
-				<<for _baileyDeposit = $baileyDeposit; _baileyDeposit >= $rentmoney + ($babyRent or 0); _baileyDeposit -= $rentmoney + ($babyRent or 0)>>
+				<<for _baileyDeposit = $baileyDeposit; _baileyDeposit >= ($rentmoney * $rentmod) + ($babyRent or 0) && _baileyDepositDays lt 1000; _baileyDeposit -= ($rentmoney * $rentmod) + ($babyRent or 0)>>
 					<<set $rentmoney to [10000,30000,50000,70000,100000,150000,200000][Math.clamp(_rentstage - 1,0,6)]>>
 					<<if $robinpaid is 1>>
 						<<set $rentmoney *= 2>>
 					<</if>>
 					<<set _rentstage += 1>>
 					<<set _baileyDepositDays += 1>>
-					<<set _baileyDepositWorth += $rentmoney + ($babyRent or 0)>>
+					<<set _baileyDepositWorth += ($rentmoney * $rentmod) + ($babyRent or 0)>>
 				<</for>>
-				<li>You still have enough deposit for Bailey for <span class="gold">_baileyDepositDays</span> weeks which is worth <<printmoney _baileyDepositWorth>>.</li>
+				<li>You still have enough deposit for Bailey for <span class="gold">_baileyDepositDays</span><<if _baileyDepositDays gte 1000>>+<</if>> weeks which is worth <<printmoney _baileyDepositWorth>><<if _baileyDepositDays gte 1000>>+<</if>>.</li>
 			<<else>>
 				<<if $rentday isnot undefined>>
 					<<if $renttime lte 0>>
@@ -480,7 +480,7 @@
 				<li>
 				<<if $stallDeposit gte 3000>>
 					<<set _string to Math.floor($stallDeposit / 3000)>>
-					You are renting a stall and still have _string days worth of deposit.
+					You are renting a stall and still have <span class="gold">_string</span> days worth of deposit.
 				<<else>>
 					You are renting a stall and it will expire by today.
 				<</if>>
