@@ -90,6 +90,9 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 <<elseif $brotheljob is 1 and $fame.prostitution gte 200 and $brothelshowdata.intro is 1>>
 	<<generate1>><<person1>>The <<person>> guarding the door rests a hand on your shoulder. <span class="gold">"Boss wants to see you again."</span><<endevent>>
 	<br><br>
+<<elseif $brotheljob is 1 and $gloryholestat gte 100 and $brothelExclusiveGloryholeIntro is 0>>
+	<<generate1>><<person1>>The <<person>> guarding the door rests a hand on your shoulder. <span class="gold">"Boss wants to see you."</span><<endevent>>
+	<br><br>
 <</if>>
 
 <<if $brotheljob is 1>>
@@ -440,10 +443,12 @@ You enter a large crowded room. The smell of sweat is palpable. Several stages d
 	<<danceinit>>
 	<<robinbrothelappear>>
 	<<set $dancing to 1>>
-	<<set $venuemod to 3>>
+	<<set $venuemod to 3 * (1 + (0.4 * (C.npc.Briar.love / 100)))>>
 	<<set $dancelocation to "brothel">>
 <</if>>
-
+<<if $stress gte $stressmax>>
+	<<set $danceevent to "rape">>
+<</if>>
 <<danceeffects>>
 <<danceaudience>>
 <<danceactions>>
@@ -537,6 +542,23 @@ You enter a large crowded room. The smell of sweat is palpable. Several stages d
 	<br>
 	<<link [[Stand|Brothel Escort Job Intro]]>><<set $phase to 2>><</link>>
 
+<<elseif $brotheljob is 1 and $gloryholestat gte 100 and $brothelExclusiveGloryholeIntro is 0>>
+	<<set $brothelExclusiveGloryholeIntro to 1>>
+	Briar is sprawled on the sofa, holding a glass of wine. <<He>> smiles as you enter. "Well well well, if it isn't everybody's favorite hole."
+	<br><br>
+
+	You raise an eyebrow at the new nickname and Briar laughs "What? Did you think we wouldn't notice eventually? You've pleased quite a few customers..."
+	<br><br>
+
+	"Don't worry, you're not in trouble. I'm here to give you good news, actually. I've set up an exclusive gloryhole for you, that way people who've been asking for you will come running. Downside is... Well, people will know it's you."
+	<br><br>
+
+	"You can set your own prices... Though of course, you can't set it at ridiculous prices if you're not famous, even those horndogs' wallets have a limit. Anyway, it's in the basement if you'd like to use it. Go on now." Briar says, waving you away as <<he>> takes a sip of <<his>> wine.
+	<br><br>
+	<<endevent>>
+	<<link [[Next|Brothel]]>><</link>>
+	<br>
+
 <<elseif $brotheljob isnot 1>>
 
 	Briar sprawls on the sofa, holding a glass of wine. <<He>> looks up as you enter. "Have you reconsidered my offer?"
@@ -565,21 +587,21 @@ You enter a large crowded room. The smell of sweat is palpable. Several stages d
 		<<else>>
 			<span class="pink">no distraction set</span>,
 		<</if>>
-		<<if $pubfame.briar.distract is 2 and ($pubfame.briar.escape is 2 or $cat gte 6) or $pubfame.briar.distract isnot 2 and $pubfame.briar.escape isnot 2 and $cat lt 6>>
+		<<if $pubfame.briar.distract is 2 and ($pubfame.briar.escape is 2 or ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))) or $pubfame.briar.distract isnot 2 and $pubfame.briar.escape isnot 2 and $cat lt 6>>
 			and
 		<<else>>
 			but
 		<</if>>
 		<<if $pubfame.briar.escape is 2>>
 			<span class="green">an escape route planned</span>.
-		<<elseif $cat gte 6>>
+		<<elseif ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))>>
 			you could easily escape through the window. <span class="green">Cats always land on their feet.</span>
 		<<else>>
 			<span class="pink">no escape route planned</span>.
 		<</if>>
 		<<if !$pubfame.briar.notice and $pubfame.briar.distract isnot 2>>
 			<<set $pubfame.briar.notice to true>>
-			<<if $cat gte 6>>
+			<<if ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))>>
 				You could probably find a distraction by looking around the brothel.
 			<<else>>
 				You could probably find a distraction, and an escape route, by looking around the brothel.
@@ -647,7 +669,7 @@ You enter a large crowded room. The smell of sweat is palpable. Several stages d
 	Briar laughs before you finish. "That old thing," <<he>> says. "Doesn't work. Was fun for a while, but it needs-"
 	<br><br>
 
-	"A special fuel." It's your turn to interrupt. Briar looks surprised. "It has no plugs," you shrug. "And it doesn't take batteries, so I suspected that was the problem."
+	"A special fuel." It's your turn to interrupt. Briar looks surprised. "It has no plugs." You shrug. "And it doesn't take batteries, so I suspected that was the problem."
 	<br><br>
 
 	"I should be careful where I let you snoop around," Briar laughs. "You're right. They make the fuel nearby, a pink gel, but refuse to sell it."<<gcontrol>><<control 10>><<glove>><<npcincr Briar love 1>><<npcincr Briar dom -1>>
@@ -755,7 +777,7 @@ You've made <<moneyGain 2000>>.
 
 <<if $phase is 0>>
 
-<<set $tipmod to 3>><<tipset>>
+<<set $tipmod to Math.round((3 + (fameTotal() / 2000)) * (1 + (0.4 * (C.npc.Briar.love / 100))))>><<tipset>>
 
 <<promiscuity3>>You lead the <<person>> into one of the back rooms. It's well-lit compared to the main room, it takes a moment for your eyes to adjust. There's a small stage with a pole in one corner. There's also a sofa, contoured to allow an extensive range of positions.
 <br><br>
@@ -893,7 +915,7 @@ After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks y
 <<elseif $phase is 5>>
 <<rng>>
 	<<if $rng gte 21>>
-	<<He>> looks at you, as if unsure what to do. Finally, <<he>> says "You've probably got something contagious anyway." before leaving the room.
+	<<He>> looks at you, as if unsure what to do. Finally, <<he>> says, "You've probably got something contagious anyway," before leaving the room.
 	<br><br>
 
 <<clotheson>>
@@ -1049,7 +1071,7 @@ After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks y
 <<stateman>>
 <br><br>
 <<actionsman>>
-<<if $alarm is 1>>
+<<if $alarm is 1 and _combatend is true>>
 	<<if $rescue is 0>>
 		<<set $alarm to 0>>
 		<br><br>
@@ -1061,9 +1083,9 @@ After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks y
 			<span id="next"><<link [[Next|Brothel Dance Rape]]>><</link>></span><<nexttext>>
 		<</if>>
 	<</if>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
+<<elseif $enemyarousal gte $enemyarousalmax and _combatend is true>>
 	<span id="next"><<link [[Next|Brothel Dance Rape Finish]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
+<<elseif $enemyhealth lte 0 and _combatend is true>>
 	<span id="next"><<link [[Next|Brothel Dance Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Brothel Dance Rape]]>><</link>></span><<nexttext>>
@@ -1283,10 +1305,13 @@ You are led down a dim corridor. You can hear music playing somewhere above. The
 	<<if $punishmentposition is "wall">>
 		<<set $position to "wall">>
 		<<set $enemyhealthmax to 1000>><<set $enemyhealth to 1000>>
+		<<healthMultiplier>>
 		<<else>><!-- Gloryhole outcome with $punishmentposition = "gloryhole" -->
 		<<npcoral>>
 		<<set $enemyhealthmax to 10>><<set $enemyhealth to 10>>
 		<<set $enemyarousal to $enemyarousalmax - 100>>
+		<<healthMultiplier>>
+		<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
 		<<set $NPCList[0].lefthand to "none">>
 		<<set $position to "doggy">>
 		<<set $NPCList[0].righthand to "none">>
@@ -1860,6 +1885,7 @@ You wash until you're squeaky clean.<<wash>><<wearProp "soap">>
 <span class="red">You hear a crash outside, followed by shouts and screams.</span> The <<person>> freezes.
 <<set $enemyarousal to 0>><<set $enemytrust to -200>>
 <<set $enemyhealth to ($enemyhealthmax / 5) * 4>><<set $enemyanger to ($enemyangermax / 5) * 2>>
+<<healthMultiplier>>
 <<animateCombat>>
 <<stateman>>
 <br><br>
@@ -2173,13 +2199,13 @@ You enter the brothel, passing Briar's goon, who leers at you but says nothing.
 	<br>
 	<<link [[Get angry|Brothel Exposed Angry]]>><<def 1>><<pain 6>><<trauma -6>><</link>><<ltrauma>><<gpain>>
 	<br>
-	<<if $submissive lte 500>>
+	/* <<if $submissive lte 500>> */
 		<<link [[Intimidate|Brothel Exposed Intimidate]]>><<trauma -6>><<stress -6>><</link>><<defianttext>><<ltrauma>><<lstress>>
 		<br>
-	<<elseif $submissive gte 1500>>
+	/* <<elseif $submissive gte 1500>> */
 		<<link [[Plead|Brothel Exposed Plead]]>><<trauma -6>><<stress -6>><</link>><<submissivetext>><<ltrauma>><<lstress>>
 		<br>
-	<</if>>
+	/* <</if>> */
 <<else>>
 	<<link [[Next|Brothel]]>><</link>>
 	<br>
@@ -2392,7 +2418,7 @@ You wait until you're sure Briar is gone, then rush to the laptop. You plug the 
 		<<pubfameComplete "briar">>
 
 		<<link [[Next|Harvest Street]]>><<endevent>><</link>>
-	<<elseif $cat gte 6>>
+	<<elseif ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))>>
 		<<set $pubfame.detail to "briarWindow">>
 		You make your way over to the window and slip out. You grab onto the handle and let it slide shut, before dropping to the ground. Briar won't know you did a thing.
 		<br><br>
@@ -2438,7 +2464,7 @@ You wait until you're sure Briar is gone, then rush to the laptop. You plug the 
 		<<pubfameComplete "briar" "punish">>
 
 		<<link [[Next|Harvest Street]]>><<endevent>><</link>>
-	<<elseif $cat gte 6>>
+	<<elseif ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))>>
 		<<set $briarPunishment to 5>><<set $pubfame.detail to "briarWindow">>
 		The guards advance on you, and you run to the window. "That's a two storey drop," <<he>> laughs. "Go ahead, though. It might still be better than what I've in mind."
 		<br><br>
@@ -2451,7 +2477,7 @@ You wait until you're sure Briar is gone, then rush to the laptop. You plug the 
 		<<link [[Next|Harvest Street]]>><<endevent>><</link>>
 	<<else>>
 		The guards advance on you, and you run to the window. "That's a two storey drop," <<he>> laughs. "Go ahead, though. It might still be better than what I've in mind."
-		<<if $harpy gte 6 or $angel gte 6 or $demon gte 6 or $fallenangel gte 2>>
+		<<if ($harpy gte 6 or ($transformationParts.bird.wings isnot "hidden" and $transformationParts.bird.wings isnot "disabled")) or ($angel gte 6 or ($transformationParts.angel.wings isnot "hidden" and $transformationParts.angel.wings isnot "disabled")) or ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled")) or ($fallenangel gte 2 or ($transformationParts.fallenAngel.wings isnot "hidden" and $transformationParts.fallenAngel.wings isnot "disabled"))>>
 			The ground is far, but still too close for your wings to slow your descent enough to give you a safe landing.
 		<</if>>
 		<br><br>
@@ -2519,7 +2545,12 @@ You ask Briar if <<he>> has already checked your vending machine's stock and col
 	<<set _productProfit to Math.max(0, _productProfit - $brothelVending.weeksRent * 5000)>>
 	<<if _productProfit>>
 		<<set _pcProfit to _productProfit * .4>>
-		and my 60% cut. Here's your profit of <span class="green"><<formatmoney _pcProfit>>_printmoney</span>, plus the <span class="blue"><<formatmoney _productCost>>_printmoney</span> you spent stocking the machine." <<He>> hands you your earnings. You make <<printmoney `_productCost + _pcProfit`>>. "Pleasure doing business with you."
+		<<set _pcProfit to _pcProfit + ((_productCost / 100) * C.npc.Briar.love)>>
+		<<set _briarCut to 60 * ((100 - C.npc.Briar.love) / 100)>>
+		<<if _briarCut gt 0>>
+			and my _briarCut% cut.
+		<</if>>
+		Here's your profit of <span class="green"><<formatmoney _pcProfit>>_printmoney</span>, plus the <span class="blue"><<formatmoney _productCost>>_printmoney</span> you spent stocking the machine." <<He>> hands you your earnings. You make <<printmoney `_productCost + _pcProfit`>>. "Pleasure doing business with you."
 		<<famebusiness 2>>
 		<<money _pcProfit "brothelVendingMachine">>
 	<<else>>
@@ -2758,11 +2789,11 @@ You are bound and suspended, unable to move or see. Laughter and lively chatter 
 <<link [[Endure|Brothel Escort Job 2]]>><<set $phase to 1>><<endevent "phaseless">><<stress 6>><<trauma 1>><</link>><<gstress>><<gtrauma>>
 <br>
 
-<<if $submissive gte 1150>>
-    <<link [[Be obedient|Brothel Escort Job 2]]>><<set $phase to 2>><<set $brothel_escortjob.sub += 1>><<endevent "phaseless">><</link>><<submissivetext>>
-<<elseif $submissive lte 850>>
+/* <<if $submissive gte 1150>> */
+    <<link [[Be obedient|Brothel Escort Job 2]]>><<set $phase to 2>><<set $brothel_escortjob.sub += 1>><<endevent "phaseless">><</link>><<submissivetext>><br>
+/* <<elseif $submissive lte 850>> */
     <<link [[Be defiant|Brothel Escort Job 2]]>><<set $phase to 3>><<endevent "phaseless">><</link>><<defianttext>>
-<</if>>
+/* <</if>> */
 <br>
 
 <<if hasSexStat("promiscuity", 4)>>
@@ -2899,11 +2930,11 @@ Some leave the room and the crowd slowly disperses.
 The <<person1>><<person>> grabs you by the chin and lifts your head to get a good look at your face.
 <br><br>
 
-<<if $submissive gte 1150>>
-    <<link [[Be submissive|Brothel Escort Job End 2]]>><<set $phase to 1>><<set $brothel_escortjob.sub += 1>><</link>><<submissivetext>>
-<<elseif $submissive lte 850>>
+/* <<if $submissive gte 1150>> */
+    <<link [[Be submissive|Brothel Escort Job End 2]]>><<set $phase to 1>><<set $brothel_escortjob.sub += 1>><</link>><<submissivetext>><br>
+/* <<elseif $submissive lte 850>> */
     <<link [[Look into their eyes|Brothel Escort Job End 2]]>><<set $phase to 2>><</link>><<defianttext>>
-<</if>>
+/* <</if>> */
 <br>
 
 <<link [[Avert your eyes|Brothel Escort Job End 2]]>><<set $phase to 3>><</link>>

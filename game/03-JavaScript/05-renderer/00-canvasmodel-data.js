@@ -1,4 +1,6 @@
 const ZIndices = {
+	deco_bg: -10,
+	
 	flatlight: -4,
 	gradientlight: -3,
 	glowlight: -2,
@@ -24,8 +26,10 @@ const ZIndices = {
 	armsidle: 30,
 	handsidle: 31.5,
 	under_upper_arms: 32,
+	under_upper_arm_right: 90.3,
 	bellyBase: 33,
 	breasts: 35,
+	highBreasts: 115,
 	breastsparasite: 36,
 	tanbreasts: 30,
 	blush: 50,
@@ -101,6 +105,10 @@ const ZIndices = {
 
 	tailPenisCover: 165,
 	tailPenisCoverOverlay: 166,
+
+	old_over_upper: 171,
+
+	deco_fg: 300,
 };
 window.ZIndices = ZIndices;
 

@@ -66,6 +66,9 @@
 		<</for>>
 	<</if>>
 
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -114,6 +117,9 @@
 	<!--Used to prevent certain variables being repeated during re-generation-->
 	<<set $combatTrain.generateInit to 0>>
 
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($beastArousalMult / 100)>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -146,6 +152,23 @@
 	<<if $dissociation gte 1>>
 		<<set $enemytrust -= 40>>
 	<</if>>
+
+	<<if $beastGroupFight is 1>>
+		<<set $enemynomax to $enemyno>>
+		<<set $enemyhealth to 0>>
+		<<for _i to 0; _i lt $enemyno; _i++>>
+			<<if $NPCList[_i].health isnot undefined>>
+				<<set $enemyhealth += $NPCList[_i].health>>
+			<</if>>
+		<</for>>
+		<<if $enemyhealth is 0>><<set $enemyhealth to 199>><</if>><!-- This is set for compatibility elsewhere if needed, v2.2.0... -->
+		<<set $enemyhealthmax to $enemyhealth>>
+		<<if $enemyhealthmax is 0>><<set $enemyhealthmax to 199>><</if>><!-- This is set for compatibility elsewhere if needed, v2.2.0... -->
+		<<set $enemyarousalmax to 500 * $enemyno>>
+	<</if>>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($beastArousalMult / 100)>>
 
 	<<set $enemytype to "beast">>
 	<<if $NPCList[0].monster is "monster">>
@@ -217,9 +240,26 @@
 	<<set $enemyno to _nn>>
 	<<set $enemytype to "beast">>
 
+	<<if $beastGroupFight is 1>>
+		<<set $enemynomax to $enemyno>>
+		<<set $enemyhealth to 0>>
+		<<for _i to 0; _i lt $enemyno; _i++>>
+			<<if $NPCList[_i].health isnot undefined>>
+				<<set $enemyhealth += $NPCList[_i].health>>
+			<</if>>
+		<</for>>
+		<<if $enemyhealth is 0>><<set $enemyhealth to 199>><</if>><!-- This is set for compatibility elsewhere if needed, v2.2.0... -->
+		<<set $enemyhealthmax to $enemyhealth>>
+		<<if $enemyhealthmax is 0>><<set $enemyhealthmax to 199>><</if>><!-- This is set for compatibility elsewhere if needed, v2.2.0... -->
+		<<set $enemyarousalmax to 500 * $enemyno>>
+	<</if>>
+
 	<!-- NG This means if Beast 1 is a monster, they are all monsters -->
 	<!-- This should be fixed globally later -->
 	<<set $monster to ($NPCList[0].monster is "monster" ? 1 : 0)>>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($beastArousalMult / 100)>>
 <</widget>>
 
 <<widget "beastPARTNERinit">>
@@ -283,6 +323,23 @@
 	<<set $stresssaved to $stress>>
 	<<set $traumagain to 0>>
 	<<set $stressgain to 0>>
+
+	<<if $beastGroupFight is 1>>
+		<<set $enemynomax to $enemyno>>
+		<<set $enemyhealth to 0>>
+		<<for _i to 0; _i lt $enemyno; _i++>>
+			<<if $NPCList[_i].health isnot undefined>>
+				<<set $enemyhealth += $NPCList[_i].health>>
+			<</if>>
+		<</for>>
+		<<if $enemyhealth is 0>><<set $enemyhealth to 199>><</if>><!-- This is set for compatibility elsewhere if needed, v2.2.0... -->
+		<<set $enemyhealthmax to $enemyhealth>>
+		<<if $enemyhealthmax is 0>><<set $enemyhealthmax to 199>><</if>><!-- This is set for compatibility elsewhere if needed, v2.2.0... -->
+		<<set $enemyarousalmax to 500 * $enemyno>>
+	<</if>>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($beastArousalMult / 100)>>
 
 	<!-- NG This means if Beast 1 is a monster, they are all monsters -->
 	<!-- This should be fixed globally later -->
@@ -354,6 +411,10 @@
 	<<set $traumagain to 0>>
 	<<set $stressgain to 0>>
 
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -386,6 +447,10 @@
 	<<set $traumagain to 0>>
 	<<set $stressgain to 0>>
 
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -417,6 +482,10 @@
 	<<set $stresssaved to $stress>>
 	<<set $traumagain to 0>>
 	<<set $stressgain to 0>>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
 
 	<<combatinit>>
 <</widget>>
@@ -453,6 +522,10 @@
 	<<set $leftarm to "bound">>
 	<<set $rightarm to "bound">>
 
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -488,6 +561,10 @@
 	<<if Time.dayState isnot "night">><<enable_rescue>><</if>>
 
 	<<hand_gag 0 left>>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
 
 	<<combatinit>>
 <</widget>>
@@ -527,6 +604,10 @@
 
 	<<if Time.dayState isnot "night">><<enable_rescue>><</if>>
 
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -560,6 +641,10 @@
 	<<set $stressgain to 0>>
 
 	<<drugs 120>>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
 
 	<<combatinit>>
 <</widget>>
@@ -612,6 +697,10 @@
 	<!--Prevents the use of asking for condoms-->
 	<<set $NPCList[0].condomAsk to true>>
 
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -650,6 +739,10 @@
 	<<set $leftarm to "grappled">>
 	<<set $rightarm to "grappled">>
 
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -681,6 +774,10 @@
 	<<set $stresssaved to $stress>>
 	<<set $traumagain to 0>>
 	<<set $stressgain to 0>>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
 
 	<<combatinit>>
 <</widget>>
@@ -714,6 +811,8 @@
 	<<set $stresssaved to $stress>>
 	<<set $traumagain to 0>>
 	<<set $stressgain to 0>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
 
 	<<combatinit>>
 <</widget>>
@@ -779,6 +878,10 @@
 	<<set $enemyno to 1>>
 
 	<<set $NPCList[0].pronoun to "n">>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($beastArousalMult / 100)>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -823,6 +926,10 @@
 	<<set $enemyno to 1>>
 
 	<<set $NPCList[0].pronoun to "n">>
+
+	<<healthMultiplier>>
+	<<set $enemyarousalmax to $enemyarousalmax * ($beastArousalMult / 100)>>
+
 	<<combatinit>>
 <</widget>>
 
@@ -861,6 +968,8 @@
 			<</if>>
 		<</for>>
 	<</if>>
+
+	<<set $initialGenderAppearance to $player.gender_appearance>>
 
 	<<set $newlyWritten to []>>
 
@@ -959,6 +1068,10 @@
 				Air: <<oxygencaption>>
 				<br>
 			<</if>>
+			<<if $combatExtended.stability gt 0 and $combatExtended.stabilityLost isnot 1 and $combatExtended.standingFights is 1 and $position isnot "stalk">>
+				Stability: <<combatExtendedStabilityCaption>>
+				<br>
+			<</if>>
 		</div>
 	<</if>>
 
@@ -975,6 +1088,22 @@
 			<<schoolrep_naked>>
 		<</if>>
 		<<if $genitalReactionDisable>>
+			<<set _noReaction to true>>
+		<<elseif $player.penisExist and $player.vaginaExist>>
+			<<if $initialGenderAppearance is "m" ? $mhermchance gte 50 : $fhermchance gte 50>>
+				<<set _noReaction to true>>
+			<</if>>
+		<<elseif $player.penisExist>>
+			<<if $initialGenderAppearance is "m" ? $mregularchance gte 50 : $dgchance gte 50>>
+				<<set _noReaction to true>>
+			<</if>>
+		<<elseif $player.vaginaExist>>
+			<<if $initialGenderAppearance is "m" ? $cbchance gte 50 : $fregularchance gte 50>>
+				<<set _noReaction to true>>
+			<</if>>
+		<</if>>
+
+		<<if _noReaction>>
 			<!-- No reaction -->
 		<<elseif $crossdressing is 2>> <!-- Herm PC -->
 			<<if $npc.length is 1 and (["Kylar","Sydney"].includes($npc[0]))>>
@@ -1095,7 +1224,9 @@
 			<</if>>
 		<</if>>
 		<<set $crossdressing to 0>>
-		<br><br>
+		<<if !_noReaction>>
+			<br><br>
+		<</if>>
 
 	<</if>>
 
@@ -1220,6 +1351,29 @@
 			<p>Combat menu</p>
 		</label>
 		<hr>
+		<<if $combatExtended.reverseRape is 1 and $pain lt 100 and $combatExtended.reverseRapeEnd is 0>>
+			<<if $combatExtended.reverseRapeStart is 1>>
+				<label class="cbtOption">
+					<p>End Reverse Rape</p>
+					<<link [[Stop|$passage]]>><<set $combatExtended.reverseRapeEnd to 1>><</link>>
+				</label>
+			<<else>>
+				<<if $reverseRapeOptOutInit is undefined>>
+					<<set $combatExtended.reverseRapeInit to $reverseRapeOptOut>>
+					<<unset $reverseRapeOptOutInit>>
+				<</if>>
+				<label class="cbtOption">
+					<p>Reverse Rape</p>
+					<<if hasSexStat("promiscuity", 5)>>
+						<label>
+							<<checkbox "$combatExtended.reverseRapeInit" 0 1 autocheck>>
+						</label><br>
+					<<else>>
+						<span class="black"><i>Unlock level 5 promiscuity.</i></span>
+					<</if>>
+				</label>
+			<</if>>
+		<</if>>
 		<label class="cbtOption">
 			<p>Control types</p>
 			<<listbox "$options.combatControls" autoselect>>

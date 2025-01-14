@@ -129,9 +129,9 @@
 			<span class="gold">Miscellaneous</span>
 			<br>
 			<<numberStepper "Money" $money {
-				activeButtons: ["single", "double", "triple"],
+				activeButtons: ["single", "double", "triple", "quad", "penta"],
 				step: 1000,
-				max: 10000000000,
+				max: 100000000000,
 				colorArr:["--yellow"],
 				percentage: false,
 				valueFormat: (value) => `<b>${formatMoney(value)}</b>`,
@@ -266,7 +266,7 @@
 				},
 				step: 10,
 				valueFormat: value => Math.round(value) + "ml",
-				percentage: false, min: 24, max: 3000
+				percentage: false, min: 24, max: $milk_max * $AMCTraits.milk
 			}>>
 			<<if $player.penisExist>>
 				<<numberStepper "Semen Volume" $semen_volume {
@@ -277,7 +277,7 @@
 					},
 					step: 10,
 					valueFormat: value => Math.round(value) + "ml",
-					percentage: false, max: 3000
+					percentage: false, max: $semen_max * $AMCTraits.semen
 				}>>
 			<</if>>
 		</div>
@@ -553,7 +553,7 @@
 			|
 			<<link "Set all to max">>
 				<<for _i range _core>>
-					<<set V[_i] to 20000>><<clamp>>
+					<<set V[_i] to 50000>><<clamp>>
 				<</for>>
 				<<replace "#characteristics">><<cheatSection "characteristics">><</replace>>
 			<</link>>
@@ -580,19 +580,27 @@
 		</div>
 
 		<div class="settingsToggleItem">
-			<<set _skills to ["skulduggery", "skulduggeryday", "danceskill", "swimmingskill", "athletics", "tending", "housekeeping"]>>
+			<<set _skills to ["skulduggery", "skulduggeryday", "danceskill", "swimmingskill", "athletics", "tending", "housekeeping", "brawling"]>>
 			<span class="gold">Core Skills</span>
 			<br>
 			<<link "Set all to 0">>
 				<<for _i range _skills>>
-					<<set V[_i] to 0>><<clamp>>
+					<<if _i isnot "brawling">>
+						<<set V[_i] to 0>><<clamp>>
+					<<else>>
+						<<set $combatExtended[_i] to 0>><<clamp>>
+					<</if>>
 				<</for>>
 				<<replace "#coreSkills">><<cheatSection "skills">><</replace>>
 			<</link>>
 			|
 			<<link "Set all to max">>
 				<<for _i range _skills>>
-					<<set V[_i] to 20000>><<clamp>>
+					<<if _i isnot "brawling">>
+						<<set V[_i] to 20000>><<clamp>>
+					<<else>>
+						<<set $combatExtended[_i] to 20000>><<clamp>>
+					<</if>>
 				<</for>>
 				<<replace "#coreSkills">><<cheatSection "skills">><</replace>>
 			<</link>>
@@ -609,14 +617,16 @@
 					<<set V[_i] to 0>><<clamp>>
 				<</for>>
 				<<adjust_school_traits>>
+				<<exam_difficulty>>
 				<<replace "#schoolSkills">><<cheatSection "school">><</replace>>
 			<</link>>
 			|
 			<<link "Set all to max">>
 				<<for _i range _subjects>>
-					<<set V[_i] to 1000>><<clamp>>
+					<<set V[_i] to 2000>><<clamp>>
 				<</for>>
 				<<adjust_school_traits>>
+				<<exam_difficulty>>
 				<<replace "#schoolSkills">><<cheatSection "school">><</replace>>
 			<</link>>
 			<br><br>
@@ -638,7 +648,7 @@
 			|
 			<<link "Set all to max">>
 				<<for _i range _sexSkills>>
-					<<set V[`${_i}skill`] to 1000>><<clamp>>
+					<<set V[`${_i}skill`] to 2000>><<clamp>>
 				<</for>>
 				<<replace "#cheatsSex">><<cheatSection "sex">><</replace>>
 			<</link>>
@@ -646,6 +656,29 @@
 
 			<span id="cheatsSex">
 				<<cheatSection "sex">>
+			</span>
+		</div>
+
+		<div class="settingsToggleItem">
+			<<set _hypnosis to ["scream", "cover", "deviancy"]>>
+			<span class="gold">Hypnosis Traits</span>
+			<br>
+			<<link "Set all to 0">>
+				<<for _i range _hypnosis>>
+					<<set V.hypnosis_traits[_i] to 0>><<clamp>>
+				<</for>>
+				<<replace "#hypnosis">><<cheatSection "hypnosis">><</replace>>
+			<</link>>
+			|
+			<<link "Set all to max">>
+				<<for _i range _hypnosis>>
+					<<set V.hypnosis_traits[_i] to 5>><<clamp>>
+				<</for>>
+				<<replace "#hypnosis">><<cheatSection "hypnosis">><</replace>>
+			<</link>>
+			<br><br>
+			<span id="hypnosis">
+				<<cheatSection "hypnosis">>
 			</span>
 		</div>
 
@@ -1153,11 +1186,14 @@
 			<<tficon "cow">>Cow: <<link "Set">><<cowTransform>><<updatesidebarimg>><</link>> | <<link "Clear">><<cowTransform 99>><<updatesidebarimg>><</link>><br>
 			<<tficon "harpy">>Bird: <<link "Set">><<harpyTransform>><<updatesidebarimg>><</link>> | <<link "Clear">><<harpyTransform 99>><<updatesidebarimg>><</link>><br>
 			<<tficon "fox">>Fox: <<link "Set">><<foxTransform>><<updatesidebarimg>><</link>> | <<link "Clear">><<foxTransform 99>><<updatesidebarimg>><</link>><br>
+			<<tficon "bear">>Bear: <<link "Set">><<bearTransform>><<updatesidebarimg>><</link>> / <<link "Clear">><<bearTransform 99>><<updatesidebarimg>><</link>><br>
 			<<tficon "bunny">>Bunny: <<link "Set">><<bunnyTransform>><<updatesidebarimg>><</link>> / <<link "Clear">><<bunnyTransform 99>><<updatesidebarimg>><</link>><br>
 		</div>
 	<div class="settingsToggleItem">
 		<span class="gold">Transformation Points</span>
-		<<for _tf range ["angel", "fallen", "demon", "wolf", "cat", "cow", "bird", "fox", "bunny"]>>
+		<br>
+		<span class="description">Angel and Cat require 50 points to reach their full transformation, while all others require 30 points. Fallen Angel requires 30 points for Acceptance.</span>
+		<<for _tf range ["angel", "fallen", "demon", "wolf", "cat", "cow", "bird", "fox", "bear", "bunny"]>>
 			<<capture _tf>>
 				<<set _name to (_tf is "fallen" ? "Fallen Angel" : _tf)>>
 				<<set _title to `<<tficon _tf>> ${toTitleCase(_name)}`>>
@@ -1443,21 +1479,88 @@
 				<span class="green">The farm is peaceful.</span>
 			<</if>>
 		<<case "farm">>
-			One of the fields is being cleared,
-			<<if $farm.clearing lte 0>>
-				<span class="green">and is ready for planting!</span>
-			<<elseif $farm.clearing lte 20>>
-				<span class="teal">and is almost ready for planting.</span>
-			<<elseif $farm.clearing lte 40>>
-				<span class="lblue">and is starting to look civilised.</span>
-			<<elseif $farm.clearing lte 60>>
-				<span class="blue">and soil has been exposed in places.</span>
-			<<elseif $farm.clearing lte 80>>
-				<span class="purple">but the tangle remains defiant.</span>
-			<<elseif $farm.clearing lte 99>>
-				<span class="pink">but little progress has been made.</span>
-			<<else>>
-				<span class="red">but remains a jungle of weeds.</span>
+			<<if $farm_stage lt 12>>
+				<<set _clearing to (100 - $farm.clearing)>>
+				<<set _percent=Math.floor((_clearing/100)*100)>>
+				One of the fields is being cleared,
+				<<if $farm.clearing lte 0>>
+					<span class="green">and is ready for planting!</span>
+					<div class="meter">
+					<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 20>>
+					<span class="teal">and is almost ready for planting.</span>
+					<div class="meter">
+					<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 40>>
+					<span class="lblue">and is starting to look civilised.</span>
+					<div class="meter">
+					<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 60>>
+					<span class="blue">and soil has been exposed in places.</span>
+					<div class="meter">
+					<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 80>>
+					<span class="purple">but the tangle remains defiant.</span>
+					<div class="meter">
+					<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 99>>
+					<span class="pink">but little progress has been made.</span>
+					<div class="meter">
+					<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<else>>
+					<span class="red">but remains a jungle of weeds.</span>
+					<div class="meter">
+					<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<</if>>
+				<br>
+			<<elseif $farm.waterField is 1 and !$farm.build_finished.includes("water field 2")>>
+				<<set _clearing to (1200 - $farm.clearing)>>
+				<<set _percent=Math.floor((_clearing/1200)*100)>>
+				The water field is being excavated and shaped,
+				<<if $farm.clearing lte 0>>
+					<span class="green">and is ready for the next phase!</span>
+					<div class="meter">
+					<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 240>>
+					<span class="teal">and is almost fully excavated.</span>
+					<div class="meter">
+					<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 480>>
+					<span class="lblue">and significant progress has been made.</span>
+					<div class="meter">
+					<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 720>>
+					<span class="blue">and the digging is well underway.</span>
+					<div class="meter">
+					<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 960>>
+					<span class="purple">but there's still much earth to move.</span>
+					<div class="meter">
+					<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<elseif $farm.clearing lte 1199>>
+					<span class="pink">but progress is slow.</span>
+					<div class="meter">
+					<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<<else>>
+					<span class="red">but the site remains untouched.</span>
+					<div class="meter">
+					<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
+					</div>
+				<</if>>
+				<br>
 			<</if>>
 			<<if $farm.clearing gt 0>>
 				| <<farmicon "clear yard">><<link "Clear field">><<set $farm.clearing to 0>><<replace "#farmYard">><<cheatsRep "farm">><</replace>><</link>>
@@ -1567,11 +1670,31 @@
 				<hr>
 				<span class="gold">Town Outskirts</span>
 				<br>
-				<<foresticon>><<link [[Forest]]>><<cheats-teleport-function>><</link>>
+				<u>Forest</u><br>
+				<<foresticon>><<link [[Forest Outskirts|Forest]]>><<set $forest = 0>><<cheats-teleport-function>><</link>><br>
+				<<foresticon>><<link [[Forest Sparse|Forest]]>><<set $forest = 20>><<cheats-teleport-function>><</link>><br>
+				<<foresticon>><<link [[Forest Lake|Forest]]>><<set $forest = 50>><<cheats-teleport-function>><</link>><br>
+				<<foresticon>><<link [[Forest Deep|Forest]]>><<set $forest = 99>><<cheats-teleport-function>><</link>><br>
 				<br>
-				<<roadicon>><<link [[Farm Road 1]]>><<cheats-teleport-function>><</link>>
+				<u>Forest Lake Locations</u><br>
+				<<lakeicon>><<link [[Forest Lake Shore|Lake Shore]]>><<cheats-teleport-function>><</link>><br>
+				<<lakeicon>><<link [[Forest Lake Firepit|Lake Firepit]]>><<cheats-teleport-function>><</link>><br>
+				<<lakeicon>><<link [[Forest Lake Waterfall|Lake Waterfall]]>><<cheats-teleport-function>><</link>><br>
+				<<lakeicon>><<link [[Forest Lake Fishing Rock|Lake Fishing Rock]]>><<cheats-teleport-function>><</link>><br>
+				<<lakeicon>><<link [[Forest Lake Campsite|Lake Campsite]]>><<cheats-teleport-function>><</link>><br>
 				<br>
-				<<farmicon "barn">><<link [[Farmlands|Farmland]]>><<cheats-teleport-function>><</link>>
+				<u>Plains</u><br>
+				<<farmicon "barn">><<link [[Farmland|Farmland]]>><<cheats-teleport-function>><</link>><br>
+				<<farmicon "meadow">><<link [[Meadow|Meadow]]>><<cheats-teleport-function>><</link>><br>
+				<<farmicon "horse">><<link [[Riding School|Riding School]]>><<cheats-teleport-function>><</link>><br>
+				<<mooricon "remy">><<link [[Remy's Estate (Gate)|Estate]]>><<estate_init gate>><<cheats-teleport-function>><</link>><br>
+				<<getinicon>><<link [[Remy's Estate (Secret)|Estate]]>><<estate_init secret>><<cheats-teleport-function>><</link>><br>
+				<br>
+				<u>Moor</u><br>
+				<<mooricon>><<link [[Moor Plains|Moor]]>><<set $moor = 1>><<cheats-teleport-function>><</link>><br>
+				<<mooricon>><<link [[Moor Rocky|Moor]]>><<set $moor = 21>><<cheats-teleport-function>><</link>><br>
+				<<mooricon>><<link [[Moor Bubbles|Moor]]>><<set $moor = 51>><<cheats-teleport-function>><</link>><br>
+				<<mooricon>><<link [[Moor Castle|Moor]]>><<set $moor = 100>><<cheats-teleport-function>><</link>><br>
 			</div>
 			<div class="settingsToggleItem">
 				<span class="gold">Town Streets</span>
@@ -1623,6 +1746,33 @@
 				<<sewericon>><<link [[Sewers Commercial]]>><<cheats-teleport-function>><</link>>
 				<br>
 				<<sewericon>><<link [[Sewers Industrial]]>><<cheats-teleport-function>><</link>>
+				<hr>
+				<span class="gold">Sea</span>
+				<br>
+				<<swimicon>><<link [[Sea Nearby Beach|Sea]]>><<set $sea = 0>><<cheats-teleport-function>><</link>><br>
+				<<swimicon>><<link [[Sea Nearby Town|Sea]]>><<set $sea = 20>><<cheats-teleport-function>><</link>><br>
+				<<swimicon>><<link [[Sea Distant Town|Sea]]>><<set $sea = 50>><<cheats-teleport-function>><</link>><br>
+				<<swimicon>><<link [[Sea Horizon Town|Sea]]>><<set $sea = 99>><<cheats-teleport-function>><</link>><br>
+				<<swimicon>><<link [[Sea Endless Deep|Sea]]>><<set $sea = 100>><<cheats-teleport-function>><</link>><br>
+				<hr>
+				<span class="gold">Unsafe Teleports</span>
+				<br>
+				Caution: Teleporting to these locations may or may not break your save. Use after saving and at your own risk.
+				<br><br>
+				<u>Forest Locations</u><br>
+				<<edenicon>><<link [[Eden Cabin|Eden Cabin]]>><<cheats-teleport-function>><</link>><br>
+				<<foresticon "churchyard">><<link [[Churchyard|Churchyard]]>><<cheats-teleport-function>><</link>><br>
+				<<getinicon>><<link [[Wolf Cave|Wolf Cave]]>><<cheats-teleport-function>><</link>><br>
+				<br>
+				<u>Others</u><br>
+				<<compoundicon>><<link [[Elk Compound|Elk Compound]]>><<cheats-teleport-function>><</link>><br>
+				<<asylumicon  "cell">><<link [[Asylum|Asylum Cell]]>><<cheats-teleport-function>><</link>><br>
+				<<link [[Underground Brothel|Underground Cell]]>><<cheats-teleport-function>><</link>><br>
+				<<link [[Underground Farm|Livestock Cell]]>><<cheats-teleport-function>><</link>><br>
+				<<link [[Tentacle Plains|Tentacle Plains]]>><<cheats-teleport-function>><</link>><br>
+				<<link [[Night Monster Lair|Monster Tower]]>><<cheats-teleport-function>><</link>><br>
+				<<link [[Great Hawk Tower|Bird Tower]]>><<cheats-teleport-function>><</link>><br>
+				<<prisonicon "cell">><<link [[Prison Cell|Prison Cell]]>><<prison_init>><<cheats-teleport-function>><</link>><br>
 			</div>
 		<<else>>
 			<div class="settingsToggleItemWide">
@@ -1663,6 +1813,13 @@
 				<<capture _hr>>
 					<<set _hours to _i is 0 ? "hour" : "hours">>
 					<<link [[_hr _hours|$passage]]>><<pass _hr hour>><</link>>
+					/* <<= _i lt 7 ? "<br>" : "">> */
+					<br>
+				<</capture>>
+			<</for>>
+			<<for _i, _dy range [2, 3, 4, 5, 6, 7, 14, 28]>>
+				<<capture _dy>>
+					<<link [[_dy + " days"|$passage]]>><<pass _dy days>><</link>>
 					<<= _i lt 7 ? "<br>" : "">>
 				<</capture>>
 			<</for>>
@@ -1701,6 +1858,19 @@
 			<<numberStepper "Sets" $maxDefaultActionSets "maxDefaultActionSets" {min: 1, max: 10, step: 1, colorArr: ["--teal", "--teal"], percentage: false, activeButtons: ["single", "minMax"]}>>
 		</div>
 	<</if>>
+
+	<br><br>
+	<<link "Unlock All Seeds">><<run unlockAllSeeds()>><</link>>
+	<br><br>
+	<<link "<<<">><<set $swimnudecounter -= 100>><<set $swimnudecounter = Math.clamp($swimnudecounter, 0, 100)>><<replace "#statswimnudecounter">><<print Math.trunc($swimnudecounter)>><</replace>><</link>> |
+	<<link "<<">><<set $swimnudecounter -= 10>><<set $swimnudecounter = Math.clamp($swimnudecounter, 0, 100)>><<replace "#statswimnudecounter">><<print Math.trunc($swimnudecounter)>><</replace>><</link>> |
+	<<link "<">><<set $swimnudecounter -= 1>><<set $swimnudecounter = Math.clamp($swimnudecounter, 0, 100)>><<replace "#statswimnudecounter">><<print Math.trunc($swimnudecounter)>><</replace>><</link>> |
+	School Pool Swim Nude Counter: <span id="statswimnudecounter"><<print Math.trunc($swimnudecounter)>></span>
+	| <<link ">">><<set $swimnudecounter += 1>><<set $swimnudecounter = Math.clamp($swimnudecounter, 0, 100)>><<replace "#statswimnudecounter">><<print Math.trunc($swimnudecounter)>><</replace>><</link>>
+	| <<link ">>">><<set $swimnudecounter += 10>><<set $swimnudecounter = Math.clamp($swimnudecounter, 0, 100)>><<replace "#statswimnudecounter">><<print Math.trunc($swimnudecounter)>><</replace>><</link>>
+	| <<link ">>>">><<set $swimnudecounter += 100>><<set $swimnudecounter = Math.clamp($swimnudecounter, 0, 100)>><<replace "#statswimnudecounter">><<print Math.trunc($swimnudecounter)>><</replace>><</link>>
+	<br><br>
+	Note: Greater than 10 will trigger the Pool Leighton Nude Punishment event.
 	<hr>
 	<div class="settingsGrid">
 		<div class="settingsHeader options">Pregnancy</div>
@@ -2200,6 +2370,320 @@
 	<</link>>
 <</widget>>
 
+<<widget "cheats-alex">>
+	<u>Animal Respect</u>
+	<br>
+
+	<<link "<<<">><<set $farm.beasts.horses -= 20>><<set $farm.beasts.horses = Math.clamp($farm.beasts.horses, -30, 30)>><<replace "#horse_respect">><<print Math.trunc($farm.beasts.horses)>><</replace>><</link>> |
+	<<link "<<">><<set $farm.beasts.horses -= 5>><<set $farm.beasts.horses = Math.clamp($farm.beasts.horses, -30, 30)>><<replace "#horse_respect">><<print Math.trunc($farm.beasts.horses)>><</replace>><</link>> |
+	<<link "<">><<set $farm.beasts.horses -= 1>><<set $farm.beasts.horses = Math.clamp($farm.beasts.horses, -30, 30)>><<replace "#horse_respect">><<print Math.trunc($farm.beasts.horses)>><</replace>><</link>> |
+	Steeds' respect: <span id="horse_respect"><<print Math.trunc($farm.beasts.horses)>></span>
+	| <<link ">">><<set $farm.beasts.horses += 1>><<set $farm.beasts.horses = Math.clamp($farm.beasts.horses, -30, 30)>><<replace "#horse_respect">><<print Math.trunc($farm.beasts.horses)>><</replace>><</link>>
+	| <<link ">>">><<set $farm.beasts.horses += 5>><<set $farm.beasts.horses = Math.clamp($farm.beasts.horses, -30, 30)>><<replace "#horse_respect">><<print Math.trunc($farm.beasts.horses)>><</replace>><</link>>
+	| <<link ">>>">><<set $farm.beasts.horses += 20>><<set $farm.beasts.horses = Math.clamp($farm.beasts.horses, -30, 30)>><<replace "#horse_respect">><<print Math.trunc($farm.beasts.horses)>><</replace>><</link>>
+	<br>
+	<<link "<<<">><<set $farm.beasts.pigs -= 20>><<set $farm.beasts.pigs = Math.clamp($farm.beasts.pigs, -30, 30)>><<replace "#pig_respect">><<print Math.trunc($farm.beasts.pigs)>><</replace>><</link>> |
+	<<link "<<">><<set $farm.beasts.pigs -= 5>><<set $farm.beasts.pigs = Math.clamp($farm.beasts.pigs, -30, 30)>><<replace "#pig_respect">><<print Math.trunc($farm.beasts.pigs)>><</replace>><</link>> |
+	<<link "<">><<set $farm.beasts.pigs -= 1>><<set $farm.beasts.pigs = Math.clamp($farm.beasts.pigs, -30, 30)>><<replace "#pig_respect">><<print Math.trunc($farm.beasts.pigs)>><</replace>><</link>> |
+	Pigs' respect: <span id="pig_respect"><<print Math.trunc($farm.beasts.pigs)>></span>
+	| <<link ">">><<set $farm.beasts.pigs += 1>><<set $farm.beasts.pigs = Math.clamp($farm.beasts.pigs, -30, 30)>><<replace "#pig_respect">><<print Math.trunc($farm.beasts.pigs)>><</replace>><</link>>
+	| <<link ">>">><<set $farm.beasts.pigs += 5>><<set $farm.beasts.pigs = Math.clamp($farm.beasts.pigs, -30, 30)>><<replace "#pig_respect">><<print Math.trunc($farm.beasts.pigs)>><</replace>><</link>>
+	| <<link ">>>">><<set $farm.beasts.pigs += 20>><<set $farm.beasts.pigs = Math.clamp($farm.beasts.pigs, -30, 30)>><<replace "#pig_respect">><<print Math.trunc($farm.beasts.pigs)>><</replace>><</link>>
+	<br>
+	<<link "<<<">><<set $farm.beasts.cattle -= 20>><<set $farm.beasts.cattle = Math.clamp($farm.beasts.cattle, -30, 30)>><<replace "#cattle_respect">><<print Math.trunc($farm.beasts.cattle)>><</replace>><</link>> |
+	<<link "<<">><<set $farm.beasts.cattle -= 5>><<set $farm.beasts.cattle = Math.clamp($farm.beasts.cattle, -30, 30)>><<replace "#cattle_respect">><<print Math.trunc($farm.beasts.cattle)>><</replace>><</link>> |
+	<<link "<">><<set $farm.beasts.cattle -= 1>><<set $farm.beasts.cattle = Math.clamp($farm.beasts.cattle, -30, 30)>><<replace "#cattle_respect">><<print Math.trunc($farm.beasts.cattle)>><</replace>><</link>> |
+	Cattle respect: <span id="cattle_respect"><<print Math.trunc($farm.beasts.cattle)>></span>
+	| <<link ">">><<set $farm.beasts.cattle += 1>><<set $farm.beasts.cattle = Math.clamp($farm.beasts.cattle, -30, 30)>><<replace "#cattle_respect">><<print Math.trunc($farm.beasts.cattle)>><</replace>><</link>>
+	| <<link ">>">><<set $farm.beasts.cattle += 5>><<set $farm.beasts.cattle = Math.clamp($farm.beasts.cattle, -30, 30)>><<replace "#cattle_respect">><<print Math.trunc($farm.beasts.cattle)>><</replace>><</link>>
+	| <<link ">>>">><<set $farm.beasts.cattle += 20>><<set $farm.beasts.cattle = Math.clamp($farm.beasts.cattle, -30, 30)>><<replace "#cattle_respect">><<print Math.trunc($farm.beasts.cattle)>><</replace>><</link>>
+	<br>
+	<<link "<<<">><<set $farm.beasts.dogs -= 20>><<set $farm.beasts.dogs = Math.clamp($farm.beasts.dogs, -30, 30)>><<replace "#dog_respect">><<print Math.trunc($farm.beasts.dogs)>><</replace>><</link>> |
+	<<link "<<">><<set $farm.beasts.dogs -= 5>><<set $farm.beasts.dogs = Math.clamp($farm.beasts.dogs, -30, 30)>><<replace "#dog_respect">><<print Math.trunc($farm.beasts.dogs)>><</replace>><</link>> |
+	<<link "<">><<set $farm.beasts.dogs -= 1>><<set $farm.beasts.dogs = Math.clamp($farm.beasts.dogs, -30, 30)>><<replace "#dog_respect">><<print Math.trunc($farm.beasts.dogs)>><</replace>><</link>> |
+	Dogs' respect: <span id="dog_respect"><<print Math.trunc($farm.beasts.dogs)>></span>
+	| <<link ">">><<set $farm.beasts.dogs += 1>><<set $farm.beasts.dogs = Math.clamp($farm.beasts.dogs, -30, 30)>><<replace "#dog_respect">><<print Math.trunc($farm.beasts.dogs)>><</replace>><</link>>
+	| <<link ">>">><<set $farm.beasts.dogs += 5>><<set $farm.beasts.dogs = Math.clamp($farm.beasts.dogs, -30, 30)>><<replace "#dog_respect">><<print Math.trunc($farm.beasts.dogs)>><</replace>><</link>>
+	| <<link ">>>">><<set $farm.beasts.dogs += 20>><<set $farm.beasts.dogs = Math.clamp($farm.beasts.dogs, -30, 30)>><<replace "#dog_respect">><<print Math.trunc($farm.beasts.dogs)>><</replace>><</link>>
+	<br><br>
+
+	<u>Farm</u>
+
+	<br>
+	<<if $farm_stage gte 6 and $farm_countdown is undefined and $wardrobes.alexFarm.unlocked is false>>
+		<<set $farm_countdown to 7>>
+		<<set $alex_countdown to 3>>
+		<<set $wardrobes.alexFarm.unlocked to true>>
+	<</if>>
+
+	<<farmcheatsync>>
+	Farm Plots: <span id="farm_stage_cheat"><<print Math.trunc($farm_stage_cheat)>></span>
+	<<link ">">><<farmincrcheat>><<set $farm_stage_cheat = Math.clamp($farm_stage_cheat, 1, 9)>><<replace "#farm_stage_cheat">><<print Math.trunc($farm_stage_cheat)>><</replace>><</link>>
+	<br>
+	Note: The above may or may not break the farm.
+	<br>
+	<<if $farm.clearing is undefined>>
+		<<set $farm.clearing to 0>>
+	<</if>>
+	<<link "<<<">><<set $farm.clearing -= 100>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+	<<link "<<">><<set $farm.clearing -= 50>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+	<<link "<">><<set $farm.clearing -= 1>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>> |
+	Farm Clearing: <span id="farm_clearing"><<print Math.trunc($farm.clearing)>></span>
+	| <<link ">">><<set $farm.clearing += 1>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
+	| <<link ">>">><<set $farm.clearing += 50>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
+	| <<link ">>>">><<set $farm.clearing += 100>><<set $farm.clearing = Math.clamp($farm.clearing, 0, 100)>><<replace "#farm_clearing">><<print Math.trunc($farm.clearing)>><</replace>><</link>>
+	<br><br>
+	<<if $farm_stage gte 8>>
+		<<if $farm.tower is undefined>>
+			<<set $farm.tower to 0>>
+		<</if>>
+		<<if $farm.tower gte 1 and !$farm.tower_guard>>
+			<<set $farm.tower_guard_can_hire to true>>
+		<<elseif $farm.tower lte 0>>
+			<<set $farm.tower_guard_can_hire to false>>
+			<<unset $farm.tower_guard>>
+		<</if>>
+		<<link "<<">><<set $farm.tower -= 2>><<set $farm.tower = Math.clamp($farm.tower, 0, 2)>><<replace "#farm_tower">><<print Math.trunc($farm.tower)>><</replace>><</link>> |
+		<<link "<">><<set $farm.tower -= 1>><<set $farm.tower = Math.clamp($farm.tower, 0, 2)>><<replace "#farm_tower">><<print Math.trunc($farm.tower)>><</replace>><</link>> |
+		Farm Tower: <span id="farm_tower"><<print Math.trunc($farm.tower)>></span>
+		| <<link ">">><<set $farm.tower += 1>><<set $farm.tower = Math.clamp($farm.tower, 0, 2)>><<replace "#farm_tower">><<print Math.trunc($farm.tower)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.tower += 2>><<set $farm.tower = Math.clamp($farm.tower, 0, 2)>><<replace "#farm_tower">><<print Math.trunc($farm.tower)>><</replace>><</link>>
+		<br>
+		<<if $farm.woodland is undefined>>
+			<<set $farm.woodland to 0>>
+		<</if>>
+		<<link "<<<">><<set $farm.woodland -= 3>><<set $farm.woodland = Math.clamp($farm.woodland, 0, 3)>><<replace "#farm_woodland">><<print Math.trunc($farm.woodland)>><</replace>><</link>> |
+		<<link "<<">><<set $farm.woodland -= 2>><<set $farm.woodland = Math.clamp($farm.woodland, 0, 3)>><<replace "#farm_woodland">><<print Math.trunc($farm.woodland)>><</replace>><</link>> |
+		<<link "<">><<set $farm.woodland -= 1>><<set $farm.woodland = Math.clamp($farm.woodland, 0, 3)>><<replace "#farm_woodland">><<print Math.trunc($farm.woodland)>><</replace>><</link>> |
+		Farm Woodland: <span id="farm_woodland"><<print Math.trunc($farm.woodland)>></span>
+		| <<link ">">><<set $farm.woodland += 1>><<set $farm.woodland = Math.clamp($farm.woodland, 0, 3)>><<replace "#farm_woodland">><<print Math.trunc($farm.woodland)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.woodland += 2>><<set $farm.woodland = Math.clamp($farm.woodland, 0, 3)>><<replace "#farm_woodland">><<print Math.trunc($farm.woodland)>><</replace>><</link>>
+		| <<link ">>>">><<set $farm.woodland += 3>><<set $farm.woodland = Math.clamp($farm.woodland, 0, 3)>><<replace "#farm_woodland">><<print Math.trunc($farm.woodland)>><</replace>><</link>>
+		<br>
+		<<if $farm.kennel is undefined>>
+			<<set $farm.kennel to 0>>
+		<</if>>
+		<<link "<">><<set $farm.kennel -= 1>><<set $farm.kennel = Math.clamp($farm.kennel, 0, 1)>><<replace "#farm_kennel">><<print Math.trunc($farm.kennel)>><</replace>><</link>> |
+		Farm Kennel: <span id="farm_kennel"><<print Math.trunc($farm.kennel)>></span>
+		| <<link ">">><<set $farm.kennel += 1>><<set $farm.kennel = Math.clamp($farm.kennel, 0, 1)>><<replace "#farm_kennel">><<print Math.trunc($farm.kennel)>><</replace>><</link>>
+		<br>
+		<<if $farm.barn is undefined>>
+			<<set $farm.barn to 0>>
+		<</if>>
+		<<link "<<">><<set $farm.barn -= 2>><<set $farm.barn = Math.clamp($farm.barn, 0, 2)>><<replace "#farm_barn">><<print Math.trunc($farm.barn)>><</replace>><</link>> |
+		<<link "<">><<set $farm.barn -= 1>><<set $farm.barn = Math.clamp($farm.barn, 0, 2)>><<replace "#farm_barn">><<print Math.trunc($farm.barn)>><</replace>><</link>> |
+		Farm Barn: <span id="farm_barn"><<print Math.trunc($farm.barn)>></span>
+		| <<link ">">><<set $farm.barn += 1>><<set $farm.barn = Math.clamp($farm.barn, 0, 2)>><<replace "#farm_barn">><<print Math.trunc($farm.barn)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.barn += 2>><<set $farm.barn = Math.clamp($farm.barn, 0, 2)>><<replace "#farm_barn">><<print Math.trunc($farm.barn)>><</replace>><</link>>
+		<br>
+		<<if $farm.stable is undefined>>
+			<<set $farm.stable to 0>>
+		<</if>>
+		<<link "<">><<set $farm.stable -= 1>><<set $farm.stable = Math.clamp($farm.stable, 0, 1)>><<replace "#farm_stable">><<print Math.trunc($farm.stable)>><</replace>><</link>> |
+		Farm Stable: <span id="farm_stable"><<print Math.trunc($farm.stable)>></span>
+		| <<link ">">><<set $farm.stable += 1>><<set $farm.stable = Math.clamp($farm.stable, 0, 1)>><<replace "#farm_stable">><<print Math.trunc($farm.stable)>><</replace>><</link>>
+		<br>
+		<<if $farm.coop is undefined>>
+			<<set $farm.coop to 0>>
+		<</if>>
+		<<link "<<">><<set $farm.coop -= 2>><<set $farm.coop = Math.clamp($farm.coop, 0, 2)>><<replace "#farm_coop">><<print Math.trunc($farm.coop)>><</replace>><</link>> |
+		<<link "<">><<set $farm.coop -= 1>><<set $farm.coop = Math.clamp($farm.coop, 0, 2)>><<replace "#farm_coop">><<print Math.trunc($farm.coop)>><</replace>><</link>> |
+		Farm Coop: <span id="farm_coop"><<print Math.trunc($farm.coop)>></span>
+		| <<link ">">><<set $farm.coop += 1>><<set $farm.coop = Math.clamp($farm.coop, 0, 2)>><<replace "#farm_coop">><<print Math.trunc($farm.coop)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.coop += 2>><<set $farm.coop = Math.clamp($farm.coop, 0, 2)>><<replace "#farm_coop">><<print Math.trunc($farm.coop)>><</replace>><</link>>
+		<br>
+		<<if $farm.tractor is undefined>>
+			<<set $farm.tractor to 0>>
+			<<set $farm.tractorplough to false>>
+			<<set $farm.tractorseeddrill to false>>
+			<<set $farm.tractorharvester to false>>
+			<<set $farm.tractorloader to false>>
+		<</if>>
+		<<link "<<<">><<set $farm.tractor -= 3>><<set $farm.tractor = Math.clamp($farm.tractor, 0, 3)>><<replace "#farm_tractor">><<print Math.trunc($farm.tractor)>><</replace>><</link>> |
+		<<link "<<">><<set $farm.tractor -= 2>><<set $farm.tractor = Math.clamp($farm.tractor, 0, 3)>><<replace "#farm_tractor">><<print Math.trunc($farm.tractor)>><</replace>><</link>> |
+		<<link "<">><<set $farm.tractor -= 1>><<set $farm.tractor = Math.clamp($farm.tractor, 0, 3)>><<replace "#farm_tractor">><<print Math.trunc($farm.tractor)>><</replace>><</link>> |
+		Farm Tractor: <span id="farm_tractor"><<print Math.trunc($farm.tractor)>></span>
+		| <<link ">">><<set $farm.tractor += 1>><<set $farm.tractor = Math.clamp($farm.tractor, 0, 3)>><<replace "#farm_tractor">><<print Math.trunc($farm.tractor)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.tractor += 2>><<set $farm.tractor = Math.clamp($farm.tractor, 0, 3)>><<replace "#farm_tractor">><<print Math.trunc($farm.tractor)>><</replace>><</link>>
+		| <<link ">>>">><<set $farm.tractor += 3>><<set $farm.tractor = Math.clamp($farm.tractor, 0, 3)>><<replace "#farm_tractor">><<print Math.trunc($farm.tractor)>><</replace>><</link>>
+		<br>
+		Farm Tractor Plough: <span id="farm_tractor_plough"><<print $farm.tractorplough>></span>
+		<<link "Change">>
+			<<if $farm.tractorplough isnot true>>
+				<<set $farm.tractorplough to true>>
+				<<replace "#farm_tractor_plough">>
+					<<print $farm.tractorplough>>
+				<</replace>>
+			<<else>>
+				<<set $farm.tractorplough to false>>
+				<<replace "#farm_tractor_plough">>
+					<<print $farm.tractorplough>>
+				<</replace>>
+			<</if>>
+		<</link>>
+		<br>
+		Farm Tractor Seed Drill: <span id="farm_tractor_seeddrill"><<print $farm.tractorseeddrill>></span>
+		<<link "Change">>
+			<<if $farm.tractorseeddrill isnot true>>
+				<<set $farm.tractorseeddrill to true>>
+				<<replace "#farm_tractor_seeddrill">>
+					<<print $farm.tractorseeddrill>>
+				<</replace>>
+			<<else>>
+				<<set $farm.tractorseeddrill to false>>
+				<<replace "#farm_tractor_seeddrill">>
+					<<print $farm.tractorseeddrill>>
+				<</replace>>
+			<</if>>
+		<</link>>
+		<br>
+		Farm Tractor Harvester: <span id="farm_tractor_harvester"><<print $farm.tractorharvester>></span>
+		<<link "Change">>
+			<<if $farm.tractorharvester isnot true>>
+				<<set $farm.tractorharvester to true>>
+				<<replace "#farm_tractor_harvester">>
+					<<print $farm.tractorharvester>>
+				<</replace>>
+			<<else>>
+				<<set $farm.tractorharvester to false>>
+				<<replace "#farm_tractor_harvester">>
+					<<print $farm.tractorharvester>>
+				<</replace>>
+			<</if>>
+		<</link>>
+		<br>
+		Farm Tractor Loader: <span id="farm_tractor_loader"><<print $farm.tractorloader>></span>
+		<<link "Change">>
+			<<if $farm.tractorloader isnot true>>
+				<<set $farm.tractorloader to true>>
+				<<replace "#farm_tractor_loader">>
+					<<print $farm.tractorloader>>
+				<</replace>>
+			<<else>>
+				<<set $farm.tractorloader to false>>
+				<<replace "#farm_tractor_loader">>
+					<<print $farm.tractorloader>>
+				<</replace>>
+			<</if>>
+		<</link>>
+		<br>
+		<<if $farm isnot undefined>>
+			<<if $farm.compostbin is undefined>>
+				<<set $farm.compostbin to 0>>
+				<<set $farm.compostToProduce to 0>>
+				<<set $farm.compostWaiting to 0>>
+				<<set $farm.compostProducing to [-1,-1,-1,-1]>>
+				<<set $farm.compostReady to 0>>
+			<</if>>
+		<</if>>
+		<<link "<<<">><<set $farm.compostbin -= 3>><<set $farm.compostbin = Math.clamp($farm.compostbin, 0, 3)>><<replace "#farm_compostbin">><<print Math.trunc($farm.compostbin)>><</replace>><</link>> |
+		<<link "<<">><<set $farm.compostbin -= 2>><<set $farm.compostbin = Math.clamp($farm.compostbin, 0, 3)>><<replace "#farm_compostbin">><<print Math.trunc($farm.compostbin)>><</replace>><</link>> |
+		<<link "<">><<set $farm.compostbin -= 1>><<set $farm.compostbin = Math.clamp($farm.compostbin, 0, 3)>><<replace "#farm_compostbin">><<print Math.trunc($farm.compostbin)>><</replace>><</link>> |
+		Farm Compost Bin: <span id="farm_compostbin"><<print Math.trunc($farm.compostbin)>></span>
+		| <<link ">">><<set $farm.compostbin += 1>><<set $farm.compostbin = Math.clamp($farm.compostbin, 0, 3)>><<replace "#farm_compostbin">><<print Math.trunc($farm.compostbin)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.compostbin += 2>><<set $farm.compostbin = Math.clamp($farm.compostbin, 0, 3)>><<replace "#farm_compostbin">><<print Math.trunc($farm.compostbin)>><</replace>><</link>>
+		| <<link ">>>">><<set $farm.compostbin += 3>><<set $farm.compostbin = Math.clamp($farm.compostbin, 0, 3)>><<replace "#farm_compostbin">><<print Math.trunc($farm.compostbin)>><</replace>><</link>>
+		<br>
+		<<if $farm isnot undefined>>
+			<<if $farm.extract is undefined>>
+				<<set $farm.extract to 0>>
+			<</if>>
+		<</if>>
+		<<link "<<">><<set $farm.extract -= 2>><<set $farm.extract = Math.clamp($farm.extract, 0, 2)>><<replace "#farm_extract">><<print Math.trunc($farm.extract)>><</replace>><</link>> |
+		<<link "<">><<set $farm.extract -= 1>><<set $farm.extract = Math.clamp($farm.extract, 0, 2)>><<replace "#farm_extract">><<print Math.trunc($farm.extract)>><</replace>><</link>> |
+		Farm Aphrodisiac Extraction System: <span id="farm_extract"><<print Math.trunc($farm.extract)>></span>
+		| <<link ">">><<set $farm.extract += 1>><<set $farm.extract = Math.clamp($farm.extract, 0, 2)>><<replace "#farm_extract">><<print Math.trunc($farm.extract)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.extract += 2>><<set $farm.extract = Math.clamp($farm.extract, 0, 2)>><<replace "#farm_extract">><<print Math.trunc($farm.extract)>><</replace>><</link>>
+		<br>
+		<<if $farm isnot undefined>>
+			<<if $farm.net is undefined>>
+				<<set $farm.net to 0>>
+			<</if>>
+		<</if>>
+		<<link "<<<">><<set $farm.net -= 4>><<set $farm.net = Math.clamp($farm.net, 0, 4)>><<replace "#farm_net">><<print Math.trunc($farm.net)>><</replace>><</link>> |
+		<<link "<<">><<set $farm.net -= 2>><<set $farm.net = Math.clamp($farm.net, 0, 4)>><<replace "#farm_net">><<print Math.trunc($farm.net)>><</replace>><</link>> |
+		<<link "<">><<set $farm.net -= 1>><<set $farm.net = Math.clamp($farm.net, 0, 4)>><<replace "#farm_net">><<print Math.trunc($farm.net)>><</replace>><</link>> |
+		Farm Net: <span id="farm_net"><<print Math.trunc($farm.net)>></span>
+		| <<link ">">><<set $farm.net += 1>><<set $farm.net = Math.clamp($farm.net, 0, 4)>><<replace "#farm_net">><<print Math.trunc($farm.net)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.net += 2>><<set $farm.net = Math.clamp($farm.net, 0, 4)>><<replace "#farm_net">><<print Math.trunc($farm.net)>><</replace>><</link>>
+		| <<link ">>>">><<set $farm.net += 4>><<set $farm.net = Math.clamp($farm.net, 0, 4)>><<replace "#farm_net">><<print Math.trunc($farm.net)>><</replace>><</link>>
+		<br>
+		<<if $farm isnot undefined>>
+			<<if $farm.cooler is undefined>>
+				<<set $farm.cooler to 0>>
+			<</if>>
+		<</if>>
+		<<link "<<<">><<set $farm.cooler -= 3>><<set $farm.cooler = Math.clamp($farm.cooler, 0, 3)>><<replace "#farm_cooler">><<print Math.trunc($farm.cooler)>><</replace>><</link>> |
+		<<link "<<">><<set $farm.cooler -= 2>><<set $farm.cooler = Math.clamp($farm.cooler, 0, 3)>><<replace "#farm_cooler">><<print Math.trunc($farm.cooler)>><</replace>><</link>> |
+		<<link "<">><<set $farm.cooler -= 1>><<set $farm.cooler = Math.clamp($farm.cooler, 0, 3)>><<replace "#farm_cooler">><<print Math.trunc($farm.cooler)>><</replace>><</link>> |
+		Farm Cooler: <span id="farm_cooler"><<print Math.trunc($farm.cooler)>></span>
+		| <<link ">">><<set $farm.cooler += 1>><<set $farm.cooler = Math.clamp($farm.cooler, 0, 3)>><<replace "#farm_cooler">><<print Math.trunc($farm.cooler)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.cooler += 2>><<set $farm.cooler = Math.clamp($farm.cooler, 0, 3)>><<replace "#farm_cooler">><<print Math.trunc($farm.cooler)>><</replace>><</link>>
+		| <<link ">>>">><<set $farm.cooler += 3>><<set $farm.cooler = Math.clamp($farm.cooler, 0, 3)>><<replace "#farm_cooler">><<print Math.trunc($farm.cooler)>><</replace>><</link>>
+		<br>
+		<<if $farm.irrigation is undefined>>
+			<<set $farm.irrigation to 0>>
+		<</if>>
+		<<link "<<<">><<set $farm.irrigation -= 9>><<set $farm.irrigation = Math.clamp($farm.irrigation, 0, 9)>><<replace "#farm_irrigation">><<print Math.trunc($farm.irrigation)>><</replace>><</link>> |
+		<<link "<<">><<set $farm.irrigation -= 3>><<set $farm.irrigation = Math.clamp($farm.irrigation, 0, 9)>><<replace "#farm_irrigation">><<print Math.trunc($farm.irrigation)>><</replace>><</link>> |
+		<<link "<">><<set $farm.irrigation -= 1>><<set $farm.irrigation = Math.clamp($farm.irrigation, 0, 9)>><<replace "#farm_irrigation">><<print Math.trunc($farm.irrigation)>><</replace>><</link>> |
+		Farm Irrigation: <span id="farm_irrigation"><<print Math.trunc($farm.irrigation)>></span>
+		| <<link ">">><<set $farm.irrigation += 1>><<set $farm.irrigation = Math.clamp($farm.irrigation, 0, 9)>><<replace "#farm_irrigation">><<print Math.trunc($farm.irrigation)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.irrigation += 3>><<set $farm.irrigation = Math.clamp($farm.irrigation, 0, 9)>><<replace "#farm_irrigation">><<print Math.trunc($farm.irrigation)>><</replace>><</link>>
+		| <<link ">>>">><<set $farm.irrigation += 9>><<set $farm.irrigation = Math.clamp($farm.irrigation, 0, 9)>><<replace "#farm_irrigation">><<print Math.trunc($farm.irrigation)>><</replace>><</link>>
+		<br>
+		<<if $farm.parasitebarn is undefined>>
+			<<set $farm.parasitebarn to 0>>
+		<</if>>
+		<<link "<<">><<set $farm.parasitebarn -= 2>><<set $farm.parasitebarn = Math.clamp($farm.parasitebarn, 0, 2)>><<replace "#farm_parasitebarn">><<print Math.trunc($farm.parasitebarn)>><</replace>><</link>> |
+		<<link "<">><<set $farm.parasitebarn -= 1>><<set $farm.parasitebarn = Math.clamp($farm.parasitebarn, 0, 2)>><<replace "#farm_parasitebarn">><<print Math.trunc($farm.parasitebarn)>><</replace>><</link>> |
+		Farm Parasitebarn: <span id="farm_parasitebarn"><<print Math.trunc($farm.parasitebarn)>></span>
+		| <<link ">">><<set $farm.parasitebarn += 1>><<set $farm.parasitebarn = Math.clamp($farm.parasitebarn, 0, 2)>><<replace "#farm_parasitebarn">><<print Math.trunc($farm.parasitebarn)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.parasitebarn += 2>><<set $farm.parasitebarn = Math.clamp($farm.parasitebarn, 0, 2)>><<replace "#farm_parasitebarn">><<print Math.trunc($farm.parasitebarn)>><</replace>><</link>>
+		<br>
+		<<if $alex_greenhouse is undefined>>
+			<<set $alex_greenhouse to 0>>
+		<</if>>
+		<<link "<<<">><<set $alex_greenhouse -= 3>><<set $alex_greenhouse = Math.clamp($alex_greenhouse, 0, 3)>><<replace "#alex_greenhouse">><<print Math.trunc($alex_greenhouse)>><</replace>><</link>> |
+		<<link "<<">><<set $alex_greenhouse -= 2>><<set $alex_greenhouse = Math.clamp($alex_greenhouse, 0, 3)>><<replace "#alex_greenhouse">><<print Math.trunc($alex_greenhouse)>><</replace>><</link>> |
+		<<link "<">><<set $alex_greenhouse -= 1>><<set $alex_greenhouse = Math.clamp($alex_greenhouse, 0, 3)>><<replace "#alex_greenhouse">><<print Math.trunc($alex_greenhouse)>><</replace>><</link>> |
+		Greenhouse: <span id="alex_greenhouse"><<print Math.trunc($alex_greenhouse)>></span>
+		| <<link ">">><<set $alex_greenhouse += 1>><<set $alex_greenhouse = Math.clamp($alex_greenhouse, 0, 3)>><<replace "#alex_greenhouse">><<print Math.trunc($alex_greenhouse)>><</replace>><</link>>
+		| <<link ">>">><<set $alex_greenhouse += 2>><<set $alex_greenhouse = Math.clamp($alex_greenhouse, 0, 3)>><<replace "#alex_greenhouse">><<print Math.trunc($alex_greenhouse)>><</replace>><</link>>
+		| <<link ">>>">><<set $alex_greenhouse += 3>><<set $alex_greenhouse = Math.clamp($alex_greenhouse, 0, 3)>><<replace "#alex_greenhouse">><<print Math.trunc($alex_greenhouse)>><</replace>><</link>>
+		<br><br>
+	<</if>>
+	<<if $farm_stage gte 5>>
+		<u>Remy</u>
+
+		<br>
+		<<if $farm.aggro is undefined>>
+			<<set $farm.aggro to 0>>
+		<</if>>
+		<<link "<<<">><<set $farm.aggro -= 100>><<set $farm.aggro = Math.clamp($farm.aggro, -100, 100)>><<replace "#farm_aggro">><<print Math.trunc($farm.aggro)>><</replace>><</link>> |
+		<<link "<<">><<set $farm.aggro -= 10>><<set $farm.aggro = Math.clamp($farm.aggro, -100, 100)>><<replace "#farm_aggro">><<print Math.trunc($farm.aggro)>><</replace>><</link>> |
+		<<link "<">><<set $farm.aggro -= 1>><<set $farm.aggro = Math.clamp($farm.aggro, -100, 100)>><<replace "#farm_aggro">><<print Math.trunc($farm.aggro)>><</replace>><</link>> |
+		Remy's Encroachment: <span id="farm_aggro"><<print Math.trunc($farm.aggro)>></span>
+		| <<link ">">><<set $farm.aggro += 1>><<set $farm.aggro = Math.clamp($farm.aggro, -100, 100)>><<replace "#farm_aggro">><<print Math.trunc($farm.aggro)>><</replace>><</link>>
+		| <<link ">>">><<set $farm.aggro += 10>><<set $farm.aggro = Math.clamp($farm.aggro, -100, 100)>><<replace "#farm_aggro">><<print Math.trunc($farm.aggro)>><</replace>><</link>>
+		| <<link ">>>">><<set $farm.aggro += 100>><<set $farm.aggro = Math.clamp($farm.aggro, -100, 100)>><<replace "#farm_aggro">><<print Math.trunc($farm.aggro)>><</replace>><</link>>
+		<br>
+		<<if $estate != undefined>>
+			<<if $estate.chaos is undefined>>
+				<<set $estate.chaos to 0>>
+			<</if>>
+			<<link "<<<">><<set $estate.chaos -= 100>><<set $estate.chaos = Math.clamp($estate.chaos, 0, 1000)>><<replace "#estate_chaos">><<print Math.trunc($estate.chaos)>><</replace>><</link>> |
+			<<link "<<">><<set $estate.chaos -= 10>><<set $estate.chaos = Math.clamp($estate.chaos, 0, 1000)>><<replace "#estate_chaos">><<print Math.trunc($estate.chaos)>><</replace>><</link>> |
+			<<link "<">><<set $estate.chaos -= 1>><<set $estate.chaos = Math.clamp($estate.chaos, 0, 1000)>><<replace "#estate_chaos">><<print Math.trunc($estate.chaos)>><</replace>><</link>> |
+			Remy Estate Chaos: <span id="estate_chaos"><<print Math.trunc($estate.chaos)>></span>
+			| <<link ">">><<set $estate.chaos += 1>><<set $estate.chaos = Math.clamp($estate.chaos, 0, 1000)>><<replace "#estate_chaos">><<print Math.trunc($estate.chaos)>><</replace>><</link>>
+			| <<link ">>">><<set $estate.chaos += 10>><<set $estate.chaos = Math.clamp($estate.chaos, 0, 1000)>><<replace "#estate_chaos">><<print Math.trunc($estate.chaos)>><</replace>><</link>>
+			| <<link ">>>">><<set $estate.chaos += 100>><<set $estate.chaos = Math.clamp($estate.chaos, 0, 1000)>><<replace "#estate_chaos">><<print Math.trunc($estate.chaos)>><</replace>><</link>>
+			<br>
+		<</if>>
+	<</if>>
+<</widget>>
+
 <<widget "changeCheatClass">>
 	<<for _class range ["red", "pink", "purple", "blue", "lblue", "teal", "green", "gold"]>>
 		<<removeclass _args[0] _class>>
@@ -2390,53 +2874,54 @@
 			<</for>>
 			<<unset _cr>>
 		<<case "negative">>
-			<<numberStepper "Sex" $fame.sex { callback: value => { V.fame.sex = value }, max: 2000, reverse: true}>>
-			<<numberStepper "Prostitution" $fame.prostitution { callback: value => { V.fame.prostitution = value }, max: 2000, reverse: true}>>
-			<<numberStepper "Rape" $fame.rape { callback: value => { V.fame.rape = value }, max: 2000, reverse: true}>>
-			<<numberStepper "Bestiality" $fame.bestiality { callback: value => { V.fame.bestiality = value }, max: 2000, reverse: true}>>
-			<<numberStepper "Pregnancy" $fame.pregnancy { callback: value => { V.fame.pregnancy = value }, max: Math.clamp(playerNormalPregnancyTotal(),1,8) * 250, step: 2000 / 100,  percentage: false, reverse: true, valueFormat: (value) => `<b>${Math.round(((value - 0) / (2000 - 0)) * 100)}%</b>`}>>
-			<<numberStepper "Impregnation" $fame.impreg { callback: value => { V.fame.impreg = value }, max: 2000, reverse: true}>>
-			<<numberStepper "Exhibitionism" $fame.exhibitionism { callback: value => { V.fame.exhibitionism = value }, max: 2000, reverse: true}>>
+			<<numberStepper "Sex" $fame.sex { callback: value => { V.fame.sex = value }, max: 2000 * $AMCTraits.sexFame, reverse: true, percentage: false}>>
+			<<numberStepper "Prostitution" $fame.prostitution { callback: value => { V.fame.prostitution = value }, max: 2000 * $AMCTraits.prostitutionFame, reverse: true, percentage: false}>>
+			<<numberStepper "Rape" $fame.rape { callback: value => { V.fame.rape = value }, max: 2000 * $AMCTraits.rapeFame, reverse: true, percentage: false}>>
+			<<numberStepper "Bestiality" $fame.bestiality { callback: value => { V.fame.bestiality = value }, max: 2000 * $AMCTraits.bestialityFame, reverse: true, percentage: false}>>
+			<<numberStepper "Pregnancy" $fame.pregnancy { callback: value => { V.fame.pregnancy = value }, max: Math.clamp(playerNormalPregnancyTotal() * $AMCTraits.pregnancyFame,1,8) * 250, step: 2000 / 100,  percentage: false, reverse: true}>>
+			<<numberStepper "Impregnation" $fame.impreg { callback: value => { V.fame.impreg = value }, max: 2000 * $AMCTraits.impregFame, reverse: true, percentage: false}>>
+			<<numberStepper "Exhibitionism" $fame.exhibitionism { callback: value => { V.fame.exhibitionism = value }, max: 2000 * $AMCTraits.exhibitionismFame, reverse: true, percentage: false}>>
 			<<if playerNormalPregnancyTotal() lt 8>>
 				<span class="description"><<set _pregsNeeded to Math.trunc(8-playerNormalPregnancyTotal())>>
 				Your pregnancy fame is capped by the amount of pregnancies you've had. You need to get pregnant <span class="gold"><<number _pregsNeeded>></span> more <<= _pregsNeeded is 1 ? "time" : "times">> to reach maximum pregnancy fame.</span>
 			<</if>>
 		<<case "positive">>
-			<<numberStepper "Combat" $fame.scrap { callback: value => { V.fame.scrap = value }, max: 2000}>>
-			<<numberStepper "Kindness" $fame.good { callback: value => { V.fame.good = value }, max: 2000}>>
-			<<numberStepper "Business" $fame.business { callback: value => { V.fame.business = value }, max: 2000}>>
-			<<numberStepper "Socialite" $fame.social { callback: value => { V.fame.social = value }, max: 2000}>>
-			<<numberStepper "Model" $fame.model { callback: value => { V.fame.model = value }, max: 2000}>>
+			<<numberStepper "Combat" $fame.scrap { callback: value => { V.fame.scrap = value }, max: 2000 * $AMCTraits.scrapFame, percentage: false}>>
+			<<numberStepper "Kindness" $fame.good { callback: value => { V.fame.good = value }, max: 2000 * $AMCTraits.goodFame, percentage: false}>>
+			<<numberStepper "Business" $fame.business { callback: value => { V.fame.business = value }, max: 2000 * $AMCTraits.businessFame, percentage: false}>>
+			<<numberStepper "Socialite" $fame.social { callback: value => { V.fame.social = value }, max: 2000 * $AMCTraits.socialFame, percentage: false}>>
+			<<numberStepper "Model" $fame.model { callback: value => { V.fame.model = value }, max: 2000 * $AMCTraits.modelFame, percentage: false}>>
 		<<case "skills">>
-			<<numberStepper "Skulduggery" $skulduggery "skulduggery" {max: 1000}>>
-			<<numberStepper "Dance" $danceskill "danceskill" {max: 1000}>>
-			<<numberStepper "Swimming" $swimmingskill "swimmingskill" {max: 1000}>>
-			<<numberStepper "Athletics" $athletics "athletics" {max: 1000}>>
-			<<numberStepper "Tending" $tending "tending" {max: 1000}>>
-			<<numberStepper "Housekeeping" $housekeeping "housekeeping" {max: 1000}>>
+			<<numberStepper "Skulduggery" $skulduggery "skulduggery" {max: 1000 * $AMCTraits.skulduggery, percentage: false}>>
+			<<numberStepper "Dance" $danceskill "danceskill" {max: 1000 * $AMCTraits.dancing, percentage: false}>>
+			<<numberStepper "Swimming" $swimmingskill "swimmingskill" {max: 1000 * $AMCTraits.swimming, percentage: false}>>
+			<<numberStepper "Athletics" $athletics "athletics" {max: 1000 * $AMCTraits.athletics, percentage: false}>>
+			<<numberStepper "Tending" $tending "tending" {max: 1000 * $AMCTraits.tending, percentage: false}>>
+			<<numberStepper "Housekeeping" $housekeeping "housekeeping" {max: 1000 * $AMCTraits.housekeeping, percentage: false}>>
+			<<numberStepper "Brawling" $combatExtended.brawling { callback: value => { V.combatExtended.brawling = value },max: 1000 * $AMCTraits.brawling, percentage: false}>>
 		<<case "school">>
 			/* normally, school traits are adjusted by the widget "school_skill_change" */
 			<<numberStepper "<<scienceicon>> Science" $science "science" {
 				callback: (value) => wikifier('adjust_school_traits'),
-				max: 1000
+				max: 1000 * $AMCTraits.science, percentage: false
 			}>>
 			<<numberStepper "<<mathicon>> Maths" $maths "maths" {
 				callback: (value) => wikifier('adjust_school_traits'),
-				max: 1000
+				max: 1000 * $AMCTraits.maths, percentage: false
 			}>>
 			<<numberStepper "<<englishicon>> English" $english "english" {
 				callback: (value) => wikifier('adjust_school_traits'),
-				max: 1000
+				max: 1000 * $AMCTraits.english, percentage: false
 			}>>
 			<<numberStepper "<<historyicon>> History" $history "history" {
 				callback: (value) => wikifier('adjust_school_traits'),
-				max: 1000
+				max: 1000 * $AMCTraits.history, percentage: false
 			}>>
 		<<case "characteristics">>
 			<<numberStepper "<<tficon angel>> Purity" $purity "purity" {max: 1000}>>
-			<<numberStepper "<<symbol beauty>> Beauty" $beauty "beauty" {max: 10000}>>
-			<<numberStepper "<<symbol physique>> Physique" $physique "physique" {max: $physiquesize}>>
-			<<numberStepper "<<symbol willpower>> Willpower" $willpower "willpower" {max: 1000}>>
+			<<numberStepper "<<symbol beauty>> Beauty" $beauty "beauty" {max: 10000 * $AMCTraits.beauty, percentage: false}>>
+			<<numberStepper "<<symbol physique>> Physique" $physique "physique" {max: $physiquesize * $AMCTraits.physique, percentage: false}>>
+			<<numberStepper "<<symbol willpower>> Willpower" $willpower "willpower" {max: 1000 * $AMCTraits.willpower, percentage: false}>>
 			<<numberStepper "<<symbol awareness>> Awareness" $awareness "awareness" {min: -200, max: 1000, reverse: true}>>
 			<<numberStepper "<<symbol promiscuity>> Promiscuity" $promiscuity "promiscuity" {reverse: true}>>
 			<<numberStepper "<<symbol exhibitionism>> Exhibitionism" $exhibitionism "exhibitionism" {reverse: true}>>
@@ -2445,16 +2930,20 @@
 				<<numberStepper "<<symbol corruption>> Corruption" $earSlime.corruption { callback: value => {V.earSlime.corruption = value; Wikifier.wikifyEval("<<updatesidebarimg>>")}, reverse: true}>>
 			<</if>>
 		<<case "sex">>
-			<<numberStepper "Seduction" $seductionskill "seductionskill" {max: 1000}>>
-			<<numberStepper "Chest" $chestskill "chestskill" {max: 1000}>>
-			<<numberStepper "Buttocks" $bottomskill "bottomskill" {max: 1000}>>
-			<<if $player.vaginaExist>><<numberStepper "Vaginal" $vaginalskill "vaginalskill" {max: 1000}>><</if>>
-			<<if $player.penisExist>><<numberStepper "Penile" $penileskill "penileskill" {max: 1000}>><</if>>
-			<<numberStepper "Thighs" $thighskill "thighskill" {max: 1000}>>
-			<<numberStepper "Oral" $oralskill "oralskill" {max: 1000}>>
-			<<numberStepper "Hands" $handskill "handskill" {max: 1000}>>
-			<<numberStepper "Anal" $analskill "analskill" {max: 1000}>>
-			<<numberStepper "Feet" $feetskill "feetskill" {max: 1000}>>
+			<<numberStepper "Seduction" $seductionskill "seductionskill" {max: 1000 * $AMCTraits.seductionskill, percentage: false}>>
+			<<numberStepper "Chest" $chestskill "chestskill" {max: 1000 * $AMCTraits.chestskill, percentage: false}>>
+			<<numberStepper "Buttocks" $bottomskill "bottomskill" {max: 1000 * $AMCTraits.bottomskill, percentage: false}>>
+			<<if $player.vaginaExist>><<numberStepper "Vaginal" $vaginalskill "vaginalskill" {max: 1000 * $AMCTraits.vaginalskill, percentage: false}>><</if>>
+			<<if $player.penisExist>><<numberStepper "Penile" $penileskill "penileskill" {max: 1000 * $AMCTraits.penileskill, percentage: false}>><</if>>
+			<<numberStepper "Thighs" $thighskill "thighskill" {max: 1000 * $AMCTraits.thighskill, percentage: false}>>
+			<<numberStepper "Oral" $oralskill "oralskill" {max: 1000 * $AMCTraits.oralskill, percentage: false}>>
+			<<numberStepper "Hands" $handskill "handskill" {max: 1000 * $AMCTraits.handskill, percentage: false}>>
+			<<numberStepper "Anal" $analskill "analskill" {max: 1000 * $AMCTraits.analskill, percentage: false}>>
+			<<numberStepper "Feet" $feetskill "feetskill" {max: 1000 * $AMCTraits.feetskill, percentage: false}>>
+		<<case "hypnosis">>
+			<<numberStepper "Yearning" $hypnosis_traits.scream {callback: value => { V.hypnosis_traits.scream = value }, step: 1, max: 5, percentage: false}>>
+			<<numberStepper "Flaunting" $hypnosis_traits.cover {callback: value => { V.hypnosis_traits.cover = value }, step: 1, max: 5, percentage: false}>>
+			<<numberStepper "Deviancy" $hypnosis_traits.deviancy {callback: value => { V.hypnosis_traits.deviancy = value }, step: 1, max: 5, percentage: false}>>
 		<<default>>
 			ERROR: Skill issue.
 	<</switch>>

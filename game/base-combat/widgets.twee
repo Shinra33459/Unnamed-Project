@@ -39,6 +39,8 @@
 						<<case "Black Wolf">><<displayFeatFake "Great Wolf the Alpha">>
 						<<case "Harper">><<displayFeatFake "Harper the Hypnotist">>
 						<<case "Morgan">><<displayFeatFake "Morgan the Lost">>
+						<<case "Bailey">><<displayFeatFake "Bailey the 'caretaker'">>
+						<<case "Zephyr">><<displayFeatFake "Zephyr the captain">>
 					<</switch>>
 					<<if !$activeNightmare>>
 						<<set $_taker to "Ivory Wraith">>
@@ -57,6 +59,8 @@
 						<<case "Black Wolf">><<earnFeat "Great Wolf the Alpha">>
 						<<case "Harper">><<earnFeat "Harper the Hypnotist">>
 						<<case "Morgan">><<earnFeat "Morgan the Lost">>
+						<<case "Bailey">><<earnFeat "Bailey the 'caretaker'">>
+						<<case "Zephyr">><<earnFeat "Zephyr the captain">>
 					<</switch>>
 				<</if>>
 				
@@ -230,7 +234,7 @@
 			<<case "addiction">>
 				<span class="lewd">You're so relieved, the thought of giving away your first kiss like this hardly registers to you.</span><<arousal 1000>>
 			<<default>>
-				<span class="blue">You feel conflicted about giving them your first kiss.</span><<stress 20>><<ggstress>>
+				<span class="blue">You feel conflicted about giving away your first kiss like this.</span><<stress 20>><<ggstress>>
 		<</switch>>
 		<<takeVirginity $_fullDescription "kiss">>
 	<</if>>
@@ -292,7 +296,7 @@
 				<<case "vaginal">>
 					<<set $speechNPCVaginaVirgin to 1>>
 					<span class="pink">You feel <<his>> hymen tear, forever robbing <<him>> of <<his>> purity.</span>
-					<<if $demon gte 6>>
+					<<if ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 						<span class="lewd">You feel a surge of pleasure unlike any other as you defile <<him>> and spread your impurity.</span>
 						<<stress -50>><<trauma -50>><<lllstress>><<llltrauma>>
 					<</if>>
@@ -301,7 +305,7 @@
 				<<case "penile">>
 					<<set $speechNPCPenisVirgin to 1>>
 					<span class="pink">You feel <<his>> foreskin separate from <<his>> glans, forever robbing <<him>> of <<his>> purity.</span>
-					<<if $demon gte 6>>
+					<<if ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 						<span class="lewd">You feel a surge of pleasure unlike any other as you defile <<him>> and spread your impurity.</span>
 						<<stress -50>><<trauma -50>><<lllstress>><<llltrauma>>
 					<</if>>
@@ -468,7 +472,7 @@
 	<<if $setupMidOrgasm isnot undefined and $enemyarousal gte $enemyarousalmax>>
 		<<set _midOrgasm to false>>
 		<<for _n to 0; _n lt $NPCList.length;_n++>>
-			<<if $NPCList[_n].maxOrgasms gt 1>>
+			<<if $NPCList[_n].maxOrgasms gt $NPCList[_n].orgasms>>
 				<<set $NPCList[_n].orgasms++>>
 			<</if>>
 			<<if $NPCList[_n].orgasms lt $NPCList[_n].maxOrgasms>>
@@ -484,7 +488,9 @@
 <</widget>>
 
 <<widget "combatTrainAdvance">>/*For use after a beast/monster in a train is finished with their turn. Loads next in line into $NPCList[0]. Loads them all back into $NPCList if at the end of the train.*/
-	<<clearnpc>>
+	<<if $beastGroupFight is 0 or $ejaculatingMid>>
+		<<clearnpc>>
+	<</if>>
 	<<if $combatTrain.length gt 0>>
 		<<set $combatTrain.length-->>
 		<<set $combatTrain.active += 1>>
@@ -497,8 +503,19 @@
 	<<else>>
 		<<for _e_n to 0; _e_n lt $combatTrain.total_length + 1; _e_n++>>
 			<<loadNPC _e_n `"beast_" + _e_n`>>
-			<<clearNPC `"beast_" + _e_n`>>
+			<<if $beastGroupFight is 0 or $ejaculatingMid>>
+				<<clearNPC `"beast_" + _e_n`>>
+			<</if>>
 		<</for>>
+	<</if>>
+	<<if $combatExtended.reverseRapeStart is 1>>
+		<<set $consensual to 0>>
+		<<set $combatExtended.reverseRapeStart to 0>>
+		<<set $combatExtended.standingFightStart to 1>>
+	<</if>>
+	<<if $finish is 1>>
+		<<set $enemyhealth to 1>>
+		<<set $enemyarousal to 0>>
 	<</if>>
 	<<set $active_enemy to 0>>
 	<<unset $hypnosis_deviancy_check>>
@@ -522,7 +539,9 @@
 		<<set $combatTrain.pronouns.push($NPCList[_e_n].pronoun)>>
 		<<set $combatTrain.monsters.push($NPCList[_e_n].monster)>>
 	<</for>>
-	<<clearnpc>>
+	<<if $beastGroupFight is 0>>
+		<<clearnpc>>
+	<</if>>
 	<<loadNPC 0 beast_0>>
 <</widget>>
 
@@ -804,3 +823,293 @@
 	<<set $_alongside to either("alongside","heedless of","pushing aside")>>
 	<<set _text_output to (playerHasButtPlug() ? ", "+$_alongside+" your "+$worn.butt_plug.name : "")>>
 <</silently>><<print _text_output>><</widget>>
+
+<<widget "combatExtendedCheck">>
+	<<set _dodgeChance to 0>>
+	<<set _passiveDodgeSuccess to 0>>
+	<<set _activeDodgeSuccess to 0>>
+	<<set _counterChance to 0>>
+	<<set _check1 to 100>>
+	<<set $combatExtended.counterSuccess to 0>>
+	<<set $combatExtended.dodgeSuccess to 0>>
+	<<if $combatExtended.enemyFeinting is 1 and random(100) gte 33>>
+		<<set _check1 += 50>>
+	<</if>>
+	<<set _check2 to _check1 * 0.8>>
+	<<set _dancedodge to Math.round(currentSkillValue('danceskill') / 40)>>
+	<<if $bodysize is 3>>
+		<<set _bodyDodgeChance to -20>>
+	<<elseif $bodysize is 2>>
+		<<set _bodyDodgeChance to 0>>
+	<<elseif $bodysize is 1>>
+		<<set _bodyDodgeChance to 15>>
+	<<else>>
+		<<set _bodyDodgeChance to 30>>
+	<</if>>
+	<<if $combatExtended.brawlingToggle is 1>>
+		<<set _brawlingDodgeChance to ($combatExtended.brawling * $enemyno * ($enemyno / 16)) / 100>>
+	<<else>>
+		<<set _brawlingDodgeChance to 0>>
+	<</if>>
+	<<if $combatExtended.passiveDodging is 1>>
+		<<set _dodgeChance = Math.round(_dancedodge + _bodyDodgeChance + _brawlingDodgeChance)>>
+		<<if $combatExtended.uncappedDodgeChance is 0>>
+			<<set _dodgeChance to Math.clamp(_dodgeChance, 0, $combatExtended.dodgeChanceCap)>>
+		<</if>>
+		<<if $combatExtended.stabilityLost is 1>>
+			<<set _dodgeChance = Math.round(_dodgeChance / 2)>>
+		<</if>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _passiveDodgeSuccess to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _passiveDodgeSuccess to 1>>
+		<<else>>
+			<<set _passiveDodgeSuccess to 0>>
+		<</if>>
+	<</if>>
+	<<if $combatExtended.activeDodgingActive is 1>>
+		<<set _dodgeChance = Math.round((_dancedodge + _bodyDodgeChance + _brawlingDodgeChance) * 2)>>
+		<<if $combatExtended.uncappedDodgeChance is 0>>
+			<<set _dodgeChance to Math.clamp(_dodgeChance, 0, $combatExtended.dodgeChanceCap)>>
+		<</if>>
+		<<if $combatExtended.stabilityLost is 1>>
+			<<set _dodgeChance = Math.round(_dodgeChance / 2)>>
+		<</if>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _activeDodgeSuccess to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _activeDodgeSuccess to 1>>
+		<<else>>
+			<<set _activeDodgeSuccess to 0>>
+		<</if>>
+	<</if>>
+	<<if $combatExtended.countering is 1>>
+		<<if $combatExtended.counteringActive gte 1>>
+			<<set _counterChance to 100 * ((0.25 * (1 * ($skulduggery / 1000))) * $combatExtended.counteringActive)>>
+			<<if $combatExtended.stabilityLost is 1>>
+				<<set _counterChance = Math.round(_counterChance / 2)>>
+			<</if>>
+			<<if _counterChance gte random(_check1)>>
+				<<set _counterSuccess to 2>>
+			<<elseif _counterChance gte random(_check2)>>
+				<<set _counterSuccess to 1>>
+			<<else>>
+				<<set _counterSuccess to 0>>
+			<</if>>
+		<</if>>
+	<</if>>
+	<<if $suffocated is undefined and $willpowerpain is undefined and $orgasmdown lte 0 and $trance lte 0 and $panicparalysis is 0 and $panicviolence is 0 and $dissociation lte 1>>
+		<<set $combatExtended.counterSuccess to _counterSuccess>>
+		<<if _passiveDodgeSuccess gt _activeDodgeSuccess>>
+			<<set $combatExtended.dodgeSuccess to _passiveDodgeSuccess>>
+		<<else>>
+			<<set $combatExtended.dodgeSuccess to _activeDodgeSuccess>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "combatExtendedStability">>
+	<<set $combatExtended.stability += _args[0]>>
+<</widget>>
+
+<<widget "combatExtendedEnemyCheck">>
+	<<set _dodgeChance to $NPCList[_args[0]].dodgeChance>>
+	<<set _passiveEnemyDodge to 0>>
+	<<set _activeEnemyDodge to 0>>
+	<<set _check1 to 100>>
+	<<set _events to 0>>
+	<<cleareventpool>>
+	<<if $combatExtended.enemyActiveDodging is 1>>
+		<<addinlineevent "enemy_dodging" 1>>
+			<<set _dodgeChance to _dodgeChance * 2>>
+		<</addinlineevent>>
+		<<set _events += 1>>
+	<</if>>
+	<<if $combatExtended.enemyBlocking is 1>>
+		<<addinlineevent "enemy_blocking" 1>>
+			<<set $combatExtended.enemyBlockingActive to 1>>
+		<</addinlineevent>>
+		<<set _events += 1>>
+	<</if>>
+	<<if $combatExtended.enemyCountering is 1>>
+		<<addinlineevent "enemy_countering" 1>>
+			<<set $combatExtended.enemyCounteringActive to 1>>
+		<</addinlineevent>>
+		<<set _events += 1>>
+	<</if>>
+	<<if _events is 0>>
+		<<set _events to 1>>
+	<</if>>
+	<<addinlineevent "enemy_none" _events>>
+		/* Nothing */
+	<</addinlineevent>>
+	<<runeventpool>>
+	<<set _check2 to _check1 * 0.8>>
+	<<if $combatExtended.feinting is 1>>
+		<<if $combatExtended.feintingActive gte 1>>
+			<<set _dodgeChanceReduction to Math.round($skulduggery / 100)>>
+			<<if $combatExtended.stabilityLost is 1>>
+				<<set _dodgeChanceReduction to _dodgeChanceReduction / 4>>
+			<</if>>
+			<<if $combatExtended.feintingActive is 2>>
+				<<set _dodgeChance -= _dodgeChanceReduction * 3>>
+			<<else>>
+				<<set _dodgeChance -= _dodgeChanceReduction>>
+			<</if>>
+		<</if>>
+	<</if>>
+	<<if $combatExtended.hookpunching is 1>>
+		<<if $combatExtended.hookpunchingActive gte 1>>
+			<<if $combatExtended.hookpunchingActive is 2>>
+				<<set _dodgeChance += 30>>
+			<<else>>
+				<<set _dodgeChance += 10>>
+			<</if>>
+		<</if>>
+	<</if>>
+	<<if $combatExtended.enemyPassiveDodging is 1>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _passiveEnemyDodge to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _passiveEnemyDodge to 1>>
+		<<else>>
+			<<set _passiveEnemyDodge to 0>>
+		<</if>>
+	<</if>>
+	<<if $combatExtended.enemyActiveDodgingActive is 1>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _activeEnemyDodge to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _activeEnemyDodge to 1>>
+		<<else>>
+			<<set _activeEnemyDodge to 0>>
+		<</if>>
+	<</if>>
+	<<if $combatExtended.enemyCounteringActive is 1>>
+		<<set _check1 += 50>>
+		<<set _check2 to _check1 * 0.8>>
+		<<if _dodgeChance gte random(_check1)>>
+			<<set _enemyCounter to 2>>
+		<<elseif _dodgeChance gte random(_check2)>>
+			<<set _enemyCounter to 1>>
+		<<else>>
+			<<set _enemyCounter to 0>>
+		<</if>>
+	<</if>>
+	<<set $combatExtended.enemyCounterSuccess to _enemyCounter>>
+	<<if _activeEnemyDodge gt _activeEnemyDodge>>
+		<<set $combatExtended.enemyDodgeSuccess to _passiveEnemyDodge>>
+	<<else>>
+		<<set $combatExtended.enemyDodgeSuccess to _activeEnemyDodge>>
+	<</if>>
+<</widget>>
+
+<<widget "healthMultiplier">>
+	<<if $NPCList[0].health isnot undefined and $NPCList[0].health gt $enemyhealth>>
+		<<set $enemyhealth to $NPCList[0].health>>
+	<</if>>
+	<<set _buff to 0>>
+	<<if $enemytype is "beast">>
+		<<set $enemyhealth to Math.round($enemyhealth * ($beastHealthMult / 100))>>
+	<<else>>
+		<<set $enemyhealth to Math.round($enemyhealth * ($npcHealthMult / 100))>>
+	<</if>>
+	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
+	<<if $combatExtended.enemyHealthDayScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
+		<<else>>
+			<<set _buff += _buffAmount * $combatExtended.enemyDayScalingLimit>>
+		<</if>>
+	<</if>>
+	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
+	<<if $combatExtended.enemyHealthDefeatScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
+		<<else>>
+			<<set _buff += _buffAmount * $combatExtended.enemyDefeatScalingLimit>>
+		<</if>>
+	<</if>>
+	<<set $enemyhealth to  Math.round($enemyhealth * (1 + (_buff / 100)))>>
+	<<set $enemyhealthmax to $enemyhealth>>
+	<<set $permenemyhealthmax to $enemyhealthmax>>
+<</widget>>
+
+<<widget "npcStealMoney">>
+	<<if $npcStealMoneyToggle is 1 and $npcStolenMoney is undefined>>
+		<br>
+		<<set _stolenMoney to $money * ($npcStealMoneyPercentage/100)>>
+		<<He>> rifles through your pockets and take <<printmoney _stolenMoney>>.
+		<<if _stolenMoney gte 100000>>
+			"That's a lot of money, I'll take that thank you."
+		<<elseif _stolenMoney gte 50000>>
+			"Not bad, not bad at all."
+		<<elseif _stolenMoney gte 10000>>
+			"Heh, that makes it worth the trouble."
+		<<elseif _stolenMoney gte 5000>>
+			"This is all you have?"
+		<<else>>
+			"This is peanuts..."
+		<</if>>
+		<<set $money to $money - _stolenMoney>>
+		<<set $npcStolenMoney to 1>>
+	<</if>>
+<</widget>>
+
+<<widget "struggle_defense_init">>
+	<<if _args[0] is "guard">>
+		<<if currentSkillValue("handskill") gte 800>>
+			but you redirect its momentum with a well-timed blow,
+		<<elseif currentSkillValue("handskill") gte 200>>
+			but you bat it aside,
+		<<else>>
+			but your flailing knocks it aside,
+		<</if>>
+	<<elseif _args[0] is "dodge">>
+		<<set $dodging -= 1>>
+		<<if $drunk gte 60>>
+			but you drunkenly stagger out of the way<<if !random(100)>> like the drunk master you are<</if>>,
+		<<elseif currentSkillValue("feetskill") gte 800 or currentSkillValue('danceskill') gte 400>>
+			but you dance aside,
+		<<elseif currentSkillValue("feetskill") gte 200>>
+			but you step aside,
+		<<else>>
+			but you stumble aside,
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "struggle_defense_result">>
+	<<if _args[0] is "guard">>
+		<<if _left_guard_chance gte _hit_chance>>
+			<<unset $left_guard>>
+		<<elseif _right_guard_chance gte _hit_chance>>
+			<<unset $right_guard>>
+		<</if>>
+		<<if $struggle.enemy[_i].health gt 0>>
+			<span class="teal">It's hurt. </span>
+		<<else>>
+			<span class="green">It's too hurt. </span>
+		<</if>>
+	<<elseif _args[0] is "dodge">>
+		<<if $struggle.enemy[_i].dodge is undefined>>
+			<<set $struggle.enemy[_i].dodge to 1>>
+		<<elseif $struggle.enemy[_i].dodge lt 3>>
+			<<set $struggle.enemy[_i].dodge ++>>
+		<<else>>
+			<<set $struggle.enemy[_i].dodge to 0>>
+			<<set $struggle.enemy[_i].health -= 1>>
+			<<if $struggle.enemy[_i].health gt 0>>
+				<span class="teal">It's running out of steam. </span>
+			<<else>>
+				<span class="green">It ran out of steam. </span>
+			<</if>>
+		<</if>>
+	<</if>>
+	<<if $struggle.enemy[_i].health lte 0>>
+		<span class="green">It won't return.</span>
+		<<set $struggle.done += 1>>
+		<<set $struggle.enemy[_i].location to "fled">>
+	<</if>>
+	<<unset _struggleDefenseResult>>
+<</widget>>

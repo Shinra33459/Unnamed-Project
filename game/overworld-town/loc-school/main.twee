@@ -168,7 +168,7 @@
 	<br>
 	<<link [[Refuse|School Night Pool Party Pay]]>><<set $phase to 1>><</link>>
 	<br>
-<<elseif $town_projects.green is 1>>
+<<elseif $town_projects.green is 1 || ($tending gte 400 && ($town_projects.green lt 2 || $town_projects.green is undefined))>>
 	<<set $town_projects.green to 2>>
 	You almost tread on an adder. It slips into a patch of tall, wild grass surrounding a large oak. Students avoid the area, as it's home to all sorts of pests. <span class="teal">An idea strikes you.</span> If the grass were cleared, there'd be a lot more room for students.
 	<br><br>
@@ -581,7 +581,7 @@ You haul yourself over the fence and drop down on the other side.
 <<set _cloth to _slots.find(c => !V.worn[c].type.includes("naked"))>>
 /* find the bottom slot that is not naked, and if it's the same as the top one (but not under_lower) - pc is going commando */
 <<set _commando to _slots.reverse().find(c => !V.worn[c].type.includes("naked")) === _cloth and _cloth isnot "under_lower">>
-<<if $cat gte 6>>
+<<if ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))>>
 	With unmatched grace and elegance, you land on all fours.
 <<elseif _cloth isnot undefined and _fencehop lte $rng>>
 	/* has clothes, failed the check */
@@ -648,7 +648,7 @@ You haul yourself over the fence and drop down on the other side.
 <<set _cloth to _slots.find(c => !V.worn[c].type.includes("naked"))>>
 /* find the bottom slot that is not naked, and if it's the same as the top one (but not under_lower) - pc is going commando */
 <<set _commando to _slots.reverse().find(c => !V.worn[c].type.includes("naked")) === _cloth and _cloth isnot "under_lower">>
-<<if $cat gte 6>>
+<<if ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))>>
 	With unmatched grace and elegance, you land on all fours.
 <<elseif _cloth isnot undefined and _fencehop lte $rng>>
 	/* has clothes, failed the check */
@@ -716,6 +716,12 @@ You haul yourself over the fence and drop down on the other side.
 					<</if>>
 				<<else>>
 					<<photographystudioicon>><<link [[Photoshoot (0:20)|Head's Office Photoshoot Blackmail]]>><<set $schoolfameblackmail to 0>><<trauma 6>><<stress 6>><<npcincr Leighton dom 1>><</link>><<gtrauma>><<gstress>>
+					<br>
+				<</if>>
+			<</if>>
+			<<if $school_desk_dolp isnot undefined>>
+				<<if $school_desk_dolp lt 2>>
+					<<ind>><<link [[Offer to buy new desks and chairs|Head's Office Buy Chair Dolp]]>><<pass 10>><</link>>
 					<br>
 				<</if>>
 			<</if>>
@@ -924,6 +930,44 @@ You haul yourself over the fence and drop down on the other side.
 <br>
 <<link [[Walk out|Hallways]]>><<detention 3>><<endevent>><</link>><<gdelinquency>>
 <br>
+
+:: Head's Office Buy Chair Dolp
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>><<person1>>
+<<if $school_desk_dolp is 0>>
+	You offer to buy new chairs and desks for the classrooms, Leighton laughs for a moment before <<he>> realizes that you are serious.
+	"Well," <<he>> says, "Let's see, we can use some new furniture for sure."
+	<br><br>
+	<<He>> pulls out diffrent pieces of paper from the cabinets behind <<his>> desk
+	and flips through a couple before finding what <<he>> is looking for. "The total will be <span class="blue">£10,000</span> for all of the classrooms."<br><br>
+	<<set $school_desk_dolp to 1>>/*first time reading check */
+<<else>>
+	Leighton looks at you in amusement "Are you going to pay this time or are you just going to annoy me more about it?" <<He>> sighs and gets the papers out from the cabinet
+	"Remember, the total is <span class="blue">£10,000</span> for the desk and chairs for all of the classrooms."
+	<br><br>
+<</if>>
+<br><br>
+<<if $money gte 1000000>>
+   	<<ind>><<link [[Pay for chairs and desks (£10,000)|Head's Office Brought Chair Dolp]]>><<pass 10>><<set $money -= 1000000>><<set $school_desk_dolp to 2>><<famebusiness 100>><<status 100>><</link>><<gggcool>>
+    <br>
+<<else>>
+    <span class="blue">You can't afford such an expense.</span>
+    <br>
+<</if>>
+	<<getouticon>><<link [[Leave the office (0:01)|Hallways]]>><<endevent>><<pass 1>><<set $daily.school.headInterrupted to 1>><</link>>
+<br>
+
+:: Head's Office Brought Chair Dolp
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>><<person1>>
+<<effects>>
+You hand over the money. Leighton counts it with a big smile, then squirrels it away in <<his>> desk. You're handed a mountain of paperwork, and it takes some time to fill out.
+<br><br>
+"Don't worry, this money will get into the right hands," <<he>> says with a big smile on <<his>> face. "The whole faculty thanks you for your donation. Now, get out."
+<br><br>
+You leave the office, hoping you weren't just robbed.
+<br><br>
+<<getouticon>><<link [[Leave the office (0:01)|Hallways]]>><<endevent>><<pass 1>><<set $daily.school.headInterrupted to 1>><</link>>
+<br>
+
 
 :: School Passout
 <<sydneySchedule>>

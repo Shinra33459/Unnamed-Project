@@ -74,7 +74,7 @@
 				<br>
 			<</if>>
 			<<goocount>>
-			<<if $cat gte 6 and $liquidoutsidecount gte 1 and $leftarm isnot "bound" and $rightarm isnot "bound">>
+			<<if ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled")) and $liquidoutsidecount gte 1 and $leftarm isnot "bound" and $rightarm isnot "bound">>
 				<<if $danceactiondefault is "groom">>
 					<label><span class="sub">Groom</span> (0:01) <span class="blue">Cat</span> <<radiobutton "$danceaction" "groom" checked>></label> |
 				<<else>>
@@ -558,7 +558,7 @@
 					<<dancedrunktrip>>
 				<<else>>
 					<<if $audiencearousal gte 41>>
-						<<if $rng gte 51>>
+						<<if $rng gte 51 and $drinkskip isnot undefined>>
 							<<dancedrink>>
 						<<else>>
 							<<dancelonging>>
@@ -642,6 +642,11 @@
 
 <<widget "dancedrink">>
 	<<set $danceevent to "drink">>
+	<<if $drinkskip is undefined>>
+		<<set $drinkskip to 1>>
+	<<else>>
+		<<unset $drinkskip>>
+	<</if>>
 	The <<person>> offers you a glass of wine.
 	<<if $drunk gte currentSkillValue('danceskill') - 800>>
 		You feel unsteady already.

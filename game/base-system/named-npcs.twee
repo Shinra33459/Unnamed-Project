@@ -223,6 +223,19 @@ Zohar
     <</if>>
 <</widget>>
 
+<<widget "initNPCBaseMaxOrgasm">>
+    <<for _i to 0; _i lt $NPCName.length; _i++>>
+        <<initNPCBaseMaxOrgasmSingle _i _args[0]>>
+    <</for>>
+<</widget>>
+
+<<widget "initNPCBaseMaxOrgasmSingle">>
+    <<set _i to _args[0]>>
+	<<if !$NPCName[_i].maxOrgasms or $NPCName[_i].maxOrgasms is 0 or _args[1] is "base max orgasms">>
+    	<<set $NPCName[_i].maxOrgasms to random(1, 5)>>
+	<</if>>
+<</widget>>
+
 <<widget "initnpcgender">>
 	<<for _i to 0; _i lt $NPCName.length; _i++>>
 		<<initnpcgendersingle _i _args[0]>>
@@ -246,7 +259,7 @@ Zohar
 			<<else>> <!-- if $player.gender is "f" -->
 				<<set _override to "f">>
 			<</if>>
-			<<if $background is "crossdresser">>
+			<<if $background.crossdresser is true>>
 				<<set _override to (_override is "m" ? "f" : "m")>>
 			<</if>>
 		<</if>>
@@ -260,17 +273,22 @@ Zohar
 	<<if $NPCName[_i].pregnancy?.type>>
 		<<set $NPCName[_i].gender to "f">>
 	<<elseif !$NPCName[_i].gender or $NPCName[_i].gender is "none" or _args[1] is "genders">>
+		<<rng>>
 		<<if $NPCName[_i].pronoun is "m">>
-			<<if random(0, 99) gte $cbchance>>
+			<<if $rng lte $mregularchance>>
 				<<set $NPCName[_i].gender to "m">>
-			<<else>>
+			<<elseif $rng gte (100 - $cbchance)>>
 				<<set $NPCName[_i].gender to "f">>
+			<<else>>
+				<<set $NPCName[_i].gender to "h">>
 			<</if>>
 		<<elseif $NPCName[_i].pronoun is "f">>
-			<<if random(0, 99) gte $dgchance>>
+			<<if $rng lte $fregularchance>>
 				<<set $NPCName[_i].gender to "f">>
-			<<else>>
+			<<elseif $rng gte (100 - $dgchance)>>
 				<<set $NPCName[_i].gender to "m">>
+			<<else>>
+				<<set $NPCName[_i].gender to "h">>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -851,13 +869,20 @@ Zohar
 		<<set $pronoun to $NPCName[_i].pronoun>>
 	<</if>>
 	/*Sets up multiple orgasms, code needs work*/
-	/*<<set $NPCList[0].maxOrgasms to 1>>
+	/* <<set $NPCList[0].maxOrgasms to 1>>
 	<<set $NPCList[0].orgasms to 0>>
-	<<if $NPCList[0].fullDescription is "Robin">>
-		<<set $NPCList[0].maxOrgasms to 2>>
-		<<set $setupMidOrgasm to true>>
-	<</if>>
-	*/
+	<<if $multiOrgasmToggle is 1>>
+		<<set _nameCheck to $NPCList[0].fullDescription>>
+		<<if _nameCheck is "Robin" or _nameCheck is "Kylar" or _nameCheck is "Sydney" or _nameCheck is "Leighton" or _nameCheck is "Gwylan">>
+			<<set $NPCList[0].maxOrgasms to 2 + Math.floor($NPCName[$NPCNameList.indexOf(_nameCheck)].lust / 20)>>
+		<<elseif _nameCheck is "Doren" or _nameCheck is "Quinn" or _nameCheck is "Niki" or _nameCheck is "Jordan" or _nameCheck is "Harper" or _nameCheck is "Landry" or _nameCheck is "Morgan" or _nameCheck is "River" or _nameCheck is "Mason" or _nameCheck is "Sam" or _nameCheck is "Winter" or _nameCheck is "Sirris" or _nameCheck is "Darryl">>
+			<<set $NPCList[0].maxOrgasms to 3 + Math.floor($NPCName[$NPCNameList.indexOf(_nameCheck)].lust / 20)>>
+		<<elseif _nameCheck is "Avery" or _nameCheck is "Whitney" or _nameCheck is "Remy" or _nameCheck is "Wren" or _nameCheck is "Alex" or _nameCheck is "Charlie">>
+			<<set $NPCList[0].maxOrgasms to 4 + Math.floor($NPCName[$NPCNameList.indexOf(_nameCheck)].lust / 20)>>
+		<<elseif _nameCheck is "Bailey" or _nameCheck is "Briar" or _nameCheck is "Eden" or _nameCheck is "Black Wolf" or _nameCheck is "Great Hawk" or _nameCheck is "Ivory Wraith" or _nameCheck is "Zephyr">>
+			<<set $NPCList[0].maxOrgasms to 5 + Math.floor($NPCName[$NPCNameList.indexOf(_nameCheck)].lust / 20)>>
+		<</if>>
+	<</if>> */
 
 	<!-- Set combat variables -->
 
@@ -867,6 +892,21 @@ Zohar
 	<<set $NPCList[_npcno].pronouns to clone($NPCName[_i].pronouns)>>
 	<<set $NPCList[_npcno].gender to $NPCName[_i].gender>>
 	<<set $NPCList[_npcno].type to $NPCName[_i].type>>
+	<<set $NPCList[_npcno].maxOrgasms to $NPCName[_i].maxOrgasms>>
+
+	<<if $NNPCMultiOrgasmToggle is 1>>
+		<<if !$NPCList[_npcno].maxOrgasms or $NPCList[_npcno].maxOrgasms lte 0>>
+			<<set $NPCList[_npcno].maxOrgasms = random(1, 5)>>
+		<</if>>
+		<<if $multiOrgasmLustScaling is 1>>
+			<<set $NPCList[_npcno].maxOrgasms += Math.floor($NPCName[$NPCNameList.indexOf(_nam)].lust / 20)>>
+		<</if>>
+		<<set $NPCList[_npcno].orgasms to 0>>
+	<</if>>
+
+	<<if $NNPCMultiOrgasmToggle is 1 and $NPCList[_npcno].maxOrgasms gt 1>>
+		<<set $setupMidOrgasm to true>>
+	<</if>>
 
 	<<set $NPCList[_npcno].lefthand to 0>>
 	<<set $NPCList[_npcno].righthand to 0>>
@@ -880,33 +920,61 @@ Zohar
 	<<case "Eden" "Black Wolf" "Great Hawk">>
 		<<set $NPCList[_npcno].health to 600>>
 		<<set $NPCList[_npcno].healthmax to 600>>
+		<<set $NPCList[_npcno].dodgeChance to 40>>
 	<<case "Bailey">>
 		<<set $NPCList[_npcno].health to 400>>
 		<<set $NPCList[_npcno].healthmax to 400>>
+		<<set $NPCList[_npcno].dodgeChance to 30>>
 	<<case "Harper">>
 		<<set $NPCList[_npcno].health to 200>>
 		<<set $NPCList[_npcno].healthmax to 200>>
 		<<set $NPCList[_npcno].traits.push("hypnotist")>>
+		<<set $NPCList[_npcno].dodgeChance to 5>>
 	<<case "Ivory Wraith">>
 		<<statsWraith>>
 		<<set $NPCList[_npcno].health to _wraithHP>>
 		<<set $NPCList[_npcno].healthmax to _wraithHP>>
 		<<set $NPCList[_npcno].traits to ["brooding", "watchful", "willful", "beautiful"]>>
 		<<set _condomIgnore to true>>
+		<<set $NPCList[_npcno].dodgeChance to 30>>
 	<<case "Alex">>
 		<<set $NPCList[_npcno].health to 200>>
 		<<set $NPCList[_npcno].healthmax to 200>>
 		/* Alex never thinks to bring a condom. */
 		<<set _condomIgnore to true>>
+		<<set $NPCList[_npcno].dodgeChance to 25>>
 	<<case "Morgan">>
 		<<set $NPCList[_npcno].health to 200>>
 		<<set $NPCList[_npcno].healthmax to 200>>
 		/* I'm so sorry.*/
 		<<set $NPCName[_i].pregnancyAvoidance to random(0,100)>>
+		<<set $NPCList[_npcno].dodgeChance to 20>>
 	<<default>>
 		<<set $NPCList[_npcno].health to 200>>
 		<<set $NPCList[_npcno].healthmax to 200>>
+		<<set $NPCList[_npcno].dodgeChance to 20>>
 	<</switch>>
+
+	<<set _buff to 0>>
+	<<set $NPCList[_npcno].healthmax to Math.round($NPCList[_npcno].healthmax * ($npcHealthMult / 100))>>
+	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
+	<<if $combatExtended.enemyHealthDayScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
+		<<else>>
+			<<set _buff += $combatExtended.enemyDayScalingLimit * $combatExtended.enemyHealthDayScalingMult>>
+		<</if>>
+	<</if>>
+	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
+	<<if $combatExtended.enemyHealthDefeatScaling is 1>>
+		<<if _buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1>>
+			<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
+		<<else>>
+			<<set _buff += $combatExtended.enemyDefeatScalingLimit * $combatExtended.enemyHealthDefeatScalingMult>>
+		<</if>>
+	<</if>>
+	<<set $NPCList[_npcno].healthmax to Math.round($NPCList[_npcno].healthmax * (1 + (_buff / 100)))>>
+	<<set $NPCList[_npcno].health to $NPCList[_npcno].healthmax>>
 
 	<<set $NPCList[_npcno].breastsize to $NPCName[_i].breastsize>>
 	<<set $NPCList[_npcno].breastsdesc to $NPCName[_i].breastsdesc>>
@@ -1426,9 +1494,9 @@ Zohar
 				<</if>>
 			<<elseif $NPCName[_i].love gte 60>>
 				<<if $NPCName[_i].purity gte 50>>
-					<<if $purity lte 500 or $demon gte 6>>
+					<<if $purity lte 500 or ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 						<span class="blue">wants to save you.</span>
-					<<elseif $temple_rank is "monk" or $temple_rank is "priest" or $angel gte 6>>
+					<<elseif $temple_rank is "monk" or $temple_rank is "priest" or ($angel gte 6 or ($transformationParts.angel.wings isnot "hidden" and $transformationParts.angel.wings isnot "disabled"))>>
 						<span class="green">considers you an inspiration.</span>
 					<<elseif $temple_rank is "initiate">>
 						<span class="green">considers you a prodigy.</span>
@@ -1442,9 +1510,9 @@ Zohar
 				<</if>>
 			<<elseif $NPCName[_i].love gte 30>>
 				<<if $NPCName[_i].purity gte 50>>
-					<<if $purity lte 500 or $demon gte 6>>
+					<<if $purity lte 500 or ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 						thinks you're <span class="blue">misguided.</span>
-					<<elseif $temple_rank is "monk" or $temple_rank is "priest" or $angel gte 6>>
+					<<elseif $temple_rank is "monk" or $temple_rank is "priest" or ($angel gte 6 or ($transformationParts.angel.wings isnot "hidden" and $transformationParts.angel.wings isnot "disabled"))>>
 						<span class="teal">looks up to you.</span>
 					<<elseif $temple_rank is "initiate">>
 						<span class="teal">sees you as an equal.</span>
@@ -1458,7 +1526,7 @@ Zohar
 				<</if>>
 			<<elseif $NPCName[_i].love gte 10>>
 				<<if $sydneySeen and $sydneySeen.includes("initiate")>>
-					<<if $purity lte 500 or $demon gte 6>>
+					<<if $purity lte 500 or ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 						<span class="pink">thinks you're lost.</span>
 					<<else>>
 						<span class="lblue">is proud of you.</span>
@@ -1468,7 +1536,7 @@ Zohar
 				<</if>>
 			<<else>>
 				<<if $sydneySeen and $sydneySeen.includes("initiate")>>
-					<<if $purity lte 500 or $demon gte 6>>
+					<<if $purity lte 500 or ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 						<span class="red">thinks you're heretical.</span>
 					<<elseif $sydney.rank is "initiate" and $temple_rank is "initiate">>
 						<span class="blue">is happy to know another initiate.</span>

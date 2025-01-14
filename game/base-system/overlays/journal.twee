@@ -36,22 +36,38 @@
 		<hr>
 		<h1 class="header gold bold">Time-Sensitive</h1>
 		<ul class="journal">
-			<<if $rentday isnot undefined>>
-				<<if $renttime lte 0>>
-					<li>Bailey is looking for you, and wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
-				<<else>>
-					<li>Bailey wants <<printmoney $rentmoney>> on <<rentday>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
+			<<if $baileyDeposit gte ($rentmoney * $rentmod) + ($babyRent or 0)>>
+				<<set _rentstage to $rentstage>>
+				<<set _baileyDepositDays to 0>>
+				<<set _baileyDepositWorth to 0>>
+				<<for _baileyDeposit = $baileyDeposit; _baileyDeposit >= ($rentmoney * $rentmod) + ($babyRent or 0) && _baileyDepositDays lt 1000; _baileyDeposit -= ($rentmoney * $rentmod) + ($babyRent or 0)>>
+					<<set $rentmoney to [10000,30000,50000,70000,100000,150000,200000][Math.clamp(_rentstage - 1,0,6)]>>
+					<<if $robinpaid is 1>>
+						<<set $rentmoney *= 2>>
+					<</if>>
+					<<set _rentstage += 1>>
+					<<set _baileyDepositDays += 1>>
+					<<set _baileyDepositWorth += ($rentmoney * $rentmod) + ($babyRent or 0)>>
+				<</for>>
+				<li>You still have enough deposit for Bailey for <span class="gold">_baileyDepositDays</span><<if _baileyDepositDays gte 1000>>+<</if>> weeks which is worth <<printmoney _baileyDepositWorth>><<if _baileyDepositDays gte 1000>>+<</if>>.</li>
+			<<else>>
+				<<if $rentday isnot undefined>>
+					<<if $renttime lte 0>>
+						<li>Bailey is looking for you, and wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
+					<<else>>
+						<li>Bailey wants <<printmoney $rentmoney>> on <<rentday>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
+					<</if>>
+				<<elseif $rentmoney isnot undefined>>
+					<li>Bailey wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
 				<</if>>
-			<<elseif $rentmoney isnot undefined>>
-				<li>Bailey wants <<printmoney $rentmoney>><<babyRentDisplay " plus " " for not looking after your children" "gold">>.</li>
 			<</if>>
 
 			<<if $averydate is 1 and Time.hour lte 21 and $averydatedone isnot 1>>
 				<li>You have a date scheduled with Avery <span class="pink">tonight.</span> <<nnpc_He "Avery">>'ll wait for you on Domus Street between <span class="gold"><<ampm 20 00>></span> and <span class="gold"><<ampm 21 00>></span>.</li>
 			<</if>>
 
-			<<if $psych is 1>>
-				<li>You have an appointment with Doctor Harper
+			<<if $psych is 1 or $schoolPsych is 1>>
+				<li>You <<if $psych is 1>>have an<<else>>may get an<</if>> appointment with Doctor Harper
 				<<if Time.weekDay is 6>>
 					<<if $daily.harperVisit is 1>>
 						next <span class='yellow'>Friday</span>.
@@ -81,13 +97,13 @@
 					<<set _date to new DateTime($brothel_escortjob.date)>>
 					<li>You have an escort job scheduled. You're expected to be in front of the brothel
 					<<if Time.monthDay is _date.day>>
-						<span class="pink">today</span> 
+						<span class="pink">today</span>
 					<<elseif Time.date.dayDifference(_date) is 1>>
-						<span class="gold">tomorrow</span> 
+						<span class="gold">tomorrow</span>
 					<<elseif Time.date.dayDifference(_date) gte 7>>
-						next <span class="gold">_date.weekDayName</span> 
+						next <span class="gold">_date.weekDayName</span>
 					<<else>>
-						on <span class="gold">_date.weekDayName</span> 
+						on <span class="gold">_date.weekDayName</span>
 					<</if>>
 					at <span class="gold"><<ampm _date.hour>></span>.</li>
 				<</if>>
@@ -119,7 +135,7 @@
 					<<elseif $smuggler_timer is 1>>
 						<span class="gold">tomorrow</span>, before midnight.
 					<<else>>
-						in <span class="gold">$smuggler_timer</span> days.
+						<<nDays $smuggler_timer>>.
 					<</if>>
 					<<if $smuggler_location is "forest">>
 						They're bringing it through the forest.
@@ -137,10 +153,8 @@
 				<li>Remy will attack the farm
 					<<if $farm_attack_timer is 0>>
 						<span class="pink">tonight</span>.
-					<<elseif $farm_attack_timer is 1>>
-						<span class="gold">tomorrow</span>.
 					<<else>>
-						in <span class="gold">$farm_attack_timer</span> days.
+						<<nDays $farm_attack_timer>>.
 					<</if>>
 					<<nnpc_He Remy>>'ll arrive between <span class="gold"><<ampm 21 00>></span> and <span class="gold">midnight.</span>
 				</li>
@@ -153,15 +167,59 @@
 					<<elseif $temple_chastity_timer is 1>>
 						You have a chastity exam due <span class="purple">tomorrow.</span>
 					<<else>>
-						You have a chastity exam due in <span class="gold">$temple_chastity_timer</span> days.
+						You have a chastity exam due <<nDays $temple_chastity_timer>>.
 					<</if>>
 					You will receive an <span class="gold">allowance</span> when passing the exam.
 				</li>
 			<</if>>
+
+			<<if $bike gte 1>>
+				<<switch $bikeLocation>>
+					<<case "nightingale">>
+						<<set _bikeString to "Nightingale Street (Hospital)">>
+					<<case "domus">>
+						<<set _bikeString to "Domus Street (Home)">>
+					<<case "elk">>
+						<<set _bikeString to "Elk Street">>
+					<<case "high">>
+						<<set _bikeString to "High Street (Shopping centre)">>
+					<<case "starfish">>
+						<<set _bikeString to "Starfish Street (Beach)">>
+					<<case "barb">>
+						<<set _bikeString to "Barb Street (Studio)">>
+					<<case "connudatus">>
+						<<set _bikeString to "Connudatus Street (Clubs)">>
+					<<case "wolf">>
+						<<set _bikeString to "Wolf Street (Temple)">>
+					<<case "harvest">>
+						<<set _bikeString to "Harvest Street (Pub)">>
+					<<case "oxford">>
+						<<set _bikeString to "Oxford Street (School)">>
+					<<case "danube">>
+						<<set _bikeString to "Danube Street (Mansions)">>
+					<<case "mer">>
+						<<set _bikeString to "Mer Street (Docks)">>
+					<<case "cliff">>
+						<<set _bikeString to "Cliff Street (Cafe)">>
+					<<case "lake">>
+						<<set _bikeString to "the Lake">>
+					<<case "farm">>
+						<<set _bikeString to "the Farmlands">>
+				<</switch>>
+				<li><<if $bikePersistentLocation is 1>>Your bike is at _bikeString.<</if>> Your bike has $bikeDurability minutes of usage time left in it.</li>
+			<</if>>
 		</ul>
 	<</if>>
 
-	<<if !$statFreeze and (($location is "asylum" and ($eden_asylum_window is 1 or ($daily.eden.distract gte 1 and Time.hour lt 21))) || $temple_spear_mission gte 1 || $dockwork gte 2 || ($brothelshowdata.intro and $brothelshowdata.type is "none") || $robindebtevent gte 1 and $robinmissing isnot 0 || $pubtask2 is 1 || $pubtask || $police_hack is 1 || $pub_hack_job gte 1 || $pubfame ||( $earSlime.event and !_tempEventHide) || $earSlime.forcedCommando isnot undefined || $earSlime.forcedDressing isnot undefined || $temple_rank is "prospective" || $chef_state gte 4 || $mason_pond gte 1 || ($brothel_machine_repair gte 1 and $brothel_machine_repair lte 3) || ($harpy gte 6 and $birdFly isnot 1) || ($studyBooks isnot undefined and $studyBooks.rented isnot "none") || $adultshopgrandopening || ($adultshopintro is 1 and $adultshopunlocked is undefined))>>
+	<<if $skul_dock isnot undefined>>
+		<<set _skul_dock_keys to Object.keys($skul_dock)>>
+		<<for _i to 0; _i lt _skul_dock_keys.length; _i++>>
+			<<if $skul_dock[_skul_dock_keys[_i]].state is "known">>
+				<<set _dockKnown to 1>>
+			<</if>>
+		<</for>>
+	<</if>>
+	<<if !$statFreeze and ($location is "asylum" and ($eden_asylum_window is 1 or ($daily.eden.distract gte 1 and Time.hour lt 21))) || $temple_spear_mission gte 1 || $dockwork gte 2 || ($brothelshowdata.intro and $brothelshowdata.type is "none") || $robindebtevent gte 1 and $robinmissing isnot 0 || $pubtask2 is 1 || $pubtask || $police_hack is 1 || $pub_hack_job gte 1 || $pubfame ||( $earSlime.event and !_tempEventHide) || $earSlime.forcedCommando isnot undefined || $earSlime.forcedDressing isnot undefined || $temple_rank is "prospective" || $chef_state gte 4 || $mason_pond gte 1 || ($brothel_machine_repair gte 1 and $brothel_machine_repair lte 3) || ($harpy gte 6 and $birdFly isnot 1) || ($studyBooks isnot undefined and $studyBooks.rented.count gte 1) || $adultshopgrandopening || ($adultshopintro is 1 and $adultshopunlocked is undefined) || _dockKnown isnot undefined || $daily.stallRented isnot undefined || ($farm isnot undefined and $farm.build isnot "")>>
 		/*TODO: streamline during eventual Journal UI Overhaul bc lol. lmao, even. */
 		<hr>
 		<h1 class="header gold bold">Reminders</h1>
@@ -316,9 +374,10 @@
 			<<elseif $chef_state is 7 and $chef_rework lte 0>>
 				<li>The renovations at the Ocean Breeze have finished.</li>
 			<<elseif $chef_state is 7 and $chef_rework lte 30>>
-				<li>The Ocean Breeze is closed for renovations. They will be done in <span class="gold">$chef_rework</span> days.</li>
+				<li>The Ocean Breeze is closed for renovations. They will be done <<nDays $chef_rework>>.</li>
 			<<elseif $chef_state is 7>>
-				<li>The Ocean Breeze will close for renovations in <span class="gold"><<print ($chef_rework - 30)>></span> days.</li>
+				<<set _timer to $chef_rework - 30>>
+				<li>The Ocean Breeze will close for renovations <<nDays _timer>>.</li>
 			<<elseif $chef_state is 8>>
 				<li>Sam wants you to attend the Ocean Breeze's grand reopening on any evening between <<ampm 18 00>> and <<ampm 21 00>>.</li>
 			<</if>>
@@ -341,7 +400,7 @@
 				<li>You have the pink gel Briar wants for the sex machine.</li>
 			<</if>>
 
-			<<if $harpy gte 6 and $birdFly isnot 1>>
+			<<if ($harpy gte 6 or ($transformationParts.bird.wings isnot "hidden" and $transformationParts.bird.wings isnot "disabled")) and $birdFly isnot 1>>
 				<li>Your wings are strong, but you don't know how to use them. The Great Hawk could teach you.</li>
 			<</if>>
 
@@ -375,14 +434,56 @@
 				<li>You encountered a strange ritual in a manor on Danube Street. Inform Jordan, head <<nnpc_title "Jordan">> at the temple.</li>
 			<</if>>
 
-			<<if $studyBooks isnot undefined and $studyBooks.rented isnot "none">>
-				<<if $book_rent_timer is 0>>
-					<li><span class="blue">You have a library book due.</span></li>
+			<<if $studyBooks isnot undefined and $studyBooks.rented.count gte 1>>
+				<<set _totalRentPrice to 0>>
+				<<for _i to 1; _i lte $studyBooks.rented.count; _i++>>
+					<<set _totalRentPrice += Math.round(2000 * (1 + (_i * _i)))>>
+				<</for>>
+				<<if $book_rent_deposit gte _totalRentPrice / 14>>
+					<<set _book_rent_deposit_duration_display to Math.floor($book_rent_deposit / (_totalRentPrice / 14))>>
+					<li>You are renting
+					<<if $studyBooks.rented.count gt 1>>
+						library books
+					<<else>>
+						a library book
+					<</if>>
+					but your deposit is still covering it for <span class="gold">_book_rent_deposit_duration_display</span> day<<if _book_rent_deposit_duration_display gt 1>>s<</if>>.</li>
+				<<elseif $book_rent_timer is 0>>
+					<li><span class="blue">You have
+					<<if $studyBooks.rented.count gt 1>>
+						library books
+					<<else>>
+						a library book
+					<</if>>
+					due.</span></li>
 				<<elseif $book_rent_timer lt 0>>
-					<li><span class="red">You have a library book overdue.</span></li>
+					<li><span class="blue">You have
+					<<if $studyBooks.rented.count gt 1>>
+						library books
+					<<else>>
+						a library book
+					<</if>>
+					overdue.</span></li>
 				<<else>>
-					<li>You have a library book due in <span class="gold">$book_rent_timer</span> day<<if $book_rent_timer gt 1>>s<</if>>.</li>
+					<li><span class="blue">You have
+					<<if $studyBooks.rented.count gt 1>>
+						library books
+					<<else>>
+						a library book
+					<</if>>
+					due in <span class="gold">$book_rent_timer</span> day<<if $book_rent_timer gt 1>>s<</if>>.</span></li>
 				<</if>>
+			<</if>>
+
+			<<if $daily.stallRented isnot undefined and $daily.stallRented is 1>>
+				<li>
+				<<if $stallDeposit gte 3000>>
+					<<set _string to Math.floor($stallDeposit / 3000)>>
+					You are renting a stall and still have <span class="gold">_string</span> days worth of deposit.
+				<<else>>
+					You are renting a stall and it will expire by today.
+				<</if>>
+				</li>
 			<</if>>
 
 			<<if $farm>>
@@ -407,24 +508,40 @@
 							Searchlights are being affixed atop the watchtower.
 						<<case "kennel 1">>
 							A guard dog training facility is being constructed.
-						<<case "barn 1" "barn 2">>
+						<<case "barn 1" "barn 2" "barn 3" "barn 4" "barn 5" "barn 6" "barn 7">>
 							The barn is being expanded.
-						<<case "woodland 1" "woodland 2" "woodland 3">>
+						<<case "woodland 1" "woodland 2" "woodland 3" "woodland 4" "woodland 5" "woodland 6" "woodland 7">>
 							A fence is being built around the nearby woodland.
 						<<case "stable 1">>
 							The stable is being expanded.
-						<<case "coop 1" "coop 2">>
+						<<case "coop 1" "coop 2" "coop 3" "coop 4" "coop 5" "coop 6" "coop 7">>
 							The coop is being expanded.
 						<<case "irrigation">>
 							Irrigation is being installed in a field.
 						<<case "nursery">>
 							A nursery is being built in the cottage.
+						<<case "compost bin 1">>
+							A compost bin is being installed.
+						<<case "compost bin 2" "compost bin 3">>
+							The compost bin is being expanded.
+						<<case "extract 1">>
+							The aphrodisiac extraction system is being installed.
+						<<case "extract 2">>
+							The aphrodisiac extraction system is being upgraded.
+						<<case "cooler 1">>
+							An industrial cooler is being installed.
+						<<case "cooler 2" "cooler 3">>
+							The industrial cooler is being upgraded.
+						<<case "water field 1">>
+							A fence is being build around the water field site.
+						<<case "water field 2">>
+							The water field is being excavated.
+						<<case "water field 3">>
+							Synethetic liners is being installed on the water field.
+						<<case "water field 4">>
+							The water source and water control structures are being installed on the water field.
 					<</switch>>
-					<<if $farm.build_timer is 1>>
-						It'll be finished <span class="gold">tomorrow.</span>
-					<<else>>
-						It'll be finished in <span class="gold"><<number $farm.build_timer>></span> days.
-					<</if>>
+					It'll be finished <<nDays $farm.build_timer>>.
 				</li>
 				<</if>>
 			<</if>>
@@ -448,9 +565,30 @@
 						$_theshop is in great disrepair.
 					<</if>>
 					<<if $adultshopprogress lt 22>>
-						You can help Sydney there on Elk Street, on Fridays after <<ampm 16>>.
+						You can help Sydney there on Elk Street, on Fridays after <<ampm 16>> and on any non-school day.
 					<</if>>
 				</li>
+			<</if>>
+
+			<<if $skul_dock isnot undefined>>
+				<<set _skul_dock_keys to Object.keys($skul_dock)>>
+				<<for _i to 0; _i lt _skul_dock_keys.length; _i++>>
+					<<if $skul_dock[_skul_dock_keys[_i]].state is "known">>
+						<<set _dock_location to _skul_dock_keys[_i]>>
+						<<set _dock_contents to $skul_dock[_skul_dock_keys[_i]].contents>>
+						<<if _dock_contents is "gold">>
+							<li>There's a bar of gold in a container at the <<skul_dock_location _dock_location>>.</li>
+						<<elseif _dock_contents is "aphrodisiacs">>
+							<li>A local company is moving something special through. It's being kept near the <<skul_dock_location _dock_location>>.</li>
+						<<elseif _dock_contents is "electronics">>
+							<li>There's a container full of goods, including valuable electronics, near the <<skul_dock_location _dock_location>>.</li>
+						<<elseif _dock_contents is "fertiliser">>
+							<li>There's a container full of what looks like fertiliser near the <<skul_dock_location _dock_location>>.</li>
+						<<elseif _dock_contents is "equipment">>
+							<li>There's a container full of specialist equipment near the <<skul_dock_location _dock_location>>.</li>
+						<</if>>
+					<</if>>
+				<</for>>
 			<</if>>
 		</ul>
 	<</if>>
@@ -542,7 +680,7 @@
 			The science fair is being held at the town hall on Cliff Street <span class="pink">today</span> from <<ampm 9 00>> until <<ampm 18 00>>.
 			<br>
 		<<else>>
-			The science fair will be held at the town hall on Cliff Street in <span class="gold">$scienceprojectdays</span> days.
+			The science fair will be held at the town hall on Cliff Street <<nDays $scienceprojectdays>>.
 			<br>
 		<</if>>
 		You have the following ongoing science projects. You'll choose one to present at the fair.
@@ -761,10 +899,10 @@
 			</li>
 		<</if>>
 		<<if $antiquemoney gt 0>>
-			<li><<museumicon>><span class="green">£<<print $antiquemoney>></span> in antiques. You can sell them to the museum.</li>
+			<li><<museumicon>><span class="green">£<<print $antiquemoney>></span> in antiques<<if $mathstrait gte 1 and $mathsTraitBuffs.antiques is 1>> but you'd wager you can haggle it up to <<printmoney `$antiquemoney * 100 * (1 + ($mathstrait/4))`>><</if>>. You can sell them to the museum.</li>
 		<</if>>
 		<<if $blackmoney gt 0>>
-			<li><<highicon>><span class="green">£<<print $blackmoney>></span> in stolen goods. You can sell them to someone on the black market.</li>
+			<li><<highicon>><span class="green">£<<print $blackmoney>></span> in stolen goods<<if $mathstrait gte 1 and $mathsTraitBuffs.stolen is 1>> but you'd wager you can haggle it up to <<printmoney `$blackmoney * 100 * (1 + ($mathstrait/4))`>><</if>>. You can sell them to someone on the black market.</li>
 		<</if>>
 		<<if $phials_held gt 0>>
 			<li><<icon "aphrodisiac.png">> <span class="green">$phials_held</span> <<= $phials_held is 1 ? "phial" : "phials">> of aphrodisiac. You can sell <<= $phials_held is 1 ? "it" : "them">> on Elk Street.</li>
@@ -783,6 +921,9 @@
 		<</if>>
 		<<if _hasProduce>>
 			<li><<tendingicon "basket">> <span class="green">Produce</span>. You can sell it by renting a stand on Connudatus Street at dawn.</li>
+		<</if>>
+		<<if $DoLPSpools isnot undefined>>
+			<li><<shopicon "tailor">> <span class="green">$DoLPSpools</span> spools.</li>
 		<</if>>
 	</ul>
 
@@ -903,7 +1044,7 @@
 				<summary class="journal">Seeds</summary>
 				<div class="itemCollectible">
 					<<for _i to 0; _i lt _plant_keys.length; _i++>>
-						<<set _tooltip to setup.plants[_plant_keys[_i]].plural[0].toUpperCase() + setup.plants[_plant_keys[_i]].plural.substring(1)>>
+						<<set _tooltip to setup.plants[_plant_keys[_i]].seed_name ? setup.plants[_plant_keys[_i]].seed_name.toUpperFirst() : (setup.plants[_plant_keys[_i]].plural[0].toUpperCase() + setup.plants[_plant_keys[_i]].plural.substring(1))>>
 						<<set _icon to setup.plants[_plant_keys[_i]].icon>>
 						<<if setup.plants[_plant_keys[_i]].type is "flower" or setup.plants[_plant_keys[_i]].type is "vegetable">>
 							<<if $plants_known.includes( setup.plants[_plant_keys[_i]].name)>>
@@ -1006,4 +1147,12 @@
 		<<set $journalNotes[_currentPage] to LZString.compress(_noteElement.value)>>
 		<<run updateMoment()>>
 	<</if>>
+<</widget>>
+
+<<widget "nDays">>
+	<<switch _args[0]>>
+		<<case 0>><span class="gold">today</span>
+		<<case 1>><span class="gold">tomorrow</span>
+		<<default>>in <span class="gold"><<= _args[0]>></span> days
+	<</switch>>
 <</widget>>

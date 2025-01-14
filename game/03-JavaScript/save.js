@@ -615,7 +615,7 @@ function importSettingsData(data) {
 	if (overrides.general != null) {
 		const listObject = settingsObjects("general");
 		const listKey = Object.keys(listObject);
-		const namedObjects = ["map", "shopDefaults", "options"];
+		const namedObjects = ["map", "shopDefaults", "options", "combatExtended", "AMCTraits"];
 		// correct swapped min/max values
 		if (overrides.general.breastsizemin > overrides.general.breastsizemax) {
 			const temp = overrides.general.breastsizemin;
@@ -726,6 +726,8 @@ function exportSettings(data, type) {
 			map: {},
 			shopDefaults: {},
 			options: {},
+			combatExtended: {},
+			AMCTraits: {},
 		},
 		npc: {},
 	};
@@ -747,7 +749,7 @@ function exportSettings(data, type) {
 
 	listObject = settingsObjects("general");
 	listKey = Object.keys(listObject);
-	const namedObjects = ["map", "shopDefaults", "options"];
+	const namedObjects = ["map", "shopDefaults", "options", "combatExtended", "AMCTraits"];
 
 	for (let i = 0; i < listKey.length; i++) {
 		if (namedObjects.includes(listKey[i]) && V[listKey[i]] != null) {
@@ -960,6 +962,8 @@ function settingsObjects(type) {
 				dgchance: { min: 0, max: 100, decimals: 0, displayName: "Percentage of women that have penises:", randomize: "encounter" },
 				cbchance: { min: 0, max: 100, decimals: 0, displayName: "Percentage of men that have vaginas:", randomize: "encounter" },
 				malevictimchance: { min: 0, max: 100, decimals: 0, displayName: "Percentage of other victims that are male:", randomize: "encounter" },
+				npcHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Health Max Multiplier:" },
+				npcArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Arousal Max Multiplier:" },
 				npcVirginityChance: { min: 0, max: 100, decimals: 0, displayName: "Likelihood of students being virgins:", randomize: "encounter" },
 				npcVirginityChanceAdult: { min: 0, max: 100, decimals: 0, displayName: "Likelihood of adults being virgins:", randomize: "encounter" },
 				breast_mod: { min: -12, max: 12, decimals: 0, displayName: "Average size of women's breasts:", randomize: "encounter" },
@@ -975,6 +979,8 @@ function settingsObjects(type) {
 				furniturePriceFactor: { min: 0.6, max: 2, decimals: 1, displayName: "Cost of furniture:", randomize: "gameplay" },
 				tending_yield_factor: { min: 1, max: 10, decimals: 1, displayName: "Crop yield:", randomize: "gameplay" },
 				rentmod: { min: 0.1, max: 3, decimals: 1, displayName: "Bailey's rent:", randomize: "gameplay" },
+				beastHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "Beast Health Max Multiplier:" },
+				beastArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "Beast Arousal Max Multiplier:" },
 				beastmalechance: { min: 0, max: 100, decimals: 0, displayName: "Percentage of beasts attracted to you that are male:", randomize: "encounter" },
 				beastMaleChanceSplit: { boolLetter: true, bool: true, displayName: "Beast attraction split by gender appearance:" },
 				beastMaleChanceMale: { min: 0, max: 100, decimals: 0, displayName: "Beasts who are attracted to men:", randomize: "encounter" },
@@ -1151,7 +1157,69 @@ function settingsObjects(type) {
 					},
 					randomize: "gameplay",
 				},
+
 				checkstyle: { strings: ["percentage", "words", "skillname"], randomize: "gameplay", displayName: "Skill check display:" },
+				enemystatstyle: { strings: ["full", "default"], randomize: "gameplay", displayName: "Enemy stat display:" },
+				combatExtended: {
+					standingFights: { min: 0, max: 1, decimals: 0, displayName: "Standing Fights:" },
+					reverseRape: { min: 0, max: 1, decimals: 0, displayName: "Reverse Rape:" },
+					passiveDodging: { min: 0, max: 1, decimals: 0, displayName: "Passive Dodging:" },
+					activeDodging: { min: 0, max: 1, decimals: 0, displayName: "Active Dodging:" },
+					uncappedDodgeChance: { min: 0, max: 1, decimals: 0, displayName: "Uncapped Dodge Chance:" },
+					dodgeChanceCap: { min: 0, max: 100, decimals: 0, displayName: "Dodge Chance Cap:" },
+					blocking: { min: 0, max: 1, decimals: 0, displayName: "Blocking:" },
+					countering: { min: 0, max: 1, decimals: 0, displayName: "Countering:" },
+					feinting: { min: 0, max: 1, decimals: 0, displayName: "Feinting:" },
+					hookpunching: { min: 0, max: 1, decimals: 0, displayName: "Hook Punching:" },
+					brawlingToggle: { min: 0, max: 1, decimals: 0, displayName: "Brawling:" },
+					enemyPassiveDodging: { min: 0, max: 1, decimals: 0, displayName: "Enemy Passive Dodging:" },
+					enemyActiveDodging: { min: 0, max: 1, decimals: 0, displayName: "Enemy Active Dodging:" },
+					enemyBlocking: { min: 0, max: 1, decimals: 0, displayName: "Enemy Blocking:" },
+					enemyCountering: { min: 0, max: 1, decimals: 0, displayName: "Enemy Countering:" },
+					enemyFeinting: { min: 0, max: 1, decimals: 0, displayName: "Enemy Feinting:" },
+					enemyLevelDayScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Level Day Scaling:" },
+					enemyLevelDayScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Level Day Scaling Multiplier:" },
+					enemyHealthDayScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Health Day Scaling:" },
+					enemyHealthDayScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Health Day Scaling Multiplier:" },
+					enemyDayScaling: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Day Scaling Interval:" },
+					enemyInfiniteDayScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Infinite Day Scaling:" },
+					enemyDayScalingLimit: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Day Scaling Limit:" },
+					enemyLevelDefeatScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Defeats Scaling:" },
+					enemyLevelDefeatScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Level Defeats Scaling Multiplier:" },
+					enemyHealthDefeatScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Health Defeats Scaling:" },
+					enemyHealthDefeatScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Health Defeats Scaling Multiplier:" },
+					enemyDefeatScaling: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Defeats Scaling Interval:" },
+					enemyInfiniteDefeatScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Infinite Defeats Scaling:" },
+					enemyDefeatScalingLimit: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Defeats Scaling Limit:" }
+				},
+				AMCTraits: {
+					halfGain: { min: 0, max: 1, decimals: 0, displayName: "Half Gain:" },
+					physique: { min: 1, max: 2, decimals: 0, displayName: "Tempered Physique:" },
+					willpower: { min: 1, max: 2, decimals: 0, displayName: "Tempered Willpower:" },
+					skulduggery: { min: 1, max: 2, decimals: 0, displayName: "Tempered Skulduggery:" },
+					dancing: { min: 1, max: 2, decimals: 0, displayName: "Tempered Dancing:" },
+					swimming: { min: 1, max: 2, decimals: 0, displayName: "Tempered Swimming:" },
+					athletics: { min: 1, max: 2, decimals: 0, displayName: "Tempered Athletics:" },
+					tending: { min: 1, max: 2, decimals: 0, displayName: "Tempered Tending:" },
+					housekeeping: { min: 1, max: 2, decimals: 0, displayName: "Tempered Housekeeping:" },
+					brawling: { min: 1, max: 2, decimals: 0, displayName: "Tempered Brawling:" },
+					science: { min: 1, max: 2, decimals: 0, displayName: "Tempered Science:" },
+					maths: { min: 1, max: 2, decimals: 0, displayName: "Tempered Maths:" },
+					english: { min: 1, max: 2, decimals: 0, displayName: "Tempered English:" },
+					history: { min: 1, max: 2, decimals: 0, displayName: "Tempered History:" },
+					seduction: { min: 1, max: 2, decimals: 0, displayName: "Tempered Seduction Skill:" },
+					oral: { min: 1, max: 2, decimals: 0, displayName: "Tempered Oral Skill:" },
+					chest: { min: 1, max: 2, decimals: 0, displayName: "Tempered Chest Skill:" },
+					hands: { min: 1, max: 2, decimals: 0, displayName: "Tempered Hands Skill:" },
+					buttocks: { min: 1, max: 2, decimals: 0, displayName: "Tempered Buttocks Skill:" },
+					penile: { min: 1, max: 2, decimals: 0, displayName: "Tempered Penile Skill:" },
+					vaginal: { min: 1, max: 2, decimals: 0, displayName: "Tempered Vaginal Skill:" },
+					anal: { min: 1, max: 2, decimals: 0, displayName: "Tempered Anal Skill:" },
+					thighs: { min: 1, max: 2, decimals: 0, displayName: "Tempered Thighs Skill:" },
+					feet: { min: 1, max: 2, decimals: 0, displayName: "Tempered Feet Skill:" }
+				},
+				multiOrgasmToggle: { min: 0, max: 1, decimals: 0, displayName: "Multi-Orgasm:" },
+				multiOrgasmLustScaling: { min: 0, max: 1, decimals: 0, displayName: "Multi-Orgasm Lust Scaling:" },
 				debugdisable: { boolLetter: true, bool: true, displayName: "Debug mode:" },
 				statdisable: { boolLetter: true, bool: true, displayName: "Blind stats mode:" },
 				cheatdisabletoggle: { boolLetter: true, bool: true, displayName: "Cheat mode:" },
@@ -1267,6 +1335,12 @@ function settingsObjects(type) {
 						12: "Enormous",
 					},
 				},
+				maxOrgasms: {
+					min: 1,
+					max: 5,
+					decimals: 0,
+					displayName: "Base max orgasms: ",
+				},
 			};
 			break;
 	}
@@ -1281,7 +1355,7 @@ function settingsConvert(exportType, type, settings) {
 	const keys = Object.keys(listObject);
 	for (let i = 0; i < keys.length; i++) {
 		if (result[keys[i]] === undefined) continue;
-		if (["map", "player", "shopDefaults", "options"].includes(keys[i])) {
+		if (["map", "player", "shopDefaults", "options", "combatExtended", "AMCTraits"].includes(keys[i])) {
 			const itemKey = Object.keys(listObject[keys[i]]);
 			for (let j = 0; j < itemKey.length; j++) {
 				if (result[keys[i]][itemKey[j]] === undefined) continue;

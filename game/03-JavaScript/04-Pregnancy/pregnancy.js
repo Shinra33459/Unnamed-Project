@@ -1093,6 +1093,8 @@ function playerPregnancyPossibleWith(NPC) {
 		// Check if this is a named NPC, whether the function is provided a string or NPCList object that belongs to a named NPC
 		NPCObject = V.NPCName[V.NPCNameList.indexOf(typeof NPC === "string" ? NPC : NPC.fullDescription)];
 
+		if (NPCObject == undefined) return false;
+
 		const NPCNameCheck = NPCObject.fullDescription || NPCObject.description; // .description is only for backup, should not be needed in normal cases
 		if (
 			setup.pregnancy.infertile.includes(NPCNameCheck) ||
@@ -1153,6 +1155,7 @@ function NPCPregnancyPossibleWithPlayer(NPC) {
 	if (typeof NPC === "string" || V.NPCNameList.includes(NPC.fullDescription)) {
 		// Check if this is a named NPC, whether the function is provided a string or NPCList object that belongs to a named NPC
 		NPCObject = V.NPCName[V.NPCNameList.indexOf(typeof NPC === "string" ? NPC : NPC.fullDescription)];
+		if (NPCObject == undefined) return false;
 		const NPCNameCheck = NPCObject.fullDescription || NPCObject.description;
 		if (!C.npc[NPCNameCheck]) {
 			Errors.report("Named NPC " + NPCNameCheck + " is undefined for pregnancy compatibility check.");

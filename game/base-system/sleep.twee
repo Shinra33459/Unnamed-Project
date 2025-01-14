@@ -22,32 +22,33 @@
 		<<set _toast to 1>>
 	<</if>>
 	<<set $sleepHoursTotal to 0>>
-	<<set $_bonusFatigueLoss to 10>>
+	<<set $_bonusFatigueLoss to 0>>
 	<!-- wearing sleep clothes -->
 	<<if $worn.upper.type.includes("sleep") or $worn.lower.type.includes("sleep")>>
-		<<set $_bonusFatigueLoss += 5>>
+		<<set $_bonusFatigueLoss += 20>>
 	<</if>>
 	<!-- sleeping with others -->
 	<<if $bedGuest or $wolfbed is 1>>
-		<<set $_bonusFatigueLoss += 5>>
+		<<set $_bonusFatigueLoss += 20>>
 	<</if>>
 	<!-- bonus for sleeping with Love Interests with the Mate For Life trait -->
 	<<if $bedGuest and $transformationParts.traits.mateForLife isnot "disabled" and isLoveInterest($bedGuest) and !$sleepWraith>>
-		<<set $_bonusFatigueLoss += 3>><<set $stress -= 10>><<set $trauma -= 1>><<set $arousal += 10>>
+		<<set $_bonusFatigueLoss += 30>><<set $stress -= 10>><<set $trauma -= 1>><<set $arousal += 10>>
 	<</if>>
 	<!-- wearing any non-sleep clothing disables the sleep bonus (except under_upper and under_lower and anything else not listed here) -->
 	<<if !["over_upper", "over_lower", "upper", "lower", "over_head", "head", "face", "neck", "hands", "handheld", "legs", "feet"].every(slot => $worn[slot].type.includes("naked") || $worn[slot].type.includes("sleep") || $worn[slot].type.includes("eerie"))>>
 		<<set $_bonusFatigueLoss to 0>>
 	<</if>>
 	<!-- sleeping in a poor/regular/comfy bed at home provides a -10/0/+10 bonus regardless of clothing -->
-	<<if $location is "home">>
+	<<if ($location is "home" and $furnitureLocation is "orphanage") or ($location is "lakehouse" and $furnitureLocation is "lakehouse") or ($location is "alex_cottage" and $furnitureLocation is "farm cottage")>>
 		<<set $_bed to Furniture.get('bed')>>
 		<<if $_bed.type.includes('comfy')>>
-			<<set $_bonusFatigueLoss += 10>>
+			<<set $_bonusFatigueLoss += 100>>
 		<<elseif $_bed.type.includes('starter')>>
-			<<set $_bonusFatigueLoss -= 10>>
+			<<set $_bonusFatigueLoss -= 100>>
 		<</if>>
 	<</if>>
+
 	<!-- note: every hour of sleep gives a standard 250 fatigue reduction, so this bonus may not be all that much. -->
 
 	<!-- sleephour repeats this until you have slept for the selected number of hours -->
@@ -272,27 +273,42 @@
 		<</if>>
 
 		<!-- fatigue is lowered by 200 for every hour slept, and another 50 more if the player has no trauma. -->
-		<<set $tiredness -= 200>>
+		<<set _tiredness = 200>>
 		<<if !($sleeptrouble is 1 and $controlled is 0)>>
-			<<set $tiredness -= 50>>
+			<<set _tiredness += 50>>
 		<</if>>
 		<<if $location is "island">>
 			<<if $island[$island.home].curtains is "simple">>
-				<<set $tiredness -= 15>>
+				<<set _tiredness += 15>>
 			<<elseif $island[$island.home].curtains is "basic">>
-				<<set $tiredness -= 30>>
+				<<set _tiredness += 30>>
 			<<elseif $island[$island.home].curtains is "advanced">>
-				<<set $tiredness -= 45>>
+				<<set _tiredness += 45>>
 			<</if>>
 		<<elseif $location is "tower" and $bedGuest isnot "alone">>
 			<<switch $bird.upgrades.nest>>
 				<<case 0>>
-				<<case 1>><<set $tiredness -= 15>>
-				<<case 2>><<set $tiredness -= 30>>
-				<<case 3>><<set $tiredness -= 45>>
+				<<case 1>><<set _tiredness += 15>>
+				<<case 2>><<set _tiredness += 30>>
+				<<case 3>><<set _tiredness += 45>>
 			<</switch>>
 		<</if>>
-		<<set $tiredness -= $_bonusFatigueLoss>>
+
+		<<set _tiredness += $_bonusFatigueLoss>>
+
+		<<if $substanceRebalance is 1>>
+			<<if $drunk gte 120>>
+				<<set _tiredness to _tiredness * (1 - (0.1 * (1 + Math.round($drunk / 120))))>>
+			<<elseif $drunk gte 1>>
+				<<set _tiredness to _tiredness * 0.95>>
+			<</if>>
+		<</if>>
+		<<if $DoLPTFBuffs is 1>>
+			<<if $TFBearBuffs is 1>>
+				<<set _tiredness to _tiredness * 0.8>>
+			<</if>>
+		<</if>>
+		<<set $tiredness -= Math.round(_tiredness)>>
 
 		<<set Weather.BodyTemperature.addActivity("sleep")>>
 

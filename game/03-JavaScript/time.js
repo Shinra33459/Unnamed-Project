@@ -421,42 +421,42 @@ function yearPassed() {
 function weekPassed() {
 	const fragment = document.createDocumentFragment();
 
-	if (V.science_exam >= 200 && V.sciencetrait < 4) {
-		V.effectsmessage = 1;
-		V.science_up_message = 1;
-		fragment.append(wikifier("school_skill_up", "science"));
-	} else if (V.science_exam <= -100 && V.sciencetrait >= 0) {
-		V.effectsmessage = 1;
-		V.science_down_message = 1;
-		fragment.append(wikifier("school_skill_down", "science"));
-	}
-	if (V.maths_exam >= 200 && V.mathstrait < 4) {
-		V.effectsmessage = 1;
-		V.maths_up_message = 1;
-		fragment.append(wikifier("school_skill_up", "maths"));
-	} else if (V.maths_exam <= -100 && V.mathstrait >= 0) {
-		V.effectsmessage = 1;
-		V.maths_down_message = 1;
-		fragment.append(wikifier("school_skill_down", "maths"));
-	}
-	if (V.english_exam >= 200 && V.englishtrait < 4) {
-		V.effectsmessage = 1;
-		V.english_up_message = 1;
-		fragment.append(wikifier("school_skill_up", "english"));
-	} else if (V.english_exam <= -100 && V.englishtrait >= 0) {
-		V.effectsmessage = 1;
-		V.english_down_message = 1;
-		fragment.append(wikifier("school_skill_down", "english"));
-	}
-	if (V.history_exam >= 200 && V.historytrait < 4) {
-		V.effectsmessage = 1;
-		V.history_up_message = 1;
-		fragment.append(wikifier("school_skill_up", "history"));
-	} else if (V.history_exam <= -100 && V.historytrait >= 0) {
-		V.effectsmessage = 1;
-		V.history_down_message = 1;
-		fragment.append(wikifier("school_skill_down", "history"));
-	}
+	// if (V.science_exam >= 200 && V.sciencetrait < 4 * V.AMCTraits.science) {
+	// 	V.effectsmessage = 1;
+	// 	V.science_up_message = 1;
+	// 	fragment.append(wikifier("school_skill_up", "science"));
+	// } else if (V.science_exam <= -100 && V.sciencetrait >= 0) {
+	// 	V.effectsmessage = 1;
+	// 	V.science_down_message = 1;
+	// 	fragment.append(wikifier("school_skill_down", "science"));
+	// }
+	// if (V.maths_exam >= 200 && V.mathstrait < 4 * V.AMCTraits.maths) {
+	// 	V.effectsmessage = 1;
+	// 	V.maths_up_message = 1;
+	// 	fragment.append(wikifier("school_skill_up", "maths"));
+	// } else if (V.maths_exam <= -100 && V.mathstrait >= 0) {
+	// 	V.effectsmessage = 1;
+	// 	V.maths_down_message = 1;
+	// 	fragment.append(wikifier("school_skill_down", "maths"));
+	// }
+	// if (V.english_exam >= 200 && V.englishtrait < 4 * V.AMCTraits.english) {
+	// 	V.effectsmessage = 1;
+	// 	V.english_up_message = 1;
+	// 	fragment.append(wikifier("school_skill_up", "english"));
+	// } else if (V.english_exam <= -100 && V.englishtrait >= 0) {
+	// 	V.effectsmessage = 1;
+	// 	V.english_down_message = 1;
+	// 	fragment.append(wikifier("school_skill_down", "english"));
+	// }
+	// if (V.history_exam >= 200 && V.historytrait < 4 * V.AMCTraits.history) {
+	// 	V.effectsmessage = 1;
+	// 	V.history_up_message = 1;
+	// 	fragment.append(wikifier("school_skill_up", "history"));
+	// } else if (V.history_exam <= -100 && V.historytrait >= 0) {
+	// 	V.effectsmessage = 1;
+	// 	V.history_down_message = 1;
+	// 	fragment.append(wikifier("school_skill_down", "history"));
+	// }
 	if (Time.schoolTerm) {
 		V.science_exam = Math.clamp(V.science_exam - 7, -107, 200);
 		V.maths_exam = Math.clamp(V.maths_exam - 7, -107, 200);
@@ -638,7 +638,11 @@ function dayPassed() {
 		delete V.community_service_done;
 	}
 
-	if (V.awareness >= 300) V.awarelevel = 2;
+	if (V.awareness >= 1000) V.awarelevel = 6;
+	else if (V.awareness >= 800) V.awarelevel = 5;
+	else if (V.awareness >= 600) V.awarelevel = 4;
+	else if (V.awareness >= 400) V.awarelevel = 3;
+	else if (V.awareness >= 300) V.awarelevel = 2;
 	else if (V.awareness >= 200) V.awarelevel = 1;
 	else if (V.awareness <= -1) V.awarelevel = -1;
 	else V.awarelevel = 0;
@@ -650,17 +654,45 @@ function dayPassed() {
 	} else if (V.awarelevel >= 2 && V.loveInterest.primary !== "None" && V.loveInterest.secondary === "None" && !V.loveInterestAwareMessage) {
 		V.loveInterest_message = 2;
 		V.effectsmessage = 1;
+	} else if (V.awarelevel >= 3 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary === "None" && V.loveInterestAwareMessage == 1) {
+		V.loveInterest_message = 3;
+		V.effectsmessage = 1;
+	} else if (V.awarelevel >= 4 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary === "None" && V.loveInterestAwareMessage == 2) {
+		V.loveInterest_message = 4;
+		V.effectsmessage = 1;
+	} else if (V.awarelevel >= 5 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary === "None" && V.loveInterest.quarternary !== "None" && V.loveInterest.quinary === "None" && V.loveInterestAwareMessage == 3) {
+		V.loveInterest_message = 5;
+		V.effectsmessage = 1;
+	} else if (V.awarelevel >= 6 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary !== "None" && V.loveInterest.quinary !== "None" && V.loveInterest.senary === "None" && V.loveInterestAwareMessage == 4) {
+		V.loveInterest_message = 6;
+		V.effectsmessage = 1;
 	}
 	if (V.pound) {
 		V.pound.compete = 0;
 		fragment.append(wikifier("stray_happiness", -1));
 		V.pound.tasks = [];
 	}
+
+	V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][
+		Math.min(Math.max(V.rentstage - 1, 0), 6)
+	];
+
+	if (V.robinpaid === 1) {
+		V.rentmoney *= 2;
+	}
+
 	V.renttime--;
-	// Not seen bailey for more than 2 weeks, tracks missed rent
-	if (V.renttime < 0 && V.renttime % 7 === 0) {
-		V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
-		V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
+	if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
+		if (V.renttime <= 0) {
+			V.renttime = 7;
+			V.baileyDeposit -= (V.rentmoney * V.rentmod) + (V.babyRent || 0);
+		}
+	} else {
+		// Not seen bailey for more than 2 weeks, tracks missed rent
+		if (V.renttime < 0 && V.renttime % 7 === 0) {
+			V.baileyRefusedToPayTotal += (V.rentmoney * V.rentmod) + (V.babyRent || 0);
+			V.baileyRefusedToPayTotalStat += (V.rentmoney * V.rentmod) + (V.babyRent || 0);
+		}
 	}
 
 	if (V.flashbacktown > 0) V.flashbacktown--;
@@ -776,6 +808,13 @@ function dayPassed() {
 		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
 	}
 
+	if (V.dailyBrothelPriceCheck) {
+		V.dailyBrothelPriceCheck = undefined;
+		V.brothelExclusiveGloryholeAccuratePrice = undefined;
+		V.brothelExclusiveGloryholeEstimatePrice = undefined;
+		V.brothelExclusiveGloryholeRoughEstimatePrice = undefined;
+	}
+
 	fragment.append(wikifier("menstruationCycle", "daily"));
 	pregnancyProgress();
 	pregnancyProgress("anus");
@@ -851,6 +890,52 @@ function dayPassed() {
 	if (V.robinPillory && V.robinPillory.danger !== undefined && (V.robindebtevent <= 1 || !V.baileySold)) V.robinPillory.active = true;
 
 	V.daily.clearProperties();
+
+	if (V.stallDeposit >= 3000) {
+		V.stallDeposit -= 3000;
+		V.daily.stallRented = 1;
+	}
+
+	if (V.bike >= 1) {
+		if (V.bikeSecurityGear == 5) {
+			T.bikeTheftProtection = 999;
+		} else if (V.bikeSecurityGear == 4) {
+			T.bikeTheftProtection = 750;
+		} else if (V.bikeSecurityGear == 3) {
+			T.bikeTheftProtection = 500;
+		} else if (V.bikeSecurityGear == 2) {
+			T.bikeTheftProtection = 300;
+		} else if (V.bikeSecurityGear == 1) {
+			T.bikeTheftProtection = 100;
+		} else {
+			T.bikeTheftProtection = 0;
+		}
+		if (V.bikeLocationCategory == "lake") {
+			T.bikeTheftChance = 500 - T.bikeTheftProtection;
+		} else if (V.bikeLocationCategory == "left" || V.bikeLocationCategory == "mid" || V.bikeLocationCategory == "right") {
+			if (V.baileydefeatedchain >= 1) {
+				T.bikeTheftChanceBonus = 250;
+			} else {
+				T.bikeTheftChanceBonus = 0;
+			}
+			T.bikeTheftChance = 750 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
+		} else if (V.bikeLocationCategory == "farm") {
+			if (V.farm?.aggro) T.bikeTheftChanceBonus = 900 * (V.farm.aggro / 100);
+			T.bikeTheftChance = 100 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
+		} else {
+			T.bikeTheftChance = 0;
+		}
+		if ((random(1, 1000) <= T.bikeTheftChance) && V.bikeSecurity == 1) {
+			V.bikeStolen = 1;
+			V.bike = 0;
+			if (V.bikeSecurityGear >= 1) V.bikeSecurityGearStolen = 1;
+			V.bikeSecurityGear = 0;
+		}
+	}
+
+	if (V.dailySunscreen == true) {
+		V.effectsmessage = 1;
+	}
 
 	return fragment;
 }
@@ -1239,7 +1324,9 @@ function dailyNPCEffects() {
 function dailyPlayerEffects() {
 	const fragment = document.createDocumentFragment();
 
-	V.willpower *= 0.99;
+	if (V.willpowerDecay == 1){
+		V.willpower *= 0.99;
+	}
 
 	if (V.awareness <= -200 && V.innocencestate !== 1) {
 		V.innocencestate = 1;
@@ -1418,7 +1505,13 @@ function dailyLiquidEffects() {
 	if (V.player.penisExist) {
 		let amount = V.player.penissize - 1;
 		if (V.semen_volume <= 24) amount++;
-		amount -= Math.floor(V.semen_volume / 250);
+		if (V.semen_volume >= 6000) {
+			amount -= Math.floor(V.semen_volume / 600);
+		} else if (V.semen_volume >= 3000) {
+			amount -= Math.floor(V.semen_volume / 450);
+		} else {
+			amount -= Math.floor(V.semen_volume / 300);
+		}
 		statChange.semenvolume(amount);
 	} else {
 		V.semen_volume = 0;
@@ -1557,6 +1650,43 @@ window.moonState = moonState;
 function dailySchoolEffects() {
 	const fragment = document.createDocumentFragment();
 
+	if (V.science_exam >= 200 && V.sciencetrait < 4 * V.AMCTraits.science) {
+		V.effectsmessage = 1;
+		V.science_up_message = 1;
+		fragment.append(wikifier("school_skill_up", "science"));
+	} else if (V.science_exam <= -100 && V.sciencetrait >= 0) {
+		V.effectsmessage = 1;
+		V.science_down_message = 1;
+		fragment.append(wikifier("school_skill_down", "science"));
+	}
+	if (V.maths_exam >= 200 && V.mathstrait < 4 * V.AMCTraits.maths) {
+		V.effectsmessage = 1;
+		V.maths_up_message = 1;
+		fragment.append(wikifier("school_skill_up", "maths"));
+	} else if (V.maths_exam <= -100 && V.mathstrait >= 0) {
+		V.effectsmessage = 1;
+		V.maths_down_message = 1;
+		fragment.append(wikifier("school_skill_down", "maths"));
+	}
+	if (V.english_exam >= 200 && V.englishtrait < 4 * V.AMCTraits.english) {
+		V.effectsmessage = 1;
+		V.english_up_message = 1;
+		fragment.append(wikifier("school_skill_up", "english"));
+	} else if (V.english_exam <= -100 && V.englishtrait >= 0) {
+		V.effectsmessage = 1;
+		V.english_down_message = 1;
+		fragment.append(wikifier("school_skill_down", "english"));
+	}
+	if (V.history_exam >= 200 && V.historytrait < 4 * V.AMCTraits.history) {
+		V.effectsmessage = 1;
+		V.history_up_message = 1;
+		fragment.append(wikifier("school_skill_up", "history"));
+	} else if (V.history_exam <= -100 && V.historytrait >= 0) {
+		V.effectsmessage = 1;
+		V.history_down_message = 1;
+		fragment.append(wikifier("school_skill_down", "history"));
+	}
+
 	V.schooleventtimer--;
 	if (V.scienceproject === "ongoing") {
 		V.scienceprojectdays--;
@@ -1587,7 +1717,11 @@ function dailySchoolEffects() {
 			V.englishPlay = "missed";
 		}
 	}
-	if (V.schooltrait >= 4) statChange.trauma(-50);
+	if (V.schooltrait >= 8) statChange.trauma(-150);
+	else if (V.schooltrait === 7) statChange.trauma(-125);
+	else if (V.schooltrait === 6) statChange.trauma(-100);
+	else if (V.schooltrait === 5) statChange.trauma(-75);
+	else if (V.schooltrait === 4) statChange.trauma(-50);
 	else if (V.schooltrait === 3) statChange.trauma(-40);
 	else if (V.schooltrait === 2) statChange.trauma(-30);
 	else if (V.schooltrait === 1) statChange.trauma(-20);
@@ -1649,13 +1783,20 @@ function dailySchoolEffects() {
 	}
 
 	V.school = V.science + V.english + V.maths + V.history;
-	V.schooltrait = V.school >= 2800 ? 4 : V.school >= 2000 ? 3 : V.school >= 1600 ? 2 : V.school >= 1200 ? 1 : 0;
+	V.schooltrait = V.school >= 8000 ? 8 : V.school >= 6500 ? 7 : V.school >= 5000 ? 6 : V.school >= 4000 ? 5 : V.school >= 2800 ? 4 : V.school >= 2000 ? 3 : V.school >= 1600 ? 2 : V.school >= 1200 ? 1 : 0;
 
 	if (V.studyBooks) {
 		fragment.append(wikifier("passiveStudy"));
-		if (V.studyBooks.rented !== "none" && Time.schoolTerm) {
-			if (V.book_rent_timer >= 0) {
-				V.book_rent_timer--;
+		if (V.studyBooks.rented.count >= 1 && Time.schoolTerm) {
+			T.totalRentPrice = 0;
+			for (T.i = 1; T.i <= V.studyBooks.rented.count; T.i++) {
+				T.totalRentPrice += Math.round(2000 * (1 + (T.i * T.i)));
+			}
+			if (V.book_rent_deposit >= Math.round(T.totalRentPrice / 14)) {
+				V.book_rent_deposit -= Math.round(T.totalRentPrice / 14);
+				V.book_rent_timer = 14;
+			} else if (V.book_rent_timer >= 0) {
+					V.book_rent_timer--;
 			} else if (V.book_rent_timer < 0) {
 				if (V.bookOverdue === undefined) V.bookOverdue = 0;
 				V.bookOverdue++;
@@ -1668,7 +1809,11 @@ function dailySchoolEffects() {
 				}
 			}
 		}
-		if (V.studyBooks.stolen !== "none" && Time.schoolTerm) fragment.append(wikifier("crimeUp", 1, "thievery"));
+		// if (V.studyBooks.stolen !== "none" && Time.schoolTerm) fragment.append(wikifier("crimeUp", 1, "thievery"));
+		if (V.studyBooks.stolen.science !== 0 && Time.schoolTerm) fragment.append(wikifier("crimeUp", 1, "thievery"));
+		if (V.studyBooks.stolen.maths !== 0 && Time.schoolTerm) fragment.append(wikifier("crimeUp", 1, "thievery"));
+		if (V.studyBooks.stolen.english !== 0 && Time.schoolTerm) fragment.append(wikifier("crimeUp", 1, "thievery"));
+		if (V.studyBooks.stolen.history !== 0 && Time.schoolTerm) fragment.append(wikifier("crimeUp", 1, "thievery"));
 		if (V.recentReturnTimer) {
 			V.recentReturnTimer--;
 			if (V.recentReturnTimer <= 0) delete V.recentReturnTimer;
@@ -1730,14 +1875,22 @@ function dailyMasochismSadismEffects() {
 		return false;
 	};
 
-	V.masochism *= 0.985;
+	if (!V.featsSadismBoost && V.uncomfortable.sadoMaso === true) V.sadism *= 0.985;
+	if (!V.featsMasochismBoost && V.uncomfortable.sadoMaso === true) V.masochism *= 0.985;
+
+	V.dailySadism = 0;
+		if (V.featsSadismBoost) V.dailySadism += V.featsSadismBoost;
+		Wikifier.wikifyEval("<<sadism $dailySadism>>");
+	V.dailyMasochism = 0;
+		if (V.featsMasochismBoost) V.dailyMasochism += V.featsMasochismBoost;
+		Wikifier.wikifyEval("<<masochism $dailyMasochism>>");
+
 	const masochism = effects(V.masochism_level, V.masochism);
 	if (masochism) {
 		V.masochism_level = masochism.level;
 		V.masochism_message = masochism.message;
 		V.effectsmessage = 1;
 	}
-	V.sadism *= 0.985;
 	const sadism = effects(V.sadism_level, V.sadism);
 	if (sadism) {
 		V.sadism_level = sadism.level;
@@ -1745,6 +1898,8 @@ function dailyMasochismSadismEffects() {
 		V.effectsmessage = 1;
 	}
 }
+
+
 
 function dailyFarmEvents() {
 	const fragment = document.createDocumentFragment();
@@ -1767,32 +1922,90 @@ function dailyFarmEvents() {
 		V.farm_attack_timer--;
 		if (V.farm_attack_timer < 0) fragment.append(wikifier("farm_attack_auto"));
 		if (V.farm.stock) {
-			V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.8);
-			V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.8);
-			V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.8);
+			if (V.farm.cooler >= 3) {
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.99);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.99);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.99);
+			} else if (V.farm.cooler >= 2) {
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.95);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.95);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.95);
+			} else if (V.farm.cooler >= 1) {
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.9);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.9);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.9);
+			} else {
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.8);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.8);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.8);
+			}
 		}
-		if (V.farm.woodland >= 3) {
-			fragment.append(wikifier("farm_stock", "truffles", 6, 12));
+		if (V.farm.woodland >= 7) {
+			fragment.append(wikifier("farm_stock", "truffles", 192, 384));
+			fragment.append(wikifier("farm_pigs", -4));
+		} else if (V.farm.woodland >= 6) {
+			fragment.append(wikifier("farm_stock", "truffles", 96, 192));
+			fragment.append(wikifier("farm_pigs", -3));
+		} else if (V.farm.woodland >= 5) {
+			fragment.append(wikifier("farm_stock", "truffles", 48, 96));
+			fragment.append(wikifier("farm_pigs", -3));
+		} else if (V.farm.woodland >= 4) {
+			fragment.append(wikifier("farm_stock", "truffles", 24, 48));
 			fragment.append(wikifier("farm_pigs", -2));
+		} else if (V.farm.woodland >= 3) {
+			fragment.append(wikifier("farm_stock", "truffles", 12, 24));
+			fragment.append(wikifier("farm_pigs", -2));
+		} else if (V.farm.woodland >= 2) {
+			fragment.append(wikifier("farm_stock", "truffles", 6, 12));
+			fragment.append(wikifier("farm_pigs", -1));
 		} else if (V.farm.woodland >= 1) {
 			fragment.append(wikifier("farm_stock", "truffles", 3, 6));
 			fragment.append(wikifier("farm_pigs", -1));
 		}
-		if (V.farm.barn >= 2) {
-			fragment.append(wikifier("farm_stock", "milk", 12, 24));
+		if (V.farm.barn >= 7) {
+			fragment.append(wikifier("farm_stock", "milk", 1280, 2560));
+		} else if (V.farm.barn >= 6) {
+			fragment.append(wikifier("farm_stock", "milk", 640, 1280));
+		} else if (V.farm.barn >= 5) {
+			fragment.append(wikifier("farm_stock", "milk", 320, 640));
+		} else if (V.farm.barn >= 4) {
+			fragment.append(wikifier("farm_stock", "milk", 160, 320));
+		} else if (V.farm.barn >= 3) {
+			fragment.append(wikifier("farm_stock", "milk", 80, 160));
+		} else if (V.farm.barn >= 2) {
+			fragment.append(wikifier("farm_stock", "milk", 40, 80));
 		} else if (V.farm.barn >= 1) {
-			fragment.append(wikifier("farm_stock", "milk", 6, 12));
+			fragment.append(wikifier("farm_stock", "milk", 20, 40));
 		}
-		if (V.farm.coop >= 2) {
-			fragment.append(wikifier("farm_stock", "eggs", 12, 24));
+		if (V.farm.coop >= 7) {
+			fragment.append(wikifier("farm_stock", "eggs", 1280, 2560));
+		} else if (V.farm.coop >= 6) {
+			fragment.append(wikifier("farm_stock", "eggs", 640, 1280));
+		} else if (V.farm.coop >= 5) {
+			fragment.append(wikifier("farm_stock", "eggs", 320, 640));
+		} else if (V.farm.coop >= 4) {
+			fragment.append(wikifier("farm_stock", "eggs", 160, 320));
+		} else if (V.farm.coop >= 3) {
+			fragment.append(wikifier("farm_stock", "eggs", 80, 160));
+		} else if (V.farm.coop >= 2) {
+			fragment.append(wikifier("farm_stock", "eggs", 40, 80));
 		} else if (V.farm.coop >= 1) {
-			fragment.append(wikifier("farm_stock", "eggs", 6, 12));
+			fragment.append(wikifier("farm_stock", "eggs", 20, 40));
 		}
 		if (V.farm.kennel >= 1) {
 			fragment.append(wikifier("farm_dogs", -1));
 			fragment.append(wikifier("farm_cattle", -1));
 		}
 		fragment.append(wikifier("farm_build_day"));
+		if (V.farm.compostbin >= 1){
+			fragment.append(wikifier("composting"));
+		}
+		if (V.farm.watchtowerDailyAttempt == 1){
+			V.farm.watchtowerDailyAttempt = 0;
+		}
+		if (V.farm.dailyHelp == 1){
+			V.farm.dailyHelp = 0;
+		}
 	}
 	if (V.farm_stage >= 9) {
 		if (V.lurkers_stored >= 1) {
@@ -1801,6 +2014,16 @@ function dailyFarmEvents() {
 				V.lurkers_stored--;
 				V.phials_stored++;
 				V.farm.still_timer = 7;
+			}
+			if (V.farm.player_still_timer >= 0) {
+				V.farm.player_still_timer--;
+			}
+			if (V.farm.player_still_timer == 0) {
+				V.lurkers_stored--;
+				V.phials_stored++;
+				if (V.farm.extract == 2 && V.lurkers_stored > 0){
+					V.farm.player_still_timer = 9 - V.sciencetrait;
+				}
 			}
 		}
 	}

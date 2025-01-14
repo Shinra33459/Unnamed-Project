@@ -43,6 +43,8 @@
 				<<set $enemyhealthmax to _wraithHP>>
 				<<set $enemyhealth to _wraithHP>>
 				<<set $enemyarousalmax to 700>>
+				<<healthMultiplier>>
+				<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
 				<<set $enemyanger += (C.npc["Ivory Wraith"].lust * 5)>>
 				<<set $enemytrust -= (C.npc["Ivory Wraith"].lust * 2)>>
 				<<npcexpose>>
@@ -94,6 +96,8 @@
 					<<set $enemyhealthmax to _wraithHP>>
 					<<set $enemyhealth to _wraithHP>>
 					<<set $enemyarousalmax to 1300>>
+					<<healthMultiplier>>
+					<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
 					<<set $enemyanger += (C.npc["Ivory Wraith"].lust * 5)>>
 					<<set $enemytrust -= (C.npc["Ivory Wraith"].lust * 2)>>
 					<<tentaclestart _wraithTentaclesAbomination 15 "tentacle" "pale">>
@@ -127,6 +131,8 @@
 				<<set $enemyhealthmax to _wraithHP>>
 				<<npcexpose>>
 				<<set $enemyarousalmax to 700>>
+				<<healthMultiplier>>
+				<<set $enemyarousalmax to $enemyarousalmax * ($npcArousalMult / 100)>>
 				<<set $enemyanger += (C.npc["Ivory Wraith"].lust * 5)>>
 				<<set $enemytrust -= (C.npc["Ivory Wraith"].lust * 2)>>
 			<<default>>
@@ -196,7 +202,13 @@
 	<<generateWraith 1>>
 	<<initWraith _wraithSelect>>
 	<<set $NPCList[0].intro to 0>>
-	<<set $enemyhealth to $wraithHealth>>
+	<<if $wraithHealth lt ($enemyhealth * 0.2) * ($npcHealthMult / 100)>>
+		<<set $enemyhealth to $enemyhealth * 0.2 * ($npcHealthMult / 100)>>
+	<<else>>
+		<<set $enemyhealth to $wraithHealth>>
+	<</if>>
+	<<set $enemyhealthmax to $enemyhealth>>
+
 	<<if $pain gte 50 and $bus isnot "lake_ruin_prison">>
 		<<kissWraith>>
 	<</if>>
@@ -407,6 +419,11 @@
 		<<if $cow gte 4>>
 			<<run _speakPool.pushUnique(
 				"moo","snort","huff"
+			)>>
+		<</if>>
+		<<if $bear gte 4>>
+			<<run _speakPool.pushUnique(
+				"growl","snort","huff"
 			)>>
 		<</if>>
 		<<if $harpy gte 4>>
@@ -887,21 +904,21 @@
 				"Until the Sands run dry.",
 			)>>
 		<</if>>
-		<<if $angel gte 6>>
+		<<if ($angel gte 6 or ($transformationParts.angel.wings isnot "hidden" and $transformationParts.angel.wings isnot "disabled"))>>
 			<<run _linePool.pushUnique(
 				"It won't last. It never does.",
 				"Your descent will be beautiful.",
 				"Fly with me, gaoler. Fly and fall.",
 				"You were only a prisoner, after everything."
 			)>>
-		<<elseif $fallenangel gte 2>>
+		<<elseif ($fallenangel gte 2 or ($transformationParts.fallenAngel.wings isnot "hidden" and $transformationParts.fallenAngel.wings isnot "disabled"))>>
 			<<run _linePool.pushUnique(
 				"Falling. Falling. Falling.",
 				"Almost like looking in a mirror.",
 				"Was it worth it? Don't answer, you would be wrong.",
 				"Open your eyes, blacken your wings, harden your heart."
 			)>>
-		<<elseif $demon gte 6>>
+		<<elseif ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 			<<run _linePool.pushUnique(
 				"Sapphire and brimstone.",
 				"All the world's to defile.",
@@ -1854,7 +1871,7 @@
 	<br>
 	<<link [[Try to look away|Wraith Caught Resist]]>><<if numberOfEarSlime()>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><</if>><<def 1>><</link>><<if numberOfEarSlime()>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>><</if>><<willpowerdifficulty 250 $willpowermax>>
 	<br>
-	<<if $angel gte 6>>
+	<<if ($angel gte 6 or ($transformationParts.angel.wings isnot "hidden" and $transformationParts.angel.wings isnot "disabled"))>>
 		<<link [[Pray|Wraith Intro Pray]]>><</link>><<angel>>
 		<br>
 	<</if>>

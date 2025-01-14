@@ -1,6 +1,6 @@
 :: Cliff Street
 
-<<set $outside to 1>><<set $location to "town">><<effects>><<set $bus to "cliff">><<getTarget true>>
+<<set $outside to 1>><<set $location to "town">><<effects>><<set $bus to "cliff">><<set $bikeStartCategory to "mid">><<set $bikeStart to "cliff">><<getTarget true>>
 You are on Cliff Street. Several civic buildings are located here, including the town hall. The Ocean Breeze cafe looks out over the sea.
 <<if $chef_state is 9 and Time.dayState isnot "night">>
 	A queue has formed outside its extravagant doors.
@@ -218,6 +218,7 @@ There's a path leading down to the beach.
 			<<if $exposed lte 0>>
 				<<buswait>>
 			<</if>>
+			<<bike>>
 			<<loiter>>
 		<</if>>
 		<<add_link "<br>Alternate Routes<br>">><<hideDisplay>>
@@ -236,14 +237,12 @@ There's a path leading down to the beach.
 :: Cliff Challenge
 <<effects>>
 
-<<if $chef_rework isnot undefined>>
-
+<<if $chef_rework>>
 	The cafe is currently being renovated, and the site is covered in construction workers.
-
-<<else>>
-
+<<elseif ($chef_state is 9 or $chef_rework is undefined) and $openinghours is 1>>
 	The cafe is full, with a line reaching out the door.
-
+<<elseif $chef_state is 8 and Time.dayState is "dusk">>
+	Guests for the opening event are chatting outside the cafe.
 <</if>>
 
 People are going about their business, to and from the beach.
@@ -253,13 +252,13 @@ The note said to start at the cafe, but you need to find somewhere to put your c
 <br><br>
 
 <<if hasSexStat("exhibitionism", 3)>>
-		<<link [[Strip|Cliff Challenge Strip]]>><</link>><<exhibitionist3>>
-		<br>
-	<<else>>
-		<<insufficientStat "exhibitionism" "to do this">>
-		<br>
-	<</if>>
-	<<link [[Leave|Cliff Street]]>><</link>>
+	<<link [[Strip|Cliff Challenge Strip]]>><</link>><<exhibitionist3>>
+	<br>
+<<else>>
+	<<insufficientStat "exhibitionism" "to do this">>
+	<br>
+<</if>>
+<<link [[Leave|Cliff Street]]>><</link>>
 
 :: Cliff Challenge Strip
 <<set $challengetimer to 10>>
@@ -276,9 +275,9 @@ The commotion starts immediately. You hear gasps and shouts and cheers from the 
 :: Cliff Challenge 2
 <<effects>>
 
-<<if $chef_rework isnot undefined>>
+<<if $chef_rework>>
 	Behind you, jeers are coming from the construction workers. You turn around and see that work has stopped, and all the workers are leering at your naked body.
-<<else>>
+<<elseif ($chef_state is 9 or $chef_rework is undefined) and $openinghours is 1>>
 	You turn and see that the entire cafe is staring at you, including a shocked-looking Sam. Several customers have gotten closer to the window to get a better look at your naked body.
 <</if>>
 
@@ -387,7 +386,7 @@ You shudder and pocket the money.
 				<br>
 			<</if>>
 		<</if>>
-		<<if $cat gte 6 and ($pillory.tenant.ass + $pillory.tenant.genital) gte 2>>
+		<<if ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled")) and ($pillory.tenant.ass + $pillory.tenant.genital) gte 2>>
 			<<link [[Groom prisoner (0:05)|Cliff Street Prisoner]]>><<pass 5>><<set $phase to 1>><</link>>
 			<br>
 		<</if>>
@@ -790,7 +789,7 @@ You turn around slowly. Three uniformed police stand behind you.
 		<br><br>
 		<<endevent>>
 		<<link [[Next|Bus Station]]>><<pass 5>><</link>>
-	<<elseif $rng gte 60 and $harpy gte 6 and $birdFly gte 1>> /* harpies get a bit more chance */
+	<<elseif $rng gte 60 and ($harpy gte 6 or ($transformationParts.bird.wings isnot "hidden" and $transformationParts.bird.wings isnot "disabled")) and $birdFly gte 1>> /* harpies get a bit more chance */
 		Your lungs are burning and you're close to collapse, when you hear <<him>> trip on something and stagger.<br>
 		A rush of adrenaline boosts your lead. Dashing around a corner and speeding downhill, you spread your wings and soar into the sky.
 		<br><br>

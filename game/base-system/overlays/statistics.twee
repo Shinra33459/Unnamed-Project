@@ -312,6 +312,8 @@
 	<<if $gamemode isnot "soft">>
 		<<foldout false "_violenceFoldout">>
 			<span class="gold">Violence</span>
+			Enemies Defeated: $enemiesDefeatedStat
+			<br>
 			Molested: $moleststat
 			<br>
 			Last molested: <<statisticsTimeCompare $molestTimeStat>>
@@ -343,6 +345,10 @@
 			<br>
 			Hit others: $attackstat
 			<br>
+			<<if $combatExtended.hookpunching is 1>>
+				Hook Punches landed: $hookpunchStat
+				<br>
+			<</if>>
 			Pepper spray used: $spraystat
 			<br>
 			<<if C.npc.Eden.init>>
@@ -354,6 +360,18 @@
 			<<if $lurkerdisable is "f">>
 				Lurkers captured: $stat_lurkers_captured
 				<br><br>
+			<</if>>
+			<<if $combatExtended.passiveDodging is 1 or $combatExtended.activeDodging is 1>>
+				Dodges: $dodgeStat
+				<br>
+				Partial Dodges: $partialDodgeStat
+				<br>
+			<</if>>
+			<<if $combatExtended.countering is 1>>
+				Counters: $counterStat
+				<br>
+				Partial Counters: $partialCounterStat
+				<br>
 			<</if>>
 		<</foldout>>
 	<</if>>
@@ -566,6 +584,8 @@
 		<br>
 		Swimming lessons missed: $schoolLessonsMissed.swimming
 		<br>
+		Umbrellas broken: $umbrellaStat
+		<br>
 		<<if $earSlimeDaysStat>>
 			Days with an ear slime: $earSlimeDaysStat
 			<br>
@@ -594,6 +614,45 @@
 			<mouse class="tooltip linkBlue">(?)<span>Not tracked in versions '0.4.5.X' and older</span></mouse>
 			<br>
 		<</if>>
+		<<set _buffDaysAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
+		Enemy Day Scaling Buff Applied: <<print "x" + _buffDaysAmount>>
+		<br>
+		<<if $combatExtended.enemyHealthDayScaling is 1 and (_buffDaysAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1)>>
+			<<set _daysHealthBuff to _buffDaysAmount * $combatExtended.enemyHealthDayScalingMult>>
+		<<else>>
+			<<set _daysHealthBuff to _buffDaysAmount * $combatExtended.enemyDayScalingLimit>>
+		<</if>>
+		Enemy Health Day Scaling Buff: <<print "+" + _daysHealthBuff + "%">>
+		<br>
+		<<if _buffDaysAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
+			<<set _dayLevelBuff to Math.clamp(_buffDaysAmount * $combatExtended.enemyLevelDayScalingMult, 0 , 21)>>
+		<<else>>
+			<<set _dayLevelBuff to Math.clamp($combatExtended.enemyDayScalingLimit * $combatExtended.enemyLevelDayScalingMult, 0 , 21)>>
+		<</if>>
+		Enemy Level Day Scaling Buff: <<print "+" + _dayLevelBuff>>
+		<br>
+		<<set _buffDefeatsAmount  to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
+		Enemy Defeat Scaling Buff Applied: <<print "x" + _buffDefeatsAmount >>
+		<br>
+		<<if $combatExtended.enemyHealthDefeatScaling is 1 and (_buffDefeatsAmount  lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1)>>
+			<<set _defeatsHealthBuff to _buffDefeatsAmount  * $combatExtended.enemyHealthDefeatScalingMult>>
+		<<else>>
+			<<set _defeatsHealthBuff to _buffDefeatsAmount  * $combatExtended.enemyDefeatScalingLimit>>
+		<</if>>
+		Enemy Health Defeat Scaling Buff: <<print "+" + _defeatsHealthBuff + "%">>
+		<br>
+		<<if _buffDefeatsAmount  lte $combatExtended.enemyLevelDefeatScalingMult or $combatExtended.enemyInfiniteDefeatScaling is 1>>
+			<<set _defeatLevelBuff to Math.clamp(_buffDefeatsAmount  * $combatExtended.enemyLevelDefeatScalingMult, 0 , 21)>>
+		<<else>>
+			<<set _defeatLevelBuff to Math.clamp($combatExtended.enemyDefeatScalingLimit * $combatExtended.enemyLevelDefeatScalingMult, 0 , 21)>>
+		<</if>>
+		Enemy Level Defeat Scaling Buff: <<print "+" + _defeatLevelBuff>>
+		<br>
+		<<set _totalHealthBuff to _daysHealthBuff + _defeatsHealthBuff>>
+		Total Enemy Health Buff: <<print "+" + _totalHealthBuff + "%">>
+		<br>
+		<<set _totalLevelBuff to Math.clamp(_dayLevelBuff + _defeatLevelBuff, 0 , 21)>>
+		Total Enemy Level Buff: <<print "+" + _totalLevelBuff>>
 		<br>
 	<</foldout>>
 
@@ -955,6 +1014,10 @@
 			Bovinity: <<print Math.trunc($cowbuild)>> (30+ for full transformation)
 			<br>
 			Cow manifestation: <<print Math.trunc($cow)>>
+			<br>
+			Beariness: <<print Math.trunc($bearbuild)>> (30+ for full transformation)
+			<br>
+			Bear manifestation: <<print Math.trunc($bear)>>
 			<br>
 			<<if $hallucinations gte 2 or $bestialitydisable is "t">>Harpyness<<else>>Birdieness<</if>>: <<print Math.trunc($birdbuild)>> (30+ for full transformation)
 			<br>

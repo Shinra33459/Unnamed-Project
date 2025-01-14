@@ -4,7 +4,7 @@
 	<br>
 	As you play through Degrees of Lewdity, you will obtain <span class="gold">feats</span> by completing different tasks. The more feats you earn, the more <span class="gold">VrelCoins</span> you will earn. When you start a new game, your VrelCoins can be used to purchase <span class="gold">feat boosters</span>. These boosters grant you bonuses in your next game.
 	<br><br>
-	This tab displays all the feats that have been unlocked in your <span class="gold">most recently loaded save</span>, which will carry over to your next playthrough. VrelCoins are earned linearly, over the course of a single playthrough. <span class="red">Save-hopping may cause your VrelCoins and unlocked feats to disappear from this page.</span> 
+	This tab displays all the feats that have been unlocked in your <span class="gold">most recently loaded save</span>, which will carry over to your next playthrough. VrelCoins are earned linearly, over the course of a single playthrough. <span class="red">Save-hopping may cause your VrelCoins and unlocked feats to disappear from this page.</span>
 	<br><br>
 	Multiple runs are necessary in order to achieve all feats. If you have multiple saves with different feats earned, you will be able to combine these feats when you start a new game by using the <span class="gold">Import all feats</span> button on the Feat Boosters page. Keep this in mind if you are aiming for 100% completion!
 	<br><br>
@@ -36,6 +36,8 @@
 		<option value="Discoveries-Other">Discoveries - Outside Town</option>
 		<option value="Special">Special</option>
 		<option value="Pregnancy">Pregnancy</option>
+		<option value="AMC Traits">AMC Traits</option>
+		<option value="Combat Extended">Combat Extended</option>
 		<option value="General" hidden="hidden" selected="selected">General</option>
 	</select>
 	<br><br>
@@ -252,6 +254,12 @@
 				<span class="gold">Special Clothing</span>
 			<<case "sexToys">>
 				<span class="gold">Sex Toys</span>
+			<<case "divineTFs">>
+				<span class="gold">Divine Transformation</span>
+			<<case "animalTFs">>
+				<span class="gold">Animal Transformation</span>
+			<<case "sadism" "masochism">>
+			<span class="gold" style="text-transform: capitalize;">Daily _upgradeName Boost</span>
 			<<default>>
 				<span class="gold"  style="text-transform: capitalize;">Starting _upgradeName Grade</span>
 		<</switch>>
@@ -273,7 +281,7 @@
 					<<case "money">>
 						You will start the game with <span class="green"> £<<print $money/100 + $featsBoosts.upgrades.money * 50 * _count / _details.cost>>.00</span>.
 					<<case "grades">>
-						You will start the game with <<if $featsBoosts.upgrades.grades / _details.cost is 2>><span class="lblue">B</span><<elseif $featsBoosts.upgrades.grades / _details.cost is 1>><span class="blue">C</span><<else>><span class="purple">D</span><</if>> grades.
+						You will start the game with <<if $featsBoosts.upgrades.grades / _details.cost is 4>><span class="green">A*</span><<elseif $featsBoosts.upgrades.grades / _details.cost is 3>><span class="green">A</span><<elseif $featsBoosts.upgrades.grades / _details.cost is 2>><span class="lblue">B</span><<elseif $featsBoosts.upgrades.grades / _details.cost is 1>><span class="blue">C</span><<else>><span class="purple">D</span><</if>> grades.
 					<<case "purity">>
 						<<if ($featsBoosts.upgrades[_name] / _details.cost) is 0>>
 						You will always gain <span class="green">1</span> point of purity per day. Purchased purity boosts will increase your daily purity gain. <i>Actions you take can negate or amplify your purity gains.</i>
@@ -320,6 +328,58 @@
 						<<elseif $featsBoosts.upgrades[_name] / _details.cost gte 1>>
 							<span class="green"><<print 3 * $featsBoosts.upgrades.sexToys / _details.cost>></span> sex toys.
 						<</if>>
+					<<case "greenThumb">>
+						You will start the game with the <span class="green">Green Thumb</span> trait.
+					<<case "divineTFs">>
+						You will start the game with a divine transformation.
+					<<case "animalTFs">>
+						You will start the game with an animal transformation.
+					<<case "sadism">>
+						<<if ($featsBoosts.upgrades[_name] / _details.cost) is 0>>
+						Purchased sadism boosts will increase your daily sadism gain. <i>Actions you take can amplify your sadism gains.</i>
+						<<else>>
+						You will gain <span class="green"><<print 1+$featsBoosts.upgrades[_name] / _details.cost>></span> points of sadism per day. <i>Actions you take can amplify your sadism gains.</i>
+						<</if>>
+					<<case "masochism">>
+						<<if ($featsBoosts.upgrades[_name] / _details.cost) is 0>>
+						Purchased masochism boosts will increase your daily masochism gain. <i>Actions you take can amplify your masochism gains.</i>
+						<<else>>
+						You will gain <span class="green"><<print 1+$featsBoosts.upgrades[_name] / _details.cost>></span> points of masochism per day. <i>Actions you take can amplify your masochism gains.</i>
+						<</if>>
+					<<case "physique">>
+						You will start the game with _name at 
+						<<if ($physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($physiquesize / 7) * 6>>
+							<span class="green"><<print $physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)>></span>.
+						<<elseif ($physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($physiquesize / 7) * 5>>
+							<span class="teal"><<print $physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)>></span>.
+						<<elseif ($physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($physiquesize / 7) * 4>>
+							<span class="lblue"><<print $physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)>></span>.
+						<<elseif ($physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($physiquesize / 7) * 3>>
+							<span class="blue"><<print $physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)>></span>.
+						<<elseif ($physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($physiquesize / 7) * 2>>
+							<span class="purple"><<print $physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)>></span>.
+						<<elseif ($physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($physiquesize / 7) * 1>>
+							<span class="pink"><<print $physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)>></span>.
+						<<else>>
+							<span class="red"><<print $physique + ($featsBoosts.upgrades[_name] / _details.cost * 1500)>></span>.
+						<</if>>
+					<<case "willpower">>
+						You will start the game with _name at 
+						<<if ($willpower + ($featsBoosts.upgrades[_name] / _details.cost * 200)) gte ($willpowermax / 7) * 6>>
+							<span class="green"><<print $willpower + ($featsBoosts.upgrades[_name] / _details.cost * 200)>></span>.
+						<<elseif ($willpower + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($willpowermax / 7) * 5>>
+							<span class="teal"><<print $willpower + ($featsBoosts.upgrades[_name] / _details.cost * 200)>></span>.
+						<<elseif ($willpower + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($willpowermax / 7) * 4>>
+							<span class="lblue"><<print $willpower + ($featsBoosts.upgrades[_name] / _details.cost * 200)>></span>.
+						<<elseif ($willpower + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($willpowermax / 7) * 3>>
+							<span class="blue"><<print $willpower + ($featsBoosts.upgrades[_name] / _details.cost * 200)>></span>.
+						<<elseif ($willpower + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($willpowermax / 7) * 2>>
+							<span class="purple"><<print $willpower + ($featsBoosts.upgrades[_name] / _details.cost * 200)>></span>.
+						<<elseif ($willpower + ($featsBoosts.upgrades[_name] / _details.cost * 1500)) gte ($willpowermax / 7) * 1>>
+							<span class="pink"><<print $willpower + ($featsBoosts.upgrades[_name] / _details.cost * 200)>></span>.
+						<<else>>
+							<span class="red"><<print $willpower + ($featsBoosts.upgrades[_name] / _details.cost * 200)>></span>.
+						<</if>>
 					<<default>>
 						You will start the game with
 						<<if $featsBoosts.upgrades[_name] / _details.cost is 1>>
@@ -330,6 +390,18 @@
 							_name at level <span class="purple">D+</span>.
 						<<elseif $featsBoosts.upgrades[_name] / _details.cost is 4>>
 							_name at level <span class="blue">C</span>.
+						<<elseif $featsBoosts.upgrades[_name] / _details.cost is 5>>
+							_name at level <span class="pink">C+</span>.
+						<<elseif $featsBoosts.upgrades[_name] / _details.cost is 6>>
+							_name at level <span class="lblue">B</span>.
+						<<elseif $featsBoosts.upgrades[_name] / _details.cost is 7>>
+							_name at level <span class="lblue">B+</span>.
+						<<elseif $featsBoosts.upgrades[_name] / _details.cost is 8>>
+							_name at level <span class="teal">A</span>.
+						<<elseif $featsBoosts.upgrades[_name] / _details.cost is 9>>
+							_name at level <span class="teal">A+</span>.
+						<<elseif $featsBoosts.upgrades[_name] / _details.cost is 10>>
+							_name at level <span class="green">S</span>.
 						<<else>>
 							<span class="red">no</span> proficiency in _name.
 						<</if>>
@@ -433,6 +505,53 @@
 						</label>
 					</div>
 				<</if>>
+				<<set _keys to Object.keys($feats.allSaves)>>
+				<<if _name is "divineTFs" and $featsBoosts.upgrades.divineTFs gt 0>>
+					<<set _options = {}>>
+					<<if _keys.count("Angel")>>
+						<<set _options["Angel"] = "angel">>
+					<</if>>
+					<<if _keys.count("Fallen Angel")>>
+						<<set _options["Fallen Angel"] = "fallenAngel">>
+					<</if>>
+					<<if _keys.count("Demon")>>
+						<<set _options["Demon"] = "demon">>
+					<</if>>
+					<<if _keys.count("Demon of Purity")>>
+						<<set _options["Virgin Demon"] = "virginDemon">>
+					<</if>>
+					<label>Divine Transformation:
+						<<listbox "$featsBoosts.divineTFs" autoselect>>
+							<<optionsfrom _options>>
+						<</listbox>>
+					</label>
+				<</if>>
+				<<if _name is "animalTFs" and $featsBoosts.upgrades.animalTFs gt 0>>
+					<<set _options = {}>>
+					<<if _keys.count("Neko") gt 0>>
+						<<set _options["Cat"] = "cat">>
+					<</if>>
+					<<if _keys.count("Wolf") gt 0>>
+						<<set _options["Wolf"] = "wolf">>
+					<</if>>
+					<<if _keys.count("Cattle") gt 0>>
+						<<set _options["Cow"] = "cow">>
+					<</if>>
+					<<if _keys.count("Bear") gt 0>>
+						<<set _options["Bear"] = "bear">>
+					<</if>>
+					<<if _keys.count("Harpy") gt 0>>
+						<<set _options["Harpy"] = "harpy">>
+					<</if>>
+					<<if _keys.count("Fox") gt 0>>
+						<<set _options["Fox"] = "fox">>
+					<</if>>
+					<label>Animal Transformation:
+						<<listbox "$featsBoosts.animalTFs" autoselect>>
+							<<optionsfrom _options>>
+						<</listbox>>
+					</label>
+				<</if>>
 			<</if>>
 		<<else>>
 			<span class="red"><<print $featsBoosts.missing[_name]>></span>
@@ -518,7 +637,7 @@
 	<div style="margin-bottom:10px;">
 	<<switch _name>>
 	<<case "money">>
-		Each purchased upgrade will add <span class="green">£<<print $featsBoosts.upgradeDetails.money.limit * 5>></span> to your starting money.
+		Each purchased upgrade will add <span class="green">£<<print $featsBoosts.upgradeDetails.money.limit * (5 / 2)>></span> to your starting money.
 	<<case "grades">>
 		Each purchased upgrade will raise your starting school grades by <span class="green">one letter grade.</span>
 	<<case "purity">>
@@ -543,6 +662,16 @@
 		Purchase this upgrade to unlock previously unlocked special clothes.
 	<<case "sexToys">>
 		Each purchased upgrade will give you three starting sex toys of your choice.
+	<<case "greenThumb">>
+		Purchase this upgrade to start with the <span class="green">Green Thumb</span> trait.
+	<<case "divineTFs">>
+		Purchase this upgrade to start with a divine transformation.
+	<<case "animalTFs">>
+		Purchase this upgrade to start with an animal transformation.
+	<<case "sadism">>
+		Each purchased upgrade will increase your daily sadism by one point per level.
+	<<case "masochism">>
+		Each purchased upgrade will increase your daily masochism by one point per level.
 	<<default>>
 		Each purchased upgrade will raise your _name level by <span class="green">one letter grade.</span>
 	<</switch>>

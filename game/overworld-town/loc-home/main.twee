@@ -2,7 +2,6 @@
 <<bedclotheson "bed">>
 <<set $outside to 0>><<set $location to "home">><<home_effects>><<effects>><<getTarget true>>
 You are in your bedroom.
-
 /* Wallpaper */
 <<set _furniture to $furniture.bedroom>>
 <<if _furniture.wallpaper>>
@@ -19,7 +18,7 @@ You are in your bedroom.
 			<</if>>
 		<<case "tentacles">>
 			Purple tentacles slither on the walls.
-			<<if $demon gte 6>>
+			<<if ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 				Thoughts of pleasure cross your mind.
 			<</if>>
 		<<case "plainwhite">>
@@ -46,20 +45,41 @@ You are in your bedroom.
 	Bleak walls protect you from the outside.
 <</if>>
 
-/* Misc Furniture */
-<<set _desk to Furniture.get('desk')>>
-<<if _desk is null>>
-	<<set _desk to Furniture.set('desk','desk')>>
+<<if $furnitureLocation is "orphanage">>
+	<<set _desk to Furniture.get('desk')>>
+	<<set _chair to Furniture.get('chair')>>
+	<<set _deco to Furniture.get('decoration')>>
+	<<set _owlplush to Furniture.get('owlplushie')>>
+	<<set _windowsill to Furniture.get('windowsill')>>
+	<<set _poster to Furniture.get('poster')>>
+	<<set _bed to Furniture.get('bed')>>
+	<<set _wardrobe to Furniture.get('wardrobe')>>
+	<<if $machineVaginalBought isnot undefined or $machineAnalBought isnot undefined>>
+		<<set _sexMachine to 1>>
+	<</if>>
 <</if>>
-<<set _chair to Furniture.get('chair')>>
-<<if _chair is null>>
-	<<set _chair to Furniture.set('chair','chair')>>
+
+/* Misc Furniture */
+<<if _desk is undefined or _desk is null>>
+	<<set _desk to Furniture.get('desk','desk')>>
+<</if>>
+<<if _chair is undefined or _chair is null>>
+	<<set _chair to Furniture.get('chair','chair')>>
 <</if>>
 <<deskText "icon">> /* If no desk options (read a book, work on project, etc.) are available, desk and icon appear here */
 <<tableText "icon">> /* If no fish tank is available to be placed on an owned table or chairs, table and chairs appear here */
+<br>
+
+<<if $ltsUsed isnot undefined>>
+	<<unset $ltsUsed>>
+	You fiddle with your lockpick training set. <<skulduggerycheck>><<skulduggeryuse>>
+<</if>>
+
+<<if $lockpickTrainingSet gte 1 and $stress lt $stressmax and !$possessed>>
+	<<lockpickTrainingSet>>
+<</if>>
 
 /* Decorations */
-<<set _deco to Furniture.get('decoration')>>
 <<if _deco>>
 	<br>
 	<<switch _deco.name>>
@@ -70,7 +90,6 @@ You are in your bedroom.
 	<</switch>>
 <</if>>
 
-<<set _owlplush to Furniture.get('owlplushie')>>
 <<if _owlplush>>
 	<br>
 	<<switch _owlplush.id>>
@@ -79,7 +98,6 @@ You are in your bedroom.
 	<</switch>>
 <</if>>
 
-<<set _windowsill to Furniture.get('windowsill')>>
 <<if _windowsill>>
 	<br>
 	<<switch _windowsill.name>> /* can be expanded further */
@@ -159,16 +177,12 @@ You are in your bedroom.
 	<<unset $study>>
 	<<if $phase is 1>>
 		You crack open your science textbook and read through the material.
-		<<scienceskill>>
 	<<elseif $phase is 2>>
 		You crack open your maths textbook and read through the material.
-		<<mathsskill>>
 	<<elseif $phase is 3>>
 		You crack open your English textbook and read through the material.
-		<<englishskill>>
 	<<elseif $phase is 4>>
 		You crack open your history textbook and read through the material.
-		<<historyskill>>
 	<</if>>
 	<<endevent>>
 	<br><br>
@@ -212,9 +226,19 @@ There is a thermometer outside your window. It reads <span class="teal"><<print 
 <<print setup.WeatherDescriptions.extremeTemperature()>>
 <br><br>
 
+<<if _deco>>
+	<br>
+	<<if _deco.name is "large bear plushie">>
+		<<furnitureicon _deco.iconFile>><<link [[Cuddle with the large bear plushie (0:10)|Home Large Bear Plushie Cuddle]]>><<pass 10>><</link>><<ltrauma>><<lstress>>
+		<br><br>
+	<</if>>
+<</if>>
+
 /* Bed */
 Your bed takes up most of the room.
-<<set _bed to Furniture.get('bed')>>
+<<if _bed is undefined or _bed is null>>
+	<<set _bed to Furniture.get("bed", "bed")>>
+<</if>>
 <<if $nextPassageCheck is "Bed">>
 	<br>
 	<<if $robinbed is "yours" or $robinbed is "theirs">>
@@ -239,21 +263,28 @@ Your bed takes up most of the room.
 	<br>
 <</if>>
 
-<<if _bed.type.includes("comfy")>>
-	<<skinicon "masturbate">><<link [[Masturbate in bed|Home Masturbation]]>><<set $masturbationstart to 1>><</link>>
-	<br>
-<</if>>
+<<furnitureicon _bed.iconFile>><<link [[Masturbate in bed|Home Masturbation]]>><<set $masturbationstart to 1>><</link>>
+<br>
 
 <<roomoptions>>
 <br>
 /* Wardrobe */
-<<set _wardrobe to Furniture.get('wardrobe')>>
+<<if _wardrobe is undefined>>
+	<<set _wardrobe to Furniture.get("wardrobe", "wardrobe")>>
+<</if>>
 <<if _wardrobe>>
 	Your clothes are kept in the _wardrobe.name.
 <</if>>
 <br>
 <<furnitureicon _wardrobe.iconFile>><<link [[Wardrobe|Wardrobe]]>><</link>>
 <br>
+/* Fuck machines */
+<<if _sexMachine>>
+    <br>
+    There's a <<= $machineVaginalBought and $machineAnalBought? "pair of discreet boxes": "discreet box">> hidden away within your _wardrobe.name.
+    <br>
+    <<bedroom_machine>>
+<</if>>
 <<if playerHasSexToys()>>
 	<<sextoysicon>><<link [[Sex toys|Sextoys Inventory]]>><<set $sextoyInvReturnLink to $passage>><</link>>
 	<br>
@@ -826,7 +857,16 @@ You squirt a dollop of toothpaste on your toothbrush and brush your teeth. When 
 <<sleepeffects>><<rngWraith 2 "noBlood">>
 <<if $sleepWraith>>
 	<<set $wraith.mimic to "Robin">><<set $wraith.exit to "sleep">><<unset $sleepWraith>><<unset $robinbed>>
-	You sleep soundly, and wake up refreshed.
+	<<if $furnitureLocation is "orphanage">>
+		<<set _bed to Furniture.get('bed')>>
+	<</if>>
+	<<if _bed and _bed.type.includes('comfy')>>
+		You sink into the soft, welcoming embrace of the bed, drifting off effortlessly, and wake up completely rested and rejuvenated.
+	<<elseif _bed and _bed.type.includes('starter')>>
+		You toss and turn throughout the night, barely finding any comfort, and wake up only feeling slightly less tired.
+	<<else>>
+		You sleep soundly, and wake up refreshed.
+	<</if>>
 	<br><br>
 
 	You look at Robin. <<Hes>> staring at you. You don't know how long <<hes>> been awake.
@@ -1016,11 +1056,26 @@ You squirt a dollop of toothpaste on your toothbrush and brush your teeth. When 
 				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 			<<else>>
 				<<wakingEffects $sleepHoursTotal>>
+				<<if $furnitureLocation is "orphanage">>
+					<<set _bed to Furniture.get('bed')>>
+				<</if>>
 				<<if _wakingEffect isnot undefined>>
 					<br><br>
-					After sleeping soundly, you
+					<<if _bed and _bed.type.includes('comfy')>>
+						After sleeping really well, you
+					<<elseif _bed and _bed.type.includes('starter')>>
+						After sleeping poorly, you
+					<<else>>
+						After sleeping soundly, you
+					<</if>>
 				<<else>>
-					You sleep soundly, but
+					<<if _bed and _bed.type.includes('comfy')>>
+						You sleep really well, but
+					<<elseif _bed and _bed.type.includes('starter')>>
+						You sleep poorly, but
+					<<else>>
+						You sleep soundly, but
+					<</if>>
 				<</if>>
 				are awakened early by a hammering on your door. It's Bailey, waking you for school.
 			<</if>>
@@ -1045,7 +1100,16 @@ You squirt a dollop of toothpaste on your toothbrush and brush your teeth. When 
 					<br><br>
 				<</if>>
 			<<elseif !_wakingEffect>>
-				You sleep soundly, and wake up refreshed.
+				<<if $furnitureLocation is "orphanage">>
+					<<set _bed to Furniture.get('bed')>>
+				<</if>>
+				<<if _bed and _bed.type.includes('comfy')>>
+					You sink into the soft, welcoming embrace of the bed, drifting off effortlessly, and wake up completely rested and rejuvenated.
+				<<elseif _bed and _bed.type.includes('starter')>>
+					You toss and turn throughout the night, barely finding any comfort, and wake up only feeling slightly less tired.
+				<<else>>
+					You sleep soundly, and wake up refreshed.
+				<</if>>
 				<br><br>
 			<<else>>
 				<br><br>
@@ -1258,11 +1322,26 @@ You squirt a dollop of toothpaste on your toothbrush and brush your teeth. When 
 				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 			<<else>>
 				<<wakingEffects $sleepHoursTotal>>
+				<<if $furnitureLocation is "orphanage">>
+					<<set _bed to Furniture.get('bed')>>
+				<</if>>
 				<<if _wakingEffect isnot undefined>>
 					<br><br>
-					After sleeping soundly, you
+					<<if _bed and _bed.type.includes('comfy')>>
+						After sleeping really well, you
+					<<elseif _bed and _bed.type.includes('starter')>>
+						After sleeping poorly, you
+					<<else>>
+						After sleeping soundly, you
+					<</if>>
 				<<else>>
-					You sleep soundly, but
+					<<if _bed and _bed.type.includes('comfy')>>
+						You sleep really well, but
+					<<elseif _bed and _bed.type.includes('starter')>>
+						You sleep poorly, but
+					<<else>>
+						You sleep soundly, but
+					<</if>>
 				<</if>>
 				are awakened early by a hammering on your door. It's Bailey, waking you for school.
 			<</if>>
@@ -1287,7 +1366,16 @@ You squirt a dollop of toothpaste on your toothbrush and brush your teeth. When 
 					<br><br>
 				<</if>>
 			<<elseif !_wakingEffect>>
-				You sleep soundly.
+				<<if $furnitureLocation is "orphanage">>
+					<<set _bed to Furniture.get('bed')>>
+				<</if>>
+				<<if _bed and _bed.type.includes('comfy')>>
+					You sink into the soft, welcoming embrace of the bed, drifting off effortlessly.
+				<<elseif _bed and _bed.type.includes('starter')>>
+					You toss and turn throughout the night, barely finding any comfort.
+				<<else>>
+					You sleep soundly.
+				<</if>>
 				<br><br>
 			<<else>>
 				<br><br>
@@ -1925,26 +2013,26 @@ You've pushed yourself too much.
 <<stateman>>
 <br><br>
 <<actionsman>>
-<<if $alarm is 1>>
+<<if $alarm is 1 and _combatend is true>>
 	<<if $rescue is 1>>
-		<span id="next"><<link [[Next->Molestation Alarm]]>><</link>></span><<nexttext>>
+		<span id="next"><<link [[Next|Molestation Alarm]]>><</link>></span><<nexttext>>
 	<<else>>
 		<<set $alarm to 0>>
 		<br><br>
 		<<if $enemyarousal gte $enemyarousalmax>>
-			<span id="next"><<link [[Next->Molestation Ejaculation]]>><</link>></span><<nexttext>>
+			<span id="next"><<link [[Next|Molestation Ejaculation]]>><</link>></span><<nexttext>>
 		<<elseif $enemyhealth lte 0>>
-			<span id="next"><<link [[Next->Molestation Escape]]>><</link>></span><<nexttext>>
+			<span id="next"><<link [[Next|Molestation Escape]]>><</link>></span><<nexttext>>
 		<<else>>
-			<span id="next"><<link [[Next->Molestation]]>><</link>></span><<nexttext>>
+			<span id="next"><<link [[Next|Molestation]]>><</link>></span><<nexttext>>
 		<</if>>
 	<</if>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next->Molestation Ejaculation]]>><</link>></span><<nexttext>>
-<<elseif $enemyhealth lte 0>>
-	<span id="next"><<link [[Next->Molestation Escape]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax and _combatend is true>>
+	<span id="next"><<link [[Next|Molestation Ejaculation]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0 and _combatend is true>>
+	<span id="next"><<link [[Next|Molestation Escape]]>><</link>></span><<nexttext>>
 <<else>>
-	<span id="next"><<link [[Next->Molestation]]>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|Molestation]]>><</link>></span><<nexttext>>
 <</if>>
 
 :: Molestation Ejaculation
@@ -2489,6 +2577,10 @@ and !$fromRobinRoom and _robin.cdquest is 2 and _robin.trauma lte 20 and !$daily
 		<</if>>
 		<br><br>
 		<<foodicon "halloween">><<link [[Approach them|Robin Trick Hall]]>><</link>>
+		<br><br>
+	<</if>>
+	<<if $bailey_housekeeping isnot undefined or $bailey_housekeeping is 1>>
+		<<ind>><<link [[Work a shift in the Orphanage (1:00)|Orphanage Housekeeping]]>><<pass 60>><<housekeeping 2 1000>><</link>><<ghousekeeping 1000>>
 		<br><br>
 	<</if>>
 	<<if $police_hack is 2 and ($pub_hack_job is 1 or $pub_hack_job is 2)>>
@@ -3759,7 +3851,7 @@ You open the locket around your neck.
 
 <<for _npc range setup.NPCNameList>>
 	<<capture _npc>>
-		<<if $carried.neck.photo != _npc and ($loveInterest.primary is _npc or $loveInterest.secondary is _npc)>>
+		<<if $carried.neck.photo != _npc and ($loveInterest.primary is _npc or $loveInterest.secondary is _npc or $loveInterest.tertiary is _npc or $loveInterest.quarternary is _npc or $loveInterest.quinary is _npc or $loveInterest.senary is _npc)>>
 			<span @class="'clothes-'+$carried.neck.colour.replace(' ', '-')"><<icon "locket.png">></span>
 			<<if $carried.neck.photo>>
 				<<link [[`Replace the picture with a photo of ${_npc}`|Mirror Locket 2]]>><<set $carried.neck.photo to _npc>><</link>>
@@ -3833,7 +3925,7 @@ They discuss your fate for a few moments. None of it sounds pleasing.
 <<effects>>
 You climb onto your knees and remain there while bowing your head. The pair laugh.
 <br><br>
-"At least someone's made up their mind," <<he>> reaches forward, and tears the gag free of your mouth. "Do you have any ideas?"
+"At least someone's made up their mind." <<He>> reaches forward, and tears the gag free of your mouth. "Do you have any ideas?"
 <br><br>
 <<set $worn.face.type.push("broken")>>
 <<faceruined>>
@@ -4044,7 +4136,7 @@ You crawl away from the <<person2>><<persons>> feet, letting you stand up. "I gu
 <</if>>
 <br><br>
 
-"Whatever," the <<person1>><<person>> shrugs. "This suits us fine too."
+"Whatever." The <<person1>><<person>> shrugs. "This suits us fine too."
 <br><br>
 
 <<link [[Next|Sold Rape]]>><<set $molestationstart to 1>><</link>>
@@ -4055,7 +4147,7 @@ You crawl away from the <<person2>><<persons>> feet, letting you stand up. "I gu
 You hold back your head, and scream.
 <br><br>
 
-"Stupid fucking <<bitch>>." the <<person1>><<person>> says, knocking over a table in <<his>> haste to reach you. "I'm going to enjoy fucking you up." <<He>> clasps a hand over your mouth as the <<person2>><<person>> holds you down.
+"Stupid fucking <<bitch>>," the <<person1>><<person>> says, knocking over a table in <<his>> haste to reach you. "I'm going to enjoy fucking you up." <<He>> clasps a hand over your mouth as the <<person2>><<person>> holds you down.
 <br><br>
 
 You cry out from the rough handling. The pair hold you still, and listen.
@@ -4174,6 +4266,24 @@ The pair blame each other for the mishap, and spend a few moments arguing before
 	<<link [[Next|Harvest Street]]>><<set $eventskip to 1>><</link>>
 <</if>>
 
+:: Home Large Bear Plushie Cuddle
+<<effects>>
+<<if $trauma gte ($traumamax / 7) * 3 or $stress gte ($stressmax / 7) * 5>>
+	You desperately cling onto the large bear plushie with your entire body and almost wind up pulling it down onto the ground, whimpering and crying loudly into it.<<trauma -6>><<stress -6>>
+<<elseif $trauma gte ($traumamax / 7) * 2 or $stress gte ($stressmax / 7) * 3>>
+	You cling to the large bear plushie and bury your head in it's back, silently crying into it.<<trauma -4>><<stress -4>>
+<<elseif $trauma gte ($traumamax / 7) * 1 or $stress gte ($stressmax / 7) * 1>>
+	You wrap your arms around the large bear plushie from behind and rest your head against it's shoulder, hugging it quietly.<<trauma -2>><<stress -2>>
+<<else>>
+	You happily take the large bear plushie in your arms.<<trauma -1>><<stress -1>>
+<</if>>
+<br><br>
+
+
+<<link [[Cuddle with the large bear plushie (0:10)|$passage]]>><<pass 10>><</link>><<ltrauma>><<lstress>>
+<br>
+<<link [[Next|Bedroom]]>><</link>>
+
 :: Robin Bed Egg Laying
 <<effects>>
 <<set [_eggnant, _eggnantGenital] to getPregnancyObject("pc", true)>>
@@ -4246,7 +4356,7 @@ You shake your head and <<if $transformationParts.bird.plumage isnot "hidden">>p
 
 <<if $robinbed is "yours">>
 	<<He>> tries to put on a sympathetic look, but <<his>>
-	<<if C.npc.Robin.dom lte 40>>
+	<<if C.npc.Robin.dom lte 40>>f
 		meek
 	<<else>>
 		confused
@@ -4423,7 +4533,30 @@ You are in the orphanage kitchen. High cupboards line the walls, above spotless 
 	<br><br>
 
 	<<kitchen_display_all>>
+	<<if $cookbook is true>>
+		<<set _baseTime to Math.max(180 - (6 * Math.round($housekeeping / 50)), 10)>>
+		<<set _timeString to getTimeString(_baseTime)>>
+		<br><br>
+		<<housekeeping_exam_select>>
+		<<if $chosen_recipe isnot "none">>
+			<span class="gold">You can teach yourself a recipe from your cookbook here.</span> You flip open the book and land on a recipe for <<print $chosen_recipe.replace(/_/g," ")>>.<br><br>
+			<<link [["Learn something new (" + _timeString + ")"|Kitchen Self Teach]]>><<pass _baseTime>><<housekeeping 1 1000>><</link>><<ghousekeeping 1000>>
+		<<else>>
+			There's no more recipes you can learn.
+		<</if>>
+		<br><br>
+	<</if>>
 <</if>>
 
 <<link [[Main hall (0:01)|Orphanage]]>><<pass 1>><<handheldon>><</link>>
 <br>
+
+:: Orphanage Housekeeping
+<<effects>>
+
+<<cleareventpool>>
+
+<<addinlineevent>>
+	You're tasked with simple sweeping today, nothing special
+	<<set $enemyarousal += 50>>
+<</addinlineevent>>

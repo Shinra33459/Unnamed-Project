@@ -2435,9 +2435,42 @@ function initHead() {
 	setup.moddedClothes.head = [
 		{
 			index: 65,
+			name: "honey hair clip",
+			name_cap: "Honey hair clip",
+			variable: "honeyhairclip",
+			state: 0,
+			state_base: 0,
+			integrity: 200,
+			integrity_max: 200,
+			fabric_strength: 30,
+			reveal: 1,
+			word: "a",
+			plural: 0,
+			colour: 0,
+			colour_options: [],
+			colour_sidebar: 0,
+			type: ["costume", "eerie"],
+			gender: "n",
+			femininity: 0,
+			warmth: 0,
+			cost: 6000,
+			description: "It gives off a sweet smell.",
+			shop: ["forest", "clothing"],
+			accessory: 0,
+			accessory_colour: 0,
+			accessory_colour_options: [],
+			back_img: 0,
+			cursed: 0,
+			location: 0,
+			iconFile: "honey_hair_clip.png",
+		},
+		{
+			index: 65,
 			name: "carrot pin",
 			name_cap: "Carrot pin",
 			variable: "carrotpin",
+			state: 0,
+			state_base: 0,
 			integrity: 200,
 			integrity_max: 200,
 			fabric_strength: 30,
@@ -2464,6 +2497,7 @@ function initHead() {
 			iconFile: "carrot_pin.png",
 			accIcon: "carrot_pin_acc.png",
 		}
+
 	];
 
 	setup.moddedClothes.head.forEach((x, i) => (x.index = setup.clothes.head.length + i));

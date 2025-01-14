@@ -1,4 +1,3 @@
-/* global weightedRandom */
 function maxParasites(genital = "anus") {
 	switch (V.sexStats[genital].pregnancy.motherStatus) {
 		case 1:
@@ -260,8 +259,9 @@ function beastTransform(mother, father) {
 	if (mother === "pc" || father === "pc") {
 		if (V.cat >= 10) return "cat";
 		if (V.cow >= 6) return "cow";
+		if (V.bear >= 6) return "bear";
 		if (V.wolfgirl >= 6) return "wolf";
-		if (V.harpy >= 6) return "bird";
+		if ((V.harpy >= 6  || V.transformationParts.bird.wings == "default")) return "bird";
 		if (V.fox >= 6) return "fox";
 		if (V.bunny >= 6) return "bunny";
 	}
@@ -474,7 +474,6 @@ window.pregnancyGenerator = {
 					size: bodySizeCalc(V.bodysize),
 					eyeColour: [eyeColourCalc(motherObject.name), eyeColourCalc(fatherObject.name)][random(0, 1)],
 					hairColour: furColour[random(0, furColour.length - 1)],
-					skinColour: [skinColourCalc(motherObject.skinColour), skinColourCalc(fatherObject.skinColour)][random(0, 1)],
 				});
 				result.fetus.push(baby);
 				parentFunction.increaseKids(motherObject.parentId.id, 0, fatherObject.parentId.id);
@@ -616,7 +615,6 @@ window.pregnancyGenerator = {
 					size: bodySizeCalc(V.bodysize),
 					eyeColour: [eyeColourCalc(motherObject.name), eyeColourCalc(fatherObject.name)][random(0, 1)],
 					hairColour: featherColour[random(0, featherColour.length - 1)],
-					skinColour: [skinColourCalc(motherObject.skinColour), skinColourCalc(fatherObject.skinColour)][random(0, 1)],
 				});
 				// Hours
 				baby.eggTimer = eggTimer;

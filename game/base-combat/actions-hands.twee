@@ -2,8 +2,23 @@
 <<widget "leftdefault">>
 	<<if $lefttarget isnot "self" and $punishmentposition isnot "gloryhole">>
 		<<set _leftaction["Stroke"] to "leftchest">>
-		<<if $consensual isnot 1 and ($fightTargets is undefined or $fightTargets.includes($lefttarget))>>
+		<<if ($consensual isnot 1 or $combatExtended.reverseRapeStart is 1) and ($fightTargets is undefined or $fightTargets.includes($lefttarget))>>
 			<<set _leftaction["Punch"] to "lefthit">>
+			<<if $worn.handheld.type.includes("rainproof") and $worn.handheld.integrity gte 1>>
+				<<set _leftaction["Umbrella"] to "leftumbrella">>
+			<</if>>
+			<<if $combatExtended.blocking is 1>>
+				<<set _leftaction["Block"] to "leftblock">>
+			<</if>>
+			<<if $combatExtended.countering is 1>>
+				<<set _leftaction["Counter"] to "leftcounter">>
+			<</if>>
+			<<if $combatExtended.feinting is 1>>
+				<<set _leftaction["Feint"] to "leftfeint">>
+			<</if>>
+			<<if $combatExtended.hookpunching is 1 and $combatExtended.stabilityLost is 0>>
+				<<set _leftaction["Hook Punch"] to "lefthookpunch">>
+			<</if>>
 		<</if>>
 	<</if>>
 	<<if $lefttarget is "self" or $options.targetYourself is false or _targetnumber is 1>>
@@ -127,7 +142,7 @@
 
 <<widget "leftspraynew">>
 	<<if $lefttarget isnot "self">>
-		<<if $consensual isnot 1 and $spray gte 1 and $NPCList.some(npc => npc.health >= 0 && (!$fightTargets || $fightTargets.includes(npc.index)))>>
+		<<if ($consensual isnot 1 or $combatExtended.reverseRapeStart is 1) and $spray gte 1 and $NPCList.some(npc => npc.health >= 0 && (!$fightTargets || $fightTargets.includes(npc.index)))>>
 			<<set _leftaction["Pepper spray"] to "spray">>
 		<</if>>
 	<</if>>
@@ -252,7 +267,7 @@
 				<<else>>
 					<<set _leftaction["Keep covering your ass"] to "leftcoveranusmeek">>
 				<</if>>
-			<<else>>
+			<<elseif $anususe is 0>>
 				<<set _leftaction["Cover your ass"] to "leftcoveranusmeek">>
 			<</if>>
 		<<elseif $lefttarget is "self" or $options.targetYourself is false or _targetnumber is 1 or $NPCList[0].state is "stalk">>
@@ -262,7 +277,7 @@
 				<<else>>
 					<<set _leftaction["Keep covering your ass"] to "leftcoveranus">>
 				<</if>>
-			<<else>>
+			<<elseif $anususe is 0>>
 				<<set _leftaction["Cover your ass"] to "leftcoveranus">>
 			<</if>>
 		<</if>>
@@ -332,6 +347,14 @@
 	<</if>>
 <</widget>>
 
+<<widget "leftstoporal">>
+	<<if $lefttarget isnot "self" and $NPCList[$lefttarget].mouth and ($NPCList[$lefttarget].mouth.startsWith("penis") or $NPCList[$lefttarget].mouth.startsWith("vagina"))>>
+		<<set $_actionText to ($consensual == 1 ? "Take " : "Push ") + $NPCList[$lefttarget].pronouns.his + " face off your " + 
+			($NPCList[$lefttarget].mouth.startsWith("penis") ? "penis" : "pussy")>>
+		<<set _leftaction[$_actionText] to "stoporal">>
+	<</if>>
+<</widget>>
+
 <<widget "leftCondom">>
 	<<if $lefttarget is "self" or $options.targetYourself is false or _targetnumber is 1>>
 		<<if !["othermouthentrance","othermouthimminent","othermouth","penetrated","otheranus"].includes($penisstate) and $player.penisExist and $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1 and !playerChastity("penis")>>
@@ -390,8 +413,23 @@
 <<widget "rightdefault">>
 	<<if $righttarget isnot "self" and $punishmentposition isnot "gloryhole">>
 		<<set _rightaction["Stroke"] to "rightchest">>
-		<<if $consensual isnot 1 and ($fightTargets is undefined or $fightTargets.includes($righttarget))>>
+		<<if ($consensual isnot 1 or $combatExtended.reverseRapeStart is 1) and ($fightTargets is undefined or $fightTargets.includes($righttarget))>>
 			<<set _rightaction["Punch"] to "righthit">>
+			<<if $worn.handheld.type.includes("rainproof") and $worn.handheld.integrity gte 1>>
+				<<set _rightaction["Umbrella"] to "rightumbrella">>
+			<</if>>
+			<<if $combatExtended.blocking is 1>>
+				<<set _rightaction["Block"] to "rightblock">>
+			<</if>>
+			<<if $combatExtended.countering is 1>>
+				<<set _rightaction["Counter"] to "rightcounter">>
+			<</if>>
+			<<if $combatExtended.feinting is 1>>
+				<<set _rightaction["Feint"] to "rightfeint">>
+			<</if>>
+			<<if $combatExtended.hookpunching is 1 and $combatExtended.stabilityLost is 0>>
+				<<set _rightaction["Hook Punch"] to "righthookpunch">>
+			<</if>>
 		<</if>>
 	<</if>>
 	<<if $righttarget is "self" or $options.targetYourself is false or _targetnumber is 1>>
@@ -515,7 +553,7 @@
 
 <<widget "rightspraynew">>
 	<<if $righttarget isnot "self">>
-		<<if $consensual isnot 1 and $spray gte 1 and $NPCList.some(npc => npc.health >= 0 && (!$fightTargets || $fightTargets.includes(npc.index)))>>
+		<<if ($consensual isnot 1 or $combatExtended.reverseRapeStart is 1) and $spray gte 1 and $NPCList.some(npc => npc.health >= 0 && (!$fightTargets || $fightTargets.includes(npc.index)))>>
 			<<set _rightaction["Pepper spray"] to "spray">>
 		<</if>>
 	<</if>>
@@ -640,7 +678,7 @@
 				<<else>>
 					<<set _rightaction["Keep covering your ass"] to "rightcoveranusmeek">>
 				<</if>>
-			<<else>>
+			<<elseif $anususe is 0>>
 				<<set _rightaction["Cover your ass"] to "rightcoveranusmeek">>
 			<</if>>
 		<<elseif $righttarget is "self" or $options.targetYourself is false or _targetnumber is 1 or $NPCList[0].state is "stalk">>
@@ -650,7 +688,7 @@
 				<<else>>
 					<<set _rightaction["Keep covering your ass"] to "rightcoveranus">>
 				<</if>>
-			<<else>>
+			<<elseif $anususe is 0>>
 				<<set _rightaction["Cover your ass"] to "rightcoveranus">>
 			<</if>>
 		<</if>>
@@ -715,6 +753,14 @@
 				<<set _rightaction["Pull " + $_target.pronouns.his + " hand off your neck"] to "stopchokenoncon">>
 			<</if>>
 		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "rightstoporal">>
+	<<if $righttarget isnot "self" and $NPCList[$righttarget].mouth and ($NPCList[$righttarget].mouth.startsWith("penis") or $NPCList[$righttarget].mouth.startsWith("vagina"))>>
+		<<set $_actionText to ($consensual == 1 ? "Take " : "Push ") + $NPCList[$righttarget].pronouns.his + " face off your " + 
+			($NPCList[$righttarget].mouth.startsWith("penis") ? "penis" : "pussy")>>
+		<<set _rightaction[$_actionText] to "stoporal">>
 	<</if>>
 <</widget>>
 
@@ -835,6 +881,10 @@
 
 		<<if $anususe is 0 and $_anus_exposed>>
 			<<set _handGuideOptions["your ass"] to "ass">>
+		<</if>>
+		
+		<<if ($choketrait or ($chokeorgasm gte 1 and $submissive gt 850) or ($awarelevel gte 2 and $submissive gte 1150)) and !$neckuse>>
+			<<set _handGuideOptions["your neck"] to "neck">>
 		<</if>>
 
 		<<if Object.keys(_handGuideOptions).length gt 0>>
@@ -1303,6 +1353,7 @@
 					<<ggcrime "assault">><<crimeUp 500 "assault">>
 				<</if>>
 			<</if>>
+			<<effectssprayFree>>
 		<<elseif $spray gte 1>>
 			<<set _baseDamage to 200>>
 			<<set $spraystat += 1>><<spray -1>><<set $speechspray to 1>>
@@ -1321,6 +1372,7 @@
 					<<ggcrime "assault">><<crimeUp 500 "assault">>
 				<</if>>
 			<</if>>
+			<<effectssprayFree>>
 		<<else>>
 			<<if $enemytype is "beast">>
 				You try to spray the <<beasttype>> in the face. Nothing comes out.
@@ -1350,6 +1402,7 @@
 					<<ggcrime "assault">><<crimeUp 500 "assault">>
 				<</if>>
 			<</if>>
+			<<effectssprayFree>>
 		<<else>>
 			<<if $enemytype is "beast">>
 				You try to spray the <<beasttype>> in the face. Nothing comes out.
@@ -1379,6 +1432,7 @@
 					<<ggcrime "assault">><<crimeUp 500 "assault">>
 				<</if>>
 			<</if>>
+			<<effectssprayFree>>
 		<<else>>
 			<<if $enemytype is "beast">>
 				You try to spray the <<beasttype>> in the face. Nothing comes out.
@@ -1414,6 +1468,14 @@
 		<</for>>
 		<<set $enemyhealth -= _totalDamage>>
 	<</if>>
+<</widget>>
+
+<<widget "effectssprayFree">><<silently>>
+<<if $prof_spray_message>>
+	<<set $_text_output to "Your spray was accurate. You didn't need to use a full cartridge, saving ammo.">>
+	<<unset $prof_spray_message>>
+<</if>>
+<</silently>><<if $_text_output>><span class="green"><<print $_text_output>></span><</if>>
 <</widget>>
 
 <<widget "effectssteal">>
@@ -1875,7 +1937,7 @@
 		<</if>>
 		<<brat 1>>
 
-		<<if combatSkillCheck("hand", _n, $NPCList[_n].fullDescription, $_handPullDifficulty)>>
+		<<if $combatExtended.reverseRapeStart is 1 or combatSkillCheck("hand", _n, $NPCList[_n].fullDescription, $_handPullDifficulty)>>
 			You grasp <<combatpersons>> wrist,
 			<<if $penisstate is "otherhand">>
 				<span class="green">and pry <<his>> fingers off your <<penis>>.</span>
@@ -1917,7 +1979,7 @@
 		<</if>>
 		<<brat 1>>
 
-		<<if combatSkillCheck("hand", _n, $NPCList[_n].fullDescription, $_handPullDifficulty)>>
+		<<if $combatExtended.reverseRapeStart is 1 or combatSkillCheck("hand", _n, $NPCList[_n].fullDescription, $_handPullDifficulty)>>
 			You grasp <<combatpersons>> wrist,
 			<<if $vaginastate is "otherhand">>
 				<span class="green">and pry <<his>> fingers out of your <<pussy>>.</span>
@@ -1959,7 +2021,7 @@
 		<</if>>
 		<<brat 1>>
 
-		<<if combatSkillCheck("hand", _n, $NPCList[_n].fullDescription, $_handPullDifficulty)>>
+		<<if $combatExtended.reverseRapeStart is 1 or combatSkillCheck("hand", _n, $NPCList[_n].fullDescription, $_handPullDifficulty)>>
 			You grasp <<combatpersons>> wrist,
 			<<if $anusstate is "otherhand">>
 				<span class="green">and pry <<his>> fingers out of your asshole.</span>

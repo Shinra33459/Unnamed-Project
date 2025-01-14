@@ -58,6 +58,10 @@
 
 <<widget "museumtalk">>
 	<<museumAntiqueText>>
+	/* Prevent having to "sell" a worn chastity belt for £0 */
+	<<if $museumAntiques.antiques.antiquegoldchastitybelt is "found" and $worn.genitals.origin is "Underwater Temple" and $gold_chastity_held isnot true>>
+		<<museumAntiqueStatus "antiquegoldchastitybelt" "talk">>
+	<</if>>
 	<<for _labelM, _valueM range $museumAntiques.antiques>>
 		<<capture _labelM, _museumAntiqueText[_labelM].name>>
 			<<set _antique to _museumAntiqueText[_labelM].name.toLowerCase()>>
@@ -516,7 +520,7 @@ You return to the museum. Winter is on <<his>> feet, busy returning antiques to 
 <</if>>
 <br><br>
 
-Winter returns the bell to its resting place and throws a sheet over it. "Not much lasting damage. Except that," <<he>> points at the slashed leather map. "I'll contact the police." <<He>> steadies <<himself>> against the pedestal. "I won't thank you for putting yourself in danger," <<he>> pauses. "But I'm grateful for your help."
+Winter returns the bell to its resting place and throws a sheet over it. "Not much lasting damage. Except that." <<He>> points at the slashed leather map. "I'll contact the police." <<He>> steadies <<himself>> against the pedestal. "I won't thank you for putting yourself in danger." <<He>> pauses. "But I'm grateful for your help."
 <br><br>
 
 <<link [[Next|Oxford Street]]>><<endevent>><<set $eventskip to 1>><</link>>
@@ -641,25 +645,25 @@ A vein twitches on <<his>> forehead as <<he>> stares at you. "You shouldn't spea
 
 Winter dons a pair of gloves and appraises the goods.
 <<if $phase is 1>>
-	"Aha," <<he>> says. "The mask. I'm glad you've decided to put it under my care." <<He>> places <<printmoney `$antiquemoney * 100`>> on the table.
+	"Aha," <<he>> says. "The mask. I'm glad you've decided to put it under my care." <<He>> places <<if $mathsTraitBuffs.antiques is 1>><<printmoney `$antiquemoney * 100 * (1 + ($mathstrait/4))`>><<else>><<printmoney `$antiquemoney * 100`>><</if>> on the table.
 	<<glove>><<npcincr Winter love 1>>
 
 <<elseif $antiquemoney gte 1000>>
-	<<His>> scepticism fades as <<he>> works. "Where did you get this?" <<he>> asks. <<He>> doesn't wait for an answer, but places <<printmoney `$antiquemoney * 100`>> on the table.
+	<<His>> scepticism fades as <<he>> works. "Where did you get this?" <<he>> asks. <<He>> doesn't wait for an answer, but places <<if $mathsTraitBuffs.antiques is 1>><<printmoney `$antiquemoney * 100 * (1 + ($mathstrait/4))`>><<else>><<printmoney `$antiquemoney * 100`>><</if>> on the table.
 	<<glove>><<npcincr Winter love 1>>
 
 <<elseif $antiquemoney gte 200>>
-	"Thank you," <<he>> says. "Your contribution is noted." <<He>> places <<printmoney `$antiquemoney * 100`>> on the table.
+	"Thank you," <<he>> says. "Your contribution is noted." <<He>> places <<if $mathsTraitBuffs.antiques is 1>><<printmoney `$antiquemoney * 100 * (1 + ($mathstrait/4))`>><<else>><<printmoney `$antiquemoney * 100`>><</if>> on the table.
 
 <<else>>
-	 Without a word, <<he>> places <<printmoney `$antiquemoney * 100`>> on the table.
+	 Without a word, <<he>> places <<if $mathsTraitBuffs.antiques is 1>><<printmoney `$antiquemoney * 100 * (1 + ($mathstrait/4))`>><<else>><<printmoney `$antiquemoney * 100`>><</if>> on the table.
 <</if>>
 <br><br>
 
 <<He>> takes the goods into a back room.
 <br><br>
 
-<<money `($antiquemoney * 100)` "museumAntique">><<set $antiquemoneyhistory += $antiquemoney>><<set $antiquemoney to 0>>
+<<if $mathsTraitBuffs.antiques is 1>><<money `($antiquemoney * 100) * (1 + ($mathstrait/4))` "museumAntique">><<else>><<money `($antiquemoney * 100)` "museumAntique">><</if>><<set $antiquemoneyhistory += $antiquemoney>><<set $antiquemoney to 0>>
 
 <<link [[Next|Museum]]>><<endevent>><</link>>
 <br>

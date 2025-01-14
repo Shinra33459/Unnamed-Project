@@ -33,7 +33,7 @@ const { npcDecompressor } = (function () {
 		"plump",
 		"wide-eyed",
 		"vulgar",
-		"minor demon",
+		"bitchy",
 		"tutorial",
 		"debug",
 	];
@@ -58,7 +58,7 @@ const { npcDecompressor } = (function () {
 		"plump",
 		"wide-eyed",
 		"brutish",
-		"minor demon",
+		"delinquent",
 		"tutorial",
 		"debug",
 	];
@@ -83,7 +83,7 @@ const { npcDecompressor } = (function () {
 		"voluptuous",
 		"lush",
 		"vulgar",
-		"demon",
+		"herculean",
 		"tutorial",
 		"debug",
 	];
@@ -108,7 +108,7 @@ const { npcDecompressor } = (function () {
 		"muscular",
 		"burly",
 		"brutish",
-		"demon",
+		"herculean",
 		"tutorial",
 		"debug",
 	];

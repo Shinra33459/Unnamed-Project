@@ -183,7 +183,7 @@ Next to it is a small basket with returned and not yet sorted books.
 		<<npc "Sydney">><<person1>>
 		You hear footsteps behind you, and feel a hand on your shoulder. "Perfect timing." It's Leighton. "It seems you just can't learn your lesson. I should get the police involved with how often you've been stealing from us, but I'll settle for a more... homely punishment instead."
 		<br><br>
-		<<nnpc_He "Leighton">> begins to lead you towards the rental counter. "Your friend will be sharing in your punishment.<<if $studyBooks.stolen isnot "none">><<set $studyBooks.stolen to "none">><<unset $sydneyStolenKnown>> Oh, and I'll be taking that stolen book back.<</if>>"
+		<<nnpc_He "Leighton">> begins to lead you towards the rental counter. "Your friend will be sharing in your punishment.<<if $studyBooks.stolen.count gte 1>><<set $studyBooks.stolen.science to 0>><<set $studyBooks.stolen.maths to 0>><<set $studyBooks.stolen.english to 0>><<set $studyBooks.stolen.history to 0>><<unset $sydneyStolenKnown>> Oh, and I'll be taking that stolen <<if $studyBooks.stolen.count gt 1>>books<<else>>book<</if>> back.<<set $studyBooks.stolen.count to 0>><</if>>"
 		<br><br>
 		A few students linger, but a glare from Leighton hurries them out. Leighton locks the door behind them.
 		<br><br>
@@ -248,14 +248,14 @@ Next to it is a small basket with returned and not yet sorted books.
 			<br>
 		<</if>>
 		/*indev - scarlet book possible to be taken. English 200+ required*/
-		<<if currentSkillValue('english') gte 300>>
+		<<if currentSkillValue('english') gte 300 and $studyBooks.stolen.RaulAndJanet is 0>>
 			<<scarleticon>><<link [[Take "Raul and Janet" from the basket (0:01)|ScarletBook1]]>><<pass 1>><<set $scarletExitPassage to "School Library">><</link>>
 			<br>
-		<<elseif currentSkillValue('english') gte 200>>
+		<<elseif currentSkillValue('english') gte 200 and $studyBooks.stolen.RaulAndJanet is 0>>
 			<<scarleticon>><<link [[Take the medium-sized scarlet book from the basket (0:01)|ScarletBook1]]>><<pass 1>><<set $scarletExitPassage to "School Library">><</link>>
 			<br>
 		<</if>>
-		<<if (Time.monthName is "November" and Time.monthDay gte 24) or Time.monthName is "December">>
+		<<if (Time.monthName is "November" and Time.monthDay gte 24) or Time.monthName is "December" and $studyBooks.stolen.pinch is 0>>
 			<<oliveicon>><<link [[Take the olive-coloured book from the basket (0:01)|Olive Book 1]]>><<set $oliveExitPassage to "School Library">><<pass 1>><</link>>
 			<br>
 		<</if>>
@@ -611,7 +611,7 @@ You follow <<him>> down the corridor toward the entrance. "H-here," <<he>> says 
 	<<run statusCheck("Sydney")>>
 	You shout for Sydney. The <<person2>><<person>> sneers. "Oh no, not Sydney, <<nnpc_hes "Sydney">> gonna write on us, whatever will we do?" The two begin to laugh.
 	<br>
-	However, they're cut off by the thwap of a ruler against skin. The <<person1>><<person>> cries out in pain. You turn to see Sydney's furious gaze, just in time for a second ruler to bounce off of the <<person2>><<persons>> head.
+	However, they're cut off by the thwap of a ruler against skin. The <<person1>><<person>> cries out in pain. You turn to see Sydney's furious gaze, just in time for it to again bounce off of the <<person2>><<persons>> head.
 	<br>
 	"That fucking hurt! I'm telling."
 	<br>
@@ -815,15 +815,37 @@ You
 				<<else>>
 					olive-coloured book.
 				<</if>>
+				<<set $studyBooks.rented.pinch to 0>>
+				<<set $studyBooks.rented.count -= 1>>
 			<<case 5>>
 				<<wearProp "book" 0 "scarlet">>
 				copy of "Raul and Janet".
+				<<set $studyBooks.rented.RaulAndJanet to 0>>
+				<<set $studyBooks.rented.count -= 1>>
+			<<case 4>>
+				history textbook.
+				<<set $studyBooks.rented.history to 0>>
+				<<set $studyBooks.rented.count -= 1>>
+			<<case 3>>
+				English textbook.
+				<<set $studyBooks.rented.english to 0>>
+				<<set $studyBooks.rented.count -= 1>>
+			<<case 2>>
+				maths textbook.
+				<<set $studyBooks.rented.maths to 0>>
+				<<set $studyBooks.rented.count -= 1>>
+			<<case 1>>
+				science textbook.
+				<<set $studyBooks.rented.science to 0>>
+				<<set $studyBooks.rented.count -= 1>>
 			<<default>>
 				<<set _colour to $studyBooks.rented is "science" ? "blue" : $studyBooks.rented is "history" ? "yellow" : $studyBooks.rented is "maths" ? "red" : "green">>
 				<<wearProp "textbook" _colour $studyBooks.rented>>
 				$studyBooks.rented textbook.
 		<</switch>>
-		<<set $studyBooks.rented to "none">>
+		<<set _rentPrice to Math.round(2000 * (1 + ($studyBooks.rented.count * $studyBooks.rented.count)))>>
+		<<set _fullRefund to _rentPrice / 100>>
+		<<set _partialRefund to _rentPrice / 200>>
 		<<if _sydney_location is "library">>
 			<<if $book_rent_timer lt 0>>
 				<<if C.npc.Sydney.love lt 10>>
@@ -838,14 +860,16 @@ You
 					"Late." Sydney looks up. "I know you know better." <<bookCriminal>>
 				<</if>>
 			<<elseif $book_rent_timer is 14>>
-				"That was... fast." Sydney fumbles around with the register for a moment, before handing you <<moneyGain 15>>.
+				"That was... fast." Sydney fumbles around with the register for a moment, before handing you <<moneyGain _fullRefund>>.
 			<<elseif $book_rent_timer gt 7>>
-				"Done early?" Sydney fumbles around with the register for a moment, before handing you <<moneyGain 10>>.
+				"Done early?" Sydney fumbles around with the register for a moment, before handing you <<moneyGain _partialRefund>>.
 			<<else>>
 				"Thanks for being punctual!" Sydney happily takes the book from you, before returning it to its place.
 			<</if>>
-			<<unset $bookOverdue>>
-			<<set $book_rent_timer to 0>>
+			<<if $studyBooks.rented.count lte 0>>
+				<<unset $bookOverdue>>
+				<<set $book_rent_timer to 0>>
+			<</if>>
 			<br><br>
 			<<sydneyOptions>>
 		<<else>>
@@ -890,9 +914,22 @@ You
 					Sydney looks down at the book and frowns. "A story full of love and sin." <<if $temple_rank>><<He>> leans in and whispers. "Jordan's actually a big fan of this book, but don't tell <<nnpc_him "Jordan">> I told you! <<nnpc_He "Jordan">> says it's a good cautionary tale of the consequences of lust."<</if>> <<He>> hands the book back to you. "Enjoy."
 			<</switch>>
 		<<else>>
-			<<set _colour to $studyBooks.rented is "science" ? "blue" : $studyBooks.rented is "history" ? "yellow" : $studyBooks.rented is "maths" ? "red" : "green">>
-			<<wearProp "textbook" _colour $studyBooks.rented>>
-			a $studyBooks.rented textbook.
+			a
+			<<switch $phase>>
+				<<case 1>>
+					<<wearProp "textbook" "blue" "science">>
+					science
+				<<case 2>>
+					<<wearProp "textbook" "yellow" "history">>
+					maths
+				<<case 3>>
+					<<wearProp "textbook" "red" "maths">>
+					English
+				<<case 4>>
+					<<wearProp "textbook" "green" "English">>
+					history
+			<</switch>>
+			textbook.
 			<<if $sydneyromance is 1>>
 				Sydney smiles at you. "Look at you, putting the extra work in! I'm proud of you."
 			<<else>>
@@ -904,19 +941,23 @@ You
 		<<sydneyOptions>>
 	<<case "renew">>
 		renew your rented
-		<<if $studyBooks.rented is "Raul and Janet">>
-			<<wearProp "book" 0 "scarlet">>
-			copy of "Raul and Janet".
-		<<elseif $studyBooks.rented is "Pinch">>
-			<<wearProp "book" 0 "olive">>
-			olive-coloured book.
+		<<if $studyBooks.rented.count gt 1>>
+			books.
 		<<else>>
-			<<set _colour to $studyBooks.rented is "science" ? "blue" : $studyBooks.rented is "history" ? "yellow" : $studyBooks.rented is "maths" ? "red" : "green">>
-			<<wearProp "textbook" _colour $studyBooks.rented>>
-			$studyBooks.rented textbook.
+			book.
 		<</if>>
 		<<set $book_rent_timer to 14>>
 		Sydney smiles. "Thanks for staying on top of this.<<if $sydneyromance is 1 and _sydneyStatus.includes("corrupt")>> Now if only you'd stay on top of me.<</if>>"
+		<br><br>
+		<<sydneyOptions>>
+	<<case "deposit">>
+		put down a deposit for your rented
+		<<if $studyBooks.rented.count gt 1>>
+			books.
+		<<else>>
+			book.
+		<</if>>
+		Sydney smiles. "Thanks for depositing, it's definitely easy to forget renewing your books every 2 weeks.<<if $sydneyromance is 1 and _sydneyStatus.includes("corrupt")>> I'll make sure you never forget our nights though.<</if>>"
 		<br><br>
 		<<sydneyOptions>>
 	<<case "steal">>
@@ -928,9 +969,7 @@ You
 			<<wearProp "book" 0 "scarlet">>
 			a copy of "Raul and Janet".
 		<<else>>
-			<<set _colour to $studyBooks.stolen is "science" ? "blue" : $studyBooks.stolen is "history" ? "yellow" : $studyBooks.stolen is "maths" ? "red" : "green">>
-			<<wearProp "textbook" 0 $studyBooks.stolen>>
-			a $studyBooks.stolen textbook.
+			a $studyBooks.stolen.last textbook.
 		<</if>>
 		<<set $bookStolen to 1>>
 		<br><br>
@@ -938,6 +977,10 @@ You
 		<br>
 		<<getouticon>><<link [[Leave|School Library]]>><<endevent>><<set $eventskip to 1>><<crimeUp 20 "thievery">><</link>><<crime "thievery">>
 		<br>
+	<<case "cancelDeposit">>
+		change your mind and decide to not put down a deposit. Sydney smiles. "That's okay, just let me know if you decide to deposit afterall."
+		<br><br>
+		<<sydneyOptions>>
 	<<default>>
 <</switch>>
 <br><br>
@@ -959,9 +1002,7 @@ You return the stolen
 	<<wearProp "book" 0 "scarlet">>
 	copy of "Raul and Janet".
 <<else>>
-	<<set _colour to $studyBooks.stolen is "science" ? "blue" : $studyBooks.stolen is "history" ? "yellow" : $studyBooks.stolen is "maths" ? "red" : "green">>
-	<<wearProp "textbook" 0 $studyBooks.stolen>>
-	$studyBooks.stolen textbook.
+	$studyBooks.stolen.last textbook.
 <</if>>
 <<if _sydney_location is "library">>
 	<<if $bookStolenKnown isnot undefined>>
@@ -981,12 +1022,45 @@ You return the stolen
 	<<else>>
 		Sydney looks at you, confused. "That book was never checked out. Did you just find it lying around?"
 	<</if>>
-	<<set $studyBooks.stolen to "none">>
+	<<if $returnBook is "science">>
+		<<set $studyBooks.stolen.science to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "maths">>
+		<<set $studyBooks.stolen.maths to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "english">>
+		<<set $studyBooks.stolen.english to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "history">>
+		<<set $studyBooks.stolen.history to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "RaulAndJanet">>
+		<<set $studyBooks.stolen.RaulAndJanet to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "pinch">>
+		<<set $studyBooks.stolen.pinch to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
 	<br><br>
 	<<sydneyOptions>>
 <<else>>
-	<<set $bookStolenAbsent to 1>>
-	<<set $studyBooks.stolen to "none">>
+	<<if $returnBook is "science">>
+		<<set $studyBooks.stolen.science to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "maths">>
+		<<set $studyBooks.stolen.maths to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "english">>
+		<<set $studyBooks.stolen.english to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "history">>
+		<<set $studyBooks.stolen.history to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "RaulAndJanet">>
+		<<set $studyBooks.stolen.RaulAndJanet to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
+	<<if $returnBook is "pinch">>
+		<<set $studyBooks.stolen.pinch to 0>><<set $studyBooks.stolen.count -= 1>><<set $returnBook to "">>
+	<</if>>
 	<<unset $sydneyStolenKnown>>
 	<br><br>
 	<<bookRentalOptions>>
@@ -994,3 +1068,17 @@ You return the stolen
 	<<getouticon>><<link [[Leave|School Library]]>><<endevent>><<set $eventskip to 1>><</link>>
 	<br>
 <</if>>
+
+:: Book Rental Deposit
+How much are you going to deposit? (£)
+<br>
+<<numberbox "_depositAmount" 1>>
+<br><br>
+
+<div id="depositExit">
+	<<link "Deposit">>
+		<<set _depositAmount = Math.clamp(_depositAmount * 100, 1, $money)>>
+		<<replace #depositExit>><<depositLibraryExitConfirm>><</replace>>
+	<</link>>
+</div>
+<<link [[Back|Book Rental]]>><<set $bookRent to "cancelDeposit">><</link>>

@@ -41,7 +41,17 @@ You are in a cave along the coast. Bioluminescent lichen clings to the walls.
 <<if $stress gte $stressmax>>
 	<<passoutcave>>
 <<elseif $eventskip isnot 1 and $cave lt 100>>
-	<<if random(1, 4) is 4>>
+	<<if $historyTraitBuffs.improvedChances is 1>>
+		<<set _treasureChance to 20 + (1.5 * $historytrait)>>
+		<<rng>>
+		<<if _treasure isnot undefined>>
+			<<unset _treasure>>
+		<</if>>
+		<<if $rng lte _treasureChance>>
+			<<set _treasure to 1>>
+		<</if>>
+	<</if>>
+	<<if random(1, 4) is 4 or _treasure isnot undefined>>
 		<<eventscavetreasure>>
 	<<elseif $danger gte (9900 - $allure) and $eventskip is 0>>
 		<<eventscave>>

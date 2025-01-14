@@ -2698,8 +2698,24 @@ function initPlants() {
 			special: ["vegan"],
 			season: [],
 			ingredients: ["turnip", "potato", "onion", "vegetable_oil", "salt"],
-			icon: "turnip_soup.png",
-		},
+			icon: "turnip_soup.png"
+			},
+		green_manure: {
+			index: 147,
+			name: "green_manure",
+			plural: "green manure",
+			plant_cost: 1,
+			difficulty: 1,
+			handheld: "green manure|0",
+			bed: "earth",
+			type: "vegetable",
+			days: 7,
+			multiplier: 4,
+			special: [],
+			season: ["spring","summer","autumn","winter"],
+			ingredients: [],
+			icon: "green_manure.png"
+		}
 	};
 
 	/*

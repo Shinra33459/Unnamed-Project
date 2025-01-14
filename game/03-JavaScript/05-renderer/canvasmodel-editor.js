@@ -729,6 +729,8 @@ Macro.add("canvasModelEditor", {
 						booleanOption("show_writings"),
 						booleanOption("show_tf"),
 						booleanOption("show_clothes"),
+						booleanOption("show_background"),
+						booleanOption("show_foreground"),
 						optionCategory("Body"),
 						booleanOption("mannequin"),
 						selectOption("breasts", ["", "default", "cleavage"]),
@@ -915,6 +917,11 @@ Macro.add("canvasModelEditor", {
 						selectOption("bunny_tail_type", ["disabled", "hidden", "default", "fluffy"]),
 						selectOption("bunny_tail_layer", ["front", "back"]),
 						selectOption("bunny_ears_type", ["disabled", "hidden", "default", "lop"]),
+						selectOption("bear_plumage_type", ["disabled", "hidden", "default"]),
+						selectOption("bear_pubes_type", ["disabled", "hidden", "default"]),
+						selectOption("bear_tail_type", ["disabled", "hidden", "default"]),
+						selectOption("bear_tail_layer", ["front", "back"]),
+						selectOption("bear_ears_type", ["disabled", "hidden", "default"]),
 
 						optionCategory("Body writings"),
 						selectOption("writing_forehead", bodyWritings),
@@ -932,6 +939,10 @@ Macro.add("canvasModelEditor", {
 						selectOption("drip_vaginal", ["", "Start", "VerySlow", "Slow", "Fast", "VeryFast"]),
 						selectOption("drip_anal", ["", "Start", "VerySlow", "Slow", "Fast", "VeryFast"]),
 						selectOption("drip_mouth", ["", "Start", "VerySlow", "Slow", "Fast", "VeryFast"]),
+
+						optionCategory("Decorations"),
+						selectOption("foreground_image_type", ["", "none", "1", "2", "3", "4", "5", "6", "7", "8"]),
+						selectOption("background_image_type", ["", "none", "1", "2", "3", "4", "5", "6", "7", "8"]),
 					]),
 					element("div", { class: "editormodelgroup" }, [
 						setup.clothes_all_slots.map(slot => [

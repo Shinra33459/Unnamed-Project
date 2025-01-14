@@ -33,20 +33,12 @@
 			<br>
 			<label><<radiobutton "$speech_attitude" "neutral" autocheck>> Neutral</label>
 			<br>
-			<<if $submissive gt 850>>
-				<label><<radiobutton "$speech_attitude" "meek" autocheck>> <span class="meek">Meek</span></label>
-				<br>
-			<<else>>
-				<input type="radio" disabled /> <span class="black"><i>You're too defiant to adopt a meek demeanor.</i></span>
-				<br>
-			<</if>>
-			<<if $submissive lt 1150>>
-				<label><<radiobutton "$speech_attitude" "bratty" autocheck>> <span class="brat">Bratty</span></label>
-				<br>
-			<<else>>
-				<input type="radio" disabled /> <span class="black"><i>You're too submissive to adopt a bratty demeanor.</i></span>
-				<br>
-			<</if>>
+			<label><<radiobutton "$speech_attitude" "meek" autocheck>> <span class="meek">Meek</span></label>
+			<br>
+			/* <input type="radio" disabled /> <span class="black"><i>You're too defiant to adopt a meek demeanor.</i></span>
+			<br> */
+			<label><<radiobutton "$speech_attitude" "bratty" autocheck>> <span class="brat">Bratty</span></label>
+			<br>
 		</div>
 		<div class="settingsToggleItem">
 			<span class="gold bold">What makes you feel uncomfortable?</span>
@@ -102,6 +94,10 @@
 		</div>
 		<<set _loveIntStart1 to $loveInterest.primary>>
 		<<set _loveIntStart2 to $loveInterest.secondary>>
+		<<set _loveIntStart3 to $loveInterest.tertiary>>
+		<<set _loveIntStart4 to $loveInterest.quarternary>>
+		<<set _loveIntStart5 to $loveInterest.quinary>>
+		<<set _loveIntStart6 to $loveInterest.senary>>
 		<div id="loveInterest" class="settingsToggleItem">
 			<div class="gold bold">Who do you consider to be your love interest?</div>
 			<<loveInterest>>
@@ -149,6 +145,42 @@
 			<</if>>
 		</div>
 	</div>
+
+	<hr>
+	<div class="settingsGrid">
+		<div class="settingsHeader">DoLP Attitudes Settings</div>
+		<div class="settingsToggleItemWide">
+			<<if $attitudesControl.unlockSadoMaso>>
+				<label><<checkbox "$uncomfortable.sadoMaso" false true autocheck>> You're uncomfortable reflecting on your depravity. <i>If unchecked, sadism and masochism will not decay.</i></label>
+			<<else>>
+				<input type="checkbox" checked disabled /> <span class="black">You're uncomfortable reflecting on your depravity.</span>
+				<br>
+				<span class="black"><i>Unlock level 2 sadism or masochism.</i></span>
+			<</if>>
+			<br>
+
+			<<if $attitudesControl.unlockWillpower>>
+				<label><<checkbox "$willpowerDecay" false true autocheck>> Your willpower wanes. <i>If unchecked, willpower will not decay.</i></label>
+			<<else>>
+				<input type="checkbox" checked disabled /> <span class="black"> Your willpower wanes.</span>
+				<br>
+				<span class="black"><i>Unlock level 4 willpower.</i></span>
+			<</if>>
+			<br>
+
+			<<if $combatExtended.reverseRape is 1>>
+				<<if hasSexStat("promiscuity", 5)>>
+					<label><<checkbox "$reverseRapeOptOut" 0 1 autocheck>> You seek to turn the tables on everyone. <i>If unchecked, reverse rape will not initiate by default.</i></label>
+				<<else>>
+					<input type="checkbox" checked disabled /> <span class="black"> You can't fathom trying to turn the tables on your attackers.</span>
+					<br>
+					<span class="black"><i>Unlock level 5 promiscuity.</i></span>
+				<</if>>
+			<</if>>
+			<br>
+
+			<label><<checkbox "$willpowerCum" 0 1 autocheck>> You cum even if you resist the stun. <i>If unchecked, you will not cum if you suceed the willpower check during an orgasm.</i></label>
+		</div>
 <</widget>>
 
 <<widget "othersFeelings">>
@@ -330,10 +362,27 @@
 
 	<<if _args[0] is true>>
 		<<set _leftHand["Punch"] to "lefthit">>
+		<<if $worn.handheld.type.includes("rainproof") and $worn.handheld.integrity gte 1>>
+			<<set _leftHand["Umbrella"] to "leftumbrella">>
+		<</if>>
+		<<if $combatExtended.blocking is 1>>
+			<<set _leftHand["Block"] to "leftblock">>
+		<</if>>
+		<<if $combatExtended.countering is 1>>
+			<<set _leftHand["Counter"] to "leftcounter">>
+		<</if>>
+		<<if $combatExtended.feinting is 1>>
+			<<set _leftHand["Feint"] to "leftfeint">>
+		<</if>>
+		<<if $combatExtended.hookpunching is 1 and $combatExtended.stabilityLost is 0>>
+			<<set _leftHand["Hook Punch"] to "lefthookpunch">>
+		<</if>>
 		<<set _leftHand["Pull their hand off your neck"] to "stopchokenoncon">>
+		<<set _leftHand["Pull their face off your crotch"] to "stoporalnoncon">>
 	<<else>>
 		<<set _leftHand["Press their hand to your neck"] to "keepchoke">>
 		<<set _leftHand["Take their hand off your neck"] to "stopchoke">>
+		<<set _leftHand["Take their face off your crotch"] to "stoporal">>
 	<</if>>
 	<<set _leftHand["Cover your face"] to "leftcoverface">>
 	<<set _leftHand["Pose for camera"] to "leftcamerapose">>
@@ -376,10 +425,27 @@
 
 	<<if _args[0] is true>>
 		<<set _rightHand["Punch"] to "righthit">>
+		<<if $worn.handheld.type.includes("rainproof") and $worn.handheld.integrity gte 1>>
+			<<set _rightHand["Umbrella"] to "rightumbrella">>
+		<</if>>
+		<<if $combatExtended.blocking is 1>>
+			<<set _rightHand["Block"] to "rightblock">>
+		<</if>>
+		<<if $combatExtended.countering is 1>>
+			<<set _rightHand["Counter"] to "rightcounter">>
+		<</if>>
+		<<if $combatExtended.feinting is 1>>
+			<<set _rightHand["Feint"] to "rightfeint">>
+		<</if>>
+		<<if $combatExtended.hookpunching is 1 and $combatExtended.stabilityLost is 0>>
+			<<set _rightHand["Hook Punch"] to "righthookpunch">>
+		<</if>>
 		<<set _rightHand["Pull their hand off your neck"] to "stopchokenoncon">>
+		<<set _rightHand["Pull their face off your crotch"] to "stoporalnoncon">>
 	<<else>>
 		<<set _rightHand["Press their hand to your neck"] to "keepchoke">>
 		<<set _rightHand["Take their hand off your neck"] to "stopchoke">>
+		<<set _rightHand["Take their face off your crotch"] to "stoporal">>
 	<</if>>
 	<<set _rightHand["Cover your face"] to "rightcoverface">>
 	<<set _rightHand["Pose for camera"] to "rightcamerapose">>
@@ -418,6 +484,9 @@
 	}>>
 	<<if _args[0] is true>>
 		<<set _feet["Kick"] to "kick">>
+		<<set _feet["Dodge"] to "dodge">>
+		<<set _feet["Plant"] to "plant">>
+		<<set _feet["Submit"] to "submit">>
 	<</if>>
 	<<if hasSexStat("promiscuity", 3) or hasSexStat("deviancy", 3) or _args[0] is true>>
 		<<set _feet["Grab their penis"] to "grab">>
@@ -445,18 +514,24 @@
 		<<set _mouth["Growl"] to "growl">>
 	<</if>>
 
-	<<if $submissive gte 1150>>
+	/* <<if $submissive gte 1150>> */
 		<<set _mouth["Moan"] to "moan">>
-	<</if>>
-	<<if $angel gte 6 and $angelforgive isnot 1 and _args[0] is true>>
+	/* <</if>> */
+	<<if (($angel gte 6 or ($transformationParts.angel.wings isnot "hidden" and $transformationParts.angel.wings isnot "disabled")) or $angeltf is 1) and $angelforgive isnot 1>>
 		<<set _mouth["Forgive"] to "forgive">>
 	<</if>>
-	<<if $fallenangel gte 4 and $angelforgive isnot 1 and _args[0] is true>>
+	<<if (($fallenangel gte 2 or ($transformationParts.fallenAngel.wings isnot "hidden" and $transformationParts.fallenAngel.wings isnot "disabled")) or $fallenangeltf is 1 or $fallenangelplustf is 1) and $fallenangelretribution isnot 1>>
+		<<set _mouth["Retribution"] to "retribution">>
+	<</if>>
+	<<if (($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled")) or $demontf is 1) and $demonseduce isnot 1>>
+		<<set _mouth["Seduce"] to "seduce">>
+	<</if>>
+	<<if ($fallenangel gte 4 or $transformationParts.fallenAngel.wings is "fallenplus" or $transformationParts.fallenAngel.wings is "classicfallenplus") and $angelforgive isnot 1 and _args[0] is true>>
 		<<set _mouth["Disparage"] to "disparage">>
 	<</if>>
-	<<if $submissive lte 850 and _args[0] is true>>
+	/* <<if $submissive lte 850 and _args[0] is true>> */
 		<<set _mouth["Demand"] to "demand">>
-	<</if>>
+	/* <</if>> */
 
 	<<if hasSexStat("promiscuity", 4) or hasSexStat("deviancy", 4) or _args[0] is true>>
 		<<set _mouth["Move your lips to their penis"] to "mouth">>
@@ -506,9 +581,9 @@
 	<</if>>
 
 	<<set _mouth["Lick ass"] to "anallick">>
-	<<if $submissive gte 1150>>
+	/* <<if $submissive gte 1150>> */
 		<<set _mouth["Kiss ass"] to "analkiss">>
-	<</if>>
+	/* <</if>> */
 	<<if _args[0] is false>>
 		<<set _mouth["Pull away from their ass"] to "analpull">>
 	<</if>>
@@ -533,7 +608,7 @@
 			<<set _askActions["to not choke you"] to "nochoke">>
 		<</if>>
 	<</if>>
-	<<if (_args[0] is false and ($choketrait or ($chokeorgasm gte 1 and $submissive gt 850))) or ($awarelevel gte 2 and $submissive gte 1150)>>
+	<<if (_args[0] is false and ($choketrait or ($chokeorgasm gte 1))) or ($awarelevel gte 2)>>
 		<<set _askActions["to choke you"] to "askchoke">>
 	<</if>>
 	<<if (_args[0] is false and $masochism_level gte 1) or $masochism_level gte 3>>
@@ -546,7 +621,7 @@
 	<<set _askActions["to leave your top on"] to "noupper">>
 
 	<<if $asphyxiaLvl gte 1 and _args[0] is false and
-	($choketrait or ($chokeorgasm gte 1 and $submissive gt 850) or ($awarelevel gte 2 and $submissive gte 1150))>>
+	($choketrait or ($chokeorgasm gte 1) or ($awarelevel gte 2))>>
 		<<set _askActions["to choke you"] to "askchoke">>
 	<</if>>
 
@@ -825,13 +900,99 @@
 			<<listbox "$loveInterest.secondary" autoselect>>
 				<<optionsfrom _potentialLoveInterests>>
 			<</listbox>>
+			<<if $loveInterest.secondary isnot "None">>
+				<<run _potentialLoveInterests.delete($loveInterest.secondary)>>
 			<</if>>
+			<</if>>
+			<br>
 		<<else>>
 			<span class="black">You don't consider it possible to have more than one love interest.</span>
-			<<set $loveInterest.secondary to "None">>
+			<<set $loveInterest.secondary to "None">><<set _awareChecked to 1>>
+			<br>
+		<</if>>
+
+		<<if $awarelevel gte 3>>
+			<<if $loveInterest.secondary is "None">>
+				<<set $loveInterest.tertiary to "None">>
+				<span class="black">You need to choose secondary love interest before you can choose a tertiary.</span>
+			<<else>>
+			Who do you consider to be your tertiary love interest?
+			<br>
+			<<listbox "$loveInterest.tertiary" autoselect>>
+				<<optionsfrom _potentialLoveInterests>>
+			<</listbox>>
+			<<if $loveInterest.tertiary isnot "None">>
+				<<run _potentialLoveInterests.delete($loveInterest.tertiary)>>
+			<</if>>
+			<</if>>
+			<br>
+		<<elseif _awareChecked isnot 1>>
+			<span class="black">You don't consider it possible to have more than two love interests.</span>
+			<<set $loveInterest.tertiary to "None">><<set _awareChecked to 1>>
+			<br>
+		<</if>>
+
+		<<if $awarelevel gte 4>>
+			<<if $loveInterest.tertiary is "None">>
+				<<set $loveInterest.quarternary to "None">>
+				<span class="black">You need to choose tertiary love interest before you can choose a quarternary.</span>
+			<<else>>
+			Who do you consider to be your quarternary love interest?
+			<br>
+			<<listbox "$loveInterest.quarternary" autoselect>>
+				<<optionsfrom _potentialLoveInterests>>
+			<</listbox>>
+			<<if $loveInterest.quarternary isnot "None">>
+				<<run _potentialLoveInterests.delete($loveInterest.quarternary)>>
+			<</if>>
+			<</if>>
+			<br>
+		<<elseif _awareChecked isnot 1>>
+			<span class="black">You don't consider it possible to have more than three love interests.</span>
+			<<set $loveInterest.quarternary to "None">><<set _awareChecked to 1>>
+			<br>
+		<</if>>
+
+		<<if $awarelevel gte 5>>
+			<<if $loveInterest.quarternary is "None">>
+				<<set $loveInterest.quinary to "None">>
+				<span class="black">You need to choose quarternary love interest before you can choose a quinary.</span>
+			<<else>>
+			Who do you consider to be your quinary love interest?
+			<br>
+			<<listbox "$loveInterest.quinary" autoselect>>
+				<<optionsfrom _potentialLoveInterests>>
+			<</listbox>>
+			<<if $loveInterest.quinary isnot "None">>
+				<<run _potentialLoveInterests.delete($loveInterest.quinary)>>
+			<</if>>
+			<</if>>
+			<br>
+		<<elseif _awareChecked isnot 1>>
+			<span class="black">You don't consider it possible to have more than four love interests.</span>
+			<<set $loveInterest.quinary to "None">><<set _awareChecked to 1>>
+			<br>
+		<</if>>
+
+		<<if $awarelevel gte 6>>
+			<<if $loveInterest.quinary is "None">>
+				<<set $loveInterest.senary to "None">>
+				<span class="black">You need to choose quinary love interest before you can choose a senary.</span>
+			<<else>>
+			Who do you consider to be your senary love interest?
+			<br>
+			<<listbox "$loveInterest.senary" autoselect>>
+				<<optionsfrom _potentialLoveInterests>>
+			<</listbox>>
+			<</if>>
+			<br>
+		<<elseif _awareChecked isnot 1>>
+			<span class="black">You don't consider it possible to have more than five love interests.</span>
+			<<set $loveInterest.senary to "None">><<set _awareChecked to 1>>
+			<br>
 		<</if>>
 	<</if>>
-	<<if $transformationParts.traits.mateForLife isnot "disabled" and (!isLoveInterest(_loveIntStart1) or (_loveIntStart2 isnot "None" and !isLoveInterest(_loveIntStart2)))>>
+	<<if $transformationParts.traits.mateForLife isnot "disabled" and (!isLoveInterest(_loveIntStart1) or (_loveIntStart2 isnot "None" and !isLoveInterest(_loveIntStart2)) or (_loveIntStart3 isnot "None" and !isLoveInterest(_loveIntStart3)) or (_loveIntStart4 isnot "None" and !isLoveInterest(_loveIntStart4)) or (_loveIntStart5 isnot "None" and !isLoveInterest(_loveIntStart5)) or (_loveIntStart6 isnot "None" and !isLoveInterest(_loveIntStart6)))>>
 		<<set $LIChanged to true>>
 		<br>
 		<span class="red">Changing your partners goes against your instincts to mate for life. It will take a toll on your mental state.</span>
@@ -855,9 +1016,15 @@
 		V.attitudesControl.unlockLoveInterest1 = V.loveInterest.primary !== "None";
 		/* there's no point in highlighting that you can assign the second LI if you've not assigned the first one */
 		V.attitudesControl.unlockLoveInterest2 = V.awarelevel >= 2 && V.loveInterest.primary !== "None" && V.loveInterest.secondary === "None";
+		V.attitudesControl.unlockLoveInterest3 = V.awarelevel >= 3 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary === "None";
+		V.attitudesControl.unlockLoveInterest4 = V.awarelevel >= 4 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary === "None";
+		V.attitudesControl.unlockLoveInterest5 = V.awarelevel >= 5 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary !== "None" && V.loveInterest.quinary === "None";
+		V.attitudesControl.unlockLoveInterest6 = V.awarelevel >= 6 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary !== "None" && V.loveInterest.quinary !== "None" && V.loveInterest.senary === "None";
 		V.attitudesControl.unlockDefaultActions = V.moleststat > 0;
 		V.attitudesControl.unlockLewd = V.exhibitionism >= 35 || V.promiscuity >= 35 || V.deviancy >= 35;
-		V.attitudesControl.unlockHypnosis = Object.keys(V.hypnosis_traits).length >= 1;
+		V.attitudesControl.unlockSadoMaso = V.sadism >= 300 || V.masochism >= 300;
+		V.attitudesControl.unlockHypnosis = V.hypnosis_traits.scream >= 0 || V.hypnosis_traits.cover >= 0 || V.hypnosis_traits.deviancy >= 0;
+		V.attitudesControl.unlockWillpower = V.willpower >= 429;
 		/* set the highlight flag when one of the controls switches to true */
 		for (const c in V.attitudesControl) {
 			if (V.attitudesControl[c] && !T.oldControl[c]) { V.attitudesControl.showGoldLink = true; break }

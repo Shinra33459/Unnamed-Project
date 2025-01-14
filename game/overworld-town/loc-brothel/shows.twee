@@ -159,7 +159,7 @@
 	<<endevent>>
 	<<generate1>><<generate2>><<generate3>><<generate4>><<generate5>><<generate6>><<person1>>
 	Briar turns to you. "We're all set and ready. Just waiting on our cum bucket. Remember, <span class="gold">I'll pay you £50 per helping."</span>
-	<<if $demon gte 6>>
+	<<if ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>>
 		<<nnpc_He "Briar">> looks at your flicking tail. "Perfect. You've an intuition for these things."
 	<</if>>
 	<br><br>
@@ -1784,20 +1784,20 @@ The pulses increase in intensity. It's certainly not the "tingle" that was adver
 
 <<switch $weekly.brothelVirginityShow>>
 	<<case 1>>
-		<<set _fame to fameSum('sex', 'rape', 'prostitution', 'exhibitionism', 'bestiality', 'social', 'model')>>
+		<<set _fame to fameTotal()>>
 		<<set $virginitytip += 50000
 			+ _fame * 50
 			+ $beauty * 20
 		>>
 
-		<<if fameSum('sex', 'rape', 'prostitution') gte 2500>>
+		<<if fameSum('sex', 'rape', 'prostitution', 'exhibitionism', 'bestiality', 'impreg', 'pregnancy') gte 2500>>
 			A <<brothelvirginitybidders>><<person>> rushes the stage. <<He>> is promptly tackled by a nearby bouncer.
 			<br><br>
 			Briar ignores the <<person>> as <<he>> is dragged from the stage.
 			<br><br>
 		<</if>>
 
-		<<set $tip_add to 50000>><<tipset>> /* Base bid. */
+		<<set $tip_add to 50000>><<set $tipmod to 1 * (1 + (0.4 * (C.npc.Briar.love / 100)))>><<tipset>> /* Base bid. */
 		"One virgin for the taking, starting at <<printmoney $tip>>." Briar looks around the eager crowd.
 		<br><br>
 		A <<brothelvirginitybidders>><<person>> shouts, "<<printmoney $tip>>!" while raising <<his>> hand above the crowd.
@@ -2268,7 +2268,7 @@ Leaning against a wall, you catch your breath.You hear footsteps and look up to 
 	<br><br>
 	<<He>> gestures you to <<his>> office. Once inside, you patiently wait for Briar to speak. "That was a very good show. Your fans loved it."
 	<br><br>
-	<<He>> seems satisfied and hands you <<printmoney $tip>><<money $tip "brothelShow">><<set $tip to 0>>. "You did well. I almost wish I had..." <<He>> trails off before waving you out.
+	<<He>> seems satisfied and hands you <<printmoney $tip>><<money $tip "brothelShow">><<set $tip to 0>><<set $tipmod to 1>>. "You did well. I almost wish I had..." <<He>> trails off before waving you out.
 <</if>>
 <br><br>
 
@@ -2363,7 +2363,7 @@ Leaning against a wall, you catch your breath.You hear footsteps and look up to 
 		<br>
 	<<else>>
 		<<endcombat>>
-		<<set _fame to fameSum('sex', 'rape', 'prostitution', 'exhibitionism', 'bestiality', 'social', 'model')/140>>
+		<<set _fame to fameTotal()/140>>
 
 		<<generatetakevirginity 1>><<generatetakevirginity 2>><<generatetakevirginity 3>>
 

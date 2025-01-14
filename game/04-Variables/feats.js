@@ -39,6 +39,30 @@ setup.feats = {
 		filter: ["All", "General"],
 		softLockable: true,
 	},
+	Decamillionaire: {
+		title: "Decamillionaire",
+		desc: "Have £10,000,000.",
+		difficulty: 4,
+		series: "money",
+		filter: ["All", "General"],
+		softLockable: true,
+	},
+	Hectomillionaire: {
+		title: "Hectomillionaire",
+		desc: "Have £100,000,000.",
+		difficulty: 4,
+		series: "money",
+		filter: ["All", "General"],
+		softLockable: true,
+	},
+	Billionaire: {
+		title: "Billionaire",
+		desc: "Have £1,000,000,000.",
+		difficulty: 5,
+		series: "money",
+		filter: ["All", "General"],
+		softLockable: true,
+	},
 	"It Belongs in a Museum": {
 		title: "It Belongs in a Museum!",
 		desc: "Find all the artefacts.",
@@ -146,8 +170,22 @@ setup.feats = {
 	},
 	"The Rival Estate": {
 		title: "The Rival Estate",
-		desc: "Build all the farm expansions.",
+		desc: "Fully upgrade 8 farm expansions.",
 		difficulty: 3,
+		series: "farm",
+		filter: ["All", "General"],
+	},
+	"The Leading Farmlands": {
+		title: "The Leading Farmlands",
+		desc: "Fully upgrade 14 farm expansions.",
+		difficulty: 3,
+		series: "farm",
+		filter: ["All", "General"],
+	},
+	"The Verdant Empire": {
+		title: "The Verdant Empire",
+		desc: "Build all the farm expansions.",
+		difficulty: 4,
 		series: "farm",
 		filter: ["All", "General"],
 	},
@@ -162,6 +200,27 @@ setup.feats = {
 		title: "Five in a Row",
 		desc: "Win five games of blackjack in a row.",
 		difficulty: 1,
+		series: "",
+		filter: ["All", "General"],
+	},
+	"Ten in a Row": {
+		title: "Ten in a Row",
+		desc: "Win ten games of blackjack in a row.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "General"],
+	},
+	"Fifteen in a Row": {
+		title: "Fifteen in a Row",
+		desc: "Win fifteen games of blackjack in a row.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "General"],
+	},
+	"Twenty in a Row": {
+		title: "Twenty in a Row",
+		desc: "Win twenty games of blackjack in a row.",
+		difficulty: 4,
 		series: "",
 		filter: ["All", "General"],
 	},
@@ -256,6 +315,20 @@ setup.feats = {
 	"No More Control": {
 		title: "No More Control",
 		desc: "You don't know how to get lewder!",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Stats"],
+	},
+	Powerful: {
+		title: "Powerful",
+		desc: "You've reached the peak fitness of humanity.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Stats"],
+	},
+	Disciplined: {
+		title: "Disciplined",
+		desc: "Your mind is solid.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Stats"],
@@ -366,6 +439,48 @@ setup.feats = {
 		series: "market",
 		filter: ["All", "Stats"],
 	},
+	Peddler: {
+		title: "Peddler",
+		desc: "Start small, sell local.",
+		difficulty: 1,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	Supplier: {
+		title: "Supplier",
+		desc: "Meet growing demand.",
+		difficulty: 2,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	Distributor: {
+		title: "Distributor",
+		desc: "Expand your reach.",
+		difficulty: 3,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	Wholesaler: {
+		title: "Wholesaler",
+		desc: "Control the bulk market.",
+		difficulty: 3,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	Agronomist: {
+		title: "Agronomist",
+		desc: "Master the art of farming.",
+		difficulty: 4,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
+	"Agricultural Tycoon": {
+		title: "Agricultural Tycoon",
+		desc: "Rule the farming empire.",
+		difficulty: 5,
+		series: "factorySale",
+		filter: ["All", "Stats"],
+	},
 	"Twisted Desire": {
 		title: "Twisted Desire",
 		desc: "Suffering is optional.",
@@ -424,7 +539,7 @@ setup.feats = {
 	},
 	"Robin the Lover": {
 		title: "Robin the Lover",
-		desc: "You gave your virginity to them.",
+		desc: "Vanilla can be fun.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -445,7 +560,7 @@ setup.feats = {
 	},
 	"Whitney the Tsundere": {
 		title: "Whitney the Bully",
-		desc: "You gave your virginity to them.",
+		desc: "Forever owned.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -473,7 +588,7 @@ setup.feats = {
 	},
 	"Kylar the Obsessed": {
 		title: "Kylar the Obsessed",
-		desc: "You gave your virginity to them.",
+		desc: "Fucking crazy.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -487,7 +602,7 @@ setup.feats = {
 	},
 	"Eden the Lonely": {
 		title: "Eden the Lonely",
-		desc: "You gave your virginity to them.",
+		desc: "Not so lonely now.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -501,7 +616,7 @@ setup.feats = {
 	},
 	"Avery the Moneybags": {
 		title: "Avery the Moneybags",
-		desc: "You gave your virginity to them.",
+		desc: "VIP treatment.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -515,14 +630,21 @@ setup.feats = {
 	},
 	"Leighton the Shady": {
 		title: "Leighton the Shady",
-		desc: "You gave your virginity to them.",
+		desc: "Headmaster's Pet.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
 	},
 	"Alex the Robust": {
 		title: "Alex the Robust",
-		desc: "You gave your virginity to them.",
+		desc: "Yeehaw!.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Social"],
+	},
+	"Great Hawk the Terror": {
+		title: "Great Hawk the Terror",
+		desc: "Mate for life.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -557,14 +679,14 @@ setup.feats = {
 	},
 	"Wren the Sly": {
 		title: "Wren the Sly",
-		desc: "You gave your virginity to them.",
+		desc: "Busted Out.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
 	},
 	"Great Wolf the Alpha": {
 		title: "Black Wolf the Alpha",
-		desc: "You gave your virginity to them.",
+		desc: "Thrown to the wolves.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -578,7 +700,7 @@ setup.feats = {
 	},
 	"Sydney the Pure Hearted": {
 		title: "Sydney the Pure-Hearted",
-		desc: "They gave their virginity to you.",
+		desc: "Blessed by the church.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -592,14 +714,28 @@ setup.feats = {
 	},
 	"Harper the Hypnotist": {
 		title: "Harper the Hypnotist",
-		desc: "You gave your virginity to them.",
+		desc: "In-Depth Physical.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
 	},
 	"Morgan the Lost": {
 		title: "Morgan the Lost",
-		desc: "You gave your virginity to them.",
+		desc: "Again...???",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Social"],
+	},
+	"Zephyr the captain": {
+		title: "Zephyr the captain",
+		desc: "Congrats on the promotion matey.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Social"],
+	},
+	"Bailey the 'caretaker'": {
+		title: "Bailey the 'caretaker'",
+		desc: "Debt-Free (JK).",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -698,6 +834,13 @@ setup.feats = {
 		hint: "Hint: Discover the secret of Kylar's manor.",
 		filter: ["All", "Social"],
 	},
+	"Owned": {
+		title: "Owned",
+		desc: "Being owned might not be that bad.",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Social"],
+	},
 	Neko: {
 		title: "Purrfect",
 		desc: "Purring for attention.",
@@ -736,6 +879,13 @@ setup.feats = {
 	Bunny: {
 		title: "Bnuuy Syndrome",
 		desc: "Instead of brain there is bnuuy",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Transformation"],
+	},
+	Bear: {
+		title: "Unadulterated Power",
+		desc: "The apex predator.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Transformation"],
@@ -1845,6 +1995,322 @@ setup.feats = {
 		filter: ["All", "Special"],
 		hint: "Hint: Time and effort.",
 	},
+	"Aphrodite": {
+		title: "Aphrodite",
+		desc: "Even the gods blush at your beauty.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max beauty with tempered beauty.",
+	},
+	"Unstoppable Force": {
+		title: "Unstoppable Force",
+		desc: "Nobody can rival the sheer power your body holds.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max physique with large body and tempered physique.",
+	},
+	"Immovable Object": {
+		title: "Immovable Object",
+		desc: "Nobody will be able to manipulate your mind again.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max willpower with tempered willpower.",
+	},
+	"Agent 47": {
+		title: "Agent 47",
+		desc: "Hiding in plain sight.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max skulduggery with tempered skulduggery.",
+	},
+	"Can't Touch This": {
+		title: "Can't Touch This",
+		desc: "Nobody can hit you; your reflexes are quite frankly instant.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max dancing with tempered dancing.",
+	},
+	"Atlantean": {
+		title: "Atlantean",
+		desc: "You are fishier than any fish can fish to fish.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max swimming with tempered swimming.",
+	},
+	"Ludicrous Speed": {
+		title: "Ludicrous Speed",
+		desc: "Light speed is too slow!",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max athletics with tempered athletics.",
+	},
+	"Grass Toucher": {
+		title: "Grass Toucher",
+		desc: "You touch grass better than anyone else.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max tending with tempered tending.",
+	},
+	"Demolisher of Filth": {
+		title: "Demolisher of Filth",
+		desc: "Nobody can rival your ability to keep a place clean, not even the most fabled maids.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max housekeeping with tempered housekeeping.",
+	},
+	/* fishing release
+	"Master Baiter": {
+		title: "Menace to the Ecosystem",
+		desc: "women want me fish fear me",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max fishing with tempered fishing.",
+	},
+	*/
+	"Smarter than Einstein": {
+		title: "Smarter than Einstein",
+		desc: "You can create E=MC Cubed in your sleep.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max science with tempered science.",
+	},
+	"Human Calculator": {
+		title: "Human Calculator",
+		desc: "You are even more asian than asians.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max maths with tempered maths.",
+	},
+	"Voice of All Things": {
+		title: "Voice of All Things",
+		desc: "ONE PIECE IS REAL!!!",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max english with tempered english.",
+	},
+	"Errm, ackshually": {
+		title: "Errm, ackshually",
+		desc: "It's illegal to think differently than me.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max history with tempered history.",
+	},
+	"Return to Monke": {
+		title: "Return to Monke",
+		desc: "You have reached the pinnacle of humanity, now you ascend by returning to monke.",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max school skills with all tempered school skills.",
+	},
+	"Irresistible": {
+		title: "Irresistible",
+		desc: "Nobody can resist your sheer ability to seduce, not even Frost.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max seduction with tempered seduction.",
+	},
+	"God of Lust": {
+		title: "God of Lust",
+		desc: "Nobody, and I mean NOBODY could last 5 seconds with you; you have simply become a god of lust.",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max sex skills with tempered sex skills.",
+	},
+	"Rivers of White": {
+		title: "Rivers of White",
+		desc: "You'll drown the world with the sheer amount of milk you produce.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max milk volume with tempered milk volume and cow tf.",
+	},
+	"Sticky Fountain": {
+		title: "Sticky Fountain",
+		desc: "You hope they pay whoever cleans up your mess REALLY well.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max semen volume with tempered semen volume and cow tf.",
+	},
+	"Many Punch Man": {
+		title: "Many Punch Man",
+		desc: "Two? Four? Six? Doesn't matter, come at me all at once.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "AMC Traits"],
+		softLockable: true,
+		hint: "Hint: Max brawling with tempered brawling.",
+	},
+	"Starting Point": {
+		title: "Starting Point",
+		desc: "You've beaten the peak of vanilla single combat, but that's it.",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 600 health.",
+	},
+	"One Step": {
+		title: "One Step",
+		desc: "You've beaten the peak of vanilla group combat, not bad.",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 1200 health.",
+	},
+	"One Leap": {
+		title: "One Leap",
+		desc: "That's pretty good mate.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 2500 health.",
+	},
+	"Five Thousand": {
+		title: "Five Thousand",
+		desc: "Five thousand!",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 5000 health.",
+	},
+	"Ten Thousand": {
+		title: "Ten Thousand",
+		desc: "Ten Thousand!",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 10000 health.",
+	},
+	"Twenty Thousand": {
+		title: "Twenty Thousand",
+		desc: "Twenty Thousand!",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 20000 health.",
+	},
+	"Fifty Thousand": {
+		title: "Fifty Thousand",
+		desc: "Fifty Thousand!",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 50000 health.",
+	},
+	"One Hundred Thousand": {
+		title: "One Hundred Thousand",
+		desc: "One Hundred Thousand!",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 100000 health.",
+	},
+	"Two Hundred Thousand": {
+		title: "Two Hundred Thousand",
+		desc: "Two Hundred Thousand!",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 200000 health.",
+	},
+	"Five Hundred Thousand": {
+		title: "Five Hundred Thousand",
+		desc: "Five Hundred Thousand!",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 500000 health.",
+	},
+	"One Million": {
+		title: "One Million",
+		desc: "One Million!",
+		difficulty: 5,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win against an enemy with 1000000 health.",
+	},
+	"Hitless": {
+		title: "Hitless",
+		desc: "They didn't even put so much as a scratch on you.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+		hint: "Hint: Win a fight and take no damage.",
+	},
+	"Brawler": {
+		title: "Brawler",
+		desc: "Nobody sane dares to mess with you; your frightening blows speak loud enough.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Combat Extended"],
+		softLockable: true,
+	},
+	"Ghost Buster": {
+		title: "Ghost Buster",
+		desc: "Defeat the Ivory Wraith.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Special"],
+		softLockable: true,
+		hint: "Hint: Win against the Ivory Wraith.",
+	},
+	"Demon of Purity": {
+		title: "Demon of Purity",
+		desc: "You fell into the depths of lewdity with your purity intact.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Transformation"],
+		softLockable: true,
+		hunt: "Hint: A true paradox.",
+	},
 };
 
 async function featsMergePre() {
@@ -2060,7 +2526,8 @@ function earnHourlyFeats() {
 	if (V.fallenangel >= 2) earnFeat("Fallen Angel");
 	if (V.demon >= 6) earnFeat("Demon");
 	if (V.cow >= 6) earnFeat("Cattle");
-	if (V.harpy >= 6) earnFeat("Harpy");
+	if (V.bear >= 6) earnFeat("Bear");
+	if ((V.harpy >= 6  || V.transformationParts.bird.wings == "default")) earnFeat("Harpy");
 	if (V.fox >= 6) earnFeat("Fox");
 
 	const specialTraits =
@@ -2156,6 +2623,9 @@ function earnHourlyFeats() {
 	if (V.money >= 1000000) earnFeat("Money Maker");
 	if (V.money >= 10000000) earnFeat("Tycoon");
 	if (V.money >= 100000000) earnFeat("Millionaire");
+	if (V.money >= 1000000000) earnFeat("Decamillionaire");
+	if (V.money >= 10000000000) earnFeat("Hectomillionaire");
+	if (V.money >= 100000000000) earnFeat("Billionaire");
 
 	if (
 		V.liquidoutsidecount >= 100 &&
@@ -2166,16 +2636,66 @@ function earnHourlyFeats() {
 		earnFeat("Fully Covered");
 	}
 
+	if (V.physique >= 16000) earnFeat("Powerful");
+	if (V.willpower >= 1000) earnFeat("Disciplined");
 	if (V.skulduggery >= 1000) earnFeat("Thief");
 	if (V.danceskill >= 1000) earnFeat("May I have this Dance?");
 	if (V.swimmingskill >= 1000) earnFeat("Aquanaut");
 	if (V.seductionskill >= 1000) earnFeat("Seductress");
 	if (V.tending >= 1000) earnFeat("Green Fingered");
 	if (V.housekeeping >= 1000) earnFeat("Majordomo");
+	/* fishing release if (V.fishing >= 1000) earnFeat("Profishional");*/
 	if (V.baseAllure >= 7000 && V.outside === 1 && !Time.isBloodMoon()) earnFeat("Alluring");
 	if (V.science >= 1000 && V.maths >= 1000 && V.english >= 1000 && V.history >= 1000) earnFeat("Perfect Record");
 	if (V.earSlime.corruption >= 100) earnFeat("Ear Slime Lover");
 	if (V.earSlime.corruption >= 100 && V.earSlime.growth >= 200) earnFeat("Ear Slime Amalgam");
+
+	if (V.physique >= 32000) earnFeat("Unstoppable Force");
+	if (V.willpower >= 2000) earnFeat("Immovable Object");
+	if (V.skulduggery >= 2000) earnFeat("Agent 47");
+	if (V.danceskill >= 2000) earnFeat("Can't Touch This");
+	if (V.swimmingskill >= 2000) earnFeat("Atlantean");
+	if (V.athletics >= 2000) earnFeat("Ludicrous Speed");
+	if (V.tending >= 2000) earnFeat("Grass Toucher");
+	if (V.housekeeping >= 2000) earnFeat("Demolisher of Filth");
+	/*if fishing release (V.fishing >= 2000) earnFeat("Master Baiter");*/
+	if (V.sciencetrait >= 8) earnFeat("Smarter than Einstein");
+	if (V.mathstrait >= 8) earnFeat("Human Calculator");
+	if (V.englishtrait >= 8) earnFeat("Voice of All Things");
+	if (V.historytrait >= 8) earnFeat("Errm, ackshually");
+	if (V.schooltrait >= 8) earnFeat("Return to Monke");
+	if (V.seductionskill >= 2000) earnFeat("Irresistible");
+	if (
+		(!V.player.vaginaExist || V.vaginalskill >= 2000) &&
+		(!V.player.penisExist || V.penileskill >= 2000) &&
+		V.oralskill >= 2000 &&
+		(V.analskill >= 2000 || V.analdisable === "t") &&
+		V.handskill >= 2000 &&
+		V.feetskill >= 2000 &&
+		V.bottomskill >= 2000 &&
+		V.thighskill >= 2000 &&
+		V.chestskill >= 2000
+	) {
+		earnFeat("God of Lust");
+	}
+	if (V.combatExtended.brawling >= 1000) earnFeat("Brawler");
+	if (V.combatExtended.brawling >= 2000) earnFeat("Many Punch Man");
+	if (V.birdFly == 1) earnFeat("Catch the Wind");
+	if (V.beauty >= 20000) earnFeat("Aphrodite");
+	if (V.milk_volume >= 12000) earnFeat("Rivers of White");
+	if (V.semen_volume >= 12000) earnFeat("Sticky Fountain");
+	if ((V.demon >= 6 || V.transformationParts.demon.wings == "default" || V.transformationParts.demon.wings == "succubus" || V.demontf == 1) && V.player.virginity.vaginal == true && V.player.virginity.penile == true) earnFeat("Demon of Purity");
+
+	if (V.whitneycollar == 1) earnFeat("Owned");
+
+	if (V.farmersProduce) {
+		if (V.farmersProduce.totalSold >= 5000) earnFeat("Peddler");
+		if (V.farmersProduce.totalSold >= 10000) earnFeat("Supplier");
+		if (V.farmersProduce.totalSold >= 50000) earnFeat("Distributor");
+		if (V.farmersProduce.totalSold >= 100000) earnFeat("Wholesaler");
+		if (V.farmersProduce.totalSold >= 500000) earnFeat("Agronomist");
+		if (V.farmersProduce.totalSold >= 1000000) earnFeat("Agricultural Tycoon");
+	}
 
 	// To earn the feat "Curious Attire"
 	fragment.append(wikifier("specialClothesUpdate"));

@@ -73,13 +73,13 @@ const combatActionColours = {
 	Default: {
 		brat: [
 			/* leftaction or rightaction */
-			"steal", "penwhack", "freeface", "leftcovervagina", "leftcoverpenis", "leftcoveranus", "rightcovervagina", "rightcoverpenis", "rightcoveranus", "leftunderpull", "leftskirtpull", "leftlowerpull", "leftupperpull", "rightunderpull", "rightskirtpull", "rightlowerpull", "rightupperpull", "rightUndressOther", "leftUndressOther", "stopchoke", "clench", "shacklewhack", "leftfold", "rightfold", "dildowhack", "hypnosiswhack", "leftstruggleweak", "rightstruggleweak", "handpullpenis", "handpullvagina", "handpullanus", "leftresistW", "rightresistW", "leftstillW", "rightstillW", "penisremovecondom", "npcremovecondom",
+			"steal", "penwhack", "freeface", "leftcovervagina", "leftcoverpenis", "leftcoveranus", "rightcovervagina", "rightcoverpenis", "rightcoveranus", "leftunderpull", "leftskirtpull", "leftlowerpull", "leftupperpull", "rightunderpull", "rightskirtpull", "rightlowerpull", "rightupperpull", "rightUndressOther", "leftUndressOther", "stopchoke", "clench", "shacklewhack", "leftfold", "rightfold", "dildowhack", "hypnosiswhack", "leftstruggleweak", "rightstruggleweak", "handpullpenis", "handpullvagina", "handpullanus", "leftresistW", "rightresistW", "leftstillW", "rightstillW", "penisremovecondom", "npcremovecondom", "leftblock", "rightblock", "stoporal",
 			/* feetaction */
-			"run", "hide", "confront", "feetresistW", "legLock", "legLocked", "feetHold",
+			"run", "hide", "confront", "feetresistW", "legLock", "legLocked", "feetHold", "dodge", "plant",
 			/* mouthaction */
-			"pullaway", "ejacspit", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl", "askPullOut","disparage",
+			"pullaway", "ejacspit", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl", "askPullOut","disparage", "askoral",
 			/* penisaction */
-			"othermouthescape", "escape", "otheranusescape", "fencingescape", "pullOut",
+			"othermouthescape", "escape", "otheranusescape", "fencingescape", "pullOut", "moveHole", "damageCondom",
 			/* vaginaaction */
 			"tribescape",
 			/* anusaction */
@@ -87,15 +87,15 @@ const combatActionColours = {
 		],
 		def: [
 			/* leftaction or rightaction */
-			"spray", "lefthit", "righthit", "leftstruggle", "rightstruggle", "stopchokenoncon", "pursuit_grab",
+			"spray", "lefthit", "righthit", "leftstruggle", "rightstruggle", "stopchokenoncon", "pursuit_grab", "leftumbrella", "rightumbrella", "leftcounter", "rightcounter", "leftfeint", "rightfeint", "lefthookpunch", "righthookpunch",
 			/* feetaction */
 			"kick",
 			/* mouthaction */
-			"bite", "demand", "breastbite", "handbite", "headbutt", "bitepussy",
+			"bite", "demand", "breastbite", "handbite", "headbutt", "bitepussy", "retribution",
 		],
 		meek: [
 			/* leftaction or rightaction */
-			"behind", "fold", "leftcovervaginameek", "leftcoverpenismeek", "leftcoveranusmeek", "rightcovervaginameek", "rightcoverpenismeek", "rightcoveranusmeek", "leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "pickupSexToy", "leftcamerapose", "rightcamerapose", "peniscondom", "npcgivecondom",
+			"behind", "fold", "leftcovervaginameek", "leftcoverpenismeek", "leftcoveranusmeek", "rightcovervaginameek", "rightcoverpenismeek", "rightcoveranusmeek", "leftprotect", "rightprotect", "leftgrip", "rightgrip", "leftcurl", "rightcurl", "pickupSexToy", "leftcamerapose", "rightcamerapose", "peniscondom", "npcgivecondom", "handpenistochest",
 			/* feetaction */
 			"strut", "feetCurl",
 			/* mouthaction */
@@ -109,13 +109,13 @@ const combatActionColours = {
 		],
 		sub: [
 			/* leftaction or rightaction */
-			"leftplay", "leftgrab", "leftstroke", "leftchest", "rightplay", "rightgrab", "rightstroke", "rightchest", "leftchest", "rightchest", "leftwork", "rightwork", "leftclit", "rightclit", "handedge", "keepchoke", "leftmasturbatepussy", "rightmasturbatepussy", "leftmasturbateanus", "rightmasturbateanus", "leftmasturbatepenis", "rightmasturbatepenis", "lefthandholdkeep", "righthandholdkeep", "lefthandholdnew", "righthandholdnew", "handguide", "lubeanus", "lubepussy", "lubepenis", "removebuttplug", "dildoOtherPussyTease", "dildoOtherPussyFuck", "dildoOtherAnusTease", "dildoOtherAnusFuck", "strokerOtherPenisTease", "strokerOtherPenisFuck", "dildoSelfPussyEntrance", "dildoSelfAnusEntrance", "dildoSelfPussy", "dildoSelfAnus", "strokerSelfPenisEntrance", "strokerSelfPenis", "leftcovervaginalewd", "rightcovervaginalewd", "leftcoverpenislewd", "rightcoverpenislewd", "leftcoveranuslewd", "rightcoveranuslewd",
+			"leftplay", "leftgrab", "leftstroke", "leftchest", "rightplay", "rightgrab", "rightstroke", "rightchest", "leftchest", "rightchest", "leftwork", "rightwork", "leftclit", "rightclit", "handedge", "keepchoke", "leftmasturbatepussy", "rightmasturbatepussy", "leftmasturbateanus", "rightmasturbateanus", "leftmasturbatepenis", "rightmasturbatepenis", "lefthandholdkeep", "righthandholdkeep", "lefthandholdnew", "righthandholdnew", "handguide", "lubeanus", "lubepussy", "lubepenis", "removebuttplug", "dildoOtherPussyTease", "dildoOtherPussyFuck", "dildoOtherAnusTease", "dildoOtherAnusFuck", "strokerOtherPenisTease", "strokerOtherPenisFuck", "dildoSelfPussyEntrance", "dildoSelfAnusEntrance", "dildoSelfPussy", "dildoSelfAnus", "strokerSelfPenisEntrance", "strokerSelfPenis", "leftcovervaginalewd", "rightcovervaginalewd", "leftcoverpenislewd", "rightcoverpenislewd", "leftcoveranuslewd", "rightcoveranuslewd",  "handpenistomouth",
 			/* feetaction */
-			"grab", "vaginagrab", "grabrub", "vaginagrabrub", "rub",
+			"grab", "vaginagrab", "grabrub", "vaginagrabrub", "rub", "submit",
 			/* mouthaction */
-			"peniskiss", "kisslips", "kissskin", "suck", "lick", "ejacswallow", "moan", "breastsuck", "breastlick", "swallow", "movetochest", "othervagina", "mouth", "kissback", "vaginalick", "oraledge", "askchoke", "anallick", "analkiss", "askrough", "condoms", "noCondoms",
+			"peniskiss", "kisslips", "kissskin", "suck", "lick", "ejacswallow", "moan", "breastsuck", "breastlick", "swallow", "movetochest", "othervagina", "mouth", "kissback", "vaginalick", "oraledge", "askchoke", "anallick", "analkiss", "askrough", "condoms", "noCondoms", "seduce",
 			/* penisaction */
-			"penistovagina", "penistoanus", "penisvaginafuck", "penisanusfuck", "othermouthtease", "othermouthrub", "othermouthcooperate", "tease", "cooperate", "otheranustease", "otheranusrub", "otheranuscooperate", "clitrub", "vaginaEdging", "otheranusEdging", "handtease", "handAnusRub", "handcooperate", "strokerCooperate",
+			"penistovagina", "penistoanus", "penisvaginafuck", "penisanusfuck", "othermouthtease", "othermouthrub", "othermouthcooperate", "tease", "cooperate", "otheranustease", "otheranusrub", "otheranuscooperate", "clitrub", "vaginaEdging", "otheranusEdging", "handtease", "handAnusRub", "handcooperate", "strokerCooperate", "mouthEdging",
 			/* fencing */
 			"otherpenisrub", "penistopenis", "penistopenisfuck", "fencingcooperate",
 			/* vaginaaction */
@@ -383,9 +383,27 @@ DefineMacro("NPCSettingsReset", NPCSettingsReset);
 
 function loveInterestFunction() {
 	jQuery(document).on("change", "#listbox-loveinterestprimary", function (e) {
+		delete T.awareChecked;
 		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
 	});
 	jQuery(document).on("change", "#listbox-loveinterestsecondary", function (e) {
+		delete T.awareChecked;
+		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
+	});
+	jQuery(document).on("change", "#listbox-loveinteresttertiary", function (e) {
+		delete T.awareChecked;
+		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
+	});
+	jQuery(document).on("change", "#listbox-loveinterestquarternary", function (e) {
+		delete T.awareChecked;
+		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
+	});
+	jQuery(document).on("change", "#listbox-loveinterestquinary", function (e) {
+		delete T.awareChecked;
+		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
+	});
+	jQuery(document).on("change", "#listbox-loveinterestsenary", function (e) {
+		delete T.awareChecked;
 		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
 	});
 }
@@ -532,8 +550,14 @@ DefineMacroS("updateAskColour", updateAskColour);
 function bulkProduceValue(plant, quantity = 250) {
 	if (plant != null) {
 		const baseCost = (plant.plant_cost * quantity) / 2;
+
 		const seasonBoost = !plant.season.includes(Time.season) ? 1.1 : 1;
-		return Math.floor(baseCost * seasonBoost);
+
+		const qualityControlBoost = V.factoryUpgrades.qualityControl ? V.factoryUpgrades.qualityControl * 0.05 : 0; // +5% per level
+		const packagingBoost = V.factoryUpgrades.packaging ? V.factoryUpgrades.packaging * 0.05 : 0; // +5% per level
+
+		const totalBoost = 1 + qualityControlBoost + packagingBoost;
+		return Math.floor(baseCost * seasonBoost * totalBoost);
 	}
 }
 window.bulkProduceValue = bulkProduceValue;
@@ -827,14 +851,14 @@ window.DefaultActions = {
 		this.addMany(type, "Submissive", "penisaction", ["tease", "cooperate"]);
 		this.addMany(type, "Submissive", "vaginaaction", ["penistease", "cooperate"]);
 		this.addMany(type, "Submissive", "anusaction", ["penistease", "cooperate"]);
-		this.addMany(type, "Submissive", "feetaction", ["grabrub", "grabrub", "vaginagrabrub"]);
+		this.addMany(type, "Submissive", "feetaction", ["grabrub", "grabrub", "vaginagrabrub", "submit"]);
 		this.addMany(type, "Defiant", "leftaction", ["lefthit", "leftstruggle"]);
 		this.addMany(type, "Defiant", "rightaction", ["penwhack", "righthit", "rightstruggle", "hypnosiswhack"]);
 		this.addMany(type, "Defiant", "mouthaction", ["pullaway", "bite", "breastbite", "headbutt"]);
 		this.addMany(type, "Defiant", "penisaction", ["escape", "otheranusescape", "othermouthescape"]);
 		this.addMany(type, "Defiant", "vaginaaction", ["escape", "othermouthescape"]);
 		this.addMany(type, "Defiant", "anusaction", ["escape", "othermouthescape"]);
-		this.addMany(type, "Defiant", "feetaction", ["kick"]);
+		this.addMany(type, "Defiant", "feetaction", ["kick", "dodge", "plant"]);
 		this.addMany(type, "Tentacles", "regrab", [0]);
 		type = "consensual";
 		this.addMany(type, "Submissive", "leftaction", ["leftchest"]);
@@ -979,9 +1003,11 @@ function clothesDataTrimmer(item) {
 		"oldVariable", // use `Setup example`, should never be added back on to clothing items due to being in `trimmerVersion`
 		"altDamage", // use `Setup example`
 		"hideUnderLower", // use `Setup example`, should never be added back on to clothing items due to being in `trimmerVersion`
+		"combat", // use `Setup example`, safe to remove from here as long as also removed from `trimmerVersion`
+		"shopGroup", // use `Setup example`, safe to remove from here as long as also removed from `trimmerVersion`
 	];
 	// To prevent it from running on variables multiple times, when updating toDelete, the last of the new additions should be added here
-	const trimmerVersion = ["shop", "short", "oldVariable", "hideUnderLower"];
+	const trimmerVersion = ["shop", "short", "oldVariable", "hideUnderLower", "combat", "shopGroup"];
 	let version = 0;
 	let indexToUpdateVersion = toDelete.indexOf(trimmerVersion[version]);
 	toDelete.forEach((v, index) => {
@@ -1212,6 +1238,23 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.worn.hands.type.includes("sticky_fingers")) result = Math.floor(result * 1.05);
 			if (V.transformationParts.traits.sharpEyes !== "disabled") result = Math.floor(result * 1.05);
 			if (V.fox >= 6) result = Math.floor(result * 1.1);
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.DoLPTFBuffs == 1) {
+				if (V.TFCatBuffs == 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFBearBuffs == 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBirdBuffs == 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFFoxBuffs == 1) {
+					result = Math.round(result * 1.3);
+				}
+			}
 			break;
 		case "physique":
 			if (["forest", "moor", "farm"].includes(V.location)) {
@@ -1220,6 +1263,29 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				}
 				if (V.worn.feet.type.includes("rugged")) {
 					result = Math.floor(result * (1 + currentSkillValue("feetskill", disableModifiers + 1) / 10000));
+				}
+			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.DoLPTFBuffs == 1) {
+				if (V.TFWolfBuffs == 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFCatBuffs == 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFCowBuffs == 1) {
+					result = Math.round(result * 1.4);
+				}
+				if (V.TFBearBuffs == 1) {
+					result = Math.round(result * 1.5);
+				}
+				if (V.TFBirdBuffs == 1) {
+					result = Math.round(result * 0.7);
+				}
+				if (V.TFFoxBuffs == 1) {
+					result = Math.round(result * 0.9);
 				}
 			}
 			break;
@@ -1234,6 +1300,29 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
+			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.DoLPTFBuffs == 1) {
+				if (V.TFWolfBuffs == 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCatBuffs == 1) {
+					result = Math.round(result * 1.4);
+				}
+				if (V.TFCowBuffs == 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBearBuffs == 1) {
+					result = Math.round(result * 0.7);
+				}
+				if (V.TFBirdBuffs == 1) {
+					result = Math.round(result * 1.3);
+				}
+				if (V.TFFoxBuffs == 1) {
+					result = Math.round(result * 1.1);
+				}
 			}
 			break;
 		case "swimmingskill":
@@ -1255,6 +1344,21 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 0.8);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 1.3);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 0.8);
+			}
+			if (V.TFFoxBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
 			break;
 		case "athletics":
 			if (["forest", "moor", "farm"].includes(V.location)) {
@@ -1266,6 +1370,27 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				}
 			}
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.TFWolfBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFCowBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFFoxBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
 			break;
 		case "willpower":
 			if (numberOfEarSlime() >= 2 && V.earSlime.growth > 50) {
@@ -1273,10 +1398,31 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			} else if (numberOfEarSlime() >= 2) {
 				result = Math.floor(result * 0.9);
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.TFWolfBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFCowBuffs == 1) {
+				result = Math.round(result * 0.8);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
 			break;
 		case "tending":
 			if (V.backgroundTraits.includes("plantlover")) {
 				result = Math.floor(result * (1 + V.trauma / (V.traumamax * 2)));
+			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.TFCowBuffs == 1) {
+				result = Math.round(result * 1.4);
 			}
 			break;
 		case "housekeeping":
@@ -1292,6 +1438,21 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.worn.handheld.type.includes("maid")) {
 				result = Math.floor(result * 1.05);
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.TFWolfBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 0.8);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 1.3);
+			}
 			break;
 		case "vaginalskill":
 			if (V.earSlime.growth > 100) {
@@ -1303,6 +1464,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (playerHeatMinArousal()) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
+			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			break;
 		case "penileskill":
@@ -1316,6 +1480,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (playerRutMinArousal()) {
 				result = Math.floor(result * (1 + Math.clamp(playerRutMinArousal(), 0, 4000) / 20000));
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "analskill":
 			if (V.earSlime.growth > 100 && !V.player.vaginaExist && V.earSlime.focus === "pregnancy") {
@@ -1324,12 +1491,38 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (playerHeatMinArousal() && canBeMPregnant()) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
 			break;
 		case "seductionskill":
 			if (V.earSlime.growth > 50 && !V.earSlime.defyCooldown) {
 				result = Math.floor(result * (1 + (V.earSlime.growth - 50) / 600));
 			}
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
+			}
+			if (V.TFCatBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
+			if (V.TFCowBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFBearBuffs == 1) {
+				result = Math.round(result * 0.9);
+			}
+			if (V.TFBirdBuffs == 1) {
+				result = Math.round(result * 1.1);
+			}
+			if (V.TFFoxBuffs == 1) {
+				result = Math.round(result * 1.2);
+			}
 			break;
+	}
+	if (V.drunk >= 120 && V.substanceRebalance == 1) {
+		result = Math.round(result * (1 - (0.1 * Math.round(V.drunk / 120))));
+	} else if (V.drunk >= 1 && V.substanceRebalance == 1) {
+		result = Math.round(result * 0.95);
 	}
 	return result;
 }
@@ -1559,6 +1752,11 @@ function waterproofCheck(clothing) {
 	return clothing.type.includesAny("swim", "stealthy", "rainproof", "waterproof");
 }
 window.waterproofCheck = waterproofCheck;
+
+function antitransparentCheck(clothing) {
+	return (clothing.type.includesAny("antitransparent") && V.realisticTransparency == 1);
+}
+window.antitransparentCheck = antitransparentCheck;
 
 function isLoveInterest(name) {
 	for (const l in V.loveInterest) if (V.loveInterest[l] === name) return true;
@@ -1938,6 +2136,8 @@ function getHalloweenCostume() {
 		return "harpy TF";
 	} else if (T.tf.foxEars && T.tf.foxTail) {
 		return "fox TF";
+	} else if (T.tf.bearEars && T.tf.BearTail) {
+		return "bear TF";
 
 		/* Misc outcomes */
 	} else if (
@@ -2414,6 +2614,11 @@ function formatMoney(amount) {
 }
 window.formatMoney = formatMoney;
 DefineMacro("formatmoney", money => formatMoney(money));
+
+function lurkerCap() {
+	return Math.min(Math.max(V.farm.net * 2, 1), Math.floor(currentSkillValue("physique") / 4000));
+}
+window.lurkerCap = lurkerCap;
 
 function unableTakeVirginity(virginity) {
 	if (!virginity) {

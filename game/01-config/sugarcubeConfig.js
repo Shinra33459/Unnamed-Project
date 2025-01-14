@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+Config.saves.id = "degrees-of-lewdity";
 Config.history.controls = false;
 Config.saves.slots = 9;
 Config.history.maxStates = 5;
@@ -11,7 +12,7 @@ const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.5.3.5 DoLB version 0.1.5.1",
+	version: "0.5.3.6 DoLP version",
 	versionName: `"Houses Kept, Virginity Sold" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
@@ -165,6 +166,10 @@ Config.navigation.override = function (dest) {
 	const checkPassages = dest => {
 		const lastVersion = DoLSave.Utils.parseVer(V.saveVersions.last());
 		const currVersion = DoLSave.Utils.parseVer(StartConfig.version);
+		if (V.saveVersion.includes("DoLP") && !StartConfig.version.includes("DoLP")) {
+			V.bypassHeader = true;
+			return "Modded Waiting Room";
+		}
 		if (lastVersion > currVersion) {
 			V.bypassHeader = true;
 			return "Downgrade Waiting Room";
@@ -174,6 +179,9 @@ Config.navigation.override = function (dest) {
 			/* Try not to include "Playground" in any passage names after this. */
 		}
 		switch (dest) {
+			case "Modded Waiting Room":
+				return V.passage;
+
 			case "Downgrade Waiting Room":
 				return V.passage;
 

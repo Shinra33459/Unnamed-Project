@@ -60,6 +60,14 @@
 		<<if $town_projects.road gte 4 and $forest lte 24>>
 			<br>
 			<<forestroadicon "deep">><<link [[Follow road (0:05)|Forest]]>><<set $forestmod to 1>><<set $forest += 5>><<set $forestmove to "road">><<pass 5>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><<set $eventskip to 1>><</link>><<noharass>>
+			<<if $forest lt 20>>
+				<br>
+				<<forestroadicon "deep">><<link [[Jog along the road (0:05)|Forest]]>><<set $forestmod to 1>><<set $forest += 10>><<set $forestmove to "road">><<pass 5>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><<set $eventskip to 1>><<tiredness 1>><<athletics 1>><</link>><<noharass>><<gtiredness>><<gathletics>>
+			<</if>>
+			<<if $forest is 0>>
+				<br>
+				<<forestroadicon "deep">><<link [[Run along the road (0:05)|Forest]]>><<set $forestmod to 1>><<set $forest += 25>><<set $forestmove to "road">><<pass 5>><<if $foresthunt gte 1>><<set $foresthunt += 4>><</if>><<set $eventskip to 1>><<tiredness 5>><<athletics 3>><</link>><<noharass>><<gtiredness>><<gathletics>>
+			<</if>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -100,6 +108,14 @@
 		<<if $town_projects.road gte 4 and $forest lte 25 and $forest gte 1>>
 			<br>
 			<<forestroadicon "town">><<link [[Follow road (0:05)|Forest]]>><<set $forestmod to 1>><<set $forest -= 5>><<set $forestmove to "road">><<pass 5>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><<set $eventskip to 1>><</link>><<noharass>>
+			<<if $forest gt 5>>
+				<br>
+				<<forestroadicon "town">><<link [[Jog along the road (0:05)|Forest]]>><<set $forestmod to 1>><<set $forest -= 10>><<set $forestmove to "road">><<pass 5>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><<set $eventskip to 1>><<tiredness 1>><<athletics 1>><</link>><<noharass>><<gtiredness>>
+			<</if>>
+			<<if $forest is 25>>
+				<br>
+				<<forestroadicon "town">><<link [[Run along the road (0:05)|Forest]]>><<set $forestmod to 1>><<set $forest -= 25>><<set $forestmove to "road">><<pass 5>><<if $foresthunt gte 1>><<set $foresthunt += 4>><</if>><<set $eventskip to 1>><<tiredness 5>><<athletics 3>><</link>><<noharass>><<gtiredness>><<gathletics>>
+			<</if>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -510,13 +526,18 @@
 	<<cleareventpool>>
 	<<addevent "forestgather">>
 	<<addevent "mushroompick" 0.33>>
+	<<addevent "berrypick" 0.33>>
 	<<addevent "forest_nest" 0.25>>
+	<<set _antiqueChance to 0.5>>
+	<<if $historyTraitBuffs.improvedChances is 1>>
+		<<set _antiqueChance += 0.15 * $historytrait>>
+	<</if>>
 	<<if $forest lte 20>>
-		<<addevent "forestarrow" 0.5>>
+		<<addevent "forestarrow" _antiqueChance>>
 	<<elseif $forest lte 50>>
-		<<addevent "forestdagger" 0.5>>
+		<<addevent "forestdagger" _antiqueChance>>
 	<<else>>
-		<<addevent "forestgem" 0.5>>
+		<<addevent "forestgem" _antiqueChance>>
 		<<if $beedisable is "f">>
 			<<addinlineevent>>
 				You hear a gentle buzz up ahead. A large beehive hangs from a tree. Workers fly in and out in a quest for pollen. The honey would be valuable.
@@ -562,7 +583,7 @@
 			<<link [[Adopt mating posture|Forest Wolf Mate]]>><</link>><<deviant2>>
 			<br>
 		<</if>>
-		<<if $wolfgirl gte 6>>
+		<<if ($wolfgirl gte 6 or ($transformationParts.wolf.tail isnot "hidden" and $transformationParts.wolf.tail isnot "disabled"))>>
 			<<link [[Howl|Forest Howl]]>><<endevent>><<stress -12>><<trauma -6>><<set $phase to 0>><</link>><<ltrauma>><<lstress>><<wolfgirl>>
 			<br>
 		<</if>>
@@ -581,7 +602,7 @@
 		<<link [[Adopt mating posture|Forest Wolf Mate2]]>><</link>><<deviant3>>
 		<br>
 	<</if>>
-	<<if $wolfgirl gte 6>>
+	<<if ($wolfgirl gte 6 or ($transformationParts.wolf.tail isnot "hidden" and $transformationParts.wolf.tail isnot "disabled"))>>
 		<<link [[Howl|Forest Howl]]>><<endevent>><<stress -12>><<trauma -6>><<set $phase to 1>><</link>><<ltrauma>><<lstress>><<wolfgirl>>
 		<br>
 	<</if>>
@@ -677,7 +698,8 @@
 	<<link [[Take a detour (0:30)|Forest]]>><<endevent>><<pass 30>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><<set $eventskip to 1>><</link>>
 	<br>
 	<!-- Modified for Monster People -->
-	<<if random(1, 5) is 5 and ($bestialitydisable is "f" or $monster is 1)>>
+	<<set _bearChance to Math.floor(1 * ($allure / 1500))>>
+	<<if random(1, 5) lte _bearChance and ($bestialitydisable is "f" or $monster is 1)>>
 		<<link [[Ignore them|Forest Bear Molestation]]>><<set $molestationstart to 1>><</link>>
 		<br>
 	<<else>>
@@ -706,7 +728,7 @@
 <</widget>>
 
 <<widget "forestrock">>
-	<<if $worn.feet.type.includes("naked")>>
+	<<if $worn.feet.type.includes("naked") or $worn.feet.type.includes("shackle")>>
 		Your bare foot steps on a hard and jagged rock. It doesn't hurt much, but the shock makes you lose your footing and you tumble into a fern.
 		<<gstress>><<gpain>><<stress 6>><<pain 6>>
 		<br><br>
@@ -1052,7 +1074,7 @@
 	        <<link [[Take it in mouth|Wolf Cave Accept]]>><<set $phase to 1>><<set $sexstart to 1>><</link>><<deviant4>>
 	        <br>
         <</if>>
-	    <<if $wolfgirl gte 6 and hasSexStat("deviancy", 5)>>
+	    <<if ($wolfgirl gte 6 or ($transformationParts.wolf.tail isnot "hidden" and $transformationParts.wolf.tail isnot "disabled")) and hasSexStat("deviancy", 5)>>
 	        <<if playerAwareTheyAreInHeat() and $NPCList[0].penis isnot "none" and (($player.vaginaExist and !playerChastity("vagina")) or (canBeMPregnant() and !playerChastity("anus")))>>
 		        <<link [[Present your behind|Wolf Cave Accept]]>><<set $phase to 2>><<set $sexstart to 1>><</link>><<deviant5>><<wolfgirl>><<heat>>
 		        <br>
@@ -1086,22 +1108,26 @@
 <<widget "cabintime">>
 	<<switch Time.hour>>
 		<<case 6>>
-			<<pass 1 hour>><<tiredness -12>>
+			<<set _night_length to 1>>
 		<<case 5>>
-			<<pass 2 hours>><<tiredness -24>>
+			<<set _night_length to 2>>
 		<<case 4>>
-			<<pass 3 hours>><<tiredness -36>>
+			<<set _night_length to 3>>
 		<<case 3>>
-			<<pass 4 hours>><<tiredness -48>>
+			<<set _night_length to 4>>
 		<<case 2>>
-			<<pass 5 hours>><<tiredness -60>>
+			<<set _night_length to 5>>
 		<<case 1>>
-			<<pass 6 hours>><<tiredness -72>>
+			<<set _night_length to 6>>
 		<<case 0>>
-			<<pass 7 hours>><<tiredness -84>>
+			<<set _night_length to 7>>
 		<<case 23>>
-			<<pass 8 hours>><<tiredness -96>>
+			<<set _night_length to 8>>
 	<</switch>>
+	<<pass _night_length hours>>
+	<<if not _args[0]>> /* passing time but not sleeping */
+		<<tiredness _night_length*(-12)>>
+	<</if>>
 <</widget>>
 
 <<widget "passoutforest">>
@@ -1188,6 +1214,33 @@
 	<br>
 <</widget>>
 
+<<widget "berrypick">>
+	<<if $forest lte 50>>
+		<<set _forest_berries to 1>>
+	<<else>>
+		<<set _forest_berries to 2>>
+	<</if>>
+
+	You find a cluster of edible berries growing on a patch of bushes.
+	<br><br>
+
+	<<if _forest_berries is 1>>
+		<<icon "tending/blackberry.png">><<link [[Search for saleable specimens (0:20)|Forest Berries Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
+		<br>
+	<<else>>
+		<<if currentSkillValue('tending') gte 150>>
+			<<icon "tending/strawberry.png">><<link [[Search for saleable specimens (0:20)|Forest Berries2 Pick]]>><<pass 20>><</link>><<tendingdifficulty 150 450>>
+			<br>
+		<<else>>
+			<span class="blue">You need a higher tending skill to pick saleable berries.</span>
+			<br>
+		<</if>>
+	<</if>>
+	<br>
+	<<getouticon>><<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
+	<br>
+<</widget>>
+
 <<widget "forest_nest">>
 	<<if !$forest_nest_intro>>
 		<<set $forest_nest_intro to true>>
@@ -1212,7 +1265,7 @@
 
 		<<ind>><<link [[Just watch (0:05)|Forest Fox Nest Watch]]>><<pass 5>><<stress -3>><</link>><<lstress>>
 		<br>
-		<<if $harpy gte 6>>
+		<<if ($harpy gte 6 or ($transformationParts.bird.wings isnot "hidden" and $transformationParts.bird.wings isnot "disabled"))>>
 			<<ind>><<link [[Challenge|Forest Fox Nest Challenge]]>><</link>><<harpy>>
 			<br>
 		<<else>>
@@ -1222,7 +1275,7 @@
 		<<set $skulduggerydifficulty to 300>>
 		<<ind>><<link [[Sneak up|Forest Fox Nest Sneak]]>><</link>><<skulduggerydifficulty>>
 		<br>
-		<<if $fox gte 6>>
+		<<if ($fox gte 6 or ($transformationParts.fox.tail isnot "hidden" and $transformationParts.fox.tail isnot "disabled"))>>
 			<<ind>><<link [[Chase!|Forest Fox Nest Chase]]>><<set $phase2 to 1>><<stress -6>><<transform fox 1>><</link>><<llstress>><<fox>><<note "No eggs" "red">>
 			<br>
 		<<else>>
@@ -1261,7 +1314,7 @@
 		<br>
 		<<if $forest_nest.fox is 2>>
 			<<beastNEWinit 1 fox>>
-			<<if $fox gte 6>>
+			<<if ($fox gte 6 or ($transformationParts.fox.tail isnot "hidden" and $transformationParts.fox.tail isnot "disabled"))>>
 				<<set $forest_nest.fox to 3>>
 				<span class="orange">You smell a <<beasttype>> nearby</span>. You can tell <<bhes>>
 				<<if $NPCList[0].traits.includes("cowardly")>><span class="teal">cowardly</span>.

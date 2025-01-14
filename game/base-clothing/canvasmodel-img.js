@@ -404,6 +404,29 @@ DefineMacro("modelprepare-player-body", function () {
 	T.modeloptions.bunny_tail_type = V.transformationParts.bunny.tail;
 	T.modeloptions.bunny_tail_layer = V.taillayer;
 	T.modeloptions.bunny_ears_type = V.transformationParts.bunny.ears;
+	
+	T.modeloptions.bear_plumage_type = V.transformationParts.bear.plumage;
+	T.modeloptions.bear_pubes_type = V.transformationParts.bear.pubes;
+	T.modeloptions.bear_tail_type = V.transformationParts.bear.tail;
+	T.modeloptions.bear_tail_layer = V.taillayer;
+	T.modeloptions.bear_ears_type = V.transformationParts.bear.ears;
+
+		/*
+
+		██████╗ ███████╗ ██████╗ ██████╗ ██████╗  █████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
+		██╔══██╗██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+		██║  ██║█████╗  ██║     ██║   ██║██████╔╝███████║   ██║   ██║██║   ██║██╔██╗ ██║███████╗
+		██║  ██║██╔══╝  ██║     ██║   ██║██╔══██╗██╔══██║   ██║   ██║██║   ██║██║╚██╗██║╚════██║
+		██████╔╝███████╗╚██████╗╚██████╔╝██║  ██║██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║███████║
+		╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
+
+	*/
+
+	T.modeloptions.background_image_type = V.background_image;
+	T.modeloptions.foreground_image_type = V.foreground_image;
+
+
 
 	/*
 			██████ ██   ██ ██ ███    ███ ███████ ██████   █████

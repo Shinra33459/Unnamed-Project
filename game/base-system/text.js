@@ -604,7 +604,7 @@ statDisplay.create("ggghistory", () => {
 
 statDisplay.create("lhousekeeping", () => statDisplay.statChange("Housekeeping", -1, "red"));
 statDisplay.create("ghousekeeping", (amount, silent = false) => {
-	if (amount === undefined || V.housekeeping < amount) {
+	if (amount === undefined || V.housekeeping < amount || amount >= 1000 || V.easyHousekeeping >= 1) {
 		return statDisplay.statChange("Housekeeping", 1, "green");
 	} else if (silent === "silent" || V.statdisable === "t") {
 		return "";
@@ -613,8 +613,8 @@ statDisplay.create("ghousekeeping", (amount, silent = false) => {
 	}
 	return "";
 });
-statDisplay.create("gghousekeeping", amount => statDisplay.statChange("Housekeeping", 2, "green", () => amount === undefined || V.housekeeping < amount));
-statDisplay.create("ggghousekeeping", amount => statDisplay.statChange("Housekeeping", 3, "green", () => amount === undefined || V.housekeeping < amount));
+statDisplay.create("gghousekeeping", amount => statDisplay.statChange("Housekeeping", 2, "green", () => amount === undefined || V.housekeeping < amount || amount >= 1000 || V.easyHousekeeping >= 1));
+statDisplay.create("ggghousekeeping", amount => statDisplay.statChange("Housekeeping", 3, "green", () => amount === undefined || V.housekeeping < amount || amount >= 1000 || V.easyHousekeeping >= 1));
 
 statDisplay.create("ldom", npc => {
 	let targetName = "";

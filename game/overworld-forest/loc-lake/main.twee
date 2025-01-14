@@ -56,7 +56,7 @@ You are at the shore of the <<= Weather.isFrozen("lake") ? "frozen lake" : "lake
 	<<foresthunt>>
 <<elseif $danger gte (9900 - $allure) and $eventskip is 0 and $laketeenspresent isnot 1 and !$possessed>>
 	<<eventlake>>
-<<elseif $town_projects.diving is 1 and $exposed lte 0 and !$possessed>>
+<<elseif ($town_projects.diving is 1 || ($historytrait gte 2 && ($town_projects.diving lt 2 || $town_projects.diving is undefined))) and $exposed lte 0 and !$possessed>>
 	<<set $town_projects.diving to 2>>
 	<<npc Winter>><<person1>>
 	<<if Weather.precipitation is "rain">>
@@ -487,13 +487,13 @@ The group leaves the tent, saying their goodbyes. "I may ask you to join them on
 :: Lake Shore Mirror
 
 <<effects>>
-<<link [[Step away|Lake Shore]]>><<unset $mirrorMenu>><<unset $bodywritingSet>><</link>>
+<<link [[Step away|Lake Shore]]>><<handheldon>><<unset $mirrorMenu>><<unset $bodywritingSet>><</link>>
 <br>
 <<mirror "reflection">>
 <br><br>
 
 :: Lake Bus
-<<set $outside to 1>><<set $location to "lake">><<set $bus to "lakebus">><<effects>><<lakeeffects>>
+<<set $outside to 1>><<set $location to "lake">><<set $bus to "lakebus">><<set $bikeStartCategory to "lake">><<set $bikeStart to "lake">><<effects>><<lakeeffects>>
 
 You are at the bus stop beside the lake. The road from town terminates here, ending in a paved circle. The lake proper is visible over a ridge.
 <br><br>
@@ -501,6 +501,7 @@ You are at the bus stop beside the lake. The road from town terminates here, end
 <<if $exposed lte 0>>
 	<<busicon>><<link [[Wait for a bus (0:02)|Bus]]>><<pass 2>><</link>><br>
 <</if>>
+<<bike>>
 
 <<lakeicon>><<link [[South to shore|Lake Shore]]>><</link>>
 <br>
