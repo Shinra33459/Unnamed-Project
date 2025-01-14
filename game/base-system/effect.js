@@ -1159,6 +1159,14 @@ function effects() {
 
 	if (V.trauma >= (V.traumamax * 0.9)) V.traumatized = true;
 
+	if (V.speech_attitude == "neutral") {
+		V.submissive = 1000;
+	} else if (V.speech_attitude == "meek") {
+		V.submissive = 2000;
+	} else {
+		V.submissive = 0;
+	}
+
 	return fragment;
 }
 
