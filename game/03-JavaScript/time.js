@@ -1347,7 +1347,8 @@ function dailyPlayerEffects() {
 	V.hairlength += 3;
 	V.fringelength += 3;
 	fragment.append(wikifier("calchairlengthstage"));
-	statChange.skill("beauty", 100 - (V.trauma / V.traumamax) * 100);
+	statChange.skill("beauty", (100 - (V.trauma / V.traumamax) * 100) * V.beautyMult);
+	if (V.stressBeauty == 1) statChange.skill("beauty", (100 - (V.stress / V.stressmax) * 100) * V.beautyMult);
 	fragment.append(wikifier("bimboUpdate"));
 
 	if (V.orgasmstat >= 1000 && V.orgasmtrait === 0) {
