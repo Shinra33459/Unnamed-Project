@@ -2467,6 +2467,7 @@
 	<</if>>
 
 	<<if $index is undefined and $enemyno gte 1>>
+		<<set $index to 0>>
 		<<for _n to 0; _n lt $NPCList.length; _n++>>
 			<<if $NPCList[_n].desc is $description>>
 				<<set $index to _n>>
@@ -3611,14 +3612,14 @@
 	/* Code that should not be moved into a check like above */
 	<<set $runWardrobeSanityChecker to true>>
 
-	<<if $objectVersion.updateClothes lt 62 or $objectVersion.updateClothes is undefined>>
+	<<if $objectVersion.updateClothes lt 63 or $objectVersion.updateClothes is undefined>>
 		<<updateClothes>>
 		<<if $objectVersion.updateClothes lt 38>>
 			<!-- V0.4.0.7 return items stuck in $store without proper .location -->
 			<<run for (const slot in V.store) V.store[slot].forEach(i => { if (i.location === 0) i.location = "getBack" })>>
 			<<storeon "getBack" "return">>
 		<</if>>
-		<<if $objectVersion.updateClothes lt 40>>
+		<<if $objectVersion.updateClothes lt 63>>
 			<!--Should'nt need to re-run that often-->
 			<<run clothesDataTrimmerLoop()>>
 		<</if>>
@@ -3634,7 +3635,7 @@
 		<<if $objectVersion.updateClothes lt 62>>
 			<<if $propEquipped is 1 and $worn.handheld.type !== "prop" and $worn.handheld.variable !== "featherduster">><<set $propEquipped to 0>><</if>>
 		<</if>>
-		<<set $objectVersion.updateClothes to 62>>
+		<<set $objectVersion.updateClothes to 63>>
 	<</if>>
 
 	<<if $objectVersion.specialClothes lt 16 or $objectVersion.specialClothes is undefined>>
@@ -3661,17 +3662,11 @@
 
 	<<updateNewNamedNpcs>>
 
-	<!-- Jimmy: Reset NPC slots if necessary by checking .type === 0
+	<!-- Jimmy: Reset NPC slots if necessary
 			Old versions prior to 3.4.* did not have empty slots properly set to baseNPC. -->
-	<<for $_i = 0; $_i < $NPCList.length; $_i++>>
-		<<if $combat isnot 1>>
-			<<if $NPCList[$_i].type is 0>>
-				<<set $NPCList[$_i] to clone(setup.baseNPC)>>
-			<</if>>
-		<<elseif $NPCList[$_i].active is "active">>
-			<<set $NPCList[$_i].type to (typeof $NPCList[$_i].type isnot "string" ? "human" : $NPCList[$_i].type)>>
-		<</if>>
-	<</for>>
+	<<if $npcListVersion lt 3>>
+		<<npcList>>
+	<</if>>
 
 	<!-- Jimmy: Run updater for EventSystem.
 				Only runs if behind on schema, and if $event exists. -->
@@ -5402,7 +5397,9 @@
 			<<unset $frozenValues.skyHidden>>
 		<</if>>
 
+		<!-- Failsafe if changing options immediately after load -->
 		<<run Weather.WeatherGeneration.generate(Time.date)>>
+		<<run Weather.sky.initialize()>>
 	<</if>>
 
 	<<if $options.clothingCaption is undefined>>
@@ -5894,4 +5891,10 @@
 
 	<!-- Rice does not have a supermarket quantity -->
 	<<set $plants.rice.supermarket ||= 0>>
+
+	<!-- Avery cards sending face items of the wrong colour -->
+	<<if $avery_cards?.face>>
+		<<facesend `clothesIndex('face',$avery_cards.face)` wardrobe $avery_cards.face.colour $avery_cards.face.accessory_colour>>
+		<<run delete $avery_cards.face>>
+	<</if>>
 <</widget>>
