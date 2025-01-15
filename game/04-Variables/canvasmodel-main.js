@@ -115,7 +115,7 @@ replace (?<!["'\w])_(?=\w) with T.
  * "demon_tail_type": "disabled"|"hidden"|"default"|"classic"
  * "demon_tail_state": "idle"|"cover"|"flaunt"
  * "demon_tail_layer": "front"|"back"
- * "demon_horns_type": "disabled"|"hidden"|"default"|"classic"
+ * "demon_horns_type": "disabled"|"hidden"|"default"|"classic" | "antler"
  * "demon_horns_layer": "front"|"back"
  * "wolf_tail_type": "disabled"|"hidden"|"default"|"feral"
  * "wolf_tail_layer": "front"|"back"
@@ -145,6 +145,9 @@ replace (?<!["'\w])_(?=\w) with T.
  * "fox_tail_layer": "front"|"back"
  * "fox_ears_type": "disabled"|"hidden"|"default"|
  * "fox_cheeks_type": "disabled"|"hidden"|
+ * "bunny_tail_type": "disabled"|"hidden"|"default"| "fluffy"
+ * "bunny_tail_layer": "front"|"back"|
+ * "bunny_ears_type": "disabled"|"hidden"|"default"| "lop"
  *
  * BODY WRITING OPTIONS:
  * --------------------
@@ -357,6 +360,10 @@ Renderer.CanvasModels.main = {
 			"fox_tail_layer": "front",
 			"fox_ears_type": "disabled",
 			"fox_cheeks_type": "disabled",
+			"bunny_tail_type": "disabled",
+			"bunny_tail_layer": "front",
+			"bunny_ears_type": "disabled",
+			"bunny_ears_layer": "front",
 			"bear_plumage_type": "disabled",
 			"bear_pubes_type": "disabled",
 			"bear_tail_type": "disabled",
@@ -2547,6 +2554,9 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.fox_cheeks_type) && !options.hideAll;
 			},
+			filters: ["hair"],
+			z: ZIndices.lower,
+			animation: "idle"
 		},
 		/***
 		Bear
@@ -2654,6 +2664,61 @@ Renderer.CanvasModels.main = {
 
 
 
+
+		/***
+		 *    ██████  ██   ██ ███    ██ ███    ██ ██ ██
+		 *    ██   ██ ██   ██ ████   ██ ████   ██ ██ ██
+		 *    ██████  ██   ██ ██ ██  ██ ██ ██  ██  ███ 
+		 *    ██   ██ ██   ██ ██  ██ ██ ██  ██ ██   █
+		 *    ██████   █████  ██   ████ ██   ████   █
+		 * 
+		 * 
+		 */
+		"bunny_tail": {
+			srcfn(options) {
+				return `img/transformations/bunny/tail/${options.bunny_tail_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bunny_tail_type);
+			},
+			filters: ["hair"],
+			zfn(options) {
+				if (options.bunny_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
+			animation: "idle"
+		},
+		"bunny_ear_front": {
+			srcfn(options) {
+				return `img/transformations/bunny/earfront/${options.bunny_ears_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bunny_ears_type);
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
+			filters: ["hair"],
+			z: ZIndices.horns,
+			animation: "idle"
+		},
+		"bunny_ear_back": {
+			srcfn(options) {
+				return `img/transformations/bunny/earback/${options.bunny_ears_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.bunny_ears_type);
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
+			filters: ["hair"],
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
 
 		/***
 		 *    ██     ██ ██████  ██ ████████ ██ ███    ██  ██████  ███████
