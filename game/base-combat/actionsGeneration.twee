@@ -91,7 +91,7 @@
 				<<anusActionInit>>
 			</div>
 
-			<<if $chestuse isnot 0>>
+			<<if $chestuse isnot 0 or ((($enemytype is "man" ? $promiscuity : $deviancy) gte 35 or $promiscuityIgnore) and $position isnot "wall")>>
 				<div id="chestaction" @class="$options.combatControls + 'Control'">
 					<<chestActionInit>>
 				</div>
@@ -201,7 +201,7 @@
 		<<safereplace #vaginaaction>><<vaginaActionInit true>><</safereplace>>
 	<</if>>
 	<<safereplace #anusaction>><<anusActionInit true>><</safereplace>>
-	<<if $chestuse isnot 0>>
+	<<if $chestuse isnot 0 or ((($enemytype is "man" ? $promiscuity : $deviancy) gte 35 or $promiscuityIgnore) and $position isnot "wall")>>
 		<<safereplace #chestaction>><<chestActionInit true>><</safereplace>>
 	<</if>>
 	<<if $thighuse isnot 0>>
@@ -2176,11 +2176,24 @@
 <<widget "chestActionInit">>
 	<<if $dissociation lte 1 and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and !$possessed>>
 		<<switch $chestuse>>
+			<<case 0>>
+				<<set _chestOptions to "free">>
+				<span @class="($lastOptions.anus isnot _anusOptions or _anusGold ?'gold':'')">Your <<breasts>> are free.</span>
+				<<if $options.combatControls.includes("adio") and _targetnumber gt 1>>
+					<br>
+					<<targetListBox "chest" _targetlist>>
+				<</if>>
+				<<if _targetnumber is 1>>
+					<<set $chesttarget to _firsttarget>>
+				<</if>>
 			<<case "penis">>
 				<<set _chestOptions to "penis">><<selectNpcWithPartInPosition "penis" "chest">><<set $chesttarget to $index>>
 				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPersons>> <<npcPenisSimple $chesttarget>> rests <<print ($player.breastsize is 0 ?"against":"between")>> your <<breasts>>.</span>
 			<<case "tentaclerub">>
 				<<set $_changetype to true>><<chestActionInitTentacle>>
+			<<case "mouth">>
+				<<set _chestOptions to "mouth">><<selectNpcWithPartInPosition "mouth" "chest">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s mouth rests <<print ($player.breastsize is 0 ?"against":"between")>> your <<breasts>>.</span>
 		<</switch>>
 		<<if $_changetype isnot true>>
 			<<chestActions>>
@@ -2217,20 +2230,27 @@
 	<</if>>
 	<<switch _diffAction>>
 		<<case "rub">><<chestdifficulty>>
+		<<case "mouthtochest">><<chestdifficulty>><<combatpromiscuous3>>
+		<<case "milkchest">><<handdifficulty>><<combatpromiscuous5>>
+		<<case "chestpullawaymouth">><<chestdifficulty>>
 	<</switch>>
 <</widget>>
 
 <<widget "chestActions">>
 	/*Generate Actions*/
+	<<unset $chesttate>> /* delete next version */
 	<<set _chestaction to {}>>
-	/*<<set _chestaction["Rest"] to "rest">>*/
-	<<if $position is "stalk">>
-
-	<<else>>
+	<<if $position isnot "stalk">>
 		<<switch _chestOptions>>
+			<<case "free">>
+				<<set _chestaction["Rest"] to "rest">>
+				<<actionschestfree>>
 			<<case "penis">>
-				<<set _chestaction["Rub"] to "rub">>
+				<<actionschestpenis>>
 				<<set _chestaction["Stop"] to "stop">>
+			<<case "mouth">>
+				<<set _chestaction["Rest"] to "rest">>
+				<<actionschestmouth>>
 		<</switch>>
 	<</if>>
 <</widget>>

@@ -84,6 +84,8 @@ const combatActionColours = {
 			"tribescape",
 			/* anusaction */
 			"doubleescape",
+			/* chestaction */
+			"chestpullawaymouth",
 		],
 		def: [
 			/* leftaction or rightaction */
@@ -106,6 +108,8 @@ const combatActionColours = {
 			"penisthighs",
 			/* anusaction */
 			"bottombay", "penischeeks", "penispussy", "penispussydap", "penisanus", "bottomhandbay", "wiggle",
+			/* chestaction */
+			"mouthtochest", "milkchest",
 		],
 		sub: [
 			/* leftaction or rightaction */
