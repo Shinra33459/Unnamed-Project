@@ -1287,6 +1287,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				if (V.TFFoxBuffs == 1) {
 					result = Math.round(result * 0.9);
 				}
+				if (V.TFBunnyBuffs == 1) {
+					result = Math.round(result * 0.7);
+				}
 			}
 			break;
 		case "danceskill":
@@ -1322,6 +1325,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				}
 				if (V.TFFoxBuffs == 1) {
 					result = Math.round(result * 1.1);
+				}
+				if (V.TFBunnyBuffs == 1) {
+					result = Math.round(result * 1.4);
 				}
 			}
 			break;
@@ -1391,6 +1397,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.TFFoxBuffs == 1) {
 				result = Math.round(result * 1.1);
 			}
+			if (V.TFBunnyBuffs == 1) {
+				result = Math.round(result * 1.5);
+			}
 			break;
 		case "willpower":
 			if (numberOfEarSlime() >= 2 && V.earSlime.growth > 50) {
@@ -1412,6 +1421,9 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			}
 			if (V.TFBearBuffs == 1) {
 				result = Math.round(result * 1.2);
+			}
+			if (V.TFBunnyBuffs == 1) {
+				result = Math.round(result * 0.8);
 			}
 			break;
 		case "tending":
