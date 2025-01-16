@@ -487,14 +487,19 @@ build_upload_html_only_job:
         - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - mkdir -p DoLP_HTML_only/
         - version=$(cat version)
         - sh ./compile.sh
+        - cp "Degrees of Lewdity.html" ./DoLP_HTML_only/
+        - zip -r ./DoLP_HTML_only_v0.$CI_PIPELINE_IID.zip ./DoLP_HTML_only/ 1>NUL
         - echo "Finished Building HTML only v0.$CI_PIPELINE_IID"
         - echo "Uploading DoLP HTML only v0.$CI_PIPELINE_IID"
         - 'curl
             --header "JOB-TOKEN: $CI_JOB_TOKEN"
-            --upload-file ./"Degrees of Lewdity.html"
-            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_HTML_only/v0.$CI_PIPELINE_IID/Degrees%20of%20Lewdity.html"'
+            --upload-file ./DoLP_HTML_only_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_HTML_only/v0.$CI_PIPELINE_IID/DoLP_HTML_only_v0.$CI_PIPELINE_IID.zip"'
+        - rm -rf ./DoLP_HTML_only
+        - rm -rf ./DoLP_HTML_only_v0.$CI_PIPELINE_IID.zip
         - echo "Finished Uploading DoLP HTML only v0.$CI_PIPELINE_IID"
     only:
         - master
