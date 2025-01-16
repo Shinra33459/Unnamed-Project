@@ -32,7 +32,7 @@ set imagepack[7]=hikfem_mys
 set imagepack[8]=goosefem
 set imagepack[9]=goosefem_mys
 
-set array_length=7
+set array_length=9
 
 del ..\..\dist\*.apk
 
