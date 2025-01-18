@@ -1423,7 +1423,7 @@ function initHead() {
 			colour: 0,
 			colour_options: ["red", "white", "pink", "light pink", "purple", "yellow", "tangerine", "black", "custom"],
 			colour_sidebar: 1,
-			type: ["normal"],
+			type: ["normal", "formal"],
 			gender: "f",
 			femininity: 200,
 			warmth: 0,
