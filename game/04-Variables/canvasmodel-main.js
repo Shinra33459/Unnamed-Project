@@ -1125,7 +1125,7 @@ Renderer.CanvasModels.main = {
 
 			zfn(options) {
 				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.arms_cover;
-				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right - 0.1 : options.zarms;
+				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right - 0.2 : options.zarms;
 			},
 			showfn(options) {
 				return options.arm_right !== "none";
@@ -2836,7 +2836,7 @@ Renderer.CanvasModels.main = {
 				return 0;
 			},
 			zfn(options) {
-				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.1 : ZIndices.armsidle + 0.1;
+				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.under_upper_arm_right - 0.1 : ZIndices.armsidle + 0.1;
 				if (options.worn.over_upper) {
 					T.zarms = ZIndices.over_upper_arms;
 				} else if (options.worn.upper) {
