@@ -242,8 +242,6 @@ Renderer.CanvasModels.main = {
 			"show_writings": true,
 			"show_tf": true,
 			"show_clothes": true,
-			"show_background": true,
-			"show_foreground": true,
 			// body
 			"mannequin": false,
 			"breasts": "",
@@ -369,9 +367,6 @@ Renderer.CanvasModels.main = {
 			"bear_tail_type": "disabled",
 			"bear_tail_layer": "front",
 			"bear_ears_type": "disabled",
-			//Decorations
-			"background_image_type": "",
-			"foreground_image_type": "",
 			// body writings
 			"writing_forehead": "",
 			"writing_left_cheek": "",
@@ -517,6 +512,16 @@ Renderer.CanvasModels.main = {
 					setup: { type: [] },
 				}
 			},
+			//DecoMod
+			"background_image_type1": "",
+			"foreground_image_type1": "",
+			"background_image_type2": "",
+			"foreground_image_type2": "",
+			"show_background1": true,
+			"show_foreground1": true,
+			"show_background2": true,
+			"show_foreground2": true,
+
 			// misc
 			"tanningEnabled": true,
 			"genitals_chastity": false, // generated option
@@ -2632,33 +2637,60 @@ Renderer.CanvasModels.main = {
 		██║  ██║██╔══╝  ██║     ██║   ██║██╔══██╗██╔══██║   ██║   ██║██║   ██║██║╚██╗██║╚════██║
 		██████╔╝███████╗╚██████╗╚██████╔╝██║  ██║██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║███████║
 		╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-
+																								
 		*/
-		"decoration_foreground": {
+		"decoration_foreground1": {
 			srcfn(options) {
-				if (options.foreground_image_type == "" || options.foreground_image_type == "none" || options.foreground_image_type == undefined) return;
-				return `img/decorations/foreground/${options.foreground_image_type}.png`;
+				if (options.foreground_image_type1 == "" || options.foreground_image_type1 == "none") return;
+				return `img/decorations/foreground1/${options.foreground_image_type1}.png`;
 			},
 			showfn(options) {
-				return options.show_foreground
-				&& isPartEnabled(options.foreground_image_type);
+				return options.show_foreground1
+				&& isPartEnabled(options.foreground_image_type1);
 			},
-			z: ZIndices.deco_fg,
+			z: ZIndices.deco_fg1,
 			animation: "idle"
 		},
 
-		"decoration_background": {
+		"decoration_background1": {
 			srcfn(options) {
-				if (options.background_image_type == "" || options.background_image_type == "none" || options.background_image_type == undefined) return;
-				return `img/decorations/background/${options.background_image_type}.png`;
+				if (options.background_image_type1 == "" || options.background_image_type1 == "none") return;
+				return `img/decorations/background1/${options.background_image_type1}.png`;
 			},
 			showfn(options) {
-				return options.show_background
-				&& isPartEnabled(options.background_image_type);
+				return options.show_background1
+				&& isPartEnabled(options.background_image_type1);
 			},
-			z: ZIndices.deco_bg,
+			z: ZIndices.deco_bg1,
 			animation: "idle"
 		},
+
+		"decoration_foreground2": {
+			srcfn(options) {
+				if (options.foreground_image_type2 == "" || options.foreground_image_type2 == "none") return;
+				return `img/decorations/foreground2/${options.foreground_image_type2}.png`;
+			},
+			showfn(options) {
+				return options.show_foreground2
+				&& isPartEnabled(options.foreground_image_type2);
+			},
+			z: ZIndices.deco_fg2,
+			animation: "idle"
+		},
+
+		"decoration_background2": {
+			srcfn(options) {
+				if (options.background_image_type2 == "" || options.background_image_type2 == "none") return;
+				return `img/decorations/background2/${options.background_image_type2}.png`;
+			},
+			showfn(options) {
+				return options.show_background2
+				&& isPartEnabled(options.background_image_type2);
+			},
+			z: ZIndices.deco_bg2,
+			animation: "idle"
+		},
+
 
 
 
