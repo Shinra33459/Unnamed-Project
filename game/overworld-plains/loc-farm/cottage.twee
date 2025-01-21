@@ -360,6 +360,12 @@ You are in your room at Alex's cottage. It's cramped, but larger than your room 
 		You fiddle with your lockpick training set. <<skulduggerycheck>><<skulduggeryuse>><br>
 	<</if>>
 
+	<<if $farmCottageLocked is 0>>
+		<<link [[Lock your door|$passage]]>><<set $farmCottageLocked to 1>><</link>><br><br>
+	<<else>>
+		<<link [[Unlock your door|$passage]]>><<set $farmCottageLocked to 0>><</link>><br><br>
+	<</if>>
+
 	<<deskText "noicon">>
 
 	/* Decorations */
@@ -450,6 +456,10 @@ You are in your room at Alex's cottage. It's cramped, but larger than your room 
 		<<furnitureicon _bed.iconFile>><<link [[Masturbate in bed|Farm Masturbation]]>><<set $masturbationstart to 1>><</link>>
 		<br>
 		<<roomoptions>>
+		<br>
+		<<if $lockpickTrainingSet gte 1 and $stress lt $stressmax and !$possessed>>
+			<<lockpickTrainingSet>>
+		<</if>>
 		<br>
 		<<furnitureicon _wardrobe.iconFile>><<link [[Wardrobe|Farm Wardrobe]]>><</link>>
 		<br>
@@ -640,7 +650,7 @@ You snuggle under the covers.
 		<</if>>
 		<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 1>><<unset $remywake>><</link>>
 		<br>
-	<<elseif _sleepinterrupt>>
+	<<elseif (_sleepinterrupt and $bus isnot "farm_alex_room" and $farmCottageLocked is 0) or (_sleepinterrupt and $bus is "farm_alex_room")>>
 		<<npc Alex>><<person1>>
 		<<if _alexWake is 1>>
 			You awake to the sound of the staircase to the loft creaking.
