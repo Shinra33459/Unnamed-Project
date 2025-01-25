@@ -224,7 +224,7 @@ function sizeName(bodysize) {
 
 function eyeColourCalc(colour) {
 	if (colour) return colour;
-	return ["purple", "dark blue", "light blue", "amber", "hazel", "green", "lime green", "red", "pink", "grey", "light grey"][random(0, 10)];
+	return ["purple", "dark blue", "light blue", "pale blue", "amber", "deepblack", "black", "darkbrown", "brown", "lightbrown", "hazel", "green", "lime green", "red", "pink", "albinored", "grey", "light grey"][random(0, 18)];
 }
 
 function hairColourCalc(colour) {
