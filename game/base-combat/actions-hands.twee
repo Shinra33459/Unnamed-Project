@@ -2793,6 +2793,173 @@
 	<</if>>
 <</widget>>
 
+<<widget "effectshandholdnew">>
+	<<if _args[0] is "left">>
+		<<set $_target to $lefttarget>>
+	<<elseif _args[0] is "right">>
+		<<set $_target to $righttarget>>
+	<</if>>
+
+	<<if combatSkillCheck("hand", $_target)>>
+		<<if _args[0] is "left">>
+			<<set $NPCList[$lefttarget].righthand to "handhold">>
+			<<set $leftarm to "handheld">><<set $leftactiondefault to "lefthandholdkeep">>
+		<<elseif _args[0] is "right">>
+			<<set $NPCList[$righttarget].lefthand to "handhold">>
+			<<set $rightarm to "handheld">><<set $rightactiondefault to "righthandholdkeep">>
+		<</if>>
+		You take <<someones $_target>> _args[0] hand in your own.
+		
+		<<submission 1>>
+		<<if isLoveInterest($NPCList[$_target].fullDescription)>>
+			<<takeHandholdingVirginity $NPCList[$_target] "romantic">>
+		<<else>>
+			<<takeHandholdingVirginity $NPCList[$_target]>>
+		<</if>>
+	<<else>>
+		You reach for <<someones $_target>> _args[0] hand, but <<he>> moves away.
+	<</if>>
+<</widget>>
+
+<<widget "effectsHit">>
+	<<if _args[0] is "left">>
+		<<set $_target to $lefttarget>>
+	<<elseif _args[0] is "right">>
+		<<set $_target to $righttarget>>
+	<</if>>
+	<<personselect $_target>>
+	<<if ($parasite.left_ear.name is "slime" and random(1, 3) is 3) or ($parasite.right_ear.name is "slime" and random(1, 3) is 3) or ($earSlime.growth gte 50 and random(1, 3) is 3)>>
+		<<if $earSlime.growth gte (currentSkillValue('willpower') / 10) and random(0,100) gte $earSlime.growth / 3>>
+			You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<person>><</if>>
+			with your _args[0] hand, <span class="red">but the slime immobilises your limb.</span>
+			<<if $earSlime.growth gt 50>><<set $earSlime.defyCooldown++>><</if>>
+		<<elseif $earSlime.corruption gte (currentSkillValue('willpower') / 10) and random(0,100) gte 50>>
+			You try to hit the <<if $enemytype is "beast">><<beasttype>><<else>><<person>><</if>>
+			with your _args[0] hand, <span class="red">but the slime distracts you, so you miss.</span>
+			<<gwillpower>><<willpower 1>>
+		<<else>>
+			The slime tries to prevent you from hitting the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $_target>><<person>><</if>>, <span class="green">but you make contact regardless.</span>
+			<<actionshit $_target>><<defiance 2 $_target>><<set $speechhit to 1>><<set $attackstat += 1>>
+		<</if>>
+	<<else>>
+		<<actionshit $_target>><<set $speechhit to 1>><<defiance 2 $_target>><<set $attackstat += 1>>
+	<</if>>
+<</widget>>
+
+<<widget "effectsStruggle">>
+	<<if _args[0] is "both">>
+		<<set $_target to $lefttarget>><<set $_handcount to 2>>
+		You struggle with all your might.
+	<<elseif _args[0] is "left">>
+		<<set $_target to $lefttarget>><<set $_handcount to 1>>
+		You struggle.
+	<<elseif _args[0] is "right">>
+		<<set $_target to $righttarget>><<set $_handcount to 1>>
+		You struggle.
+	<</if>>
+	
+	<<set $speechstruggle to 1>><<defiance $_handcount $_target>>
+	<<if currentSkillValue('physique') gte random(1, 220 * $NPCList[$_target].healthmax / $_handcount) and !$robinRentEvent>>
+		<span class="teal">You manage to twist your arms free.</span>
+		<<defiance 5 $_target>>
+		<<set $leftarm to 0>><<set $rightarm to 0>>
+		<<if $NPCList[$_target].lefthand is "arms">>
+			<<set $NPCList[$_target].lefthand to 0>>
+		<</if>>
+		<<if $NPCList[$_target].righthand is "arms">>
+			<<set $NPCList[$_target].righthand to 0>>
+		<</if>>
+	<<else>>
+		<span class="purple">Your arms remain grasped.</span>
+	<</if>>
+<</widget>>
+
+<<widget "effectsunderpull">>
+	<<brat 1>>
+	<<if $worn.under_lower.name is "naked">>
+		You clutch the tattered remains of your clothing.
+	<<else>>
+		<<if !$NPCList.some(npc => npc.lefthand !== "underlowerclothes" || npc.righthand !== "underlowerclothes" || npc.mouth !== "underlowerclothes")>>
+			<<if $worn.under_lower.state is "ankles">>
+				<<set $worn.under_lower.state to "knees">>
+				You pull your $worn.under_lower.name up to your knees.
+			<<elseif $worn.under_lower.state is "knees">>
+				<<set $worn.under_lower.state to "thighs">>
+				You pull your $worn.under_lower.name up to your thighs.
+			<<elseif $worn.under_lower.state is "thighs">>
+				<<if $vaginause is 0 and $anususe is 0>>
+					You pull your $worn.under_lower.name up to your waist.
+					<<set $worn.under_lower.state to "waist">><<set $worn.under_lower.exposed to setup.clothes.under_lower[clothesIndex('under_lower', $worn.under_lower)].exposed_base>>
+					<<set $worn.under_lower.vagina_exposed to setup.clothes.under_lower[clothesIndex('under_lower', $worn.under_lower)].vagina_exposed_base>>
+					<<set $worn.under_lower.anus_exposed to setup.clothes.under_lower[clothesIndex('under_lower', $worn.under_lower)].anus_exposed_base>>
+				<<else>>
+					You try to pull up your $worn.under_lower.name, but something is in the way.
+				<</if>>
+			<</if>>
+		<<else>>
+			You try to pull up your $worn.under_lower.name, but one hand won't be enough.
+			<<brat 1>>
+		<</if>>
+	<</if>>
+<</widget>>
+		
+<<widget "effectsUndressOther">>
+	<<if _args[0] is "both">>
+		<<set $_target to $lefttarget>><<set $_handcount to 2>><<set $_clothesTarget to $undressRightTarget>>
+	<<elseif _args[0] is "left">>
+		<<set $_target to $lefttarget>><<set $_handcount to 1>><<set $_clothesTarget to $undressLeftTarget>>
+	<<elseif _args[0] is "right">>
+		<<set $_target to $righttarget>><<set $_handcount to 1>><<set $_clothesTarget to $undressRightTarget>>
+	<</if>>
+
+	<<if $_clothesTarget is "rest">>
+		<<if _args[0] is "both">>
+			<<set $leftactiondefault to "rest">><<set $rightactiondefault to "rest">>
+			You rest your arms.
+		<<elseif _args[0] is "left">>
+			<<set $leftactiondefault to "rest">>
+			You rest your left arm.
+		<<elseif _args[0] is "right">>
+			<<set $rightactiondefault to "rest">>
+			You rest your right arm.
+		<</if>>
+	<<else>>
+		<<handskilluse>><<combatpromiscuity2>><<brat $_handcount $_target>>
+		<<set $_npc to $NPCList[$_target]>>
+		<<personselect $_target>>
+		<<if combatSkillCheck("hand", $_target, $_npc.fullDescription, 1000 - (($_handcount - 1) * 300), $_npc.clothes[$_clothesTarget].integrity)>>
+			<!-- Using a switch to make it easier to add more NPC clothes types later -->
+			<<switch $_clothesTarget>>
+				<<case "upper">>
+					<span class="lblue">You <<handtext>> <<npcUndressText $_npc $_clothesTarget>>, <<npcRevealText $_npc $_clothesTarget>>.</span>
+					<<set $_npc.chest to 0>>
+				<<case "lower">>
+					<span class="lblue">You <<handtext>> <<npcUndressText $_npc $_clothesTarget>>, <<npcRevealText $_npc $_clothesTarget>>.</span>
+					<<if $_npc.fullDescription is "Sydney">>
+						<<sydneyExpose>>
+					<</if>>
+					<<if $_npc.penis is "clothed">>
+						<<npcGenitalReaction $_npc>>
+						<<set $_npc.penis to 0>>
+					<</if>>
+					<<if $_npc.vagina is "clothed">>
+						<<set $_npc.vagina to 0>>
+					<</if>>
+				<<default>>
+					You try to undress <<him>>, but grab nothing but the air. <span class="red">Improper clothes target: $_clothesTarget. Please report this bug.</span>
+			<</switch>>
+		<<else>>
+			You try to <<npcUndressText $_npc $_clothesTarget>>, but <<he>> holds on to <<his>> clothes.
+			<<set $_npc.clothes[$_clothesTarget].integrity -= Math.floor(currentSkillValue("handskill") / 100)>>
+		<</if>>
+	<</if>>
+
+	<<if _args[0] is "both">><<unset $undressLeftTarget>><<unset $undressRightTarget>>
+	<<elseif _args[0] is "left">><<unset $undressLeftTarget>>
+	<<elseif _args[0] is "right">><<unset $undressRightTarget>>
+	<</if>>
+<</widget>>
+
 /* Combat sex toys */
 
 <<widget "effectsDildoSelf">>
@@ -2972,5 +3139,76 @@
 		<<set $NPCList[$_target].penis to 0>><<personselect $_target>>
 		<span class="blue">You try to fuck <<hisselect $_target>> ass with your _args[1], but <<he>>
 		<<if $enemytype isnot "beast">>slaps your hand away<<else>>shifts way from you and growls<</if>>.</span>
+	<</if>>
+<</widget>>
+
+/* MCA actions's effects */
+
+<<widget "effectshandpenistomouth">>
+	<<if _args[0] is "left">>
+		<<set $_target to $lefttarget>>
+		<<set $leftactiondefault to 0>><<set $leftarm to 0>>
+		/* No repeating this action */
+		<<if $rightaction is "handpenistomouth">>
+			<<set $rightaction to 0>><<set $rightactiondefault to 0>><<set $rightarm to 0>>
+		<</if>>
+	<<elseif _args[0] is "right">>
+		<<set $_target to $righttarget>>
+		<<set $rightactiondefault to 0>><<set $rightarm to 0>>
+	<</if>>	
+	
+	<<if $mouthuse is 0>>
+		<<if _args[0] is "left">><<meek 1 $lefttarget>>
+		<<elseif _args[0] is "right">><<meek 1 $righttarget>>
+		<</if>>	
+		<<set $mouthaction to 0>><<set $mouthactiondefault to "mouth">><<combatpromiscuity4>>
+		<<if $penisbitten is 1>>
+			<<set $NPCList[$_target].penis to 0>><<violence 5>>
+			<<He>> smacks your head away from <<his>> penis.
+		<<elseif combatSkillCheck("hand", $_target)>>
+			<<set $NPCList[$_target].penis to "mouthentrance">> <<set $mouthactiondefault to "lick">> <<set $mouthuse to "penis">> <<set $mouthstate to "entrance">>
+			<<set $NPCList[$_target].location.genitals to "head">>
+			<span class="blue">You move <<hisselect $_target>> penis towards your mouth.</span>
+			<<handskilluse>>
+		<<else>>
+			<<set $NPCList[$_target].penis to 0>><<handskilluse>>
+			You try to move into a position where your mouth can take <<hisselect $_target>> penis, but <<he>> has other ideas.
+		<</if>>
+	<<else>>
+		<span class="blue">You try to move <<hisselect $_target>> penis towards your mouth, but the entrance is already occupied.</span>
+	<</if>>
+<</widget>>
+
+<<widget "effectshandpenistochest">>
+	<<if _args[0] is "left">>
+		<<set $_target to $lefttarget>><<personselect $lefttarget>>
+		<<set $leftactiondefault to 0>><<set $leftarm to 0>>
+		/* No repeating this action */
+		<<if $rightaction is "handpenistochest">>
+			<<set $rightaction to 0>><<set $rightactiondefault to 0>><<set $rightarm to 0>>
+		<</if>>
+	<<elseif _args[0] is "right">>
+		<<set $_target to $righttarget>><<personselect $righttarget>>
+		<<set $rightactiondefault to 0>><<set $rightarm to 0>>
+	<</if>>	
+
+	<<handskilluse>>
+	<<if combatSkillCheck("hand", $NPCList[$_target])>>
+		<<chestskilluse>><<combatpromiscuity3>>
+		<<set $chestactiondefault to "rub">><<set $chestuse to "penis">><<cheststat>><<set $mouthactiondefault to "peniskiss">>
+		<<set $NPCList[$_target].penis to "chest">><<set $chesttarget to $_target>>
+		<<if $breastcup is "none">>
+			<span class="lblue">You <<handtext>> put <<his>> $NPCList[$_target].penisdesc between your <<breasts>> and squeeze them together as best as you can.
+			Your breasts are too small for it to be effective, but your cute attempt succeeds in charming <<him>>.</span> <<He>> rubs <<his>> penis against your chest.
+		<<else>>
+			<span class="lblue">You <<handtext>> put <<his>> $NPCList[$_target].penisdesc between your <<breasts>>.</span>
+		<</if>>
+	<<else>>
+		<<set $NPCList[$_target].penis to 0>>
+		<<if $player.breastsize is 0>>
+			You squeeze your <<breasts>> together as best you can and try to put <<his>> penis between them, to no avail.
+		<<else>>
+			You try to put <<his>> penis between your <<breasts>>, but fail.
+		<</if>>
 	<</if>>
 <</widget>>
