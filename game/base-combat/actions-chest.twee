@@ -9,6 +9,7 @@
 
 <<widget "actionschestpenis">>
     <<set _chestaction["Rub"] to "rub">>
+    <<set _chestaction["Stop"] to "stop">>
 <</widget>>
 
 <<widget "actionschestmouth">>
@@ -17,4 +18,97 @@
         <<set _chestaction["Breastfeed " + $NPCList[$chesttarget].pronouns.him] to "milkchest">>
     <</if>>
     <<set _chestaction["Pull away"] to "chestpullawaymouth">>
+<</widget>>
+
+:: Widgets Effects Chest [widget]
+
+<<widget "effectsRub">>
+    <<if combatSkillCheck("chest", $chesttarget)>>
+        <<if $player.breastsize is 0>>
+            You <<chesttext>> rub your <<breasts>> against <<hisselect $chesttarget>> penis.
+        <<else>>
+            You <<chesttext>> rub <<hisselect $chesttarget>> penis between your <<breasts>>.
+        <</if>>
+        <<submission 3>><<chestskilluse>>
+    <<elseif $NPCList[$chesttarget].penis is "chest">>
+        <<set $chestuse to 0>><<personselect $chesttarget>>
+        <<if $mouthuse is 0>>
+            <<set $mouthactiondefault to "grasp">><<set $mouthstate to "entrance">><<set $mouthuse to "penis">>
+            <<set $NPCList[$chesttarget].penis to "mouthentrance">>
+            <span class="purple">You try to rub your <<breasts>> against <<hisselect $chesttarget>> $NPCList[$chesttarget].penisdesc, but <<he>> moves <<his>> penis to your mouth.</span>
+        <<else>>
+            <<set $NPCList[$chesttarget].penis to 0>>
+            <span class="blue">You try to rub your <<breasts>> against <<hisselect $chesttarget>> penis, but <<he>> pulls away.</span>
+        <</if>>
+    <</if>>
+<</widget>>
+
+<<widget "effectsStop">>
+    <<if $NPCList[$chesttarget].penis is "chest">>
+        <<set $chestuse to 0>><<personselect $chesttarget>>
+        <<if $mouthuse is 0>>
+            <<set $mouthactiondefault to "grasp">><<set $mouthstate to "entrance">><<set $mouthuse to "penis">>
+            <<set $NPCList[$chesttarget].penis to "mouthentrance">>
+            <span class="purple">As you stop rubbing, <<combatperson>> moves <<his>> penis to your mouth.</span>
+        <<else>>
+            <<set $NPCList[$chesttarget].penis to 0>>
+            <span class="blue">As you stop rubbing, <<combatperson>> pulls away.</span>
+        <</if>>
+    <</if>>
+<</widget>>
+
+<<widget "effectsmouthtochest">>
+    <<set $chestactiondefault to "rest">><<chestskilluse>><<combatpromiscuity3>><<meek 2>>
+    <<if combatSkillCheck("chest", $chesttarget)>>
+        <<set $NPCList[$chesttarget].mouth to "chestentrance">><<set $NPCList[$chesttarget].location.head to "head">>
+        <<set $chestuse to "mouth">><<set $cheststate to "mouthentrance">>
+        <span class="lblue">You <<chesttext>> move your <<breasts>> towards <<hisselect $chesttarget>> mouth.</span>
+    <<else>>
+        You try to move your <<breasts>> towards <<hisselect $chesttarget>> mouth, but fail.
+    <</if>>
+<</widget>>
+
+<<widget "effectsMilkChest">>
+    <<set $chestactiondefault to "milkchest">><<personselect $chesttarget>><<meek 10>><<combatpromiscuity5>>
+    <<if $leftactiondefault is "rest" or $rightactiondefault is "rest">>
+        <<handskilluse>>
+        <<if $milk_amount gt 0 and $NPCList[$chesttarget].mouth isnot "chest">>
+            <<set $NPCList[$chesttarget].mouth to "chest">><<set $cheststate to "chest">>
+            <span class="lewd">You push your <<nipples>> into <<his>> mouth.</span>
+        <<elseif $NPCList[$chesttarget].mouth is "chestentrance">>
+            <<set $NPCList[$chesttarget].mouth to "chestimminent">><<set $cheststate to "chestimminent">>
+            <span class="lewd">You push your <<nipples>> into <<his>> mouth.</span>
+        <</if>>
+        <<if combatSkillCheck("hand", $chesttarget) and $milk_amount gt 0>>
+            <<breastfeed 10>><<sex 5 "breast" $chesttarget>>
+            <<set $enemyanger -= 2 * _milk_released>>
+            <span class="lblue">You <<chesttext>> milk your <<breasts>> into <<his>> mouth. It calms <<him>> down slightly.</span>
+        <<elseif $milk_amount is 0>>
+            <<sex 3 "breast" $chesttarget>>
+            You try to breastfeed <<him>>, but don't have any milk left.
+        <<else>>
+            You try to breastfeed <<him>>, <span class="red">but <<He>> doesn't let you.</span>
+        <</if>>
+    <<else>>
+        You try to breastfeed <<him>>, but don't have any hands free to do so.
+    <</if>>
+<</widget>>
+
+<<widget "effectsChestpullawaymouth">>
+    <<personselect $chesttarget>>
+    <<chestskilluse>><<brat 1 $chesttarget>>
+    <<if combatSkillCheck("chest", $chesttarget)>>
+        <<set $chestactiondefault to "rest">>
+        <span class="lblue">You <<chesttext>> pull your 
+        <<if $cheststate isnot "chestentrance">>
+            <<set $NPCList[$chesttarget].mouth to "chestentrance">><<set $cheststate to "chestentrance">>
+            <<nipples>> 
+        <<else>>
+            <<set $NPCList[$chesttarget].mouth to 0>><<set $cheststate to 0>><<set $chestuse to 0>><<set $chestaction to 0>>
+            <<chest>> 
+        <</if>>
+        away from <<his>> mouth.</span>
+    <<else>>
+        You try to pull your <<if $cheststate isnot "chestentrance">><<nipples>><<else>><<chest>><</if>> away from <<his>> mouth, <span class="purple">but <<he>> doesn't let go.</span>
+    <</if>>
 <</widget>>
