@@ -2513,17 +2513,63 @@
 	<</if>>
 <</widget>>
 
+<<widget "effectsClench">> /* stalk action */
+	<<if $earSlime.growth gt 50 and $earSlime.growth - random(0, Math.clamp(300 - ($earSlime.defyCooldown * 20), 0, 300)) gte (currentSkillValue('willpower')/ 10) and hasSexStat("exhibitionism", 2)>>
+		<<if ($player.penisExist or playerHasStrapon()) and (!$player.vaginaExist or $worn.genitals.name is "chastity parasite" or random(0,100) gte 50)>>
+			<<set _slimeTarget to playerHasStrapon() ? "strap-on" : (playerChastity("penis") ? $worn.genitals.name : "penis")>>
+			<<set _slimeWidget to "penis">>
+		<<elseif $player.vaginaExist>>
+			<<set _slimeTarget to "vagina">>
+			<<set _slimeWidget to "vagina">>
+		<<else>>
+			<<set _slimeTarget to "butt">>
+			<<set _slimeWidget to "anus">>
+		<</if>>
+		You try to clench your fists, <span class="red">but you suddenly find them moving towards your _slimeTarget.</span> You feel the slime steal your control away.
+		<<if _args[0] is "both">>
+			<<set $leftactiondefault to 0>><<set $rightactiondefault to 0>>
+			<<switch _slimeWidget>>
+				<<case "penis">><<effectsCoverPenis "both" "lewd">>
+				<<case "vagina">><<effectsCoverVagina "both" "lewd">>
+				<<case "anus">><<effectsCoverAnus "both" "lewd">>
+			<</switch>>
+		<<elseif _args[0] is "left">>
+			<<set $leftactiondefault to 0>>
+			<<switch _slimeWidget>>
+				<<case "penis">><<effectsCoverPenis "left" "lewd">>
+				<<case "vagina">><<effectsCoverVagina "left" "lewd">>
+				<<case "anus">><<effectsCoverAnus "left" "lewd">>
+			<</switch>>
+		<<elseif _args[0] is "right">>
+			<<set $rightactiondefault to 0>>
+			<<switch _slimeWidget>>
+				<<case "penis">><<effectsCoverPenis "right" "lewd">>
+				<<case "vagina">><<effectsCoverVagina "right" "lewd">>
+				<<case "anus">><<effectsCoverAnus "right" "lewd">>
+			<</switch>>
+		<</if>>
+	<<else>>
+		<<if _args[0] is "both">>
+			<<brat 6>>
+			You clench your fists.
+		<<elseif _args[0] is "left">>
+			<<brat 3>>
+			You clench your left fist.
+		<<elseif _args[0] is "right">>
+			<<brat 3>>
+			You clench your right fist.
+		<</if>>
+	<</if>>
+<</widget>>
+
 <<widget "effectsStopOral">>
 	<<set $_handsCount to 1>>
 	<<if _args[0] is "both">>
 		<<set $_handsCount to 2>>
-		<<set $leftactiondefault to "stoporal">><<set $rightactiondefault to "stoporal">>
 		<<set $_target to $lefttarget>><<set $_text to "both hands">><<personselect $lefttarget>>
 	<<elseif _args[0] is "left">>
-		<<set $leftactiondefault to "stoporal">>
 		<<set $_target to $lefttarget>><<set $_text to "your left hand">><<personselect $lefttarget>>
 	<<elseif _args[0] is "right">>
-		<<set $rightactiondefault to "stoporal">>
 		<<set $_target to $righttarget>><<set $_text to "your right hand">><<personselect $righttarget>>
 	<<else>>
 		<<error "hand not set">>
