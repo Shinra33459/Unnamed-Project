@@ -416,7 +416,18 @@ DefineMacro("modelprepare-player-body", function () {
 	T.modeloptions.okami_ears_type = V.transformationParts.okami.ears;
 	T.modeloptions.okami_wings_type = V.transformationParts.okami.wings;
 	T.modeloptions.okami_wings_layer = V.wingslayer;
-	T.modeloptions.okami_markings_type = V.transformationParts.okami.markings;
+	T.modeloptions.okami_misc_type = V.transformationParts.okami.misc;
+
+	T.modeloptions.seraphim_wings_type = V.transformationParts.seraphim.wings;
+	T.modeloptions.seraphim_wings_layer = V.wingslayer;
+	T.modeloptions.seraphim_plumage_type = V.transformationParts.seraphim.plumage;
+	T.modeloptions.seraphim_eyes_type = V.transformationParts.seraphim.eyes;
+
+	T.modeloptions.kitsune_tail_type = V.transformationParts.kitsune.tail;
+	T.modeloptions.kitsune_tail_layer = V.taillayer;
+	T.modeloptions.kitsune_ears_type = V.transformationParts.kitsune.ears;
+	T.modeloptions.kitsune_cheeks_type = V.transformationParts.kitsune.cheeks;
+	T.modeloptions.kitsune_misc_type = V.transformationParts.kitsune.misc;
 
 	/*
 
