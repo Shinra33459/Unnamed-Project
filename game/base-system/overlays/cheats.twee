@@ -128,19 +128,34 @@
 		<div class="settingsToggleItemWide">
 			<span class="gold">Miscellaneous</span>
 			<br>
-			<<numberStepper "Money" $money {
-				activeButtons: ["single", "double", "triple", "quad", "penta"],
-				step: 1000,
-				max: 100000000000,
-				colorArr:["--yellow"],
-				percentage: false,
-				valueFormat: (value) => `<b>${formatMoney(value)}</b>`,
-				callback: (value) => {
-					const difference = value - V.money;
-					V.moneyStats.cheats.earned += difference;
-					V.money = value;
-				}
-			}>>
+			<<if Browser.isMobile.any()>>
+				<<link "<<<<<">><<set $money -= 10000000>><<set $moneyStats.cheats.earned -= 10000000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>> |
+				<<link "<<<<">><<set $money -= 1000000>><<set $moneyStats.cheats.earned -= 1000000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>> |
+				<<link "<<<">><<set $money -= 100000>><<set $moneyStats.cheats.earned -= 100000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>> |
+				<<link "<<">><<set $money -= 10000>><<set $moneyStats.cheats.earned -= 10000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>> |
+				<<link "<">><<set $money -= 1000>><<set $moneyStats.cheats.earned -= 1000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>> |
+				Money: <span id="statsmoney"><<print Math.trunc($money)>></span>
+				| <<link ">">><<set $money += 1000>><<set $moneyStats.cheats.earned += 1000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>>
+				| <<link ">>">><<set $money += 10000>><<set $moneyStats.cheats.earned += 10000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>>
+				| <<link ">>>">><<set $money += 100000>><<set $moneyStats.cheats.earned += 100000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>>
+				| <<link ">>>>">><<set $money += 1000000>><<set $moneyStats.cheats.earned += 1000000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>>
+				| <<link ">>>>>">><<set $money += 10000000>><<set $moneyStats.cheats.earned += 10000000>><<clamp>><<replace "#statsmoney">><<print Math.trunc($money)>><</replace>><</link>>
+				<br>
+			<<else>>
+				<<numberStepper "Money" $money {
+					activeButtons: ["single", "double", "triple", "quad", "penta"],
+					step: 1000,
+					max: 100000000000,
+					colorArr:["--yellow"],
+					percentage: false,
+					valueFormat: (value) => `<b>${formatMoney(value)}</b>`,
+					callback: (value) => {
+						const difference = value - V.money;
+						V.moneyStats.cheats.earned += difference;
+						V.money = value;
+					}
+				}>>
+			<</if>>
 
 			<<if $location is "prison">>
 				<<set $prison.teeth to $prison.teeth or 0>>

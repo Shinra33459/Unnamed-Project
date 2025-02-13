@@ -933,6 +933,18 @@ setup.colours.eyes = [
 		},
 	},
 	{
+		variable: "pale blue",
+		name: "pale blue",
+		name_cap: "Pale Blue",
+		csstext: "paleblue",
+		natural: true,
+		lens: true,
+		canvasfilter: {
+			blend: "#95c4dc",
+			brightness: +0.3,
+		},
+	},
+	{
 		variable: "amber",
 		name: "amber",
 		name_cap: "Amber",
@@ -941,6 +953,66 @@ setup.colours.eyes = [
 		lens: true,
 		canvasfilter: {
 			blend: "#f6ca70",
+		},
+	},
+	{
+		variable: "deepblack",
+		name: "deep black",
+		name_cap: "Deep Black",
+		csstext: "black",
+		natural: true,
+		lens: true,
+		canvasfilter: {
+			blend: "#454545",
+			brightness: -0.3,
+		},
+	},
+	{
+		variable: "black",
+		name: "black",
+		name_cap: "Black",
+		csstext: "black",
+		natural: true,
+		lens: true,
+		canvasfilter: {
+			blend: "#504949",
+			brightness: -0.1,
+		},
+	},
+	{
+		variable: "darkbrown",
+		name: "dark brown",
+		name_cap: "Dark Brown",
+		csstext: "darkbrown",
+		natural: true,
+		lens: true,
+		canvasfilter: {
+			blend: "#784a3a",
+			brightness: -0.3,
+		},
+	},
+	{
+		variable: "brown",
+		name: "brown",
+		name_cap: "Brown",
+		csstext: "brown",
+		natural: true,
+		lens: true,
+		canvasfilter: {
+			blend: "#8f6e56",
+			brightness: -0.3,
+		},
+	},
+	{
+		variable: "lightbrown",
+		name: "light brown",
+		name_cap: "Light Brown",
+		csstext: "lightbrown",
+		natural: true,
+		lens: true,
+		canvasfilter: {
+			blend: "#e49b67",
+			brightness: -0.3,
 		},
 	},
 	{
@@ -1009,6 +1081,18 @@ setup.colours.eyes = [
 		canvasfilter: {
 			blend: "#F76EF7",
 			brightness: +0.2,
+		},
+	},
+	{
+		variable: "albinored",
+		name: "albino red",
+		name_cap: "Albino Red",
+		csstext: "albinored",
+		natural: true,
+		lens: false,
+		canvasfilter: {
+			blend: "#ffb0ab",
+			brightness: +0.3,
 		},
 	},
 	{
