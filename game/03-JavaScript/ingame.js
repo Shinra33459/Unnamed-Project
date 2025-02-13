@@ -75,9 +75,9 @@ const combatActionColours = {
 			/* leftaction or rightaction */
 			"steal", "penwhack", "freeface", "leftcovervagina", "leftcoverpenis", "leftcoveranus", "rightcovervagina", "rightcoverpenis", "rightcoveranus", "leftunderpull", "leftskirtpull", "leftlowerpull", "leftupperpull", "rightunderpull", "rightskirtpull", "rightlowerpull", "rightupperpull", "rightUndressOther", "leftUndressOther", "stopchoke", "clench", "shacklewhack", "leftfold", "rightfold", "dildowhack", "hypnosiswhack", "leftstruggleweak", "rightstruggleweak", "handpullpenis", "handpullvagina", "handpullanus", "leftresistW", "rightresistW", "leftstillW", "rightstillW", "penisremovecondom", "npcremovecondom", "leftblock", "rightblock", "stoporal",
 			/* feetaction */
-			"run", "hide", "confront", "feetresistW", "legLock", "legLocked", "feetHold", "dodge", "plant", "feetHold",
+			"run", "hide", "confront", "feetresistW", "legLock", "legLocked", "feetHold", "dodge", "plant",
 			/* mouthaction */
-			"pullaway", "ejacspit", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl", "askPullOut", "disparage", "askoral",
+			"pullaway", "ejacspit", "pullawayvagina", "finish", "novaginal", "nopenile", "noanal", "scream", "mock", "breastclosed", "breastpull", "pullawaykiss", "noupper", "analpull", "up", "stifleorgasm", "stifle", "mouthresistW", "handcloseW", "growl", "askPullOut","disparage", "askoral",
 			/* penisaction */
 			"othermouthescape", "escape", "otheranusescape", "fencingescape", "pullOut", "moveHole", "damageCondom",
 			/* vaginaaction */
@@ -1239,7 +1239,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.transformationParts.traits.sharpEyes !== "disabled") result = Math.floor(result * 1.05);
 			if (V.fox >= 6) result = Math.floor(result * 1.1);
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.DoLPTFBuffs == 1) {
 				if (V.TFCatBuffs == 1) {
@@ -1305,7 +1305,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.floor(result * 0.5);
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.DoLPTFBuffs == 1) {
 				if (V.TFWolfBuffs == 1) {
@@ -1408,7 +1408,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.floor(result * 0.9);
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.TFWolfBuffs == 1) {
 				result = Math.round(result * 1.1);
@@ -1431,7 +1431,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.floor(result * (1 + V.trauma / (V.traumamax * 2)));
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.TFCowBuffs == 1) {
 				result = Math.round(result * 1.4);
@@ -1451,7 +1451,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.floor(result * 1.05);
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.TFWolfBuffs == 1) {
 				result = Math.round(result * 0.9);
@@ -1478,7 +1478,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			break;
 		case "penileskill":
@@ -1493,7 +1493,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.floor(result * (1 + Math.clamp(playerRutMinArousal(), 0, 4000) / 20000));
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			break;
 		case "analskill":
@@ -1504,7 +1504,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			break;
 		case "seductionskill":
@@ -1512,7 +1512,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				result = Math.floor(result * (1 + (V.earSlime.growth - 50) / 600));
 			}
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 + (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.TFCatBuffs == 1) {
 				result = Math.round(result * 1.2);

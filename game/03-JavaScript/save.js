@@ -849,7 +849,7 @@ function settingsObjects(type) {
 					randomize: "characterTrait",
 				},
 				eyeselect: {
-					strings: ["purple", "dark blue", "light blue", "pale blue", "amber", "deepblack", "black", "darkbrown", "brown", "lightbrown", "hazel", "green", "lime green", "red", "pink", "albinored", "grey", "light grey", "random"],
+					strings: ["purple", "dark blue", "light blue", "amber", "hazel", "green", "lime green", "red", "pink", "grey", "light grey", "random"],
 					randomize: "characterAppearance",
 					displayName: "Eye colour:",
 				},
