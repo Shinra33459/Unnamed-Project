@@ -2560,6 +2560,7 @@
 	<<set _bird to $transformationParts.bird>>
 	<<set _fox to $transformationParts.fox>>
 	<<set _bunny to $transformationParts.bunny>>
+	<<set _okami to $transformationParts.okami>>
 	<<set _traits to $transformationParts.traits>>
 
 	<<set _angelFullCheck to ($angel gte 6) or $angeltf is 1>>
@@ -2652,6 +2653,29 @@
 				Lapine Celerity: <<checkbox "$TFBunnyBuffs" 0 1 autocheck>><br>
 			<</if>>
 		<</if>>
+		<br>
+	<</if>>
+
+	/* Markings */
+	<<set _options = {}>> 
+	<<set _options["None"] = 0>>
+	<<if _wolfFullCheck and _angelFullCheck>>
+		<<set _options["Okami"] = ["okami", "default"]>>
+		<<if _okami.markings is "default">>
+			<<set _markingsChoice to _options["Okami"]>>
+		<</if>>
+	<</if>>
+	<<if !_markingsChoice>>
+		<<set _markingsChoice to 0>>
+	<</if>>
+	<<if Object.keys(_options).length > 1>>
+		<label>Markings:
+			<div class="tf-markings">
+				<<listbox "_markingsChoice" autoselect>>
+					<<optionsfrom _options>>
+				<</listbox>>
+			</div>
+		</label>
 		<br>
 	<</if>>
 
@@ -2846,6 +2870,12 @@
 			<<set _earsChoice to _options["Wolf Feral"]>>
 		<</if>>
 	<</if>>
+	<<if _wolfFullCheck and _angelFullCheck>>
+		<<set _options["Okami"] = ["okami", "default"]>>
+		<<if _okami.ears is "default">>
+			<<set _earsChoice to _options["Okami"]>>
+		<</if>>
+	<</if>>
 	<<if !_earsChoice>>
 		<<set _earsChoice to 0>>
 	<</if>>
@@ -2986,6 +3016,12 @@
 			<<set _divineTailChoice to _options["Demon Classic"]>>
 		<</if>>
 	<</if>>
+	<<if _wolfFullCheck and _angelFullCheck>>
+		<<set _options["Okami"] = ["okami", "default"]>>
+		<<if _okami.tail is "default">>
+			<<set _divineTailChoice to _options["Okami"]>>
+		<</if>>
+	<</if>>
 	<<if !_divineTailChoice>>
 		<<set _divineTailChoice to 0>>
 	<</if>>
@@ -3105,6 +3141,12 @@
 			<<set _divineWingsChoice to _options["Fallen Angel Classic"]>>
 		<</if>>
 	<</if>>
+	<<if _wolfFullCheck and _angelFullCheck>>
+		<<set _options["Okami"] = ["okami", "default"]>>
+		<<if _okami.wings is "default">>
+			<<set _divineWingsChoice to _options["Okami"]>>
+		<</if>>
+	<</if>>
 	<<if !_divineWingsChoice>>
 		<<set _divineWingsChoice to 0>>
 	<</if>>
@@ -3201,7 +3243,7 @@
 			<</switch>>
 			<br>
 		<</if>>
-		<<if !["demon", "cat", "cow", "bear", "wolf", "bird", "fox"].every(transform => T[transform].tail is "disabled")>>
+		<<if !["demon", "cat", "cow", "bear", "wolf", "bird", "fox", "okami"].every(transform => T[transform].tail is "disabled")>>
 			<<switch $taillayer>>
 				<<case "front">>
 					<<link "Push tail back">>
@@ -3221,7 +3263,7 @@
 			<</switch>>
 			<br>
 		<</if>>
-		<<if !["angel", "fallen", "demon", "bird"].every(transform => T[transform].wings is "disabled")>>
+		<<if !["angel", "fallen", "demon", "bird", "okami"].every(transform => T[transform].wings is "disabled")>>
 			<<switch $wingslayer>>
 				<<case "front">>
 					<<link "Push wings behind">>
@@ -3277,6 +3319,9 @@
 	*/
 	<!-- Attach an event to every listbox item to update the PC on the sidebar. -->
 	<<script>>
+	jQuery('.passage').on('change', 'div.tf-markings select.macro-listbox', function (e) {
+			Wikifier.wikifyEval('<<clearmarkings>><<if _markingsChoice isnot 0>><<set $transformationParts[_markingsChoice[0]].markings = _markingsChoice[1]>><</if>><<updatesidebarimg true>>');
+		});
 		jQuery('.passage').on('change', 'div.tf-cheeks select.macro-listbox', function (e) {
 			Wikifier.wikifyEval('<<clearcheeks>><<if _cheeksChoice isnot 0>><<set $transformationParts[_cheeksChoice[0]].cheeks = _cheeksChoice[1]>><</if>><<updatesidebarimg true>>');
 		});

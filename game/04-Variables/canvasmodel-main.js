@@ -367,6 +367,15 @@ Renderer.CanvasModels.main = {
 			"bear_tail_type": "disabled",
 			"bear_tail_layer": "front",
 			"bear_ears_type": "disabled",
+			"okami_tail_type": "disabled",
+			"okami_tail_layer": "front",
+			"okami_ears_type": "disabled",
+			"okami_ears_layer": "front",
+			"okami_wings_type": "disabled",
+			"okami_wing_right": "idle",
+			"okami_wing_left": "idle",
+			"okami_wings_layer": "front",
+			"okami_markings_type": "disabled",
 			// body writings
 			"writing_forehead": "",
 			"writing_left_cheek": "",
@@ -2750,6 +2759,78 @@ Renderer.CanvasModels.main = {
 			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
+		},
+
+		/*    
+			░█████╗░██╗░░██╗░█████╗░███╗░░░███╗██╗
+			██╔══██╗██║░██╔╝██╔══██╗████╗░████║██║
+			██║░░██║█████═╝░███████║██╔████╔██║██║
+			██║░░██║██╔═██╗░██╔══██║██║╚██╔╝██║██║
+			╚█████╔╝██║░╚██╗██║░░██║██║░╚═╝░██║██║
+			░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░░░░╚═╝╚═╝
+		 */
+		"okami_ears": {
+			srcfn(options) {
+				return `img/transformations/okami/ears/${options.okami_ears_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.okami_ears_type) && !options.hideAll;
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
+			zfn(options) {
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
+			},
+			animation: "idle"
+		},
+		"okami_tail": {
+			srcfn(options) {
+				return `img/transformations/okami/tail/${options.okami_tail_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.okami_tail_type) && !options.hideAll;
+			},
+			zfn(options) {
+				if (options.okami_tail_layer === "back") {
+					return ZIndices.tail
+				} else {
+					return ZIndices.back_lower
+				}
+			},
+			animation: "idle"
+		},
+		"okami_wings": {
+			z: ZIndices.backhair,
+			animation: "idle",
+
+			srcfn(options) {
+				return `img/transformations/okami/wings/${options.okami_wings_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf
+					&& isPartEnabled(options.okami_wings_type)
+					&& !options.hideAll;
+			},
+			zfn(options) {
+				if (options.okami_wings_layer === "back") return ZIndices.head_back;
+				if (options.okami_wings_layer === "cover") return ZIndices.tailPenisCover;
+				return ZIndices.backhair
+			},
+		},
+		"okami_markings": {
+			z: ZIndices.lower,
+			animation: "idle",
+			srcfn(options) {
+				return `img/transformations/okami/markings/${options.okami_markings_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.okami_markings_type) && !options.hideAll;
+			},
 		},
 
 		/***
