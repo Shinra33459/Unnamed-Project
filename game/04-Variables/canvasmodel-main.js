@@ -372,10 +372,17 @@ Renderer.CanvasModels.main = {
 			"okami_ears_type": "disabled",
 			"okami_ears_layer": "front",
 			"okami_wings_type": "disabled",
-			"okami_wing_right": "idle",
-			"okami_wing_left": "idle",
 			"okami_wings_layer": "front",
-			"okami_markings_type": "disabled",
+			"okami_misc_type": "disabled",
+			"seraphim_wings_type": "disabled",
+			"seraphim_wings_layer": "front",
+			"seraphim_plumage_type": "disabled",
+			"seraphim_eyes_type": "disabled",
+			"kitsune_tail_type": "disabled",
+			"kitsune_tail_layer": "disabled",
+			"kitsune_ears_type": "disabled",
+			"kitsune_cheeks_type": "disabled",
+			"kitsune_misc_type": "disabled",
 			// body writings
 			"writing_forehead": "",
 			"writing_left_cheek": "",
@@ -2572,8 +2579,13 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.lower,
 			animation: "idle"
 		},
-		/***
-		Bear
+		/*		
+			██████╗░███████╗░█████╗░██████╗░
+			██╔══██╗██╔════╝██╔══██╗██╔══██╗
+			██████╦╝█████╗░░███████║██████╔╝
+			██╔══██╗██╔══╝░░██╔══██║██╔══██╗
+			██████╦╝███████╗██║░░██║██║░░██║
+			╚═════╝░╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝
 		*/
 		"bear_ears": {
 			srcfn(options) {
@@ -2822,14 +2834,141 @@ Renderer.CanvasModels.main = {
 				return ZIndices.backhair
 			},
 		},
-		"okami_markings": {
+		"okami_misc": {
 			z: ZIndices.lower,
 			animation: "idle",
 			srcfn(options) {
-				return `img/transformations/okami/markings/${options.okami_markings_type}.png`;
+				return `img/transformations/okami/misc/${options.okami_misc_type}.png`;
 			},
 			showfn(options) {
-				return options.show_tf && isPartEnabled(options.okami_markings_type) && !options.hideAll;
+				return options.show_tf && isPartEnabled(options.okami_misc_type) && !options.hideAll;
+			},
+		},
+
+		/*
+			░██████╗███████╗██████╗░░█████╗░██████╗░██╗░░██╗██╗███╗░░░███╗
+			██╔════╝██╔════╝██╔══██╗██╔══██╗██╔══██╗██║░░██║██║████╗░████║
+			╚█████╗░█████╗░░██████╔╝███████║██████╔╝███████║██║██╔████╔██║
+			░╚═══██╗██╔══╝░░██╔══██╗██╔══██║██╔═══╝░██╔══██║██║██║╚██╔╝██║
+			██████╔╝███████╗██║░░██║██║░░██║██║░░░░░██║░░██║██║██║░╚═╝░██║
+			╚═════╝░╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░░░░╚═╝░░╚═╝╚═╝╚═╝░░░░░╚═╝
+		*/
+		"seraphim_wings": {
+			z: ZIndices.backhair,
+			animation: "idle",
+
+			srcfn(options) {
+				return `img/transformations/seraphim/wings/${options.seraphim_wings_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf
+					&& isPartEnabled(options.seraphim_wings_type)
+					&& !options.hideAll;
+			},
+			zfn(options) {
+				if (options.seraphim_wings_layer === "back") return ZIndices.head_back;
+				if (options.seraphim_wings_layer === "cover") return ZIndices.tailPenisCover;
+				return ZIndices.backhair
+			},
+		},
+		"seraphim_plumage": {
+			srcfn(options) {
+				return `img/transformations/seraphim/plumage/${options.seraphim_plumage_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.seraphim_plumage_type) && !options.hideAll;
+			},
+			z: ZIndices.lower,
+			animation: "idle"
+		},
+		"seraphim_eyes": {
+			z: ZIndices.irisacc,
+			animation: "idle",
+
+			srcfn(options) {
+				return `img/transformations/seraphim/eyes/${options.seraphim_eyes_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf
+					&& options.show_face
+					&& isPartEnabled(options.seraphim_eyes_type)
+					&& !options.hideAll;
+			},
+			masksrcfn(options) {
+				return {
+					path: `img/face/${options.facestyle}/${options.facevariant}/iris.png`,
+					convert: true,
+				};
+			}
+		},
+
+		/*
+			██╗░░██╗██╗████████╗░██████╗██╗░░░██╗███╗░░██╗███████╗
+			██║░██╔╝██║╚══██╔══╝██╔════╝██║░░░██║████╗░██║██╔════╝
+			█████═╝░██║░░░██║░░░╚█████╗░██║░░░██║██╔██╗██║█████╗░░
+			██╔═██╗░██║░░░██║░░░░╚═══██╗██║░░░██║██║╚████║██╔══╝░░
+			██║░╚██╗██║░░░██║░░░██████╔╝╚██████╔╝██║░╚███║███████╗
+			╚═╝░░╚═╝╚═╝░░░╚═╝░░░╚═════╝░░╚═════╝░╚═╝░░╚══╝╚══════╝
+		*/
+		"kitsune_tail": {
+			filters: ["hair"],
+			animation: "idle",
+
+			srcfn(options) {
+				return `img/transformations/kitsune/tail/${options.kitsune_tail_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.kitsune_tail_type) && !options.hideAll;
+			},
+			zfn(options) {
+				return options.kitsune_tail_layer === "back" ? ZIndices.tail : ZIndices.back_lower;
+			},
+		},
+		"kitsune_ears": {
+			filters: ["hair"],
+			// z: ZIndices.backhair,
+			zfn(options) {
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
+			},
+			animation: "idle",
+
+			srcfn(options) {
+				return `img/transformations/kitsune/ears/${options.kitsune_ears_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.kitsune_ears_type) && !options.hideAll;
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
+		},
+		"kitsune_cheeks": {
+			filters: ["hair"],
+			z: ZIndices.lower,
+			animation: "idle",
+
+			srcfn(options) {
+				return `img/transformations/kitsune/cheeks/${options.kitsune_cheeks_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.kitsune_cheeks_type) && !options.hideAll;
+			},
+			filters: ["hair"],
+			z: ZIndices.lower,
+			animation: "idle"
+		},
+		"kitsune_misc": {
+			z: ZIndices.old_over_upper,
+			animation: "idle",
+			srcfn(options) {
+				return `img/transformations/kitsune/misc/${options.kitsune_misc_type}.png`;
+			},
+			showfn(options) {
+				return options.show_tf && isPartEnabled(options.kitsune_misc_type) && !options.hideAll;
 			},
 		},
 
