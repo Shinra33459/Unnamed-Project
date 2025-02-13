@@ -411,6 +411,13 @@ DefineMacro("modelprepare-player-body", function () {
 	T.modeloptions.bear_tail_layer = V.taillayer;
 	T.modeloptions.bear_ears_type = V.transformationParts.bear.ears;
 
+	T.modeloptions.okami_tail_type = V.transformationParts.okami.tail;
+	T.modeloptions.okami_tail_layer = V.taillayer;
+	T.modeloptions.okami_ears_type = V.transformationParts.okami.ears;
+	T.modeloptions.okami_wings_type = V.transformationParts.okami.wings;
+	T.modeloptions.okami_wings_layer = V.wingslayer;
+	T.modeloptions.okami_markings_type = V.transformationParts.okami.markings;
+
 	/*
 
 		██████╗ ███████╗ ██████╗ ██████╗ ██████╗  █████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗

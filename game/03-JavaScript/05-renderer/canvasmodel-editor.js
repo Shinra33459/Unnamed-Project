@@ -928,6 +928,12 @@ Macro.add("canvasModelEditor", {
 						selectOption("bear_tail_type", ["disabled", "hidden", "default"]),
 						selectOption("bear_tail_layer", ["front", "back"]),
 						selectOption("bear_ears_type", ["disabled", "hidden", "default"]),
+						selectOption("okami_tail_type", ["disabled", "hidden", "default"]),
+						selectOption("okami_tail_layer", ["front", "back"]),
+						selectOption("okami_ears_type", ["disabled", "hidden", "default"]),
+						selectOption("okami_wings_type", ["disabled", "hidden", "default"]),
+						selectOption("okami_wings_layer", ["front", "back"]),
+						selectOption("okami_markings_type", ["disabled", "hidden", "default"]),
 
 						optionCategory("Body writings"),
 						selectOption("writing_forehead", bodyWritings),
