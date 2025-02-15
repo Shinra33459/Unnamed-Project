@@ -2224,10 +2224,13 @@
 
 <<widget "chestActionInit">>
 	<<if $dissociation lte 1 and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and !$possessed>>
-		<<switch $chestuse>>
+		<<switch $cheststate>>
 			<<case 0>>
+				<<if not $options.combatControls.includes("adio") and _targetnumber gt 1>>
+					<<targetListBox "chest" _targetlist>>
+				<</if>>
 				<<set _chestOptions to "free">>
-				<span @class="($lastOptions.anus isnot _anusOptions or _anusGold ?'gold':'')">Your <<breasts>> are free.</span>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">Your <<breasts>> are free.</span>
 				<<if $options.combatControls.includes("adio") and _targetnumber gt 1>>
 					<br>
 					<<targetListBox "chest" _targetlist>>
@@ -2235,14 +2238,40 @@
 				<<if _targetnumber is 1>>
 					<<set $chesttarget to _firsttarget>>
 				<</if>>
+			<<case "othermouthbay">>
+				<<set _chestOptions to "othermouthbay">><<selectNpcWithPartInPosition "mouth" "chestbay">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s face is <<if $player.breastsize gte 9>>buried in your cleavage<<elseif $player.breastsize gte 3>>pressed between your <<breasts>><<else>>pressed into the center of your chest<</if>>.</span>
+			<<case "othermouthentrance">>
+				<<set _chestOptions to "othermouthentrance">><<selectNpcWithPartInPosition "mouth" "chestentrance">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">You feel breath on your <<breasts>>.</span>
+			<<case "othermouthimminent">>
+				<<set _chestOptions to "othermouthimminent">><<selectNpcWithPartInPosition "mouth" "chestimminent">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s lips press against your <<nipple>>.</span>
+			<<case "othermouthsuck">>
+				<<set _chestOptions to "othermouthsuck">><<selectNpcWithPartInPosition "mouth" "chestsuck">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s mouth sucks and licks your <<nipple>>.</span>
+			<<case "othermouthdrink">>
+				<<set _chestOptions to "othermouthdrink">><<selectNpcWithPartInPosition "mouth" "chestdrink">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s mouth suckles milk from your <<nipple>>.</span>
+			<<case "otherhandsqueeze">>
+				<<set _chestOptions to "otherhandsqueeze">><<selectNpcWithPartInPosition "hand" "chestsqueeze">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s fingers squeeze on your <<breasts>>.</span>
+			<<case "otherhandimminent">>
+				<<set _chestOptions to "otherhandimminent">><<selectNpcWithPartInPosition "hand" "chestimminent">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">You feel <<combatperson>>'s fingers on your <<breasts>>.</span>
+			<<case "otherhandmilk">>
+				<<set _chestOptions to "otherhandmilk">><<selectNpcWithPartInPosition "hand" "chestmilk">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">You feel <<combatperson>>'s fingers squeezing milk out of your <<breasts>>.</span>
 			<<case "penis">>
 				<<set _chestOptions to "penis">><<selectNpcWithPartInPosition "penis" "chest">><<set $chesttarget to $index>>
 				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPersons>> <<npcPenisSimple $chesttarget>> rests <<print ($player.breastsize is 0 ?"against":"between")>> your <<breasts>>.</span>
 			<<case "tentaclerub">>
 				<<set $_changetype to true>><<chestActionInitTentacle>>
+			<!-- 
 			<<case "mouth">>
 				<<set _chestOptions to "mouth">><<selectNpcWithPartInPosition "mouth" "chest">><<set $chesttarget to $index>>
 				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s mouth rests <<print ($player.breastsize is 0 ?"against":"between")>> your <<breasts>>.</span>
+			-->
 		<</switch>>
 		<<if $_changetype isnot true>>
 			<<chestActions>>
@@ -2289,14 +2318,20 @@
 	/*Generate Actions*/
 	<<set _chestaction to {}>>
 	<<if $position isnot "stalk">>
+		/* MCA unfinished setting actions, some of these are unreachable atm */
 		<<switch _chestOptions>>
-			<<case "free">>
-				<<set _chestaction["Rest"] to "rest">>
-				<<actionschestfree>>
+			<<case "free">><<actionschestfree>>
+			<<case "othermouthbay">><<set _chestaction["Rest"] to "rest">>
+			<<case "othermouthentrance">><<actionschestmouth>>
+			<<case "othermouthimminent">><<actionschestmouth>>
+			<<case "othermouthsuck">><<actionschestmouth>>
+			<<case "othermouthdrink">><<actionschestmouth>>
+			<<case "otherhandsqueeze">><<set _chestaction["Rest"] to "rest">>
+			<<case "otherhandimminent">><<set _chestaction["Rest"] to "rest">>
+			<<case "otherhandmilk">><<set _chestaction["Rest"] to "rest">>
 			<<case "penis">><<actionschestpenis>>
-			<<case "mouth">>
-				<<set _chestaction["Rest"] to "rest">>
-				<<actionschestmouth>>
+			/*<<case "mouth">><<actionschestmouth>>*/
+			/*<<case "hand">><<actionschesthand>>*/
 		<</switch>>
 	<</if>>
 <</widget>>

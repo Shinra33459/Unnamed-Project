@@ -1,5 +1,7 @@
 :: Widgets Actions Chest [widget]
+
 <<widget "actionschestfree">>
+    <<set _chestaction["Rest"] to "rest">>
     <<if ($consensual is 1 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 35 or $promiscuityIgnore) and
         $NPCList[$chesttarget].location.genitals isnot "head" and ![$NPCList[$chesttarget].location.head].includesAny("head", "genitals")
         and !$gloryhole>>
@@ -13,11 +15,16 @@
 <</widget>>
 
 <<widget "actionschestmouth">>
+    <<set _chestaction["Rest"] to "rest">>
     <<if ($consensual is 1 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 75 or $promiscuityIgnore) and $player.breastsize gte 3 
-    and $lactating and $worn.upper.exposed is 2 and $breastfeedingdisable is "f" and !$gloryhole and ($leftarm is 0 or $rightarm is 0)>>
+    and $lactating and $worn.upper.exposed is 2 and !$gloryhole and ($leftarm is 0 or $rightarm is 0) and $breastfeedingdisable is "f">>
         <<set _chestaction["Breastfeed " + $NPCList[$chesttarget].pronouns.him] to "milkchest">>
     <</if>>
     <<set _chestaction["Pull away"] to "chestpullawaymouth">>
+<</widget>>
+
+<<widget "actionschesthand">>
+    <<set _chestaction["Rest"] to "rest">>
 <</widget>>
 
 :: Widgets Effects Chest [widget]
@@ -61,7 +68,7 @@
     <<set $chestactiondefault to "rest">><<chestskilluse>><<combatpromiscuity3>><<meek 2>>
     <<if combatSkillCheck("chest", $chesttarget)>>
         <<set $NPCList[$chesttarget].mouth to "chestentrance">><<set $NPCList[$chesttarget].location.head to "head">>
-        <<set $chestuse to "mouth">><<set $cheststate to "mouthentrance">>
+        <<set $chestuse to "othermouth">><<set $cheststate to "othermouthentrance">>
         <span class="lblue">You <<chesttext>> move your <<breasts>> towards <<hisselect $chesttarget>> mouth.</span>
     <<else>>
         You try to move your <<breasts>> towards <<hisselect $chesttarget>> mouth, but fail.
@@ -69,14 +76,14 @@
 <</widget>>
 
 <<widget "effectsMilkChest">>
-    <<set $chestactiondefault to "milkchest">><<personselect $chesttarget>><<meek 10>><<combatpromiscuity5>>
+    <<personselect $chesttarget>><<meek 10>><<combatpromiscuity5>>
     <<if $leftactiondefault is "rest" or $rightactiondefault is "rest">>
         <<handskilluse>>
-        <<if $milk_amount gt 0 and $NPCList[$chesttarget].mouth isnot "chest">>
-            <<set $NPCList[$chesttarget].mouth to "chest">><<set $cheststate to "chest">>
+        <<if $milk_amount gt 0 and $NPCList[$chesttarget].mouth isnot "chestdrink">>
+            <<set $NPCList[$chesttarget].mouth to "chestdrink">><<set $cheststate to "othermouthdrink">>
             <span class="lewd">You push your <<nipples>> into <<his>> mouth.</span>
         <<elseif $NPCList[$chesttarget].mouth is "chestentrance">>
-            <<set $NPCList[$chesttarget].mouth to "chestimminent">><<set $cheststate to "chestimminent">>
+            <<set $NPCList[$chesttarget].mouth to "chestmouthimminent">><<set $cheststate to "othermouthsuck">>
             <span class="lewd">You push your <<nipples>> into <<his>> mouth.</span>
         <</if>>
         <<if combatSkillCheck("hand", $chesttarget) and $milk_amount gt 0>>
@@ -100,8 +107,8 @@
     <<if combatSkillCheck("chest", $chesttarget)>>
         <<set $chestactiondefault to "rest">>
         <span class="lblue">You <<chesttext>> pull your 
-        <<if $cheststate isnot "chestentrance">>
-            <<set $NPCList[$chesttarget].mouth to "chestentrance">><<set $cheststate to "chestentrance">>
+        <<if $cheststate isnot "othermouthentrance">>
+            <<set $NPCList[$chesttarget].mouth to "chestentrance">><<set $cheststate to "othermouthentrance">>
             <<nipples>> 
         <<else>>
             <<set $NPCList[$chesttarget].mouth to 0>><<set $cheststate to 0>><<set $chestuse to 0>><<set $chestaction to 0>>
@@ -109,6 +116,6 @@
         <</if>>
         away from <<his>> mouth.</span>
     <<else>>
-        You try to pull your <<if $cheststate isnot "chestentrance">><<nipples>><<else>><<chest>><</if>> away from <<his>> mouth, <span class="purple">but <<he>> doesn't let go.</span>
+        You try to pull your <<if $cheststate isnot "othermouthentrance">><<nipples>><<else>><<chest>><</if>> away from <<his>> mouth, <span class="purple">but <<he>> doesn't let go.</span>
     <</if>>
 <</widget>>
