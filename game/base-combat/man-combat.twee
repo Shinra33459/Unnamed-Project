@@ -1764,7 +1764,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 <</widget>>
 
 <<widget "combat-hand-on-throat">>
-	<<if $asphyxiaLvl gte 1 and ($consensual is 1 or $combatExtended.stabilityLost is 1 or $combatExtended.standingFightsType is "normal")>>
+	<<if $asphyxiaLvl gte 1 and ($consensual is 1 or $combatExtended.stabilityLost is 1)>>
 		<<rng>>
 		<<if $consensual is 1>>
 			<<mancombat_choke>>
@@ -1807,6 +1807,26 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 		<<set $askedtochoke to 0>>
 		<<combat-set-hand-target _args[0] "throat">>
 		<<neutral 1 _n>>
+	<<elseif $combatExtended.standingFightStart is 0 and $combatExtended.standingFightsType is "normal" and $combatExtended.stabilityLost is 0 and Math.random() * 100 lte 33 and ($enemyanger + $rng lt 160)>>
+		<<if ($combatExtended.passiveDodging is 1 or $combatExtended.activeDodgingActive is 1 or $combatExtended.countering is 1) and ($combatExtended.dodgeSuccess gte 1 or $combatExtended.counteringActive gte 1) and $consensual isnot 1>>
+			<span class="purple"><<He>> tries to grapple you onto the floor with <<his>> _args[0] hand</span> but
+			<<if $combatExtended.counterSuccess is 2>>
+				<span class="green">you avoid their grabby hands and jab their face.</span>
+				<<defiance 5>><<control 4>><<ggcontrol>><<counterStat>>
+			<<elseif $combatExtended.dodgeSuccess is 2>>
+				<span class="green">you dodge.</span>
+				<<control 2>><<gcontrol>><<dodgeStat>><<set $enemyanger += 10>>
+			<<elseif $combatExtended.counterSuccess is 1>>
+				<span class="blue">you manage to punch them in return.</span>
+				<<defiance 3>><<partialCounterStat>><<combatExtendedStability -10>>
+			<<else>>
+				<span class="blue">you partially dodge.</span>
+				<<partialDodgeStat>><<set $enemyanger += 5>><<combatExtendedStability -5>>
+			<</if>>
+		<<else>>
+			<span class="pur1ple"><<He>> tries to grapple you onto the floor with <<his>> _args[0] hand.</span>
+			<<set $speechgrapple to 1>><<combatExtendedStability -10>>
+		<</if>>
 	<<elseif $combatgoal is "strip" and ($consensual is 1 or $combatExtended.stabilityLost is 1 or $combatExtended.standingFightsType is "normal")>>
 		<<if $worn.over_upper.name isnot "naked" and $noupper isnot 1>>
 			<span class="purple"><<He>> grasps your $worn.over_upper.name with <<his>> _args[0] hand.</span>

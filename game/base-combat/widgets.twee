@@ -909,10 +909,15 @@
 <</widget>>
 
 <<widget "combatExtendedStability">>
-	<<if $combatExtended.footworkToggle is 1>>
-		<<set _tmp to _args[0] * (1 - (0.8 * ($combatExtended.footwork / 2000)))>>
+	<<set _tmp to _args[0]>>
+	<<if $combatExtended.footworkToggle is 1 and _tmp lt 0>>
+		<<if _tmp lte 0>>
+			<<set _tmp to _tmp * (1 - (0.8 * ($combatExtended.footwork / 2000)))>>
+		<<else>>
+			<<set _tmp to _tmp * (1 + (0.8 * ($combatExtended.footwork / 2000)))>>
+		<</if>>
 	<</if>>
-	<<set $combatExtended.stability += _tmp>>
+	<<set $combatExtended.stability to Math.clamp($combatExtended.stability + _tmp, 0 , 100)>>
 <</widget>>
 
 <<widget "combatExtendedEnemyCheck">>
