@@ -109,7 +109,7 @@ const combatActionColours = {
 		],
 		sub: [
 			/* leftaction or rightaction */
-			"leftplay", "leftgrab", "leftstroke", "leftchest", "rightplay", "rightgrab", "rightstroke", "rightchest", "leftchest", "rightchest", "leftwork", "rightwork", "leftclit", "rightclit", "handedge", "keepchoke", "leftmasturbatepussy", "rightmasturbatepussy", "leftmasturbateanus", "rightmasturbateanus", "leftmasturbatepenis", "rightmasturbatepenis", "lefthandholdkeep", "righthandholdkeep", "lefthandholdnew", "righthandholdnew", "handguide", "lubeanus", "lubepussy", "lubepenis", "removebuttplug", "dildoOtherPussyTease", "dildoOtherPussyFuck", "dildoOtherAnusTease", "dildoOtherAnusFuck", "strokerOtherPenisTease", "strokerOtherPenisFuck", "dildoSelfPussyEntrance", "dildoSelfAnusEntrance", "dildoSelfPussy", "dildoSelfAnus", "strokerSelfPenisEntrance", "strokerSelfPenis", "leftcovervaginalewd", "rightcovervaginalewd", "leftcoverpenislewd", "rightcoverpenislewd", "leftcoveranuslewd", "rightcoveranuslewd",  "handpenistomouth",
+			"leftplay", "leftgrab", "leftstroke", "leftchest", "rightplay", "rightgrab", "rightstroke", "rightchest", "leftchest", "rightchest", "leftwork", "rightwork", "leftclit", "rightclit", "handedge", "keepchoke", "leftmasturbatepussy", "rightmasturbatepussy", "leftmasturbateanus", "rightmasturbateanus", "leftmasturbatepenis", "rightmasturbatepenis", "lefthandholdkeep", "righthandholdkeep", "lefthandholdnew", "righthandholdnew", "handguide", "lubeanus", "lubepussy", "lubepenis", "removebuttplug", "dildoOtherPussyTease", "dildoOtherPussyFuck", "dildoOtherAnusTease", "dildoOtherAnusFuck", "strokerOtherPenisTease", "strokerOtherPenisFuck", "dildoSelfPussyEntrance", "dildoSelfAnusEntrance", "dildoSelfPussy", "dildoSelfAnus", "strokerSelfPenisEntrance", "strokerSelfPenis", "leftcovervaginalewd", "rightcovervaginalewd", "leftcoverpenislewd", "rightcoverpenislewd", "leftcoveranuslewd", "rightcoveranuslewd", "handpenistomouth",
 			/* feetaction */
 			"grab", "vaginagrab", "grabrub", "vaginagrabrub", "rub", "submit",
 			/* mouthaction */
@@ -516,10 +516,9 @@ function calculateMarkedChance(deckCount, markedCount, depth, atLeast, doLog = f
 		// log(`One marked card can be picked from MARKED=1 cards in 1c1 = 1 ways, and the remaining three (which are not marked) can be picked from DECK=5-MARKED=1 = 4 cards in 4c3 = 4 ways.
 		log(
 			`${nMarkedPicked} marked cards can be picked from MARKED=${markedCount} cards in ${markedCount}c${nMarkedPicked} = ${markedPoolWays} ways,` +
-				`and the remaining ${deckCount - markedCount} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${
-					deckCount - markedCount
-				} cards in ${deckCount - markedCount}c${possibleMarkedCardsVisibleLimit - nMarkedPicked} = ${unmarkedPoolWays} ways.\n` +
-				`${markedPoolWays}*${unmarkedPoolWays} = ${totalWays} ways.`
+			`and the remaining ${deckCount - markedCount} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${deckCount - markedCount
+			} cards in ${deckCount - markedCount}c${possibleMarkedCardsVisibleLimit - nMarkedPicked} = ${unmarkedPoolWays} ways.\n` +
+			`${markedPoolWays}*${unmarkedPoolWays} = ${totalWays} ways.`
 		);
 	}
 
@@ -1582,6 +1581,24 @@ function drunkSexStatModifier(statValue) {
 window.drunkSexStatModifier = drunkSexStatModifier;
 
 /**
+ * @param {number} statValue
+ */
+function hallucinogenSexStatModifier(statValue) {
+	if (V.hallucinogen === 0) return 0;
+
+	const maxValue = 40; // The maximum value of the curve.
+	const valueAdjust = Math.clamp(maxValue - Math.floor(statValue / 4), 0, maxValue); // The curve is less effective with higher base stat.
+	const growthRate = 3; // How fast the curve grows as the hallucinogen value increases.
+	const midpoint = 500; // Needs to be half of the max hallucinogen value.
+	const shifter = 0.85; // Decreases this value to make lower hallucinogen values give higher results and higher hallucinogen values give lower results.
+	const hallucinogenMod = (V.hallucinogen - midpoint) / 500; // Adjusts the hallucinogen values to be scaled correctly with the equation and max stat value.
+	const denominator = 1 + shifter * Math.E ** (-1 * growthRate * hallucinogenMod);
+
+	return Math.floor(valueAdjust / denominator);
+}
+window.hallucinogenSexStatModifier = hallucinogenSexStatModifier;
+
+/**
  * Returns the modifier for a sexStat based on heat/rut/minArousal and the stat provided.
  *
  * @param {string} input
@@ -1642,6 +1659,8 @@ function hasSexStat(input, required, modifiers = true) {
 	if (modifiers) {
 		// modify effective stat value based on inebriation.
 		statValue += drunkSexStatModifier(statValue);
+
+		statValue += hallucinogenSexStatModifier(statValue);
 
 		// modify effective stat value based on heat/rut/minArousal.
 		statValue += heatRutSexStatModifier(statName);
@@ -2345,7 +2364,7 @@ function dailyConvert() {
 			// eslint-disable-next-line prettier/prettier
 			/* school */ "scienceinterrupted", "mathsinterrupted", "englishinterrupted", "historyinterrupted", "swimminginterrupted", "headinterrupted", "luncheaten", "canteenapproach", "detentionattended", "boysroomentered", "girlsroomentered", "scienceExcused", "mathsExcused", "englishExcused", "historyExcused", "swimmingExcused", "school_herm_day", "school_crossdress_day",
 			// eslint-disable-next-line prettier/prettier
-			/* whitney */ "bullygate", "whitney_toilet_check", "whitney_park", "whitney_text_trigger", "whitneyFlirt", "whitneyChat", "whitneyAsk","whitney_text", "whitney_text_trigger", "whitneyDaily",
+			/* whitney */ "bullygate", "whitney_toilet_check", "whitney_park", "whitney_text_trigger", "whitneyFlirt", "whitneyChat", "whitneyAsk", "whitney_text", "whitney_text_trigger", "whitneyDaily",
 			// eslint-disable-next-line prettier/prettier
 			/* robin */ "robinwalk", "robinhugcry", "robinhugcomplain", "robinblame", "robinpersecute", "robinpolicebody", "robinpolicepay", "robin_tending", "robinDaily", "robinbeachpolice", "robinparksnow", "robinDebtAsk",
 			// eslint-disable-next-line prettier/prettier
