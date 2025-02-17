@@ -380,7 +380,10 @@
 			<<if $_blockDancingEvents>>
 				<!-- No other events can trigger -->
 			<<elseif $dancelocation is 0>>
-				<<if $audiencearousal gte 100>>
+				<<if $stress gte $stressmax>>
+					<span class="red">You collapse out of sheer exhaustion.</span>
+					<<dancefall>>
+				<<elseif $audiencearousal gte 100>>
 					<<if $rng gte 91>>
 						<<dancerape>>
 					<<elseif $rng gte 71>>
@@ -400,7 +403,9 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "club">>
-				<<if $rng lte 8 and $worn.feet.type.includes("heels") and currentSkillValue("feetskill") lt $worn.feet.reveal>>
+				<<if $tiredness gte C.tiredness.max>>
+					<<dancetiredfinish>>
+				<<elseif $rng lte 8 and $worn.feet.type.includes("heels") and currentSkillValue("feetskill") lt $worn.feet.reveal>>
 					<<dancetripfinish>>
 				<<elseif $audiencearousal gte 100>>
 					<<dancefinish>>
@@ -426,7 +431,9 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "cafe">>
-				<<if $timer lte 0>>
+				<<if $tiredness gte C.tiredness.max>>
+					<<dancesamtiredfinish>>
+				<<elseif $timer lte 0>>
 					<<dancesamfinish>>
 				<<else>>
 					<<if $audiencearousal gte 81>>
@@ -440,7 +447,10 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "brothel">>
-				<<if $rng lte 8 and $worn.feet.type.includes("heels") and currentSkillValue("feetskill") lt $worn.feet.reveal>>
+				<<if $stress gte $stressmax>>
+					<span class="red">You collapse out of sheer exhaustion.</span>
+					<<dancefall>>
+				<<elseif $rng lte 8 and $worn.feet.type.includes("heels") and currentSkillValue("feetskill") lt $worn.feet.reveal>>
 					<<dancetriprape>>
 				<<elseif $audiencearousal gte 100>>
 					<<if $rng gte 101 - ($earSlime.corruption / 20) and $corruptionDancing is undefined>>
@@ -502,7 +512,10 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "underground">>
-				<<if $audiencearousal gte 100>>
+				<<if $stress gte $stressmax>>
+					<span class="red">You collapse out of sheer exhaustion.</span>
+					<<dancefall>>
+				<<elseif $audiencearousal gte 100>>
 					<<if $rng gte 91>>
 						<<dancerape>>
 					<<elseif $rng gte 71>>
@@ -528,7 +541,10 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "smuggler_forced">>
-				<<if $audiencearousal gte 100>>
+				<<if $stress gte $stressmax>>
+					<span class="red">You collapse out of sheer exhaustion.</span>
+					<<dancefall>>
+				<<elseif $audiencearousal gte 100>>
 					<<if $rng gte 91>>
 						<<dancerape>>
 					<<elseif $rng gte 71>>
@@ -554,7 +570,9 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "party">>
-				<<if $audiencearousal gte 90>>
+				<<if $tiredness gte C.tiredness.max>>
+					<<dancetiredpull>>
+				<<elseif $audiencearousal gte 90>>
 					<<dancepull>>
 				<<elseif $drunk gte random(1, 1000)>>
 					<<dancedrunktrip>>
@@ -568,7 +586,10 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "stage">>
-				<<if $audiencearousal gte 100>>
+				<<if $stress gte $stressmax>>
+					<span class="red">You collapse out of sheer exhaustion.</span>
+					<<dancefall>>
+				<<elseif $audiencearousal gte 100>>
 					<<if $rng gte 91>>
 						<<dancerape>>
 					<<elseif $rng gte 71>>
@@ -595,7 +616,10 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "smuggler_pub">>
-				<<if $audiencearousal gte 100>>
+				<<if $stress gte $stressmax>>
+					<span class="red">You collapse out of sheer exhaustion.</span>
+					<<dancefall>>
+				<<elseif $audiencearousal gte 100>>
 					<<if $rng gte 91>>
 						<<dancerape>>
 					<<elseif $rng gte 71>>
@@ -658,6 +682,11 @@
 <<widget "dancepull">>
 	<<set $danceevent to "dancepull">>
 	Driven mad with lust, <span class="pink">the <<person>> grasps your leg, and tries to pull you off the stage.</span>
+<</widget>>
+
+<<widget "dancetiredpull">>
+	<<set $danceevent to "finish">>
+	One of the audience gets on stage and pulls you aside. "Look, anyone could tell you're exhausted, let's stop here."
 <</widget>>
 
 <<widget "dancedrunktrip">>
@@ -746,6 +775,13 @@
 	<br><br>
 <</widget>>
 
+<<widget "dancetiredfinish">>
+	A member of security motions for you to step off the stage. You open your mouth to ask why, but you are interrupted, "Anyone can tell that you're tired as hell. We won't allow anyone to overwork themselves in the establishment, club policy."
+	<br><br>
+	<<set $danceevent to "finish">>
+	<br><br>
+<</widget>>
+
 <<widget "dancetriprape">>
 	You clumsily botch a move and stumble in your heels, falling forwards and hurtling your body off the stage. You land in a crowd of people, hitting your head on the way down.
 	<<pain 25>><<ggpain>>
@@ -801,6 +837,11 @@
 <<widget "dancesamfinish">>
 	<<endevent>><<npc Sam>>Sam appears beside your table-stage. "That's enough everyone, this <<girl>> has had enough." <<He>> takes you by the arm and leads you into a back room. "Good job today. Here's a little something extra." You earn <<printmoney 1000>><<money 1000 "cafeWaiter">>.
 	<<npcincr Sam love 2>><<glove>><<set $danceevent to "finish">>
+<</widget>>
+
+<<widget "dancesamtiredfinish">>
+	<<endevent>><<npc Sam>>Sam appears beside your table-stage. "That's enough everyone, this <<girl>> has had enough." <<He>> takes you by the arm and leads you into a back room. "Don't force yourself, anyone could tell you're exhausted." You earn <<printmoney500>><<money 500 "cafeWaiter">>.
+	<<npcincr Sam love 1>><<glove>><<set $danceevent to "finish">>
 <</widget>>
 
 <<widget "danceleighton">>
