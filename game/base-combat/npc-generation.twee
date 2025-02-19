@@ -883,8 +883,28 @@
 		<</if>>
 	<</if>>
 
-	<<if $combatExtended.enemyPassiveDodging is 1>>
-		<<set $NPCList[_n].dodgeChance to _i * 2>>
+	<<set $NPCList[_n].dodgeChance to 0>>
+	<<if $combatExtended.enemyBaseDodgeChance is 1>>
+		<<set $NPCList[_n].dodgeChance += _i * $combatExtended.enemyBaseDodgeChanceMult>>
+	<</if>>
+
+	<<if $combatExtended.enemyMartialArts is 1>>
+		<<set $NPCList[_n].martialArts to 0>>
+		<<if (_i * $enemyMartialArtsLevelScalingMult) lt 200>>
+			<<set _randomness to (_i * $combatExtended.enemyMartialArtsLevelScalingMult) / 2>>
+		<<else>>
+			<<set _randomness to 100>>
+		<</if>>
+		<<if $combatExtended.enemyMartialArtsScaling is "random" or $combatExtended.enemyMartialArtsScaling is "both">>
+			<<set $NPCList[_n].martialArts += random((_i * $combatExtended.enemyMartialArtsLevelScalingMult) - _randomness, (_i * $combatExtended.enemyMartialArtsLevelScalingMult) + _randomness)>>
+		<</if>>
+		<<if $combatExtended.enemyMartialArtsScaling is "level" or $combatExtended.enemyMartialArtsScaling is "both">>
+			<<set $NPCList[_n].martialArts += _i * $combatExtended.enemyMartialArtsLevelScalingMult>>
+		<</if>>
+
+		<<if $NPCList[_n].martialArts gt 0>>
+			<<set $NPCList[_n].dodgeChance += Math.round($NPCList[_n].martialArts / 10)>>
+		<</if>>
 	<</if>>
 
 	<<if $NPCList[_n].penis isnot "none">><!-- set pp size based on the upper and lower bounds for the selected description -->
@@ -929,7 +949,7 @@
 			<<set $NPCList[_n].maxOrgasms to 3 + Math.floor($NPCName[$NPCNameList.indexOf(_nameCheck)].lust / 20)>>
 		<<elseif _nameCheck is "Avery" or _nameCheck is "Whitney" or _nameCheck is "Remy" or _nameCheck is "Wren" or _nameCheck is "Alex" or _nameCheck is "Charlie">>
 			<<set $NPCList[_n].maxOrgasms to 4 + Math.floor($NPCName[$NPCNameList.indexOf(_nameCheck)].lust / 20)>>
-		<<elseif _nameCheck is "Bailey" or _nameCheck is "Briar" or _nameCheck is "Eden" or _nameCheck is "Black Wolf" or _nameCheck is "Great Hawk" or _nameCheck is "Ivory Wraith" or _nameCheck is "Zephyr">>
+		<<elseif _nameCheck is "Bailey" or _nameCheck is "Briar" or _nameCheck is "Eden" or _nameCheck is "Black Wolf" or _nameCheck is "Great Hawk" or _nameCheck is "Ivory Wraith" or _nameCheck is "Zephyr" or _nameCheck is "Riley">>
 			<<set $NPCList[_n].maxOrgasms to 5 + Math.floor($NPCName[$NPCNameList.indexOf(_nameCheck)].lust / 20)>>
 		<<else>>
 			<<set $NPCList[_n].maxOrgasms += Math.floor(_i / 5)>>
