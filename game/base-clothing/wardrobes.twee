@@ -47,6 +47,15 @@
 				<</if>>
 			<</for>>
 		<</for>>
+		<<for _key range Object.keys($worn)>>
+			<<if not $worn[_key]>>
+				<<continue>>
+			<</if>>
+			<<if $worn[_key].integrity lt clothingData(_key, $worn[_key],'integrity_max')>>
+				<<set _repairCount += Math.ceil((clothingData(_key, $worn[_key], 'integrity_max') - $worn[_key].integrity) / 25)>>
+				<<set $worn[_key].integrity = clothingData(_key, $worn[_key],'integrity_max')>>
+			<</if>>
+		<</for>>
 		<<set _timeNeeded to (10 - (1 * Math.round($housekeeping / 250))) * _repairCount>>
 		<<set _gain to Math.max((6 - (2 * Math.round($housekeeping / 200))) * _repairCount, 2 * _repairCount)>>
 		<<housekeeping _gain 1000>>
@@ -348,6 +357,14 @@
 				<<set _repairCount += Math.ceil((clothingData(_key, $wardrobe[_key][_i], 'integrity_max') - $wardrobe[_key][_i].integrity) / 25)>>
 			<</if>>
 		<</for>>
+	<</for>>
+	<<for _key range Object.keys($worn)>>
+		<<if not $worn[_key]>>
+			<<continue>>
+		<</if>>
+		<<if $worn[_key].integrity lt clothingData(_key, $worn[_key],'integrity_max')>>
+			<<set _repairCount += Math.ceil((clothingData(_key, $worn[_key], 'integrity_max') - $worn[_key].integrity) / 25)>>
+		<</if>>
 	<</for>>
 	<<set _timeNeeded to (10 - (1 * Math.round($housekeeping / 250))) * _repairCount>>
 	<<set _timeString to getTimeString(_timeNeeded)>>
