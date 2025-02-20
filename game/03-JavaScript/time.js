@@ -1327,7 +1327,7 @@ function dailyNPCEffects() {
 function dailyPlayerEffects() {
 	const fragment = document.createDocumentFragment();
 
-	if (V.willpowerDecay == 1){
+	if (V.willpowerDecay == 1) {
 		V.willpower *= 0.99;
 	}
 
@@ -1800,7 +1800,7 @@ function dailySchoolEffects() {
 				V.book_rent_deposit -= Math.round(T.totalRentPrice / 14);
 				V.book_rent_timer = 14;
 			} else if (V.book_rent_timer >= 0) {
-					V.book_rent_timer--;
+				V.book_rent_timer--;
 			} else if (V.book_rent_timer < 0) {
 				if (V.bookOverdue === undefined) V.bookOverdue = 0;
 				V.bookOverdue++;
@@ -1883,11 +1883,11 @@ function dailyMasochismSadismEffects() {
 	if (!V.featsMasochismBoost && V.uncomfortable.sadoMaso === true) V.masochism *= 0.985;
 
 	V.dailySadism = 0;
-		if (V.featsSadismBoost) V.dailySadism += V.featsSadismBoost;
-		Wikifier.wikifyEval("<<sadism $dailySadism>>");
+	if (V.featsSadismBoost) V.dailySadism += V.featsSadismBoost;
+	Wikifier.wikifyEval("<<sadism $dailySadism>>");
 	V.dailyMasochism = 0;
-		if (V.featsMasochismBoost) V.dailyMasochism += V.featsMasochismBoost;
-		Wikifier.wikifyEval("<<masochism $dailyMasochism>>");
+	if (V.featsMasochismBoost) V.dailyMasochism += V.featsMasochismBoost;
+	Wikifier.wikifyEval("<<masochism $dailyMasochism>>");
 
 	const masochism = effects(V.masochism_level, V.masochism);
 	if (masochism) {
@@ -2001,13 +2001,13 @@ function dailyFarmEvents() {
 			fragment.append(wikifier("farm_cattle", -1));
 		}
 		fragment.append(wikifier("farm_build_day"));
-		if (V.farm.compostbin >= 1){
+		if (V.farm.compostbin >= 1) {
 			fragment.append(wikifier("composting"));
 		}
-		if (V.farm.watchtowerDailyAttempt == 1){
+		if (V.farm.watchtowerDailyAttempt == 1) {
 			V.farm.watchtowerDailyAttempt = 0;
 		}
-		if (V.farm.dailyHelp == 1){
+		if (V.farm.dailyHelp == 1) {
 			V.farm.dailyHelp = 0;
 		}
 	}
@@ -2023,10 +2023,18 @@ function dailyFarmEvents() {
 				V.farm.player_still_timer--;
 			}
 			if (V.farm.player_still_timer == 0) {
-				V.lurkers_stored--;
-				V.phials_stored++;
-				if (V.farm.extract == 2 && V.lurkers_stored > 0){
-					V.farm.player_still_timer = 9 - V.sciencetrait;
+				if (V.lurker_stored >= 3 && V.farm.extractOverdrive == 1) {
+					V.lurkers_stored -= 3;
+					V.phials_stored += 2;
+					if (V.farm.extract == 2 && V.lurkers_stored > 0) {
+						V.farm.player_still_timer = 9 - V.sciencetrait;
+					}
+				} else {
+					V.lurkers_stored--;
+					V.phials_stored++;
+					if (V.farm.extract == 2 && V.lurkers_stored > 0) {
+						V.farm.player_still_timer = 9 - V.sciencetrait;
+					}
 				}
 			}
 		}
