@@ -511,7 +511,12 @@ const Furniture = (() => {
 		});
 	}
 
-	function furnitureGet(category, onlySetup = false) {
+	function furnitureGet(category, location, onlySetup = false) {
+		if (location == "home") {
+			location = "bedroom";
+		} else if (location == "alex_cottage") {
+			location = "cottage";
+		}
 		print("Furniture.get > getting:", category);
 		if (typeof category !== "string") {
 			print("Furniture.Get expected an argument of type: string.", category);
@@ -524,9 +529,9 @@ const Furniture = (() => {
 			print("Furniture.Get called before SugarCube is ready, postpone execution next time.", category);
 			return null;
 		}
-		const area = V.furniture[target];
+		const area = V.furniture[location];
 		if (typeof area !== "object" && area === null) {
-			print("Furniture.Get called with a location that doesn't exist:", target, area);
+			print("Furniture.Get called with a location that doesn't exist:", location, area);
 			return null;
 		}
 		const current = area[category];
@@ -549,7 +554,7 @@ const Furniture = (() => {
 			Errors.report(`Furniture.Set was incorrectly passed an invalid category : ${category}`);
 			return false;
 		}
-		const home = V.furniture[target];
+		const home = V.furniture[V.furnitureShopTarget];
 
 		home[category] = { id };
 		if (typeof overrides === "object" && overrides !== null) {
@@ -563,13 +568,13 @@ const Furniture = (() => {
 
 	function furnitureDelete(category) {
 		print("Furniture.delete > Deleting:", category);
-		delete V.furniture[target][category];
+		delete V.furniture[V.furnitureShopTarget][category];
 		return true;
 	}
 
 	function furnitureIn(location) {
 		if (Object.values(Locations).includes(location)) {
-			target = location;
+			V.furnitureShopTarget = location;
 		} else {
 			Errors.report(`Location provided (${location}) does not exist in the furniture system.`);
 		}
@@ -661,7 +666,7 @@ const Furniture = (() => {
 	}
 
 	function isWardrobeHigherTier(wardrobe) {
-		const current = Furniture.get("wardrobe");
+		const current = Furniture.get("wardrobe", V.furnitureShopTarget);
 		if (current) {
 			const targetTier = getWardrobeTier(wardrobe);
 			const currentTier = getWardrobeTier(current);
@@ -678,8 +683,8 @@ const Furniture = (() => {
 				// console.log("isWardrobeHigherTier", isWardrobeHigherTier(item));
 				return isWardrobeHigherTier(item);
 			case "notBedroom":
-				// console.log("notBedroom", target !== "bedroom", target);
-				return target !== "bedroom";
+				// console.log("notBedroom", V.furnitureShopTarget !== "bedroom", V.furnitureShopTarget);
+				return V.furnitureShopTarget !== "bedroom";
 			case "disabled":
 				// console.log("disabled");
 				return false;
@@ -742,7 +747,7 @@ const Furniture = (() => {
 		setPrice,
 		showFn,
 		get target() {
-			return target;
+			return V.furnitureShopTarget;
 		},
 	});
 })();
