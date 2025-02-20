@@ -203,23 +203,23 @@ setup.feats = {
 		series: "",
 		filter: ["All", "General"],
 	},
-	"Ten in a Row": {
-		title: "Ten in a Row",
-		desc: "Win ten games of blackjack in a row.",
+	"Seven in a Row": {
+		title: "Seven in a Row",
+		desc: "Win seven games of blackjack in a row.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "General"],
 	},
-	"Fifteen in a Row": {
-		title: "Fifteen in a Row",
-		desc: "Win fifteen games of blackjack in a row.",
+	"Nine in a Row": {
+		title: "Nine in a Row",
+		desc: "Win nine games of blackjack in a row.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "General"],
 	},
-	"Twenty in a Row": {
-		title: "Twenty in a Row",
-		desc: "Win twenty games of blackjack in a row.",
+	"Ten in a Row": {
+		title: "Ten in a Row",
+		desc: "Win ten games of blackjack in a row.",
 		difficulty: 4,
 		series: "",
 		filter: ["All", "General"],
