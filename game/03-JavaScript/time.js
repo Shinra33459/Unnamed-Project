@@ -1052,9 +1052,15 @@ function minutePassed(minutes) {
 
 	// Effects
 	V.stress = Math.min(V.stress, V.stressmax);
-	if (V.drunk > 0) statChange.alcohol(-minutes);
-	if (V.hallucinogen > 0) statChange.hallucinogen(-minutes);
-	if (V.drugged > 0) statChange.drugs(-minutes);
+	if (V.substanceRebalance == 1) {
+		if (V.drunk > 0) statChange.alcohol(-minutes * (1000 / (30 * 60)));
+		if (V.hallucinogen > 0) statChange.hallucinogen(-minutes * (1000 / (72 * 60)));
+		if (V.drugged > 0) statChange.drugs(-minutes * (1000 / (36 * 60)));
+	} else {
+		if (V.drunk > 0) statChange.alcohol(-minutes);
+		if (V.hallucinogen > 0) statChange.hallucinogen(-minutes);
+		if (V.drugged > 0) statChange.drugs(-minutes);
+	}
 	if (minutes < 1200) statChange.tiredness((minutes * (V.drunk > 0 ? 2 : 1)) / 15);
 	statChange.pain(minutes, -1);
 
