@@ -615,7 +615,7 @@ const Furniture = (() => {
 				/* Set the target to the bedroom in the unlikely event it wasn't preset. */
 				furnitureIn(Locations.bedroom);
 				/* Search for the wallpaper object, returns null if not found. */
-				wallpaper = furnitureGet(Categories.wallpaper);
+				wallpaper = furnitureGet(Categories.wallpaper, "bedroom");
 				if (wallpaper != null && wallpaper.name.includes("<<")) {
 					const name = Util.escape(wallpaper.name);
 					furnitureSet("wallpaper", Categories.wallpaper, {
@@ -624,7 +624,7 @@ const Furniture = (() => {
 					});
 				}
 				/* Search for the poster object, returns null if not found. */
-				poster = furnitureGet(Categories.poster);
+				poster = furnitureGet(Categories.poster, "bedroom");
 				if (poster != null && poster.name.includes("<<")) {
 					const name = Util.escape(poster.name);
 					furnitureSet("poster", Categories.poster, {
@@ -640,7 +640,7 @@ const Furniture = (() => {
 				/* Fix owl-plushie being in the decoration category, as it can then be deleted,
 					or potentially lock out decorations in the current system. */
 				furnitureIn(Locations.bedroom);
-				decoration = furnitureGet(Categories.decoration);
+				decoration = furnitureGet(Categories.decoration, "bedroom");
 				if (decoration !== null && decoration.id === "owlplushie") {
 					furnitureSet("owlplushie", Categories.owlplushie, {
 						name: "owl plushie",
@@ -695,7 +695,7 @@ const Furniture = (() => {
 
 	function wardrobeSpaceUpdater() {
 		const wardrobe = V.wardrobe;
-		const furniture = furnitureGet("wardrobe");
+		const furniture = furnitureGet("wardrobe", "bedroom");
 		if (typeof furniture !== "object") return;
 		if (!(furniture.type instanceof Array)) return;
 		/* Wardrobe object appears to be good: Is an object, type is an array. */
