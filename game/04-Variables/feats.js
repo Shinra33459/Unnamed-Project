@@ -2054,6 +2054,30 @@ setup.feats = {
 		filter: ["All", "Special"],
 		hint: "Hint: Rake it in.",
 	},
+	"Silver Tongue": {
+		title: "Silver Tongue",
+		desc: "Made over £1000 from a single tip.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Special"],
+		hint: "Hint: Words are your greatest asset.",
+	},
+	"Smooth Talker": {
+		title: "Smooth Talker",
+		desc: "Made over £1500 from a single tip.",
+		difficulty: 3,
+		series: "",
+		filter: ["All", "Special"],
+		hint: "Hint: You always know just what to say.",
+	},
+	"Master of Persuasion": {
+		title: "Master of Persuasion",
+		desc: "Made over £2000 from a single tip.",
+		difficulty: 4,
+		series: "",
+		filter: ["All", "Special"],
+		hint: "Hint: No one can say no to you.",
+	},
 	"Curious Attire": {
 		title: "Curious Attire",
 		desc: "Unlocked all the special clothing items.",
@@ -2748,7 +2772,7 @@ function earnHourlyFeats() {
 	if (V.demon >= 6) earnFeat("Demon");
 	if (V.cow >= 6) earnFeat("Cattle");
 	if (V.bear >= 6) earnFeat("Bear");
-	if ((V.harpy >= 6  || V.transformationParts.bird.wings == "default")) earnFeat("Harpy");
+	if ((V.harpy >= 6 || V.transformationParts.bird.wings == "default")) earnFeat("Harpy");
 	if (V.fox >= 6) earnFeat("Fox");
 
 	const specialTraits =
