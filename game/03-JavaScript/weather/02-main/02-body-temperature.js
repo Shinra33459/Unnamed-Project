@@ -227,42 +227,42 @@ Weather.BodyTemperature = (() => {
 
 		const transformationAdjustments = {
 			wolf: {
-				coldBonus: -16, coldEndBonus: -20,
-				heatPenalty: 5, heatEndPenalty: 10
+				coldTolerance: -20, coldToleranceEnd: -25,
+				heatTolerance: -5, heatToleranceEnd: -10
 			},
 			cat: {
-				coldBonus: 2, coldEndBonus: 5,
-				heatPenalty: -3, heatEndPenalty: -6
+				coldTolerance: 2, coldToleranceEnd: 5,
+				heatTolerance: 5, heatToleranceEnd: 10
 			},
 			cow: {
-				coldBonus: -2, coldEndBonus: -5,
-				heatPenalty: 3, heatEndPenalty: 6
+				coldTolerance: -5, coldToleranceEnd: -10,
+				heatTolerance: 8, heatToleranceEnd: 12
 			},
 			bear: {
-				coldBonus: -20, coldEndBonus: -25,
-				heatPenalty: 8, heatEndPenalty: 12
+				coldTolerance: -30, coldToleranceEnd: -35,
+				heatTolerance: 5, heatToleranceEnd: 10
 			},
 			bird: {
-				coldBonus: 5, coldEndBonus: 10,
-				heatPenalty: -10, heatEndPenalty: -15
+				coldTolerance: 5, coldToleranceEnd: 10,
+				heatTolerance: 15, heatToleranceEnd: 20
 			},
 			bunny: {
-				coldBonus: 5, coldEndBonus: 8,
-				heatPenalty: 2, heatEndPenalty: 4
+				coldTolerance: 5, coldToleranceEnd: 8,
+				heatTolerance: -5, heatToleranceEnd: -8
 			},
 		};
 
 		const mod = transformationAdjustments[V.transformationParts.traits.tempTolerance] ?? {
-			coldBonus: 0, coldEndBonus: 0,
-			heatPenalty: 0, heatEndPenalty: 0
+			coldTolerance: 0, coldToleranceEnd: 0,
+			heatTolerance: 0, heatToleranceEnd: 0
 		};
 
 		// Apply modifications
-		settings.effects.lowerThresholdStart = 36 + mod.coldBonus;
-		settings.effects.lowerThresholdEnd = 33 + mod.coldEndBonus;
+		settings.effects.lowerThresholdStart = 36 + mod.coldTolerance;
+		settings.effects.lowerThresholdEnd = 33 + mod.coldToleranceEnd;
 
-		settings.effects.upperThresholdStart = 38 + mod.heatPenalty;
-		settings.effects.upperThresholdEnd = 41 + mod.heatEndPenalty;
+		settings.effects.upperThresholdStart = 38 + mod.heatTolerance;
+		settings.effects.upperThresholdEnd = 41 + mod.heatToleranceEnd;
 	}
 
 	return Object.create({
