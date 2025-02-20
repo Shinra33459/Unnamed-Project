@@ -1382,6 +1382,46 @@
 
 <<widget "forestgather">>
 	<<set _forest_item to random(1, 2)>>
+	<<cleareventpool>>
+	<<addinlineevent "normal" 10000>>
+		/* Normal gather */
+	<</addinlineevent>>
+	<<if $forest lte 20>>
+		<<addinlineevent "fly agaric" 50>>
+			<<set _forest_item to 3>>
+		<</addinlineevent>>
+	<<elseif $forest lte 50>>
+		<<addinlineevent "fly agaric" 50>>
+			<<set _forest_item to 3>>
+		<</addinlineevent>>
+		<<addinlineevent "lady orchid" 20>>
+			<<set _forest_item to 4>>
+		<</addinlineevent>>
+	<<elseif $forest lte 99>>
+		<<addinlineevent "fly agaric" 50>>
+			<<set _forest_item to 3>>
+		<</addinlineevent>>
+		<<addinlineevent "lady orchid" 20>>
+			<<set _forest_item to 4>>
+		<</addinlineevent>>
+		<<addinlineevent "red helleborine" 10>>
+			<<set _forest_item to 5>>
+		<</addinlineevent>>
+		<<addinlineevent "hen of the woods" 20>>
+			<<set _forest_item to 6>>
+		<</addinlineevent>>
+	<<else>>
+		<<addinlineevent "red helleborine" 10>>
+			<<set _forest_item to 3>>
+		<</addinlineevent>>
+		<<addinlineevent "hen of the woods" 20>>
+			<<set _forest_item to 4>>
+		<</addinlineevent>>
+		<<addinlineevent "ghost orchid (Epipogium aphyllum)" 1>>
+			<<set _forest_item to 5>>
+		<</addinlineevent>>
+	<</if>>
+	<<runeventpool>>
 	You come to a clearing. A gentle breeze blows against your face, and small, soft plants press beneath your feet.
 	<<if $forest lte 20>>
 		<<if _forest_item is 1>>
@@ -1389,22 +1429,52 @@
 		<<elseif _forest_item is 2>>
 			A patch of clovers sway gently in the breeze while ripe apples hang from the branches.
 		<<else>>
+			<span class="pulse-glow pulse-fly-agaric">Bright red mushrooms with white-spotted caps sprout in a loose ring around an old birch tree. They seem almost unreal, like something out of a fairy tale.</span>
 		<</if>>
 	<<elseif $forest lte 50>>
 		<<if _forest_item is 1>>
 			Wild red rose bushes dot the area.
-		<<else>>
+		<<elseif _forest_item is 2>>
 			Wild pears grow from the trees.
+		<<elseif _forest_item is 3>>
+			<span class="pulse-glow pulse-fly-agaric">Bright red mushrooms with white-spotted caps sprout in a loose ring around an old birch tree. They seem almost unreal, like something out of a fairy tale.</span>
+		<<else>>
+			<span class="pulse-glow pulse-lady-orchid">Tall, regal stalks bear clusters of speckled purple flowers, their shapes resembling tiny, hooded figures. Their sweet fragrance carries on the wind, luring unseen visitors to their hidden corner of the woods.</span>
 		<</if>>
-	<<else>>
+	<<elseif $forest lte 99>>
 		<<if _forest_item is 1>>
 			You spot orchids near the edge, at the base of ancient trees.
-		<<else>>
+		<<elseif _forest_item is 2>>
 			<<if Time.isBloodMoon()>>
 				<span class="red">Red-veined</span> lemons grow from a cluster of small trees.
 			<<else>>
 				Lemons grow from a cluster of small trees.
 			<</if>>
+		<<elseif _forest_item is 3>>
+			<span class="pulse-glow pulse-fly-agaric">Bright red mushrooms with white-spotted caps sprout in a loose ring around an old birch tree. They seem almost unreal, like something out of a fairy tale.</span>
+		<<elseif _forest_item is 4>>
+			<span class="pulse-glow pulse-lady-orchid">Tall, regal stalks bear clusters of speckled purple flowers, their shapes resembling tiny, hooded figures. Their sweet fragrance carries on the wind, luring unseen visitors to their hidden corner of the woods.</span>
+		<<elseif _forest_item is 5>>
+			<span class="pulse-glow pulse-red-helleborine">Soft pink petals emerge from the undergrowth, their delicate hues blending with the dappled light of the forest floor. Sunlight filters through the canopy, casting a gentle glow on their slender, graceful stems.</span>
+		<<else>>
+			<span class="pulse-glow pulse-hen-of-the-woods">A dense cluster of ruffled mushrooms clings to the roots of an ancient oak, its layered caps resembling the plumage of a resting bird. The scent of damp earth and wood lingers in the air.</span>
+		<</if>>
+	<<else>>
+		<<if _forest_item is 1>>
+			You spot orchids near the edge, at the base of ancient trees.
+		<<elseif _forest_item is 2>>
+			<<if Time.isBloodMoon()>>
+				<span class="red">Red-veined</span> lemons grow from a cluster of small trees.
+			<<else>>
+				Lemons grow from a cluster of small trees.
+			<</if>>
+		<<elseif _forest_item is 3>>
+			<span class="pulse-glow pulse-red-helleborine">Soft pink petals emerge from the undergrowth, their delicate hues blending with the dappled light of the forest floor. Sunlight filters through the canopy, casting a gentle glow on their slender, graceful stems.</span>
+		<<elseif _forest_item is 4>>
+			<span class="pulse-glow pulse-hen-of-the-woods">A dense cluster of ruffled mushrooms clings to the roots of an ancient oak, its layered caps resembling the plumage of a resting bird. The scent of damp earth and wood lingers in the air.</span>
+		<<else>>
+			<span class="pulse-glow pulse-ghost-orchid">A cluster of pale, ghostly flowers emerges from the forest floor, its translucent petals seeming to glow in the dim light. The air around it feels eerily still, as if nature itself holds its breath.</span>
+		<</if>>
 		<</if>>
 	<</if>>
 	<<lstress>><<stress -2>>
@@ -1442,11 +1512,19 @@
 				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
 				<br>
 			<</if>>
-		<<else>>
+		<<elseif _forest_item is 2>>
 	        <<icon "tending/clover.png">> <<link [[Pick clovers (0:10)|Forest Clover]]>><<pass 10>><</link>>
 			<br>
 			<<icon "tending/apple.png">> <<link [[Pick apples (0:20)|Forest Apple Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
-		<br>
+			<br>
+		<<else>>
+			<<if currentSkillValue('tending') gte 100>>
+				<<icon "tending/fly_agaric.png">> <<link [[Pick Fly Agarics (0:20)|Forest Fly Agaric Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 300>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
 		<</if>>
 	<<elseif $forest lte 50>>
 		<<if _forest_item is 1>>
@@ -1467,9 +1545,85 @@
 				<br>
 			<</if>>
 			<br>
-		<<else>>
+		<<elseif _forest_item is 2>>
 			<<if currentSkillValue('tending') gte 100>>
 				<<icon "tending/pear.png">> <<link [[Pick pears (0:20)|Forest Pear Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 400>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<elseif _forest_item is 3>>
+			<<if currentSkillValue('tending') gte 100>>
+				<<icon "tending/fly_agaric.png">> <<link [[Pick Fly Agarics (0:20)|Forest Fly Agaric Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 300>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<else>>
+			<<if currentSkillValue('tending') gte 500>>
+				<<icon "tending/lady_orchid.png">> <<link [[Pick Lady Orchids (0:20)|Forest Lady Orchids Pick]]>><<pass 20>><</link>><<tendingdifficulty 500 800>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<</if>>
+	<<elseif $forest lte 99>>
+		<<if _forest_item is 1>>
+			<<if !$plants_known.includes("red_rose")>>
+				<<if $sciencetrait gte 2>>
+					<<icon "tending/red_rose.png">> <<link [[Search for seeds (0:30)|Forest Red Rose]]>><<pass 30>><<tending 6>><<set $plants_known.push("red_rose")>><<pain 6>><</link>><<gpain>><<gtending>>
+					<br>
+				<<else>>
+					<span class="blue">A higher science skill would let you harvest red rose seeds.</span>
+					<br>
+				<</if>>
+			<</if>>
+			<<if currentSkillValue('tending') gte 200>>
+				<<icon "tending/red_rose.png">> <<link [[Pick red roses (0:20)|Forest Red Rose Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+			<br>
+		<<elseif _forest_item is 2>>
+			<<if currentSkillValue('tending') gte 100>>
+				<<icon "tending/pear.png">> <<link [[Pick pears (0:20)|Forest Pear Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 400>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<elseif _forest_item is 3>>
+			<<if currentSkillValue('tending') gte 100>>
+				<<icon "tending/fly_agaric.png">> <<link [[Pick Fly Agarics (0:20)|Forest Fly Agaric Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 300>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<elseif _forest_item is 4>>
+			<<if currentSkillValue('tending') gte 500>>
+				<<icon "tending/lady_orchid.png">> <<link [[Pick Lady Orchids (0:20)|Forest Lady Orchids Pick]]>><<pass 20>><</link>><<tendingdifficulty 500 800>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<elseif _forest_item is 5>>
+			<<if currentSkillValue('tending') gte 600>>
+				<<icon "tending/red_helleborine.png">> <<link [[Pick Red Helleborine (0:20)|Forest Red Helleborine Pick]]>><<pass 20>><</link>><<tendingdifficulty 600 900>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<else>>
+			<<if currentSkillValue('tending') gte 300>>
+				<<icon "tending/hen_of_the_woods.png">> <<link [[Pick Hen of the Woods (0:20)|Forest Hen of the Woods Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
 				<br>
 			<<else>>
 				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
@@ -1494,7 +1648,7 @@
 				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
 				<br>
 			<</if>>
-		<<else>>
+		<<elseif _forest_item is 2>>
 			<<if currentSkillValue('tending') gte 200>>
 				<<if Time.isBloodMoon()>>
 					<<icon "tending/lemon.png">> <<link [[Pick lemons (0:20)|Forest Blood Lemon Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
@@ -1503,6 +1657,30 @@
 					<<icon "tending/lemon.png">> <<link [[Pick lemons (0:20)|Forest Lemon Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
 					<br>
 				<</if>>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<elseif _forest_item is 3>>
+			<<if currentSkillValue('tending') gte 600>>
+				<<icon "tending/red_helleborine.png">> <<link [[Pick Red Helleborine (0:20)|Forest Red Helleborine Pick]]>><<pass 20>><</link>><<tendingdifficulty 600 900>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<elseif _forest_item is 4>>
+			<<if currentSkillValue('tending') gte 300>>
+				<<icon "tending/hen_of_the_woods.png">> <<link [[Pick Hen of the Woods (0:20)|Forest Hen of the Woods Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<else>>
+			<<if currentSkillValue('tending') gte 900>>
+				<<icon "tending/ghost_orchid.png">> <<link [[Pick Ghost Orchid (Epipogium Aphyllum) (0:20)|Forest Ghost Orchid Pick]]>><<pass 20>><</link>><<tendingdifficulty 900 1000>>
+				<br>
 			<<else>>
 				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
 				<br>

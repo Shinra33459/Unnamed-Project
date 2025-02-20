@@ -2699,7 +2699,8 @@ function initPlants() {
 			season: [],
 			ingredients: ["turnip", "potato", "onion", "vegetable_oil", "salt"],
 			icon: "turnip_soup.png"
-			},
+		},
+
 		green_manure: {
 			index: 147,
 			name: "green_manure",
@@ -2712,9 +2713,99 @@ function initPlants() {
 			days: 7,
 			multiplier: 4,
 			special: [],
-			season: ["spring","summer","autumn","winter"],
+			season: ["spring", "summer", "autumn", "winter"],
 			ingredients: [],
 			icon: "green_manure.png"
+		},
+
+		ghost_orchid: {
+			index: 148,
+			name: "ghost_orchid",
+			singular: "ghost orchid (Epipogium aphyllum)",
+			plural: "ghost orchids (Epipogium aphyllum)",
+			plant_cost: 5000000,
+			difficulty: 1,
+			handheld: "ghost orchid|0",
+			bed: "earth",
+			type: "flower",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "ghost_orchid.png"
+		},
+
+		hen_of_the_woods: {
+			index: 149,
+			name: "hen_of_the_woods",
+			singular: "hen of the wood",
+			plural: "hen of the woods",
+			plant_cost: 12500,
+			difficulty: 1,
+			handheld: "hen of the woods|0",
+			bed: "earth",
+			type: "shroom",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "hen_of_the_woods.png"
+		},
+
+		red_helleborine: {
+			index: 150,
+			name: "red_helleborine",
+			singular: "red helleborine (Cephalanthera rubra)",
+			plural: "red helleborines (Cephalanthera rubra)",
+			plant_cost: 300000,
+			difficulty: 1,
+			handheld: "red helleborine|0",
+			bed: "earth",
+			type: "flower",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "red_helleborine.png"
+		},
+
+		lady_orchid: {
+			index: 151,
+			name: "lady_orchid",
+			singular: "lady orchid",
+			plural: "lady orchids",
+			plant_cost: 150000,
+			difficulty: 1,
+			handheld: "lady orchid|0",
+			bed: "earth",
+			type: "flower",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "lady_orchid.png"
+		},
+
+		fly_agaric: {
+			index: 152,
+			name: "fly_agaric",
+			singular: "fly agaric",
+			plural: "fly agaric",
+			plant_cost: 20000,
+			difficulty: 1,
+			handheld: "fly agaric|0",
+			bed: "earth",
+			type: "shroom",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "fly_agaric.png"
 		}
 	};
 
