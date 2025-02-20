@@ -2667,6 +2667,66 @@
 				Lapine Celerity: <<checkbox "$TFBunnyBuffs" 0 1 autocheck>><br>
 			<</if>>
 		<</if>>
+		<<if $DoLPTFTempTolerance is 1>>
+			/* Temp Tolerance */
+			<<set _options = {}>> 
+			<<set _options["None"] = "disabled">>
+			<<if _wolfFullCheck>>
+				<<set _options["Wolf"] = "wolf">>
+				<<if _traits.tempTolerance is "wolf">>
+					<<set _tempToleranceChoice to ["Wolf"]>>
+				<</if>>
+			<</if>>
+			<<if _catFullCheck>>
+				<<set _options["Cat"] = "cat">>
+				<<if _traits.tempTolerance is "cat">>
+					<<set _tempToleranceChoice to _options["Cat"]>>
+				<</if>>
+			<</if>>
+			<<if _cowFullCheck>>
+				<<set _options["Cow"] = "cow">>
+				<<if _traits.tempTolerance is "cow">>
+					<<set _tempToleranceChoice to _options["Cow"]>>
+				<</if>>
+			<</if>>
+			<<if _bearFullCheck>>
+				<<set _options["Bear"] = "bear">>
+				<<if _traits.tempTolerance is "bear">>
+					<<set _tempToleranceChoice to _options["Bear"]>>
+				<</if>>
+			<</if>>
+			<<if _birdFullCheck>>
+				<<set _options["Bird"] = "bird">>
+				<<if _traits.tempTolerance is "bird">>
+					<<set _tempToleranceChoice to _options["Bird"]>>
+				<</if>>
+			<</if>>
+			<<if _foxFullCheck>>
+				<<set _options["Fox"] = "fox">>
+				<<if _traits.tempTolerance is "fox">>
+					<<set _tempToleranceChoice to _options["Fox"]>>
+				<</if>>
+			<</if>>
+			<<if _bunnyFullCheck>>
+				<<set _options["Bunny"] = "bunny">>
+				<<if _traits.tempTolerance is "bunny">>
+					<<set _tempToleranceChoice to _options["Bunny"]>>
+				<</if>>
+			<</if>>
+			<<if !_tempToleranceChoice>>
+				<<set _tempToleranceChoice to 0>>
+			<</if>>
+			<<if Object.keys(_options).length > 1>>
+				<label>Temperature Tolerance:
+					<div class="tf-tempTolerance">
+						<<listbox "_tempToleranceChoice" autoselect>>
+							<<optionsfrom _options>>
+						<</listbox>>
+					</div>
+				</label>
+				<br>
+			<</if>>
+		<</if>>
 		<br>
 	<</if>>
 
@@ -3384,7 +3444,10 @@
 	*/
 	<!-- Attach an event to every listbox item to update the PC on the sidebar. -->
 	<<script>>
-	jQuery('.passage').on('change', 'div.tf-misc select.macro-listbox', function (e) {
+		jQuery('.passage').on('change', 'div.tf-temptolerance select.macro-listbox', function (e) {
+			Wikifier.wikifyEval('<<set _traits.tempTolerance = _temptoleranceChoice>>');
+		});
+		jQuery('.passage').on('change', 'div.tf-misc select.macro-listbox', function (e) {
 			Wikifier.wikifyEval('<<clearmisc>><<if _miscChoice isnot 0>><<set $transformationParts[_miscChoice[0]].misc = _miscChoice[1]>><</if>><<updatesidebarimg true>>');
 		});
 		jQuery('.passage').on('change', 'div.tf-cheeks select.macro-listbox', function (e) {

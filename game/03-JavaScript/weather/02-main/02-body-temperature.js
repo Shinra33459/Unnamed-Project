@@ -81,6 +81,8 @@ Weather.BodyTemperature = (() => {
 	 * @param {number} minutes The time elapsed in minutes.
 	 */
 	function update(temperature, minutes) {
+		adjustTemperatureThresholds();
+
 		if (T.bodyActivity === undefined) resetActivity();
 
 		if (T.inWater && V.outside) {
@@ -214,6 +216,55 @@ Weather.BodyTemperature = (() => {
 		return getWarmth();
 	}
 
+	function adjustTemperatureThresholds() {
+		if (V.transformationParts.traits.tempTolerance == "disabled") {
+			settings.effects.lowerThresholdStart = 36;
+			settings.effects.lowerThresholdEnd = 33;
+			settings.effects.upperThresholdStart = 38;
+			settings.effects.upperThresholdEnd = 41;
+			return;
+		}
+
+		const transformationAdjustments = {
+			wolf: {
+				coldBonus: -16, coldEndBonus: -20,
+				heatPenalty: 5, heatEndPenalty: 10
+			},
+			cat: {
+				coldBonus: 2, coldEndBonus: 5,
+				heatPenalty: -3, heatEndPenalty: -6
+			},
+			cow: {
+				coldBonus: -2, coldEndBonus: -5,
+				heatPenalty: 3, heatEndPenalty: 6
+			},
+			bear: {
+				coldBonus: -20, coldEndBonus: -25,
+				heatPenalty: 8, heatEndPenalty: 12
+			},
+			bird: {
+				coldBonus: 5, coldEndBonus: 10,
+				heatPenalty: -10, heatEndPenalty: -15
+			},
+			bunny: {
+				coldBonus: 5, coldEndBonus: 8,
+				heatPenalty: 2, heatEndPenalty: 4
+			},
+		};
+
+		const mod = transformationAdjustments[V.transformationParts.traits.tempTolerance] ?? {
+			coldBonus: 0, coldEndBonus: 0,
+			heatPenalty: 0, heatEndPenalty: 0
+		};
+
+		// Apply modifications
+		settings.effects.lowerThresholdStart = 36 + mod.coldBonus;
+		settings.effects.lowerThresholdEnd = 33 + mod.coldEndBonus;
+
+		settings.effects.upperThresholdStart = 38 + mod.heatPenalty;
+		settings.effects.upperThresholdEnd = 41 + mod.heatEndPenalty;
+	}
+
 	return Object.create({
 		get() {
 			if (isNaN(V.player.bodyTemperature)) return 37;
@@ -277,5 +328,6 @@ Weather.BodyTemperature = (() => {
 		getTotalWarmth,
 		getWarmth,
 		getRestingPoint,
+		adjustTemperatureThresholds,
 	});
 })();
