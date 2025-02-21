@@ -516,6 +516,8 @@ const Furniture = (() => {
 			location = "bedroom";
 		} else if (location == "alex_cottage") {
 			location = "cottage";
+		} else {
+			onlySetup = true;
 		}
 		print("Furniture.get > getting:", category);
 		if (typeof category !== "string") {
