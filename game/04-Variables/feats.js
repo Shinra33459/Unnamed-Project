@@ -3018,6 +3018,12 @@ function earnHourlyFeats() {
 		if (V.farmersProduce.totalSold >= 1000000) earnFeat("Agricultural Tycoon");
 	}
 
+	if (V.unlockAllFeats) {
+		for (const key of Object.keys(setup.feats)){
+			if (!V.feats.currentSave[key]) fragment.append(wikifier("earnFeat", `"${key}"`));
+		}
+	}
+
 	// To earn the feat "Curious Attire"
 	fragment.append(wikifier("specialClothesUpdate"));
 
