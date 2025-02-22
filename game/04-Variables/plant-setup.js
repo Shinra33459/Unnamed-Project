@@ -2721,8 +2721,8 @@ function initPlants() {
 		ghost_orchid: {
 			index: 148,
 			name: "ghost_orchid",
-			singular: "ghost orchid (Epipogium aphyllum)",
-			plural: "ghost orchids (Epipogium aphyllum)",
+			singular: "ghost orchid (epipogium aphyllum)",
+			plural: "ghost orchids (epipogium aphyllum)",
 			plant_cost: 5000000,
 			difficulty: 1,
 			handheld: "ghost orchid|0",
@@ -2739,7 +2739,7 @@ function initPlants() {
 		hen_of_the_woods: {
 			index: 149,
 			name: "hen_of_the_woods",
-			singular: "hen of the wood",
+			singular: "hen of the woods",
 			plural: "hen of the woods",
 			plant_cost: 12500,
 			difficulty: 1,
@@ -2794,7 +2794,7 @@ function initPlants() {
 			index: 152,
 			name: "fly_agaric",
 			singular: "fly agaric",
-			plural: "fly agaric",
+			plural: "fly agarics",
 			plant_cost: 20000,
 			difficulty: 1,
 			handheld: "fly agaric|0",
@@ -2806,6 +2806,96 @@ function initPlants() {
 			season: [],
 			ingredients: [],
 			icon: "fly_agaric.png"
+		},
+
+		spiked_rampion: {
+			index: 153,
+			name: "spiked_rampion",
+			singular: "spiked rampion",
+			plural: "spiked rampions",
+			plant_cost: 150000,
+			difficulty: 1,
+			handheld: "spiked rampion|0",
+			bed: "earth",
+			type: "flower",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "spiked_rampion.png"
+		},
+
+		cloudberry: {
+			index: 154,
+			name: "cloudberry",
+			singular: "cloudberry",
+			plural: "cloudberries",
+			plant_cost: 2000,
+			difficulty: 1,
+			handheld: "cloudberry|0",
+			bed: "earth",
+			type: "fruit",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "cloudberry.png"
+		},
+
+		scottish_bog_myrtle: {
+			index: 155,
+			name: "scottish_bog_myrtle",
+			singular: "scottish bog myrtle",
+			plural: "scottish bog myrtles",
+			plant_cost: 10000,
+			difficulty: 1,
+			handheld: "scottish bog myrtle|0",
+			bed: "earth",
+			type: "shroom",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "scottish_bog_myrtle.png"
+		},
+
+		bog_orchid: {
+			index: 156,
+			name: "bog_orchid",
+			singular: "bog orchid (hammarbya paludosa)",
+			plural: "bog orchids (hammarbya paludosa)",
+			plant_cost: 120000,
+			difficulty: 1,
+			handheld: "bog orchid|0",
+			bed: "earth",
+			type: "flower",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "bog_orchid.png"
+		},
+
+		marsh_saxifrage: {
+			index: 157,
+			name: "marsh_saxifrage",
+			singular: "marsh saxifrage",
+			plural: "marsh saxifrages",
+			plant_cost: 250000,
+			difficulty: 1,
+			handheld: "marsh saxifrage|0",
+			bed: "earth",
+			type: "flower",
+			days: 7,
+			multiplier: 1,
+			special: [],
+			season: [],
+			ingredients: [],
+			icon: "marsh_saxifrage.png"
 		}
 	};
 
