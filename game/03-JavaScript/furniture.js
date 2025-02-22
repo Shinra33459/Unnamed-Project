@@ -512,9 +512,9 @@ const Furniture = (() => {
 	}
 
 	function furnitureGet(category, location, onlySetup = false) {
-		if (location == "home") {
+		if (location == "home" || location == "bedroom") {
 			location = "bedroom";
-		} else if (location == "alex_cottage") {
+		} else if (location == "alex_cottage" || location == "cottage") {
 			location = "cottage";
 		} else {
 			onlySetup = true;
