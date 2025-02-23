@@ -253,7 +253,7 @@ function initPlants() {
 			type: "fruit",
 			days: 14,
 			multiplier: 1,
-			special: [],
+			special: ["small"],
 			season: ["spring", "summer", "autumn", "winter"],
 			ingredients: [],
 			icon: "strawberry.png",
@@ -2838,7 +2838,7 @@ function initPlants() {
 			type: "fruit",
 			days: 7,
 			multiplier: 1,
-			special: [],
+			special: ["small"],
 			season: [],
 			ingredients: [],
 			icon: "cloudberry.png"
