@@ -175,6 +175,9 @@ const Time = (() => {
 			fragment.append(weekPassed());
 		}
 		fragment.append(dayPassed());
+		if (Time.monthDay === 1) {
+			fragment.append(monthPassed());
+		}
 		if (prevDate.yearDay < Time.startDate.yearDay && currentDate.yearDay >= Time.startDate.yearDay) {
 			fragment.append(yearPassed());
 		}
@@ -414,6 +417,26 @@ function yearPassed() {
 	V.englishPlay = "none";
 
 	V.yearly.clearProperties();
+
+	return fragment;
+}
+
+function monthPassed() {
+	const fragment = document.createDocumentFragment();
+
+	if (V.hbsc.account.level >= 5 && V.hbsc.account.deposit >= 250000000) {
+		V.hbsc.account.deposit *= 1 + (0.0025 / 12);
+	} else if (V.hbsc.account.level >= 4 && V.hbsc.account.deposit >= 50000000) {
+		V.hbsc.account.deposit *= 1 + (0.0075 / 12);
+	} else if (V.hbsc.account.level >= 3 && V.hbsc.account.deposit >= 10000000) {
+		V.hbsc.account.deposit *= 1 + (0.0125 / 12);
+	} else if (V.hbsc.account.level >= 2 && V.hbsc.account.deposit >= 50000000) {
+		V.hbsc.account.deposit *= 1 + (0.02 / 12);
+	} else if (V.hbsc.account.level >= 1) {
+		V.hbsc.account.deposit *= 1 + (0.025 / 12);
+	}
+
+	V.monthly.clearProperties();
 
 	return fragment;
 }
