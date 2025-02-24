@@ -17,6 +17,10 @@
 			<<stallicon "open">><<link [[Continue (0:20)|Stall]]>><<endevent>><<endstall>><<pass 20>><</link>>
 			<br>
 		<</if>>
+		<<if $passage isnot "Stall Whitelist">>
+			<<stallicon "open">><<link [[Decide which products to sell|Stall Whitelist]]>><<endevent>><<endstall>><</link>>
+			<br>
+		<</if>>
 		<<if $worn.lower.name isnot "naked">>
 			<<if $worn.under_lower.name isnot "naked">>
 				<<if $worn.upper.set isnot $worn.lower.set>>
@@ -61,13 +65,16 @@
 			<<if ndef $stall_stats[_plant_keys[_t]]>>
 				<<set $stall_stats[_plant_keys[_t]] to { inventory:{amount:0, price:0, total:0}, sold:{amount:0, total:0} }>>
 			<</if>>
-			<<if $plants[_plant_keys[_t]].amount gte 1>>
+			<<if ndef $stall_stats[_plant_keys[_t]].selling>>
+				<<set $stall_stats[_plant_keys[_t]].selling to true>>
+			<</if>>
+			<<if $plants[_plant_keys[_t]].amount gte 1 and $stall_stats[_plant_keys[_t]].selling is true>>
 				<<set _plant_value to Math.round(setup.plants[$plants[_plant_keys[_t]].name].plant_cost)>>
 				<<set _total_worth += $plants[_plant_keys[_t]].amount * _plant_value>>
 				<<set _total_amount += $plants[_plant_keys[_t]].amount>>
 				<<set _inventory_found to 1>>
 				<<run $plant_inventory.push($plants[_plant_keys[_t]].name)>>
-				<<if ($stall_expensive is undefined) or ($plants[$stall_expensive].amount lte 0) or (setup.plants[$plants[_plant_keys[_t]].name].plant_cost gte setup.plants[$stall_expensive].plant_cost)>>
+				<<if (($stall_expensive is undefined) or ($plants[$stall_expensive].amount lte 0) or (setup.plants[$plants[_plant_keys[_t]].name].plant_cost gte setup.plants[$stall_expensive].plant_cost)) and $stall_stats[_plant_keys[_t]].selling is true>>
 					<<set $stall_expensive to clone(setup.plants[$plants[_plant_keys[_t]].name].name)>>
 				<</if>>
 				<<set $stall_stats[_plant_keys[_t]].inventory to {amount:$plants[_plant_keys[_t]].amount, price:_plant_value, total:($plants[_plant_keys[_t]].amount * _plant_value)}>>
@@ -146,6 +153,7 @@
 						<<case 6>>
 							<th colspan="3" align="center">Sold Today</th>
 					<</switch>>
+					<th style="border-top-width:4px;border-top-style:double" align="left">Selling?</th>
 				</tr>
 				<tr>
 					<th style="border-bottom-width:2px;min-width:7ch" align="center">Amount</th>
@@ -163,6 +171,7 @@
 				</tr>
 
 				<<for _t to 0; _t lt _plant_keys.length; _t++>>
+					<<set _plant_keys[_t] to _plant_keys[_t]>>
 					<<if $stall_stats[_plant_keys[_t]].inventory.amount gt 0 or (_canmath gte 5 and $stall_stats[_plant_keys[_t]].sold.amount gt 0)>>
 						<<if _mobile>>
 							<tr>
@@ -200,6 +209,16 @@
 									<</if>>
 									<td align="right">-&nbsp;</td>
 								<</if>>
+							<</if>>
+							<<if $passage is "Stall Whitelist">>
+								<<set _temp to _plant_keys[_t]>>
+								<td style="border-top-width:4px;border-top-style:double">
+									<<capture _temp>>
+										<<checkbox "$stall_stats[_temp].selling" false true autocheck>>
+									<</capture>>
+								</td>
+							<<else>>
+								<td style="border-top-width:4px;border-top-style:double"><<print $stall_stats[_plant_keys[_t]].selling>></td>
 							<</if>>
 						</tr>
 					<</if>>
@@ -800,6 +819,10 @@
 
 			<<link [[Let <<him>> go (0:20)|Stall]]>><<endevent>><<endstall>><<pass 20>><</link>>
 			<br>
+			<<if $passage isnot "Stall Whitelist">>
+				<<link [[Let <<him>> go and decide which products to sell|Stall Whitelist]]>><<endevent>><<endstall>><</link>>
+				<br>
+			<</if>>
 			<<link [[Leave your stall|Connudatus Street]]>><<endevent>><<endstall>><<set $eventskip to 1>><<clotheson>><</link>>
 			<br>
 		<</if>>
