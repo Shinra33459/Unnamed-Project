@@ -1045,7 +1045,7 @@ function minutePassed(minutes) {
 	// decay/rise and crossdresser trait
 	const isCrossdresser = V.backgroundTraits.includes("crossdresser");
 	const isCrossdressing = V.player.gender !== V.player.gender_appearance && V.player.gender !== "h";
-	if (V.controlled === 0 && V.anxiety >= 2) V.stress += minutes * ((isCrossdresser && !isCrossdressing) + 1);
+	if (V.controlled === 0 && V.anxiety >= 2 && V.timeSkip == undefined) V.stress += minutes * ((isCrossdresser && !isCrossdressing) + 1);
 	else if (V.stress < V.stressmax && (V.controlled === 1 || V.anxiety === 0)) V.stress -= minutes * ((isCrossdresser && isCrossdressing) + 1);
 
 	parasiteProgressTime(minutes);
@@ -1063,7 +1063,7 @@ function minutePassed(minutes) {
 	// Body temperature
 	const temperature = V.outside ? Weather.temperature : Weather.insideTemperature;
 	if (!V.possessed) Weather.BodyTemperature.update(temperature, minutes);
-	V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
+	if (V.timeSkip == undefined) V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
 
 	// Snow & ice
 	Weather.setAccumulatedSnow(minutes);
@@ -1084,7 +1084,7 @@ function minutePassed(minutes) {
 		if (V.hallucinogen > 0) statChange.hallucinogen(-minutes);
 		if (V.drugged > 0) statChange.drugs(-minutes);
 	}
-	if (minutes < 1200) statChange.tiredness((minutes * (V.drunk > 0 ? 2 : 1)) / 15);
+	if (minutes < 1200 && V.timeSkip == undefined) statChange.tiredness((minutes * (V.drunk > 0 ? 2 : 1)) / 15);
 	statChange.pain(minutes, -1);
 
 	// Arousal
