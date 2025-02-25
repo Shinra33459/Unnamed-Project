@@ -436,7 +436,7 @@ function monthPassed() {
 		V.hbsc.account.deposit *= 1 + (0.025 / 12);
 	}
 
-	V.monthly.clearProperties();
+	if (V.monthly !== undefined) V.monthly.clearProperties();
 
 	return fragment;
 }
