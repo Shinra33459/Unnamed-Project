@@ -81,24 +81,26 @@ Weather.BodyTemperature = (() => {
 	 * @param {number} minutes The time elapsed in minutes.
 	 */
 	function update(temperature, minutes) {
-		adjustTemperatureThresholds();
+		if (V.timeSkip == undefined) {
+			adjustTemperatureThresholds();
 
-		if (T.bodyActivity === undefined) resetActivity();
+			if (T.bodyActivity === undefined) resetActivity();
 
-		if (T.inWater && V.outside) {
-			temperature = Weather.waterTemperature;
-		}
+			if (T.inWater && V.outside) {
+				temperature = Weather.waterTemperature;
+			}
 
-		const scaledMinutes = Math.min(minutes, 60 + Math.sqrt(Math.max(minutes - 60, 0)));
-		this.set(calculateTemperatureChange(Weather.BodyTemperature.get(), temperature, scaledMinutes, getTotalWarmth()));
-		resetActivity();
+			const scaledMinutes = Math.min(minutes, 60 + Math.sqrt(Math.max(minutes - 60, 0)));
+			this.set(calculateTemperatureChange(Weather.BodyTemperature.get(), temperature, scaledMinutes, getTotalWarmth()));
+			resetActivity();
 
-		if (Weather.BodyTemperature.get() < Weather.tempSettings.minTemperature) {
-			V.passout = "cold";
-		} else if (Weather.BodyTemperature.get() > Weather.tempSettings.maxTemperature) {
-			V.passout = "heat";
-		} else {
-			delete V.passout;
+			if (Weather.BodyTemperature.get() < Weather.tempSettings.minTemperature) {
+				V.passout = "cold";
+			} else if (Weather.BodyTemperature.get() > Weather.tempSettings.maxTemperature) {
+				V.passout = "heat";
+			} else {
+				delete V.passout;
+			}
 		}
 	}
 
