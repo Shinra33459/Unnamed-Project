@@ -576,7 +576,7 @@ const Furniture = (() => {
 
 	function furnitureIn(location) {
 		if (Object.values(Locations).includes(location)) {
-			V.furnitureShopTarget = location;
+			target = location;
 		} else {
 			Errors.report(`Location provided (${location}) does not exist in the furniture system.`);
 		}
