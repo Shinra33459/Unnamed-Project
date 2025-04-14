@@ -584,14 +584,18 @@ function calculateallure() {
 	for (const slot of ["head", "face", "neck", "legs", "feet", "handheld", "hands"]) attractiveness += V.worn[slot].reveal || 0;
 	/* tf bonuses */
 	const partsHidden = (tf, parts) => parts.filter(part => V.transformationParts[tf][part] === "hidden").length;
-	if (V.demon >= 6) attractiveness += 500 - 100 * partsHidden("demon", ["horns", "tail", "wings"]);
-	if (V.angel >= 6) attractiveness += 500 - 150 * partsHidden("angel", ["halo", "wings"]);
-	if (V.fallenangel >= 2) attractiveness += 500 - 150 * partsHidden("fallenAngel", ["halo", "wings"]);
-	if (V.wolfgirl >= 6) attractiveness += 500 - 150 * partsHidden("wolf", ["tail", "ears"]);
-	if (V.cat >= 6) attractiveness += 500 - 150 * partsHidden("cat", ["tail", "ears"]);
-	if (V.cow >= 6) attractiveness += 500 - 100 * partsHidden("cow", ["ears", "horns", "tail"]);
-	if (V.harpy >= 6) attractiveness += 500 - 60 * partsHidden("bird", ["tail", "eyes", "wings", "malar", "plumage"]);
-	if (V.fox >= 6) attractiveness += 750 - 225 * partsHidden("fox", ["ears", "tail"]);
+	attractiveness += 500 - 100 * partsHidden("demon", ["horns", "tail", "wings"]);
+	attractiveness += 500 - 150 * partsHidden("angel", ["halo", "wings"]);
+	attractiveness += 500 - 150 * partsHidden("fallenAngel", ["halo", "wings"]);
+	attractiveness += 500 - 150 * partsHidden("wolf", ["tail", "ears"]);
+	attractiveness += 500 - 150 * partsHidden("cat", ["tail", "ears"]);
+	attractiveness += 500 - 100 * partsHidden("cow", ["ears", "horns", "tail"]);
+	attractiveness += 500 - 60 * partsHidden("bird", ["tail", "eyes", "wings", "malar", "plumage"]);
+	attractiveness += 750 - 225 * partsHidden("fox", ["ears", "tail"]);
+	attractiveness += 500 - 225 * partsHidden("bunny", ["ears","tail"]);
+	attractiveness += 1000 - 200 * partsHidden("okami", ["ears", "tail", "wings", "misc"]);
+	attractiveness += 1000 - 400 * partsHidden("seraphim", ["wings", "plumage"]);
+	attractiveness += 1000 - 200 * partsHidden("kitsune", ["ears", "tail", "cheeks", "misc"]);
 	/* makeup */
 	for (const makeup of ["lipstick", "mascara", "eyeshadow", "blusher"]) {
 		if (V.makeup[makeup]) attractiveness += 100;
@@ -618,6 +622,7 @@ function calculateallure() {
 	if (Time.isBloodMoon()) allure += 2000;
 	allure = Math.clamp(allure, 0, 8000);
 	V.baseAllure = allure;
+	if (V.hallucinogen >= 1 && V.substanceRebalance == 1) V.allure *= 1 + (0.25 * (V.hallucinogen / 250))
 	/* extra modifiers */
 	allure *= V.alluremod;
 	if (V.moorLuck > 0) allure *= 1 - V.moorLuck / 100;
