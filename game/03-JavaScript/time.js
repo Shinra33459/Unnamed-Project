@@ -1028,6 +1028,7 @@ function hourPassed(hours) {
 function minutePassed(minutes) {
 	// Stress
 	// decay/rise and crossdresser trait
+	const isCrossdresser = V.backgroundTraits.includes("crossdresser");
 	// Not using isCrossdressing() since the stress gains/penalties should not be based on NudeGenderDC
 	const isCrossdressing = V.player.sex !== V.player.gender_appearance && V.player.sex !== "h";
 	if (V.controlled === 0 && V.anxiety >= 2 && V.timeSkip == undefined) V.stress += minutes * ((isCrossdresser && !isCrossdressing) + 1);
