@@ -583,19 +583,19 @@ function calculateallure() {
 	/* extra attractiveness from accessories */
 	for (const slot of ["head", "face", "neck", "legs", "feet", "handheld", "hands"]) attractiveness += V.worn[slot].reveal || 0;
 	/* tf bonuses */
-	const partsHidden = (tf, parts) => parts.filter(part => V.transformationParts[tf][part] === "hidden").length;
-	attractiveness += 500 - 100 * partsHidden("demon", ["horns", "tail", "wings"]);
-	attractiveness += 500 - 150 * partsHidden("angel", ["halo", "wings"]);
-	attractiveness += 500 - 150 * partsHidden("fallenAngel", ["halo", "wings"]);
-	attractiveness += 500 - 150 * partsHidden("wolf", ["tail", "ears"]);
-	attractiveness += 500 - 150 * partsHidden("cat", ["tail", "ears"]);
-	attractiveness += 500 - 100 * partsHidden("cow", ["ears", "horns", "tail"]);
-	attractiveness += 500 - 60 * partsHidden("bird", ["tail", "eyes", "wings", "malar", "plumage"]);
-	attractiveness += 750 - 225 * partsHidden("fox", ["ears", "tail"]);
-	attractiveness += 500 - 225 * partsHidden("bunny", ["ears","tail"]);
-	attractiveness += 1000 - 200 * partsHidden("okami", ["ears", "tail", "wings", "misc"]);
-	attractiveness += 1000 - 400 * partsHidden("seraphim", ["wings", "plumage"]);
-	attractiveness += 1000 - 200 * partsHidden("kitsune", ["ears", "tail", "cheeks", "misc"]);
+	const partsDisabled = (tf, parts) => parts.filter(part => V.transformationParts[tf][part] === "disabled").length;
+	if (partsDisabled("demon", ["horns", "tail", "wings"]) < 3) attractiveness += 500 - 100 * partsDisabled("demon", ["horns", "tail", "wings"]);
+	if (partsDisabled("angel", ["halo", "wings"]) < 2) attractiveness += 500 - 150 * partsDisabled("angel", ["halo", "wings"]);
+	if (partsDisabled("fallenAngel", ["halo", "wings"]) < 2) attractiveness += 500 - 150 * partsDisabled("fallenAngel", ["halo", "wings"]);
+	if (partsDisabled("wolf", ["tail", "ears"]) < 2) attractiveness += 500 - 150 * partsDisabled("wolf", ["tail", "ears"]);
+	if (partsDisabled("cat", ["tail", "ears"]) < 2) attractiveness += 500 - 150 * partsDisabled("cat", ["tail", "ears"]);
+	if (partsDisabled("cow", ["ears", "horns", "tail"]) < 3) attractiveness += 500 - 100 * partsDisabled("cow", ["ears", "horns", "tail"]);
+	if (partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]) < 5) attractiveness += 500 - 60 * partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]);
+	if (partsDisabled("fox", ["ears", "tail"]) < 2) attractiveness += 750 - 225 * partsDisabled("fox", ["ears", "tail"]);
+	if (partsDisabled("bunny", ["ears","tail"]) < 2) attractiveness += 500 - 225 * partsDisabled("bunny", ["ears","tail"]);
+	if (partsDisabled("okami", ["ears", "tail", "wings"]) < 3) attractiveness += 1000 - 225 * partsDisabled("okami", ["ears", "tail", "wings"]);
+	if (partsDisabled("seraphim", ["wings", "plumage"]) < 2) attractiveness += 1000 - 400 * partsDisabled("seraphim", ["wings", "plumage"]);
+	if (partsDisabled("kitsune", ["ears", "tail", "cheeks"]) < 3) attractiveness += 1000 - 225 * partsDisabled("kitsune", ["ears", "tail", "cheeks"]);
 	/* makeup */
 	for (const makeup of ["lipstick", "mascara", "eyeshadow", "blusher"]) {
 		if (V.makeup[makeup]) attractiveness += 100;
