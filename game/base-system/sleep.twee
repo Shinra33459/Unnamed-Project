@@ -111,6 +111,20 @@
 					<<set _wakeEvent to "slimeWakeMasturbation">>
 					<<break>>
 				<</if>>
+			<<case "old_temple">>
+				/* Hopeless Cycle event */
+				<<if $statFreeze and $hc>>
+					<<if _hcEvent is "blood">>
+						<<set _sleepInterrupt to 1>>
+						<<set $hc.bloodWake to true>>	
+					<<elseif Time.dayState is "night" and $hc.nightBreakIn is "tonight" and $prisoner.love gte 30 and !$hc.daily.nightmare>>
+						<<set _sleepinterrupt to 1>>
+						<<set $hc.daily.nightmare to true>>						
+					<<elseif Time.hour gte 7 and ["dawn", "day"].includes(Time.dayState)>>
+						<<set _sleepinterrupt to 1>>
+						<<set $hc.daily.wake to true>>
+					<</if>>
+				<</if>>
 			<<case "asylum">>
 				<<asylumeffects>>
 				<<if Time.hour is 6 or ($asylumstate is "firsttreatment" and $daily.asylumTreatment1 isnot 1) or ($asylumstate is "secondtreatment" and $daily.asylumTreatment2 isnot 1) or ($asylumstate is "assessment" and $daily.asylumAssessment isnot 1)>>
@@ -125,7 +139,7 @@
 					<<break>>
 				<</if>>
 			<<case "prison">>
-				<<if Time.hour is 6>>
+				<<if Time.hour is 6 and !$daily.prison.wake>>
 					<<set _sleepinterrupt to 1>>
 					<<set $daily.prison.wake to true>>
 				<<elseif !$bedGuest and $exposed is 2 and $sleepHoursTotal gte 3 and !$weekly.slimeWakeMasturbation and $earSlime.growth gte (currentSkillValue('willpower') / 7) and random(0,100) lt 4 and $leftarm isnot "bound" and $rightarm isnot "bound">>
@@ -347,6 +361,23 @@
 	<<unset $bedGuest>>
 <</widget>>
 
+<<widget "wetDream">>
+	<<if $specialClothesEffects.bimbo.total gte 100 and $specialClothesEffects.pimp.total gte 100>>
+		<<set _lustful to $player.gender_appearance is "f" ? $specialClothesEffects.bimbo : $specialClothesEffects.pimp>>
+	<<else>>
+		<<set _lustful to $specialClothesEffects.bimbo.total gte 100 ? $specialClothesEffects.bimbo : $specialClothesEffects.pimp>>
+	<</if>>
+	Your sleep <<if _wakingEffect>>was<<else>>is<</if>> plagued by dirty dreams.
+	<<arousal `_lustful.total / 10 * $sleepHoursTotal`>>
+	<<arousal `100 * $sleepHoursTotal`>>
+	<<if $arousal gte $arousalmax>>
+		They push you over the edge.
+		<<orgasm>>
+	<<else>>
+		<br><br>
+	<</if>>
+<</widget>>
+
 <<widget "bedclotheson">>
 	<<switch _args[0]>>
 		<<case "bed" "Bed">>
@@ -421,7 +452,7 @@
 	<<if ["home", "temple", "alex_cottage"].includes($location) and $earSlime.knowsAboutPhotoShoot and $earSlime.exhibitionism gte 2 and $photo.shoot is 0 and random(0,100) gte 50>>
 		<<set _eventsList.push("fully expose yourself while working as a model in town")>>
 	<</if>>
-	<<if ["alex_cottage"].includes($location)>>
+	<<if ["alex_cottage"].includes($location) and Time.dayState is "night" and between(Time.hour, 20, 24)>>
 		<<if $earSlime.deviancy gte 2 and $breastfeedingdisable is "f" and $lactating and $milk_amount gte 1000 and $earSlime.focus isnot "impregnation">>
 			<<set _eventsList.push("use the farm equipment to empty your breasts of milk")>>
 		<</if>>
@@ -676,7 +707,7 @@
 			It also promises that the limits of your current body will not hold you back.
 		<</if>>
 	<<else>>
-		<span class="lewd">pure femininity</span>. 
+		<span class="lewd">pure femininity</span>.
 	<</if>>
 	<br>
 	The first voice is interrupted by the one on your right, grabbing your attention. Your mind is assaulted with more promises. It tells you that it will help you fulfil yourself through
@@ -693,7 +724,7 @@
 	The voices invading your mind start to subside. The peace is short-lived as they start to talk over one another. Your own thoughts are drowned out as they argue about what your fate should be. <<gstress>><<stress 6>>
 	<br><br>
 
-	<<link [[Agree with the voice on the left|$passage]]>><<set $location to _prevLocation>><<set $earSlime.focus to "pregnancy">><<set $earSlime.growth++>><</link>><<if $player.gender is "m" and $analdisable is "t" and _pregnancyEnabled>><<note "With anal being disabled, pregnancy cannot occur for you" "italic">><</if>>
+	<<link [[Agree with the voice on the left|$passage]]>><<set $location to _prevLocation>><<set $earSlime.focus to "pregnancy">><<set $earSlime.growth++>><</link>><<if $player.sex is "m" and $analdisable is "t" and _pregnancyEnabled>><<note "With anal being disabled, pregnancy cannot occur for you" "italic">><</if>>
 	<br>
 	<<link [[Agree with the voice on the right|$passage]]>><<set $location to _prevLocation>><<set $earSlime.focus to "impregnation">><<set $earSlime.growth++>><</link>><<if $whitneypantiescheck is 2>><<note "Not recommended without disabling 'forced crossdressing'">><</if>>
 	<br>

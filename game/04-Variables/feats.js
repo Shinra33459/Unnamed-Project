@@ -247,21 +247,21 @@ setup.feats = {
 	},
 	"Chef de Tournant": {
 		title: "Chef de Tournant",
-		desc: "Learn recipes.",
+		desc: "Learn 5 recipes.",
 		difficulty: 1,
 		series: "chef",
 		filter: ["All", "General"],
 	},
 	"Chef de Partie": {
 		title: "Chef de Partie",
-		desc: "Learn recipes.",
+		desc: "Learn 20 recipes.",
 		difficulty: 2,
 		series: "chef",
 		filter: ["All", "General"],
 	},
 	"Sous Chef": {
 		title: "Sous Chef",
-		desc: "Learn recipes.",
+		desc: "Learn 50 recipes.",
 		difficulty: 3,
 		series: "chef",
 		filter: ["All", "General"],
@@ -944,6 +944,22 @@ setup.feats = {
 		desc: "Get 2000 impregnation fame.",
 		difficulty: 4,
 		series: "",
+		filter: ["All", "Social"],
+	},
+	"Warmest Winter": {
+		title: "Warmest Winter",
+		desc: "Heard Winter's most personal tale.",
+		difficulty: 2,
+		series: "",
+		hint: "Hint: Help an old fossil remember.",
+		filter: ["All", "Social"],
+	},
+	"Trials of Faith": {
+		title: "Trials of Faith",
+		desc: "Heard all endings of the 'Hopeless Cycle' story.",
+		difficulty: 4,
+		series: "",
+		hint: "Hint: A truth buried behind many lies.",
 		filter: ["All", "Social"],
 	},
 	Neko: {
@@ -2034,6 +2050,14 @@ setup.feats = {
 		filter: ["All", "Discoveries-Town"],
 		hint: "Hint: Convince Briar to do business.",
 	},
+	"Player of the Match": {
+		title: "Player of the Match",
+		desc: "Stole the cricket ball from Wren.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Discoveries-Town"],
+		hint: "Hint: Double-cross your partner in crime.",
+	},
 	"Ear Slime Lover": {
 		title: "Ear Slime Lover",
 		desc: "It is your best friend.",
@@ -2809,7 +2833,7 @@ function earnHourlyFeats() {
 
 	// Feats that can only be earned after 50 days
 	if (Time.days >= 50) {
-		switch (V.player.gender) {
+		switch (V.player.sex) {
 			case "m":
 				earnFeat("Being a Boy");
 				break;
@@ -2879,7 +2903,6 @@ function earnHourlyFeats() {
 	if (specialTraits >= 1) earnFeat("A Special Trait");
 	if (specialTraits >= 9) earnFeat("A Special Trait Collector");
 
-	if (V.sexStats.anus.pregnancy.motherStatus >= 2 || V.sexStats.vagina.pregnancy.motherStatus >= 2) earnFeat("Broodmother Host");
 	if (
 		V.pregnancyStats.parasiteTypesSeen &&
 		V.pregnancyStats.parasiteTypesSeen.length >= 14 &&

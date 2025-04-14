@@ -42,7 +42,7 @@
 		<br>
 		<<clothingCaptionTextStrip>>
 	<</if>>
-	<<if $NudeGenderDC gte 0>>
+	<<if isHermOrCrossdresser() or ($player.gender_appearance isnot $player.gender and $player.gender isnot "n")>>
 		<br>
 		<<clothingCaptionTextGender>>
 	<</if>>
@@ -138,7 +138,7 @@
 			<<pushClothingCaption "under_lower" $_pair>>
 
 			<<set _nothingBut to $_exposed>>
-			<<if !$_exposed and !_topless and $player.breastsize gte 4 and ($player.gender isnot "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<if !$_exposed and !_topless and $player.breastsize gte 4 and ($player.sex isnot "m" or $backgroundTraits.includes("crossdresser"))>>
 				<<set _finally to ". <span class='purple'>You are not wearing a bra.</span>">>
 			<</if>>
 		<</if>>
@@ -167,7 +167,7 @@
 <<widget "clothingCaptionTextGenitals">><<silently>>
 	<<if $worn.genitals.name isnot "naked">>
 		<<if _bottomless>>
-			<<set $_text_output to " <span class='red'>Your <<clothingCaptionChastityEffect>> <<genitalsintegrity>> $worn.genitals.name <<if playerChastity('anus')>>with an anal shield<</if>><<if playerHasButtPlug()>> and $worn.butt_plug.name<</if>> gives you no comfort.</span>">>
+			<<set $_text_output to " <span class='red'>Your <<clothingCaptionChastityEffect>> <<genitalsintegrity>> $worn.genitals.name <<if playerChastity('anus')>>with an anal shield<</if>><<if playerHasButtPlug()>> and $worn.butt_plug.name give<<else>> gives<</if>> you no comfort.</span>">>
 		<<else>>
 			<<set $_text_output to " You wear <<genitalsword>> <<clothingCaptionChastityEffect>> <<genitalsintegrity>> $worn.genitals.name<<if playerChastity('anus')>> with an anal shield<</if>><<if playerHasButtPlug()>> and $worn.butt_plug.name<</if>>.">>
 		<</if>>
@@ -303,21 +303,27 @@
 <</widget>>
 
 <<widget "clothingCaptionTextGender">><<silently>>
-	<<if ($player.gender isnot "f" or $player.penisExist) and $player.gender_appearance is "f">>
-		<<if $breastindicator is 1 and $player.perceived_breastsize gt 1>>
-			<<set $_text_output to "Your exposed breasts will make people think you're a girl!">>
-		<<elseif $exposed gte 2>>
-			<<set $_text_output to "The way you look, people will think you're a girl!">>
-		<<else>>
-			<<set $_text_output to "The way you're dressed, people will think you're a girl!">>
+	<<if $player.gender_appearance is "f" and ($player.gender is "m" or (isHermOrCrossdresser() and $player.sex isnot "f"))>>
+		<<if $exposed gte 2 and $player.gender is "m">>
+			<<set $_text_output to `The way you look, people will think you're a girl!`>>
+		<<elseif $breastindicator is 1 and $player.perceived_breastsize gt 1 and $player.gender is "m">>
+			<<set $_text_output to `Your exposed breasts will make people think you're a girl!`>>
+		<<elseif nudeGenderAppearance() is "m">>
+			<<set _crossdresser to $player.sex is "m" ? "crossdresser" : "boy">>
+			<<set $_text_output to `If people see your genitals, they will think you're a ${_crossdresser}!`>>
+		<<elseif $player.gender is "m">>
+			<<set $_text_output to `The way you're dressed, people will think you're a girl!`>>
 		<</if>>
-	<<elseif $player.gender isnot "m" and $player.gender_appearance is "m">>
-		<<if $breastindicator is 0 and $worn.upper.exposed is 2 and $worn.under_upper.exposed gte 1 and $player.perceived_breastsize lte 1>>
-			<<set $_text_output to "Your exposed flat chest will make people think you're a boy!">>
-		<<elseif $exposed gte 2>>
-			<<set $_text_output to "The way you look, people will think you're a boy!">>
-		<<else>>
-			<<set $_text_output to "The way you're dressed, people will think you're a boy!">>
+	<<elseif $player.gender_appearance is "m" and ($player.gender is "f" or (isHermOrCrossdresser() and $player.sex isnot "m"))>>
+		<<if $exposed gte 2>>
+			<<set $_text_output to `The way you look, people will think you're a boy!`>>
+		<<elseif $breastindicator is 1 and $player.perceived_breastsize lte 1 and $player.gender is "f">>
+			<<set $_text_output to `Your exposed flat chest will make people think you're a boy!`>>
+		<<elseif nudeGenderAppearance() is "f">>
+			<<set _crossdresser to $player.sex is "f" ? "crossdresser" : "girl">>
+			<<set $_text_output to `If people see your genitals, they will think you're a ${_crossdresser}!`>>
+		<<elseif $player.gender is "f">>
+			<<set $_text_output to `The way you're dressed, people will think you're a boy!`>>
 		<</if>>
 	<</if>>
 <</silently>><<if $_text_output>><span class="pink"><<print $_text_output>></span><</if>><</widget>>

@@ -274,7 +274,7 @@
 			<<if _preventItemEquip is true>>
 				<<if $_incomingItemName is "naked">>
 					/*Can't unequip cursed item */
-					<<set _notEquipped[$_slot] to {"name": setup.clothes[$_slot][clothesIndex($_slot,$worn[$_slot])].name_cap, "reason": "cursed unequip"}>>
+					<<set _notEquipped[$_slot] to {"name": setup.clothes[$_slot][clothesIndex($_slot,$worn[$_slot])].name, "reason": "cursed unequip"}>>
 				<<else>>
 					/*Can't swap cursed item for anything else */
 					<<set _notEquipped[$_slot] to {"name": $_incomingItemName, "reason": "cursed slot"}>>
@@ -400,7 +400,7 @@
 							<</if>>
 						<</if>>
 
-						/*Finds the least damaged outfit if the current clothing item is the main part and sets it as a last resort incase an undamaged one isnt found*/
+						/*Finds the least damaged outfit if the current clothing item is the main part and sets it as a last resort in case an undamaged one isn't found*/
 						<<set _damage to 0>>
 						<<if $_wardrobeItem.outfitPrimary isnot undefined>>
 							<<set _outfitPrimaryWearOutfit to $_wardrobeItem.outfitPrimary>>
@@ -477,6 +477,10 @@
 										<<continue>>
 									<</if>>
 									<<if $_primaryAccColourIsCustom and ($_foundPrimary.accessory isnot 0 and $_foundPrimary.accessory_colourCustom is undefined or $_foundPrimary.accessory_colourCustom isnot $_possiblePiece.accessory_colourCustom)>>
+										<<continue>>
+									<</if>>
+									/*Skip items that don't have matching patterns*/
+									<<if $_possiblePiece.pattern and $_possiblePiece.pattern isnot 0 and $_foundPrimary.pattern isnot $_possiblePiece.pattern>>
 										<<continue>>
 									<</if>>
 									/*Found the correct item*/
