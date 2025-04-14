@@ -2242,7 +2242,7 @@ setup.feats = {
 	*/
 	"Smarter than Einstein": {
 		title: "Smarter than Einstein",
-		desc: "You can create E=MC Cubed in your sleep.",
+		desc: "You have ascended the 'erm ackchually' technique.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "AMC Traits"],
