@@ -1952,21 +1952,25 @@ function dailyFarmEvents() {
 		if (V.farm_attack_timer < 0) wikifier("farm_attack_auto");
 		if (V.farm.stock) {
 			if (V.farm.cooler >= 3) {
-				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.99);
-				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.99);
-				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.99);
+				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.999);
+				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.999);
+				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.999);
+				V.farm.stock.cream = Math.trunc(V.farm.stock.cream * 0.999);
 			} else if (V.farm.cooler >= 2) {
 				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.95);
 				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.95);
 				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.95);
+				V.farm.stock.cream = Math.trunc(V.farm.stock.cream * 0.95);
 			} else if (V.farm.cooler >= 1) {
 				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.9);
 				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.9);
 				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.9);
+				V.farm.stock.cream = Math.trunc(V.farm.stock.cream * 0.9);
 			} else {
 				V.farm.stock.truffles = Math.trunc(V.farm.stock.truffles * 0.8);
 				V.farm.stock.milk = Math.trunc(V.farm.stock.milk * 0.8);
 				V.farm.stock.eggs = Math.trunc(V.farm.stock.eggs * 0.8);
+				V.farm.stock.cream = Math.trunc(V.farm.stock.cream * 0.8);
 			}
 		}
 		if (V.farm.woodland >= 7) {
@@ -1993,18 +1997,25 @@ function dailyFarmEvents() {
 		}
 		if (V.farm.barn >= 7) {
 			wikifier("farm_stock", "milk", 1280, 2560);
+			wikifier("farm_stock", "cream", 1280, 2560);
 		} else if (V.farm.barn >= 6) {
 			wikifier("farm_stock", "milk", 640, 1280);
+			wikifier("farm_stock", "cream", 640, 1280);
 		} else if (V.farm.barn >= 5) {
 			wikifier("farm_stock", "milk", 320, 640);
+			wikifier("farm_stock", "cream", 320, 640);
 		} else if (V.farm.barn >= 4) {
 			wikifier("farm_stock", "milk", 160, 320);
+			wikifier("farm_stock", "cream", 160, 320);
 		} else if (V.farm.barn >= 3) {
 			wikifier("farm_stock", "milk", 80, 160);
+			wikifier("farm_stock", "cream", 80, 160);
 		} else if (V.farm.barn >= 2) {
 			wikifier("farm_stock", "milk", 40, 80);
+			wikifier("farm_stock", "cream", 40, 80);
 		} else if (V.farm.barn >= 1) {
 			wikifier("farm_stock", "milk", 20, 40);
+			wikifier("farm_stock", "cream", 20, 40);
 		}
 		if (V.farm.coop >= 7) {
 			wikifier("farm_stock", "eggs", 1280, 2560);
