@@ -189,6 +189,7 @@ Weather.BodyTemperature = (() => {
 	}
 
 	function temperatureFactor() {
+		adjustTemperatureThresholds();
 		if (Weather.BodyTemperature.get() <= settings.effects.lowerThresholdStart) {
 			return 1 - normalise(Weather.BodyTemperature.get(), settings.effects.lowerThresholdStart, settings.effects.lowerThresholdEnd);
 		}
@@ -222,8 +223,10 @@ Weather.BodyTemperature = (() => {
 		if (V.transformationParts.traits.tempTolerance == "disabled") {
 			settings.effects.lowerThresholdStart = 36;
 			settings.effects.lowerThresholdEnd = 33;
+			settings.effects.minTemperature = 33;
 			settings.effects.upperThresholdStart = 38;
 			settings.effects.upperThresholdEnd = 41;
+			settings.effects.maxTemperature = 41;
 			return;
 		}
 
@@ -262,9 +265,11 @@ Weather.BodyTemperature = (() => {
 		// Apply modifications
 		settings.effects.lowerThresholdStart = 36 + mod.coldTolerance;
 		settings.effects.lowerThresholdEnd = 33 + mod.coldToleranceEnd;
+		settings.effects.minTemperature = 33 + mod.coldToleranceEnd;
 
 		settings.effects.upperThresholdStart = 38 + mod.heatTolerance;
 		settings.effects.upperThresholdEnd = 41 + mod.heatToleranceEnd;
+		settings.effects.maxTemperature = 41 + mod.heatToleranceEnd;
 	}
 
 	return Object.create({
