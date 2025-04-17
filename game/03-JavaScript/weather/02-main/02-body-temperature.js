@@ -223,37 +223,37 @@ Weather.BodyTemperature = (() => {
 		if (V.transformationParts.traits.tempTolerance == "disabled") {
 			settings.effects.lowerThresholdStart = 36;
 			settings.effects.lowerThresholdEnd = 33;
-			settings.effects.minTemperature = 33;
+			settings.minTemperature = 33;
 			settings.effects.upperThresholdStart = 38;
 			settings.effects.upperThresholdEnd = 41;
-			settings.effects.maxTemperature = 41;
+			settings.maxTemperature = 41;
 			return;
 		}
 
 		const transformationAdjustments = {
 			wolf: {
 				coldTolerance: -20, coldToleranceEnd: -25,
-				heatTolerance: -5, heatToleranceEnd: -10
+				heatTolerance: 0, heatToleranceEnd: 0
 			},
 			cat: {
-				coldTolerance: 2, coldToleranceEnd: 5,
+				coldTolerance: 0, coldToleranceEnd: 0,
 				heatTolerance: 5, heatToleranceEnd: 10
 			},
 			cow: {
 				coldTolerance: -5, coldToleranceEnd: -10,
-				heatTolerance: 8, heatToleranceEnd: 12
+				heatTolerance: 0, heatToleranceEnd: 0
 			},
 			bear: {
 				coldTolerance: -30, coldToleranceEnd: -35,
-				heatTolerance: 5, heatToleranceEnd: 10
+				heatTolerance: 0, heatToleranceEnd: 0
 			},
 			bird: {
-				coldTolerance: 5, coldToleranceEnd: 10,
+				coldTolerance: 0, coldToleranceEnd: 0,
 				heatTolerance: 15, heatToleranceEnd: 20
 			},
 			bunny: {
 				coldTolerance: 5, coldToleranceEnd: 8,
-				heatTolerance: -5, heatToleranceEnd: -8
+				heatTolerance: 0, heatToleranceEnd: 0
 			},
 		};
 
@@ -265,11 +265,11 @@ Weather.BodyTemperature = (() => {
 		// Apply modifications
 		settings.effects.lowerThresholdStart = 36 + mod.coldTolerance;
 		settings.effects.lowerThresholdEnd = 33 + mod.coldToleranceEnd;
-		settings.effects.minTemperature = 33 + mod.coldToleranceEnd;
+		settings.minTemperature = 33 + mod.coldToleranceEnd;
 
 		settings.effects.upperThresholdStart = 38 + mod.heatTolerance;
 		settings.effects.upperThresholdEnd = 41 + mod.heatToleranceEnd;
-		settings.effects.maxTemperature = 41 + mod.heatToleranceEnd;
+		settings.maxTemperature = 41 + mod.heatToleranceEnd;
 	}
 
 	return Object.create({
