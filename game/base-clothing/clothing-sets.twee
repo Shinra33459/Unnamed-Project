@@ -264,7 +264,7 @@
 			<<if _preventItemEquip is true>>
 				<<if $_incomingItemName is "naked">>
 					/*Can't unequip cursed item */
-					<<set _notEquipped[$_slot] to {"name": setup.clothes[$_slot][clothesIndex($_slot,$worn[$_slot])].name_cap, "reason": "cursed unequip"}>>
+					<<set _notEquipped[$_slot] to {"name": setup.clothes[$_slot][clothesIndex($_slot,$worn[$_slot])].name, "reason": "cursed unequip"}>>
 				<<else>>
 					/*Can't swap cursed item for anything else */
 					<<set _notEquipped[$_slot] to {"name": $_incomingItemName, "reason": "cursed slot"}>>
@@ -300,6 +300,12 @@
 						/* Check for saved colors in clothing set */
 						<<set $_outfitColors to $outfit[$wear_outfit].colors>>
 						<<if $_outfitColors>>
+							<<if $_outfitColors[$_slot][0] is 0 and setup.clothes[$_slot].find(item => item.name === $_wardrobeItem.name).colour_options.length>>
+								<<set $_outfitColors[$_slot][0] to setup.clothes[$_slot].find(item => item.name === $_wardrobeItem.name).colour_options[0]>>
+							<</if>>
+							<<if $_outfitColors[$_slot][1] is 0 and setup.clothes[$_slot].find(item => item.name === $_wardrobeItem.name).accessory_colour_options.length>>
+								<<set $_outfitColors[$_slot][1] to setup.clothes[$_slot].find(item => item.name === $_wardrobeItem.name).accessory_colour_options[0]>>
+							<</if>>
 							/* Start of checking for random colours */
 							<<set _randomColourListItem to $_wardrobeItem.name>>
 							<<if $_outfitColors[$_slot][0] is "random" or $_outfitColors[$_slot][1] is "random">>
@@ -341,10 +347,10 @@
 							<<unset _randomColourListItem>>
 
 							/* Skips over items that do not match the random colours */
-							<<if (!_randomColour or _randomColour isnot $_wardrobeItem.colour) and $_outfitColors[$_slot][0] isnot $_wardrobeItem.colour>>
+							<<if (!_randomColour or _randomColour isnot $_wardrobeItem.colour) and $_outfitColors[$_slot][0] isnot 0 and $_outfitColors[$_slot][0] isnot $_wardrobeItem.colour>>
 								<<continue>>
 							<</if>>
-							<<if (!_randomColourAcc or _randomColourAcc isnot $_wardrobeItem.accessory_colour) and $_outfitColors[$_slot][1] isnot $_wardrobeItem.accessory_colour>>
+							<<if (!_randomColourAcc or _randomColourAcc isnot $_wardrobeItem.accessory_colour) and $_outfitColors[$_slot][1] isnot 0 and $_outfitColors[$_slot][1] isnot $_wardrobeItem.accessory_colour>>
 								<<continue>>
 							<</if>>
 							/* End of checking for random colours */
@@ -390,7 +396,7 @@
 							<</if>>
 						<</if>>
 
-						/*Finds the least damaged outfit if the current clothing item is the main part and sets it as a last resort incase an undamaged one isnt found*/
+						/*Finds the least damaged outfit if the current clothing item is the main part and sets it as a last resort in case an undamaged one isn't found*/
 						<<set _damage to 0>>
 						<<if $_wardrobeItem.outfitPrimary isnot undefined>>
 							<<set _outfitPrimaryWearOutfit to $_wardrobeItem.outfitPrimary>>
@@ -467,6 +473,10 @@
 										<<continue>>
 									<</if>>
 									<<if $_primaryAccColourIsCustom and ($_foundPrimary.accessory isnot 0 and $_foundPrimary.accessory_colourCustom is undefined or $_foundPrimary.accessory_colourCustom isnot $_possiblePiece.accessory_colourCustom)>>
+										<<continue>>
+									<</if>>
+									/*Skip items that don't have matching patterns*/
+									<<if $_possiblePiece.pattern and $_possiblePiece.pattern isnot 0 and $_foundPrimary.pattern isnot $_possiblePiece.pattern>>
 										<<continue>>
 									<</if>>
 									/*Found the correct item*/

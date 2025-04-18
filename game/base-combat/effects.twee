@@ -1246,7 +1246,7 @@
 					<<if combatSkillCheck("hand", $righttarget)>>
 						<<submission 1>><<sextoystat>>
 						<<if $NPCList[$righttarget].penis is 0>>
-							<<set $NPCList[$righttarget].penis to "rightstroker">><<set $rightarm to "strokerOtherPenisFuck">><<personselect $righttarget>>
+							<<set $NPCList[$righttarget].penis to "rightStroker">><<set $rightarm to "strokerOtherPenisFuck">><<personselect $righttarget>>
 							<span class="lblue">You <<handtext>> tease <<hisselect $righttarget>> <<npcPenis $righttarget>><<if $NPCList[$righttarget].chastity.penis.includes("chastity")>> through <<his>> $NPCList[$righttarget].chastity.penis<</if>> with the $currentSexToyRight.name in your right hand.</span>
 						<<else>>
 							<span class="blue">You try to tease <<hisselect $righttarget>> <<npcPenis $righttarget>> with the $currentSexToyRight.name in your right hand, but the entrance is already occupied.</span>
@@ -1258,11 +1258,89 @@
 					/* Note: deliberately does not take virginities */
 					<<handskilluse>>
 					<<if combatSkillCheck("hand", $righttarget)>>
-						<<submission 10>><<set $speechstroker to 1>><<set $rightarm to "strokerOtherPenisFuck">><<set $NPCList[$righttarget].penis to "rightstroker">>
+						<<submission 10>><<set $speechstroker to 1>><<set $rightarm to "strokerOtherPenisFuck">><<set $NPCList[$righttarget].penis to "rightStroker">>
 
 						You <<handtext>> fuck <<their $righttarget>> <<npcPenis $righttarget>> with the $currentSexToyRight.name in your right hand.
 
-					<<elseif $NPCList[$righttarget].penis is "rightstroker">>
+			<<elseif $NPCList[$righttarget].penis is "rightStroker">>
+				<<set $rightarm to 0>><<set $rightactiondefault to "strokerOtherPenisTease">>
+				<<set $NPCList[$righttarget].penis to 0>><<personselect $righttarget>>
+				<span class="blue">You try to fuck <<hisselect $righttarget>> <<npcPenis 0>> with your $currentSexToyRight.name, but <<he>>
+				<<if $enemytype isnot "beast">>slaps your hand away<<else>>shifts way from you and growls<</if>>.</span>
+			<</if>>
+		<</if>>
+
+
+		/*Stalked actions */
+		<<if !$stalk_end>>
+			<<if $leftaction is "clench" and $rightaction is "clench">>
+				<<if $earSlime.growth gt 50 and $earSlime.growth - random(0, Math.clamp(300 - ($earSlime.defyCooldown * 20), 0, 300)) gte (currentSkillValue('willpower')/ 10) and hasSexStat("exhibitionism", 2)>>
+					<<if ($player.penisExist or playerHasStrapon()) and (!$player.vaginaExist or $worn.genitals.name is "chastity parasite" or random(0,100) gte 50)>>
+						<<set _slimeTarget to playerHasStrapon() ? "strap-on" : (playerChastity("penis") ? $worn.genitals.name : "penis")>>
+						<<set _slimeWidget to "penis">>
+					<<elseif $player.vaginaExist>>
+						<<set _slimeTarget to "vagina">>
+						<<set _slimeWidget to "vagina">>
+					<<else>>
+						<<set _slimeTarget to "butt">>
+						<<set _slimeWidget to "anus">>
+					<</if>>
+					You try to clench your fists, <span class="red">but you suddenly find them moving towards your _slimeTarget.</span> You feel the slime steal your control away.
+					<<switch _slimeWidget>>
+						<<case "penis">><<effectsCoverPenis "both" "lewd">>
+						<<case "vagina">><<effectsCoverVagina "both" "lewd">>
+						<<case "anus">><<effectsCoverAnus "both" "lewd">>
+					<</switch>>
+				<<else>>
+					<<set $leftactiondefault to "clench">><<set $leftaction to 0>><<set $rightactiondefault to "clench">><<set $rightaction to 0>><<brat 6>>
+					You clench your fists.
+				<</if>>
+			<<elseif $leftaction is "clench">>
+				<<if $earSlime.growth gt 50 and $earSlime.growth - random(0, Math.clamp(300 - ($earSlime.defyCooldown * 20), 0, 300)) gte (currentSkillValue('willpower')/ 10) and hasSexStat("exhibitionism", 2)>>
+					<<if ($player.penisExist or playerHasStrapon()) and (!$player.vaginaExist or $worn.genitals.name is "chastity parasite" or random(0,100) gte 50)>>
+						<<set _slimeTarget to playerHasStrapon() ? "strap-on" : (playerChastity("penis") ? $worn.genitals.name : "penis")>>
+						<<set _slimeWidget to "penis">>
+					<<elseif $player.vaginaExist>>
+						<<set _slimeTarget to "vagina">>
+						<<set _slimeWidget to "vagina">>
+					<<else>>
+						<<set _slimeTarget to "butt">>
+						<<set _slimeWidget to "anus">>
+					<</if>>
+					You try to clench your fists, <span class="red">but you suddenly find them moving towards your _slimeTarget.</span> You feel the slime steal your control away.
+					<<switch _slimeWidget>>
+						<<case "penis">><<effectsCoverPenis "left" "lewd">>
+						<<case "vagina">><<effectsCoverVagina "left" "lewd">>
+						<<case "anus">><<effectsCoverAnus "left" "lewd">>
+					<</switch>>
+				<<else>>
+					<<set $leftactiondefault to "clench">><<set $leftaction to 0>><<brat 3>>
+					You clench your left fist.
+				<</if>>
+			<<elseif $rightaction is "clench">>
+				<<if $earSlime.growth gt 50 and $earSlime.growth - random(0, Math.clamp(300 - ($earSlime.defyCooldown * 20), 0, 300)) gte (currentSkillValue('willpower')/ 10) and hasSexStat("exhibitionism", 2)>>
+					<<if ($player.penisExist or playerHasStrapon()) and (!$player.vaginaExist or $worn.genitals.name is "chastity parasite" or random(0,100) gte 50)>>
+						<<set _slimeTarget to playerHasStrapon() ? "strap-on" : (playerChastity("penis") ? $worn.genitals.name : "penis")>>
+						<<set _slimeWidget to "penis">>
+					<<elseif $player.vaginaExist>>
+						<<set _slimeTarget to "vagina">>
+						<<set _slimeWidget to "vagina">>
+					<<else>>
+						<<set _slimeTarget to "butt">>
+						<<set _slimeWidget to "anus">>
+					<</if>>
+					You try to clench your fists, <span class="red">but you suddenly find them moving towards your _slimeTarget.</span> You feel the slime steal your control away.
+					<<switch _slimeWidget>>
+						<<case "penis">><<effectsCoverPenis "right" "lewd">>
+						<<case "vagina">><<effectsCoverVagina "right" "lewd">>
+						<<case "anus">><<effectsCoverAnus "right" "lewd">>
+					<</switch>>
+				<<else>>
+					<<set $rightactiondefault to "clench">><<set $rightaction to 0>><<brat 3>>
+					You clench your right fist.
+				<</if>>
+			<</if>>
+					<<elseif $NPCList[$righttarget].penis is "rightStroker">>
 						<<set $rightarm to 0>><<set $rightactiondefault to "strokerOtherPenisTease">>
 						<<set $NPCList[$righttarget].penis to 0>><<personselect $righttarget>>
 						<span class="blue">You try to fuck <<hisselect $righttarget>> <<npcPenis 0>> with your $currentSexToyRight.name, but <<he>>

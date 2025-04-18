@@ -27,7 +27,9 @@
 	<br><br>
 <<else>>
 
-	<<if $estate_cards_end is "naked">>
+	<<if $wrenHeistMissed is true or ($wrenHeist is true and $wrenHeistDance.attended isnot true and Time.hour gte 21)>>
+		"Look who it is," Wren says. "You stood me up," <<= C.npc.Wren.love gte 40 ? "You know Wren well enough by now to see" : "You can't tell">> <<hes>> hurt. "Luckily, I didn't need your help."<<npcincr Wren love -1>><<llove>><<set $wrenHeist to false>><<unset $wrenHeistMissed>><<unset $wrenHeistDance>>
+	<<elseif $estate_cards_end is "naked">>
 		"Look who it is," Wren says, a smug smile on <<his>> face. "We left you with nothing last time. Hope the journey home wasn't too cold." <<His>> friends laugh.
 	<<elseif $estate_cards_end is "left_early">>
 		"Look who it is," Wren says. "Planning to stay around a bit longer this time, I hope."
@@ -70,6 +72,8 @@
 			"At least you're otherwise staying out of trouble. Mind where you pass out next time.
 		<</if>>
 		I won't always be around to save you."
+	<<elseif $wrenSeenLast is "heist">>
+		"Look who it is," Wren says. "Fancy seeing you here, partner. <<if $wrenHeistCricketBall is true>>You owe me. Big. <<set $wrenHeistCricketBall to false>><</if>>"
 	<<else>>
 		"Look who it is," Wren says. "Fancy a game?"
 	<</if>>
@@ -429,7 +433,7 @@ You turn and run.
 
 :: Estate Cards Cheating Plead
 <<effects>>
-<!-- <<if $estate.cards.state is "ride">>  is omitted because in that state the apologise option isn't given -->
+<!-- <<if $estate.cards.state is "ride">> is omitted because in that state the apologise option isn't given -->
 
 
 <<if $speech_attitude is "meek">>
@@ -888,7 +892,7 @@ What do you ask?
 <!-- we could allow the player to announce victory earlier, too, but it makes sense to require ALL dares to be completed -->
 <!-- we could also ignore the ones where we get Wren to get more daring with no actual benefit for us
      since PC doesn't particularly care about Wren's state of undress
-	 however, I figured I'll count them too since Wren being undressed definitely plays a role in them feeling defeated when the PC leaves  -->
+	 however, I figured I'll count them too since Wren being undressed definitely plays a role in them feeling defeated when the PC leaves -->
 <<if _favoursRemaining is 0>>
 	<i>You realise there are no more favours you can think of. You could end the game by declaring yourself victorious.</i>
 	<<if $estate.cards.confiscatedClothes and $estate.cards.confiscatedClothes.length gt 0>>
@@ -1046,7 +1050,7 @@ Before <<he>> can say anything, you continue.
 				<br><br>
 				<<set $estate.cards.exposure to 5>>
 				<span class="pink">They don't know you're naked beneath.</span>
-			<<elseif $worn.under_upper.type.includes("naked") and ($player.gender is "f" or $player.gender_appearance is "f")>>
+			<<elseif $worn.under_upper.type.includes("naked") and ($player.sex is "f" or $player.gender_appearance is "f")>>
 				<br><br>
 				<<set $estate.cards.exposure to 4>>
 				<span class="purple">They don't know you're topless beneath.</span>
@@ -1059,7 +1063,7 @@ Before <<he>> can say anything, you continue.
 			<</if>>
 		<<elseif $worn.upper.type.includes("naked")>>
 			<br><br>
-			<<if $worn.under_upper.type.includes("naked") and ($player.gender is "f" or $player.gender_appearance is "f")>>
+			<<if $worn.under_upper.type.includes("naked") and ($player.sex is "f" or $player.gender_appearance is "f")>>
 				<<set $estate.cards.exposure to 4>>
 				<span class="purple">They don't know you're topless beneath.</span>
 			<<else>>
@@ -1081,10 +1085,10 @@ Before <<he>> can say anything, you continue.
 	<<else>>
 		<<if $worn.upper.type.includes("naked")>>
 			<br><br>
-			<<if $worn.under_upper.type.includes("naked") and ($player.gender is "f" or $player.gender_appearance is "f")>>
+			<<if $worn.under_upper.type.includes("naked") and ($player.sex is "f" or $player.gender_appearance is "f")>>
 				<<set $estate.cards.exposure to 4>>
 				<span class="purple">They don't know you're topless beneath.</span>
-			<<elseif $player.gender is "f" or $player.gender_appearance is "f">>
+			<<elseif $player.sex is "f" or $player.gender_appearance is "f">>
 				<<set $estate.cards.exposure to 3>>
 				<span class="blue">They don't know you're only wearing underwear beneath.</span>
 			<</if>>
@@ -1115,7 +1119,7 @@ Before <<he>> can say anything, you continue.
 			<br><br>
 			<<set $estate.cards.exposure to 5>>
 			<span class="pink">They don't know you're naked beneath.</span>
-		<<elseif $worn.under_upper.type.includes("naked") and ($player.gender is "f" and $player.gender_appearance is "f")>>
+		<<elseif $worn.under_upper.type.includes("naked") and ($player.sex is "f" and $player.gender_appearance is "f")>>
 			<br><br>
 			<<set $estate.cards.exposure to 4>>
 			<span class="purple">They don't know you're topless beneath.</span>
@@ -1127,7 +1131,7 @@ Before <<he>> can say anything, you continue.
 
 		<</if>>
 	<<else>>
-		<<if $worn.under_upper.type.includes("naked") and ($player.gender_appearance is "f" or $player.gender is "f")>>
+		<<if $worn.under_upper.type.includes("naked") and ($player.gender_appearance is "f" or $player.sex is "f")>>
 			<br><br>
 			<<set $estate.cards.exposure to 4>>
 			<span class="purple">They don't know you're topless beneath.</span>
@@ -1413,7 +1417,7 @@ Before <<he>> can say anything, you continue.
 				<<cards_naked_cover>>
 				Wren just smiles, taking in the sight.
 				<br><br>
-			<<elseif $worn.under_upper.type.includes("naked") and ($player.gender is "f" or $player.gender_appearance is "f")>>
+			<<elseif $worn.under_upper.type.includes("naked") and ($player.sex is "f" or $player.gender_appearance is "f")>>
 				<span class="purple">revealing your <<breasts>>.</span> Someone laughs. "You really are a naughty <<girl>>," Wren laughs.
 				<br><br>
 
@@ -1430,8 +1434,8 @@ Before <<he>> can say anything, you continue.
 				<<cards_underwear_cover>>
 			<</if>>
 		<<elseif $worn.upper.type.includes("naked") and !$worn.lower.type.includes("covered")>>
-			pull off your $worn.over_upper,
-			<<if $worn.under_upper.type.includes("naked") and ($player.gender is "f" or $player.gender_appearance is "f")>>
+			pull off your $worn.over_upper.name,
+			<<if $worn.under_upper.type.includes("naked") and ($player.sex is "f" or $player.gender_appearance is "f")>>
 				<<set $estate.cards.exposure to 4>>
 				<span class="purple">revealing your <<breasts>>.</span> "I knew it," a <<person2>><<person>> says. "The slut's half stripped already."
 				<br><br>
@@ -1472,13 +1476,13 @@ Before <<he>> can say anything, you continue.
 	<<else>>
 		remove your $worn.over_upper.name,
 		<<if $worn.upper.type.includes("naked")>>
-			<<if $worn.under_upper.type.includes("naked") and ($player.gender is "f" or $player.gender_appearance is "f")>>
+			<<if $worn.under_upper.type.includes("naked") and ($player.sex is "f" or $player.gender_appearance is "f")>>
 				<<set $estate.cards.exposure to 4>>
 				<span class="purple">revealing your <<breasts>>.</span> A cheer erupts as they see you're already topless. Wren leers at you.
 				<br><br>
 
 				<<cards_top_cover>>
-			<<elseif $player.gender is "f" or $player.gender_appearance is "f">>
+			<<elseif $player.sex is "f" or $player.gender_appearance is "f">>
 				<<set $estate.cards.exposure to 3>>
 				<span class="blue">revealing your $worn.under_upper.name.</span> "Not wearing much," Wren says. "Are we? I won't complain."
 				<br><br>
@@ -1530,7 +1534,7 @@ Before <<he>> can say anything, you continue.
 			<br><br>
 
 			<<cards_naked_cover>>
-		<<elseif $worn.under_upper.type.includes("naked") and ($player.gender is "f" and $player.gender_appearance is "f")>>
+		<<elseif $worn.under_upper.type.includes("naked") and ($player.sex is "f" and $player.gender_appearance is "f")>>
 			<<set $estate.cards.exposure to 4>>
 			<span class="purple">revealing your <<breasts>>.</span> The room cheers. Wren leans forward for a closer look. "I knew you weren't a bra wearer," <<he>> says.
 			<br><br>
@@ -1551,7 +1555,7 @@ Before <<he>> can say anything, you continue.
 		<<card_clothes_lost "upper">><<card_clothes_lost "lower">>
 	<<else>>
 		pull off your $worn.upper.name,
-		<<if $worn.under_upper.type.includes("naked") and ($player.gender_appearance is "f" or $player.gender is "f")>>
+		<<if $worn.under_upper.type.includes("naked") and ($player.gender_appearance is "f" or $player.sex is "f")>>
 			<<set $estate.cards.exposure to 4>>
 			<span class="purple">revealing your <<breasts>>.</span> The room cheers. "No bra?" Wren muses. "Should have guessed."
 			<br><br>
@@ -2745,7 +2749,7 @@ You walk outside. <<if $exposed gte 2>>A breeze makes you shiver.<</if>>
 <<cards_naked_end>>
 
 :: Estate Fame Letter
-<<effects>><<set $outside to 0>><<person1>><<set $wrenSeen.pushUnique("letter")>><<set $wrenSeenLast to "letter">>
+<<effects>><<set $outside to 0>><<person1>><<set $wrenSeen.pushUnique("letter")>><<set $wrenSeenLast to "letter">><<wearProp "envelope" 0 "manila">>
 
 <<if $wren_intro is undefined>>
 	<<set $wren_intro to true>>
@@ -2762,7 +2766,7 @@ You walk outside. <<if $exposed gte 2>>A breeze makes you shiver.<</if>>
 	<br><br>
 <</if>>
 
-You take out the Manila envelope Mickey gave you and hold it out to Wren.
+You take out the manila envelope Mickey gave you and hold it out to Wren.
 <<if $speech_attitude is "meek">>
 	"This is from the old man."
 <<elseif $speech_attitude is "bratty">>
@@ -2810,9 +2814,9 @@ Wren takes it, examines it from both sides and smirks. <<He>> tosses it onto a n
 <</if>>
 <br><br>
 
-<<link [[Kiss|Estate Fame Letter 2]]>><<set $phase to 0>><<arousal 1000 "mouth">><<npcincr Wren love 3>><</link>><<promiscuous1>><<ggarousal>><<glove>><<kissvirginitywarning>>
+<<link [[Kiss|Estate Fame Letter 2]]>><<handheldon>><<set $phase to 0>><<arousal 1000 "mouth">><<npcincr Wren love 3>><</link>><<promiscuous1>><<ggarousal>><<glove>><<kissvirginitywarning>>
 <br>
-<<link [[Pull away|Estate Fame Letter 2]]>><<set $phase to 1>><</link>>
+<<link [[Pull away|Estate Fame Letter 2]]>><<handheldon>><<set $phase to 1>><</link>>
 
 :: Estate Fame Letter 2
 <<effects>><<set $outside to 0>>

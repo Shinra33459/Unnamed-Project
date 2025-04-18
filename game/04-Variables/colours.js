@@ -1157,6 +1157,13 @@ setup.colours.clothes = [
 		canvasfilter: { blend: "#72AC72" },
 	},
 	{
+		variable: "forest green",
+		name: "forest green",
+		name_cap: "Forest Green",
+		csstext: "forest-green",
+		canvasfilter: { blend: "#374f2f" },
+	},
+	{
 		variable: "lime",
 		name: "lime",
 		name_cap: "Lime",
@@ -1255,11 +1262,25 @@ setup.colours.clothes = [
 		canvasfilter: { blend: "#6a4225" },
 	},
 	{
+		variable: "light brown",
+		name: "light brown",
+		name_cap: "Light brown",
+		csstext: "brownish",
+		canvasfilter: { blend: "#87634a" },
+	},
+	{
 		variable: "tan",
 		name: "tan",
 		name_cap: "Tan",
 		csstext: "tan",
 		canvasfilter: { blend: "#c3ad91" },
+	},
+	{
+		variable: "khaki",
+		name: "khaki",
+		name_cap: "Khaki",
+		csstext: "tan",
+		canvasfilter: { blend: "#c89673" },
 	},
 	{
 		variable: "fleshy",
