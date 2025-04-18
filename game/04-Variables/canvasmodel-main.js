@@ -1385,7 +1385,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.blush + 1,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/blusher.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/blusher.png`;
 			},
 			showfn(options) {
 				return options.show_face && !!options.blusher_colour;
@@ -1410,7 +1410,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.mouth,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/mouth-${options.mouth}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/mouth-${options.mouth}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.mouth !== "none";
@@ -1421,7 +1421,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.mouth,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/lipstick-${options.mouth}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/lipstick-${options.mouth}.png`;
 			},
 			showfn(options) {
 				return options.show_face && !!options.lipstick_colour;
@@ -1432,7 +1432,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.blush,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/blush${options.blush}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/blush${options.blush}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.blush > 0;
@@ -1443,7 +1443,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/tear${options.tears}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/tear${options.tears}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.tears > 0;
@@ -4040,7 +4040,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.follower && !!options.follower.leftarm;
 			},
-			z: ZIndices.fronthair,
+			z: ZIndices.head + 1,
 		},
 		"follower_clothes_leftarm": {
 			animation: "idle",
@@ -4050,7 +4050,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.follower && !!options.follower.clothes_leftarm;
 			},
-			z: ZIndices.fronthair + 1,
+			z: ZIndices.head + 2,
 		},
 		"follower_hair": {
 			animation: "idle",
@@ -4070,7 +4070,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.follower && !!options.follower.under_clothes;
 			},
-			z: ZIndices.head + 1,
+			z: ZIndices.head + 2,
 		},
 		"follower_clothes": {
 			animation: "idle",
@@ -4080,7 +4080,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.follower && !!options.follower.clothes;
 			},
-			z: ZIndices.head + 2,
+			z: ZIndices.head + 3,
 		},
 		"follower_skin": {
 			animation: "idle",
