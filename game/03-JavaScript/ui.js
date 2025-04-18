@@ -629,6 +629,7 @@ function closeOverlay() {
 	T.buttons.reset();
 	$("#customOverlay").addClass("hidden").parent().addClass("hidden");
 	$.event.trigger(":oncloseoverlay", [T.currentOverlay]);
+	document.getElementById("ui-bar-toggle").style.opacity = V.options.showUiBar ? "1" : "0";
 	delete T.currentOverlay;
 	delete V.tempDisable;
 }
