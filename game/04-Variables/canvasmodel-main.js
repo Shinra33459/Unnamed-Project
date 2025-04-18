@@ -4040,7 +4040,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.follower && !!options.follower.leftarm;
 			},
-			z: ZIndices.fronthair,
+			z: ZIndices.head + 1,
 		},
 		"follower_clothes_leftarm": {
 			animation: "idle",
@@ -4050,7 +4050,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.follower && !!options.follower.clothes_leftarm;
 			},
-			z: ZIndices.fronthair + 1,
+			z: ZIndices.head + 2,
 		},
 		"follower_hair": {
 			animation: "idle",
@@ -4070,7 +4070,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.follower && !!options.follower.under_clothes;
 			},
-			z: ZIndices.head + 1,
+			z: ZIndices.head + 2,
 		},
 		"follower_clothes": {
 			animation: "idle",
@@ -4080,7 +4080,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.follower && !!options.follower.clothes;
 			},
-			z: ZIndices.head + 2,
+			z: ZIndices.head + 3,
 		},
 		"follower_skin": {
 			animation: "idle",
