@@ -1385,7 +1385,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.blush + 1,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/blusher.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/blusher.png`;
 			},
 			showfn(options) {
 				return options.show_face && !!options.blusher_colour;
@@ -1410,7 +1410,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.mouth,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/mouth-${options.mouth}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/mouth-${options.mouth}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.mouth !== "none";
@@ -1421,7 +1421,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.mouth,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/lipstick-${options.mouth}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/lipstick-${options.mouth}.png`;
 			},
 			showfn(options) {
 				return options.show_face && !!options.lipstick_colour;
@@ -1432,7 +1432,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.blush,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/blush${options.blush}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/blush${options.blush}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.blush > 0;
@@ -1443,7 +1443,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/tear${options.tears}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/tear${options.tears}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.tears > 0;
