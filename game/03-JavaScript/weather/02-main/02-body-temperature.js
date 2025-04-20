@@ -82,7 +82,7 @@ Weather.BodyTemperature = (() => {
 	 */
 	function update(temperature, minutes) {
 		if (V.timeSkip == undefined) {
-			adjustTemperatureThresholds();
+			if (V.DoLPTFTempTolerance) adjustTemperatureThresholds();
 
 			if (T.bodyActivity === undefined) resetActivity();
 
@@ -189,7 +189,7 @@ Weather.BodyTemperature = (() => {
 	}
 
 	function temperatureFactor() {
-		adjustTemperatureThresholds();
+		if (V.DoLPTFTempTolerance) adjustTemperatureThresholds();
 		if (Weather.BodyTemperature.get() <= settings.effects.lowerThresholdStart) {
 			return 1 - normalise(Weather.BodyTemperature.get(), settings.effects.lowerThresholdStart, settings.effects.lowerThresholdEnd);
 		}
@@ -252,7 +252,7 @@ Weather.BodyTemperature = (() => {
 				heatTolerance: 15, heatToleranceEnd: 20
 			},
 			bunny: {
-				coldTolerance: 5, coldToleranceEnd: 8,
+				coldTolerance: 0, coldToleranceEnd: 0,
 				heatTolerance: 0, heatToleranceEnd: 0
 			},
 		};
