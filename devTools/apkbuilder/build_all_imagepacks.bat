@@ -16,7 +16,8 @@ set target[7]=b3s_mys
 set target[8]=b3s_hikfem_mys
 set target[9]=goosefem
 set target[10]=goosefem_mys
-set target[11]=mikili
+set target[11]=gooseandro
+set target[12]=mikili
 
 set imagepack[0]=vanilla
 set imagepack[1]=beeesss
@@ -32,9 +33,10 @@ set imagepack[7]=b3s_mys
 set imagepack[8]=hikfem_mys
 set imagepack[9]=goosefem
 set imagepack[10]=goosefem_mys
-set imagepack[11]=mikili
+set imagepack[11]=gooseandro
+set imagepack[12]=mikili
 
-set array_length=11
+set array_length=12
 
 del ..\..\dist\*.apk
 
