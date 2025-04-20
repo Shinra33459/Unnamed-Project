@@ -82,7 +82,7 @@ Weather.BodyTemperature = (() => {
 	 */
 	function update(temperature, minutes) {
 		if (V.timeSkip == undefined) {
-			if (V.DoLPTFTempTolerance) adjustTemperatureThresholds();
+			adjustTemperatureThresholds();
 
 			if (T.bodyActivity === undefined) resetActivity();
 
@@ -189,7 +189,7 @@ Weather.BodyTemperature = (() => {
 	}
 
 	function temperatureFactor() {
-		if (V.DoLPTFTempTolerance) adjustTemperatureThresholds();
+		adjustTemperatureThresholds();
 		if (Weather.BodyTemperature.get() <= settings.effects.lowerThresholdStart) {
 			return 1 - normalise(Weather.BodyTemperature.get(), settings.effects.lowerThresholdStart, settings.effects.lowerThresholdEnd);
 		}
@@ -220,7 +220,7 @@ Weather.BodyTemperature = (() => {
 	}
 
 	function adjustTemperatureThresholds() {
-		if (V.transformationParts.traits.tempTolerance == "disabled") {
+		if (V.transformationParts.traits.tempTolerance == "disabled" || V.DoLPTFTempTolerance == 0) {
 			settings.effects.lowerThresholdStart = 36;
 			settings.effects.lowerThresholdEnd = 33;
 			settings.minTemperature = 33;
@@ -241,11 +241,11 @@ Weather.BodyTemperature = (() => {
 			},
 			cow: {
 				coldTolerance: -5, coldToleranceEnd: -10,
-				heatTolerance: 0, heatToleranceEnd: 0
+				heatTolerance: 8, heatToleranceEnd: 12
 			},
 			bear: {
 				coldTolerance: -30, coldToleranceEnd: -35,
-				heatTolerance: 0, heatToleranceEnd: 0
+				heatTolerance: 5, heatToleranceEnd: 10
 			},
 			bird: {
 				coldTolerance: 0, coldToleranceEnd: 0,
