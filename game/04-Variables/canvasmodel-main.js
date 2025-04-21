@@ -2968,11 +2968,11 @@ Renderer.CanvasModels.main = {
 				return options.belly_hides_lower ? options.belly_mask_clip_src : null;
 			},
 		}),
-		// "upper_leftarm_fitted": genlayer_clothing_arm_fitted("left", "upper", {
-		// 	zfn(options) {
-		// 		return options.zupperleft - 1;
-		// 	},
-		// }),
+		"upper_leftarm_fitted": genlayer_clothing_arm_fitted("left", "upper", {
+			zfn(options) {
+				return options.zupperleft - 1;
+			},
+		}),
 		"upper_leftarm_fitted_acc": genlayer_clothing_arm_acc_fitted("left", "upper", {
 			zfn(options) {
 				return options.zupperleft - 1;
@@ -4861,13 +4861,14 @@ function genlayer_clothing_arm(arm, slot, overrideOptions) {
 function genlayer_clothing_arm_fitted(arm, slot, overrideOptions) {
 	return genlayer_clothing_arm(arm, slot, Object.assign({
 		showfn(options) {
-			return options.show_clothes
-				&& options.worn[slot].index > 0
-				&& options.worn[slot].setup.sleeve_img === 1
-				&& ["curvy", "slender"].includes(options.body_type)
-				&& options.arm_left === "idle"
-				&& !(options.belly > 7)
-				&& options["arm_" + arm] !== "none";
+			// return options.show_clothes
+			// 	&& options.worn[slot].index > 0
+			// 	&& options.worn[slot].setup.sleeve_img === 1
+			// 	&& ["curvy", "slender"].includes(options.body_type)
+			// 	&& options.arm_left === "idle"
+			// 	&& !(options.belly > 7)
+			// 	&& options["arm_" + arm] !== "none";
+			return false;
 		},
 		masksrcfn(options) {
 			return options.shirt_fitted_left_move_src;
