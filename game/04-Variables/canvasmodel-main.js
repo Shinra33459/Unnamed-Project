@@ -2968,11 +2968,11 @@ Renderer.CanvasModels.main = {
 				return options.belly_hides_lower ? options.belly_mask_clip_src : null;
 			},
 		}),
-		"upper_leftarm_fitted": genlayer_clothing_arm_fitted("left", "upper", {
-			zfn(options) {
-				return options.zupperleft - 1;
-			},
-		}),
+		// "upper_leftarm_fitted": genlayer_clothing_arm_fitted("left", "upper", {
+		// 	zfn(options) {
+		// 		return options.zupperleft - 1;
+		// 	},
+		// }),
 		"upper_leftarm_fitted_acc": genlayer_clothing_arm_acc_fitted("left", "upper", {
 			zfn(options) {
 				return options.zupperleft - 1;
