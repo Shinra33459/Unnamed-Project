@@ -816,6 +816,12 @@ function settingsObjects(type) {
 					textMap: { 0: "Tiny", 1: "Small", 2: "Normal", 3: "Large" },
 					randomize: "characterAppearance",
 				},
+				facevariant: {
+					strings: ["default", "catty", "aloof", "sweet", "foxy"],
+					displayName: "Demeanour:",
+					textMap: { default: "Default", catty: "Catty", aloof: "Aloof", sweet: "Sweet", foxy: "Foxy" },
+					randomize: "characterAppearance",
+				},
 				breastsensitivity: {
 					min: 1,
 					max: 3,
@@ -896,6 +902,10 @@ function settingsObjects(type) {
 					displayName: "Background:",
 					randomize: "characterTrait",
 				},
+				startingseason: {
+					strings: ["spring", "summer", "autumn", "winter", "random"],
+					displayName: "Starting season:",
+				},
 				gamemode: { strings: ["normal", "soft", "hard"], displayName: "Game difficulty:" },
 				ironmanmode: { bool: false, displayName: "Ironman mode:" },
 				player: {
@@ -915,6 +925,12 @@ function settingsObjects(type) {
 						strings: ["m", "f", "a"],
 						displayName: "Body type:",
 						textMap: { m: "Masculine", f: "Feminine", a: "Androgynous" },
+					},
+					bodyshape: {
+						strings: ["classic", "slender", "curvy", "soft"],
+						textMap: { classic: "Classic", slender: "Slender", curvy: "Curvy", soft: "Soft" },
+						displayName: "Body shape:",
+						randomize: "characterAppearance",
 					},
 					skin: {
 						color: {
