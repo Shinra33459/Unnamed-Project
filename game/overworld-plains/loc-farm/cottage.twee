@@ -281,10 +281,43 @@ You are in your room at Alex's cottage. It's cramped, but larger than your room 
 <<set _bed to Furniture.get('bed', $location)>>
 <<set _wardrobe to Furniture.get('wardrobe', $location)>>
 <<set _poster to Furniture.get('poster', $location)>>
+<<set _radio to Furniture.get('radio', $location)>>
 <<if $machineVaginalBought isnot undefined or $machineAnalBought isnot undefined>>
 	<<set _sexMachine to 1>>
 <</if>>
 <<set _poster to Furniture.get('poster', $location)>>
+
+<<if _radio>>
+	<br><br>
+	<<run while (V.weatherObj.keypointsArr.length > 1 && V.weatherObj.keypointsArr[1].timestamp <= (new DateTime(Time.date)).timeStamp) {V.weatherObj.keypointsArr.shift();}>>
+	The radio buzzes. "There will be 
+	<<set _forecastDate to new DateTime(V.weatherObj.keypointsArr[1].timestamp)>>
+	<<switch Weather.WeatherGeneration.getWeather(_forecastDate).name>>
+		<<case "clear">>
+			<span class="green">clear skies</span> 
+		<<case "lightClouds">>
+			<span class="lblue">light clouds</span> 
+		<<case "lightPrecipitation">>
+			<span class="blue">light rain</span> 
+		<<case "heavyPrecipitation">>
+			<span class="blue">heavy rain</span> 
+		<<case "thunderStorm">>
+			<span class="yellow">thunderstorms</span>
+		<<case "heavyClouds">>
+			<span class="lblue">heavy clouds</span>
+		<<default>>
+			<span class="red">ERROR, please alert Frostberg.</span>
+	<</switch>>
+	on the <<print ordinalSuffixOf(_forecastDate.day) + " of " + _forecastDate.monthName + ", ">> <<ampm _forecastDate.hour _forecastDate.minute>>, which is in 
+	<<if Time.date.compareWith(_forecastDate).days gt 0>>
+		<<print Time.date.compareWith(_forecastDate).days>> days."
+	<<elseif Time.date.compareWith(_forecastDate).hours gt 0>>
+		<<print Time.date.compareWith(_forecastDate).hours>> hours and <<print Time.date.compareWith(_forecastDate).minutes>> minutes."
+	<<elseif Time.date.compareWith(_forecastDate).minutes gt 0>>
+		<<print Time.date.compareWith(_forecastDate).minutes>> minutes."
+	<</if>>
+	<br>
+<</if>>
 
 <<if $alex_bed is "player">>
 	Alex snores in your bed.
