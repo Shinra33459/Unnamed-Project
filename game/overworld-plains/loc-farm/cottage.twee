@@ -287,7 +287,7 @@ You are in your room at Alex's cottage. It's cramped, but larger than your room 
 <</if>>
 <<set _poster to Furniture.get('poster', $location)>>
 
-<<if _radio>>
+<<if _radio and $bedroomUI.cottage.radio is true>>
 	<br><br>
 	<<run while (V.weatherObj.keypointsArr.length > 1 && V.weatherObj.keypointsArr[1].timestamp <= (new DateTime(Time.date)).timeStamp) {V.weatherObj.keypointsArr.shift();}>>
 	<<furnitureicon _radio.iconFile>>The radio buzzes. "There will be 
@@ -387,7 +387,9 @@ You are in your room at Alex's cottage. It's cramped, but larger than your room 
 		You fiddle with your lockpick training set. <<skulduggerycheck>><<skulduggeryuse>><br>
 	<</if>>
 
-	Lock your door: <<checkbox "$farmCottageLocked" 0 1 autocheck>><mouse class="tooltip linkBlue">(?)<span>Will stop Alex from interrupting your sleep unless Remy is attacking.</span></mouse><br><br>
+	<<if $bedroomUI.cottage.lock is true>>
+		Lock your door: <<checkbox "$farmCottageLocked" 0 1 autocheck>><mouse class="tooltip linkBlue">(?)<span>Will stop Alex from interrupting your sleep unless Remy is attacking.</span></mouse><br><br>
+	<</if>>
 
 	<<deskText "noicon">>
 
@@ -464,7 +466,7 @@ You are in your room at Alex's cottage. It's cramped, but larger than your room 
 		<br><br>
 		/* <<christmas_options>> */
 		<<if _deco>>
-			<<if _deco.name is "large bear plushie">>
+			<<if _deco.name is "large bear plushie" and $bedroomUI.cottage.largeBearPlushie is true>>
 				<<furnitureicon _deco.iconFile>><<link [[Cuddle with the large bear plushie (0:10)|Farm Cottage Large Bear Plushie Cuddle]]>><<pass 10>><</link>><<ltrauma>><<lstress>>
 				<br><br>
 			<</if>>
@@ -473,18 +475,20 @@ You are in your room at Alex's cottage. It's cramped, but larger than your room 
 		<<furnitureicon _bed.iconFile>><<link [[Strip and get in bed|Farm Bed]]>><<undressSleep "Farm Bed">><</link>>
 		<br>
 		<<listsleepoutfits "Farm Bed">>
-		<<furnitureicon _bed.iconFile>><<link [[Masturbate in bed|Farm Masturbation]]>><<set $masturbationstart to 1>><</link>>
-		<br>
+		<<if $bedroomUI.cottage.masturbation is true>>
+			<<furnitureicon _bed.iconFile>><<link [[Masturbate in bed|Farm Masturbation]]>><<set $masturbationstart to 1>><</link>>
+			<br>
+		<</if>>
 		<<roomoptions>>
 		<br>
-		<<if $lockpickTrainingSet gte 1 and $stress lt $stressmax and !$possessed>>
+		<<if $lockpickTrainingSet gte 1 and $stress lt $stressmax and !$possessed and $bedroomUI.cottage.lts is true>>
 			<<lockpickTrainingSet>>
 		<</if>>
 		<br>
 		<<furnitureicon _wardrobe.iconFile>><<link [[Wardrobe|Farm Wardrobe]]>><</link>>
 		<br>
 		/* Fuck machines */
-		<<if _sexMachine>>
+		<<if _sexMachine and $bedroomUI.cottage.sexMachine>>
 			<br>
 			There's a <<= $machineVaginalBought and $machineAnalBought? "pair of discreet boxes": "discreet box">> hidden away within your _wardrobe.name.
 			<br>
@@ -5342,3 +5346,23 @@ You are in the kitchen in Alex's cottage. There's a window above the sink, givin
 
 <<link [[Leave|Farm Cottage]]>><<handheldon>><</link>>
 <br>
+
+:: Cottage Bedroom UI
+<label>Radio UI <<checkbox "$bedroomUI.cottage.radio" false true autocheck>></label>
+<br>
+<label>Lock UI <<checkbox "$bedroomUI.cottage.lock" false true autocheck>></label>
+<br>
+<label>Project UI <<checkbox "$bedroomUI.cottage.project" false true autocheck>></label>
+<br>
+<label>Home Study UI <<checkbox "$bedroomUI.cottage.homeStudy" false true autocheck>></label>
+<br>
+<label>Large Bear Plushie UI <<checkbox "$bedroomUI.cottage.largeBearPlushie" false true autocheck>></label>
+<br>
+<label>Masturbation UI <<checkbox "$bedroomUI.cottage.masturbation" false true autocheck>></label>
+<br>
+<label>Lockpick Training Set UI <<checkbox "$bedroomUI.cottage.lts" false true autocheck>></label>
+<br>
+<label>Sex Machine UI <<checkbox "$bedroomUI.cottage.sexMachine" false true autocheck>></label>
+<br>
+<br>
+<<link [[Back|Bedroom]]>><</link>>
