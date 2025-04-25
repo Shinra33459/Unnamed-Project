@@ -1538,7 +1538,8 @@ function initNeck() {
 			accIcon: 0,
 		},
 		{
-			index: 35,
+			index: 39,
+			slot: "neck",
 			name: "harness",
 			name_cap: "Harness",
 			variable: "harness",
@@ -1593,7 +1594,8 @@ function initNeck() {
 			accIcon: 0,
 		},		
 		{
-			index: 36,
+			index: 40,
+			slot: "neck",
 			name: "harness with leash",
 			name_cap: "Harness with leash",
 			variable: "harnessleash",
