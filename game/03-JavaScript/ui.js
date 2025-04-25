@@ -630,6 +630,7 @@ function closeOverlay() {
 	$("#customOverlay").addClass("hidden").parent().addClass("hidden");
 	$.event.trigger(":oncloseoverlay", [T.currentOverlay]);
 	document.getElementById("ui-bar-toggle").style.opacity = V.options.showUiBar ? "1" : "0";
+	Weather.Thermometer.load();
 	delete T.currentOverlay;
 	delete V.tempDisable;
 }

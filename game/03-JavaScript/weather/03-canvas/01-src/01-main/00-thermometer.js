@@ -32,6 +32,9 @@ Weather.Thermometer = (() => {
 	let allImagesLoaded = false;
 
 	function load() {
+		images.baseImg.src = "img/ui/weather/" + V.options.thermometerDisplay + "thermometer.png";
+		images.fillImg.src = "img/ui/weather/" + V.options.thermometerDisplay + "thermo_filled.png";
+
 		Object.entries(images).map(([key, imageInfo]) => {
 			const promise = new Promise((resolve, reject) => {
 				const img = new Image();
@@ -47,6 +50,10 @@ Weather.Thermometer = (() => {
 		});
 
 		Promise.all(loadPromises).then(() => {
+			if (thermometerCanvas) {
+				thermometerCanvas.canvas.remove();
+				thermometerCanvas = null;
+			}
 			thermometerCanvas = new BaseCanvas(0, 0, 0.5);
 			const baseImg = images.baseImg.img;
 			size.width = baseImg.width * size.scaleFactor;

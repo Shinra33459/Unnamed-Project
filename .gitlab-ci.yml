@@ -479,6 +479,34 @@ build_upload_goose_andro_job:
     only:
         - master
 
+build_upload_goose_masc_job:
+    stage: compilation
+    script:
+        - echo "Building DoLP goose_masc v0.$CI_PIPELINE_IID"
+        - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/mascidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - version=$(cat version)
+        - mkdir -p DoLP_goose_masc/img/
+        - sh ./compile.sh
+        - cp "Degrees of Lewdity.html" ./DoLP_goose_masc/
+        - cp -r -f ./imagepacks/vanilla/* ./DoLP_goose_masc/img/
+        - cp -r -f ./imagepacks/dolp/* ./DoLP_goose_masc/img/
+        - cp -r -f ./imagepacks/goosemasc/* ./DoLP_goose_masc/img/
+        - echo "Finished Building goose_masc v0.$CI_PIPELINE_IID"
+        - echo "Uploading DoLP goose_masc v0.$CI_PIPELINE_IID"
+        - zip -r ./DoLP_goose_masc_v0.$CI_PIPELINE_IID.zip ./DoLP_goose_masc/ 1>NUL
+        - 'curl
+            --header "JOB-TOKEN: $CI_JOB_TOKEN"
+            --upload-file ./DoLP_goose_masc_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_goose_masc/v0.$CI_PIPELINE_IID/DoLP_goose_masc_v0.$CI_PIPELINE_IID.zip"'
+        - rm -rf ./DoLP_goose_masc
+        - rm -rf ./DoLP_goose_masc_v0.$CI_PIPELINE_IID.zip
+        - echo "Finished Uploading DoLP goose_masc v0.$CI_PIPELINE_IID"
+    only:
+        - master
+
 build_upload_mikili_job:
     stage: compilation
     script:
@@ -583,6 +611,7 @@ release_job:
         - job: build_upload_goose_female_job
         - job: build_upload_goose_female_mysterious_job
         - job: build_upload_goose_andro_job
+        - job: build_upload_goose_masc_job
         - job: build_upload_mikili_job
         - job: build_upload_modloader_job
         - job: build_upload_html_only_job
@@ -629,6 +658,8 @@ release_job:
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_goose_female_mysterious/v0.$CI_PIPELINE_IID/DoLP_goose_female_mysterious_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_goose_andro'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_goose_andro/v0.$CI_PIPELINE_IID/DoLP_goose_andro_v0.$CI_PIPELINE_IID.zip"
+                - name: 'DoLP_goose_masc'
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_goose_masc/v0.$CI_PIPELINE_IID/DoLP_goose_masc_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_mikili'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_mikili/v0.$CI_PIPELINE_IID/DoLP_mikili_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_Modloader'
