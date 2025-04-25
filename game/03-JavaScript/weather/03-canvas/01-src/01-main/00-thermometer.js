@@ -32,8 +32,13 @@ Weather.Thermometer = (() => {
 	let allImagesLoaded = false;
 
 	function load() {
-		images.baseImg.src = "img/ui/weather/" + V.options.thermometerDisplay + "thermometer.png";
-		images.fillImg.src = "img/ui/weather/" + V.options.thermometerDisplay + "thermo_filled.png";
+		if (V.options.thermometerDisplay.includes("modded")) {
+			images.baseImg.src = "img/ui/weather/thermometer/" + V.options.thermometerDisplay + ".png";
+			images.fillImg.src = "img/ui/weather/thermo_filled/" + V.options.thermometerDisplay + ".png";
+		} else {
+			images.baseImg.src = "img/ui/weather/thermometer.png";
+			images.fillImg.src = "img/ui/weather/thermo_filled.png";
+		}
 
 		Object.entries(images).map(([key, imageInfo]) => {
 			const promise = new Promise((resolve, reject) => {
