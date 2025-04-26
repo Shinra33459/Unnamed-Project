@@ -553,6 +553,8 @@ Renderer.CanvasModels.main = {
 			"show_background2": true,
 			"show_foreground2": true,
 
+			"show_nnpc": true,
+
 			// misc
 			"tanningEnabled": true,
 			"genitals_chastity": false, // generated option
@@ -2104,11 +2106,24 @@ Renderer.CanvasModels.main = {
 			animation: "idle"
 		},
 
-
-
-
-
-
+		"nnpc": {
+			srcfn() {
+				if (V.options.nnpcDisplay == 0) return;
+				return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplaySlot}.png`;
+			},
+			showfn(options) {
+				return options.show_nnpc
+				&& isPartEnabled(options.show_nnpc);
+			},
+			zfn() {
+				if (V.options.nnpcDisplayLayer === "front") {
+					return ZIndices.deco_fg1 + 1;
+				} else {
+					return ZIndices.deco_bg2 + 1;
+				}
+			},
+			animation: "idle"
+		},
 
 		/***
 		 *    ██████  ██   ██ ███    ██ ███    ██ ██ ██
