@@ -11,7 +11,7 @@ const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.5.4.5",
+	version: "0.5.4.8",
 	versionName: `"Hopeless Cycle" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
@@ -671,6 +671,12 @@ Config.navigation.override = function (dest) {
 			case "Prison Wren Trousers":
 			case "Prison Wren Jumpsuit":
 				return "Prison Wren Clothes";
+			case "Wolf Cave Hand":
+				return "Wolf Cave Accept";
+			case "Wolf Cave Hand Refuse":
+				return "Wolf Cave Refuse";
+			case "Wolf Cave Hand Finish":
+				return "Wolf Cave Accept Finish";
 
 			default:
 				return false;
