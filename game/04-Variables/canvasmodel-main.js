@@ -899,7 +899,7 @@ Renderer.CanvasModels.main = {
 
 		if (options.worn.handheld.setup.type.includes("rainproof")) {
 			options.handheld_overhead = true;
-			if (options.angel_halo_type === "default" || options.fallen_halo_type === "default" ) options.angel_halo_lower = true;
+			if ((options.angel_halo_type === "default" || options.fallen_halo_type === "default") && V.options.lowerHalo == true) options.angel_halo_lower = true;
 		} else if (["right_cover", "over_head"].includes(options.worn.handheld.setup.holdPosition)) {
 			options.handheld_overhead = true;
 			options.angel_halo_lower = false;
