@@ -2108,7 +2108,7 @@ Renderer.CanvasModels.main = {
 
 		"nnpc": {
 			srcfn() {
-				if (V.NPCList[0].fullDescription != undefined && V.NPCList[0].fullDescription.includes(setup.NPCNameList)) {	
+				if (V.NPCList[0].fullDescription != undefined && setup.NPCNameList.includes(V.NPCList[0].fullDescription)) {	
 					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
 				} else T.activeNNPC = 0;
 				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
