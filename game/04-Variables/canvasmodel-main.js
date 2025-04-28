@@ -553,6 +553,8 @@ Renderer.CanvasModels.main = {
 			"show_background2": true,
 			"show_foreground2": true,
 
+			"show_nnpc": true,
+
 			// misc
 			"tanningEnabled": true,
 			"genitals_chastity": false, // generated option
