@@ -2108,17 +2108,36 @@ Renderer.CanvasModels.main = {
 
 		"nnpc": {
 			srcfn() {
-				if (V.options.nnpcDisplay == 0) return;
-				return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplaySlot}.png`;
+				if (V.NPCList[0].fullDescription != undefined) {	
+					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
+				} else T.activeNNPC = 0;
+				
+				if (V.options.autoNNPCDisplay.enabled == true) {
+					if (T.activeNNPC == 0 || V.options.autoNNPCDisplay[T.activeNNPC].slot == 0) return;
+				} else if (V.options.nnpcDisplay == 0 || V.options.nnpcDisplaySlot == 0) return;
+				if (V.options.autoNNPCDisplay.enabled == true) {
+					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) return `img/ui/nnpc/${T.activeNNPC}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
+				} else {
+					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplaySlot}.png`;
+				}
 			},
 			showfn(options) {
 				return options.show_nnpc;
 			},
 			zfn() {
-				if (V.options.nnpcDisplayLayer === "front") {
-					return ZIndices.deco_fg1 + 1;
+				T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
+				if (V.options.autoNNPCDisplay.enabled == true) {
+					if (V.options.autoNNPCDisplay[T.activeNNPC].layer === "front") {
+						return ZIndices.deco_fg1 + 1;
+					} else {
+						return ZIndices.deco_bg2 + 1;
+					}
 				} else {
-					return ZIndices.deco_bg2 + 1;
+					if (V.options.nnpcDisplayLayer === "front") {
+						return ZIndices.deco_fg1 + 1;
+					} else {
+						return ZIndices.deco_bg2 + 1;
+					}
 				}
 			},
 			animation: "idle"
