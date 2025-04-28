@@ -2108,15 +2108,16 @@ Renderer.CanvasModels.main = {
 
 		"nnpc": {
 			srcfn() {
-				if (V.NPCList[0].fullDescription != undefined) {	
+				if (V.NPCList[0].fullDescription != undefined && V.NPCList[0].fullDescription.includes(setup.NPCNameList)) {	
 					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
 				} else T.activeNNPC = 0;
-				
-				if (V.options.autoNNPCDisplay.enabled == true) {
+				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (T.activeNNPC == 0 || V.options.autoNNPCDisplay[T.activeNNPC].slot == 0) return;
 				} else if (V.options.nnpcDisplay == 0 || V.options.nnpcDisplaySlot == 0) return;
-				if (V.options.autoNNPCDisplay.enabled == true) {
-					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) return `img/ui/nnpc/${T.activeNNPC}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
+				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
+					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) {
+						return `img/ui/nnpc/${T.activeNNPC}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
+					} else return;
 				} else {
 					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplaySlot}.png`;
 				}
@@ -2126,7 +2127,7 @@ Renderer.CanvasModels.main = {
 			},
 			zfn() {
 				T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
-				if (V.options.autoNNPCDisplay.enabled == true) {
+				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (V.options.autoNNPCDisplay[T.activeNNPC].layer === "front") {
 						return ZIndices.deco_fg1 + 1;
 					} else {
