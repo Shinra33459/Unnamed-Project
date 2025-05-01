@@ -2111,15 +2111,32 @@ Renderer.CanvasModels.main = {
 				if (V.NPCList[0].fullDescription != undefined && setup.NPCNameList.includes(V.NPCList[0].fullDescription)) {	
 					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
 				} else T.activeNNPC = 0;
+
 				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (T.activeNNPC == 0 || V.options.autoNNPCDisplay[T.activeNNPC].slot == 0) return;
 				} else if (V.options.nnpcDisplay == 0 || V.options.nnpcDisplaySlot == 0) return;
+
 				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) {
-						return `img/ui/nnpc/${T.activeNNPC}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
+						if (V.NPCList[0].skincolour == "white") {
+							T.skin = "pale";
+						} else {
+							T.skin = "dark";
+						}
+						
+						if (V.options.autoNNPCDisplay[T.activeNNPC].genderOverride == true && V.options.autoNNPCDisplay[T.activeNNPC].gender != "") {
+							T.gender = V.options.autoNNPCDisplay[T.activeNNPC].gender;
+						} else {
+							if (V.NPCList[0].gender == "m" || (V.NPCList[0].gender == "h" && V.NPCList[0].pronoun == "m")) {
+								T.gender = "male";
+							} else {
+								T.gender = "female";
+							} 
+						}
+						return `img/ui/nnpc/${T.activeNNPC}/${T.gender}/${T.skin}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
 					} else return;
 				} else {
-					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplaySlot}.png`;
+					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplayGender}/${V.options.nnpcDisplaySkin}/${V.options.nnpcDisplaySlot}.png`;
 				}
 			},
 			showfn(options) {
