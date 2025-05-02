@@ -2531,39 +2531,8 @@ Renderer.CanvasModels.main = {
 				return 0;
 			},
 			zfn(options) {
-				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.under_upper_arm_right - 0.1 : ZIndices.under_upper_arms - 0.1;
-				if (options.worn.over_upper) {
-					T.zarms = ZIndices.over_upper_arms;
-				} else if (options.worn.upper) {
-					if (options.arm_left === "cover") {
-						if (options.upper_tucked) {
-							T.zarms = ZIndices.upper_arms_tucked;
-						} else {
-							T.zarms = ZIndices.upper_arms;
-						}
-					} else {
-						T.zarms = ZIndices.under_upper_arms;
-					}
-				} else if (options.worn.under_upper) {
-					T.zarms = ZIndices.under_upper_arms;
-				} else {
-					T.zarms = ZIndices.armsidle
-				}
-				// Do not put skin above sleeves
-				if (options.worn.under_upper.setup.sleeve_img === 1) {
-					T.zarms = ZIndices.under_upper_arms;
-				} else if (options.worn.upper.setup.sleeve_img === 1) {
-					if (options.arm_left === "cover") {
-						if (options.upper_tucked) {
-							T.zarms = ZIndices.upper_arms_tucked;
-						} else {
-							T.zarms = ZIndices.upper_arms;
-						}
-					} else {
-						T.zarms = ZIndices.under_upper_arms;
-					}
-				}
-				return T.zarms - 0.09
+				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.01 : ZIndices.under_upper_arm_right - 0.2;
+				return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.01 : options.zarms + 0.01;
 			},
 		},
 		"writing_pubic": {
@@ -2724,6 +2693,7 @@ Renderer.CanvasModels.main = {
 					&& !!options.cum_rightarm;
 			},
 			zfn(options) {
+				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.05 : ZIndices.under_upper_arm_right - 0.1;
 				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.arms_cover + 0.05 : options.zarms + 0.05;
 			},
 		},
