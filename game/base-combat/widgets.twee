@@ -1043,11 +1043,8 @@
 
 <<widget "healthMultiplier">>
 	<<if Time.days lte 0>>
-		<<if $lastRecordedDays isnot undefined and $lastRecordedDays gte 1>>
-			<<set _days to $lastRecordedDays>>
-		<<else>>
-			<<set _days to 1>>
-		<</if>>
+		<<set _hopelessDate to new DateTime($frozenValues.timeStamp)>>
+		<<set _days to DateTime.getTotalDaysSinceStart(_hopelessDate.year) + DateTime.getDaysOfMonthFromYear(_hopelessDate.year).slice(0, _hopelessDate.month - 1).reduce((a, b) => a + b, 0) + _hopelessDate.day - 1>>
 	<<else>>
 		<<set _days to Time.days>>
 	<</if>>
@@ -1067,7 +1064,7 @@
 		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
 			<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
 		<<else>>
-			<<set _buff += _buffAmount * $combatExtended.enemyDayScalingLimit>>
+			<<set _buff += $combatExtended.enemyDayScalingLimit * $combatExtended.enemyHealthDayScalingMult>>
 		<</if>>
 	<</if>>
 	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
@@ -1075,7 +1072,7 @@
 		<<if _buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1>>
 			<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
 		<<else>>
-			<<set _buff += _buffAmount * $combatExtended.enemyDefeatScalingLimit>>
+			<<set _buff += $combatExtended.enemyDefeatScalingLimit * $combatExtended.enemyHealthDefeatScalingMult>>
 		<</if>>
 	<</if>>
 	<<set $enemyhealth to  Math.round($enemyhealth * (1 + (_buff / 100)))>>
