@@ -1042,6 +1042,15 @@
 <</widget>>
 
 <<widget "healthMultiplier">>
+	<<if Time.days lte 0>>
+		<<if $lastRecordedDays isnot undefined and $lastRecordedDays gte 1>>
+			<<set _days to $lastRecordedDays>>
+		<<else>>
+			<<set _days to 1>>
+		<</if>>
+	<<else>>
+		<<set _days to Time.days>>
+	<</if>>
 	<<if $NPCList[0].health isnot undefined and $NPCList[0].health gt $enemyhealth>>
 		<<set $enemyhealth to $NPCList[0].health>>
 	<</if>>
@@ -1053,7 +1062,7 @@
 	<<else>>
 		<<set $enemyhealth to Math.round($enemyhealth * ($npcHealthMult / 100))>>
 	<</if>>
-	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
+	<<set _buffAmount to Math.floor(_days / $combatExtended.enemyDayScaling)>>
 	<<if $combatExtended.enemyHealthDayScaling is 1>>
 		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
 			<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
