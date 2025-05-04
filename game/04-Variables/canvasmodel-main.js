@@ -2429,10 +2429,11 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
+				if (V.tattoo_bodypart == "forehead" && V.passage == "Tattoo Choice") return getWritingImgPath('forehead', setup.bodywriting[V.tattoo_choice]);
 				return getWritingImgPath('forehead', setup.bodywriting[options.writing_forehead]);
 			},
 			showfn(options) {
-				return options.show_writings && !!options.writing_forehead;
+				return options.show_writings && !!options.writing_forehead || (V.tattoo_bodypart == "forehead" && V.passage == "Tattoo Choice");
 			},
 		},
 		"writing_left_cheek": {
@@ -2440,10 +2441,11 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
+				if (V.tattoo_bodypart == "left_cheek" && V.passage == "Tattoo Choice") return getWritingImgPath('left_cheek', setup.bodywriting[V.tattoo_choice]);
 				return getWritingImgPath('left_cheek', setup.bodywriting[options.writing_left_cheek]);
 			},
 			showfn(options) {
-				return options.show_writings && !!options.writing_left_cheek;
+				return options.show_writings && !!options.writing_left_cheek || (V.tattoo_bodypart == "left_cheek" && V.passage == "Tattoo Choice");
 			},
 		},
 		"writing_right_cheek": {
@@ -2453,6 +2455,7 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const area_name = "right_cheek"
 				const writing = setup.bodywriting[options.writing_right_cheek];
+				if (V.tattoo_bodypart == "right_cheek" && V.passage == "Tattoo Choice") writing = setup.bodywriting[V.tattoo_choice];
 				if (writing.type === "text") {
 					if (writing.sprites && writing.sprites.length > 0 && writing.sprites.includes(area_name)) {
 						return `img/bodywriting/text/${writing.key}/${area_name}.png`;
@@ -2465,7 +2468,7 @@ Renderer.CanvasModels.main = {
 				return '';
 			},
 			showfn(options) {
-				return options.show_writings && !!options.writing_right_cheek;
+				return options.show_writings && !!options.writing_right_cheek || (V.tattoo_bodypart == "right_cheek" && V.passage == "Tattoo Choice");
 			},
 		},
 		"writing_breasts": {
@@ -2475,6 +2478,7 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const area_name = "breasts"
 				const writing = setup.bodywriting[options.writing_breasts];
+				if (V.tattoo_bodypart == "breasts" && V.passage == "Tattoo Choice") writing = setup.bodywriting[V.tattoo_choice];
 				if (writing.type === "text") {
 					if (writing.sprites && writing.sprites.length > 0 && writing.sprites.includes(area_name)) {
 						return `img/bodywriting/text/${writing.key}/${area_name}.png`;
@@ -2487,7 +2491,7 @@ Renderer.CanvasModels.main = {
 				return '';
 			},
 			showfn(options) {
-				return options.show_writings && !!options.writing_breasts;
+				return options.show_writings && !!options.writing_breasts || (V.tattoo_bodypart == "breasts" && V.passage == "Tattoo Choice");
 			},
 		},
 		"writing_breasts_extra": {
@@ -2511,20 +2515,22 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
+				if (V.tattoo_bodypart == "left_shoulder" && V.passage == "Tattoo Choice") return getWritingImgPath('left_shoulder', setup.bodywriting[V.tattoo_choice]);
 				return getWritingImgPath('left_shoulder', setup.bodywriting[options.writing_left_shoulder]);
 			},
 			showfn(options) {
-				return options.show_writings && !!options.writing_left_shoulder;
+				return options.show_writings && !!options.writing_left_shoulder || (V.tattoo_bodypart == "left_shoulder" && V.passage == "Tattoo Choice");
 			},
 		},
 		"writing_right_shoulder": {
 			animation: "idle",
 
 			srcfn(options) {
+				if (V.tattoo_bodypart == "right_shoulder" && V.passage == "Tattoo Choice") return getWritingImgPath('right_shoulder', setup.bodywriting[V.tattoo_choice]);
 				return getWritingImgPath('right_shoulder', setup.bodywriting[options.writing_right_shoulder]);
 			},
 			showfn(options) {
-				return options.show_writings && !!options.writing_right_shoulder;
+				return options.show_writings && !!options.writing_right_shoulder || (V.tattoo_bodypart == "right_shoulder" && V.passage == "Tattoo Choice");
 			},
 			dxfn(options) {
 				if (options.arm_right === "cover" || options.handheld_position === "right_cover") return 4;
@@ -2540,10 +2546,11 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
+				if (V.tattoo_bodypart == "pubic" && V.passage == "Tattoo Choice") return getWritingImgPath('pubic', setup.bodywriting[V.tattoo_choice]);
 				return getWritingImgPathArrow('pubic', setup.bodywriting[options.writing_pubic]);
 			},
 			showfn(options) {
-				return options.show_writings && !!options.writing_pubic;
+				return options.show_writings && !!options.writing_pubic || (V.tattoo_bodypart == "pubic" && V.passage == "Tattoo Choice");
 			},
 			dxfn(options) {
 				if (options.belly >= 23) return 10;
@@ -2565,10 +2572,11 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
+				if (V.tattoo_bodypart == "left_thigh" && V.passage == "Tattoo Choice") return getWritingImgPath('left_thigh', setup.bodywriting[V.tattoo_choice]);
 				return getWritingImgPathArrow('left_thigh', setup.bodywriting[options.writing_left_thigh]);
 			},
 			showfn(options) {
-				return options.show_writings && !!options.writing_left_thigh;
+				return options.show_writings && !!options.writing_left_thigh || (V.tattoo_bodypart == "left_thigh" && V.passage == "Tattoo Choice");
 			},
 		},
 		"writing_right_thigh": {
@@ -2576,10 +2584,11 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
+				if (V.tattoo_bodypart == "right_thigh" && V.passage == "Tattoo Choice") return getWritingImgPath('right_thigh', setup.bodywriting[V.tattoo_choice]);
 				return getWritingImgPathArrow('right_thigh', setup.bodywriting[options.writing_right_thigh]);
 			},
 			showfn(options) {
-				return !!options.writing_right_thigh;
+				return !!options.writing_right_thigh || (V.tattoo_bodypart == "right_thigh" && V.passage == "Tattoo Choice");
 			},
 		},
 
