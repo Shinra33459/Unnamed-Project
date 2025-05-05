@@ -2159,7 +2159,7 @@ Renderer.CanvasModels.main = {
 						} else {
 							T.skin += "/corrupt";
 						}
-					} else if (T.activeNNPC == "ivory_wraith") {
+					} else if (V.options.nnpcDisplay == "ivory_wraith") {
 						T.skin = "";
 					}
 					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplayGender}${T.skin}/${V.options.nnpcDisplaySlot}.png`;
