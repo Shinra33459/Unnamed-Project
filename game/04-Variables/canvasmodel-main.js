@@ -2112,16 +2112,32 @@ Renderer.CanvasModels.main = {
 					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
 				} else T.activeNNPC = 0;
 
+				if (T.activeNNPC == "black wolf") T.activeNNPC = "black_wolf";
+				if (T.activeNNPC == "great hawk") T.activeNNPC = "great_hawk";
+				if (T.activeNNPC == "ivory wraith") T.activeNNPC = "ivory_wraith";
+
 				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (T.activeNNPC == 0 || V.options.autoNNPCDisplay[T.activeNNPC].slot == 0) return;
 				} else if (V.options.nnpcDisplay == 0 || V.options.nnpcDisplaySlot == 0) return;
 
 				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) {
-						if (V.NPCList[0].skincolour == "white") {
-							T.skin = "pale";
+						if ((T.activeNNPC == "black_wolf" || T.activeNNPC == "great_hawk") && V.monster != 0) {
+							T.skin = "/monster";
+						} else if (V.NPCList[0].skincolour == "white") {
+							T.skin = "/pale";
 						} else {
-							T.skin = "dark";
+							T.skin = "/dark";
+						}
+
+						if (T.activeNNPC == "sydney") {
+							if (C.npc.Sydney.purity >= 1) {
+								T.skin += "/pure";
+							} else {
+								T.skin += "/corrupt";
+							}
+						} else if (T.activeNNPC == "ivory_wraith") {
+							T.skin = "";
 						}
 						
 						if (V.options.autoNNPCDisplay[T.activeNNPC].genderOverride == true && V.options.autoNNPCDisplay[T.activeNNPC].gender != "") {
@@ -2133,17 +2149,34 @@ Renderer.CanvasModels.main = {
 								T.gender = "female";
 							} 
 						}
-						return `img/ui/nnpc/${T.activeNNPC}/${T.gender}/${T.skin}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
+						return `img/ui/nnpc/${T.activeNNPC}/${T.gender}${T.skin}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
 					} else return;
 				} else {
-					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplayGender}/${V.options.nnpcDisplaySkin}/${V.options.nnpcDisplaySlot}.png`;
+					T.skin = "/" + V.options.nnpcDisplaySkin;
+					if (V.options.nnpcDisplay == "sydney") {
+						if (C.npc.Sydney.purity >= 1) {
+							T.skin += "/pure";
+						} else {
+							T.skin += "/corrupt";
+						}
+					} else if (T.activeNNPC == "ivory_wraith") {
+						T.skin = "";
+					}
+					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplayGender}${T.skin}/${V.options.nnpcDisplaySlot}.png`;
 				}
 			},
 			showfn(options) {
 				return options.show_nnpc;
 			},
 			zfn() {
-				T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
+				if (T.optionsEnabled) {
+					T.activeNNPC = V.options.nnpcDisplay;
+				} else if (V.NPCList[0].fullDescription != undefined && setup.NPCNameList.includes(V.NPCList[0].fullDescription)) {	
+					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
+				} else return;
+				if (T.activeNNPC == "black wolf") T.activeNNPC = "black_wolf";
+				if (T.activeNNPC == "great hawk") T.activeNNPC = "great_hawk";
+				if (T.activeNNPC == "ivory wraith") T.activeNNPC = "ivory_wraith";
 				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (V.options.autoNNPCDisplay[T.activeNNPC].layer === "front") {
 						return ZIndices.deco_fg1 + 1;
