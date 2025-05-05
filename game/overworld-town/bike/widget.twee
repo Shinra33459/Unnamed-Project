@@ -81,7 +81,16 @@
 		<<unset _error>>
 		<<bikeError>>
 	<<else>>
-		<<set $bikeDurability to Math.max($bikeDurability - (_time + (_roughTerrainModifier * 2)), 0)>>
+		<<if _roughTerrainModifier gt 0>>
+			<<set _roughTerrainModifierDurability to (_roughTerrainModifier * 2)>>
+			<<if $bikeSuspension is 1>><<set _roughTerrainModifierDurability *= 0.75>><</if>>
+			<<if $bikeTires is 1>><<set _roughTerrainModifierDurability *= 0.85>><</if>>
+			<<if $bikeTubeless is 1>><<set _roughTerrainModifierDurability *= 0.9>><</if>>
+			<<if $bikeBrakes is 1>><<set _roughTerrainModifierDurability *= 0.95>><</if>>
+			<<if $bikePedals is 1>><<set _roughTerrainModifierDurability *= 0.95>><</if>>
+			<<if $bikeGrips is 1>><<set _roughTerrainModifierDurability *= 0.95>><</if>>
+		<</if>>
+		<<set $bikeDurability to Math.max($bikeDurability - (_time + _roughTerrainModifierDurability), 0)>>
 		<<if $bikeDurability is 0>><<set $bikeBroken to 1>><</if>>
 		<<set $bikeLocation to $bikeDestination>>
 		<<set $bikeLocationCategory to $bikeDestination>>
@@ -148,13 +157,26 @@
 
 <<widget "bikeTime">>
 	<<set _townToTown to 1>>
-	<<set _townToLake to 21>>
-	<<set _lakeToDeepForest to 28>>
-	<<set _townToFarm to 19>>
-	<<set _townToMoor to 80>>
 	<<if $town_projects.road gte 4>>
 		<<set _townToLake to 5>>
+	<<else>>
+		<<set _townToLake to 21>>
+		<<if $bikeSuspension is 1>><<set _townToLake *= 0.9>><</if>>
+		<<if $bikeTires is 1>><<set _townToLake *= 0.95>><</if>>
+		<<if $bikeTubeless is 1>><<set _townToLake *= 0.95>><</if>>
+		<<if $bikePedals is 1>><<set _townToLake *= 0.975>><</if>>
+		<<if $bikeGrips is 1>><<set _townToLake *= 0.975>><</if>>
+		<<set _townToLake to Math.round(_townToLake)>>
 	<</if>>
+	<<set _lakeToDeepForest to 28>>
+	<<set _townToFarm to 19>>
+	<<set _farmToMoor to 80>>
+	<<if $bikeSuspension is 1>><<set _lakeToDeepForest *= 0.9>><<set _farmToMoor *= 0.9>><</if>>
+	<<if $bikeTires is 1>><<set _lakeToDeepForest *= 0.95>><<set _farmToMoor *= 0.95>><</if>>
+	<<if $bikeTubeless is 1>><<set _lakeToDeepForest *= 0.95>><<set _farmToMoor *= 0.95>><</if>>
+	<<if $bikePedals is 1>><<set _lakeToDeepForest *= 0.975>><<set _farmToMoor *= 0.975>><</if>>
+	<<if $bikeGrips is 1>><<set _lakeToDeepForest *= 0.975>><<set _farmToMoor *= 0.975>><</if>>
+	<<set _lakeToDeepForest to Math.round(_lakeToDeepForest)>><<set _farmToMoor to Math.round(_farmToMoor)>>
 	<<set _time to 1>><<set _roughTerrainModifier to 0>>
 	<<switch $bikeStart>>
 		<<case "lake">>
@@ -169,7 +191,7 @@
 				<<case "farm">>
 					<<set _time += _townToLake + _townToTown + _townToFarm>><<set _roughTerrainModifier to _townToLake>>
 				<<case "moor">>
-					<<set _time += _townToLake + _townToTown + _townToFarm + _townToMoor>><<set _roughTerrainModifier to _townToLake>>
+					<<set _time += _townToLake + _townToTown + _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _townToLake>>
 				<<default>>
 					<<set _error to 1>>
 			<</switch>>
@@ -187,7 +209,7 @@
 				<<case "farm">>
 					<<set _time += _townToTown + _townToTown + _townToFarm>>
 				<<case "moor">>
-					<<set _time += _townToTown + _townToTown + _townToFarm + _townToMoor>><<set _roughTerrainModifier to _townToMoor>>
+					<<set _time += _townToTown + _townToTown + _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
 				<<default>>
 					<<set _error to 1>>
 			<</switch>>
@@ -203,7 +225,7 @@
 				<<case "farm">>
 					<<set _time += _townToTown + _townToFarm>>
 				<<case "moor">>
-					<<set _time += _townToTown + _townToFarm + _townToMoor>><<set _roughTerrainModifier to _townToMoor>>
+					<<set _time += _townToTown + _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
 				<<default>>
 					<<set _error to 1>>
 			<</switch>>
@@ -221,7 +243,7 @@
 				<<case "farm">>
 					<<set _time += _townToFarm>>
 				<<case "moor">>
-					<<set _time += _townToFarm + _townToMoor>><<set _roughTerrainModifier to _townToMoor>>
+					<<set _time += _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
 				<<default>>
 					<<set _error to 1>>
 			<</switch>>
@@ -239,7 +261,7 @@
 					<<set _time += _townToFarm + _townToTown + _townToLake + _lakeToDeepForest>><<set _roughTerrainModifier to _townToLake + _lakeToDeepForest>>
 				<<case "farm">>
 				<<case "moor">>
-					<<set _time += _townToMoor>><<set _roughTerrainModifier to _townToMoor>>
+					<<set _time += _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
 				<<default>>
 					<<set _error to 1>>
 			<</switch>>
@@ -257,24 +279,24 @@
 				<<case "farm">>
 					<<set _time += _lakeToDeepForest + _townToLake + _townToTown + _townToTown + _townToFarm>><<set _roughTerrainModifier to _lakeToDeepForest + _townToLake>>
 				<<case "moor">>
-					<<set _time += _lakeToDeepForest + _townToLake + _townToTown + _townToTown + _townToFarm + _townToMoor>><<set _roughTerrainModifier to _lakeToDeepForest + _townToLake + _townToMoor>>
+					<<set _time += _lakeToDeepForest + _townToLake + _townToTown + _townToTown + _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _lakeToDeepForest + _townToLake + _farmToMoor>>
 				<<default>>
 					<<set _error to 1>>
 			<</switch>>
 		<<case "moor">>
 			<<switch $bikeDestination>>
 				<<case "domus" "barb" "danube" "connudatus">>
-					<<set _time += _townToMoor + _townToFarm + _townToTown + _townToTown>><<set _roughTerrainModifier to _townToMoor>>
+					<<set _time += _farmToMoor + _townToFarm + _townToTown + _townToTown>><<set _roughTerrainModifier to _farmToMoor>>
 				<<case "wolf" "high"  "cliff" "nightingale" "starfish">>
-					<<set _time += _townToMoor + _townToFarm + _townToTown>><<set _roughTerrainModifier to _townToMoor>>
+					<<set _time += _farmToMoor + _townToFarm + _townToTown>><<set _roughTerrainModifier to _farmToMoor>>
 				<<case "oxford" "elk" "mer" "harvest">>
-					<<set _time += _townToMoor + _townToFarm>><<set _roughTerrainModifier to _townToMoor>>
+					<<set _time += _farmToMoor + _townToFarm>><<set _roughTerrainModifier to _farmToMoor>>
 				<<case "lake">>
-					<<set _time += _townToMoor + _townToFarm + _townToTown + _townToLake>><<set _roughTerrainModifier to _townToMoor + _townToLake>>
+					<<set _time += _farmToMoor + _townToFarm + _townToTown + _townToLake>><<set _roughTerrainModifier to _farmToMoor + _townToLake>>
 				<<case "wolfCave" "eden">>
-					<<set _time += _townToMoor + _townToFarm + _townToTown + _townToLake + _lakeToDeepForest>><<set _roughTerrainModifier to _townToMoor + _townToLake + _lakeToDeepForest>>
+					<<set _time += _farmToMoor + _townToFarm + _townToTown + _townToLake + _lakeToDeepForest>><<set _roughTerrainModifier to _farmToMoor + _townToLake + _lakeToDeepForest>>
 				<<case "farm">>
-					<<set _time += _townToMoor>><<set _roughTerrainModifier to _townToMoor>>
+					<<set _time += _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
 				<<case "moor">>
 				<<default>>
 					<<set _error to 1>>
