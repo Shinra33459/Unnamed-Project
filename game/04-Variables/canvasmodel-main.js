@@ -2143,7 +2143,7 @@ Renderer.CanvasModels.main = {
 						if (V.options.autoNNPCDisplay[T.activeNNPC].genderOverride == true && V.options.autoNNPCDisplay[T.activeNNPC].gender != "") {
 							T.gender = V.options.autoNNPCDisplay[T.activeNNPC].gender;
 						} else {
-							if (V.NPCList[0].gender == "m" || (V.NPCList[0].gender == "h" && V.NPCList[0].pronoun == "m")) {
+							if (V.NPCList[0].pronoun == "m") {
 								T.gender = "male";
 							} else {
 								T.gender = "female";
