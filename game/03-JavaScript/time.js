@@ -2070,7 +2070,7 @@ function dailyFarmEvents() {
 				V.farm.player_still_timer--;
 			}
 			if (V.farm.player_still_timer == 0) {
-				if (V.lurker_stored >= 3 && V.farm.extractOverdrive == 1) {
+				if (V.lurkers_stored >= 3 && V.farm.extractOverdrive == 1) {
 					V.lurkers_stored -= 3;
 					V.phials_stored += 2;
 					if (V.farm.extract == 2 && V.lurkers_stored > 0) {
