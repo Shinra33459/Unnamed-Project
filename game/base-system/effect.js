@@ -1591,13 +1591,13 @@ function effects() {
 	if (V.combat === 0 && V.ironmanmode === true) IronMan.scheduledSaves();
 
 	if (V.tirednessMaxScalingToggle) {
-		C.tiredness.max = 2000 + Math.floor(V.physique / 32);
+		C.tiredness.max = 2000 + Math.floor(currentSkillValue("physique") / 32);
 	} else {
 		C.tiredness.max = 2000;
 	}
 
 	if (V.stressMaxScalingToggle) {
-		V.stressmax = 10000 + Math.floor(V.willpower * 5);
+		V.stressmax = 10000 + Math.floor(currentSkillValue("willpower") * 5);
 	} else {
 		V.stressmax = 10000;
 	}
