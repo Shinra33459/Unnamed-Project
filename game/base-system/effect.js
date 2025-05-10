@@ -1613,5 +1613,41 @@ Macro.add("effects", {
 		const fragment = effects();
 		this.output.append(fragment);
 		DOL.Perflog.logWidgetEnd("effectsJs");
+		$(document).on(':passageend', function () {
+			if (V.options.bigCanvas == true) {
+				document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "267px";
+				document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 95px - 1.32em)";
+				document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width  = "392px";
+				document.querySelector("body.has-images #storyCaptionContent").style.width  = "392px";
+				document.querySelector("#stats").style.width  = "392px";
+				document.querySelector("#ui-bar").style.width = "24.5em";
+			} else {
+				document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "192px";
+				document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 20px - 1.32em)";
+				document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width  = "280px";
+				document.querySelector("body.has-images #storyCaptionContent").style.width  = "280px";
+				document.querySelector("#stats").style.width  = "280px";
+				document.querySelector("#ui-bar").style.width = "17.5em";
+			}
+		});
+		if (document.getElementById("ui-bar")) {
+			const observer = new MutationObserver((mutations) => {
+				for (const mutation of mutations) {
+					if (mutation.type === "attributes" && mutation.attributeName === "class") {
+						if (document.getElementById("ui-bar").classList.contains("stowed")) {
+							if (V.options.bigCanvas == true) {
+								document.querySelector("#ui-bar").style.left = "-22.5em";
+							} else {
+								document.querySelector("#ui-bar").style.left = "-15.5em";
+							}
+						} else {
+							document.querySelector("#ui-bar").style.left = "0";
+						}
+					}
+				}
+			});
+
+			observer.observe(document.getElementById("ui-bar"), { attributes: true });
+		}
 	},
 });
