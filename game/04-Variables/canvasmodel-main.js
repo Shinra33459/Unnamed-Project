@@ -1084,7 +1084,7 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const mannequin = (options.mannequin) ? "mannequin/" : "";
 				const prefix = `img/body/${mannequin}`;
-				const suffix = options.breasts === "cleavage" && options.breast_size >= 3 ? "_clothed.png" : V.releaseBoobs === "release" ? "_released.png" : ".png";
+				const suffix = options.breasts === "cleavage" && options.breast_size >= 3 ? "_clothed.png" : V.releaseBoobs === "release" && options.breast_size >= 3 && !options.mannequin ? "_released.png" : ".png";
 				return `${prefix}breasts/breasts${options.breast_size}${suffix}`;
 			},
 		},
