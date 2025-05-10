@@ -1657,5 +1657,6 @@ Macro.add("effects", {
 
 			observer.observe(document.getElementById("ui-bar"), { attributes: true });
 		}
+		Weather.Thermometer.load();
 	},
 });
