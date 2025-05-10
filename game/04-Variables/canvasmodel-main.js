@@ -3613,12 +3613,13 @@ Renderer.CanvasModels.main = {
 				return gray_suffix(path, options.filters['worn_hands']);
 			},
 			showfn(options) {
-				return options.show_clothes
-					&& options.worn.hands.index > 0
-					&& options.worn.hands.setup.leftImage === 1
-					&& ["curvy", "slender"].includes(options.body_type)
-					&& options.arm_left === "idle"
-					&& !(options.belly > 7)
+				// return options.show_clothes
+				// 	&& options.worn.hands.index > 0
+				// 	&& options.worn.hands.setup.leftImage === 1
+				// 	&& ["curvy", "slender"].includes(options.body_type)
+				// 	&& options.arm_left === "idle"
+				// 	&& !(options.belly > 7)
+				return false;
 			},
 			masksrcfn(options) {
 				return options.shirt_fitted_left_move_src;
