@@ -4,12 +4,13 @@
 
 <<if Time.dayState is "night">>
 	<<if Weather.precipitation is "rain">>
-	You run through the deserted park. Cold rain assails you.
+		You run through the deserted park. Cold rain assails you.
 	<<elseif Weather.isFreezing>>
-	You run through the deserted park. Cold night air caresses your skin.
+		You run through the deserted park. Cold night air caresses your skin.
 	<<else>>
-	You run through the deserted park. The night air caresses your skin.
+		You run through the deserted park. The night air caresses your skin.
 	<</if>>
+	<<physique 1>>
 	<<rng>>
 
 	<<if random(1, 100) gte 95 and $cow gte 6 and $livestock_intro isnot undefined and $hospitalintro>>
@@ -32,25 +33,43 @@
 		<<link [[Next|Park Run Stalk]]>><<set $molestationstart to 1>><</link>>
 		<br>
 	<<else>>
-		<<rng>>
-		<<if $rng gte 33>>/*2/3 of time, do nothing*/
-		<<elseif $rng gte 22>>
+		<<cleareventpool>>
+
+		<<addinlineevent "toilet_queue">>
 			<br><br>
-			There is a large queue at one of the toilet entrances. <<if Weather.precipitation is "rain">>The queue wraps closely around the building where people are sheltered from the rain.<</if>>
-			<<if $awareness lte 100>>It's strange. You have no idea why so many <<if $rng % 2>>men<<else>>women<</if>> would queue up at one toilet when the one next to it is empty. Maybe someone made a mess.
-			<br>
-			<<elseif $awareness lte 300>>You can tell something sleazy is happening. You don't need details.
-			<br>
-			<<else>>It looks like someone is running a gloryhole out of one of the cubicles.
-			<br>
-			<</if>>You run by.
-		<<elseif $rng gte 11>>
+			There's a large queue at one of the toilet entrances.
+			<<if Weather.precipitation is "rain">>
+				The queue wraps closely around the building where people are sheltered from the rain.
+				<br><br>
+			<</if>>
+			<<if $awareness lte 100>>
+				<<generate1>><<person1>>It's strange. You have no idea why so many <<if $pronoun is "f">>wo<</if>>men would queue up at one toilet when the one next to it is empty. Maybe someone made a mess?
+				<<endevent>> /* Tidying up the people generated in this fork */
+			<<elseif $awareness lte 300>>
+				You can tell something sleazy is happening. You don't need details.
+			<<else>>
+				It looks like someone is running a gloryhole out of one of the cubicles.
+			<</if>>
 			<br><br>
-			In a secluded part of the park, you enter a clearing. A large group of people stand <<if Weather.precipitation is "rain">>naked in the pounding rain<<elseif Weather.isFreezing>>half-naked despite the cold,<<else>>half-naked in silence<</if>> surrounding some kind of altar.
-			All eyes fix on you.
-			<br>
-			You speed up and run quickly by.
-		<<elseif $rng gte 6>>
+			You on run by.
+		<</addinlineevent>>
+
+		<<addinlineevent "nude_cult">>
+			<br><br>
+			In a secluded part of the park, you enter a clearing. A large group of people stand
+			<<if Weather.precipitation is "rain">>
+				naked in the pounding rain
+			<<elseif Weather.isFreezing>>
+				half-naked despite the cold,
+			<<else>>
+				half-naked in silence
+			<</if>>
+			surrounding some kind of altar. All eyes fix on you.
+			<br><br>
+			You speed up and quickly run by.
+		<</addinlineevent>>
+
+		<<addinlineevent "secluded_sex_show">>
 			<<generate1>><<person1>>
 			<br><br>
 			There is a small crowd in a secluded <<if Weather.precipitation is "rain">>park gazebo, sheltered from the rain.<<else>>grass clearing.<</if>>
@@ -64,38 +83,43 @@
 				<<if $brothelintro is 1>>You recognise the <<person>> as a worker from the Harvest Street brothel.<</if>>
 			<</if>>
 			<br><br>
-			You run <<if $awareness lte 100>>quickly <</if>>by.<<endevent>> /*tidy up people generated in this fork*/
-		<<else>>
+			You run <<if $awareness lte 100>>quickly <</if>>by.
+			<<endevent>> /* Tidying up the people generated in this fork */
+		<</addinlineevent>>
+
+		<<addinlineevent "bump_in_the_night">>
 			<br><br>
-			You hear a sharp squeal nearby followed by some muffled cries. Slowing down, you glance around.
-			Thanks to the shadows you can't tell where the noises came from. Somewhere behind is a heavy thud. You spin around. The hairs on your neck rise with the strong and sudden feeling of being watched.
-			<br>
+			You hear a sharp squeal nearby followed by some muffled cries. Slowing down, you glance around. Thanks to the shadows you can't tell where the noises came from. A heavy thud comes from somewhere behind you and you spin around. The hairs on your neck rise with the strong and sudden feeling of being watched.
+			<br><br>
 			<<if $speech_attitude is "bratty">>
-				<<if $physique gte ($physiquesize / 7) * 4>>Sure you're tough, trim and pretty much fearless,
-				<<else>>Sure you're not one to back down from a fight,<</if>>
+				<<if $physique gte ($physiquesize / 7) * 4>>
+					Sure, you're tough, trim, and pretty much fearless,
+				<<else>>
+					Sure, you're not one to back down from a fight,
+				<</if>>
 				but you're also not stupid. You're not going alone into the shadows to investigate a 'funny noise.'
 				<br><br>
-				"Nope."
-				<br>
-				You run on.
+				"Noooope." You mutter to yourself as you run on.
 			<<else>>
-				You're no hero and it's not like you could help if you wanted.
+				You're no hero, and it's not like you could help even if you wanted to.
 				<br><br>
-				You run.
-				<br><br>
-				It was probably nothing anyway. Just someone trying to scare you. That's all it was.
+				You turn and run. It was probably nothing anyway. Just someone trying to scare you. That's all it was.
 			<</if>>
-		<</if>>
-	<br><br>
-	<<link [[Next|Park]]>><</link>>
-	<br>
+		<</addinlineevent>>
+
+		/* Triggers no events 2/3rds of the time */
+		<<if random(1,3) is 1>><<runeventpool>><</if>>
+		<br><br>
+		<<link [[Next|Park]]>><</link>>
+		<br>
 	<</if>>
 <<else>>
 	<<if Weather.precipitation is "rain">>
-	You run through the park. Few others brave the rain.
+		You run through the park. Few others brave the rain.
 	<<else>>
-	You run through the park. Other runners wave as you pass.
+		You run through the park. Other runners wave as you pass.
 	<</if>>
+	<<physique 1>>
 	<br><br>
 	<<link [[Next|Park]]>><</link>>
 	<br>
@@ -109,9 +133,9 @@ You run through the dark and deserted park. The cool night air blows against you
 <<pass 30>>
 
 <<if $phase is 0>>
-    <<exhibitionism3>>
+	<<exhibitionism3>>
 <<else>>
-    <<exhibitionism1>>
+	<<exhibitionism1>>
 <</if>>
 
 <<if random(1, 100) gte 95 and $cow gte 6 and $livestock_intro isnot undefined and $hospitalintro>>
@@ -422,9 +446,9 @@ Your heart is pounding with the thrill as you quietly move on.
 		<br><br>
 		"Evening, <<sir>>," you call out.
 		<br>
-		<<He>> stops in <<his>> tracks, turns around, and instantly averts <<his>> eyes. 
+		<<He>> stops in <<his>> tracks, turns around, and instantly averts <<his>> eyes.
 		<br>
-		"W-What do you think you're doing?" <<he>> asks. "Where are your clothes?" 
+		"W-What do you think you're doing?" <<he>> asks. "Where are your clothes?"
 		<br><br>
 		Ignoring <<his>> questions, you run on, passing Mason as <<he>> does <<his>> best to avoid looking at you. <<if C.npc.Mason.lust gte 40>> You see <<his>> ears turn red as you pass by.<</if>><<npcincr Mason lust 1>>
 		<<set $park_run_seen_by.pushUnique("mason")>>
@@ -526,6 +550,7 @@ Your heart is pounding with the thrill as you quietly move on.
 	<<else>>
 		You _exercise in the deserted park. The cool night air caresses your skin.
 	<</if>>
+	<<physique 1>>
 	<<rng>>
 	<<if $rng gte 91>>
 		<<generate1>><<person1>>
@@ -549,6 +574,7 @@ Your heart is pounding with the thrill as you quietly move on.
 	<<else>>
 		You _exercise in the park. It feels good to feel the air and sunshine on your skin.
 	<</if>>
+	<<physique 1>>
 
 	<<rng>>
 	<<if $rng lte 20 and $footdisable is "f">>
@@ -712,7 +738,7 @@ You decline the offer and get back to your exercise.
 	<br><br>
 	<<He>> walks towards you.
 <<elseif $phase is 3>>
-	Following the slime's command, you find a gap in the waist-high hedge and move towards <<him>>. <<He>> looks shocked the moment <<he>> realises you're so exposed. 
+	Following the slime's command, you find a gap in the waist-high hedge and move towards <<him>>. <<He>> looks shocked the moment <<he>> realises you're so exposed.
 	<br><br>
 	"I want you to rape me," you tell <<him>>. "Do whatever you want to me."
 	<br><br>
@@ -720,9 +746,9 @@ You decline the offer and get back to your exercise.
 <<elseif $phase is 4>>
 	Following the slime's command, you walk towards the officer and pedestrian. The officer is the first to notice you. "Oh, there you are. Been a lot of reports of you running around while exposed."
 	<br><br>
-	"I need to be raped by you two," you say. The pedestrian's relaxed expression quickly changes to one of shock. 
+	"I need to be raped by you two," you say. The pedestrian's relaxed expression quickly changes to one of shock.
 	<br><br>
-	"Sure, we can do that," the officer replies. The pedestrian gives <<him>> an incredulous look as the officer shrugs <<his>> shoulders."<<pShes>> the one who asked."
+	"Sure, we can do that," the officer replies. The pedestrian gives <<him>> an incredulous look as the officer shrugs <<his>> shoulders. "<<pShes>> the one who asked."
 	<br><br>
 	They both walk towards you.
 <</if>>
@@ -795,7 +821,7 @@ You feel a jolt of pain as the slime punishes you for your defiance. However, <s
 	<<elseif $phase is 2 or $phase is 3>>
 		You shove the <<person>> away from you. <<tearful>> you escape between the trees.
 	<</if>>
-	
+
 	<span class="red">You feel the slime in your head punish you for not doing as it asked.</span>
 	<<pain 12>><<stress 12>><<trauma 18>><<ggpain>><<ggtrauma>><<ggstress>><<set $earSlime.defyCooldown += 4>>
 	<br><br>

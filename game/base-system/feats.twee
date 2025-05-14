@@ -1,7 +1,7 @@
 :: Feats [widget]
 
 <<widget "earnFeat">>
-	<<if _args[0] and $feats.locked is false and $cheatdisable is "t" and $debug is 0 and $gamemode isnot "soft" and $alluremod gte 1>>
+	<<if _args[0] and $feats.locked is false and $cheatdisable is "t" and $debug is 0 and $gamemode isnot "soft" and $alluremod gte 1 and !$statFreeze>>
 		<<if $feats.currentSave[_args[0]] is undefined and (!$feats.soft or !setup.feats[_args[0]].softLockable) and (!$feats.pregnancyLocked or !setup.feats[_args[0]].pregnancyLockable) and (!$feats.pregnancySillyLocked or !setup.feats[_args[0]].pregnancySillyLockable)>>
 			<<set $feats.currentSave[_args[0]] to Date()>>
 
@@ -103,7 +103,6 @@
 				newLife:0,
 				aNewBestFriend:0,
 				tattoos:0,
-				defaultMoves: 0,
 				randomClothing:0,
 				specialClothing:0,
 				sexToys:0,
@@ -124,7 +123,6 @@
 				newLife:{cost:20, limit: _newLifeLimit, minCount: 1, count:_newLife, exclusive:""},
 				aNewBestFriend:{cost:10, limit: 10 * _earSlimeFeats, minCount: 1, count:_earSlimeFeats, exclusive:""},
 				tattoos:{cost:5, limit: 25, minCount: 2, count:_tattoosFeats, exclusive:""},
-				defaultMoves:{cost:5, limit: 25, minCount: 1, count:_keys.count("A New Life"), exclusive:""},
 				randomClothing:{cost:1, limit: 20, minCount: 0, count:0, exclusive:""},
 				specialClothing:{cost:40, limit: 40, minCount: 1, count:_keys.count("Curious Attire"), exclusive:""},
 				sexToys:{cost:30, limit: 30 * _sexToysFeats, minCount: 1, count:_sexToysFeats, exclusive:""},
@@ -144,7 +142,6 @@
 				newLife:"Unlock this boost by obtaining a hidden feat (" + setup.feats["Broodmother Host"].hint + ")",
 				aNewBestFriend:"Unlock this boost by obtaining a hidden feat (" + setup.feats["Ear Slime Lover"].hint + ")",
 				tattoos:"Unlock this boost by obtaining the 'Billboard' and 'A Living Canvas' feats",
-				defaultMoves:"Unlock this boost by obtaining a hidden feat (" + setup.feats["A New Life"].hint + ")",
 				randomClothing:"",
 				specialClothing:"Unlock this boost by obtaining a hidden feat (" + setup.feats["Curious Attire"].hint + ")",
 				sexToys:"Unlock this boost by obtaining a hidden feat (" + setup.feats["Opened Pandoras Box"].hint + ")",
@@ -165,7 +162,6 @@
 				newLife:"A New Life",
 				aNewBestFriend:"A New Best Friend",
 				tattoos:"Starting Tattoos",
-				defaultMoves:"Extra Default Moves",
 				randomClothing:"Random Clothing",
 				specialClothing:"Special Clothing",
 				sexToys:"Sex Toys",
@@ -344,6 +340,9 @@
 					<<set _item.accessory_colourCustom to customColour(random(0,360), (random(0,20)/10), (random(5,40)/10), (random(0,20)/10), (random(0,100)/100))>>
 				<</if>>
 			<</if>>
+			<<if _item.pattern_options and _item.pattern_options.length gt 0>>
+				<<set _item.pattern to clone(_item.pattern_options).random()>>
+			<</if>>
 
 			<<set $_.outfitPrimary to _item.outfitPrimary>>
 			<<set $_.items to {}>>
@@ -355,6 +354,7 @@
 							<<set $_.items[_labelf] to clone(setup.clothes[_labelf][_j])>>
 							<<set $_.items[_labelf].colour to clone($_.items[_slot].colour)>>
 							<<set $_.items[_labelf].accessory_colour to clone($_.items[_slot].accessory_colour)>>
+							<<if $_.items[_labelf].pattern_options and $_.items[_labelf].pattern_options.length gt 0>><<set $_.items[_labelf].pattern to clone($_.items[_slot].pattern)>><</if>>
 							<<if $featsBoosts.clothingCustomColors is true and _item.colour is "custom">>
 								<<set $_.items[_labelf].colourCustom to clone($_.items[_slot].colourCustom)>>
 							<</if>>
@@ -437,9 +437,6 @@
 			<</for>>
 		<</for>>
 		<<bodywritingExposureCheck true>>
-	<</if>>
-	<<if _upgrades.defaultMoves gt 0>>
-		<<set $maxDefaultActionSets to 2 + _upgrades.defaultMoves / _details.defaultMoves.cost>>
 	<</if>>
 	<<if _upgrades.specialClothing gt 0>>
 		<<set _unlocked to $feats.allSaves.specialClothes>>

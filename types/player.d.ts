@@ -202,20 +202,7 @@ declare module "twine-sugarcube" {
 			right_arm: ParasiteState;
 		};
 
-		skin: {
-			forehead: Bodywriting;
-			left_cheek: Bodywriting;
-			right_cheek: Bodywriting;
-			left_shoulder: Bodywriting;
-			right_shoulder: Bodywriting;
-			breasts: Bodywriting;
-			back: Bodywriting;
-			left_bottom: Bodywriting;
-			right_bottom: Bodywriting;
-			pubic: Bodywriting;
-			left_thigh: Bodywriting;
-			right_thigh: Bodywriting;
-		};
+		skin: Record<SkinPositions, Bodywriting>;
 
 		makeup: {
 			eyelenses: {
@@ -234,6 +221,20 @@ declare module "twine-sugarcube" {
 
 declare global {
 	export type TransformationKeys = "angel" | "bird" | "cat" | "cow" | "demon" | "fallenAngel" | "fox" | "wolf";
+
+	export type SkinPositions =
+		| "forehead"
+		| "left_cheek"
+		| "right_cheek"
+		| "left_shoulder"
+		| "right_shoulder"
+		| "breasts"
+		| "back"
+		| "left_bottom"
+		| "right_bottom"
+		| "pubic"
+		| "left_thigh"
+		| "right_thigh";
 
 	export type TransformationParts =
 		| "halo"
@@ -314,7 +315,8 @@ declare global {
 		vagina: string;
 		condom: Condom | false;
 
-		gender: "m" | "f";
+		gender: "m" | "f" | "n";
+		sex: "m" | "f" | "h";
 
 		virginity: {
 			penile: "string" | boolean;
