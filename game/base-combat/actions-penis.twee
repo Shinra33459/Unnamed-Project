@@ -211,9 +211,6 @@
 	<<if ($consensual is 0 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55) and currentSkillValue("penileskill") gte 800>>
 		<<set _penisaction["Edge " + $NPCList[$penistarget].pronouns.him] to "vaginaEdging">>
 	<</if>>
-	<<if $player.condom and currentSkillValue("penileskill") gte 800>>
-		<<set _penisaction["Damage Condom"] to "damageCondom">>
-	<</if>>
 	<<set _penisaction["Pull out"] to "pullOut">>
 <</widget>>
 
@@ -265,9 +262,6 @@
 	<</if>>
 	<<if ($consensual is 0 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55) and currentSkillValue("penileskill") gte 800>>
 		<<set _penisaction["Edge " + $NPCList[$penistarget].pronouns.him] to "otheranusEdging">>
-	<</if>>
-	<<if $player.condom and currentSkillValue("penileskill") gte 800>>
-		<<set _penisaction["Damage Condom"] to "damageCondom">>
 	<</if>>
 	<<set _penisaction["Pull out"] to "pullOut">>
 <</widget>>
@@ -496,46 +490,44 @@
 <</widget>>
 
 <<widget "effectsmovehole">>
-	<<if $penisaction is "moveHole">>
-		<<set $penisaction to 0>><<thighskilluse>><<brat 5 $penistarget>>
-		<<set $_target to $NPCList[$penistarget]>><<personselect $penistarget>>
-		<<if [$_target.vagina, $_target.penis].includesAny("penisentrance", "otheranusentrance", "otheranusimminent")>>
-			<<if combatSkillCheck("thigh", $penistarget)>>
-				<span class="lblue">You <<thightext>> move your <<penis>> against <<combatpersons>>
-				<<if $_target.vagina is "penisentrance" or $_target.penis is "penisentrance">>
-					<<set $penisuse to "otheranus">><<set $penisstate to "otheranusentrance">>
-					<<set $penisactiondefault to "otheranustease">>
-					<<if $_target.vagina is "penisentrance">>
-						<<set $_target.vagina to "otheranusentrance">>
-					<<else>>
-						<<set $_target.penis to "otheranusentrance">>
-					<</if>>
-					 <<npcAnus $penistarget>>.
-				<<elseif $_target.vagina is "otheranusentrance" or $_target.vagina is "otheranusimminent">>
-					<<set $penisuse to "othervagina">><<set $penisstate to "entrance">>
-					<<set $penisactiondefault to "tease">>
-					<<set $_target.vagina to "penisentrance">>
-					<<npcVagina $penistarget>>.
-				<<elseif $_target.penis is "otheranusentrance" or $_target.penis is "otheranusimminent">>
-					<<set $penisuse to "otherpenis">><<set $penisstate to "otherpenis">>
-					<<set $penisactiondefault to "otherpenisrub">>
-					<<set $_target.penis to "penisentrance">>
-					<<npcPenisSimple $penistarget>>.
+	<<thighskilluse>><<brat 5 $penistarget>>
+	<<set $_target to $NPCList[$penistarget]>><<personselect $penistarget>>
+	<<if [$_target.vagina, $_target.penis].includesAny("penisentrance", "otheranusentrance", "otheranusimminent")>>
+		<<if combatSkillCheck("thigh", $penistarget)>>
+			<span class="lblue">You <<thightext>> move your <<penis>> against <<combatpersons>>
+			<<if $_target.vagina is "penisentrance" or $_target.penis is "penisentrance">>
+				<<set $penisuse to "otheranus">><<set $penisstate to "otheranusentrance">>
+				<<set $penisactiondefault to "otheranustease">>
+				<<if $_target.vagina is "penisentrance">>
+					<<set $_target.vagina to "otheranusentrance">>
+				<<else>>
+					<<set $_target.penis to "otheranusentrance">>
 				<</if>>
-				</span>
-			<<else>>
-				<span class="blue">You try to move your <<penis>> towards <<combatpersons>>
-				<<if $_target.vagina is "otheranusentrance">>
-					<<npcVagina $penistarget>>
-				<<elseif $_target.penis is "otheranusentrance">>
-					<<npcPenisSimple $penistarget>>
-				<<elseif $_target.vagina is "penisentrance" or $_target.penis is "otherpenis">>
-					<<npcAnus $penistarget>>
-				<</if>>
-				but you're unable to move your way.</span>
+					<<npcAnus $penistarget>>.
+			<<elseif $_target.vagina is "otheranusentrance" or $_target.vagina is "otheranusimminent">>
+				<<set $penisuse to "othervagina">><<set $penisstate to "entrance">>
+				<<set $penisactiondefault to "tease">>
+				<<set $_target.vagina to "penisentrance">>
+				<<npcVagina $penistarget>>.
+			<<elseif $_target.penis is "otheranusentrance" or $_target.penis is "otheranusimminent">>
+				<<set $penisuse to "otherpenis">><<set $penisstate to "otherpenis">>
+				<<set $penisactiondefault to "otherpenisrub">>
+				<<set $_target.penis to "penisentrance">>
+				<<npcPenisSimple $penistarget>>.
 			<</if>>
+			</span>
 		<<else>>
-			<span class="blue">You try to change the target of your <<penisSimple>> but your position doesn't allow you to.</span>
+			<span class="blue">You try to move your <<penis>> towards <<combatpersons>>
+			<<if $_target.vagina is "otheranusentrance">>
+				<<npcVagina $penistarget>>
+			<<elseif $_target.penis is "otheranusentrance">>
+				<<npcPenisSimple $penistarget>>
+			<<elseif $_target.vagina is "penisentrance" or $_target.penis is "otherpenis">>
+				<<npcAnus $penistarget>>
+			<</if>>
+			but you're unable to move your way.</span>
 		<</if>>
+	<<else>>
+		<span class="blue">You try to change the target of your <<penisSimple>> but your position doesn't allow you to.</span>
 	<</if>>
 <</widget>>
