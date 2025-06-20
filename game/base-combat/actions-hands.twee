@@ -2600,3 +2600,44 @@
 		<</if>>
 	<</if>>
 <</widget>>
+
+<<widget "effectsstoporal">>
+	<<switch _args[0]>>
+		<<case "both">>
+			<<set $_target to $lefttarget>><<set $_handsCount to 2>>
+		<<case "left">>
+			<<set $_target to $lefttarget>><<set $_handsCount to 1>>
+		<<case "right">>
+			<<set $_target to $righttarget>><<set $_handsCount to 1>>
+	<</switch>>
+	<<personselect $_target>>
+
+	<<if ($penisuse is "othermouth" and $NPCList[$_target].mouth.startsWith("penis")) or 
+		($vaginause is "othermouth" and $NPCList[$_target].mouth.startsWith("vagina"))>>
+		<<set $_success to 0>>
+		You grab <<combatpersons>> head with <<= $_handsCount is 2 ? "both hands" : "your hand">> and <<= ($consensual == 1 ? "gently push" : "try to shove")>> <<him>> away from your crotch.
+		<<if $consensual is 1>>
+			<<He>> doesn't resist.
+			<<set $_success to 1>><<brat 1 $_target>>
+		<<elseif currentSkillValue('physique') gte random(1, 44000/$_handsCount)>>
+			<span class="teal">You manage to do so.</span>
+			<<set $_success to 1>><<defiance $_handsCount $_target>>
+		<<else>>
+			<span class="purple"><<His>> face remains on your crotch.</span>
+			<<defiance $_handsCount $_target>>
+		<</if>>
+		<<if $_success>>
+			<<if $NPCList[$_target].mouth.startsWith("penis")>>
+				<<set $penisuse to 0>><<set $penisstate to 0>>
+			<<else>>
+				<<set $vaginause to 0>><<set $vaginastate to 0>>
+			<</if>>
+			<<set $NPCList[$_target].mouth to 0>>
+			<<set $NPCList[$_target].location.head to 0>>
+			<<if $NPCList[$_target].vagina is "othermouth">><<set $NPCList[$_target].vagina to 0>>
+			<<elseif $NPCList[$_target].penis is "othermouth">><<set $NPCList[$_target].penis to 0>><</if>>
+			<<if $leftaction is "stoporal">><<set $leftactiondefault to "rest">><</if>>
+			<<if $rightaction is "stoporal">><<set $rightactiondefault to "rest">><</if>>
+		<</if>>
+	<</if>>
+<</widget>>
