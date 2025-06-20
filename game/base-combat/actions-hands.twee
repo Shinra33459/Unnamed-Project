@@ -38,6 +38,11 @@
 		or ($NPCList[$lefttarget].righthand and $NPCList[$lefttarget].righthand.startsWith("anus"))>>
 			<<set _leftaction["Take " + $NPCList[$lefttarget].pronouns.his + " hand off your ass"] to "handpullanus">>
 		<</if>>
+			/* MCA Credits to Ryumi */
+		<<if ($NPCList[$lefttarget].lefthand and $NPCList[$lefttarget].lefthand.startsWith("chest"))
+		or ($NPCList[$lefttarget].righthand and $NPCList[$lefttarget].righthand.startsWith("chest"))>>
+			<<set _leftaction["Take " + $NPCList[$lefttarget].pronouns.his + " hand off your chest"] to "handpullchest">>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -434,6 +439,11 @@
 		or ($NPCList[$righttarget].righthand and $NPCList[$righttarget].righthand.startsWith("anus"))>>
 			<<set _rightaction["Take " + $NPCList[$righttarget].pronouns.his + " hand off your ass"] to "handpullanus">>
 		<</if>>
+		/* MCA Credits to Ryumi */
+		<<if ($NPCList[$righttarget].lefthand and $NPCList[$righttarget].lefthand.startsWith("chest"))
+		or ($NPCList[$righttarget].righthand and $NPCList[$righttarget].righthand.startsWith("chest"))>>
+			<<set _rightaction["Take " + $NPCList[$righttarget].pronouns.his + " hand off your chest"] to "handpullchest">>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -811,6 +821,13 @@
 					<<set _actions["Free your face"] to "freeface">>
 				<</if>>
 			<</if>>
+			<<if $chestuse is "othermouth">> /* MCA Credits to Ryumi */
+				<<if _style is "old">>
+					| <label><span class="brat">Free your chest</span><<radiobutton _actionVariable "freechest" `_default is "freechest" ? 'checked' : ''`>></label>
+				<<else>>
+					<<set _actions["Free your chest"] to "freechest">>
+				<</if>>
+			<</if>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -852,7 +869,12 @@
 		<<if $anususe is 0 and $_anus_exposed>>
 			<<set _handGuideOptions["your ass"] to "ass">>
 		<</if>>
-		
+		/* MCA Credits to Ryumi */
+		<!-- If our chest isn't being used, OR the NPC using our chest is our target NPC -->
+		<<if $chestuse is 0 or ($chestuse is "hand" and $chesttarget is (_args[0] is "left" ? $lefttarget : $righttarget))>>
+			<<set _handGuideOptions["your chest"] to "chest">>
+		<</if>>
+
 		<<if ($choketrait or ($chokeorgasm gte 1 and $submissive gt 850) or ($awarelevel gte 2 and $submissive gte 1150)) and !$neckuse>>
 			<<set _handGuideOptions["your neck"] to "neck">>
 		<</if>>
@@ -2032,6 +2054,8 @@
 			<<case "throat">> <<combat-hand-on-throat>>
 			<<case "mask">> <<combat-hand-on-mask "both" "hands">>
 			<<case "genitals">> <<combat-hand-on-chastity "both">>
+			<<case "chestsqueeze">> <<combat-hand-on-chestsqueeze "both" "hands">> /* MCA Credits to Ryumi */
+			<<case "chestimminent">> <<combat-hand-on-chestimminent "both" "hands">>
 			<<default>> <<set $_bothHandsUsed to false>>
 		<</switch>>
 	<</if>>
@@ -2106,6 +2130,10 @@
 		<<case "hypnosis_cover">> <<combat-hand-hypnosis-cover $_hand>>
 		<<case "hypnosis_orgasm">> <<combat-hand-hypnosis-orgasm $_hand>>
 		<<case "hypnosis_masochism">> <<combat-hand-hypnosis-masochism $_hand>>
+		/* MCA Credits to Ryumi */
+		<<case "chestimminent">> <<combat-hand-on-chestimminent $_hand "hand">> 
+		<<case "chestsqueeze">> <<combat-hand-on-chestsqueeze $_hand "hand">>
+		<<case "chestmilk">> <<combat-hand-on-chestmilk $_hand>>
 		<<case 0>> <<combat-set-hand-start $_hand>>
 		<<default>> <<run console.error("NPC hand action unaccounted for! Hand: " + $_hand + " Value: " + $_npcHand)>> <<run throw new Error("NPC hand action unaccounted for! Hand: " + $_hand + " Value: " + $_npcHand)>>
 	<</switch>>
