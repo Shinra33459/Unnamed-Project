@@ -211,6 +211,9 @@
 	<<if ($consensual is 0 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55) and currentSkillValue("penileskill") gte 800>>
 		<<set _penisaction["Edge " + $NPCList[$penistarget].pronouns.him] to "vaginaEdging">>
 	<</if>>
+	<<if $player.condom and currentSkillValue("penileskill") gte 800>>
+		<<set _penisaction["Damage Condom"] to "damageCondom">>
+	<</if>>
 	<<set _penisaction["Pull out"] to "pullOut">>
 <</widget>>
 
@@ -262,6 +265,9 @@
 	<</if>>
 	<<if ($consensual is 0 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55) and currentSkillValue("penileskill") gte 800>>
 		<<set _penisaction["Edge " + $NPCList[$penistarget].pronouns.him] to "otheranusEdging">>
+	<</if>>
+	<<if $player.condom and currentSkillValue("penileskill") gte 800>>
+		<<set _penisaction["Damage Condom"] to "damageCondom">>
 	<</if>>
 	<<set _penisaction["Pull out"] to "pullOut">>
 <</widget>>
@@ -529,5 +535,30 @@
 		<</if>>
 	<<else>>
 		<span class="blue">You try to change the target of your <<penisSimple>> but your position doesn't allow you to.</span>
+	<</if>>
+<</widget>>
+
+<<widget "effectsdamagecondom">>
+	<<penileskilluse>>
+	<<sex 5 "genitals">><<brat 5 $penistarget>>
+	<<if $player.condom>>
+		<<if combatSkillCheck("penile", $penistarget)>>
+			<<if [$player.condom.state].includesAny("defective", "sabotaged")>>
+				<span class="blue">You try to wear out the condom and realize it is already broken.</span>
+				<<set $penisactiondefault to "cooperate">>
+			<<else>>
+				<span class="lblue">You <<peniletext>> wear out the condom.</span>
+				<<if $rng lte currentSkillValue("penileskill")/10 - 50>>
+					<span class="lewd">You feel the tip rip open.</span>
+					<<set $player.condom.state to "defective">>
+					<<set $penisactiondefault to "cooperate">>
+				<</if>>
+			<</if>>
+		<<else>>
+			<<personselect $penistarget>>
+			You try to wear out the condom, but <span class="red"><<he>> doesn't let you move your way.</span>
+		<</if>>
+	<<else>>
+		You try to wear out the condom, but have no condom on.
 	<</if>>
 <</widget>>
