@@ -1640,8 +1640,8 @@ Macro.add("effects", {
 				if (!Browser.isMobile.any() && !/Joiplay/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "20em";
 			}
 		});
-		if (document.getElementById("ui-bar")) {
-			const observer = new MutationObserver((mutations) => {
+		if (document.getElementById("ui-bar") && !window.uiBarObserver) {
+			window.uiBarObserver = new MutationObserver((mutations) => {
 				for (const mutation of mutations) {
 					if (mutation.type === "attributes" && mutation.attributeName === "class") {
 						if (document.getElementById("ui-bar").classList.contains("stowed")) {
@@ -1657,7 +1657,7 @@ Macro.add("effects", {
 				}
 			});
 
-			observer.observe(document.getElementById("ui-bar"), { attributes: true });
+			window.uiBarObserver.observe(document.getElementById("ui-bar"), { attributes: true });
 		}
 		Weather.Thermometer.load();
 	},
