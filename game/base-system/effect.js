@@ -1613,7 +1613,9 @@ Macro.add("effects", {
 		const fragment = effects();
 		this.output.append(fragment);
 		DOL.Perflog.logWidgetEnd("effectsJs");
-		$(document).on(':passageend', function () {
+		$(document)
+		.off(':passageend.effects') 
+		.on(':passageend.effects', function () {
 			if (V.options.bigCanvas == true) {
 				document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "267px";
 				document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 95px - 1.32em)";
