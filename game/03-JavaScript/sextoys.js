@@ -77,6 +77,29 @@ function playerHasButtPlug() {
 }
 window.playerHasButtPlug = playerHasButtPlug;
 
+function playerHasVibrator() {
+	return V.worn.vibrator != null && V.worn.vibrator.state === "worn" && V.worn.vibrator.worn;
+	// V.worn.vibrator.worn is just as a safeguard for now
+}
+window.playerHasVibrator = playerHasVibrator;
+
+function playerVibratorOn() {
+	return playerHasVibrator() && V.worn.vibrator.vibrating === 1
+}
+window.playerVibratorOn = playerVibratorOn;
+
+function togglePlayerVibrator(link) {
+	if (playerHasVibrator()) {
+		V.worn.vibrator.vibrating = !!V.worn.vibrator.vibrating ? 0 : 1;
+		if (V.worn.vibrator.vibrating) {
+			link.innerText = "Turn bullet vibe off"
+		} else {
+			link.innerText = "Turn bullet vibe on"
+		}
+	}
+}
+window.togglePlayerVibrator = togglePlayerVibrator;
+
 function existsInSexToyInventory(name, colour) {
 	if (V.player.inventory.sextoys[name] && V.player.inventory.sextoys[name].length > 0) {
 		if (!colour || colour === "any") {
@@ -124,6 +147,9 @@ function sexToysInventoryDelete(name, colour) {
 	}
 	// If no specific colour is specified or colour is 'any', then remove the first item with the specified name
 	const item = V.player.inventory.sextoys[name][0];
+	if (item.worn && item.type.includes("vibrator")) {
+		delete V.worn.bullet_vibe;
+	}
 	if (item.worn && item.type.includes("anal")) {
 		delete V.worn.butt_plug;
 	}

@@ -1104,6 +1104,7 @@ function minutePassed(minutes) {
 	// Arousal
 	const arousalMultiplier = V.backgroundTraits.includes("lustful") ? 0.2 * (12 - Math.floor(V.purity / 80)) + 1 + (V.purity <= 50 ? 1 : 0) : -10;
 	statChange.arousal(minutes * arousalMultiplier + getArousal(minutes));
+
 	V.timeSinceArousal = V.arousal < V.arousalmax / 4 ? V.timeSinceArousal + minutes : 1;
 	if (V.player.vaginaExist) passArousalWetness(minutes);
 
@@ -2107,8 +2108,8 @@ function dailyFarmEvents() {
 function passWater(passMinutes) {
 	/* To be reworked */
 	/* Tie wetness to clothing items - can dry differently depending on their warmth
-	   dryingFactor, sun/no sun, temperature
-	   change wetness to 0-1 (0-100%)
+		 dryingFactor, sun/no sun, temperature
+		 change wetness to 0-1 (0-100%)
 	*/
 	if (!V.outside || (V.outside && Weather.precipitation === "none")) {
 		const temperature = V.outside ? Weather.temperature : Weather.insideTemperature;
@@ -2198,6 +2199,7 @@ function getArousal(passMinutes) {
 	if (V.parasite.right_thigh.name) addedArousal += minuteMultiplier;
 	if (V.drugged > 1) addedArousal += minuteMultiplier;
 	if (playerHasButtPlug()) addedArousal += minuteMultiplier;
+	if (playerVibratorOn()) addedArousal += minuteMultiplier * 9 * V.genitalsensitivity;
 	if (V.parasite.left_ear.name === "slime" && random(1, 10) >= 9) statChange.drugs(Math.min(60, passMinutes));
 	if (V.parasite.right_ear.name === "slime" && random(1, 10) >= 9) statChange.drugs(Math.min(60, passMinutes));
 	if (V.earSlime.growth > 100 && random(1, 10) >= 9) statChange.drugs(Math.min(60, passMinutes));
