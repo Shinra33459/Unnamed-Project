@@ -498,7 +498,11 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 	<<if $rng gte 101>>
 		<span class="blue"><<He>> moves <<his>> hand away from your ass.</span>
 		<<combat-reset-hand _args[0]>>
-		<<set $anususe to 0>>
+		<<if !playerHasButtPlug()>>
+			<<set $anususe to 0>>
+		<<else>>
+			<<set $anususe to "buttPlug">><<set $anusstate to "buttPlug">>
+		<</if>>
 	<<elseif playerHasButtPlug()>>
 		<<if $rng gte 21 or $noanal is 1 or $cheekaction is "handrub">>
 			<<print either(
@@ -518,10 +522,10 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<else>>
 				<<he>> removes your $worn.butt_plug.name and moves <<his>> hand away.
 				<<combat-reset-hand $_hand>><<neutral 5 _n>>
+				<<set $anususe to 0>>
+				<<set $anusstate to 0>>
 			<</if>>
 		<</if>>
-		<<set $anususe to "hand">>
-		<<set $anusstate to "handentrance">>
 		<<neutral 10 _n>>
 		<<bodypart_admire_chance random_bottom>>
 	<<elseif $rng gte 21 or $noanal is 1 or $cheekaction is "handrub">>
@@ -1788,6 +1792,165 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 	<<bodypart_admire_chance forehead>>
 <</widget>>
 
+/* MCA Credits to Ryumi */
+<!-- pass "left", "right" or "both" as the first argument, and "hand" or "hands" for the second argument -->
+<<widget "combat-hand-on-chestsqueeze">>
+	<<rng>>
+	<<outfitChecksExposed>>
+	<<set $_hishand to (_args[0] isnot "both" ? "<<his>> " : "") + _args[0] + " " + _args[1]>>
+	<<set $_yourbreast to (_args[0] isnot "both" ? "one of " : "") + "your <<breasts>>">>
+	<<set $_breast to (_args[0] isnot "both" ? "breast" : "breasts")>>
+	<<set $_throughyourtop to (!_toplessExposed ? " through the fabric of your <<top>>" : "")>>
+	<<set $_yourbreastthroughyourtop to ($_yourbreast + $_throughyourtop)>>
+	<<set $_it to (_args[0] isnot "both" ? "it" : "them")>>
+	<<set $_handsOnBreasts to (_args[0] isnot "both" ? 1 : 2)>>
+	<<if $rng gte 101>>
+		<span class="blue"><<He>> takes $_hishand off of $_yourbreast.</span>
+		<<combat-reset-hand _args[0]>>
+		<<set $chestuse to 0>><<set $cheststate to 0>>
+	<!-- If both hands are on the player's chest, and they're big enough to squeeze together -->
+	<<elseif $rng gte 81 and _args[0] is "both" and $player.breastsize gte 3>>
+		<<He>> puts <<his>> hands on either side of your <<breasts>> and presses them together.
+		<<if $lactating is 1 and $breastfeedingdisable is "f">>
+			<<combat-chest-squeeze-milk "buds" 2>>
+		<</if>>
+		<<sex 5 $_breast _n>>
+		<<playWithBreasts $_handsOnBreasts>>
+	<!-- If only one hand is still on the player's chest, meaning one booba is still available, and NPC's mouth isn't occupied -->
+	<<elseif $rng gte 71 and $NPCList[_n].mouth is 0 and $_handsOnBreasts is 1>>
+		<<He>> <<squeezes>> one of your <<nipples>> and sucks on the other$_throughyourtop.
+		<<if $lactating is 1 and $breastfeedingdisable is "f">>
+			<<combat-chest-mouth-milk 2>>
+		<</if>>
+		<<sex 10 $_breast _n>>
+		<<playWithBreasts $_handsOnBreasts>>
+	<<elseif $rng gte 51>>
+		<<if $_handsOnBreasts is 1>>
+			<<He>> slips <<his>> fingers around one of your <<nipples>> and <<squeezes>> it.
+			<<if $lactating is 1 and $breastfeedingdisable is "f">>
+				<<combat-chest-squeeze-milk "bud" 1>>
+			<</if>>
+		<<else>>
+			<<He>> slips <<his>> fingers around both of your <<nipples>> and <<squeezes>> them.
+			<<if $lactating is 1 and $breastfeedingdisable is "f">>
+				<<combat-chest-squeeze-milk "buds" 2>>
+			<</if>>
+		<</if>>
+		<<if $enemyanger gte 100>>
+			<<violence 10>><<bruise chest>><<hitstat>><<set $speechbeat to 1>>
+		<<else>>
+			<<sex 10 $_breast _n>>
+		<</if>>
+		<<playWithBreasts $_handsOnBreasts>>
+	<<else>>
+		<<if $enemyanger gte 100>>
+			<<if $enemyarousal gte (($enemyarousalmax / 5) * 4)>>
+				<<He>> violates $_yourbreast with a brutally tight squeeze$_throughyourtop.
+			<<elseif $enemyarousal gte (($enemyarousalmax / 5) * 2)>>
+				<<He>> gives $_yourbreast a painfully tight squeeze$_throughyourtop.
+			<<else>>
+				<<He>> digs <<his>> nails into $_yourbreastthroughyourtop in a painful squeeze.
+			<</if>>
+			<<violence 10>><<bruise chest>><<hitstat>><<set $speechbeat to 1>>
+		<<else>>
+			<<He>> <<squeezes>> $_yourbreastthroughyourtop with $_hishand.
+			<<sex 5 $_breast _n>>
+		<</if>>
+		<!-- If PC is lactating, release some of their milk. -->
+		<<if $lactating is 1 and $breastfeedingdisable is "f">>
+			<<set _budOrBuds to ($_handsOnBreasts is 1 ? "bud" : "buds")>>
+			<<combat-chest-squeeze-milk _budOrBuds $_handsOnBreasts>>
+		<</if>>
+		<<playWithBreasts $_handsOnBreasts>>
+	<</if>>
+<</widget>>
+
+<!-- pass "left", "right" or "both" as the first argument, and "hand" or "hands" for the second argument -->
+<<widget "combat-hand-on-chestimminent">>
+	<<rng>>
+	<<outfitChecksExposed>>
+	<<set $_hishand to (_args[0] isnot "both" ? "<<his>> " : "") + _args[0] + " " + _args[1]>>
+	<<set $_yourbreast to (_args[0] isnot "both" ? "one of " : "") + "your <<breasts>>">>
+	<<set $_breast to (_args[0] isnot "both" ? "breast" : "breasts")>>
+	<<set $_throughyourtop to (!_toplessExposed ? " through the fabric of your <<top>>" : "")>>
+	<<set $_yourbreastthroughyourtop to ($_yourbreast + $_throughyourtop)>>
+	<<set $_it to (_args[0] isnot "both" ? "it" : "them")>>
+	<<set $_handsOnBreasts to (_args[0] isnot "both" ? 1 : 2)>>
+	<<if $rng gte 101>>
+		<span class="blue"><<He>> takes $_hishand off your $_breast.</span>
+		<<combat-reset-hand _args[0]>>
+		<<set $chestuse to 0>><<set $cheststate to 0>>
+	<<elseif $rng gte 61>>
+		<<He>> <<gropes>> $_yourbreastthroughyourtop with $_hishand.
+		<<playWithBreasts $_handsOnBreasts>>
+	<<else>>
+		<<set _hishandses to ($_hishand + (_args[0] isnot "both" ? "'s" : "'"))>>
+		<<He>> strengthens _hishandses grip on $_yourbreast and gives $_it a tight squeeze.
+		<<if $lactating is 1 and $breastfeedingdisable is "f">>
+			<<set _budOrBuds to ($_handsOnBreasts is 1 ? "bud" : "buds")>>
+			<<combat-chest-squeeze-milk _budOrBuds $_handsOnBreasts>>
+		<</if>>
+		<<if _args[0] is "both">>
+			<<combat-set-hand-target "left" "chestsqueeze">>
+			<<combat-set-hand-target "right" "chestsqueeze">>
+		<<else>>
+			<<combat-set-hand-target _args[0] "chestsqueeze">>
+		<</if>>
+		<<set $cheststate to "otherhandsqueeze">>
+		<<sex 5 $_breast _n>>
+		<<playWithBreasts $_handsOnBreasts>>
+	<</if>>
+<</widget>>
+
+<!-- For when the PC's breast(s) are getting the milk squeezed out of them. -->
+<!-- Arg 0: "bud" or "buds" -->
+<!-- Arg 1: Multiplier for milk released (Optional, defaults to 1) -->
+<<widget "combat-chest-squeeze-milk">>
+	<<set _buds to _args[0]>>
+	<<set _milkingintensity to (_args[1] isnot undefined ? _args[1] : 1)>>
+	<<if $milk_amount gte 1>>
+		<<breastfeed _milkingintensity>>
+		<<if _milk_released gte 18>>
+			<span class="lewd">Several thin streams of milk spray from your _buds</span>.
+		<<elseif _milk_released gte 10>>
+			<span class="lewd">A thin stream of milk sprays from your _buds</span>.
+		<<elseif _milk_released gte 5>>
+			<span class="lewd">A small stream of milk trickles from your _buds</span>.
+		<<else>>
+			<span class="lewd">A tiny trickle of milk leaks from your _buds</span>.
+		<</if>>
+		<<set $speechbreastmilk to 1>>
+	<<else>>
+		No milk comes out. You must be dry.
+		<<milkvolume _milkingintensity>>
+		<<set $speechbreastsqueeze to 1>>
+	<</if>>
+<</widget>>
+
+<!-- For when an NPC is using their mouth to suck milk from the PC's breast -->
+<!-- Arg 0: Multiplier for milk released (defaults to 1) -->
+<<widget "combat-chest-mouth-milk">>
+	<<set _milkingintensity to (_args[0] isnot undefined ? _args[0] : 1)>>
+	<<set _n to $active_enemy>>
+	<<if $milk_amount gte 1>>
+		<<breastfeed _milkingintensity>>
+		Your bud
+		<<if _milk_released gte 18>>
+			<span class="lewd">sprays several thin streams of milk</span> into <<hisselect _n>> mouth.
+		<<elseif _milk_released gte 10>>
+			<span class="lewd">sprays a thin stream of milk</span> into <<hisselect _n>> mouth.
+		<<elseif _milk_released gte 5>>
+			<span class="lewd">releases a steady trickle of milk</span> into <<hisselect _n>> mouth.
+		<<else>>
+			<span class="lewd">leaks a bit of milk</span> into <<hisselect _n>> mouth.
+		<</if>>
+	<<else>>
+		Despite <<hisselect _n>> efforts, no milk comes out. You've been sucked dry.
+		<<milkvolume _milkingintensity>>
+		<<set $cheststate to "othermouthsuck">><<set $NPCList[_n].mouth to "chestsuck">><<set $chesttarget to _n>>
+	<</if>>
+<</widget>>
+
 <<widget "combat-pen-on-bodypart">>
 	<<set $_hand to _args[0]>><<set $_penbodypart to _args[1]>>
 	<<He>> scrawls on your <<bodypart $_penbodypart>>:
@@ -2005,7 +2168,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 					<<set $handtarget to "genitals">><<neutral 1 "genitals" _n>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
 					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
-						<<if $anususe is 0 and $analdisable is "f">>
+						<<if ($anususe is 0 or $anususe is "buttPlug") and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> _args[0] hand against your <<bottom>>.</span>
 							<<set $handtarget to "anusentrance">><<set $anususe to "handentrance">><<set $anusstate to "handentrance">><<neutral 1 _n>>
 						<</if>>
@@ -2023,7 +2186,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 					<<set $handtarget to "genitals">><<neutral 1 "genitals" _n>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
 					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
-						<<if $anususe is 0 and $analdisable is "f">>
+						<<if ($anususe is 0 or $anususe is "buttPlug") and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> _args[0] hand against your <<bottom>>.</span>
 							<<set $handtarget to "anusentrance">><<set $anususe to "handentrance">><<set $anusstate to "handentrance">><<neutral 1 _n>>
 						<</if>>
@@ -2350,7 +2513,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 				<<combat-set-hand-target _args[0] "genitals">><<neutral 1 "genitals" _n>>
 			<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
 				<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
-					<<if $anususe is 0 and $analdisable is "f">>
+					<<if ($anususe is 0 or $anususe is "buttPlug") and $analdisable is "f">>
 						<span class="purple"><<He>> presses <<his>> _args[0] hand against your <<bottom>>.</span>
 						<<combat-set-hand-target _args[0] "anusentrance">><<set $anususe to "handentrance">><<set $anusstate to "handentrance">><<neutral 1 _n>>
 					<</if>>
@@ -2370,7 +2533,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 				<<combat-set-hand-target _args[0] "genitals">><<neutral 1 "genitals" _n>>
 			<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
 				<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
-					<<if $anususe is 0 and $analdisable is "f">>
+					<<if ($anususe is 0 or $anususe is "buttPlug") and $analdisable is "f">>
 						<span class="purple"><<He>> presses <<his>> _args[0] hand against your <<bottom>>.</span>
 						<<combat-set-hand-target _args[0] "anusentrance">><<set $anususe to "handentrance">><<set $anusstate to "handentrance">><<neutral 1 _n>>
 					<</if>>
@@ -5037,6 +5200,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 					<<He>> gets up off of your face.
 					<<set $mouthuse to 0>><<set $mouthstate to 0>><<set $NPCList[_n].vagina to 0>>
 				<</if>>
+				<</if>>
 			<</if>>
 
 			<<rng>>
@@ -5229,6 +5393,17 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 
 			<!-- MOUTH START -->
 
+			/* MCA Credits to Ryumi */
+			<<if $NPCList[_n].mouth is "chestbay">>
+				<<if $player.breastsize gte 9>>
+					<<He>> kisses and licks around the inside of your cleavage.
+				<<elseif $player.breastsize gte 3>>
+					<<He>> kisses and licks your chest between your <<breasts>>.
+				<<else>>
+					<<He>> kisses and licks around your chest.
+				<</if>>
+				<<neutral 5 _n>>
+			<</if>>
 			<<rng>>
 			<<if $NPCList[_n].mouth is "thigh">>
 				<<He>> kisses and licks your thigh.
@@ -6328,7 +6503,8 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<submission 2 _n>>
 		<<elseif $player.breastsize gte 3>>
 			<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your <<breasts>>.</span>
-			<<submission 2 _n>><<playWithBreasts>><<set $chestactiondefault to "rub">><<set $chestuse to "penis">><<set $chesttarget to _n>><<cheststat>><<set $mouthactiondefault to "peniskiss">><<set $NPCList[_n].penis to "chest">><<set $NPCList[_n].location.genitals to "head">>
+			<<submission 2 _n>><<playWithBreasts>><<set $chestactiondefault to "rub">><<set $chestuse to "penis">><<set $cheststate to "penis">><<set $chesttarget to _n>><<cheststat>>
+			<<set $mouthactiondefault to "peniskiss">><<set $NPCList[_n].penis to "chest">><<set $NPCList[_n].location.genitals to "head">>
 		<<else>>
 			<<He>> rubs <<his>> $NPCList[_n].penisdesc against your <<breasts>>.
 			<<submission 2 _n>><<playWithBreasts>>
@@ -6596,10 +6772,10 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 		<span class="purple"><<He>> presses <<his>> foot against your <<genitals>>.</span>
 		<<neutral 5 "genitals" _n>><<violence 1>><<set $NPCList[_n].penis to "footjob">>
 		<<if $player.penisExist and $penisuse is 0>>
-			<<set $penisuse to "feet">><<set $speechpenisfoot to 1>>
+			<<set $penisuse to "feet">><<set $speechpenisfoot to 1>><<set $penisstate to "otherfoot">>
 		<</if>>
 		<<if $player.vaginaExist and $vaginause is 0>>
-			<<set $vaginause to "feet">>
+			<<set $vaginause to "feet">><<set $vaginastate to "otherfoot">>
 			<<if !$player.penisExist>>
 				<<set $speechvaginafoot to 1>>
 			<</if>>
@@ -6843,10 +7019,10 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 		<span class="purple"><<He>> presses <<his>> foot against your <<genitals>>.</span>
 		<<neutral 5 "genitals" _n>><<violence 1>><<set $NPCList[_n].vagina to "footjob">>
 		<<if ($player.penisExist or playerHasStrapon()) and $penisuse is 0>>
-			<<set $penisuse to "feet">><<set $speechpenisfoot to 1>>
+			<<set $penisuse to "feet">><<set $speechpenisfoot to 1>><<set $penisstate to "otherfoot">>
 		<</if>>
 		<<if $player.vaginaExist and $vaginause is 0>>
-			<<set $vaginause to "feet">>
+			<<set $vaginause to "feet">><<set $vaginastate to "otherfoot">>
 			<<if !$player.penisExist>>
 				<<set $speechvaginafoot to 1>>
 			<</if>>

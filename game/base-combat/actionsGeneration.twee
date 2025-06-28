@@ -51,7 +51,7 @@
 				<<anusActionInit>>
 			</div>
 
-			<<if $chestuse isnot 0>>
+			<<if $chestuse isnot 0 or ((($enemytype is "man" ? $promiscuity : $deviancy) gte 35 or $promiscuityIgnore) and $position isnot "wall")>>
 				<div id="chestaction" @class="$options.combatControls + 'Control'">
 					<<chestActionInit>>
 				</div>
@@ -161,7 +161,7 @@
 		<<safereplace #vaginaaction>><<vaginaActionInit true>><</safereplace>>
 	<</if>>
 	<<safereplace #anusaction>><<anusActionInit true>><</safereplace>>
-	<<if $chestuse isnot 0>>
+	<<if $chestuse isnot 0 or ((($enemytype is "man" ? $promiscuity : $deviancy) gte 35 or $promiscuityIgnore) and $position isnot "wall")>>
 		<<safereplace #chestaction>><<chestActionInit true>><</safereplace>>
 	<</if>>
 	<<if $thighuse isnot 0>>
@@ -1276,6 +1276,7 @@
 		<<case "movetochest">><<oraldifficulty>> <<combatpromiscuous3>>
 		<<case "ejacswallow">><<oraldifficulty>> <<combatpromiscuous5>>
 		<<case "ejacspit">><<oraldifficulty>>
+		<<case "ejacfacial">><<oraldifficulty>> <<combatpromiscuous1>>
 		<<case "swallow">><<oralvirginitywarning>> <<combatpromiscuous5>>
 		<<case "grasp">><<chestdifficulty>> <<combatpromiscuous3>>
 		<<case "kisslips">><<oraldifficulty>> <<combatpromiscuous1>>
@@ -1462,6 +1463,9 @@
 				<<set $_changetype to true>><<penisActionInitTentacle>>
 			<<case "struggle" "struggle_pen">>
 				<<set $_changetype to true>><<penisActionInitStruggle>>
+			<<case "otherfoot">>
+				<<set _penisOptions to "otherFoot">><<selectNpcWithPartInPosition "foot" "penisentrance">><<set $penistarget to $index>>
+				<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<combatPersons>> <<= random(0,1) ? "presses" : "rubs">> <<his>> foot against your shaft.</span>
 			<<default>>
 				<<switch $penisuse>>
 					<<case "clit">>
@@ -1712,6 +1716,9 @@
 				<<set $_changetype to true>><<vaginaActionInitTentacle>>
 			<<case "struggle" "struggle_pen">>
 				<<set $_changetype to true>><<vaginaActionInitStruggle>>
+			<<case "otherfoot">>
+				<<set _vaginaOptions to "otherFoot">><<selectNpcWithPartInPosition "foot" "vaginaentrance">><<set $vaginatarget to $index>>
+				<span @class="($lastOptions.vagina isnot _vaginaOptions or _vaginaGold is true ?'gold':'')"><<combatPerson>> foot rubs your pussy.</span>
 		<</switch>>
 		<<if $lastOptions.vagina isnot _vaginaOptions>>
 			<<set _vaginaGold to true>>
@@ -1812,6 +1819,8 @@
 			<<case "otherHandEntrance">>
 				<<set _vaginaaction["Rest"] to "rest">>
 			<<case "otherHand">>
+				<<set _vaginaaction["Rest"] to "rest">>
+			<<default>>
 				<<set _vaginaaction["Rest"] to "rest">>
 		<</switch>>
 	<</if>>
@@ -2023,7 +2032,44 @@
 
 <<widget "chestActionInit">>
 	<<if $dissociation lte 1 and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined) and !$possessed>>
-		<<switch $chestuse>>
+		<<switch $cheststate>>
+			<<case 0>>
+				<<if not $options.combatControls.includes("adio") and _targetnumber gt 1>>
+					<<targetListBox "chest" _targetlist>>
+				<</if>>
+				<<set _chestOptions to "free">>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">Your <<breasts>> are free.</span>
+				<<if $options.combatControls.includes("adio") and _targetnumber gt 1>>
+					<br>
+					<<targetListBox "chest" _targetlist>>
+				<</if>>
+				<<if _targetnumber is 1>>
+					<<set $chesttarget to _firsttarget>>
+				<</if>>
+			<<case "othermouthbay">>
+				<<set _chestOptions to "othermouthbay">><<selectNpcWithPartInPosition "mouth" "chestbay">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s face is <<if $player.breastsize gte 9>>buried in your cleavage<<elseif $player.breastsize gte 3>>pressed between your <<breasts>><<else>>pressed into the center of your chest<</if>>.</span>
+			<<case "othermouthentrance">>
+				<<set _chestOptions to "othermouthentrance">><<selectNpcWithPartInPosition "mouth" "chestentrance">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">You feel breath on your <<breasts>>.</span>
+			<<case "othermouthimminent">>
+				<<set _chestOptions to "othermouthimminent">><<selectNpcWithPartInPosition "mouth" "chestimminent">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s lips press against your <<nipple>>.</span>
+			<<case "othermouthsuck">>
+				<<set _chestOptions to "othermouthsuck">><<selectNpcWithPartInPosition "mouth" "chestsuck">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s mouth sucks and licks your <<nipple>>.</span>
+			<<case "othermouthdrink">>
+				<<set _chestOptions to "othermouthdrink">><<selectNpcWithPartInPosition "mouth" "chestdrink">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s mouth suckles milk from your <<nipple>>.</span>
+			<<case "otherhandsqueeze">>
+				<<set _chestOptions to "otherhandsqueeze">><<selectNpcWithPartInPosition "hand" "chestsqueeze">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPerson>>'s fingers squeeze on your <<breasts>>.</span>
+			<<case "otherhandimminent">>
+				<<set _chestOptions to "otherhandimminent">><<selectNpcWithPartInPosition "hand" "chestimminent">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">You feel <<combatperson>>'s fingers on your <<breasts>>.</span>
+			<<case "otherhandmilk">>
+				<<set _chestOptions to "otherhandmilk">><<selectNpcWithPartInPosition "hand" "chestmilk">><<set $chesttarget to $index>>
+				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">You feel <<combatperson>>'s fingers squeezing milk out of your <<breasts>>.</span>
 			<<case "penis">>
 				<<set _chestOptions to "penis">><<selectNpcWithPartInPosition "penis" "chest">><<set $chesttarget to $index>>
 				<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')"><<combatPersons>> <<npcPenisSimple $chesttarget>> rests <<print ($player.breastsize is 0 ?"against":"between")>> your <<breasts>>.</span>
@@ -2064,20 +2110,28 @@
 	<</if>>
 	<<switch _diffAction>>
 		<<case "rub">><<chestdifficulty>>
+		<<case "chesttomouth">><<chestdifficulty>><<combatpromiscuous3>>
+		<<case "chestpullawaymouth">><<chestdifficulty>>
 	<</switch>>
 <</widget>>
 
 <<widget "chestActions">>
 	/*Generate Actions*/
 	<<set _chestaction to {}>>
-	/*<<set _chestaction["Rest"] to "rest">>*/
-	<<if $position is "stalk">>
-
-	<<else>>
+	<<if $position isnot "stalk">>
+		/* MCA unfinished setting actions, some of these are unreachable atm */
 		<<switch _chestOptions>>
-			<<case "penis">>
-				<<set _chestaction["Rub"] to "rub">>
-				<<set _chestaction["Stop"] to "stop">>
+			<<case "free">><<actionschestfree>>
+			<<case "othermouthbay">><<actionschestmouth>>
+			<<case "othermouthentrance">><<actionschestmouth>>
+			<<case "othermouthimminent">><<actionschestmouth>>
+			<<case "othermouthsuck">><<actionschestmouth>>
+			<<case "othermouthdrink">><<actionschestmouth>>
+			<<case "otherhandsqueeze">><<set _chestaction["Rest"] to "rest">>
+			<<case "otherhandimminent">><<set _chestaction["Rest"] to "rest">>
+			<<case "otherhandmilk">><<set _chestaction["Rest"] to "rest">>
+			<<case "penis">><<actionschestpenis>>
+			<<default>><<error "Unintended chest check reached. Pls report this error to MCA thread with a screenshot of the current PC & NPC dialogues and/or save if possible. This error should be benign except for chest not working, feel free to continue.">>
 		<</switch>>
 	<</if>>
 <</widget>>
