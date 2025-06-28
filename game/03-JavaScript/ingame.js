@@ -84,8 +84,6 @@ const combatActionColours = {
 			"tribescape",
 			/* anusaction */
 			"doubleescape",
-			/* chestaction */
-			"chestpullawaymouth",
 		],
 		def: [
 			/* leftaction or rightaction */
