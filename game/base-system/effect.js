@@ -1629,7 +1629,7 @@ Macro.add("effects", {
 					document.querySelector("#ui-bar").style.width = "24.5em";
 					document.querySelector("#stats").style.width  = "392px";
 				}
-				if (!Browser.isMobile.any() && !/Joiplay/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "27em";
+				if (!Browser.isMobile.any() && !/joiplay|cyou\.joiplay\.joiplay|wv/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "27em";
 			} else {
 				if (V.options.images == 1) {
 					document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "192px";
@@ -1643,7 +1643,7 @@ Macro.add("effects", {
 					document.querySelector("#ui-bar").style.width = "17.5em";
 					document.querySelector("#stats").style.width  = "280px";
 				}
-				if (!Browser.isMobile.any() && !/Joiplay/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "20em";
+				if (!Browser.isMobile.any() && !/joiplay|cyou\.joiplay\.joiplay|wv/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "20em";
 			}
 		});
 		if (document.getElementById("ui-bar") && !window.uiBarObserver) {
