@@ -1222,6 +1222,7 @@ function settingsObjects(type) {
 				npcHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Health Max Multiplier (%):" },
 				npcArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Arousal Max Multiplier (%):" },
 				npcStealMoneyToggle: { min: 0, max: 1, decimals: 0, displayName: "NPCs stealing your money:" },
+				npcStealMoneyRandomToggle: { min: 0, max: 1, decimals: 0, displayName: "NPC Randomized Stolen Money Percentage:" },
 				npcStealMoneyPercentage: { min: 1, max: 100, decimals: 0, displayName: "NPC Stolen Money Percentage (%):" },
 				npcDescGenType: { strings: ["vanilla", "randomized"], displayName: "NPC Description Generation:" },
 				npcDescDemonDisable: { min: 0, max: 1, decimals: 0, displayName: "Disable Demon descriptions:" },
