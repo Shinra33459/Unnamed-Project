@@ -1,7 +1,7 @@
 :: Feats [widget]
 
 <<widget "earnFeat">>
-	<<if _args[0] and $feats.locked is false and $cheatdisable is "t" and $debug is 0 and $gamemode isnot "soft" and $alluremod gte 1>>
+	<<if _args[0] and $feats.locked is false and $cheatdisable is "t" and $debug is 0 and $gamemode isnot "soft" and $alluremod gte 1 and !$statFreeze>>
 		<<if $feats.currentSave[_args[0]] is undefined and (!$feats.soft or !setup.feats[_args[0]].softLockable) and (!$feats.pregnancyLocked or !setup.feats[_args[0]].pregnancyLockable) and (!$feats.pregnancySillyLocked or !setup.feats[_args[0]].pregnancySillyLockable)>>
 			<<set $feats.currentSave[_args[0]] to Date()>>
 
@@ -122,6 +122,34 @@
 		<<set _willpowerFeats to _keys.count("Disciplined") + _keys.count("Immovable Object")>>
 		<<set _willpowerFeatsLimit to (_willpowerFeats * 30)>>
 
+		<<set _sexSkillFeats to _keys.count("Sex Specialist") + _keys.count("God of Lust")>>
+		<<if _sexSkillFeats is 2>>
+			<<set _sexSkillFeatsLimit to 25>>
+		<<elseif _sexSkillFeats gte 1>>
+			<<set _sexSkillFeatsLimit to 10>>
+		<</if>>
+
+		<<set _sexCharacteristicFeats to _keys.count("No More Control")>>
+		<<set _sexCharacteristicFeatsLimit to (_sexCharacteristicFeats * 60)>>
+
+		<<set _transcendFeats to _keys.count("Unstoppable Force") + _keys.count("Immovable Object") + _keys.count("Agent 47") + _keys.count("Can't Touch This") + _keys.count("Atlantean") + _keys.count("Ludicrous Speed") + _keys.count("Grass Toucher") + _keys.count("Demolisher of Filth") + _keys.count("Smarter than Einstein") + _keys.count("Human Calculator") + _keys.count("Voice of All Things") + _keys.count("Errm, ackshually") + _keys.count("Irresistible") + _keys.count("God of Lust") + _keys.count("Rivers of White") + _keys.count("Sticky Fountain") + _keys.count("Many Punch Man") + _keys.count("Fleet-Footed") + _keys.count("Knockout Artist") + _keys.count("Bladed Legs")>>
+		<<if _transcendFeats gte 20>>
+			<<set _transcendFeatsLimit to 200>>
+		<<elseif _transcendFeats gte 10>>
+			<<set _transcendFeatsLimit to 100>>
+		<<else>>
+			<<set _transcendFeatsLimit to 0>>
+		<</if>>
+
+		<<set _adaptiveGenesFeats to _keys.count("Angel") + _keys.count("Fallen Angel") + _keys.count("Demon") + _keys.count("Demon of Purity") + _keys.count("Neko") + _keys.count("Wolf") + _keys.count("Cattle") + _keys.count("Harpy") + _keys.count("Fox") + _keys.count("Bear") + _keys.count("Bunny")>>
+		<<if _adaptiveGenesFeats gte 10>>
+			<<set _adaptiveGenesFeatsLimit to 100>>
+		<<elseif _adaptiveGenesFeats gte 5>>
+			<<set _adaptiveGenesFeatsLimit to 50>>
+		<<else>>
+			<<set _adaptiveGenesFeatsLimit to 0>>
+		<</if>>
+
 		<<set $featsBoosts to {
 			upgrades:{
 				money:0,
@@ -139,7 +167,6 @@
 				newLife:0,
 				aNewBestFriend:0,
 				tattoos:0,
-				defaultMoves: 0,
 				randomClothing:0,
 				specialClothing:0,
 				sexToys:0,
@@ -149,6 +176,20 @@
 				masochism:0,
 				physique:0,
 				willpower:0,
+				oral:0,
+				chest:0,
+				hands:0,
+				buttocks:0,
+				penile:0,
+				anal:0,
+				vaginal:0,
+				feet:0,
+				thighs:0,
+				promiscuity:0,
+				exhibitionism:0,
+				deviancy:0,
+				transcend:0,
+				adaptiveGenes:0,
 			},
 			upgradeDetails:{
 				money:{cost:5, limit: _moneyFeatsLimit, minCount: 1, count:_moneyFeats, exclusive:""},
@@ -166,7 +207,6 @@
 				newLife:{cost:20, limit: _newLifeLimit, minCount: 1, count:_newLife, exclusive:""},
 				aNewBestFriend:{cost:10, limit: 10 * _earSlimeFeats, minCount: 1, count:_earSlimeFeats, exclusive:""},
 				tattoos:{cost:5, limit: 25, minCount: 2, count:_tattoosFeats, exclusive:""},
-				defaultMoves:{cost:5, limit: 100, minCount: 1, count:_keys.count("A New Life"), exclusive:""},
 				randomClothing:{cost:1, limit: 20, minCount: 0, count:0, exclusive:""},
 				specialClothing:{cost:40, limit: 40, minCount: 1, count:_keys.count("Curious Attire"), exclusive:""},
 				sexToys:{cost:30, limit: 30 * _sexToysFeats, minCount: 1, count:_sexToysFeats, exclusive:""},
@@ -176,6 +216,20 @@
 				masochism:{cost:10, limit: 100, minCount: 1, count:_sadomasochismFeats, exclusive:""},
 				physique:{cost:10, limit: _physiqueFeatsLimit, minCount: 1, count:_physiqueFeats, exclusive:""},
 				willpower:{cost:10, limit: _willpowerFeatsLimit, minCount: 1, count:_willpowerFeats, exclusive:""},
+				oral:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				chest:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				hands:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				buttocks:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				penile:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				anal:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				vaginal:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				feet:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				thighs:{cost:5, limit: _sexSkillFeatsLimit, minCount: 1, count:_sexSkillFeats, exclusive:""},
+				promiscuity:{cost:15, limit: _sexCharacteristicFeatsLimit, minCount: 1, count:_sexCharacteristicFeats, exclusive:""},
+				exhibitionism:{cost:15, limit: _sexCharacteristicFeatsLimit, minCount: 1, count:_sexCharacteristicFeats, exclusive:""},
+				deviancy:{cost:15, limit: _sexCharacteristicFeatsLimit, minCount: 1, count:_sexCharacteristicFeats, exclusive:""},
+				transcend:{cost:100, limit: _transcendFeatsLimit, minCount: 10, count:_transcendFeats, exclusive:""},
+				adaptiveGenes:{cost:50, limit: _adaptiveGenesFeatsLimit, minCount: 5, count:_adaptiveGenesFeats, exclusive:""},
 			},
 			missing:{
 				money:"Unlock this boost by obtaining the 'Pocket Change' feat",
@@ -192,7 +246,6 @@
 				newLife:"Unlock this boost by obtaining a hidden feat (" + setup.feats["Broodmother Host"].hint + ")",
 				aNewBestFriend:"Unlock this boost by obtaining a hidden feat (" + setup.feats["Ear Slime Lover"].hint + ")",
 				tattoos:"Unlock this boost by obtaining the 'Billboard' and 'A Living Canvas' feats",
-				defaultMoves:"Unlock this boost by obtaining a hidden feat (" + setup.feats["A New Life"].hint + ")",
 				randomClothing:"",
 				specialClothing:"Unlock this boost by obtaining a hidden feat (" + setup.feats["Curious Attire"].hint + ")",
 				sexToys:"Unlock this boost by obtaining a hidden feat (" + setup.feats["Opened Pandoras Box"].hint + ")",
@@ -202,6 +255,20 @@
 				masochism:"Unlock this boost by obtaining one of the sadism or masochism feats",
 				physique:"Unlock this boost by obtaining the 'Powerful' feat",
 				willpower:"Unlock this boost by obtaining the 'Disciplined' feat",
+				oral:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				chest:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				hands:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				buttocks:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				penile:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				anal:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				vaginal:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				feet:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				thighs:"Unlock this boost by obtaining the 'Sex Specialist' feat",
+				promiscuity:"Unlock this boost by obtaining the 'No More Control' feat",
+				exhibitionism:"Unlock this boost by obtaining the 'No More Control' feat",
+				deviancy:"Unlock this boost by obtaining the 'No More Control' feat",
+				transcend:"Unlock this boost by obtaining all skill-related AMC feats",
+				adaptiveGenes:"Unlock this boost by obtaining at least 5 transformation feats",
 			},
 			name:{
 				money:"Starting Money",
@@ -219,7 +286,6 @@
 				newLife:"A New Life",
 				aNewBestFriend:"A New Best Friend",
 				tattoos:"Starting Tattoos",
-				defaultMoves:"Extra Default Moves",
 				randomClothing:"Random Clothing",
 				specialClothing:"Special Clothing",
 				sexToys:"Sex Toys",
@@ -229,6 +295,20 @@
 				masochism:"Masochism",
 				physique:"Physique",
 				willpower:"Willpower",
+				oral:"Oral",
+				chest:"Chest",
+				hands:"Hands",
+				buttocks:"Buttocks",
+				penile:"Penile",
+				anal:"Anal",
+				vaginal:"Vaginal",
+				feet:"Feet",
+				thighs:"Thighs",
+				promiscuity:"Promiscuity",
+				exhibitionism:"Exhibitionism",
+				deviancy:"Deviancy",
+				transcend:"Transcendence",
+				adaptiveGenes:"Adaptive Genes",
 			},
 			pointsUsed: 0,
 			clothingGender:"Either",
@@ -464,6 +544,9 @@
 					<<set _item.accessory_colourCustom to customColour(random(0,360), (random(0,20)/10), (random(5,40)/10), (random(0,20)/10), (random(0,100)/100))>>
 				<</if>>
 			<</if>>
+			<<if _item.pattern_options and _item.pattern_options.length gt 0>>
+				<<set _item.pattern to clone(_item.pattern_options).random()>>
+			<</if>>
 
 			<<set $_.outfitPrimary to _item.outfitPrimary>>
 			<<set $_.items to {}>>
@@ -475,6 +558,7 @@
 							<<set $_.items[_labelf] to clone(setup.clothes[_labelf][_j])>>
 							<<set $_.items[_labelf].colour to clone($_.items[_slot].colour)>>
 							<<set $_.items[_labelf].accessory_colour to clone($_.items[_slot].accessory_colour)>>
+							<<if $_.items[_labelf].pattern_options and $_.items[_labelf].pattern_options.length gt 0>><<set $_.items[_labelf].pattern to clone($_.items[_slot].pattern)>><</if>>
 							<<if $featsBoosts.clothingCustomColors is true and _item.colour is "custom">>
 								<<set $_.items[_labelf].colourCustom to clone($_.items[_slot].colourCustom)>>
 							<</if>>
@@ -558,9 +642,6 @@
 		<</for>>
 		<<bodywritingExposureCheck true>>
 	<</if>>
-	<<if _upgrades.defaultMoves gt 0>>
-		<<set $maxDefaultActionSets to 2 + _upgrades.defaultMoves / _details.defaultMoves.cost>>
-	<</if>>
 	<<if _upgrades.specialClothing gt 0>>
 		<<set _unlocked to $feats.allSaves.specialClothes>>
 		<<specialClothesSetup>>
@@ -588,6 +669,42 @@
 			<<run sexShopOnBuyClick(_sexToyIndex, false, _sexToyColour, false)>>
 			<<unset _sexToyColour>>
 		<</for>>
+	<</if>>
+	<<if _upgrades.oral gt 0>>
+		<<set $oralskill += _upgrades.oral / _details.oral.cost * 200>>
+	<</if>>
+	<<if _upgrades.chest gt 0>>
+		<<set $chestskill += _upgrades.chest / _details.chest.cost * 200>>
+	<</if>>
+	<<if _upgrades.hands gt 0>>
+		<<set $handskill += _upgrades.hands / _details.hands.cost * 200>>
+	<</if>>
+	<<if _upgrades.buttocks gt 0>>
+		<<set $bottomskill += _upgrades.buttocks / _details.buttocks.cost * 200>>
+	<</if>>
+	<<if _upgrades.penile gt 0>>
+		<<set $penileskill += _upgrades.penile / _details.penile.cost * 200>>
+	<</if>>
+	<<if _upgrades.anal gt 0>>
+		<<set $analskill += _upgrades.anal / _details.anal.cost * 200>>
+	<</if>>
+	<<if _upgrades.thighs gt 0>>
+		<<set $thighskill += _upgrades.thighs / _details.thighs.cost * 200>>
+	<</if>>
+	<<if _upgrades.feet gt 0>>
+		<<set $feetskill += _upgrades.feet / _details.feet.cost * 200>>
+	<</if>>
+	<<if _upgrades.vaginal gt 0>>
+		<<set $vaginalskill += _upgrades.vaginal / _details.vaginal.cost * 200>>
+	<</if>>
+	<<if _upgrades.promiscuity gt 0>>
+		<<set $promiscuity += _upgrades.promiscuity / _details.promiscuity.cost * 15>>
+	<</if>>
+	<<if _upgrades.exhibitionism gt 0>>
+		<<set $exhibitionism += _upgrades.exhibitionism / _details.exhibitionism.cost * 15>>
+	<</if>>
+	<<if _upgrades.deviancy gt 0>>
+		<<set $deviancy += _upgrades.deviancy / _details.deviancy.cost * 15>>
 	<</if>>
 	/* Clean Up */
 	<<run delete $featsBoosts.name>>

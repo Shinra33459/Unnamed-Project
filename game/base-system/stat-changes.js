@@ -137,6 +137,7 @@ const statChange = (() => {
 		if (amount) {
 			V.control += amount * 10;
 			if (combat && V.control >= V.controlstart) V.control = V.controlstart;
+			else if (V.controlstart < V.control) V.controlstart = Math.min(V.control, V.controlmax);
 			V.controlled = V.control >= (V.controlmax / 5) * 2 ? 1 : 0;
 		}
 		V.control = Math.clamp(V.control, 0, V.controlmax);
@@ -278,7 +279,7 @@ const statChange = (() => {
 			// Trait checks & effects
 			if (amount > 0 && V.orgasmtrait) mod *= 0.6;
 
-			// adds up to +1 to the  arousal modifier when suffocating
+			// adds up to +1 to the arousal modifier when suffocating
 			if (V.choketrait) mod += (V.oxygenmax - V.oxygen) / V.oxygenmax;
 
 			if (V.drugged > 0) {
@@ -553,7 +554,6 @@ const statChange = (() => {
 	DefineMacro("spray", spray);
 
 	function awareness(amount) {
-		if (V.statFreeze) return;
 		if (isNaN(amount)) paramError("awareness", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
@@ -568,7 +568,6 @@ const statChange = (() => {
 	DefineMacro("awareness", awareness);
 
 	function purity(amount) {
-		if (V.statFreeze) return;
 		if (isNaN(amount)) paramError("purity", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
@@ -830,7 +829,6 @@ const statChange = (() => {
 	}
 
 	function willpower(amount) {
-		if (V.statFreeze) return;
 		if (isNaN(amount)) paramError("willpower", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
@@ -967,7 +965,6 @@ const statChange = (() => {
 	DefineMacro("skulduggery", amount => skill("skulduggery", amount));
 
 	function prof(skill, amount) {
-		if (V.statFreeze) return;
 		if (isNaN(amount)) paramError("prof", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
@@ -987,7 +984,6 @@ const statChange = (() => {
 	DefineMacro("locker_suspicion", lockerSuspicion);
 
 	function alcohol(amount) {
-		if (V.statFreeze) return;
 		if (isNaN(amount)) paramError("alcohol", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
@@ -999,7 +995,6 @@ const statChange = (() => {
 	DefineMacro("alcohol", alcohol);
 
 	function drugs(amount) {
-		if (V.statFreeze) return;
 		if (isNaN(amount)) paramError("drugs", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
@@ -1011,7 +1006,6 @@ const statChange = (() => {
 	DefineMacro("drugs", drugs);
 
 	function hallucinogen(amount) {
-		if (V.statFreeze) return;
 		if (isNaN(amount)) paramError("hallucinogen", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {

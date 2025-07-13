@@ -63,7 +63,7 @@
 						<<case "Zephyr">><<earnFeat "Zephyr the captain">>
 					<</switch>>
 				<</if>>
-				
+
 				<<if !$player.virginityDetails>>
 					<<set $player.virginityDetails to {}>>
 				<</if>>
@@ -205,7 +205,7 @@
 			<<set _npcConsensualOverride to true>>
 		<<case "rape" "loveRape">>
 			<<set _npcConsensualOverride to true>>
-	<</switch>>	
+	<</switch>>
 	<<takeNPCVirginity $_fullDescription "kiss" "pc">>
 	<<unset _npcConsensualOverride>>
 
@@ -224,7 +224,7 @@
 				<span class="lewd">You're happy your first kiss was taken in such a romantic way.</span><<arousal 1500>><<stress -6>><<trauma -6>><<garousal>><<lstress>>
 				<<set _consensualOverride to true>>
 			<<case "rape">>
-				<span class="red">They stole your first kiss. You feel horrible.</span><<stress 40>><<gggstress>>
+				<span class="red">Your first kiss was stolen. You feel horrible.</span><<stress 40>><<gggstress>>
 				<<set _consensualOverride to false>>
 			<<case "loveRape">>
 				<span class="red">You didn't want your first kiss with <<nnpc_him $_fullDescription>> to be like this.</span><<stress 40>><<gggstress>>
@@ -601,6 +601,9 @@
 <</widget>>
 
 <<widget "cover_end">>
+	<<if $enemyarousal gte $enemyarousalmax>>
+		<<exit>>
+	<</if>>
 	<<if $leftarm is "vagina" or $rightarm is "vagina">>
 		<<set $vaginause to 0>>
 	<<elseif $leftarm is "coverpenis" or $rightarm is "coverpenis">>
@@ -1036,21 +1039,29 @@
 <</widget>>
 
 <<widget "healthMultiplier">>
+	<<if Time.days lt 0>>
+		<<set _hopelessDate to new DateTime($frozenValues.timeStamp)>>
+		<<set _days to DateTime.getTotalDaysSinceStart(_hopelessDate.year) + DateTime.getDaysOfMonthFromYear(_hopelessDate.year).slice(0, _hopelessDate.month - 1).reduce((a, b) => a + b, 0) + _hopelessDate.day - 1>>
+	<<else>>
+		<<set _days to Time.days>>
+	<</if>>
 	<<if $NPCList[0].health isnot undefined and $NPCList[0].health gt $enemyhealth>>
 		<<set $enemyhealth to $NPCList[0].health>>
 	<</if>>
 	<<set _buff to 0>>
 	<<if $enemytype is "beast">>
 		<<set $enemyhealth to Math.round($enemyhealth * ($beastHealthMult / 100))>>
+	<<elseif setup.NPCNameList.includes($NPCList[0].fullDescription)>>
+		<<set $enemyhealth to Math.round($enemyhealth * ($nnpcHealthMult / 100))>>
 	<<else>>
 		<<set $enemyhealth to Math.round($enemyhealth * ($npcHealthMult / 100))>>
 	<</if>>
-	<<set _buffAmount to Math.floor(Time.days / $combatExtended.enemyDayScaling)>>
+	<<set _buffAmount to Math.floor(_days / $combatExtended.enemyDayScaling)>>
 	<<if $combatExtended.enemyHealthDayScaling is 1>>
 		<<if _buffAmount lte $combatExtended.enemyDayScalingLimit or $combatExtended.enemyInfiniteDayScaling is 1>>
 			<<set _buff += _buffAmount * $combatExtended.enemyHealthDayScalingMult>>
 		<<else>>
-			<<set _buff += _buffAmount * $combatExtended.enemyDayScalingLimit>>
+			<<set _buff += $combatExtended.enemyDayScalingLimit * $combatExtended.enemyHealthDayScalingMult>>
 		<</if>>
 	<</if>>
 	<<set _buffAmount to Math.floor($enemiesDefeatedStat / $combatExtended.enemyDefeatScaling)>>
@@ -1058,10 +1069,10 @@
 		<<if _buffAmount lte $combatExtended.enemyDefeatScalingLimit or $combatExtended.enemyInfiniteDefeatScaling is 1>>
 			<<set _buff += _buffAmount * $combatExtended.enemyHealthDefeatScalingMult>>
 		<<else>>
-			<<set _buff += _buffAmount * $combatExtended.enemyDefeatScalingLimit>>
+			<<set _buff += $combatExtended.enemyDefeatScalingLimit * $combatExtended.enemyHealthDefeatScalingMult>>
 		<</if>>
 	<</if>>
-	<<set $enemyhealth to  Math.round($enemyhealth * (1 + (_buff / 100)))>>
+	<<set $enemyhealth to Math.round($enemyhealth * (1 + (_buff / 100)))>>
 	<<set $enemyhealthmax to $enemyhealth>>
 	<<set $permenemyhealthmax to $enemyhealthmax>>
 <</widget>>
@@ -1069,7 +1080,11 @@
 <<widget "npcStealMoney">>
 	<<if $npcStealMoneyToggle is 1 and $npcStolenMoney is undefined>>
 		<br>
-		<<set _stolenMoney to $money * ($npcStealMoneyPercentage/100)>>
+		<<if npcStealMoneyRandomToggle is 1>>
+			<<set _stolenMoney to $money * (random(1, 100)/100)>>
+		<<else>>
+			<<set _stolenMoney to $money * ($npcStealMoneyPercentage/100)>>
+		<</if>>
 		<<He>> rifles through your pockets and take <<printmoney _stolenMoney>>.
 		<<if _stolenMoney gte 100000>>
 			"That's a lot of money, I'll take that thank you."
@@ -1082,7 +1097,8 @@
 		<<else>>
 			"This is peanuts..."
 		<</if>>
-		<<set $money to $money - _stolenMoney>>
+		<<set _stolenMoney to _stolenMoney * -1>>
+		<<money _stolenMoney "stolenMoney">>
 		<<set $npcStolenMoney to 1>>
 	<</if>>
 <</widget>>

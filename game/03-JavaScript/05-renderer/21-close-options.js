@@ -124,9 +124,9 @@ class CloseCombatMapper {
 	 */
 	static mapClosePenetrators(slot, options) {
 		const activeEnemy = V.NPCList[V.active_enemy].type;
-		const chastity = (playerChastity("hidden") || V.worn.genitals.name === "chastity parasite") && slot === "vagina";
-		const belt = V.worn.genitals.name === "gold chastity belt" ? "gold-belt" : "belt";
 		const npc = ["horse", "centaur"].includes(activeEnemy) ? "horse" : ["beast", "machine", "tentacles"].includes(V.enemytype) ? V.enemytype : "npc";
+		const chastity = (playerChastity("hidden") || V.worn.genitals.name === "chastity parasite") && slot === "vagina" && !["horse", "machine"].includes(npc);
+		const belt = V.worn.genitals.name === "gold chastity belt" ? "gold-belt" : "belt";
 		options[slot] = {};
 
 		/* check $anusstate or $vaginastate */
@@ -228,7 +228,7 @@ class CloseCombatMapper {
 			"small chastity cage": "small",
 		};
 		const chastityDevice = chastityTypes[V.worn.genitals.name] || "base";
-		const penisType = V.player.gender === "f" ? "parasite" : V.player.ballsExist ? "penis" : "herm";
+		const penisType = V.player.sex === "f" ? "parasite" : V.player.ballsExist ? "penis" : "herm";
 
 		options.penis = {
 			type: penisType,

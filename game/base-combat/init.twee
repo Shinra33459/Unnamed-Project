@@ -936,7 +936,7 @@
 <<widget "crossdressing_check">>
 	<<if $player.penisExist and $player.vaginaExist>>
 		<<set $crossdressing to 2>>
-	<<elseif $player.gender isnot $player.gender_appearance>>
+	<<elseif isCrossdressing()>>
 		<<set $crossdressing to 1>>
 	<<else>>
 		<<set $crossdressing to 0>>
@@ -950,7 +950,8 @@
 <</widget>>
 
 <<widget "combatinit">>
-	<<if $consensual is 1>>
+	<<if !_controlloss>>
+		/* save $control state at the combat start, unless it's already been saved by <<controlloss>> earlier in the passage */
 		<<set $controlstart to $control>>
 	<</if>>
 	<<set $arousalmasochism to 0>>
@@ -1081,7 +1082,7 @@
 		<<run $npc.forEach(npc => $genderknown.pushUnique(npc))>>
 	<</if>>
 
-	<<if $worn.genitals.type.includesAll("chastity", "hidden") or $NPCList[0].state is "stalk" or $NPCList[0].state is "pursuit">>
+	<<if $worn.genitals.type.includesAll("chastity", "hidden") or $NPCList[0].state is "stalk" or $NPCList[0].state is "pursuit" or $gloryhole>>
 	<<elseif $crossdressing gte 1 and $worn.over_lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1 and $worn.lower.vagina_exposed gte 1>>
 		<<exposedcheck true>>
 		<<if $NPCList[0].teen is 1 and $location is "school" and !($npc.length is 1 and (["Kylar","Sydney"].includes($npc[0])))>>
@@ -1170,7 +1171,7 @@
 				<<elseif $npc[0] is "Kylar">>
 					<!-- TODO: Give Kylar unique reactions? -->
 					<<set _kylar to statusCheck("Kylar")>>
-					<<if _kylar.gender isnot $player.gender or _kylar.gender is "h">>
+					<<if _kylar.gender isnot $player.sex or _kylar.gender is "h">>
 						Your <<genitals 1>> was clearly not what <<he>> was expecting, but <<he>> doesn't seem to mind. <<if _kylar.gender isnot "h">><span class="purple">In fact, if <<his>> shaking hands are anything to go by <<he>> is quite pleased.</span><</if>>
 						<<set $enemyarousal += 50>><<set $speechcrossdressaroused to 2>>
 					<<else>>

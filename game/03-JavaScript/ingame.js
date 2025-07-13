@@ -463,6 +463,19 @@ function ordinalSuffixOf(i) {
 }
 window.ordinalSuffixOf = ordinalSuffixOf;
 
+function ordinalWritten(i) {
+	const ordinals = ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth"];
+	if (i > 0 && i < 10) return ordinals[i];
+
+	const j = i % 10;
+	const k = i % 100;
+	if (j === 1 && k !== 11) return i + "st";
+	if (j === 2 && k !== 12) return i + "nd";
+	if (j === 3 && k !== 13) return i + "rd";
+	return i + "th";
+}
+window.ordinalWritten = ordinalWritten;
+
 /**
  * Given there are {deckCount} cards in the deck and {markedCount} of them have been marked by the player,
  *   calculates the chance that the player will see at least {atLeast} number of marked cards (from the top of the deck),
@@ -506,7 +519,7 @@ function calculateMarkedChance(deckCount, markedCount, depth, atLeast, doLog = f
 	for (let nMarkedPicked = atLeast; nMarkedPicked <= possibleMarkedCardsVisibleLimit; ++nMarkedPicked) {
 		// we calculate how many possible ways we can pull a valid number of marked cards from the deck
 		//   by dividing the cards into a pool of
-		//	* marked cards (and calculating how many ways we can pull the valid nMarkedPicked cards from the pool of markedCount marked cards),  nCr(markedCount, nMarkedPicked)
+		//	* marked cards (and calculating how many ways we can pull the valid nMarkedPicked cards from the pool of markedCount marked cards), nCr(markedCount, nMarkedPicked)
 		//	* unmarked cards (and calculating how many ways we can pull the remaining possibleMarkedCardsVisibleLimit-nMarkedPicked non-marked cards from the pool of deck-markedCount unmarked cards), ncr(deck-markedCount, possibleMarkedCardsVisibleLimit-nMarkedPicked)
 		//   and then we multiply the mutually exclusive combinations to get all possible combinations (cross-joins) of the two (since for each way we can pull (say) 1 marked card, there's the second number of ways we can pull the remaining non marked ones)
 		const markedPoolWays = nCr(markedCount, nMarkedPicked);
@@ -555,7 +568,12 @@ function bulkProduceValue(plant, quantity = 250) {
 		const qualityControlBoost = V.factoryUpgrades.qualityControl ? V.factoryUpgrades.qualityControl * 0.05 : 0; // +5% per level
 		const packagingBoost = V.factoryUpgrades.packaging ? V.factoryUpgrades.packaging * 0.05 : 0; // +5% per level
 
-		const totalBoost = 1 + qualityControlBoost + packagingBoost;
+		const businessBoost = 0.3 * (1 * (V.fame.business / 4000));
+		const socialBoost = 0.1 * (1 * (V.fame.social / 4000));
+		const goodBoost = 0.05 * (1 * (V.fame.good / 4000));
+		const modelBoost = 0.05 * (1 * (V.fame.model / 4000));
+
+		const totalBoost = 1 + qualityControlBoost + packagingBoost + businessBoost + socialBoost + goodBoost + modelBoost;
 		return Math.floor(baseCost * seasonBoost * totalBoost);
 	}
 }
@@ -844,28 +862,29 @@ window.DefaultActions = {
 	setDefaults() {
 		V.actionDefaults = this.create(true);
 		let type = "rape";
-		this.addMany(type, "Submissive", "leftaction", ["leftchest"]);
-		this.addMany(type, "Submissive", "rightaction", ["rightchest"]);
-		this.addMany(type, "Submissive", "mouthaction", ["plead", "suck", "kiss", "breastsuck"]);
+		this.addMany(type, "Submissive", "leftaction", ["leftchest", "leftgrip", "leftprotect"]);
+		this.addMany(type, "Submissive", "rightaction", ["rightchest", "rightgrip", "rightprotect"]);
+		this.addMany(type, "Submissive", "mouthaction", ["plead", "suck", "breastsuck", "breastlick", "vaginalick", "letoutorgasm", "letout"]);
 		this.addMany(type, "Submissive", "penisaction", ["tease", "cooperate"]);
 		this.addMany(type, "Submissive", "vaginaaction", ["penistease", "cooperate"]);
 		this.addMany(type, "Submissive", "anusaction", ["penistease", "cooperate"]);
-		this.addMany(type, "Submissive", "feetaction", ["grabrub", "grabrub", "vaginagrabrub", "submit"]);
+		this.addMany(type, "Submissive", "feetaction", ["grabrub", "grabrub", "vaginagrabrub", "feetCurl", "submit"]);
 		this.addMany(type, "Defiant", "leftaction", ["lefthit", "leftstruggle"]);
 		this.addMany(type, "Defiant", "rightaction", ["penwhack", "righthit", "rightstruggle", "hypnosiswhack"]);
-		this.addMany(type, "Defiant", "mouthaction", ["pullaway", "bite", "breastbite", "headbutt"]);
+		this.addMany(type, "Defiant", "mouthaction", ["headbutt", "pullaway", "bite", "handbite", "breastbite", "bitepussy", "demand"]);
 		this.addMany(type, "Defiant", "penisaction", ["escape", "otheranusescape", "othermouthescape"]);
 		this.addMany(type, "Defiant", "vaginaaction", ["escape", "othermouthescape"]);
 		this.addMany(type, "Defiant", "anusaction", ["escape", "othermouthescape"]);
 		this.addMany(type, "Defiant", "feetaction", ["kick", "dodge", "plant"]);
 		this.addMany(type, "Tentacles", "regrab", [0]);
 		type = "consensual";
-		this.addMany(type, "Submissive", "leftaction", ["leftchest"]);
-		this.addMany(type, "Submissive", "rightaction", ["rightchest"]);
-		this.addMany(type, "Submissive", "mouthaction", ["kiss", "suck", "breastsuck", "breastlick"]);
+		this.addMany(type, "Submissive", "leftaction", ["leftchest", "leftgrip", "leftprotect"]);
+		this.addMany(type, "Submissive", "rightaction", ["rightchest", "rightgrip", "rightprotect"]);
+		this.addMany(type, "Submissive", "mouthaction", ["kiss", "suck", "breastsuck", "breastlick", "vaginalick", "kissskin", "letoutorgasm", "letout"]);
 		this.addMany(type, "Submissive", "penisaction", ["tease", "cooperate"]);
 		this.addMany(type, "Submissive", "vaginaaction", ["penistease", "cooperate"]);
 		this.addMany(type, "Submissive", "anusaction", ["penistease", "cooperate"]);
+		this.addMany(type, "Submissive", "feetaction", ["feetCurl"]);
 		this.addMany(type, "Defiant", "leftaction", [0]);
 		this.addMany(type, "Defiant", "rightaction", ["penwhack"]);
 		this.addMany(type, "Defiant", "mouthaction", ["breastpull", "breastclosed"]);
@@ -968,7 +987,7 @@ window.clothesDataTrimmerLoop = clothesDataTrimmerLoop;
 	Setup example - setup.clothes.upper[clothesIndex('upper',$worn.upper)].name_cap
 	clothingData example - clothingData(_slot, $worn[_slot], "integrity_max")
 
-	The `clothingData example`, allows you to add the variable back to override the setup varient, for example, if you want to increase `integrity_max`
+	The `clothingData example`, allows you to add the variable back to override the setup variant, for example, if you want to increase `integrity_max`
 
 	If any use the `Setup example` and you want to override variables like the `clothingData example`, every instance needs to be converted first, please update the comment below if you do
 */
@@ -983,6 +1002,7 @@ function clothesDataTrimmer(item) {
 		"description", // use `Setup example`
 		"colour_options", // use `Setup example`
 		"accessory_colour_options", // use `Setup example`
+		"pattern_colour_options", // use `Setup example`
 		"fabric_strength", // use `clothingData example`
 		"integrity_max", // use `clothingData example`
 		"bustresize", // use `clothingData example`
@@ -1195,7 +1215,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 		});
 		return 0;
 	}
-	// Prevents infinate loops, any call to `currentSkillValue` in this function should be written like 'currentSkillValue("skillName", disableModifiers + 1)'
+	// Prevents infinite loops, any call to `currentSkillValue` in this function should be written like 'currentSkillValue("skillName", disableModifiers + 1)'
 	if (disableModifiers >= 2) return result;
 	if (
 		// prettier-ignore
@@ -1839,7 +1859,7 @@ window.checkTFparts = checkTFparts;
 
 /*
 	Might be good to convert the whole TF mechanic, including `transformationStateUpdate` to something like below at some point.
-	Part of the transformationParts is unsued right now, but its to account for this potential.
+	Part of the transformationParts is unused right now, but its to account for this potential.
 */
 function validateTransformations() {
 	if (V.cat >= 1 || V.wolfgirl >= 1 || V.cow >= 1 || V.harpy >= 1) {
@@ -1991,14 +2011,14 @@ function getSexesFromRandomGroup() {
 		if (V.cbchance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
 		if (V.cbchance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
 	}
-	if (V.cbchance >= 100 && V.dgchance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but males are cuntboys, and there are no dickgirls. */
+	if (V.cbchance >= 100 && V.dgchance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
 	if (V.dgchance >= 100 && V.cbchance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
 	return SexTypes.BOTH;
 }
 window.getSexesFromRandomGroup = getSexesFromRandomGroup;
 
 /**
- * Pick the right colour to use when colouring various things.  Primarily sidebar stats.
+ * Pick the right colour to use when colouring various things. Primarily sidebar stats.
  * When using this function, try to keep in mind what value of your input variable you want "red" to be at.
  *
  * Example: $drugged goes higher than 500, but we want the bar to become red at 500, so we call this function as getColourClassFromPercentage($drugged / 5).
@@ -2547,7 +2567,7 @@ function earSlimeCorruptionClothes() {
 	if (!numberOfEarSlime()) return 0;
 	if (!V.daily.corruptionSlimeClothes) {
 		const baseCorruption = V.earSlime.corruption + V.earSlime.growth;
-		// Reduced from the origonal equivalent of *2.5 and *12.5, still want it to have SOME effect, but this should hopefully soften it enough
+		// Reduced from the original equivalent of *2.5 and *12.5, still want it to have SOME effect, but this should hopefully soften it enough
 		V.daily.corruptionSlimeClothes = Math.clamp(random(baseCorruption, baseCorruption * 5) - currentSkillValue("willpower"), 0, 1000);
 	}
 	const cap = ["prison", "asylum"].includes(V.location) ? 1000 : 500;
@@ -2659,7 +2679,7 @@ window.formatMoney = formatMoney;
 DefineMacro("formatmoney", money => formatMoney(money));
 
 function lurkerCap() {
-	return Math.min(Math.max(V.farm.net * 2, 1), Math.floor(currentSkillValue("physique") / 4000));
+	return Math.min(Math.max(V.farm.net * 2, 1), Math.floor(currentSkillValue("physique") / 3000));
 }
 window.lurkerCap = lurkerCap;
 
@@ -2707,3 +2727,229 @@ function canGiftFood(npc) {
 	return V.daily.giftedFood[npc] === undefined && amount > 0;
 }
 window.canGiftFood = canGiftFood;
+
+function ingredientIsAllowed(providedKey) {
+	const provided = T.ingredientsSupplied || [];
+	const exceptions = T.ingredientsExceptions;
+	const isAllowed = key => {
+		if (provided.includes(key) || !exceptions || exceptions.includes(key)) return true;
+
+		const setupObject = setup.plants[key];
+		if (Array.isArray(setupObject?.ingredients) && setupObject.ingredients.length) {
+			return setupObject.ingredients.every(ingredient => {
+				return isAllowed(ingredient);
+			});
+		}
+
+		return false;
+	};
+	return isAllowed(providedKey);
+}
+window.ingredientIsAllowed = ingredientIsAllowed;
+
+function ingredientAlternativesSetup(recipe) {
+	const alternatives = {
+		bottle_of_milk: [],
+		cream: [],
+		strange_flower: ["blood_lemon"],
+		chicken_egg: ["bird_egg"],
+		beef: [],
+	};
+	if (V.chef_state >= 3 && T.allowLewdIngredients && (!V.options.ingredientsAutoManage || V.options.ingredientsAutoManageLewd)) {
+		alternatives.bottle_of_milk.pushUnique("baby_bottle_of_breast_milk");
+		alternatives.cream.pushUnique("bottle_of_semen");
+	}
+	switch (recipe) {
+		case "lasagne":
+			alternatives.beef.pushUnique("chicken");
+			break;
+	}
+
+	return alternatives;
+}
+
+function ingredientsProvided(mainIngredient, recipe) {
+	if (!setup.plants[mainIngredient] || !setup.plants[recipe]) return false;
+	const alternatives = ingredientAlternativesSetup(recipe);
+	const options = [mainIngredient];
+
+	if (alternatives[mainIngredient]) alternatives[mainIngredient].forEach(ingredient => options.pushUnique(ingredient));
+	return options.find(ingredient => T.ingredientsSupplied?.includes(ingredient));
+}
+window.ingredientsProvided = ingredientsProvided;
+
+function ingredientUsed(mainIngredient, recipe) {
+	const alternatives = ingredientAlternativesSetup(recipe);
+
+	// When auto management has been disabled
+	if (!V.options.ingredientsAutoManage) {
+		if (Array.isArray(alternatives[mainIngredient]) && alternatives[mainIngredient].includes(V.plants[mainIngredient].alternative)) {
+			return V.plants[mainIngredient].alternative;
+		}
+		return mainIngredient;
+	}
+
+	// Check for any provided ingredients first
+	if (ingredientsProvided(mainIngredient)) return ingredientsProvided(mainIngredient);
+
+	// Check for alternatives if there is none of the normal ingredient
+	if (alternatives[mainIngredient]?.length && V.plants[mainIngredient]?.amount <= 0) {
+		const alternative = alternatives[mainIngredient].find(ingredient => V.plants[ingredient]?.amount > 0);
+		if (alternative) return alternative;
+	}
+	return mainIngredient;
+}
+window.ingredientUsed = ingredientUsed;
+
+function ingredientsTotal(mainIngredient, recipe, includeAlternatives) {
+	if (!setup.plants[mainIngredient]) return 0;
+	const alternatives = ingredientAlternativesSetup(recipe);
+	let count = V.plants[mainIngredient].amount;
+	if (includeAlternatives && alternatives[mainIngredient] && !T.ingredientsSupplied?.includes(mainIngredient)) {
+		alternatives[mainIngredient].forEach(ingredient => {
+			count += V.plants[ingredient]?.amount || 0;
+		});
+	}
+	return count;
+}
+window.ingredientsTotal = ingredientsTotal;
+
+function ingredientsOptions(mainIngredient, recipe) {
+	const alternatives = ingredientAlternativesSetup(recipe);
+	const result = [mainIngredient];
+	if (Array.isArray(alternatives[mainIngredient])) alternatives[mainIngredient].forEach(ingredient => result.pushUnique(ingredient));
+	return result;
+}
+window.ingredientsOptions = ingredientsOptions;
+
+function ingredientsNextAlternative(mainIngredient, recipe) {
+	if (!V.plants[mainIngredient]) return;
+	const options = ingredientsOptions(mainIngredient, recipe);
+	const currentAlt = V.plants[mainIngredient].alternative || mainIngredient;
+	const currentIndex = options.indexOf(currentAlt);
+	const nextIndex = currentIndex === -1 || currentIndex + 1 >= options.length ? 0 : currentIndex + 1;
+	V.plants[mainIngredient].alternative = options[nextIndex];
+}
+window.ingredientsNextAlternative = ingredientsNextAlternative;
+
+function kitchenFilter() {
+	T.recipeKeys = [];
+	T.recipesGroups = ["ingredients", "sweets", "savouries", "drinks"];
+	const kitchenFilter = T.foodSearch ? T.foodSearch.split(/[_ ]/g) : false;
+
+	let missingIngredients = false;
+	let providedIngredients = false;
+	let knownRestrictions = false;
+
+	Object.keys(setup.plants).forEach(recipe => {
+		const item = setup.plants[recipe];
+
+		if (
+			kitchenFilter &&
+			!kitchenFilter.find(
+				term =>
+					(V.options.ingredientsSearch !== "ingredients" &&
+						(item.name.includes(term) || item.type.includes(term) || item.plural?.includes(term) || item.singular?.includes(term))) ||
+					(V.options.ingredientsSearch !== "recipes" &&
+						item.ingredients.find(ingredient => ingredient.includes(term) || ingredientUsed(ingredient)?.includes(term)))
+			)
+		) {
+			return;
+		}
+
+		if (T.ingredientsSupplied?.includes(recipe)) {
+			providedIngredients = true;
+			if (!T.recipeKeys.some(recipe => recipe.key === recipe)) T.recipeKeys.push({ key: recipe, group: "Provided Ingredients" });
+			return;
+		}
+		if (!V.plants[recipe].recipe || !item.ingredients) return;
+		let group;
+
+		if (item.special.includes("sweet")) {
+			group = "sweets";
+		} else if (item.special.includes("drink")) {
+			group = "drinks";
+		} else if (item.type.includes("ingredient")) {
+			group = "ingredients";
+		} else {
+			group = "savouries";
+		}
+
+		let missingIngredientsFound = false;
+		item.ingredients.forEach(ingredient => {
+			if (ingredientsTotal(ingredient, recipe, true) <= 0 && !ingredientsProvided(ingredient, recipe)) missingIngredientsFound = true;
+		});
+
+		if (!ingredientIsAllowed(recipe)) {
+			group = "Restricted Ingredients";
+			knownRestrictions = true;
+		} else if (missingIngredientsFound) {
+			group = "Missing Ingredients";
+			missingIngredients = true;
+		}
+		if (!T.recipeKeys.some(recipeObj => recipeObj.key === recipe)) T.recipeKeys.push({ key: recipe, group });
+	});
+
+	if (providedIngredients) T.recipesGroups.unshift("Provided Ingredients");
+	if (missingIngredients) T.recipesGroups.push("Missing Ingredients");
+	if (knownRestrictions) T.recipesGroups.push("Restricted Ingredients");
+}
+DefineMacro("kitchenFilter", kitchenFilter);
+
+function marketFilter() {
+	T.marketKeys = [];
+	T.marketGroups = [];
+	const marketFilter = T.marketSearch ? T.marketSearch.split(/[_ ]/g) : false;
+
+	let missingItems = false;
+
+	Object.keys(setup.plants).forEach(product => {
+		const item = setup.plants[product];
+
+		if (V.plants[product].amount <= 0 && V.plants[product].marketStall === undefined) return;
+
+		// Makes sure items always get this set for older saves
+		if (V.plants[product].marketStall === undefined) V.plants[product].marketStall = !setup.plants[product]?.shop?.length;
+
+		if (
+			marketFilter &&
+			!marketFilter.find(term => item.name.includes(term) || item.type.includes(term) || item.plural?.includes(term) || item.singular?.includes(term))
+		) {
+			return;
+		}
+
+		T.marketGroups.pushUnique(item.type);
+		let group = item.type;
+		if (V.plants[product].amount <= 0) {
+			missingItems = true;
+			group = "No Stock";
+		}
+		if (!T.marketKeys.find(productObj => productObj.key === product)) T.marketKeys.push({ key: product, group });
+	});
+
+	if (missingItems) T.marketGroups.push("No Stock");
+}
+DefineMacro("marketFilter", marketFilter);
+
+function teensPresentCheck(location) {
+	let present = 0;
+
+	if (V.daily.teensPresent === undefined) {
+		if (Weather.temperature < 5 && !Weather.isFrozen("lake")) {
+			V.daily.teensPresent = "arcade";
+		} else {
+			V.daily.teensPresent = "lake";
+		}
+	}
+
+	if (V.daily.teensPresent === location) {
+		if (["day", "dusk"].includes(Time.dayState) && ((Time.schoolDay && Time.hour >= 15) || !Time.schoolDay)) {
+			if (location === "arcade" || (location === "lake" && Weather.precipitation === "none")) {
+				present = 1;
+			}
+		}
+	}
+
+	return present;
+}
+window.teensPresentCheck = teensPresentCheck;

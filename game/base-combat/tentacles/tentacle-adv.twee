@@ -1468,9 +1468,17 @@
 		<<set $speechhit to 1 * _multi>><<set $attackstat += 1 * _multi>>
 		<<if $rng lte (currentSkillValue('physique') / 200)>>
 			<span class="green">It trembles before your strength.</span>
-			<<set _tentacle.tentaclehealth -= 1 * _multi>>
+			<<if $combatExtended.strikingToggle is 1>>
+				<<set _tentacle.tentaclehealth -= Math.round(1 + (1 + (currentSkillValue('physique') / 8000)) + (1 + ($combatExtended.striking / 1000))) * _multi>>
+			<<else>>
+				<<set _tentacle.tentaclehealth -= Math.round(1 + (1 + (currentSkillValue('physique') / 8000))) * _multi>>
+			<</if>>
 		<</if>>
-		<<set _tentacle.tentaclehealth -= 1 * _multi>>
+		<<if $combatExtended.strikingToggle is 1>>
+			<<set _tentacle.tentaclehealth -= Math.round(1 + (1 + (currentSkillValue('physique') / 8000)) + (1 + ($combatExtended.striking / 1000))) * _multi>>
+		<<else>>
+			<<set _tentacle.tentaclehealth -= Math.round(1 + (1 + (currentSkillValue('physique') / 8000))) * _multi>>
+		<</if>>
 		<<tentacleadvdisable _tentacle>>
 		<<if $abomination is 1>>
 			The <<person>> winces in pain.
@@ -1485,16 +1493,18 @@
 			<<set _multi to 2>>
 			<<set $leftaction to 0>><<set $leftactiondefault to "leftbanish">>
 			<<set $rightaction to 0>><<set $rightactiondefault to "rightbanish">>
-		<<elseif $leftaction is "leftbanish">>
+		<<elseif $leftaction is "leftbanish" and $angelBanish gte 1>>
 			<<set $angelBanish -->>
 			You make an intricate gesture with your left hand. _The _tentacle.fullDesc shimmers and recoils violently.
 			<<set _multi to 1>><<set $leftaction to 0>>
 			<<set $leftactiondefault to "leftbanish">>
-		<<else>>
+		<<elseif $rightaction is "rightbanish" and $angelBanish gte 1>>
 			<<set $angelBanish -->>
 			You make an intricate gesture with your right hand. _The _tentacle.fullDesc shimmers and recoils violently.
 			<<set _multi to 1>><<set $rightaction to 0>>
 			<<set $rightactiondefault to "rightbanish">>
+		<<else>>
+			You make an intricate gesture with your <<if $leftaction is "leftbanish">>left<<else>>right<</if>> hand, <span class="red">but nothing happens</span>.
 		<</if>>
 		<<if $purity gte 1000>>
 			<<set _multi ++>>
@@ -1836,6 +1846,16 @@
 		<<tentacleadvdisable _tentacle>>
 	<</if>>
 
+	<<if $rightaction is "rest">>
+		<<set $rightaction to 0>>
+		<<set $rightactiondefault to "rest">>
+	<</if>>
+
+	<<if $leftaction is "rest">>
+		<<set $leftaction to 0>>
+		<<set $leftactiondefault to "rest">>
+	<</if>>
+
 	<<effectshandsclothes>>
 
 	<<if $feetaction is "feethit" and $feetactionTarget is _tentacle.id>>
@@ -1845,7 +1865,11 @@
 		<<set _tentacle.tentaclehealth -= 1>>
 		<<if $rng lte (currentSkillValue('physique') / 200)>>
 			<span class="green">It trembles before your strength.</span>
-			<<set _tentacle.tentaclehealth -= 1>>
+			<<if $combatExtended.kickingToggle is 1>>
+				<<set _tentacle.tentaclehealth -= Math.round(1 + (1 + (currentSkillValue('physique') / 8000)) + (1 + ($combatExtended.kicking / 1000)))>>
+			<<else>>
+				<<set _tentacle.tentaclehealth -= Math.round(1 + (1 + (currentSkillValue('physique') / 8000)))>>
+			<</if>>
 		<</if>>
 		<<if $abomination is 1>>
 			<<defiance 3>>
@@ -1954,7 +1978,7 @@
 		<</if>>
 	<</if>>
 
-		<<if $feetaction is "showpenis"+_tentacle.id>>
+	<<if $feetaction is "showpenis"+_tentacle.id>>
 		<<set $feetaction to 0>><<set $feetstate to 0>>
 		<<set $leftleg to 0>><<set $rightleg to 0>>
 
@@ -1992,6 +2016,11 @@
 		<<set $feetaction to 0>><<set $feetactiondefault to "feetstop"+_tentacle.id>>
 		You let go of the _tentacle.fullDesc between your feet.
 		<<tentacleadvdisable _tentacle>>
+	<</if>>
+
+	<<if $feetaction is "rest">>
+		<<set $feetaction to 0>>
+		<<set $feetactiondefault to "rest">>
 	<</if>>
 
 	<<if $mouthaction is "mouthlull"+_tentacle.id>>
@@ -2073,7 +2102,7 @@
 		<<tentacleadvdisable _tentacle>><<set $attackstat += 1>><<set _tentacle.tentaclehealth -= 1>>
 		<<if $rng lte (currentSkillValue('physique') / 200)>>
 			<span class="green">It trembles before your strength.</span>
-			<<set _tentacle.tentaclehealth -= 1>>
+			<<set _tentacle.tentaclehealth -= Math.round(1 + (1 + (currentSkillValue('physique') / 8000))) * _multi>>
 		<</if>>
 		<<if $abomination is 1>>
 			The <<person>> grunts in pain. <<defiance 10>>

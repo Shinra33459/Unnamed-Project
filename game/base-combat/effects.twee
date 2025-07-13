@@ -41,7 +41,7 @@
 		<<set $combatExtended.enemyCounteringActive to 0>>
 
 		/* Check if standing fights toggle is on and if the fight is non-consensual */
-		<<if $combatExtended.standingFights is 1 and $consensual is 0>>
+		<<if $combatExtended.standingFights is 1 and $consensual is 0 and $position isnot "wall" and $punishmentposition isnot "gloryhole">>
 			/* Start Standing Fights if not stuck in a wall or gloryhole */
 			<<if $combatExtended.standingFightStart is 1 and $position isnot "wall" and $punishmentposition isnot "gloryhole">>
 				<<set $combatExtended.standingFightStart to 0>>
@@ -656,7 +656,7 @@
 					with your right hand, <span class="red">but the slime distracts you, so you miss.</span>
 					<<gwillpower>><<willpower 1>>
 				<<else>>
-					The slime tries to prevent you from hitting the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $lefttarget>><<person>><</if>>, <span class="green">but you make contact regardless.</span>
+					The slime tries to prevent you from hitting the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $righttarget>><<person>><</if>>, <span class="green">but you make contact regardless.</span>
 					<<actionshit $righttarget>>
 					<<if $combatExtended.enemyDodgeSuccess gte 1 or $combatExtended.enemyCounterSuccess gte 1>>
 						<<if $combatExtended.enemyCounterSuccess is 2>>
@@ -925,43 +925,43 @@
 		<</if>>
 
 		<<if $rightaction is "rightfeint">>
-			<<set $rightaction to 0>><<set $leftactiondefault to "rightfeint">><<set $combatExtended.feintingActive to 1>><<set $striking to 1>><<combatExtendedEnemyCheck $rightaction>>
+			<<set $rightaction to 0>><<set $leftactiondefault to "rightfeint">><<set $combatExtended.feintingActive to 1>><<set $striking to 1>><<combatExtendedEnemyCheck $righttarget>>
 			<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
 				<<if $earSlime.corruption gte (currentSkillValue('willpower') / 10)>>
-					You try to launch a feint a the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $rightaction>><<person>><</if>>
+					You try to launch a feint a the <<if $enemytype is "beast">><<beasttype>><<else>><<personselect $righttarget>><<person>><</if>>
 					with your right hand, <span class="red">but the slime immobilises your limb.</span>
 					<<gwillpower>><<willpower 1>>
 				<<else>>
 					The slime tries to immobilise your right arm, <span class="green">but you wrestle control away from it.</span>
-					<<actionsfeint $rightaction>>
+					<<actionsfeint $righttarget>>
 					<<if $combatExtended.enemyDodgeSuccess gte 1 or $combatExtended.enemyCounterSuccess gte 1>>
 						<<if $combatExtended.enemyCounterSuccess is 2>>
 							<<violence 10>><<combatExtendedStability -10>>
 						<<elseif $combatExtended.enemyDodgeSuccess is 2>>
 							/* Attack dodged */
 						<<elseif $combatExtended.enemyCounterSuccess is 1>>
-							<<defiance 1 $rightaction>><<violence 5>><<set $speechhit to 1>><<set $attackstat += 1>><<combatExtendedStability -5>>
+							<<defiance 1 $righttarget>><<violence 5>><<set $speechhit to 1>><<set $attackstat += 1>><<combatExtendedStability -5>>
 						<<else>>
-							<<defiance 0.5 $rightaction>><<set $speechhit to 1>><<set $attackstat += 1>>
+							<<defiance 0.5 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
 						<</if>>
 					<<else>>
-						<<defiance 1 $rightaction>><<set $speechhit to 1>><<set $attackstat += 1>>
+						<<defiance 1 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
 					<</if>>
 				<</if>>
 			<<else>>
-				<<actionsfeint $rightaction>>
+				<<actionsfeint $righttarget>>
 				<<if $combatExtended.enemyDodgeSuccess gte 1 or $combatExtended.enemyCounterSuccess gte 1>>
 					<<if $combatExtended.enemyCounterSuccess is 2>>
 						<<violence 10>>
 					<<elseif $combatExtended.enemyDodgeSuccess is 2>>
 						/* Attack dodged */
 					<<elseif $combatExtended.enemyCounterSuccess is 1>>
-						<<defiance 1 $rightaction>><<violence 5>><<set $speechhit to 1>><<set $attackstat += 1>>
+						<<defiance 1 $righttarget>><<violence 5>><<set $speechhit to 1>><<set $attackstat += 1>>
 					<<else>>
-						<<defiance 0.5 $rightaction>><<set $speechhit to 1>><<set $attackstat += 1>>
+						<<defiance 0.5 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
 					<</if>>
 				<<else>>
-					<<defiance 1 $rightaction>><<set $speechhit to 1>><<set $attackstat += 1>>
+					<<defiance 1 $righttarget>><<set $speechhit to 1>><<set $attackstat += 1>>
 				<</if>>
 			<</if>>
 		<</if>>
@@ -1522,7 +1522,7 @@
 							<</if>>
 						<</if>>
 					<</for>>
-					<<if _leftlowerpull isnot "failed">>
+					<<if _lowerpull isnot "failed">>
 						<<if $vaginause isnot 0 and $vaginause isnot "none">>
 							Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<pussy>> is threatened.
 						<<elseif $penisuse isnot 0 and $penisuse isnot "none">>
@@ -2900,7 +2900,7 @@
 			<<if $combatExtended.reverseRapeStart is 1 or combatSkillCheck("hand", $righttarget)>>
 				<<submission 1>><<sextoystat>>
 				<<if $NPCList[$righttarget].penis is 0>>
-					<<set $rightactiondefault to "strokerOtherPenisTease">><<set $NPCList[$righttarget].penis to "rightstroker">><<set $rightarm to "strokerOtherPenisFuck">><<personselect $righttarget>>
+					<<set $rightactiondefault to "strokerOtherPenisTease">><<set $NPCList[$righttarget].penis to "rightStroker">><<set $rightarm to "strokerOtherPenisFuck">><<personselect $righttarget>>
 					<span class="lblue">You <<handtext>> tease <<hisselect $righttarget>> <<npcPenis $righttarget>><<if $NPCList[$righttarget].chastity.penis.includes("chastity")>> through <<his>> $NPCList[$righttarget].chastity.penis<</if>> with the $currentSexToyRight.name in your right hand.</span>
 				<<else>>
 					<span class="blue">You try to tease <<hisselect $righttarget>> <<npcPenis $righttarget>> with the $currentSexToyRight.name in your right hand, but the entrance is already occupied.</span>
@@ -2931,11 +2931,11 @@
 			/* Note: deliberately does not take virginities */
 			<<set $rightaction to 0>><<set $rightactiondefault to "strokerOtherPenisFuck">><<handskilluse>>
 			<<if $combatExtended.reverseRapeStart is 1 or combatSkillCheck("hand", $righttarget)>>
-				<<submission 10>><<set $speechstroker to 1>><<set $rightarm to "strokerOtherPenisFuck">><<set $NPCList[$righttarget].penis to "rightstroker">>
+				<<submission 10>><<set $speechstroker to 1>><<set $rightarm to "strokerOtherPenisFuck">><<set $NPCList[$righttarget].penis to "rightStroker">>
 
 				You <<handtext>> fuck <<their $righttarget>> <<npcPenis $righttarget>> with the $currentSexToyRight.name in your right hand.
 
-			<<elseif $NPCList[$righttarget].penis is "rightstroker">>
+			<<elseif $NPCList[$righttarget].penis is "rightStroker">>
 				<<set $rightarm to 0>><<set $rightactiondefault to "strokerOtherPenisTease">>
 				<<set $NPCList[$righttarget].penis to 0>><<personselect $righttarget>>
 				<span class="blue">You try to fuck <<hisselect $righttarget>> <<npcPenis 0>> with your $currentSexToyRight.name, but <<he>>
@@ -5174,7 +5174,7 @@
 								/*Default pregnancyAvoidance is 50*/
 								<<switch $_speech>>
 									<<case "accept">>
-										<<He_Short>> grins. "<span class="green">Sure thing, slut.</span>."
+										<<He_Short>> grins. "<span class="green">Sure thing, slut.</span>"
 									<<case "acceptGive">>
 										<<He_Short>> grins. "<span class="blue">Sure, if you have one.</span>"
 									<<case "acceptHas">>
