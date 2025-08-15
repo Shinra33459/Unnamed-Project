@@ -17,6 +17,7 @@ set target[11]=gooseandro
 set target[12]=goosemasc
 set target[13]=mikili
 set target[14]=au
+set target[15]=au_mys
 
 set imagepack[0]=vanilla
 set imagepack[1]=beeesss
@@ -33,8 +34,9 @@ set imagepack[11]=gooseandro
 set imagepack[12]=goosemasc
 set imagepack[13]=mikili
 set imagepack[14]=aokiutage
+set imagepack[15]=aokiutage_mys
 
-set array_length=14
+set array_length=15
 
 del ..\..\dist\*.apk
 

@@ -459,7 +459,6 @@ build_upload_au_job:
         - cp -r -f ./imagepacks/vanilla/* ./DoLP_aoki_utage/img/
         - cp -r -f ./imagepacks/dolp/* ./DoLP_aoki_utage/img/
         - cp -r -f ./imagepacks/au/* ./DoLP_aoki_utage/img/
-        - cp -r -f ./imagepacks/mysterious/* ./DoLP_aoki_utage/img/
         - echo "Finished Building aoki_utage v0.$CI_PIPELINE_IID"
         - echo "Uploading DoLP aoki_utage v0.$CI_PIPELINE_IID"
         - zip -r ./DoLP_aoki_utage_v0.$CI_PIPELINE_IID.zip ./DoLP_aoki_utage/ 1>NUL
@@ -470,6 +469,35 @@ build_upload_au_job:
         - rm -rf ./DoLP_aoki_utage
         - rm -rf ./DoLP_aoki_utage_v0.$CI_PIPELINE_IID.zip
         - echo "Finished Uploading DoLP aoki_utage v0.$CI_PIPELINE_IID"
+    only:
+        - master
+
+build_upload_au_mys_job:
+    stage: compilation
+    script:
+        - echo "Building DoLP aoki_utage_mys v0.$CI_PIPELINE_IID"
+        - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - version=$(cat version)
+        - mkdir -p DoLP_aoki_utage_mys/img/
+        - sh ./compile.sh
+        - cp "Degrees of Lewdity.html" ./DoLP_aoki_utage_mys/
+        - cp -r -f ./imagepacks/vanilla/* ./DoLP_aoki_utage_mys/img/
+        - cp -r -f ./imagepacks/dolp/* ./DoLP_aoki_utage_mys/img/
+        - cp -r -f ./imagepacks/au/* ./DoLP_aoki_utage_mys/img/
+        - cp -r -f ./imagepacks/mysterious/* ./DoLP_aoki_utage_mys/img/
+        - echo "Finished Building aoki_utage_mys v0.$CI_PIPELINE_IID"
+        - echo "Uploading DoLP aoki_utage_mys v0.$CI_PIPELINE_IID"
+        - zip -r ./DoLP_aoki_utage_mys_v0.$CI_PIPELINE_IID.zip ./DoLP_aoki_utage_mys/ 1>NUL
+        - 'curl
+            --header "JOB-TOKEN: $CI_JOB_TOKEN"
+            --upload-file ./DoLP_aoki_utage_mys_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage_mys/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_mys_v0.$CI_PIPELINE_IID.zip"'
+        - rm -rf ./DoLP_aoki_utage_mys
+        - rm -rf ./DoLP_aoki_utage_mys_v0.$CI_PIPELINE_IID.zip
+        - echo "Finished Uploading DoLP aoki_utage_mys v0.$CI_PIPELINE_IID"
     only:
         - master
 
@@ -547,6 +575,7 @@ release_job:
         - job: build_upload_goose_masc_job
         - job: build_upload_mikili_job
         - job: build_upload_au_job
+        - job: build_upload_au_mys_job
         - job: build_upload_modloader_job
         - job: build_upload_html_only_job
     rules:
@@ -592,6 +621,8 @@ release_job:
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_mikili/v0.$CI_PIPELINE_IID/DoLP_mikili_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_aoki_utage'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_v0.$CI_PIPELINE_IID.zip"
+                - name: 'DoLP_aoki_utage_mys'
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage_mys/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_mys_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_Modloader'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_Modloader/v0.$CI_PIPELINE_IID/DoLP_Modloader_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_HTML_only'
