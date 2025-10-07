@@ -642,15 +642,6 @@ function effects() {
 			delete V.pillsTakenLast;
 		}
 
-		if (V.dailySunscreen == true) {
-			if (Skin.Sunscreen.usesLeft > 0) {
-				Skin.Sunscreen.apply();
-				element("span", "You apply sunscreen for the day.", "purple");
-			} else {
-				element("span", "You don't have any sunscreen to apply.", "red");
-			}
-		}
-
 		if (V.hairGrowthApplied) {
 			element("span", `You apply growth formula to your hair${V.hairGrowthAppliedLast ? "," : "."}`, "purple");
 			if (V.hairGrowthAppliedLast) element("span", "but used the last of it.", "red");

@@ -993,10 +993,6 @@ function dayPassed(days) {
 				V.bikeSecurityGear = 0;
 			}
 		}
-
-		if (V.dailySunscreen == true) {
-			V.effectsmessage = 1;
-		}
 	}
 
 	if (random(1, 8) === 1) V.daily.robin.orphanageKitchen = true;
