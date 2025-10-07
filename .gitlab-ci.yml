@@ -501,35 +501,63 @@ build_upload_au_mys_job:
     only:
         - master
 
-build_upload_modloader_job:
+build_upload_aumasc_job:
     stage: compilation
     script:
-        - echo "Building DoLP Modloader v0.$CI_PIPELINE_IID"
+        - echo "Building DoLP aoki_utage_masc v0.$CI_PIPELINE_IID"
         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
         - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
-        - mkdir -p DoLP_Modloader/img/
-        - mkdir -p DoLP_Modloader/mod/
+        - version=$(cat version)
+        - mkdir -p DoLP_aoki_utage_masc/img/
         - sh ./compile.sh
-        - node "dist-insertTools/insert2html.cjs" "Degrees of Lewdity.html" "modList.json" "dist-BeforeSC2/BeforeSC2.js"
-        - cp "Degrees of Lewdity.html.mod.html" ./DoLP_Modloader/
-        - cp "modList.json" ./DoLP_Modloader/
-        - cp -r -f ./mod/* ./DoLP_Modloader/mod/
-        - cp -r -f ./imagepacks/vanilla/* ./DoLP_Modloader/img/
-        - cp -r -f ./imagepacks/dolp/* ./DoLP_Modloader/img/
-        - echo "Finished Building DoLP Modloader v0.$CI_PIPELINE_IID"
-        - echo "Uploading DoLP Modloader v0.$CI_PIPELINE_IID"
-        - zip -r ./DoLP_Modloader_v0.$CI_PIPELINE_IID.zip ./DoLP_Modloader/ 1>NUL
+        - cp "Degrees of Lewdity.html" ./DoLP_aoki_utage_masc/
+        - cp -r -f ./imagepacks/vanilla/* ./DoLP_aoki_utage_masc/img/
+        - cp -r -f ./imagepacks/dolp/* ./DoLP_aoki_utage_masc/img/
+        - cp -r -f ./imagepacks/aumasc/* ./DoLP_aoki_utage_masc/img/
+        - echo "Finished Building aoki_utage_masc v0.$CI_PIPELINE_IID"
+        - echo "Uploading DoLP aoki_utage_masc v0.$CI_PIPELINE_IID"
+        - zip -r ./DoLP_aoki_utage_masc_v0.$CI_PIPELINE_IID.zip ./DoLP_aoki_utage_masc/ 1>NUL
         - 'curl
             --header "JOB-TOKEN: $CI_JOB_TOKEN"
-            --upload-file ./DoLP_Modloader_v0.$CI_PIPELINE_IID.zip
-            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_Modloader/v0.$CI_PIPELINE_IID/DoLP_Modloader_v0.$CI_PIPELINE_IID.zip"'
-        - rm -rf ./DoLP_Modloader
-        - rm -rf ./DoLP_Modloader_v0.$CI_PIPELINE_IID.zip
-        - echo "Finished Uploading DoLP Modloader v0.$CI_PIPELINE_IID"
+            --upload-file ./DoLP_aoki_utage_masc_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage_masc/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_masc_v0.$CI_PIPELINE_IID.zip"'
+        - rm -rf ./DoLP_aoki_utage_masc
+        - rm -rf ./DoLP_aoki_utage_masc_v0.$CI_PIPELINE_IID.zip
+        - echo "Finished Uploading DoLP aoki_utage_masc v0.$CI_PIPELINE_IID"
     only:
         - master
+
+# build_upload_modloader_job:
+#     stage: compilation
+#     script:
+#         - echo "Building DoLP Modloader v0.$CI_PIPELINE_IID"
+#         - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+#         - find ./devTools/androidsdk/image/cordova/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+#         - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+#         - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+#         - mkdir -p DoLP_Modloader/img/
+#         - mkdir -p DoLP_Modloader/mod/
+#         - sh ./compile.sh
+#         - node "dist-insertTools/insert2html.cjs" "Degrees of Lewdity.html" "modList.json" "dist-BeforeSC2/BeforeSC2.js"
+#         - cp "Degrees of Lewdity.html.mod.html" ./DoLP_Modloader/
+#         - cp "modList.json" ./DoLP_Modloader/
+#         - cp -r -f ./mod/* ./DoLP_Modloader/mod/
+#         - cp -r -f ./imagepacks/vanilla/* ./DoLP_Modloader/img/
+#         - cp -r -f ./imagepacks/dolp/* ./DoLP_Modloader/img/
+#         - echo "Finished Building DoLP Modloader v0.$CI_PIPELINE_IID"
+#         - echo "Uploading DoLP Modloader v0.$CI_PIPELINE_IID"
+#         - zip -r ./DoLP_Modloader_v0.$CI_PIPELINE_IID.zip ./DoLP_Modloader/ 1>NUL
+#         - 'curl
+#             --header "JOB-TOKEN: $CI_JOB_TOKEN"
+#             --upload-file ./DoLP_Modloader_v0.$CI_PIPELINE_IID.zip
+#             "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_Modloader/v0.$CI_PIPELINE_IID/DoLP_Modloader_v0.$CI_PIPELINE_IID.zip"'
+#         - rm -rf ./DoLP_Modloader
+#         - rm -rf ./DoLP_Modloader_v0.$CI_PIPELINE_IID.zip
+#         - echo "Finished Uploading DoLP Modloader v0.$CI_PIPELINE_IID"
+#     only:
+#         - master
 
 build_upload_html_only_job:
     stage: compilation
@@ -576,7 +604,8 @@ release_job:
         - job: build_upload_mikili_job
         - job: build_upload_au_job
         - job: build_upload_au_mys_job
-        - job: build_upload_modloader_job
+        - job: build_upload_aumasc_job
+        # - job: build_upload_modloader_job
         - job: build_upload_html_only_job
     rules:
     - if: $CI_COMMIT_TAG
@@ -623,6 +652,8 @@ release_job:
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_aoki_utage_mys'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage_mys/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_mys_v0.$CI_PIPELINE_IID.zip"
+                - name: 'DoLP_aoki_utage_masc'
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage_masc/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_masc_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_Modloader'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_Modloader/v0.$CI_PIPELINE_IID/DoLP_Modloader_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_HTML_only'
