@@ -827,8 +827,8 @@ Six pairs of eyes stare at you through the dim light. The pack advances on you.
 :: Forest Swim
 
 <<location "forest">><<water>><<effects>>
-<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
-<<if $danger gte (9900 - ($allure * $forestmod)) and $eventskip is 0>>
+
+<<if dangerEvent($forestmod) and $eventskip is 0>>
 	<!-- Modified for monster people -->
 	<<beastNEWinit 1 lizard>>
 	<<if $monster is 1 or $bestialitydisable is "f">>
@@ -852,7 +852,7 @@ Six pairs of eyes stare at you through the dim light. The pack advances on you.
 		<br><br>
 
 		<<rng>>
-		<<if $wraith.hunt and Time.isBloodMoon() and $danger gte (7900 - ($allure * $forestmod))>>
+		<<if $wraith.hunt and Time.isBloodMoon() and dangerEvent($forestmod, 7900)>>
 			As you climb up the bank you feel your foot catch on something.
 			<<if $slimedisable is "f">>
 				You look down to see a pale white slime stuck to you, and many more emerging from the river. <<rainWraith true>>
@@ -1690,7 +1690,7 @@ You stay and chat with the <<person>>. <<He>> seems happy for the company.
 <</if>>
 
 <<if $rng gte 81>>
-	"If you see any strange fellows," <<he>> says at one point. "Stay away. Criminals sometimes traffic through these woods. Getting stuff into town that they shouldn't."
+	"If you see any strange fellows," <<he>> says at one point, "stay away. Criminals sometimes traffic through these woods. Getting stuff into town that they shouldn't."
 <<elseif $rng gte 61>>
 	"Folks from the temple sometimes come out here for ceremonies," <<he>> says at one point. "I avoid them. Creepy buggers."
 <<elseif $rng gte 41>>
@@ -1714,7 +1714,6 @@ After a while <<he>> looks at the sky. "I need to get back to work," <<he>> says
 
 <<set $seductiondifficulty to 6000>>
 <<seductioncheck>>
-<br><br>
 <<seductionskilluptext>>
 <<seductionskilluse>>
 
@@ -3351,7 +3350,6 @@ The slimes disappear into the river. <<tearful>> you look around frantically.
 
 <<set $seductiondifficulty to 0>>
 <<seductioncheck>>
-<br><br>
 
 <<His>> eyes light up. "Oh, hell yeah!" <<He>> lunges for you and throws <<his>> arms around you, tackling you to the forest floor. <<His>> vines come to <<his>> side, writhing around you. "I love meeting humans who love nature."
 <br><br>
@@ -3529,7 +3527,7 @@ You start to climb the tree towards the nest. You make it up half way, before ne
 
 	You continue the climb up to the nest, balancing yourself on the large branch it sits on.
 	<<if currentSkillValue('tending') gte 150>>
-		By your quick count, you see <span class="blue"><<number $forest_nest.eggs>></span> viable bird egg<<if $forest_nest.eggs gt 1>>s<</if>>, but you'd need to count them individually to be sure.
+		By your quick count, you see <span class="blue"><<number $forest_nest.eggs>></span> viable bird <<pluralise $forest_nest.eggs "egg">>, but you'd need to count them individually to be sure.
 		<br><br>
 
 		<<link [[Climb down and pick out eggs|Forest Nest Search Eggs]]>><</link>><<tendingdifficulty 100 500>>
@@ -3569,7 +3567,7 @@ You start to climb the tree towards the nest. You make it up half way, before ne
 				<br>
 			<</if>>
 		<<elseif currentSkillValue('tending') gte 150>>
-			By your quick count, you see <span class="blue"><<number $forest_nest.eggs>></span> viable bird egg<<if $forest_nest.eggs gt 1>>s<</if>>, but you'd need to count them individually to be sure.
+			By your quick count, you see <span class="blue"><<number $forest_nest.eggs>></span> viable bird <<pluralise $forest_nest.eggs "egg">>, but you'd need to count them individually to be sure.
 			<br><br>
 
 			<<link [[Pick up eggs|Forest Nest Search Eggs]]>><</link>><<tendingdifficulty 100 500>>
@@ -3679,7 +3677,7 @@ You approach the nest and look inside.
 		<br>
 	<</if>>
 <<elseif currentSkillValue('tending') gte 150>>
-	By your quick count, you see <span class="blue"><<number $forest_nest.eggs>></span> viable bird egg<<if $forest_nest.eggs gt 1>>s<</if>>, but you'd need to count them individually to be sure.
+	By your quick count, you see <span class="blue"><<number $forest_nest.eggs>></span> viable bird <<pluralise $forest_nest.eggs "egg">>, but you'd need to count them individually to be sure.
 	<br><br>
 
 	<<link [[Pick up eggs|Forest Nest Search Eggs]]>><</link>><<tendingdifficulty 100 500>>
@@ -3873,13 +3871,13 @@ That is, until you hear rapid footsteps behind you. You turn just in time to be
 <</if>>
 <br><br>
 
+You eventually say goodbye.
 <<if $forest_nest.eggs gte 2>>
 	<<set $forest_nest.eggs to Math.floor($forest_nest.eggs / 2)>>
 	<<bHe>> lets you take half of the remaining eggs. <<tending_bird_eggs $forest_nest.eggs>>
 <<else>>
 	There's no eggs left to take.
 <</if>>
-You eventually say goodbye.
 <br><br>
 
 <<link [[Leave|Forest]]>><<endevent>><<unset $forest_nest>><<set $eventskip to 1>><</link>>
@@ -3940,7 +3938,7 @@ You hide and wait, watching the nest intently.
 			<<set $forest_nest.eggs -= 1>><span class="purple"><<bHe>> clumsily drops one of them and steps on it,</span> tumbling over <<bhimself>> right after.
 		<</if>>
 	<</if>>
-	<<set $_athlDiffMin to ($NPCList[0].traits.includesAny("terrirorial","cowardly") ? 200 : 1)>>
+	<<set $_athlDiffMin to ($NPCList[0].traits.includesAny("territorial","cowardly") ? 200 : 1)>>
 	<<set $skulduggerydifficulty to $NPCList[0].skills.security>>
 	<br><br>
 
@@ -4038,6 +4036,7 @@ The <<beasttype>> dives behind a bush and starts to dig a hole. You slowly step 
 	<</if>>
 	You carefully avoid any stray stones or twigs, and <span class="green">make it right behind <<bhim>> without a sound.</span>
 	<<skulduggeryuse>>
+	<br><br>
 
 	<<link [[Pet|Forest Fox Nest Pet]]>><</link>><<tendingdifficulty _tendingMin _tendingMax>><<llstress>>
 	<br>
@@ -4303,7 +4302,7 @@ Without warning, the rope releases, dropping you back on the ground. You shakily
 	<br>
 	<<link [[Submit (0:30)|Eden Caged Caught]]>><<set $phase to 1>><<pass 30>><<npcincr Eden dom 1>><</link>><<gdom>>
 	<br>
-<<elseif $syndromeeden is 1 and (($edenfreedom isnot 2 and $edendays gte 7) or ($edenfreedom gte 2 and $edendays gte 21))>>
+<<elseif edenFreedomStatus() gte 2>>
 	A hand grabs you by the back of the neck. "Where the fuck have you been?" snarls a <<personsimple>>. It's Eden. "I've been worried sick!"
 	<br><br>
 
@@ -4316,27 +4315,19 @@ Without warning, the rope releases, dropping you back on the ground. You shakily
 	<br>
 	<<link [[Submit (0:30)|Eden Caged Caught]]>><<set $phase to 1>><<pass 30>><<sub 1>><<npcincr Eden dom 1>><</link>><<gdom>>
 	<br>
-<<elseif $edenfreedom gte 2 and $edendays gte 8>>
+<<elseif edenFreedomStatus() is 1>>
 	An arm wraps around your neck from behind, while a hand presses against the back of your head. You hear a <<personsimple>>'s voice. "I've been looking for you all over." It's Eden. "Come on, let's go home."
 	<br><br>
 
-	<<if $asphyxiaLvl gte 3>>
+	<<if $edenfreedom is 1 or ($edenfreedom gte 2 and $asphyxiaLvl gte 3)>>
 		<<link [[Resist|Eden Recaptured Resist]]>><<set $fightstart to 1>><</link>>
 	<<else>>
 		<<link [[Resist|Eden Recaptured Resist Normal]]>><<set $molestationstart to 1>><</link>>
 	<</if>>
 	<br>
-	<<link [[Go to the cabin (0:30)|Eden Recaptured]]>><<set $edendays to 0>><<pass 30>><</link>>
+	<<link [[Go to the cabin (0:30)|Eden Recaptured]]>><<edenTrackers>><<pass 30>><</link>>
 	<br>
-<<elseif $edenfreedom is 1 and $edendays gte 2>>
-	An arm wraps around your neck from behind, while a hand presses against the back of your head. You hear a <<personsimple>>'s voice. "I've been looking for you all over." It's Eden. "Come on, let's go home."
-	<br><br>
-
-	<<link [[Resist|Eden Recaptured Resist]]>><<set $fightstart to 1>><</link>>
-	<br>
-	<<link [[Go to the cabin (0:30)|Eden Recaptured]]>><<set $edendays to 0>><<pass 30>><</link>>
-	<br>
-<<elseif $edenfreedom gte 1>>
+<<elseif edenFreedomStatus() is 0>>
 	<<rng>>
 	<<if Time.dayState isnot "night">>
 		"Those traps are meant for animals," you hear a voice say. It's Eden. "I thought you were that damned fox. You should watch where you're going."
@@ -4876,7 +4867,7 @@ You put your head right next to the <<beasttype>>.
 		<<saveNPC 0 "fox_grudge">>
 		<<set $fox_grudge to 1>>
 		<<if $monster is 1>>
-			"Dick," <<bhe>> barks. "<span class="red">I'll remember this</span>."
+			"Dick," <<bhe>> barks. <span class="red">"I'll remember this."</span>
 		<<else>>
 			<span class="red">And angry</span>.
 		<</if>>
@@ -5212,7 +5203,7 @@ You put your head right next to the <<beasttype>>.
 
 :: Forest Nest Snake Vore 1
 <<effects>>
-You lay down in the nest, completely still. You don't have to wait long. You hear the slithering first, and soon feel breath on your legs.
+You lie down in the nest, completely still. You don't have to wait long. You hear the slithering first, and soon feel breath on your legs.
 <<deviancy4>>
 <<link [[Next|Forest Nest Snake Vore 2]]>><<endevent>><<unset $forest_nest>><<set $molestationstart to 2>><</link>>
 <br>

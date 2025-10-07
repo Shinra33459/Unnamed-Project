@@ -44,7 +44,7 @@
 	<<if !$daily.birdHuntAsked>>
 		<<set $daily.birdHuntAsked to 1>>
 		<<if $monster is 1>>
-			<<bHe>> looks at you for a moment. "No. <<Wife>> is not ready yet." Before you can ask why, <<bhe>> flaps <<bhis>> wings for emphasis. "Can not carry you for the hunt. When <<wife>> is ready, we can go together."
+			<<bHe>> looks at you for a moment. "No. <<Wife>> is not ready yet." Before you can ask why, <<bhe>> flaps <<bhis>> wings for emphasis. "Cannot carry you for the hunt. When <<wife>> is ready, we can go together."
 		<<else>>
 			<<bHe>> looks at you for a moment. <<bHe>> flaps <<bhis>> wings at you and shakes <<bhis>> head. <<bHe>> seems to think you're not ready. <span class="blue">You'll need to learn to fly first.</span>
 		<</if>>
@@ -293,11 +293,17 @@ You stand on the edge of the perch, spreading your wings. You feel for the wind 
 	<br>
 <<else>>
 	<<flight_time_check 30 "silent">>
-	<<link [[Hunt alone (<<print getTimeString(_hoursPassed, _minutesPassed)>>)|Bird Hunt Start Alone]]>><<set $fatigueMod to _fatigueMod>><<set $flightTime to _flightTime>><<unset $birdPerch>><<bird_pass _flightTime>><</link>><<print _fatigueText>>
+	<<if pcAreArmsBound("both")>>
+		<span class="red">Both of your arms are bound</span>, so you are unable to hunt alone.
+	<<else>>
+		<<link [[Hunt alone (<<print getTimeString(_hoursPassed, _minutesPassed)>>)|Bird Hunt Start Alone]]>><<set $fatigueMod to _fatigueMod>><<set $flightTime to _flightTime>><<unset $birdPerch>><<bird_pass _flightTime>><</link>><<print _fatigueText>>
+	<</if>>
 	<br>
 	<<if ($bird.activity is "sing" or $bird.activity is "groom") and $bird.state is "home">>
 		<<if $bird.injured gt 1>>
 			<span class="red">Your spouse won't be able to hunt with you until <<bhis>> wing heals.</span>
+		<<elseif pcAreArmsBound("both")>>
+			<span class="red">Both of your arms are bound</span>, so you are unable to hunt together.
 		<<else>>
 			<<link [[Hunt together|Bird Hunt Start Ask]]>><<npcincr "Great Hawk" dom 1>><</link>><<gdom>>
 		<</if>>
@@ -1686,8 +1692,8 @@ You land near the dying plants. They look fragile. You'll have to choose which p
 	<<case 2>>You pluck away the few living leaves.<<set _prop to "leaf">><<flight_hunt_get "leaves" 2>>
 <</switch>>
 <br><br>
-<<set $danger to random(1, 10000)>>
-<<if $danger gte (9000 - $allure)>>
+
+<<if dangerEvent(1, 9000)>>
 	<<endevent>>
 	<<wearProp _prop>>
 	<<if $rng gte 50>><<beastNEWinit 1 fox>><<else>><<beastNEWinit 1 cat>><</if>>
@@ -1833,11 +1839,11 @@ You land amidst the flowers.
 <<effects>>
 <<switch $phase>>
 	<<case 1>>
-		You lay back in the flowers.
+		You lie back in the flowers.
 		<<if $bird.hunts.duo>>
 			<<your_bird_text "cap">> looks down at you curiously, before
 			<<if $monster is 1>>
-				laying on <<bhis>> back next to you.
+				lying on <<bhis>> back next to you.
 			<<else>>
 				sitting down next to you.
 			<</if>>
@@ -1923,7 +1929,7 @@ You land amidst the flowers.
 
 		<<flight_hunt_return>>
 	<<case 4>>
-		You lay back in the strange flowers. Your head spins.
+		You lie back in the strange flowers. Your head spins.
 		<<if $bird.hunts.duo is true>>
 			<<your_bird_text "cap">> snuggles up next to you, gripping onto you tightly.
 			<br><br>
@@ -3292,7 +3298,7 @@ You watch the couple with interest.
 				It starts off slow, but before long, the large <<beasttype _domF>> is riding <<bhis _domF>> lover with fervour. It's hard to not get a little exasperated yourself.
 				<br><br>
 
-				You continue to watch for a long time, their pace still increasing. With a final thrust, you <<if $bird.hunts.duo is true>>and your spouse <</if>>watch the <<beasttype _subF>>'s knot slide in. They both moan as the <<beasttype _domF>> is filled wih warm semen. <<arousal 2000>><<ggarousal>>
+				You continue to watch for a long time, their pace still increasing. With a final thrust, you <<if $bird.hunts.duo is true>>and your spouse <</if>>watch the <<beasttype _subF>>'s knot slide in. They both moan as the <<beasttype _domF>> is filled with warm semen. <<arousal 2000>><<ggarousal>>
 			<</if>>
 		<<case 3>>
 			The large <<beasttype _domF>> slowly takes the smaller <<beasttype _subF>>'s penis into <<bhis _domF>> mouth, and bobs <<bhis _domF>> head up and down.
@@ -3525,12 +3531,9 @@ You land away from their tents and stay low. <<if $exposed gte 2>>Your heart pou
 <<if $skulduggerysuccess is 1>>
 	<<wearProp "rock">>
 	<span class="green">Thinking quickly, you pick up a rock and throw it behind them.</span> The sound is enough to pull their attention. With the <<person>> distracted, you sneak into the tent they came out of.
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<br><br>
+
+	<<skulduggeryuse>>
 
 	It's mercifully empty of other occupants. There's a lot of ground to cover, but you don't know how much time you have.
 	<br><br>
@@ -3551,6 +3554,8 @@ You land away from their tents and stay low. <<if $exposed gte 2>>Your heart pou
 	<</if>>
 	Something about <<him>> makes you uneasy.
 	<br><br>
+
+	<<skulduggeryuse>>
 
 	<<link [[Run|Bird Hunt Tent Steal Alone Caught]]>><<set $phase to 1>><<set $phase2 to 1>><</link>><<athleticsdifficulty 100 700>>
 	<br>
@@ -3664,7 +3669,6 @@ You land away from their tents and stay low. <<if $exposed gte 2>>Your heart pou
 	You continue searching.
 	<br><br>
 <</if>>
-<<set $danger to (random(1, 10000) + ($tentLootAmount * 2000))>>
 <<if $phase is 1>>
 	<<wearProp "rag">>
 	You look around for any spare clothing. You find
@@ -3742,7 +3746,7 @@ You land away from their tents and stay low. <<if $exposed gte 2>>Your heart pou
 	<</if>>
 	<br><br>
 
-	<<if $danger gte (9900 - $allure) and $tentLootAmount gte 2>>
+	<<if dangerEvent(1, 9900 + $tentLootAmount * 2000) and $tentLootAmount gte 2>>
 		<<set $daily.huntRemyAlerted to true>><<unset $tentLootAmount>>
 		<span class="red">You hear footsteps.</span> The <<person>> enters the tent and locks eyes with you.
 		<br><br>
@@ -3786,7 +3790,7 @@ You land away from their tents and stay low. <<if $exposed gte 2>>Your heart pou
 	<br><br>
 
 	<<flight_hunt_get "tools" 1>>
-	<<if $danger gte (9900 - $allure) and $tentLootAmount gte 2>>
+	<<if dangerEvent(1, 9900 + $tentLootAmount * 2000) and $tentLootAmount gte 2>>
 		<<set $daily.huntRemyAlerted to true>><<unset $tentLootAmount>>
 		<span class="red">You hear footsteps.</span> The <<person>> enters the tent and locks eyes with you.
 		<br><br>
@@ -3832,7 +3836,7 @@ You land away from their tents and stay low. <<if $exposed gte 2>>Your heart pou
 <</switch>>
 <br><br>
 
-<<if $danger gte (9900 - $allure) and $tentLootAmount gte 2>>
+<<if dangerEvent(1, 9900 + $tentLootAmount * 2000) and $tentLootAmount gte 2>>
 	<<set $daily.huntRemyAlerted to true>><<unset $tentLootAmount>>
 	<span class="red">You hear footsteps.</span> The <<person>> enters the tent and locks eyes with you.
 	<br><br>
@@ -3919,7 +3923,6 @@ Without thinking, you grab one of the snare rods from the wall and swing it at <
 <<set _seductionMod to $tentLootAmount or 0>>
 <<set $seductiondifficulty to (5000 + (_seductionMod * 1000))>>
 <<seductioncheck>>
-<br><br>
 <<seductionskilluptext>>
 <<seductionskilluse>>
 
@@ -4391,6 +4394,7 @@ You take a step forward. Then another. You begin to run, torch to the side. You 
 	<br><br>
 
 	<<if $danceSuccess>>
+		<<canvas-model-temporary-effect "fire" 2>>
 		Some of them try to throw water at you, <span class="green">but you dodge every attempt to quench the flame</span>. You duck clear under a bucketful of water hurled at you, only to spin and light another tent. You deftly avoid someone trying to tackle you, and pass another tent as it goes up in smoke. They try to surround you, so you keep your torch between you and them, making them think twice. Arriving near their last tent, you hurl your torch. It finds its mark. <<if $farm?.aggro>><<farm_aggro -5>><<laggro>><</if>><<ggcrime "destruction">><<crimeUp 35 "destruction">>
 		<br><br>
 
@@ -5103,7 +5107,7 @@ You start to make the trap. You scrounge up leaves and sticks to cover the hole.
 
 As the <<person2>><<person>> draws close, you suddenly grab <<his>> hand and pull.
 <<if $physiqueSuccess>>
-	<span class="green"><<He>>'s unable to pull away.</span> You sidestep the hole, and bring <<him>> right to it. "Don't make this hard for-" <<His>> words are interrupted as <<he>> steps on the trap, causing <<him>> to stumble and fall. You take the opportunity to quickly run away. The <<person1>> doesn't chase you, instead opting to laugh at <<his>> misfortunate friend.
+	<span class="green"><<Hes>> unable to pull away.</span> You sidestep the hole, and bring <<him>> right to it. "Don't make this hard for-" <<His>> words are interrupted as <<he>> steps on the trap, causing <<him>> to stumble and fall. You take the opportunity to quickly run away. The <<person1>> doesn't chase you, instead opting to laugh at <<his>> misfortunate friend.
 	<br><br>
 
 	You make sure you're out of sight, then take flight. You fly above them and wait until the two leave, then land up on the pillar again. With your trap ruined, you can either leave or try to make an ambush without it.
@@ -5180,7 +5184,7 @@ As the <<person2>><<person>> draws close, you suddenly grab <<his>> hand and pul
 	<<endcombat>>
 	<<set $phase to _phaseSaved>>
 
-	You make sure you're out of sight, then take flight. You fly above them and wait until the they leave, then land up on the pillar again.
+	You make sure you're out of sight, then take flight. You fly above them and wait until they leave, then land up on the pillar again.
 	<<if $phase is 3>>
 		Your trap is ruined, but maybe you won't need it.
 	<<else>>
@@ -6036,7 +6040,7 @@ Your stomach rises as you plummet. You try to get your bearings, and your attack
 <<if $phase is 0>>
 	<<if $physiqueSuccess>>
 		<<if $bodysize lte 1>>
-			You tuck your wings in as tightly as you can, disrupting <<bhis 0>> grip. <span class="green"><<bHe 0>> fumbles you thanks to your small size, and you escape <<bhis 0>> grasp.</span> Your maneuver throws <<bhim 0>> off balance.
+			You tuck your wings in as tightly as you can, disrupting <<bhis 0>> grip. <span class="green"><<bHe 0>> fumbles you thanks to your small size, and you escape <<bhis 0>> grasp.</span> Your manoeuvre throws <<bhim 0>> off balance.
 			<br><br>
 
 			You take the chance to turn the grab around, preventing <<bhim 0>> from using <<bhis 0>> wings entirely. Once you're confident you can escape, you release <<bhim 0>>, letting the air resistance keep you far above <<bhim 0>>.
@@ -6386,7 +6390,7 @@ It makes you feel warm inside. You've changed a life today. <<stress -36>><<trau
 <<set $bird.overrideTimer to 300>>
 <<set $bird.timer to 300>>
 <<set $moor to 100>>
-You see the castle, it's not far anymore. Meanwhile, your <<beasttype>> has started to show a slight limp in <<bhis>> wing. You land on the perch. <<bHe>> slowly walks into the nest and lays down.
+You see the castle, it's not far anymore. Meanwhile, your <<beasttype>> has started to show a slight limp in <<bhis>> wing. You land on the perch. <<bHe>> slowly walks into the nest and lies down.
 <br><br>
 
 <<bHe>> closes <<bhis>> wings and tries to find a comfortable position.
@@ -6714,7 +6718,7 @@ You stoke the fire, and keep a close eye on it. When you think it's done, you ta
 <<effects>>
 <<npc "Great Hawk">>
 <<feedLurker>>
-You bring the lurker to your injured spouse. <<He>> quickly devours it.
+You bring the lurker to your injured spouse. <<bHe>> quickly devours it.
 <<if $monster is 1>>
 	"Thank you for hunting for me, <<wife>>. I feel... better."
 <<else>>
@@ -6729,7 +6733,7 @@ You bring the lurker to your injured spouse. <<He>> quickly devours it.
 <<effects>>
 <<npc "Great Hawk">>
 <<feedLurker>>
-You bring the lurker to your spouse. <<He>> quickly devours it.
+You bring the lurker to your spouse. <<bHe>> quickly devours it.
 <<if $monster is 1>>
 	"Thank you for hunting for me, <<wife>>. I hope I can join you in hunting again soon."
 <<else>>
@@ -7737,7 +7741,7 @@ You dodge their grabs and try to maintain distance, but they eventually corner y
 "I can't deny your skill, <<girl>>. No one's gotten past me before." <<His>> voice reverberates through the now darkened cave, <<his>> visor giving it an eerie undertone. <<He>> brings <<his>> face close to yours, letting you see your own reflection. You see the etchings on the visor clearly: a pair of antlers, each one over where <<his>> eyes would be, over where your reflection's eyes are. <<stress 12>><<ggstress>>
 <br><br>
 
-You back away, holding the silver bar behind you. <<He>> chuckles. "The Lure called to you too, didn't it? It calls to all of the Elk's children. How's about we talk a while? We could use someone like-"
+You back away, holding the silver bar behind you. <<He>> chuckles. "The Lure called to you too, didn't it? It calls to all of the Elk's children. How's about we talk awhile? We could use someone like-"
 <br><br>
 
 Suddenly, you hear a heavy thumping coming from behind you. It starts slow, but speeds up rapidly. You didn't realise it until now, but you've ended up right in front of the largest hole in the wall. The sound grows louder and louder, and the chittering in the cave becomes overwhelming. The <<person4>><<person>> takes a few steps back. You turn around, and a wiry pink shape in the darkness starts to grow larger. As it approaches, you see the shiny black detailing around it. It's a massive lurker. It lunges out of the hole!

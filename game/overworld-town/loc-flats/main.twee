@@ -33,8 +33,8 @@ You are on the ground floor of a block of flats on Barb Street. The walls and fl
 	<br>
 
 <<else>>
-	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
-	<<if ($danger gte (9900 - $allure) or $eventforced) and $eventskip is 0>>
+	
+	<<if (dangerEvent() or $eventforced) and $eventskip is 0>>
 		<<cleareventpool>>
 
 		<<if $exposed gte 1>>
@@ -147,7 +147,7 @@ You are on the ground floor of a block of flats on Barb Street. The walls and fl
 
 			<<addinlineevent "flats_4" 1>>
 				<<generate1>><<person1>>
-				You pass a <<person>> working as a janitor. <<He>>'s wearing headphones, and doesn't seem to notice you.
+				You pass a <<person>> working as a janitor. <<Hes>> wearing headphones, and doesn't seem to notice you.
 				<br><br>
 				<<link [[Next|Flats]]>><<endevent>><<set $eventskip to 1>><</link>>
 				<br>
@@ -250,8 +250,11 @@ You are on the ground floor of a block of flats on Barb Street. The walls and fl
 				<span class="blue">You need more daylight to work as a window cleaner.</span>
 				<br>
 			<<else>>
-				<<link [[Work as a window cleaner (1:00)|Flats Window]]>><<housekeeping 1 300>><</link>><<ghousekeeping 300>>
-				<br>
+				<<if pcAreArmsBound("both")>>
+					<span class="red">Both of your arms are bound</span>, so you are unable to work as a window cleaner.
+				<<else>>
+					<<link [[Work as a window cleaner (1:00)|Flats Window]]>><<housekeeping 1 300>><</link>><<ghousekeeping 300>>
+				<</if>>
 			<</if>>
 		<</if>>
 		<<if $hookah_state gte 2>>
@@ -264,15 +267,15 @@ You are on the ground floor of a block of flats on Barb Street. The walls and fl
 		<<if $flats_superintendent is 1 or $flats_superintendent is 2>>
 			<<if Time.dayState is "day">>
 				<<if $exposed lt 1>>
-					<<ind>><<link [[Superintendent's office (0:01)|Flats Superintendent]]>><<pass 1>><</link>>
+					<<officeicon>><<link [[Superintendent's office (0:01)|Flats Superintendent]]>><<pass 1>><</link>>
 					<br>
 				<</if>>
 			<<else>>
 				<<if Time.dayState is "dawn">>
-					<<ind>><span class="blue">The superintendent's office isn't open yet.</span>
+					<<officeicon>><span class="blue">The superintendent's office isn't open yet.</span>
 					<br>
 				<<else>>
-					<<ind>><span class="blue">The superintendent's office is closed for the night.</span>
+					<<officeicon>><span class="blue">The superintendent's office is closed for the night.</span>
 					<br>
 				<</if>>
 			<</if>>
@@ -300,10 +303,10 @@ You enter the superintendent's office,
 	<br><br>
 	<<if $hookah_state gte 1>>
 		<<if $hookah_state gte 2>>
-			<<ind>><<link [[Say you've found it, and show the way (0:01)|Flats Superintendent Found Quick]]>><<set $flats_superintendent to 2>><<pass 1>><</link>>
+			<<icon "hookah_smoke.png">><<link [[Say you've found it, and show the way (0:01)|Flats Superintendent Found Quick]]>><<set $flats_superintendent to 2>><<pass 1>><</link>>
 			<br>
 		<<else>>
-			<<ind>><<link [[Say you've found it, and show the way (0:20)|Flats Superintendent Found]]>><<set $flats_superintendent to 2>><<pass 20>><</link>>
+			<<icon "hookah_smoke.png">><<link [[Say you've found it, and show the way (0:20)|Flats Superintendent Found]]>><<set $flats_superintendent to 2>><<pass 20>><</link>>
 			<br>
 		<</if>>
 	<</if>>

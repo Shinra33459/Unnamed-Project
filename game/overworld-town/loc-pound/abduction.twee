@@ -116,7 +116,7 @@ They continue to pull you towards the door.
 <<if $enemyarousal gte $enemyarousalmax>>
 	<<ejaculation "short">>
 	The pair lean against the walls, giving you the chance you need. You climb to your feet and bolt for the fence.
-	<<if $leftarm is "bound" or $rightarm is "bound">>
+	<<if pcAreArmsBound("any")>>
 		<<tearful>> you shove the gate with your shoulder. It opens, and you escape onto the street outside.
 		<br><br>
 	<<else>>
@@ -131,7 +131,7 @@ They continue to pull you towards the door.
 
 <<elseif $enemyhealth lte 0>>
 	The pair back away from you, giving you the chance you need.
-	<<if $leftarm is "bound" or $rightarm is "bound">>
+	<<if pcAreArmsBound("any")>>
 		<<tearful>> you shove the gate with your shoulder. It opens, and you escape onto the street outside.
 		<br><br>
 	<<else>>
@@ -672,15 +672,17 @@ You're forced to crawl to the <<beasttype>>, then drop to a submissive position.
 		The staff gather around, snapping pictures of the two of you, linked together by the <<beasttype>>'s <<print $NPCList[0].penisdesc>>.
 		<br><br>
 
-		"Nice to see a <<bitch>> getting <<bred>> proper."
-		<br>
+		<<if _knotted isnot "mouth">>
+			"Nice to see a <<bitch>> getting <<bred>> proper."
+			<br>
+		<</if>>
 		"Gonna take a selfie."
 		<br>
 		"This <<girl>> is enjoying it."
 		<br><br>
 
 		<<pass 5>>
-		The comments continue, until at last the knot empties enough for the <<beasttype>> to wriggle it out with a plop. Semen oozes down your thighs.
+		The comments continue, until at last, the knot empties enough for <<bhim>> to <<if _knotted is "mouth">>slip it out. Semen dribbles down your chin<<else>>wriggle it out with a plop. Semen oozes down your thighs<</if>>.
 		<br><br>
 
 		<<endcombat>>
@@ -1050,12 +1052,7 @@ A <<person>> stomps towards you, a leash in <<his>> hand. A keychain rattles at 
 	You snatch the leash as <<he>> drops it, and whirl it around <<him>>, binding <<him>> tight before <<he>> knows what's happening. "What are you-" You snatch the keys next, and leave <<him>> to strain against the binds. It won't hold long, but it should hold long enough.
 	<br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<link [[Next|Pound Escape Free]]>><<endevent>><</link>>
 	<br>
@@ -1065,12 +1062,7 @@ A <<person>> stomps towards you, a leash in <<his>> hand. A keychain rattles at 
 	<<He>> lunges for you, and tries to grapple you with both arms. You duck aside, <span class="red">but trip.</span> <<Hes>> soon atop you.
 	<br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<link [[Next|Pound Escape Fight]]>><<set $fightstart to 1>><</link>>
 	<br>
@@ -1195,12 +1187,7 @@ You turn away from the courtyards and cages, and face the metal door. "Don't you
 	You hear shouting from the yard, and the thud of approaching feet. <span class="green">The padlock clicks open.</span> You pull it wide, and slip inside.
 	<br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<link [[Next|Pound Escape Secret]]>><</link>>
 	<br>
@@ -1212,12 +1199,8 @@ You turn away from the courtyards and cages, and face the metal door. "Don't you
 
 	"A runaway, aye?" a <<person1>><<person>> asks. "Be a good bitch and come quietly."
 	<br><br>
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+
+	<<skulduggeryuse>>
 
 	<<link [[Go quietly|Pound Escape Quiet]]>><</link>>
 	<br>
@@ -1338,7 +1321,7 @@ You lie on the hard floor.
 	You slept soundly, but now feel a little rough.
 	<br><br>
 <<elseif $nightmares gte 1 and $controlled is 0>>
-	You <<if _wakingEffect>>dreamed of<<else>>dream you are<</if>> hunted by something <<if ["haunt", "despair"].includes($wraith.state) and $rng lte 25>>pale<<else>>dark<</if>> and terrible.
+	<<nightmareWake>>
 <<else>>
 	<<if ($specialClothesEffects.bimbo.total gte random(100,1000) || $specialClothesEffects.pimp.total gte random(100,1000)) or $arousal gte ($arousalmax / 10) * 9>>
 		<<wetDream>>

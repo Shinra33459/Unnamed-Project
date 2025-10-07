@@ -325,7 +325,7 @@
 					<<link [[Refuse|Street Bully Paint]]>><<set $phase to 0>><<npcincr Whitney dom -1>><</link>>
 					<br>
 				<<else>>
-					As you pass, <<he>> suddenly spins around and sprays you in the face, laughing as you retch. You manage to <<if $leftarm is "bound" and $rightarm is "bound">>shake<<else>>wipe<</if>> the worst of it off, but the fumes leave you dizzy.<<hallucinogen 50>><<trauma 6>><<stress 6>><<npcincr Whitney lust 5>><<gtrauma>><<gstress>><<glust>>
+					As you pass, <<he>> suddenly spins around and sprays you in the face, laughing as you retch. You manage to <<= pcAreArmsBound("both") ? "shake" : "wipe">> the worst of it off, but the fumes leave you dizzy.<<hallucinogen 50>><<trauma 6>><<stress 6>><<npcincr Whitney lust 5>><<gtrauma>><<gstress>><<glust>>
 					<br><br>
 
 					<<endevent>>
@@ -397,7 +397,7 @@
 				"Now make some perv's day."<<npcincr Whitney lust 5>><<glust>>
 				<br><br>
 
-				<<if $leftarm is "bound" and $rightarm is "bound">>
+				<<if pcAreArmsBound("both")>>
 					A <<persony>> whispers something in Whitney's ear. <<His>> brow furrows. <<He>> grasps your shoulders and spins you around, leering at your bound arms. "Guess I gotta do everything myself." <span class="purple"><<He>> begins dragging you into the street.</span>
 					<br><br>
 
@@ -582,7 +582,12 @@
 	<<set $fightstart to 0>>
 	<<neutral 1>>
 	<<maninit>>
-	You push Whitney away, but <<he>> isn't deterred. <<His>> friends cheer <<him>> on.
+	<<if $stalk_end is "ambush">>
+		You get a few free hits in before Whitney pushes you off. <<He>> isn't deterred. <<His>> friends cheer <<him>> on.
+		<<set $enemyhealth -= 150>>
+	<<else>>
+		You push Whitney away, but <<he>> isn't deterred. <<His>> friends cheer <<him>> on.
+	<</if>>
 	<br><br>
 	<<npcidlegenitals>>
 	<<set $enemytrust -= 100>>
@@ -978,7 +983,7 @@
 		<<if $speech_attitude is "meek">>
 			You squirm in Whitney's grasp, trying to break free. <span class="green">You succeed,</span> wriggling out from under <<his>> arm and scampering away. <<He>> laughs, but doesn't give chase.
 		<<elseif $speech_attitude is "bratty">>
-			<<if ($leftarm is "bound" and $rightarm is "bound") or $transformationParts.traits.fangs isnot "disabled">>
+			<<if pcAreArmsBound("both") or $transformationParts.traits.fangs isnot "disabled">>
 				You press your mouth to <<his>> forearm and chomp down.
 			<<else>>
 				You grab <<his>> forearm in both hands and twist as hard as you can.
@@ -1322,7 +1327,7 @@ A sudden, sharp pain shocks your <<genitals>> as the fabric of your <<print $wor
 	<</if>>
 	<<link [[Let it happen|Street Bully Sex]]>><<set $phase to 0>><<set $molestationstart to 1>><<trauma 6>><<stress 6>><<npcincr Whitney dom 1>><</link>><<gtrauma>><<gstress>><<gdom>>
 	<br>
-	<<link [[Fight|Street Bully Fight]]>><<npcincr Whitney dom -1>><<set $fightstart to 1>><</link>>
+	<<link [[Fight|Street Bully Fight]]>><<npcincr Whitney dom -1>><<set $fightstart to 1>><</link>><<ldom>>
 	<br>
 <<elseif $stalk_end is "hide">>
 	You emerge from your hiding place. <<if $stalk_assess>>Whitney<<else>>Whoever was following you<</if>> is nowhere to be found. <<tearful>> you continue on your way.
@@ -1332,6 +1337,21 @@ A sudden, sharp pain shocks your <<genitals>> as the fabric of your <<print $wor
 	<<endcombat>>
 
 	<<destinationeventend>>
+<<elseif $stalk_end is "ambush">>
+	You tumble with Whitney until <<hes>> flat on <<his>> back and you're on top of <<him>>. <<He>> looks at you with surprise as you lie on <<his>> chest.
+	<br><br>
+
+	<<silently>><<endcombat>><</silently>>
+	<<npc Whitney>><<person1>>
+
+	<<link [[Fight|Street Bully Fight]]>><<npcincr Whitney dom -1>><<set $fightstart to 1>><</link>><<ldom>>
+	<br>
+	<<link [[Run|Street Bully Ambush]]>><<set $phase to 0>><</link>>
+	<br>
+	<<if $whitneyromance is 1>>
+		<<link [[Kiss Whitney, and then run|Street Bully Ambush]]>><<set $phase to 1>><<npcincr Whitney love 1>><<npcincr Whitney dom -1>><</link>><<glove>><<ldom>><<kissvirginitywarning>>
+		<br>
+	<</if>>
 <<else>>
 	You slow to a walk. <<tearful>> you continue your journey.
 	<br><br>
@@ -1341,6 +1361,21 @@ A sudden, sharp pain shocks your <<genitals>> as the fabric of your <<print $wor
 
 	<<destinationeventend>>
 <</if>>
+
+:: Street Bully Ambush
+<<effects>>
+<<if $phase is 1>>
+	You give Whitney a kiss right on the lips before <<he>> can get <<his>> bearings. <<takeKissVirginity "Whitney" "romantic">>
+<</if>>
+<br><br>
+
+You push yourself off of <<him>> and dash away. <<His>> friends jeer at <<him>> as you escape into the <<if Time.dayState is "night">>darkness<<else>>crowds<</if>>. Finally, it fades into the distance. <<tearful>> you slow to a walk, and continue on your way.
+<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<destinationeventend>>
 
 :: Street Bully Private
 <<set $outside to 1>><<effects>>
@@ -2274,12 +2309,16 @@ Over <<his>> shoulder, you spy Whitney hiding under a parked car. <<nnpc_He "Whi
 		<br><br>
 
 		<<He>> walks off, laughing. You continue on your path.
+		<br><br>
+
 		<<skulduggeryuse>>
 
 		<<endevent>>
 		<<destinationeventend>>
 	<<else>>
 		The <<person>> grits <<his>> teeth, eyes narrowed. <<He>> didn't buy it.
+		<br><br>
+
 		<<skulduggeryuse>>
 
 		"Was really looking forward to punishing that punk," <<he>> snarls. "But you'll do."
@@ -2787,7 +2826,7 @@ A <<generate2>><<person2>><<person>> drives by, honking <<his>> horn as <<he>> l
 		You tap Whitney on the shoulder. <<He>> turns around with a glare. <<His>> eyebrows raise when <<he>> sees you.
 		<br><br>
 
-		"Keep fooling around with my friends," you say. "And I might just get jealous."
+		"Keep fooling around with my friends," you say, "and I might just get jealous."
 	<</if>>
 	<<promiscuity1>>
 
@@ -2807,7 +2846,7 @@ A <<generate2>><<person2>><<person>> drives by, honking <<his>> horn as <<he>> l
 		You strut towards Whitney, hands behind your back. "That looks fun," you giggle. "May I go next?"
 	<<elseif $speech_attitude is "bratty">>
 		You clear your throat. "Uh, hello?"
-		<<if $leftarm is "bound" and $rightarm is "bound">>
+		<<if pcAreArmsBound("both")>>
 			You thrust your hips out just so.
 		<<else>>
 			Hands on your hips, you thrust them out just so.
@@ -2820,7 +2859,6 @@ A <<generate2>><<person2>><<person>> drives by, honking <<his>> horn as <<he>> l
 
 	<<set $seductiondifficulty to 4000 - (C.npc.Whitney.lust * 50)>>
 	<<seductioncheck>>
-	<br><br>
 	<<seductionskilluptext>>
 	<<seductionskilluse>>
 
@@ -3278,7 +3316,7 @@ Whitney hauls <<himself>> up right after you, and wraps an arm around your waist
 		"Your home is near here, right?" Whitney asks. "Point it out to me." You'd already spotted the orphanage, just down the road, visible between a couple of other buildings.
 		<br><br>
 
-		<<link [[Point at the orphange|Street Bully Roof Point]]>><<npcincr Whitney love 3>><</link>><<gglove>>
+		<<link [[Point at the orphanage|Street Bully Roof Point]]>><<npcincr Whitney love 3>><</link>><<gglove>>
 		<br>
 	<<case "barb" "danube" "residential">>
 		"Can you see your home from here?" Whitney asks. "Point it out to me." You peer across the other houses. You can make out Domus Street easy enough, but the street's curvature and sight-obscuring foliage obscure the orphanage.
@@ -3366,7 +3404,7 @@ You pull yourself free of Whitney. <<He>> doesn't stop you. "Places to be? I und
 :: Street Bully Orphanage Go
 <<set $outside to 0>><<set $location to "home">><<effects>><<seenPassage>>
 <<generate2>>
-You walk a meandering path through the streets, arm locked with Whitney, with <<his>> friends following behind. They harass a few passersby, grabbing one frightened <<person2>><<personsimple>>'s rucksack and scattering the contents.
+You walk a meandering path through the streets, arm locked with Whitney, with <<his>> friends following behind. They harass a few passers-by, grabbing one frightened <<person2>><<personsimple>>'s rucksack and scattering the contents.
 <br><br>
 
 <<endevent>>
@@ -3525,7 +3563,7 @@ The teenagers hang around the main hall, scaring any residents who stumble upon 
 
 You wait until Whitney's friends exit. "And keep your hands off my slut," Whitney adds as the last leave.
 <br><br><<person2>>
-"Out." Bailey says. <<He>> means you. You leave the room, and join Whitney's friends outside.
+"Out," Bailey says. <<He>> means you. You leave the room, and join Whitney's friends outside.
 <br><br>
 The teenagers hang around the main hall, scaring any residents who stumble upon them. You hear murmuring behind Bailey's door.
 <br><br>
@@ -3592,12 +3630,7 @@ You press your ear against the door. Whitney's friends laugh, but don't interrup
 		<br><br>
 	<</if>>
 	<<set $whitney_bailey_met to 1>>
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<link [[Next|Street Bully Orphanage Wait]]>><</link>>
 	<br>
@@ -3609,12 +3642,7 @@ You press your ear against the door. Whitney's friends laugh, but don't interrup
 	<<He>> slams the door. Music erupts inside a moment later. You won't be able to hear anything.
 	<br><br>
 
-	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
-		<<skulduggeryskilluse>>
-	<<else>>
-		<span class="blue">That was too easy. You didn't learn anything.</span>
-		<br><br>
-	<</if>>
+	<<skulduggeryuse>>
 
 	<<link [[Next|Street Bully Orphanage Wait]]>><</link>>
 	<br>
