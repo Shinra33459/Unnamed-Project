@@ -1,7 +1,7 @@
 :: Widgets Journal [widget]
 <<widget "journal">>
 	<br>
-	<<print "It is " + getFormattedDate(Time.date) + ", " + Time.year + "." >>
+	<<print "It is " + getFormattedDate(Time.date) + ", " + Time.year + ".">>
 	<ul class="journal">
 	<<if Time.days lt 0>>
 		<<if Time.days lt -365>>
@@ -395,7 +395,7 @@
 				<li>You can work at the docks starting from <<ampm 7 00>> - <<ampm 8 00>><<if !($idDocksReveal is 2)>> on any day except school days<</if>>.</li>
 			<</if>>
 
-			<<if $brothelshowdata.intro and $brothelshowdata.type is "none" >>
+			<<if $brothelshowdata.intro and $brothelshowdata.type is "none">>
 				<li>You can star in shows at the brothel.</li>
 			<</if>>
 
@@ -554,12 +554,14 @@
 
 			<<if $farm_stage gte 5 and $estate_fence is undefined>>
 				<li>Remy is encroaching on Alex's farm, operating from the estate on the moor.</li>
-			<<elseif $estate_fence is "quest" and currentSkillValue('skulduggery') lt 800>>
-				<li>Find someone who can help you break into the Remy estate. Someone with underworld connections, or who knows the moor.</li>
-			<<elseif $estate_fence is "bird">>
-				<li>Search the Remy estate fence for an entrance made by the Great Hawk.</li>
-			<<elseif $estate_fence is "landry">>
-				<li>Search the Remy estate fence for an entrance made by Landry's specialist.</li>
+			<<elseif $farm_stage gte 5 or isPubfameTaskAccepted("wren")>>
+				<<if $estate_fence is "quest" and currentSkillValue('skulduggery') lt 800>>
+					<li>Find someone who can help you break into the Remy estate. Someone with underworld connections, or who knows the moor.</li>
+				<<elseif $estate_fence is "bird">>
+					<li>Search the Remy estate fence for an entrance made by the Great Hawk.</li>
+				<<elseif $estate_fence is "landry">>
+					<li>Search the Remy estate fence for an entrance made by Landry's specialist.</li>
+				<</if>>
 			<</if>>
 
 			<<if $farm>>
@@ -792,7 +794,7 @@
 		<hr>
 		<h1 class="header gold bold">Avery's Demands</h1>
 		<ul class="journal carry">
-			<li><<foodicon "eat">>Avery wants you to have dinner ready at <span @class="between(Time.weekDay,2,6) ? 'gold' : ''"><<ampm 21 00>> weekdays</span>, and <span @class="Time.weekDay is 1 ? 'gold' : ''"><<ampm 17 00>> Sundays</span>.</li>
+			<li><<foodicon "eat">>Avery wants you to have dinner ready at <span @class="between(Time.weekDay,2,6) ? 'gold' : ''"><<ampm 21 00>> weekdays</span>.</li>
 			<<if $avery_mansion.food.name isnot "none">>
 				<li>
 					<<tendingicon $avery_mansion.food.icon>>
@@ -1327,13 +1329,18 @@
 											<</if>>
 										</div>
 									</div>
+								<<case "talk">>
+									<<set $_tooltipPainting to `You should ask Winter about the ${_museumPaintingText[_labelP].journalName.toLowerCase()}.`>>
+									<div class="item" @tooltip="$_tooltipPainting">
+										<img class="icon" @src="'img/misc/icon/' + _museumPaintingText[_labelP].iconFull" width="120" height="120">
+									</div>
 								<<case "notFound">>
 									<div class="item" tooltip="Unknown Painting.">
 										<img class="icon" src="img/misc/icon/antiques/paintings/curtain.png" width="120" height="120">
 									</div>
 								<<default>>
 									<div class="item" @tooltip="_painting">
-										<img class="icon" @src="'img/misc/icon/' + _museumPaintingText[_labelP].iconFull" width="120" height="120">
+										<img class="icon" @src="'img/misc/icon/' + _museumPaintingText[_labelP].iconRaw" width="120" height="120">
 									</div>
 							<</switch>>
 						<</for>>

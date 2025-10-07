@@ -633,7 +633,7 @@ DefineMacro("calculateallure", calculateallure);
 
 // check exposure, tags, and wetness
 function itemExposure(slot) {
-	const item = setup.clothes[slot][V.worn[slot].index];
+	const item = V.worn[slot];
 	// if you're looking to delete $overupperwetstage, $upperwetstage, $underupperwetstage, $overlowerwetstage, $lowerwetstage, or $underlowerwetstage - look here, too
 	if (item.type.includes("naked") || V[slot.replace("_", "") + "wetstage"] >= 3) return 2;
 	return item.exposed;
@@ -672,43 +672,32 @@ function exposure() {
 	}
 
 	/*
-		is bra visible?
+		is bra or breasts visible?
 	*/
 	// "covered" is a strange beast and might need splitting into separate tags
 	// when applied to lower - it covers under_upper. when applied to under_upper - it makes it okay to be seen. when applied to face - it doesn't cover under_upper and doesn't make face okay to be seen...
-	if (["over_upper", "upper"].every(slot => itemExposure(slot) >= 1) && (!V.worn.lower.type.includes("covered") || itemExposure("lower") >= 2)) {
+	// If under_upper is not covering or exposing/displaced exposed should be 1 because either it's underwear or PCs breasts are visible
+	if (
+		["over_upper", "upper"].every(slot => itemExposure(slot) >= 1) &&
+		(!V.worn.lower.type.includes("covered") || itemExposure("lower") >= 2) &&
+		(!V.worn.under_upper.type.includes("covered") || itemExposure("lower") >= 1)
+	) {
 		// the answer is yes
-		const bra = V.worn.under_upper;
-		if (V.player.gender_appearance === "m") {
-			// boys can sport their naked all the live long day. but not wear bra. unless it's manly bra. and their booba is not too conspicuous
-			if (bra.gender === "f" || bra.type.includes("fetish") || V.player.perceived_breastsize >= 3) {
-				// this check differs from the girls' one in that it allows for arm sleeves and bare chest, while excluding sports bra and camisole
-				V.exposed = 1;
-			}
-		} else {
-			// girls can only wear "covered" upperwear
-			if (!bra.type.includes("covered")) {
-				V.exposed = 1;
-			}
-			/*
-				is chest visible?
-			*/
-			// the check here is a bit stricter and overrides "covered" state
-			else if (["over_upper", "upper"].every(slot => itemExposure(slot) >= 2) && itemExposure("under_upper") >= 1) {
-				V.exposed = 1;
-			}
+		// Only non-male appearing PCs should be exposed from underwear/breasts
+		if (V.player.gender_appearance !== "m") {
+			V.exposed = 1;
 		}
 	}
 
 	/*
 		panties
 	*/
-	if (["over_lower", "lower"].every(slot => itemExposure(slot) >= 1) && !V.worn.under_lower.type.includes("covered")) {
+	if (["over_lower", "lower"].every(slot => itemExposure(slot) >= 1) && (!V.worn.under_lower.type.includes("covered") || itemExposure("under_lower") >= 1)) {
 		V.exposed = 1;
 	}
 
 	/*
-		genitals. again, stricter check. exposed === 2 is not just lewd - it's super lewd
+		genitals
 	*/
 	if (["over_lower", "lower"].every(slot => itemExposure(slot) >= 2) && itemExposure("under_lower") >= 1) {
 		V.exposed = 2;
