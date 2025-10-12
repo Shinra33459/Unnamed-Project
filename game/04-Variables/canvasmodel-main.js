@@ -481,7 +481,25 @@ Renderer.CanvasModels.main = {
 					pattern: 0,
 					setup: { type: [] },
 				},
+				rings: {
+					index: 0,
+					alpha: 1,
+					integrity: "full",
+					colour: "white",
+					accColour: "white",
+					pattern: 0,
+					setup: { type: [] },
+				},
 				handheld: {
+					index: 0,
+					alpha: 1,
+					integrity: "full",
+					colour: "white",
+					accColour: "white",
+					pattern: 0,
+					setup: { type: [] },
+				},
+				earrings: {
 					index: 0,
 					alpha: 1,
 					integrity: "full",
@@ -1038,7 +1056,8 @@ Renderer.CanvasModels.main = {
 			// Only use necessary data for tanning layers. Filter out the rest.
 			// Only clothing items that aren't handheld or headwear will be used
 			// Only use the base pregnancy layers
-			const skippedSlots = ["handheld", "head", "neck", "face", "under_upper_belly_", "upper_belly_", "under_lower_belly_", "lower_belly_"];
+			//Edit
+			const skippedSlots = ["handheld", "rings", "earrings", "head", "neck", "face", "under_upper_belly_", "upper_belly_", "under_lower_belly_", "lower_belly_"];
 			this.tanningLayers = this.layerList
 				.filter(obj => obj.show === true
 					&& obj.worn
@@ -2000,14 +2019,15 @@ Renderer.CanvasModels.main = {
 			filters: ["demon_horns"],
 		}),
 
-		/*		
-			██████╗░███████╗░█████╗░██████╗░
-			██╔══██╗██╔════╝██╔══██╗██╔══██╗
-			██████╦╝█████╗░░███████║██████╔╝
-			██╔══██╗██╔══╝░░██╔══██║██╔══██╗
-			██████╦╝███████╗██║░░██║██║░░██║
-			╚═════╝░╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝
-		*/
+		/***
+		 *    ██████  ███████  █████  ██████  
+		 *    ██   ██ ██      ██   ██ ██   ██ 
+		 *    ██████  █████   ███████ ██████  
+		 *    ██   ██ ██      ██   ██ ██   ██ 
+		 *    ██████  ███████ ██   ██ ██   ██ 
+		 *
+		 *    
+		 */
 		"bear_ears": {
 			srcfn(options) {
 				return `img/transformations/bear/ears/${options.bear_ears_type}.png`;
@@ -3780,6 +3800,204 @@ Renderer.CanvasModels.main = {
 					ZIndices.hands : options.zarms + 0.2;
 			},
 		},
+		//Edit
+		/***
+		 *    ██   ██  █████  ███    ██ ██████  ███████
+		 *    ██   ██ ██   ██ ████   ██ ██   ██ ██
+		 *    ███████ ███████ ██ ██  ██ ██   ██ ███████
+		 *    ██   ██ ██   ██ ██  ██ ██ ██   ██      ██
+		 *    ██   ██ ██   ██ ██   ████ ██████  ███████
+		 *
+		 *
+		 */
+		"rings": genlayer_clothing_main('rings'),
+		//"rings": genlayer_clothing_main('hands'),
+		"rings_left": {
+			filters: ["worn_rings"],
+			animation: "idle",
+
+			srcfn(options) {
+				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
+				const pattern = options.worn.rings.pattern && !["tertiary", "secondary"].includes(options.worn.rings.setup.pattern_layer) ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}.png`;
+				return gray_suffix(path, options.filters['worn_rings']);
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.rings.index > 0
+					&& options.worn.rings.setup.leftImage === 1
+					&& options.arm_left !== "none";
+			},
+			zfn(options) {
+				return options.arm_left === "cover" ? ZIndices.hands : options.zarms + 0.2;
+			},
+		},
+		"rings_left_acc": {
+			filters: ["worn_rings_acc"],
+			animation: "idle",
+
+			srcfn(options) {
+				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
+				const pattern = options.worn.rings.pattern && options.worn.rings.setup.pattern_layer === "secondary" ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}_acc.png`;
+				return gray_suffix(path, options.filters['worn_rings_acc']);
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.rings.index > 0
+					&& options.worn.rings.setup.leftImage === 1
+					&& options.worn.rings.setup.accessory === 1
+					&& options.arm_left !== "none";
+			},
+			zfn(options) {
+				return options.arm_left === "cover" ? ZIndices.hands : options.zarms + 0.2;
+			},
+		},
+		"rings_left_fitted": {
+			filters: ["worn_rings"],
+			animation: "idle",
+
+			srcfn(options) {
+				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
+				const pattern = options.worn.rings.pattern && !["tertiary", "secondary"].includes(options.worn.rings.setup.pattern_layer) ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}.png`;
+				return gray_suffix(path, options.filters['worn_rings']);
+			},
+			showfn(options) {
+				// return options.show_clothes
+				// 	&& options.worn.rings.index > 0
+				// 	&& options.worn.rings.setup.leftImage === 1
+				// 	&& ["curvy", "slender"].includes(options.body_type)
+				// 	&& options.arm_left === "idle"
+				// 	&& !(options.belly > 7)
+				return false;
+			},
+			masksrcfn(options) {
+				return options.upper_fitted_left_move_src || options.under_upper_fitted_left_move_src ;
+			},
+			dxfn() {
+				return -2;
+			},
+			zfn(options) {
+				return options.zarms + 0.1;
+			},
+		},
+		"rings_left_fitted_acc": {
+			filters: ["worn_rings_acc"],
+			animation: "idle",
+
+			srcfn(options) {
+				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
+				const pattern = options.worn.rings.pattern && options.worn.rings.setup.pattern_layer === "secondary" ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}_acc.png`;
+				return gray_suffix(path, options.filters['worn_rings_acc']);
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.rings.index > 0
+					&& options.worn.rings.setup.leftImage === 1
+					&& options.worn.rings.setup.accessory === 1
+					&& ["curvy", "slender"].includes(options.body_type)
+					&& options.arm_left === "idle"
+					&& !(options.belly > 7);
+			},
+			masksrcfn(options) {
+				return options.upper_fitted_left_move_src || options.under_upper_fitted_left_move_src;
+			},
+			dxfn() {
+				return -2;
+			},
+			zfn(options) {
+				return options.zarms + 0.1;
+			},
+		},
+		"rings_left_detail": {
+			animation: "idle",
+
+			srcfn(options) {
+				const hold = options.handheld_position || "right";
+				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
+				return `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}_${options.worn.rings.pattern}.png`;
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.rings.index > 0
+					&& options.worn.rings.setup.leftImage === 1
+					&& options.worn.rings.setup.pattern_layer === "tertiary"
+					&& !!options.worn.rings.setup.pattern
+					&& options.arm_right !== "none";
+			},
+			zfn(options) {
+				return (options.arm_right === "cover" || options.arm_right === "hold") ?
+					ZIndices.hands : options.zarms + 0.2;
+			},
+		},
+		"rings_right": {
+			filters: ["worn_rings"],
+			animation: "idle",
+
+			srcfn(options) {
+				const hold = options.handheld_position || "right";
+				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
+				const pattern = options.worn.rings.pattern && !["tertiary", "secondary"].includes(options.worn.rings.setup.pattern_layer) ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}.png`;
+				return gray_suffix(path, options.filters['worn_rings']);
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.rings.index > 0
+					&& options.worn.rings.setup.rightImage === 1
+					&& options.arm_right !== "none";
+			},
+			zfn(options) {
+				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
+				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
+			},
+		},
+		"rings_right_acc": {
+			filters: ["worn_rings_acc"],
+			animation: "idle",
+
+			srcfn(options) {
+				const hold = options.handheld_position || "right";
+				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
+				const pattern = options.worn.rings.pattern && options.worn.rings.setup.pattern_layer === "secondary" ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}_acc.png`;
+				return gray_suffix(path, options.filters['worn_rings_acc']);
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.rings.index > 0
+					&& options.worn.rings.setup.rightImage === 1
+					&& options.worn.rings.setup.accessory === 1
+					&& options.arm_right !== "none";
+			},
+			zfn(options) {
+				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
+				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
+			},
+		},
+		"rings_right_detail": {
+			animation: "idle",
+
+			srcfn(options) {
+				const hold = options.handheld_position || "right";
+				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
+				return `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}_${options.worn.rings.pattern}.png`;
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.rings.index > 0
+					&& options.worn.rings.setup.rightImage === 1
+					&& options.worn.rings.setup.pattern_layer === "tertiary"
+					&& !!options.worn.rings.setup.pattern
+					&& options.arm_right !== "none";
+			},
+			zfn(options) {
+				return (options.arm_right === "cover" || options.arm_right === "hold") ?
+					ZIndices.hands : options.zarms + 0.2;
+			},
+		},
 		/***
 		 *    ██   ██  █████  ███    ██ ██████  ██   ██ ██████ ██     ██████
 		 *    ██   ██ ██   ██ ████   ██ ██   ██ ██   ██ ██     ██     ██   ██
@@ -4106,6 +4324,80 @@ Renderer.CanvasModels.main = {
 						&& options.worn.head.setup.hood
 						&& options.worn.head.setup.outfitSecondary !== undefined);
 				return check ? ZIndices.collar : ZIndices.neck;
+			},
+			dyfn(options) {
+				return options.high_waist_suspenders ? -8 : 0;
+			},
+		}),
+		//Edit
+
+		/***
+		 *    ███    ██ ███████  ██████ ██   ██
+		 *    ████   ██ ██      ██      ██  ██
+		 *    ██ ██  ██ █████   ██      █████
+		 *    ██  ██ ██ ██      ██      ██  ██
+		 *    ██   ████ ███████  ██████ ██   ██
+		 *
+		 *
+		 */
+		"earrings": genlayer_clothing_main('earrings', {
+			srcfn(options) {
+				const isAltPosition = !options.alt_override
+					&& options.worn.earrings.setup.altposition !== undefined
+					&& options.worn.earrings.alt === "alt";
+
+				let collar = "";
+				if (options.worn.earrings.setup.has_collar === 1 && options.worn.upper.setup.has_collar === 1 && !(options.worn.upper.setup.name === "dress shirt" && options.worn.upper.alt === "alt")) {
+					collar = '_nocollar';
+				} else if (options.worn.earrings.setup.name === "sailor ribbon" && options.worn.upper.setup.name === "serafuku") {
+					collar = "_serafuku";
+				}
+				const pattern = options.worn.earrings.pattern && !["tertiary", "secondary"].includes(options.worn.earrings.pattern_layer) ? "_" + options.worn.earrings.pattern?.replace(/ /g,"_") : '';
+				const alt = isAltPosition ? '_alt' : '';
+
+				const setupVar = options.worn.earrings.setup.variable;
+				const integrity = options.worn.earrings.integrity;
+				const path = `img/clothes/earrings/${setupVar}/${integrity}${collar}${pattern}${alt}.png`;
+				return gray_suffix(path, options.filters['worn_earrings']);
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.earrings.index > 0
+					&& options.worn.earrings.setup.mainImage !== 0
+					&& !options.hideAll;
+			},
+			masksrcfn(options) {
+				return options.high_waist_suspenders ? "img/clothes/earrings/suspenders/mask.png" : null;
+			},
+			zfn(options) {
+				return options.hood_mask ? ZIndices.collar : ZIndices.neck + 1;
+			},
+		}),
+		"earrings_acc": genlayer_clothing_accessory('earrings', {
+			srcfn(options) {
+				const isAltPosition = !options.alt_override
+					&& options.worn.earrings.setup.altposition !== undefined
+					&& options.worn.earrings.alt === "alt";
+				const integrity = setup.accessory_integrity_img ? `_${options.worn.earrings.integrity}` : '';
+				const alt = isAltPosition ? '_alt' : '';
+				const pattern = options.worn.earrings?.pattern && options.worn.earrings?.pattern_layer === "secondary" ? "_" + options.worn.earrings.pattern?.replace(/ /g,"_") : '';
+
+				const setupVar = options.worn.earrings.setup.variable;
+				const path = `img/clothes/earrings/${setupVar}/acc${integrity}${pattern}${alt}.png`;
+				return gray_suffix(path, options.filters['worn_earrings_acc']);
+			},
+			showfn(options) {
+				return options.show_clothes
+					&& options.worn.earrings.index > 0
+					&& options.worn.earrings.setup.accImage !== 0
+					&& options.worn.earrings.setup.accessory === 1;
+			},
+			zfn(options) {
+				const check = options.worn.head.setup.mask_img === 1
+					&& !(options.hood_down
+						&& options.worn.head.setup.hood
+						&& options.worn.head.setup.outfitSecondary !== undefined);
+				return check ? ZIndices.collar : ZIndices.neck + 1;
 			},
 			dyfn(options) {
 				return options.high_waist_suspenders ? -8 : 0;
