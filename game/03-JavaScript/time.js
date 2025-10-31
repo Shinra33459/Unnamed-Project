@@ -950,12 +950,12 @@ function dayPassed(days) {
 		// Activate the robin pillory
 		if (V.robinPillory && V.robinPillory.danger !== undefined && (V.robindebtevent <= 1 || !V.baileySold)) V.robinPillory.active = true;
 
-		V.daily.clearProperties();
-
 		if (V.stallDeposit >= 3000) {
 			V.stallDeposit -= 3000;
 			V.daily.stallRented = 1;
 		}
+
+		V.daily.clearProperties();
 
 		if (V.bike >= 1) {
 			if (V.bikeSecurityGear == 5) {
