@@ -106,9 +106,9 @@ setup.sextoys = [
 		name: "bullet vibe",
 		namecap: "Bullet vibe",
 		name_underscore: "bullet_vibe",
-		description: "The vibrations produced from this item give powerful orgasms. Good for people new to sex toys.",
+		description: "The vibrations produced from this item give powerful orgasms. Good for people new to sex toys. Can be worn for on-the-go pleasure.",
 		cost: 12000,
-		wearable: 0,
+		wearable: 1,
 		size: 0,
 		category: "vibrator",
 		type: ["dildo", "vibrator"],
@@ -116,6 +116,7 @@ setup.sextoys = [
 		colour: 0,
 		colour_options: [],
 		default_colour: "pink",
+		vibrating: 0,
 		owned: setup.sextoyFunctions.owned,
 		isCarried: setup.sextoyFunctions.isCarried,
 		isWorn: setup.sextoyFunctions.isWorn,
@@ -415,8 +416,8 @@ function sexShopOnItemClick(index) {
 			? `<a id="ssmBuyButton" onclick="window.sexShopOnBuyClick(${item.index})" class="ssm_buy_button">
 					Buy it
 				</a> (<span class="gold">£` +
-			  item.cost / 100 +
-			  `</span>)`
+			item.cost / 100 +
+			`</span>)`
 			: `<span class="ssm_not_enough_money">Not enough money</span> (<span class="gold">£${item.cost / 100}</span>)`) +
 		(item.type.includes("strap-on") ? determineRecipient(item.index) : "") +
 		`</div>

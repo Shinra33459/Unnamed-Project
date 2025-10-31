@@ -158,6 +158,10 @@ function sexToysInventoryOnWearClick(index, category) {
 	}
 
 	if (setupCategory !== "strap-on" && toy.worn) {
+		if (setupCategory === "vibrator") {
+			V.worn.vibrator.vibrating = 0
+		}
+
 		delete V.worn[setupCategory];
 	}
 	// If player chose "Wear it"
