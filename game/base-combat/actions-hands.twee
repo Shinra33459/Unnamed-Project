@@ -58,6 +58,11 @@
 		or ($NPCList[$lefttarget].righthand and $NPCList[$lefttarget].righthand.startsWith("anus"))>>
 			<<set _leftaction["Take " + $NPCList[$lefttarget].pronouns.his + " hand off your ass"] to "handpullanus">>
 		<</if>>
+			/* MCA Credits to Ryumi */
+		<<if ($NPCList[$lefttarget].lefthand and $NPCList[$lefttarget].lefthand.startsWith("chest"))
+		or ($NPCList[$lefttarget].righthand and $NPCList[$lefttarget].righthand.startsWith("chest"))>>
+			<<set _leftaction["Take " + $NPCList[$lefttarget].pronouns.his + " hand off your chest"] to "handpullchest">>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -474,6 +479,11 @@
 		or ($NPCList[$righttarget].righthand and $NPCList[$righttarget].righthand.startsWith("anus"))>>
 			<<set _rightaction["Take " + $NPCList[$righttarget].pronouns.his + " hand off your ass"] to "handpullanus">>
 		<</if>>
+		/* MCA Credits to Ryumi */
+		<<if ($NPCList[$righttarget].lefthand and $NPCList[$righttarget].lefthand.startsWith("chest"))
+		or ($NPCList[$righttarget].righthand and $NPCList[$righttarget].righthand.startsWith("chest"))>>
+			<<set _rightaction["Take " + $NPCList[$righttarget].pronouns.his + " hand off your chest"] to "handpullchest">>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -851,6 +861,13 @@
 					<<set _actions["Free your face"] to "freeface">>
 				<</if>>
 			<</if>>
+			<<if $chestuse is "othermouth">> /* MCA Credits to Ryumi */
+				<<if _style is "old">>
+					| <label><span class="brat">Free your chest</span><<radiobutton _actionVariable "freechest" `_default is "freechest" ? 'checked' : ''`>></label>
+				<<else>>
+					<<set _actions["Free your chest"] to "freechest">>
+				<</if>>
+			<</if>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -892,7 +909,12 @@
 		<<if $anususe is 0 and $_anus_exposed>>
 			<<set _handGuideOptions["your ass"] to "ass">>
 		<</if>>
-		
+		/* MCA Credits to Ryumi */
+		<!-- If our chest isn't being used, OR the NPC using our chest is our target NPC -->
+		<<if $chestuse is 0 or ($chestuse is "hand" and $chesttarget is (_args[0] is "left" ? $lefttarget : $righttarget))>>
+			<<set _handGuideOptions["your chest"] to "chest">>
+		<</if>>
+
 		<<if ($choketrait or ($chokeorgasm gte 1) or ($awarelevel gte 2)) and !$neckuse>>
 			<<set _handGuideOptions["your neck"] to "neck">>
 		<</if>>
@@ -2045,7 +2067,8 @@
 			<<else>>
 				<<combat-reset-hand "right">>
 			<</if>>
-			<<set $anususe to 0>><<set $anusstate to 0>>
+			<<if !playerHasButtPlug()>><<set $anususe to 0>><<set $anusstate to 0>>
+			<<else>><<set $anususe to "buttPlug">><<set $anusstate to "buttPlug">><</if>>
 		<<else>>
 			You try to grab <<combatpersons>> wrist,
 			<<if $anusstate is "otherhand">>
@@ -2072,6 +2095,8 @@
 			<<case "throat">> <<combat-hand-on-throat>>
 			<<case "mask">> <<combat-hand-on-mask "both" "hands">>
 			<<case "genitals">> <<combat-hand-on-chastity "both">>
+			<<case "chestsqueeze">> <<combat-hand-on-chestsqueeze "both" "hands">> /* MCA Credits to Ryumi */
+			<<case "chestimminent">> <<combat-hand-on-chestimminent "both" "hands">>
 			<<default>> <<set $_bothHandsUsed to false>>
 		<</switch>>
 	<</if>>
@@ -2146,6 +2171,10 @@
 		<<case "hypnosis_cover">> <<combat-hand-hypnosis-cover $_hand>>
 		<<case "hypnosis_orgasm">> <<combat-hand-hypnosis-orgasm $_hand>>
 		<<case "hypnosis_masochism">> <<combat-hand-hypnosis-masochism $_hand>>
+		/* MCA Credits to Ryumi */
+		<<case "chestimminent">> <<combat-hand-on-chestimminent $_hand "hand">> 
+		<<case "chestsqueeze">> <<combat-hand-on-chestsqueeze $_hand "hand">>
+		<<case "chestmilk">> <<combat-hand-on-chestmilk $_hand>>
 		<<case 0>> <<combat-set-hand-start $_hand>>
 		<<default>> <<run console.error("NPC hand action unaccounted for! Hand: " + $_hand + " Value: " + $_npcHand)>> <<run throw new Error("NPC hand action unaccounted for! Hand: " + $_hand + " Value: " + $_npcHand)>>
 	<</switch>>
@@ -2157,10 +2186,12 @@
 			<<set $leftaction to 0>>
 			You remove your $worn.butt_plug.name, exposing your anus.
 			<<set $worn.butt_plug.state to "removed">>
+			<<set $anususe to 0>><<set $anusstate to 0>>
 		<<elseif $rightaction is "removebuttplug" and playerHasButtPlug()>>
 			<<set $rightaction to 0>>
 			You remove your $worn.butt_plug.name, exposing your anus.
 			<<set $worn.butt_plug.state to "removed">>
+			<<set $anususe to 0>><<set $anusstate to 0>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -2188,139 +2219,95 @@
 
 <<widget "effectsDropSexToy">>
 	<<if $leftaction is "dildoDrop" and $rightaction is "dildoDrop">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
-			You drop your sex toys.
-			<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
-	<<else>>
-		<<if $leftaction is "dildoDrop">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
-			You drop your $currentSexToyLeft.name in your left hand.
-			<<unset $currentSexToyLeft>>
+		<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+		You drop your sex toys.
+		<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
+		<<if [$leftarm, $rightarm].includes("dildoSelfPussy")>>
+			<<set $vaginause to 0>><<set $vaginastate to 0>>
 		<</if>>
-		<<if $rightaction is "dildoDrop">>
-			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
-			You drop your $currentSexToyRight.name in your right hand.
-			<<unset $currentSexToyRight>>
+		<<if [$leftarm, $rightarm].includes("dildoSelfAnus")>>
+			<<set $anususe to 0>><<set $anusstate to 0>>
 		<</if>>
+		<<set $leftarm to 0>><<set $rightarm to 0>>
+	<<elseif $leftaction is "dildoDrop">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
+		You drop your $currentSexToyLeft.name in your left hand.
+		<<unset $currentSexToyLeft>>
+		<<if $leftarm is "dildoSelfPussy">>
+			<<set $vaginause to 0>><<set $vaginastate to 0>>
+		<<elseif $leftarm is "dildoSelfAnus">>
+			<<set $anususe to 0>><<set $anusstate to 0>>
+		<</if>>
+		<<set $leftarm to 0>>
+	<<elseif $rightaction is "dildoDrop">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+		You drop your $currentSexToyRight.name in your right hand.
+		<<unset $currentSexToyRight>>
+		<<if $rightarm is "dildoSelfPussy">>
+			<<set $vaginause to 0>><<set $vaginastate to 0>>
+		<<elseif $rightarm is "dildoSelfAnus">>
+			<<set $anususe to 0>><<set $anusstate to 0>>
+		<</if>>
+		<<set $rightarm to 0>>
 	<</if>>
 
-	<<if $leftaction is "dildoDropLeft" and $rightaction is "dildoDropRight">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
-			You drop your sex toys.
-			<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
-			<<for $_i = 0; $_i lt $enemyno; $_i++>>
-				<<if ["leftDildo","leftDildoTease"].includes($NPCList[$_i].vagina)>>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if ["leftDildo","leftDildoTease"].includes($NPCList[$_i].penis)>>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-				<<if ["rightDildo","rightDildoTease"].includes($NPCList[$_i].vagina)>>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if ["rightDildo","rightDildoTease"].includes($NPCList[$_i].penis)>>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-			<</for>>
-	<<else>>
-		<<if $leftaction is "dildoDropLeft">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
-			You drop your $currentSexToyLeft.name in your left hand.
-			<<unset $currentSexToyLeft>>
-			<<for $_i = 0; $_i lt $enemyno; $_i++>>
-				<<if $NPCList[$_i].vagina is "leftDildo">>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if $NPCList[$_i].penis is "leftDildo">>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-			<</for>>
-		<</if>>
-		<<if $rightaction is "dildoDropRight">>
-			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
-			You drop your $currentSexToyRight.name in your right hand.
-			<<unset $currentSexToyRight>>
-			<<for $_i = 0; $_i lt $enemyno; $_i++>>
-				<<if $NPCList[$_i].vagina is "rightDildo">>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if $NPCList[$_i].penis is "rightDildo">>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-			<</for>>
-		<</if>>
-	<</if>>
-
-	<<if $leftaction is "dildoDropAnusLeft" and $rightaction is "dildoDropAnusRight">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
-			You drop your sex toys.
-			<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
-			<<for $_i = 0; $_i lt $enemyno; $_i++>>
-				<<if ["leftDildoAnus","leftDildoAnusTease"].includes($NPCList[$_i].vagina)>>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if ["leftDildoAnus","leftDildoAnusTease"].includes($NPCList[$_i].penis)>>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-				<<if ["rightDildoAnus","rightDildoAnusTease"].includes($NPCList[$_i].vagina)>>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if ["rightDildoAnus","rightDildoAnusTease"].includes($NPCList[$_i].penis)>>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-			<</for>>
-	<<else>>
-		<<if ["dildoDropAnusLeft","dildoDropAnusTeaseLeft"].includes($leftaction)>>
-			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
-			You drop your $currentSexToyLeft.name in your left hand.
-			<<unset $currentSexToyLeft>>
-			<<for $_i = 0; $_i lt $enemyno; $_i++>>
-				<<if ["leftDildoAnus","leftDildoAnusTease"].includes($NPCList[$_i].vagina)>>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if ["leftDildoAnus","leftDildoAnusTease"].includes($NPCList[$_i].penis)>>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-			<</for>>
-		<</if>>
-		<<if ["dildoDropAnusRight","dildoDropAnusTeaseRight"].includes($rightaction)>>
-			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
-			You drop your $currentSexToyRight.name in your right hand.
-			<<unset $currentSexToyRight>>
-			<<for $_i = 0; $_i lt $enemyno; $_i++>>
-				<<if ["rightDildoAnus","rightDildoAnusTease"].includes($NPCList[$_i].vagina)>>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if ["rightDildoAnus","rightDildoAnusTease"].includes($NPCList[$_i].penis)>>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-			<</for>>
-		<</if>>
+	<<if ["dildoDropLeft", "dildoDropAnusLeft"].includes($leftaction) and ["dildoDropRight", "dildoDropAnusRight"].includes($rightaction)>>
+		<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+		You drop your sex toys.
+		<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
+		<<for $_i = 0; $_i lt $enemyno; $_i++>>
+			<<if $NPCList[$_i].vagina.toString().includesAny("leftDildo", "rightDildo")>>
+				<<set $NPCList[$_i].vagina to 0>>
+			<<elseif $NPCList[$_i].penis.toString().includesAny("leftDildo", "rightDildo")>>
+				<<set $NPCList[$_i].penis to 0>>
+			<</if>>
+		<</for>>
+	<<elseif ["dildoDropLeft", "dildoDropAnusLeft"].includes($leftaction)>>
+		<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
+		You drop your $currentSexToyLeft.name in your left hand.
+		<<unset $currentSexToyLeft>>
+		<<for $_i = 0; $_i lt $enemyno; $_i++>>
+			<<if $NPCList[$_i].vagina.toString().includes("leftDildo")>>
+				<<set $NPCList[$_i].vagina to 0>>
+			<<elseif $NPCList[$_i].penis.toString().includes("leftDildo")>>
+				<<set $NPCList[$_i].penis to 0>>
+			<</if>>
+		<</for>>
+	<<elseif ["dildoDropRight", "dildoDropAnusRight"].includes($rightaction)>>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+		You drop your $currentSexToyRight.name in your right hand.
+		<<unset $currentSexToyRight>>
+		<<for $_i = 0; $_i lt $enemyno; $_i++>>
+			<<if $NPCList[$_i].vagina.toString().includes("rightDildo")>>
+				<<set $NPCList[$_i].vagina to 0>>
+			<<elseif $NPCList[$_i].penis.toString().includes("rightDildo")>>
+				<<set $NPCList[$_i].penis to 0>>
+			<</if>>
+		<</for>>
 	<</if>>
 
 	<<if $leftaction is "strokerDropLeft" and $rightaction is "strokerDropRight">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
-			You drop your sex toys.
-			<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
-			<<for $_i = 0; $_i lt $enemyno; $_i++>>
-				<<if ["leftStroker","leftStrokerTease"].includes($NPCList[$_i].vagina)>>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if ["leftStroker","leftStrokerTease"].includes($NPCList[$_i].penis)>>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-				<<if ["rightStroker","rightStrokerTease"].includes($NPCList[$_i].vagina)>>
-					<<set $NPCList[$_i].vagina to 0>>
-				<</if>>
-				<<if ["rightStroker","rightStrokerTease"].includes($NPCList[$_i].penis)>>
-					<<set $NPCList[$_i].penis to 0>>
-				<</if>>
-			<</for>>
-	<<else>>
-		<<if $leftaction is "strokerDropLeft">>
-			<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>>
-			You drop the $currentSexToyLeft.name in your left hand.
-			<<unset $currentSexToyLeft>>
+		<<set $leftaction to 0>><<set $leftactiondefault to "rest">><<set $leftarm to 0>><<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
+		You drop your sex toys.
+		<<unset $currentSexToyLeft>><<unset $currentSexToyRight>>
+		<<if $penisuse is "strokerSelfPenis">>
+			<<set $penisuse to 0>><<set $penisstate to 0>>
+		<</if>>
+		<<for $_i = 0; $_i lt $enemyno; $_i++>>
+			<<if ["leftStroker", "rightStroker"].includes($NPCList[$_i].vagina)>>
+				<<set $NPCList[$_i].vagina to 0>>
+			<</if>>
+			<<if ["leftStroker", "rightStroker"].includes($NPCList[$_i].penis)>>
+				<<set $NPCList[$_i].penis to 0>>
+			<</if>>
+		<</for>>
+	<<elseif $leftaction is "strokerDropLeft">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
+		You drop the $currentSexToyLeft.name in your left hand.
+		<<unset $currentSexToyLeft>>
+		<<if $leftarm is "strokerSelfPenis" and $penisuse is "strokerSelfPenis">>
+			<<set $penisuse to 0>><<set $penisstate to 0>>
+		<<else>>
 			<<for $_i = 0; $_i lt $enemyno; $_i++>>
 				<<if $NPCList[$_i].vagina is "leftStroker">>
 					<<set $NPCList[$_i].vagina to 0>>
@@ -2329,14 +2316,15 @@
 					<<set $NPCList[$_i].penis to 0>>
 				<</if>>
 			<</for>>
-			<<if $penisuse is "strokerSelfPenis">>
-				<<set $penisuse to 0>><<set $penisstate to 0>>
-			<</if>>
 		<</if>>
-		<<if $rightaction is "strokerDropRight">>
-			<<set $rightaction to 0>><<set $rightactiondefault to "rest">><<set $rightarm to 0>>
-			You drop the $currentSexToyRight.name in your right hand.
-			<<unset $currentSexToyRight>>
+		<<set $leftarm to 0>>
+	<<elseif $rightaction is "strokerDropRight">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+		You drop the $currentSexToyRight.name in your right hand.
+		<<unset $currentSexToyRight>>
+		<<if $rightarm is "strokerSelfPenis" and $penisuse is "strokerSelfPenis">>
+			<<set $penisuse to 0>><<set $penisstate to 0>>
+		<<else>>
 			<<for $_i = 0; $_i lt $enemyno; $_i++>>
 				<<if $NPCList[$_i].vagina is "rightStroker">>
 					<<set $NPCList[$_i].vagina to 0>>
@@ -2345,10 +2333,8 @@
 					<<set $NPCList[$_i].penis to 0>>
 				<</if>>
 			<</for>>
-			<<if $penisuse is "strokerSelfPenis">>
-				<<set $penisuse to 0>><<set $penisstate to 0>>
-			<</if>>
 		<</if>>
+		<<set $rightarm to 0>>
 	<</if>>
 <</widget>>
 
@@ -2682,5 +2668,192 @@
 		<<else>>
 			cover your ass with your <<print $_hands>>.
 		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "effectsstoporal">>
+	<<switch _args[0]>>
+		<<case "both">>
+			<<set $_target to $lefttarget>><<set $_handsCount to 2>>
+		<<case "left">>
+			<<set $_target to $lefttarget>><<set $_handsCount to 1>>
+		<<case "right">>
+			<<set $_target to $righttarget>><<set $_handsCount to 1>>
+	<</switch>>
+	<<personselect $_target>>
+
+	<<if ($penisuse is "othermouth" and $NPCList[$_target].mouth.startsWith("penis")) or 
+		($vaginause is "othermouth" and $NPCList[$_target].mouth.startsWith("vagina"))>>
+		<<set $_success to 0>>
+		You grab <<combatpersons>> head with <<= $_handsCount is 2 ? "both hands" : "your hand">> and <<= ($consensual == 1 ? "gently push" : "try to shove")>> <<him>> away from your crotch.
+		<<if $consensual is 1>>
+			<<He>> doesn't resist.
+			<<set $_success to 1>><<brat 1 $_target>>
+		<<elseif currentSkillValue('physique') gte random(1, 44000/$_handsCount)>>
+			<span class="teal">You manage to do so.</span>
+			<<set $_success to 1>><<defiance $_handsCount $_target>>
+		<<else>>
+			<span class="purple"><<His>> face remains on your crotch.</span>
+			<<defiance $_handsCount $_target>>
+		<</if>>
+		<<if $_success>>
+			<<if $NPCList[$_target].mouth.startsWith("penis")>>
+				<<set $penisuse to 0>><<set $penisstate to 0>>
+			<<else>>
+				<<set $vaginause to 0>><<set $vaginastate to 0>>
+			<</if>>
+			<<set $NPCList[$_target].mouth to 0>>
+			<<set $NPCList[$_target].location.head to 0>>
+			<<if $NPCList[$_target].vagina is "othermouth">><<set $NPCList[$_target].vagina to 0>>
+			<<elseif $NPCList[$_target].penis is "othermouth">><<set $NPCList[$_target].penis to 0>><</if>>
+			<<if $leftaction is "stoporal">><<set $leftactiondefault to "rest">><</if>>
+			<<if $rightaction is "stoporal">><<set $rightactiondefault to "rest">><</if>>
+		<</if>>
+	<</if>>
+<</widget>>
+	
+<<widget "effectshandpenistochest">>
+	<<switch _args[0]>>
+		<<case "both" "left">>
+			<<set $_target to $lefttarget>><<set $leftarm to 0>>
+		<<case "right">>
+			<<set $_target to $righttarget>><<set $rightarm to 0>>
+	<</switch>>
+	<<handskilluse>><<personselect $_target>>
+	<<if combatSkillCheck("hand", $NPCList[$_target])>>
+		<<chestskilluse>><<combatpromiscuity3>>
+		<<set $chestactiondefault to "rub">><<set $chestuse to "penis">><<set $cheststate to "penis">><<cheststat>><<set $mouthactiondefault to "peniskiss">>
+		<<set $NPCList[$_target].penis to "chest">><<set $chesttarget to $_target>>
+		<<if $breastcup is "none">>
+			<span class="lblue">You <<handtext>> put <<his>> $NPCList[$_target].penisdesc between your <<breasts>> and squeeze them together as best as you can.
+			Your breasts are too small for it to be effective, but your cute attempt succeeds in charming <<him>>.</span> <<He>> rubs <<his>> penis against your chest.
+		<<else>>
+			<span class="lblue">You <<handtext>> put <<his>> $NPCList[$_target].penisdesc between your <<breasts>>.</span>
+		<</if>>
+	<<else>>
+		<<set $NPCList[$_target].penis to 0>>
+		<<if $player.breastsize is 0>>
+			You squeeze your <<breasts>> together as best you can and try to put <<his>> penis between them, to no avail.
+		<<else>>
+			You fail to put <<his>> penis between your <<breasts>>.
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "effectshandfreechest">> /* MCA Credits to Ryumi */
+	<<switch _args[0]>>
+		<<case "both">>
+			<<set $_freestrength to 2.5>>
+			You try to use both hands to free your chest,
+		<<case "left" "right">>
+			<<set $_freestrength to 1>>
+			You try to use your hand to free your chest,	
+	<</switch>>
+
+	<<set _npc to $NPCList[$chesttarget]>><<personselect $chesttarget>>
+
+	<<if (1000 - ($rng * 10) - ((currentSkillValue('physique') / $physiquemax * 100) * $_freestrength) + ($enemyanger * 0.5)) lte
+			(200 + $enemytrust)>>
+		<<if $cheststate is "othermouthentrance">>
+			<span class="green">
+				<<print either(
+					"and manage to shove <<his>> head away from your <<chest>> before <<he>> can go any further.",
+					"and push <<his>> face some distance from your <<chest>>.",
+					"and manage to distance <<his>> face from your <<chest>> with a good shove."
+				)>>
+			</span>
+			<<set _npc.mouth to 0>><<set _npc.location.head to 0>>
+		<<elseif $cheststate is "othermouthimminent">>
+			<span class="green">
+			<<print either(
+				"and manage to push <<his>> face away from your <<nipple>>.",
+				"and pry <<his>> probing mouth off your <<nipple>>.",
+				"and shove <<his>> face off your <<nipple>>."
+			)>>
+			</span>
+			<!-- <<if $body_temperature is "chilly" or $body_temperature is "cold">>
+				Your buds stand erect and vulnerable as they're re-exposed to the cold.
+			<</if>> --> /* body temp is obsolete iirc, gotta find how to deal with this */
+			<<set _npc.mouth to 0>><<set _npc.location.head to 0>>
+		<<elseif $cheststate is "othermouthsuck" or $cheststate is "othermouthdrink">>
+			<span class="green">
+			<<print either(
+				"and pry <<his>> lips off your <<nipple>> with a wet 'pop.'",
+				"and free your <<nipple>> from <<his>> mouth with a firm shove.",
+				"and manage to shove <<his>> face off your <<nipple>>."
+			)>>
+			</span>
+			<!-- <<if $body_temperature is "chilly" or $body_temperature is "cold">>
+				Your buds stand erect and vulnerable as they're re-exposed to the cold.
+			<</if>> -->
+			<<set _npc.mouth to 0>><<set _npc.location.head to 0>>
+		<</if>>
+		<<set $chest to 0>><<set $cheststate to 0>><<set $chestaction to 0>><<set $chestuse to 0>>
+		<<brat 4>><<brat 1>>
+	<<else>>
+		<span class="red">
+			<<if $cheststate is "chestentrance">>
+				<<if $rng % 4 == 0 and (_npc.lefthand is 0 or _npc.righthand is 0)>>
+					<<if _npc.lefthand is 0>>
+						<<set _npc.lefthand to "arms">>
+					<<else>>
+						<<set _npc.righthand to "arms">>
+					<</if>>
+
+					<<if $leftactiondefault is "freechest">>
+						<<set $leftarm to "grappled">>
+					<</if>>
+					<<if $rightactiondefault is "freechest">>
+						<<set $rightarm to "grappled">>
+					<</if>>
+
+					<<if $_freestrength is 1>>
+						however, <<he>> seizes your arm and traps it behind your back.
+					<<else>>
+						however, <<he>> grabs your arms and traps them behind your back.
+					<</if>>
+				<<else>>
+					<<print either(
+						"but you can't push <<his>> head away from your <<chest>>.",
+						"but <<he>> pushes <<his>> face into your <<chest>> with greater force.",
+						"but <<he>> shoves <<his>> face into your ($player.breastsize gte 9 ? 'cleavage' : '<<chest>>')."
+					)>>
+				<</if>>
+
+			<<elseif ["othermouthimminent", "othermouthsuck", "othermouthdrink"].includes($cheststate)>>
+				<<if $rng % 4 == 0>>
+					<<if _npc.lefthand is 0 or _npc.righthand is 0>>
+						<<if _npc.lefthand is 0>>
+						<<set _npc.lefthand to "arms">>
+						<<else>>
+							<<set _npc.righthand to "arms">>
+						<</if>>
+
+						<<if $leftactiondefault is "freechest">>
+							<<set $leftarm to "grappled">>
+						<</if>>
+						<<if $rightactiondefault is "freechest">>
+							<<set $rightarm to "grappled">>
+						<</if>>
+
+						<<if $_freestrength is 1>>
+							however, <<he>> seizes your arm and traps it behind your back.
+						<<else>>
+							however, <<he>> grabs your arms and traps them behind your back.
+						<</if>>
+					<<else>>
+						however, <<he>> shoves <<his>> mouth forcefully onto your <<chest>> and bites your <<nipple>> in retaliation.
+						<<violence 4>><<bruise chest>>
+					<</if>>
+				<<else>>
+					<<print either(
+						"but cannot pry <<his>> lips off your <<nipple>>.",
+						"but <<his>> mouth remains firmly stuck to your <<nipple>>.",
+						"but aren't able to push <<him>> off your <<nipple>>."
+					)>>
+				<</if>>
+			<</if>>
+		</span>
+		<<brat 2>>
 	<</if>>
 <</widget>>

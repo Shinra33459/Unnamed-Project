@@ -232,6 +232,9 @@
 	<<if $head isnot "grappled" and $head isnot "bound">>
 		<<if $enemyarousal gte $enemyarousalmax and $consensual is 1>>
 			<<set _mouthaction["Spit"] to "ejacspit">>
+			<<if ($enemytype is "man" ? $promiscuity : $deviancy) gte 15>>
+				<<set _mouthaction["Ready your face"] to "ejacfacial">>
+			<</if>>
 		<<else>>
 			<<set _mouthaction["Pull away"] to "pullaway">>
 		<</if>>
@@ -282,5 +285,77 @@
 	<</if>>
 	<<if ($consensual isnot 1 or $combatExtended.reverseRapeStart is 1) and ($fightTargets is undefined or $fightTargets.includes($mouthtarget))>>
 		<<set _mouthaction["Bite"] to "breastbite">>
+	<</if>>
+<</widget>>
+
+
+:: Widgets Effects Mouth [widget]
+
+<<widget "effectsaskoral">>
+	<<if $penisuse is 0 and $vaginause is 0>>
+		<<set $_PorV to ($rng gt 50 ? "P" : "V")>>
+	<<elseif $penisuse is 0>>
+		<<set $_PorV to "P">>
+	<<elseif $vaginause is 0>>
+		<<set $_PorV to "V">>
+	<</if>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "ask for oral service" 1>>
+	<<else>>
+		<<if $_PorV is "P">><<askoralpenis>><<elseif $_PorV is "V">><<askoralvagina>><</if>>
+		<<if $role is "islander" and (!$islander_language or $islander_language lt 100)>>
+			<span class="red"><<if $enemyno gte 2>>They don't<<else>><<He>> doesn't<</if>> understand your words,</span> and <<if $enemyno gte 2>>ignore<<else>>ignores<</if>> them.
+		<<else>>
+			<<set $mouthactiondefault to 0>><<brat 2>>
+			<<set $_target to $NPCList[$mouthtarget]>><<personselect $mouthtarget>>
+			<<if combatSkillCheck("seduction", $mouthtarget, $_target.fullDescription)>>
+				<<He>> complies.
+				<<set $_target.location.head to "genitals">>
+				<<if $_target.vagina is 0>><<set $_target.vagina to "othermouth">><<elseif $_target.penis is 0>><<set $_target.penis to "othermouth">><</if>>
+				<<if $_PorV is "P">>
+					<<set $_target.mouth to "penisentrance">>
+					<<set $penisuse to "othermouth">><<set $penisstate to "othermouthentrance">>
+				<<elseif $_PorV is "V">>
+					<<set $_target.mouth to "vaginaentrance">>
+					<<set $vaginause to "othermouth">><<set $vaginastate to "othermouthentrance">>
+				<</if>>
+			<<else>>
+				<span class="red"><<He>> refuses.</span>
+			<</if>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<<widget "effectsaskfootjob">>
+	<<if $penisuse is 0 and $vaginause is 0>>
+		<<set $_PorV to ($rng gt 50 ? "P" : "V")>>
+	<<elseif $penisuse is 0>>
+		<<set $_PorV to "P">>
+	<<elseif $vaginause is 0>>
+		<<set $_PorV to "V">>
+	<</if>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "ask for a foot job" 1>>
+	<<else>>
+		<<askfootjob>>
+		<<if $role is "islander" and (!$islander_language or $islander_language lt 100)>>
+			<span class="red"><<if $enemyno gte 2>>They don't<<else>><<He>> doesn't<</if>> understand your words,</span> and <<if $enemyno gte 2>>ignore<<else>>ignores<</if>> them.
+		<<else>>
+			<<set $mouthactiondefault to 0>><<meek 2>>
+			<<set $_target to $NPCList[$mouthtarget]>><<personselect $mouthtarget>>
+			<<if combatSkillCheck("seduction", $mouthtarget, $_target.fullDescription)>>
+				<<He>> complies.
+				<<if $_target.penis is 0>><<set $_target.penis to "footjob">><<elseif $_target.vagina is 0>><<set $_target.vagina to "footjob">><</if>>
+				<<if $_PorV is "P">>
+					<<set $penisuse to "feet">><<set $penisstate to "otherfoot">><<set $_target.foot to "penisentrance">>
+					<<set $speechpenisfoot to 1>>
+				<<elseif $_PorV is "V">>
+					<<set $vaginause to "feet">><<set $vaginastate to "otherfoot">><<set $_target.foot to "vaginaentrance">>
+					<<set $speechvaginafoot to 1>>
+				<</if>>
+			<<else>>
+				<span class="red"><<He>> refuses.</span>
+			<</if>>
+		<</if>>
 	<</if>>
 <</widget>>
