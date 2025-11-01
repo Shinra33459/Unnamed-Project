@@ -2076,15 +2076,15 @@ DefineMacro("validateTransformations", validateTransformations);
 // prettier-ignore
 function getSexesFromRandomGroup() {
 	if (maleChance() <= 0) { /* Only females. */
-		if (V.settings.femaleNPCPenisChance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
-		if (V.settings.femaleNPCPenisChance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
+		if (V.dgchance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
+		if (V.dgchance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
 	}
 	if (maleChance() >= 100) { /* Only males. */
-		if (V.settings.maleNPCVaginaChance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
-		if (V.settings.maleNPCVaginaChance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
+		if (V.cbchance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
+		if (V.cbchance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
 	}
-	if (V.settings.maleNPCVaginaChance >= 100 && V.settings.femaleNPCPenisChance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
-	if (V.settings.femaleNPCPenisChance >= 100 && V.settings.maleNPCVaginaChance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
+	if (V.cbchance >= 100 && V.dgchance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
+	if (V.dgchance >= 100 && V.cbchance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
 	return SexTypes.BOTH;
 }
 window.getSexesFromRandomGroup = getSexesFromRandomGroup;
@@ -2886,18 +2886,18 @@ function unableTakeVirginity(virginity) {
 		case "penile":
 			return (
 				V.settings.analEnabled === false &&
-				((V.settings.maleNPCVaginaChance === 0 && V.settings.femaleNPCPenisChance === 100) ||
-					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 0) ||
-					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 100) ||
-					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 100 && V.settings.straponChance === 100) ||
-					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 0 && V.settings.straponChance === 100))
+				((V.cbchance === 0 && V.dgchance === 100) ||
+					(maleChance() === 100 && V.cbchance === 0) ||
+					(maleChance() === 0 && V.dgchance === 100) ||
+					(maleChance() === 100 && V.cbchance === 100 && V.settings.straponChance === 100) ||
+					(maleChance() === 0 && V.dgchance === 0 && V.settings.straponChance === 100))
 			);
 		case "vaginal":
 			return (
 				V.settings.straponChance === 0 &&
-				((V.settings.maleNPCVaginaChance === 100 && V.settings.femaleNPCPenisChance === 0) ||
-					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 100) ||
-					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 0))
+				((V.cbchance === 100 && V.dgchance === 0) ||
+					(maleChance() === 100 && V.cbchance === 100) ||
+					(maleChance() === 0 && V.dgchance === 0))
 			);
 		default:
 			return false;
@@ -3187,9 +3187,9 @@ function hasSharpSenses(sense = "any") {
 		if (currentSkillValue("skulduggery") >= 600) return "experienced ears";
 	}
 	if (["instincts"].includes(sense)) {
-		if (V.wolfgirl >= 6) return "wolf instincts";
-		if (V.cat >= 6) return "cat instincts";
-		if (V.fox >= 6) return "fox instincts";
+		if (V.wolfgirl >= 6 || V.transformationParts.wolf.tail !== "disabled" && V.transformationParts.wolf.tail !== "hidden") return "wolf instincts";
+		if (V.cat >= 6 || V.transformationParts.cat.tail !== "disabled" && V.transformationParts.cat.tail !== "hidden") return "cat instincts";
+		if (V.fox >= 6 || V.transformationParts.fox.tail !== "disabled" && V.transformationParts.fox.tail !== "hidden") return "fox instincts";
 		if (V.dryad >= 6 || currentSkillValue("tending") >= 900) return "nature-trained instincts";
 	}
 	return false;

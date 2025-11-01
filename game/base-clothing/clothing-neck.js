@@ -1615,7 +1615,7 @@ function initNeck() {
 	*/
 	setup.moddedClothes.neck = [
 		{
-			index: 37,
+			index: 41,
 			slot: "neck",
 			name: "Whitney's collar",
 			name_cap: "Whitney's collar",
@@ -1650,7 +1650,7 @@ function initNeck() {
 			accIcon: 0,
 		},
 		{
-			index: 38,
+			index: 42,
 			slot: "neck",
 			name: "Whitney's collar with leash",
 			name_cap: "Whitney's collar with leash",
@@ -1687,7 +1687,7 @@ function initNeck() {
 			accIcon: 0,
 		},
 		{
-			index: 39,
+			index: 43,
 			slot: "neck",
 			name: "harness",
 			name_cap: "Harness",
@@ -1743,7 +1743,7 @@ function initNeck() {
 			accIcon: 0,
 		},		
 		{
-			index: 40,
+			index: 44,
 			slot: "neck",
 			name: "harness with leash",
 			name_cap: "Harness with leash",
