@@ -188,7 +188,7 @@
 			<</if>>
 		</div>
 		<div class="settingsToggleItem">
-			<span class="gold">Body</span> <mouse class="tooltip linkBlue">(?)<span>Changing the player's genitalia will wash the player of lewd fluids, and remove genital parasites, to prevent them from lingering on nonexisting body parts.</span></mouse>
+			<span class="gold">Body</span> <mouse class="tooltip linkBlue">(?)<span>Changing the player's genitalia will wash the player of lewd fluids and remove genital parasites to prevent them from lingering on nonexisting body parts.</span></mouse>
 			<br>
 			Genitals:
 			<span id="statsGender">
@@ -196,7 +196,7 @@
 			</span>
 			<br>
 			<<set _gender_body_words to {"m": "Masculine", "f": "Feminine", "a": "Androgynous"}>>
-			Body type <mouse class="tooltip linkBlue">(?)<span>Contributes to how feminine or masculine you appear. In normal gameplay, the player's body type does not contribute to gender appearance, unless it has been feminised or masculinised via special clothing.</span></mouse>:
+			Body type: <mouse class="tooltip linkBlue">(?)<span>Contributes to how feminine or masculine you appear. In normal gameplay, the player's body type does not contribute to gender appearance, unless it has been feminised or masculinised via special clothing.</span></mouse>:
 			<span id="statsBodyType">
 				<<cheatsBody>>
 			</span>
@@ -205,6 +205,23 @@
 			Body size:
 			<span id="statsBodySize">
 				<<cheatsBodySize>>
+			</span>
+			<br>
+			Body shape:
+			<span id="statsBodyShape">
+				<<cheatsBodyShape>>
+			</span>
+			<<if setup.faceStyleOptions.length gt 1>>
+				<br>
+				Face style:
+				<span id="statsFaceStyle">
+					<<cheatsFaceStyle>>
+				</span>
+			<</if>>
+			<br>
+			Demeanour:
+			<span id="statsDemeanour">
+				<<cheatsDemeanour>>
 			</span>
 		</div>
 		<div class="settingsToggleItem">
@@ -302,7 +319,7 @@
 		<div class="settingsHeader options">Clothes</div>
 		<div class="settingsToggleItemWide">
 			<<link "Unlock all special clothing">>
-				<<run for(const c in V.specialClothes) V.specialClothes[c] = "unlocked">>
+				<<run for(const c in V.specialClothes) {if (V.specialClothes[c].unlocked === 0) V.specialClothes[c].unlocked = 1}>>
 			<</link>>
 			<br>
 			<span class="description">If clothing health is set to zero, it will break. Leaving the cheats menu will destroy it, and you will not be able to get it back.</span>
@@ -1154,7 +1171,7 @@
 			}>>
 		</div>
 	</div>
-	<<if $parasitedisable is "f">>
+	<<if $settings.parasitesEnabled>>
 		<hr>
 		<div class="settingsGrid">
 			<div class="settingsHeader options">Parasites</div>
@@ -1317,6 +1334,17 @@
 				Setting Sydney's <<= _purity is "purity" ? "purity to below 0%" : "corruption to above 0%">> will switch it to <<= _purity is "purity" ? "corruption" : "purity">>.
 			</span>
 		</div>
+		/* Gwylan's love is a calculated value and any change added here would not stick. */
+		<<if $gwylanSeen?.includes("yearning")>>
+			<div class="settingsToggleItemWide">
+				<span class="gold">Gwylan</span>
+				<span id="gwylandesc" class="description">
+					Gwylan's love is calculated as a total from a list of events and can not be set with cheats.
+				</span>
+				<<numberStepper "<<symbol lust>> Lust" `C.npc.Gwylan.lust` { callback: value => { C.npc.Gwylan.lust = value } }>>
+				<<numberStepper "<<symbol yearning>> Yearning" `C.npc.Gwylan.dom` { callback: value => { C.npc.Gwylan.dom = value }, max: 150 }>>
+			</div>
+		<</if>>
 	</div>
 	<hr>
 	<div class="settingsGrid">
@@ -1329,7 +1357,7 @@
 		<div class="settingsToggleItem">
 			<span class="gold">Zephyr</span>
 			<<numberStepper "<<symbol love>> <<print setup.loveAlias.Zephyr()>>" `C.npc.Zephyr.love` { callback: value => { C.npc.Zephyr.love = value } }>>
-			<<numberStepper "<<symbol lust>> Lust" `C.npc.Zephyr.lust` { callback: value => { C.npc.Zephyr.lust = value }, max: 50 }>>
+			<<numberStepper "<<symbol lust>> Lust" `C.npc.Zephyr.lust` { callback: value => { C.npc.Zephyr.lust = value }, max: 100 }>>
 		</div>
 		<div class="settingsToggleItem">
 			<span class="gold">Teachers</span>
@@ -1337,7 +1365,7 @@
 			<<numberStepper "<<symbol love>> Doren <<print setup.loveAlias.Doren()>>" `C.npc.Doren.love` { callback: value => { C.npc.Doren.love = value } }>>
 			<<numberStepper "<<symbol love>> Leighton <<print setup.loveAlias.Leighton()>>" `C.npc.Leighton.love` { callback: value => { C.npc.Leighton.love = value } }>>
 			<<numberStepper "<<symbol love>> River <<print setup.loveAlias.River()>>" `C.npc.River.love` { callback: value => { C.npc.River.love = value }, max: 50 }>>
-			<<numberStepper "<<symbol love>> Winter <<print setup.loveAlias.Winter()>>" `C.npc.Winter.love` { callback: value => { C.npc.Winter.love = value }, max: 50 }>>
+			<<numberStepper "<<symbol love>> Winter <<print setup.loveAlias.Winter()>>" `C.npc.Winter.love` { callback: value => { C.npc.Winter.love = value } }>>
 		</div>
 		<div class="settingsToggleItem">
 			<span class="gold">Other Named NPCs</span>
@@ -1593,7 +1621,7 @@
 			<<switch $schoolrep.crossdress>>
 				<<case 5>><span class="red">Your _crossdressing has become common knowledge at school. Everyone _knows, including the teachers.</span>
 				<<case 4>><span class="pink">Rumours of your _crossdressing are spreading throughout the school.</span>
-				<<case 3>><span class="purple">Rumours of your _crossdressing are spreading, and have become a popular topic of conversation at school.</span>
+				<<case 3>><span class="purple">Rumours of your _crossdressing are spreading and have become a popular topic of conversation at school.</span>
 				<<case 2>><span class="blue">Whispers of your _crossdressing are spreading through the school.</span>
 				<<case 1>><span class="lblue">A few cliques at school have begun whispering of your _crossdressing.</span>
 				<<default>><span class="green">No one is spreading rumours about you at school.</span>
@@ -1670,7 +1698,7 @@
 					<<landfillicon>><<link [[Landfill|Trash Gate Enter]]>><<cheats-teleport-function>><</link>>
 					<br>
 				<</if>>
-				<<if $compoundcard or $farm_stage gte 9>>
+				<<if $compound.card or $farm_stage gte 9>>
 					<<landfillicon>><<link [[Elk Compound]]>><<cheats-teleport-function>><</link>>
 					<br>
 				<</if>>
@@ -1747,11 +1775,11 @@
 				<br>
 				<<clifficon>><<link [[Cliff Street]]>><<cheats-teleport-function>><</link>>
 				<br>
-				<<alleyicon>><<link [[Commercial alleyways]]>><<cheats-teleport-function>><</link>>
+				<<alleyicon>><<link [[Commercial Alleyways]]>><<cheats-teleport-function>><</link>>
 				<br>
-				<<alleyicon>><<link [[Industrial alleyways]]>><<cheats-teleport-function>><</link>>
+				<<alleyicon>><<link [[Industrial Alleyways]]>><<cheats-teleport-function>><</link>>
 				<br>
-				<<alleyicon>><<link [[Residential alleyways]]>><<cheats-teleport-function>><</link>>
+				<<alleyicon>><<link [[Residential Alleyways]]>><<cheats-teleport-function>><</link>>
 				<hr>
 				<span class="gold">Underground</span>
 				<br>
@@ -1926,7 +1954,7 @@
 	<hr>
 	<div class="settingsGrid">
 		<div class="settingsHeader options">Pregnancy</div>
-			<<if $parasitepregdisable is "t">>
+			<<if !$settings.parasitePregnancyEnabled>>
 				<div class="settingsToggleItemWide">
 					<span class="gold">Parasitic Pregnancy</span>
 					<br>
@@ -1954,7 +1982,7 @@
 					</div>
 				<</if>>
 			<</if>>
-		<<if ($playerPregnancyBeastDisable is "f" or $playerPregnancyHumanDisable is "f")>>
+		<<if ($settings.playerPregnancyBeastEnabled or $settings.playerPregnancyHumanEnabled)>>
 			<div class="settingsToggleItem" id="cheatsPregnancyOptions">
 				<<cheatsPregnancyOptions>>
 			</div>
@@ -2095,9 +2123,9 @@
 	<<if $player.vaginaExist or canBeMPregnant()>>
 		<<set _menstruation to $sexStats.vagina.menstruation>>
 		<<set $_pregnancy to getPregnancyObject()>>
-		<<if !playerIsPregnant() and $cycledisable == "f">>
+		<<if !playerIsPregnant() and $settings.fertilityCycleEnabled>>
 			You aren't pregnant.
-			<<if $pregnancytype is "realistic">>
+			<<if $settings.pregnancyType is "realistic">>
 				You have <span id="cheatSpermSources"><span class="gold"><span class="gold">$sexStats[_womb].sperm.length</span></span> <<pluralise $sexStats[_womb].sperm.length "sperm source">></span> contributing to your chances of getting pregnant.
 			<</if>>
 			<br><br>
@@ -2147,12 +2175,11 @@
 				<<run delete C.npc.Alex.pregnancy.sample>>
 				<<run delete C.npc.Alex.pregnancy.ultraSoundPics>>
 			<</link>>
-			<span class="description">This is a cheat, not an abortion.</span>
 		<<else>>
-			<<if ($playerPregnancyHumanDisable == "f" or $playerPregnancyBeastDisable == "f") and !playerIsPregnant()>>
+			<<if ($settings.playerPregnancyHumanEnabled or $settings.playerPregnancyBeastEnabled) and !playerIsPregnant()>>
 				Get pregnant from:
 				<br>
-				<<if $playerPregnancyHumanDisable == "f">>
+				<<if $settings.playerPregnancyHumanEnabled>>
 					<<link [[A random person|$passage]]>> /* checks if males or females have penises, if there is no people with penises a foreigner impregnates PC */
 					<<set _impregnator to either("arbitrary", "aimless", "by-the-way", "casual", "driftless", "hit-or-miss", "fluky", "promiscuous", "slapdash", "irresponsible", "careless", "negligent") + " cheater ">>
 					<<if $dgchance gt 0 and $cbchance lt 100>>
@@ -2167,12 +2194,12 @@
 					<<playerPregnancy _impregnator "human" true _womb undefined true>>
 					<</link>>
 				<</if>>
-				<<if $playerPregnancyBeastDisable == "f">>
-					<<if $playerPregnancyHumanDisable == "f">>
+				<<if $settings.playerPregnancyBeastEnabled>>
+					<<if $settings.playerPregnancyHumanEnabled>>
 						|
 					<</if>>
 					<<link [[A wolf|$passage]]>>
-					<<if $monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+					<<if $settings.monsterChance gte random(1, 100) and ($hallucinations gte 1 or !$settings.monsterHallucinationsOnly)>>
 						<<if $dgchance gt 0 and $cbchance lt 100>>
 							<<set _impregnator to either("cheater wolfboy", "cheater wolfgirl")>>
 						<<elseif $dgchance gt 0 and $cbchance gt 99>>
@@ -2226,10 +2253,10 @@
 					<</link>>
 				<</if>>
 				<br><br>
-				<<if $pregnancytype is "realistic">>
+				<<if $settings.pregnancyType is "realistic">>
 					Add sperm from:
 					<br>
-					<<if $playerPregnancyHumanDisable == "f">>
+					<<if $settings.playerPregnancyHumanEnabled>>
 						<<link "An anonymous donor">> /* The sperm owner is always the same, anonymous donor, so it helps pregnancy from only one source */
 							<<recordSperm `{target: "pc", spermOwner: "anonymous donor", spermType: "human", genital: _womb}`>>
 							<<replace "#cheatSpermSources">><span class="gold">$sexStats[_womb].sperm.length</span> <<= $sexStats[_womb].sperm.length is 1 ? "sperm source" : "sperm sources">><</replace>>
@@ -2249,12 +2276,12 @@
 							<<replace "#cheatSpermSources">><span class="gold">$sexStats[_womb].sperm.length</span> <<= $sexStats[_womb].sperm.length is 1 ? "sperm source" : "sperm sources">><</replace>>
 						<</link>>
 					<</if>>
-					<<if $playerPregnancyBeastDisable == "f">>
-						<<if $playerPregnancyHumanDisable == "f">>
+					<<if $settings.playerPregnancyBeastEnabled>>
+						<<if $settings.playerPregnancyHumanEnabled>>
 							|
 						<</if>>
 						<<link "A wolf">>
-							<<if $monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+							<<if $settings.monsterChance gte random(1, 100) and ($hallucinations gte 1 or !$settings.monsterHallucinationsOnly)>>
 								<<if $dgchance gt 0 and $cbchance lt 100>>
 									<<set _impregnator to either("cheater wolfboy", "cheater wolfgirl")>>
 								<<elseif $dgchance gt 0 and $cbchance gt 99>>
@@ -2339,7 +2366,7 @@
 				<<link [[_linkText|$passage]]>>
 					<<namedNpcPregnancy _actor.nam "pc" "human" true undefined true>>
 				<</link>>
-				<<if $pregnancytype is "realistic">>
+				<<if $settings.pregnancyType is "realistic">>
 					<<set _linkText to "Inseminate">>
 					- <<link _linkText>>
 						<<recordSperm `{target: _actor.nam, spermOwner: "pc", spermType: "human", genital: "vagina"}`>>
@@ -2347,7 +2374,7 @@
 					<</link>>
 					<span @id="'cheatSpermSources' + _actorNameNoSpace" class="description">(<<= _actor.pregnancy.sperm.length>> doses)</span>
 				<</if>>
-				<<if $cycledisable == "f">>
+				<<if $settings.fertilityCycleEnabled>>
 					- <<link [[Set cycle to fertile days|$passage]]>>
 						<<set _actor.pregnancy.cycleDay to _actor.pregnancy.cycleDangerousDay - 1>>
 					<</link>>
@@ -2829,7 +2856,48 @@
 		<</for>>
 	<</capture>>
 <</widget>>
+<<widget "cheatsBodyShape">>
+	<<capture _i>>
+		<<for _i = 0; _i < setup.bodyShapes.length; _i++>>
+			<span @class="$player.bodyshape is setup.bodyShapes[_i] ? 'goldLink' : 'unselected'">
+				<<link setup.bodyShapes[_i].toUpperFirst()>>
+					<<set $player.bodyshape to setup.bodyShapes[_i]>>
+					<<replace "#statsBodyShape">><<cheatsBodyShape>><</replace>><<updatesidebarimg>>
+				<</link>>
+			</span>	<<= _i lt setup.bodyShapes.length - 1 ? "|" : "">>
+		<</for>>
+	<</capture>>
+<</widget>>
+<<widget "cheatsFaceStyle">>
+	<<set _faceStyles to Object.values(setup.faceStyleOptions)>>
 
+	<<capture _i>>
+		<<for _i = 0; _i < _faceStyles.length; _i++>>
+			<span @class="$facestyle is _faceStyles[_i] ? 'goldLink' : 'unselected'">
+				<<link _faceStyles[_i].toUpperFirst()>>
+					<<set $facestyle to _faceStyles[_i]>>
+					<<set $facevariant to "default">>
+					<<replace "#statsFaceStyle">><<cheatsFaceStyle>><</replace>><<updatesidebarimg>>
+					<<replace "#statsDemeanour">><<cheatsDemeanour>><</replace>><<updatesidebarimg>>
+				<</link>>
+			</span>	<<= _i lt _faceStyles.length - 1 ? "|" : "">>
+		<</for>>
+	<</capture>>
+<</widget>>
+<<widget "cheatsDemeanour">>
+	<<set _faceVariants to Object.values(setup.faceVariantOptions[V.facestyle])>>
+
+	<<capture _i>>
+		<<for _i = 0; _i < _faceVariants.length; _i++>>
+			<span @class="$facevariant is _faceVariants[_i] ? 'goldLink' : 'unselected'">
+				<<link _faceVariants[_i].toUpperFirst()>>
+					<<set $facevariant to _faceVariants[_i]>>
+					<<replace "#statsDemeanour">><<cheatsDemeanour>><</replace>><<updatesidebarimg>>
+				<</link>>
+			</span>	<<= _i lt _faceVariants.length - 1 ? "|" : "">>
+		<</for>>
+	<</capture>>
+<</widget>>
 <<widget "cheatsSpeechAttitude">>
 	<<set _submissiveness = [1500, 1000, 500]>>
 	<<set _attitude = ["meek", "neutral", "bratty"]>>

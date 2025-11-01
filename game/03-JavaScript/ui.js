@@ -136,446 +136,24 @@ window.zoom = zoom;
 
 function beastTogglesCheck() {
 	T.beastVars = [
-		"bestialitydisable",
-		"swarmdisable",
-		"parasitedisable",
-		"parasitepregdisable",
-		"tentacledisable",
-		"slimedisable",
-		"voredisable",
-		"spiderdisable",
-		"slugdisable",
-		"waspdisable",
-		"beedisable",
-		"lurkerdisable",
-		"horsedisable",
-		"plantdisable",
+		"bestialityEnabled",
+		"swarmsEnabled",
+		"parasitesEnabled",
+		"parasitePregnancyEnabled",
+		"tentaclesEnabled",
+		"slimesEnabled",
+		"voreEnabled",
+		"spidersEnabled",
+		"slugsEnabled",
+		"waspsEnabled",
+		"beesEnabled",
+		"lurkersEnabled",
+		"horsesEnabled",
+		"plantsEnabled",
 	];
-	T.anyBeastOn = T.beastVars.some(x => V[x] === "f");
+	T.anyBeastOn = T.beastVars.some(x => V.settings[x] === true);
 }
 window.beastTogglesCheck = beastTogglesCheck;
-
-function settingsAsphyxiation() {
-	const updateText = () => {
-		let val = V.asphyxiaLvl;
-		let text = null;
-		switch (val) {
-			case 0:
-				text = "Don't touch my neck!";
-				break;
-			case 1:
-				text = "NPCs may <span class='blue inline-colour'>grab</span> you by the neck. Doesn't impede breathing.";
-				break;
-			case 2:
-				text = "NPCs may try to <span class='purple inline-colour'>choke</span> you during consensual intercourse.";
-				break;
-			case 3:
-				text = "NPCs may try to <span class='red inline-colour'>strangle</span> you during non-consensual intercourse.";
-				break;
-			case 4:
-				text =
-					"NPCs will <span class='red inline-colour'>often</span> try to <span class='red inline-colour'>strangle</span> you during non-consensual intercourse.";
-				break;
-			default:
-				text = "Error: bad value: " + val;
-				val = 0;
-		}
-		jQuery("#numberslider-value-asphyxialvl").text("").append(text).addClass("small-description");
-	};
-
-	$(() => {
-		updateText();
-		$("#numberslider-input-asphyxialvl").on("input change", function (e) {
-			updateText();
-		});
-	});
-}
-window.settingsAsphyxiation = settingsAsphyxiation;
-
-function settingsCondoms() {
-	const updateText = () => {
-		let val = V.condomLvl;
-		let text = null;
-		switch (val) {
-			case 0:
-				text = "<span class='red inline-colour'>Everyone is allergic to latex and safe sex.</span>";
-				break;
-			case 1:
-				text = "Only <span class='green inline-colour'>you</span> may use condoms. You may still give condoms to NPCs.";
-				break;
-			case 2:
-				text = "NPCs will only have condoms if <span class='blue inline-colour'>pregnancy</span> between them and the player is possible.";
-				break;
-			case 3:
-				text = "NPCs may have and use condoms <span class='pink inline-colour'>whenever they please</span>.";
-				break;
-			default:
-				text = "Error: bad value: " + val;
-				val = 0;
-		}
-		jQuery("#numberslider-value-condomlvl").text("").append(text).addClass("small-description");
-	};
-
-	$(() => {
-		updateText();
-		$("#numberslider-input-condomlvl").on("input change", function (e) {
-			updateText();
-		});
-	});
-}
-window.settingsCondoms = settingsCondoms;
-
-function settingsNudeGenderAppearance() {
-	const updateText = () => {
-		let val = V.NudeGenderDC;
-		let text = null;
-		switch (val) {
-			case 0:
-				text = "NPCs will <span class='blue inline-colour'>ignore</span> your genitals when perceiving your gender.";
-				break;
-			case 1:
-				text = "NPCs will <span class='purple inline-colour'>consider</span> your genitals when perceiving your gender.";
-				break;
-			case 2:
-				text = "NPCs will <span class='red inline-colour'>judge</span> your gender based on your genitals.";
-				break;
-			default:
-				text = "Error: bad value: " + val;
-				val = 0;
-		}
-		$("#numberslider-value-nudegenderdc").text("").append(text).addClass("small-description");
-	};
-
-	$(() => {
-		updateText();
-		jQuery("#numberslider-input-nudegenderdc")
-			.on("input change", function (e) {
-				updateText();
-			})
-			.css("width", "100%");
-	});
-}
-window.settingsNudeGenderAppearance = settingsNudeGenderAppearance;
-
-function settingsBodywriting() {
-	const updateText = () => {
-		let val = V.bodywritingLvl;
-		let text = null;
-		switch (val) {
-			case 0:
-				text = "NPCs may <span class='green inline-colour'>not</span> write on you.";
-				break;
-			case 1:
-				text = "NPCs may <span class='blue inline-colour'>ask</span> to write on you.";
-				break;
-			case 2:
-				text = "NPCs may <span class='purple inline-colour'>forcibly</span> write on you.";
-				break;
-			case 3:
-				text = "NPCs may <span class='red inline-colour'>forcibly</span> write on and <span class='red inline-colour'>tattoo</span> you.";
-				break;
-			default:
-				text = "Error: bad value: " + val;
-				val = 0;
-		}
-		// delete the below code when $bodywritingdisable is fully replaced by $bodywritingLvl
-		V.bodywritingdisable = "f";
-		if (val === 0) V.bodywritingdisable = "t";
-
-		$("#numberslider-value-bodywritinglvl").text("").append(text).addClass("small-description");
-	};
-
-	$(() => {
-		updateText();
-		$("#numberslider-input-bodywritinglvl").on("input change", function (e) {
-			updateText();
-		});
-	});
-}
-window.settingsBodywriting = settingsBodywriting;
-
-function settingsNamedNpcBreastSize(id, persist) {
-	const breastSizes = ["nipple", "budding", "tiny", "small", "pert", "modest", "full", "large", "ample", "massive", "huge", "gigantic", "enormous"];
-
-	const updateText = () => {
-		const npc = persist ? V.per_npc[T.pNPCId] : V.NPCName[T.npcId];
-		const val = npc.breastsize;
-
-		const text = breastSizes[val];
-
-		if (val > 0) {
-			npc.breastdesc = text + " breast";
-			npc.breastsdesc = text + " breasts";
-		} else {
-			npc.breastdesc = text;
-			npc.breastsdesc = text + "s";
-		}
-
-		$("#numberslider-value-" + id).text(npc.breastsdesc);
-	};
-
-	$(() => {
-		updateText();
-		$("#numberslider-input-" + id).on("input change", function (e) {
-			updateText();
-		});
-	});
-}
-window.settingsNamedNpcBreastSize = settingsNamedNpcBreastSize;
-
-function settingsGenericGenders(id) {
-	let slider = null;
-	const updateText = () => {
-		let val = null;
-		let attraction = null;
-		let men = null;
-		let women = null;
-
-		if (id === "beasts") {
-			val = V.beastmalechance;
-			slider = "beastmalechance";
-		} else if (id === "NPCs") {
-			val = V.malechance;
-			slider = "malechance";
-		} else if (id === "mlm") {
-			val = V.maleChanceMale;
-			slider = "malechancemale";
-			attraction = "<span class='blue inline-colour'>attracted to men</span>";
-			men = "men";
-			women = "women";
-		} else if (id === "wlw") {
-			val = V.maleChanceFemale;
-			slider = "malechancefemale";
-			attraction = "<span class='pink inline-colour'>attracted to women</span>";
-			men = "men";
-			women = "women";
-		} else if (id === "blm") {
-			val = V.beastMaleChanceMale;
-			slider = "beastmalechancemale";
-			attraction = "<span class='blue inline-colour'>attracted to men</span>";
-			men = "male beasts";
-			women = "female beasts";
-		} else if (id === "blw") {
-			val = V.beastMaleChanceFemale;
-			slider = "beastmalechancefemale";
-			attraction = "<span class='pink inline-colour'>attracted to women</span>";
-			men = "male beasts";
-			women = "female beasts";
-		} else {
-			val = V.malevictimchance;
-			slider = "malevictimchance";
-		}
-
-		let text = null;
-
-		if (id === "mlm" || id === "wlw" || id === "blw" || id === "blm") {
-			switch (val) {
-				case 100:
-					text = `<span class='gold inline-colour'>No</span> <span class='pink inline-colour'>${women}</span> and <span class='gold inline-colour'>all</span> <span class='blue inline-colour'>${men}</span> will be ${attraction}.`;
-					break;
-				case 0:
-					text = `<span class='gold inline-colour'>All</span> <span class='pink inline-colour'>${women}</span> and <span class='gold inline-colour'>no</span> <span class='blue inline-colour'>${men}</span> will be ${attraction}.`;
-					break;
-				default:
-					text = `<span class='gold inline-colour'>${100 - val
-						}%</span> of <span class='pink inline-colour'>${women}</span> and <span class='gold inline-colour'>${val}%</span> of <span class='blue inline-colour'>${men}</span> will be ${attraction}.`;
-					break;
-			}
-		} else {
-			if (val === 100) {
-				text = `<span class='gold inline-colour'>All</span> ${id} will be <span class='blue inline-colour'>male</span>.`;
-			} else if (val === 0) {
-				text = `<span class='gold inline-colour'>All</span> ${id} will be <span class='pink inline-colour'>female</span>.`;
-			} else if (val === 50) {
-				text =
-					id.charAt(0).toUpperCase() +
-					id.slice(1) +
-					" will be <span class='gold inline-colour'>evenly</span> split between <span class='blue inline-colour'>male</span> and <span class='pink inline-colour'>female</span> genders.";
-			} else if (val > 50) {
-				text = `<span class='gold inline-colour'>${val}%</span> of ${id} will be <span class='blue inline-colour'>male</span>.`;
-			} else {
-				text = `<span class='gold inline-colour'>${100 - val}%</span> of ${id} will be <span class='pink inline-colour'>female</span>.`;
-			}
-		}
-
-		jQuery("#numberslider-value-" + slider)
-			.text("")
-			.append(text)
-			.addClass("small-description");
-	};
-
-	$(() => {
-		updateText();
-		$("#numberslider-input-" + slider).on("input change", function (e) {
-			updateText();
-		});
-	});
-}
-
-window.settingsGenericGenders = settingsGenericGenders;
-
-function settingsMonsterChance() {
-	const updateText = () => {
-		const val = V.monsterchance;
-		let text = null;
-
-		switch (val) {
-			case 100:
-				text = "Beasts will <span class='gold inline-colour'>always</span> be monster girls and boys.";
-				break;
-			case 0:
-				text = "Beasts will <span class='gold inline-colour'>never</span> appear as monster girls and boys, unless allowed while hallucinating.";
-				break;
-			case 50:
-				text = "<span class='gold inline-colour'>Half</span> of all beasts will be replaced by monster girls and boys.";
-				break;
-			default:
-				text = `<span class='gold inline-colour'>${val}%</span> of beasts will be replaced by monster girls and boys.`;
-				break;
-		}
-
-		jQuery("#numberslider-value-monsterchance").text("").append(text).addClass("small-description");
-	};
-
-	$(() => {
-		updateText();
-		$("#numberslider-input-monsterchance").on("input change", function (e) {
-			updateText();
-		});
-	});
-}
-
-window.settingsMonsterChance = settingsMonsterChance;
-
-function settingsBeastGenders(singleUpdate) {
-	const updateText = () => {
-		const val = T.beastmalechance;
-		let text = null;
-		switch (val) {
-			case 100:
-				if (T.beastMaleChanceSplit === "t") {
-					text = "<span class='gold inline-colour'>All</span> beasts will prefer the <span class='gold inline-colour'>opposite sex</span>.";
-				} else {
-					text = "<span class='gold inline-colour'>All</span> beasts will be <span class='blue inline-colour'>male</span>.";
-				}
-				break;
-			case 75:
-				if (T.beastMaleChanceSplit === "t") {
-					text = "<span class='gold inline-colour'>75%</span> of beasts will prefer the <span class='gold inline-colour'>opposite sex</span>.";
-				} else {
-					text = "<span class='gold inline-colour'>75%</span> of beasts will be <span class='blue inline-colour'>male.</span>";
-				}
-				break;
-			case 50:
-				if (T.beastMaleChanceSplit === "t") {
-					text = "Beast sexual preferences will be <span class='gold inline-colour'>randomly</span> split.";
-				} else {
-					text =
-						"Beasts will be <span class='gold inline-colour'>evenly</span> split between <span class='blue inline-colour'>male</span> and <span class='pink inline-colour'>female</span> genders.";
-				}
-				break;
-			case 25:
-				if (T.beastMaleChanceSplit === "t") {
-					text = "<span class='gold inline-colour'>75%</span> of beasts will prefer the <span class='gold inline-colour'>same sex</span>.";
-				} else {
-					text = "<span class='gold inline-colour'>75%</span> of beasts will be <span class='pink inline-colour'>female.</span>";
-				}
-				break;
-			case 0:
-				if (T.beastMaleChanceSplit === "t") {
-					text = "<span class='gold inline-colour'>All</span> beasts will prefer the <span class='gold inline-colour'>same sex</span>.";
-				} else {
-					text = "<span class='gold inline-colour'>All</span> beasts will be <span class='pink inline-colour'>female.</span>";
-				}
-				break;
-			default:
-				if (T.beastMaleChanceSplit === "t") {
-					text = "Beast sexual preferences will be <span class='gold inline-colour'>randomly</span> split.";
-				} else {
-					text = "<span class='gold inline-colour'>" + V.beastmalechance + "%</span> of beasts will be <span class='blue inline-colour'>male.</span>";
-				}
-				break;
-		}
-		jQuery("#numberslider-value--beastmalechance").text("").append(text).addClass("small-description");
-	};
-
-	if (!singleUpdate) {
-		$(() => {
-			updateText();
-			$("#numberslider-input--beastmalechance").on("input change", function (e) {
-				updateText();
-			});
-		});
-	} else {
-		updateText();
-	}
-}
-window.settingsBeastGenders = settingsBeastGenders;
-
-function settingsNpcGenders(singleUpdate) {
-	const updateText = () => {
-		const val = T.malechance;
-		let text = null;
-		switch (val) {
-			case 100:
-				if (T.maleChanceSplit === "t") {
-					text = "<span class='gold inline-colour'>All</span> NPCs will prefer the <span class='gold inline-colour'>opposite sex</span>.";
-				} else {
-					text = "<span class='gold inline-colour'>All</span> NPCs will be <span class='blue inline-colour'>male</span>.";
-				}
-				break;
-			case 75:
-				if (T.maleChanceSplit === "t") {
-					text = "<span class='gold inline-colour'>75%</span> of NPCs will prefer the <span class='gold inline-colour'>opposite sex</span>.";
-				} else {
-					text = "<span class='gold inline-colour'>75%</span> of NPCs will be <span class='blue inline-colour'>male.</span>";
-				}
-				break;
-			case 50:
-				if (T.maleChanceSplit === "t") {
-					text = "NPC sexual preferences will be <span class='gold inline-colour'>randomly</span> split.";
-				} else {
-					text =
-						"NPCs will be <span class='gold inline-colour'>evenly</span> split between <span class='blue inline-colour'>male</span> and <span class='pink inline-colour'>female</span> genders.";
-				}
-				break;
-			case 25:
-				if (T.maleChanceSplit === "t") {
-					text = "<span class='gold inline-colour'>75%</span> of NPCs will prefer the <span class='gold inline-colour'>same sex</span>.";
-				} else {
-					text = "<span class='gold inline-colour'>75%</span> of NPCs will be <span class='pink inline-colour'>female.</span>";
-				}
-				break;
-			case 0:
-				if (T.maleChanceSplit === "t") {
-					text = "<span class='gold inline-colour'>All</span> NPCs will prefer the <span class='gold inline-colour'>same sex</span>.";
-				} else {
-					text = "<span class='gold inline-colour'>All</span> NPCs will be <span class='pink inline-colour'>female.</span>";
-				}
-				break;
-			default:
-				if (T.maleChanceSplit === "t") {
-					text = "NPC sexual preferences will be <span class='gold inline-colour'>randomly</span> split.";
-				} else {
-					text = "<span class='gold inline-colour'>" + V.malechance + "%</span> of NPCs will be <span class='blue inline-colour'>male.</span>";
-				}
-				break;
-		}
-		jQuery("#numberslider-value--malechance").text("").append(text).addClass("small-description");
-	};
-
-	if (!singleUpdate) {
-		$(() => {
-			updateText();
-			$("#numberslider-input--malechance").on("input change", function (e) {
-				updateText();
-			});
-		});
-	} else {
-		updateText();
-	}
-}
-window.settingsNpcGenders = settingsNpcGenders;
 
 // Checks current settings page for data attributes
 // Run only when settings tab is changed (probably in "displaySettings" widget)
@@ -647,7 +225,7 @@ function updatehistorycontrols() {
 	else Config.history.maxStates = V.options.maxStates; // update engine config
 
 	// enable fast rng re-roll on "keypad *" for debug and testing
-	if (V.debug || V.cheatdisable === "f" || V.testing) Links.disableRNGReload = false;
+	if (V.debug || V.cheatsEnabled === true || V.testing) Links.disableRNGReload = false;
 	else Links.disableRNGReload = true;
 
 	// option to still record history without showing the controls, for better debugging
@@ -852,6 +430,7 @@ function moneyStatsProcess(stats) {
 					case "robin":
 					case "sydney":
 					case "whitney":
+					case "gwylan":
 						compressTo = "peopleOfInterest";
 						break;
 					case "hairdressers":
@@ -975,7 +554,7 @@ function getLargestSexStatModifierCssClasses(input, requiredLevel = 0) {
 	const hallucinogenSexStatModifierValue = hallucinogenSexStatModifier(V[statName]);
 	const heatRutSexStatModifierValue = heatRutSexStatModifier(statName);
 
-	// If there is a modifier, and either requiredLevel is 0 or the modifiers put the player up a level of the sexStat.
+	// If there is a modifier and either requiredLevel is 0 or the modifiers put the player up a level of the sexStat.
 	if (
 		drunkSexStatModifierValue + hallucinogenSexStatModifierValue + heatRutSexStatModifierValue > 0 &&
 		(requiredLevel === 0 || (!hasSexStat(statName, requiredLevel, false) && hasSexStat(statName, requiredLevel, true)))
@@ -992,7 +571,10 @@ function getLargestSexStatModifierCssClasses(input, requiredLevel = 0) {
 		// Gets the base class for effect.
 		let modifierClasses = `${largestModifier.class}-text`;
 
-		if (V.options.textAnimations) {
+		if (
+			V.options.textAnimsAll &&
+			((largestModifier.class === "jitter" && V.options.textAnimsHeat) || (largestModifier.class === "drunk" && V.options.textAnimsDrunk))
+		) {
 			// Sets the animation based on how large the modifier is.
 			if (largestModifier.value > 20) {
 				modifierClasses += ` ${largestModifier.class}-3`;
@@ -1013,21 +595,31 @@ function getLargestSexStatModifierCssClasses(input, requiredLevel = 0) {
 window.getLargestSexStatModifierCssClasses = getLargestSexStatModifierCssClasses;
 
 /**
- * Used to display the drunk text, with with animations if enabled, otherwise just the glow effect.
+ * Used to display the drunk text, with animations if enabled, otherwise just the glow effect.
  *
  * @returns {string}
  */
 function basicDrunkCss() {
-	return V.options.textAnimations ? "drunk-text drunk-1" : "drunk-text";
+	return V.options.textAnimsAll && V.options.textAnimsDrunk ? "drunk-text drunk-1" : "drunk-text";
 }
 window.basicDrunkCss = basicDrunkCss;
 
 /**
- * Used to display the jitter text, with with animations if enabled, otherwise just the glow effect.
+ * Used to display the jitter text, with animations if enabled, otherwise just the glow effect.
  *
  * @returns {string}
  */
 function basicJitterCss() {
-	return V.options.textAnimations ? "jitter-text jitter-1" : "jitter-text";
+	return V.options.textAnimsAll && V.options.textAnimsHeat ? "jitter-text jitter-1" : "jitter-text";
 }
 window.basicJitterCss = basicJitterCss;
+
+/**
+ * Used to display the hypnosis text, with animations if enabled, otherwise just the gradient.
+ *
+ * @returns {string}
+ */
+function basicHypnoCss() {
+	return V.options.textAnimsAll && V.options.textAnimsHypno ? "hypno-text hypno" : "hypno-text";
+}
+window.basicHypnoCss = basicHypnoCss;

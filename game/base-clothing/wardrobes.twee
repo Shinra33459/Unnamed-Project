@@ -27,7 +27,11 @@
 	<<if _wearAction is "strip">>
 		You remove your clothing.
 		<br><br>
-		<<undress $wardrobe_location>>
+		<<if $worn.under_lower.type.includes("strap-on")>>
+			<<undressKeepSlot $wardrobe_location "under_lower">>
+		<<else>>
+			<<undress $wardrobe_location>>
+		<</if>>
 	<</if>>
 	<<wearoutfit>>
 	<<if $randomWear>>
@@ -584,7 +588,7 @@
 		<label><<radiobutton "$wardrobeOption" "repair" autocheck>> Repair (0:05 per piece)</label> |
 	<</if>>
 	<label><<radiobutton "$wardrobeOption" "separateOutfits" autocheck>> Separate Outfits (0:10)</label> |
-	<<if $multipleWardrobes is "all" and !$wardrobes[$wardrobe_location].isolated>>
+	<<if $settings.multipleWardrobes is "all" and !$wardrobes[$wardrobe_location].isolated>>
 		<label><<radiobutton "$wardrobeOption" "transfer" autocheck>> Transfer:</label>
 		<<set _options to {}>>
 		<<for _label, _value range $wardrobes>>
@@ -620,7 +624,7 @@
 		<<checkbox "_saveColor" false true autocheck>>
 	</label>
 	<br>
-	<<if $multipleWardrobes>>
+	<<if $settings.multipleWardrobes>>
 		<label>
 			Make clothes set unique to this wardrobe
 			<<checkbox "_saveLocation" false true autocheck>>
@@ -1664,14 +1668,14 @@
 <</widget>>
 
 <<widget "wardrobeSelection">>
-	<<if !$multipleWardrobes or !$wardrobes[$wardrobe_location]>>
+	<<if !$settings.multipleWardrobes or !$wardrobes[$wardrobe_location]>>
 		<<set $wardrobe_location to "wardrobe">>
 	<<elseif $forceWardrobeLocation>>
 		<<set $wardrobe_location to $forceWardrobeLocation>>
-	<<elseif $multipleWardrobes is "isolated" and !$wardrobes[$wardrobe_location].isolated>>
+	<<elseif $settings.multipleWardrobes is "isolated" and !$wardrobes[$wardrobe_location].isolated>>
 		<<set $wardrobe_location to "wardrobe">>
 	<</if>>
-	<<if $debug and $multipleWardrobes and !_args[0]>>
+	<<if $debug and $settings.multipleWardrobes and !_args[0]>>
 		<div class="no-numberify">Debug:
 			<<for _label, _value range $wardrobes>>
 				<<if _value.unlocked is undefined>>
@@ -1796,7 +1800,7 @@
 				<br>
 			<<elseif $wardrobe_residential_alleys gte 2>>
 				<<if $exposed lte 0>>
-					<<link [[Exit|Residential alleyways]]>><</link>>
+					<<link [[Exit|Residential Alleyways]]>><</link>>
 					<br>
 				<<elseif $exposed is 1 and hasSexStat("exhibitionism", 4)>>
 					<<link [[Exit|Residential Mansion Undies]]>><</link>><<exhibitionist4>>
@@ -2143,7 +2147,7 @@ It will cost you
 						/* Edge case for damaged hood paired with an upper w/ hoodposition === "down" */
 						.filter(([, item]) => {
 							if (item.outfitPrimary) {
-								return Object.keys(item.outfitPrimary).contains(T.ignoreSlot);
+								return Object.keys(item.outfitPrimary).includes(T.ignoreSlot);
 							}
 							return true;
 						})
