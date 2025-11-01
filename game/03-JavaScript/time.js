@@ -752,7 +752,7 @@ function dayPassed(days) {
 			V.rentmoney *= 2;
 		}
 
-		V.rentmoney *= V.rentmod;
+		V.rentmoney *= V.settings.rentCostModifier;
 		
 		if (V.avery_mansion && V.avery_fate !== "fallen" && V.avery_fate !== "kicked") {
 			// Avery takes on the PC's debt, but stops if unsatisfied
