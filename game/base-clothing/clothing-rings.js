@@ -44,7 +44,7 @@ function initRings() {
 			index: 1,
 			slot: "rings",
 			name: "metal band",
-			name_cap: "Metal  band",
+			name_cap: "Metal band",
 			variable: "base",
 			state: 0,
 			state_base: 0,
