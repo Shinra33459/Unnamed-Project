@@ -1735,7 +1735,6 @@ Macro.add("effects", {
 	handler() {
 		const fragment = effects();
 		this.output.append(fragment);
-		DOL.Perflog.logWidgetEnd("effectsJs");
 		$(document)
 		.off(':passageend.effects') 
 		.on(':passageend.effects', function () {
