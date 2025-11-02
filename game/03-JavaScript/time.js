@@ -747,7 +747,7 @@ function dayPassed(days) {
 		V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][
 			Math.min(Math.max(V.rentstage - 1, 0), 6)
 		];
-		sWikifier("<<rentmod>>");
+		wikifier("rentmod");
 		
 		if (V.avery_mansion && V.avery_fate !== "fallen" && V.avery_fate !== "kicked") {
 			// Avery takes on the PC's debt, but stops if unsatisfied
