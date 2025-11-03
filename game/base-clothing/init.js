@@ -108,7 +108,6 @@ function clothingArrays() {
 	wardrobesUpdate();
 }
 
-//Edit
 function clothingInit() {
 	clothingArrays();
 	V.upperoff = 0;

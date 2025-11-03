@@ -167,7 +167,6 @@ function genderappearancecheck() {
 	addfemininityofclothingarticle("neck", V.worn.neck);
 	addfemininityofclothingarticle("legs", V.worn.legs);
 	addfemininityofclothingarticle("handheld", V.worn.handheld);
-	//Edit
 	addfemininityofclothingarticle("earrings", V.worn.earrings);
 	addfemininityofclothingarticle("rings", V.worn.rings);
 	addfemininityofclothingarticle("feet", V.worn.feet);
@@ -585,7 +584,6 @@ function calculateallure() {
 	}
 	attractiveness = baseattractiveness;
 	/* extra attractiveness from accessories */
-	//Edit
 	for (const slot of ["head", "face", "neck", "legs", "feet", "handheld", "earrings", "rings", "hands"]) attractiveness += V.worn[slot].reveal || 0;
 	/* tf bonuses */
 	const partsDisabled = (tf, parts) => parts.filter(part => V.transformationParts[tf][part] === "disabled").length;

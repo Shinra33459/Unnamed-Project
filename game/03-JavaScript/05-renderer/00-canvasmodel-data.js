@@ -78,7 +78,6 @@ const ZIndices = {
 
 	collar: 103,
 	neck: 103,
-	//Edit
 	earrings: 104,
 
 	over_lower: 103.3,
@@ -86,7 +85,6 @@ const ZIndices = {
 	over_upper_arms: 103.9,
 
 	handheld: 104,
-	//Edit
 	rings: 104,
 	arms_cover: 105,
 	under_upper_arms_cover: 109,

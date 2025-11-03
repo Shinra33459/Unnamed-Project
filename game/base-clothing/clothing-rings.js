@@ -67,6 +67,8 @@ function initRings() {
 			accessory: 0,
 			accessory_colour: 0,
 			accessory_colour_options: [],
+			altposition: "none",
+			altdisabled: [],
 			cursed: 0,
 			location: 0,
 			iconFile: "metal_ring.png",

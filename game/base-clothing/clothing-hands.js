@@ -467,7 +467,7 @@ function initHands() {
 			warmth: 0,
 			cost: 800,
 			description: "Sexy enough for a playboy bunny, classy enough for a butler.",
-			shop: ["adult", "jewellery"],
+			shop: ["adult"],
 			accessory: 0,
 			accessory_colour: 0,
 			accessory_colour_options: [],

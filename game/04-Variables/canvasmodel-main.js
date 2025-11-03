@@ -1063,7 +1063,6 @@ Renderer.CanvasModels.main = {
 			// Only use necessary data for tanning layers. Filter out the rest.
 			// Only clothing items that aren't handheld or headwear will be used
 			// Only use the base pregnancy layers
-			//Edit
 			const skippedSlots = ["handheld", "rings", "earrings", "head", "neck", "face", "under_upper_belly_", "upper_belly_", "under_lower_belly_", "lower_belly_"];
 			this.tanningLayers = this.layerList
 				.filter(obj => obj.show === true
@@ -3861,26 +3860,29 @@ Renderer.CanvasModels.main = {
 					ZIndices.hands : options.zarms + 0.2;
 			},
 		},
-		//Edit
 		/***
-		 *    ██   ██  █████  ███    ██ ██████  ███████
-		 *    ██   ██ ██   ██ ████   ██ ██   ██ ██
-		 *    ███████ ███████ ██ ██  ██ ██   ██ ███████
-		 *    ██   ██ ██   ██ ██  ██ ██ ██   ██      ██
-		 *    ██   ██ ██   ██ ██   ████ ██████  ███████
+		 *    ████  █████ █   █  ████ █████ 
+		 *    █   █   █   ██  █ █     █     
+		 *    ████    █   █ █ █ █  ██ █████ 
+		 *    █   █   █   █  ██ █   █     █ 
+		 *    █   █ █████ █   █  ███  █████ 
 		 *
 		 *
 		 */
 		"rings": genlayer_clothing_main('rings'),
-		//"rings": genlayer_clothing_main('hands'),
 		"rings_left": {
 			filters: ["worn_rings"],
 			animation: "idle",
 
 			srcfn(options) {
 				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
-				const pattern = options.worn.rings.pattern && !["tertiary", "secondary"].includes(options.worn.rings.setup.pattern_layer) ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.rings.setup.altposition !== undefined
+					&& options.worn.rings.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_rings']);
 			},
 			showfn(options) {
@@ -3899,8 +3901,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
-				const pattern = options.worn.rings.pattern && options.worn.rings.setup.pattern_layer === "secondary" ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}_acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.rings.setup.altposition !== undefined
+					&& options.worn.rings.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${alt}_acc.png`;
 				return gray_suffix(path, options.filters['worn_rings_acc']);
 			},
 			showfn(options) {
@@ -3920,8 +3927,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
-				const pattern = options.worn.rings.pattern && !["tertiary", "secondary"].includes(options.worn.rings.setup.pattern_layer) ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.rings.setup.altposition !== undefined
+					&& options.worn.rings.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_rings']);
 			},
 			showfn(options) {
@@ -3949,8 +3961,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
-				const pattern = options.worn.rings.pattern && options.worn.rings.setup.pattern_layer === "secondary" ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}_acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.rings.setup.altposition !== undefined
+					&& options.worn.rings.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${alt}_acc.png`;
 				return gray_suffix(path, options.filters['worn_rings_acc']);
 			},
 			showfn(options) {
@@ -3978,7 +3995,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
-				return `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}_${options.worn.rings.pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.rings.setup.altposition !== undefined
+					&& options.worn.rings.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}_${alt}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -4000,8 +4023,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
-				const pattern = options.worn.rings.pattern && !["tertiary", "secondary"].includes(options.worn.rings.setup.pattern_layer) ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.rings.setup.altposition !== undefined
+					&& options.worn.rings.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_rings']);
 			},
 			showfn(options) {
@@ -4022,8 +4050,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
-				const pattern = options.worn.rings.pattern && options.worn.rings.setup.pattern_layer === "secondary" ? "_" + options.worn.rings.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${pattern}_acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.rings.setup.altposition !== undefined
+					&& options.worn.rings.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${alt}_acc.png`;
 				return gray_suffix(path, options.filters['worn_rings_acc']);
 			},
 			showfn(options) {
@@ -4044,7 +4077,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
-				return `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}_${options.worn.rings.pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.rings.setup.altposition !== undefined
+					&& options.worn.rings.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+
+				return `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}_${alt}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -4392,35 +4431,24 @@ Renderer.CanvasModels.main = {
 				return options.high_waist_suspenders ? -8 : 0;
 			},
 		}),
-		//Edit
-
 		/***
-		 *    ███    ██ ███████  ██████ ██   ██
-		 *    ████   ██ ██      ██      ██  ██
-		 *    ██ ██  ██ █████   ██      █████
-		 *    ██  ██ ██ ██      ██      ██  ██
-		 *    ██   ████ ███████  ██████ ██   ██
-		 *
-		 *
-		 */
+		 *█████  ███  ████  ████  █████ █   █  ████ █████ 
+		 *█     █   █ █   █ █   █   █   ██  █ █     █     
+		 *████  █████ ████  ████    █   █ █ █ █  ██ █████ 
+		 *█     █   █ █   █ █   █   █   █  ██ █   █     █ 
+		 *█████ █   █ █   █ █   █ █████ █   █  ███  █████
+ 		 */
+		 
 		"earrings": genlayer_clothing_main('earrings', {
 			srcfn(options) {
 				const isAltPosition = !options.alt_override
 					&& options.worn.earrings.setup.altposition !== undefined
 					&& options.worn.earrings.alt === "alt";
-
-				let collar = "";
-				if (options.worn.earrings.setup.has_collar === 1 && options.worn.upper.setup.has_collar === 1 && !(options.worn.upper.setup.name === "dress shirt" && options.worn.upper.alt === "alt")) {
-					collar = '_nocollar';
-				} else if (options.worn.earrings.setup.name === "sailor ribbon" && options.worn.upper.setup.name === "serafuku") {
-					collar = "_serafuku";
-				}
-				const pattern = options.worn.earrings.pattern && !["tertiary", "secondary"].includes(options.worn.earrings.pattern_layer) ? "_" + options.worn.earrings.pattern?.replace(/ /g,"_") : '';
 				const alt = isAltPosition ? '_alt' : '';
 
 				const setupVar = options.worn.earrings.setup.variable;
 				const integrity = options.worn.earrings.integrity;
-				const path = `img/clothes/earrings/${setupVar}/${integrity}${collar}${pattern}${alt}.png`;
+				const path = `img/clothes/earrings/${setupVar}/${integrity}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_earrings']);
 			},
 			showfn(options) {
@@ -4433,7 +4461,7 @@ Renderer.CanvasModels.main = {
 				return options.high_waist_suspenders ? "img/clothes/earrings/suspenders/mask.png" : null;
 			},
 			zfn(options) {
-				return options.hood_mask ? ZIndices.collar : ZIndices.neck + 1;
+				return ZIndices.ears + 1;
 			},
 		}),
 		"earrings_acc": genlayer_clothing_accessory('earrings', {
@@ -4443,10 +4471,9 @@ Renderer.CanvasModels.main = {
 					&& options.worn.earrings.alt === "alt";
 				const integrity = setup.accessory_integrity_img ? `_${options.worn.earrings.integrity}` : '';
 				const alt = isAltPosition ? '_alt' : '';
-				const pattern = options.worn.earrings?.pattern && options.worn.earrings?.pattern_layer === "secondary" ? "_" + options.worn.earrings.pattern?.replace(/ /g,"_") : '';
 
 				const setupVar = options.worn.earrings.setup.variable;
-				const path = `img/clothes/earrings/${setupVar}/acc${integrity}${pattern}${alt}.png`;
+				const path = `img/clothes/earrings/${setupVar}/acc${integrity}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_earrings_acc']);
 			},
 			showfn(options) {
@@ -4461,9 +4488,6 @@ Renderer.CanvasModels.main = {
 						&& options.worn.head.setup.hood
 						&& options.worn.head.setup.outfitSecondary !== undefined);
 				return check ? ZIndices.collar : ZIndices.neck + 1;
-			},
-			dyfn(options) {
-				return options.high_waist_suspenders ? -8 : 0;
 			},
 		}),
 		/***

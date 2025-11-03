@@ -570,7 +570,6 @@ DefineMacro("updateClothes", updateClothes);
 
 function wardrobesUpdate() {
 	/* default wardrobe object */
-	//Edit
 	const defWardrobe = {
 		face: [],
 		feet: [],
@@ -721,8 +720,7 @@ function wardrobesUpdate() {
 			if (wardrobe && Array.isArray(wardrobe.upper) && !wardrobe.handheld) wardrobe.handheld = [];
 		});
 	}
-	//Edit
-	if (V.objectVersion.wardrobes < 11) {
+	if (V.wear_rings === undefined) {
 		Object.values(V.wardrobes).forEach(wardrobe => {
 			if (wardrobe && Array.isArray(wardrobe.upper) && !wardrobe.earrings) wardrobe.earrings = [];
 		});
