@@ -2156,7 +2156,7 @@ Renderer.CanvasModels.main = {
 
 				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) {
-						if ((T.activeNNPC == "black_wolf" || T.activeNNPC == "great_hawk") && V.monster != 0) {
+						if ((T.activeNNPC == "black_wolf" || T.activeNNPC == "great_hawk") && V.monster != 1) {
 							T.skin = "/monster";
 						} else if (V.NPCList[0].skincolour == "white") {
 							T.skin = "/pale";
