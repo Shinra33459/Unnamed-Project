@@ -1778,15 +1778,6 @@ function dailyPlayerEffects() {
 			}
 		}
 	}
-
-	if (V.auriga_scar && V.location !== "asylum") {
-		const scarTrauma = V.auriga_scar * 50;
-		const scarAwareness = V.auriga_scar;
-		const scarPurity = V.auriga_scar * -5;
-		if (V.trauma <= (V.traumamax / 5) * 3) statChange.trauma(scarTrauma);
-		statChange.awareness(scarAwareness);
-		statChange.purity(scarPurity);
-	}
 }
 
 function dailyTransformationEffects() {
@@ -1832,6 +1823,15 @@ function dailyTransformationEffects() {
 	if (V.plucked) {
 		V.plucked--;
 		if (V.plucked <= 0) delete V.plucked;
+	}
+
+	if (V.auriga_scar && V.location !== "asylum") {
+		const scarTrauma = V.auriga_scar * 50;
+		const scarAwareness = V.auriga_scar;
+		const scarPurity = V.auriga_scar * -5;
+		if (V.trauma <= (V.traumamax / 5) * 3) statChange.trauma(scarTrauma);
+		statChange.awareness(scarAwareness);
+		statChange.purity(scarPurity);
 	}
 
 	wikifier("transformationStateUpdate");
