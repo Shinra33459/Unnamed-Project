@@ -154,6 +154,27 @@ const Time = (() => {
 			}
 		}
 
+        if (V.godClothes === 1) {
+			if (V.worn.upper.name !== "naked") { 
+			V.worn.upper.integrity = 2000;
+			}
+			if (V.worn.over_upper.name !== "naked") { 
+			V.worn.over_upper.integrity = 2000;
+			}
+			if (V.worn.over_lower.name !== "naked") { 
+			V.worn.over_lower.integrity = 2000;
+			}
+			if (V.worn.lower.name !== "naked") { 
+			V.worn.lower.integrity = 2000;
+			}
+			if (V.worn.under_lower.name !== "naked") { 
+			V.worn.under_lower.integrity = 2000;
+			}
+			if (V.worn.under_upper.name !== "naked") { 
+			V.worn.under_upper.integrity = 2000;
+			}
+		}
+
 		const minutes = Math.floor((currentDate.timeStamp - prevDate.timeStamp) / 60) || (60 + (currentDate.minute - prevDate.minute)) % 60;
 		if (!minutes) return;
 
