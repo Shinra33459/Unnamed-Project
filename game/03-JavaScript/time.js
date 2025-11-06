@@ -965,9 +965,6 @@ function dayPassed(days) {
 		}
 		if (V.bird.clean >= 1) V.bird.clean = Math.clamp(V.bird.clean - (10 - V.bird.upgrades.shelter), 0, 100);
 
-		/* Set flag to determine Kylar's position at lunch */
-		V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
-
 		if (V.whitney_roof) {
 			delete V.whitney_roof;
 		}
@@ -982,12 +979,21 @@ function dayPassed(days) {
 		// Activate the robin pillory
 		if (V.robinPillory && V.robinPillory.danger !== undefined && (V.robindebtevent <= 1 || !V.baileySold)) V.robinPillory.active = true;
 
+		// Save today's HC ending in local storage
+		if (V.daily.winterStoryTime && V.hcEndings)
+			localStorage.setItem("hopelessCycle", localStorage.getItem("hopelessCycle").split(",").concatUnique(V.hcEndings));
+
+
+
 		if (V.stallDeposit >= 3000) {
 			V.stallDeposit -= 3000;
 			V.daily.stallRented = 1;
 		}
 
 		V.daily.clearProperties();
+
+		/* Set flag to determine Kylar's position at lunch */
+		V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
 
 		if (V.bike >= 1) {
 			if (V.bikeSecurityGear == 5) {
