@@ -1005,14 +1005,12 @@ function dayPassed(days) {
 		if (V.daily.winterStoryTime && V.hcEndings)
 			localStorage.setItem("hopelessCycle", localStorage.getItem("hopelessCycle").split(",").concatUnique(V.hcEndings));
 
-
+		V.daily.clearProperties();
 
 		if (V.stallDeposit >= 3000) {
 			V.stallDeposit -= 3000;
 			V.daily.stallRented = 1;
 		}
-
-		V.daily.clearProperties();
 
 		/* Set flag to determine Kylar's position at lunch */
 		V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
