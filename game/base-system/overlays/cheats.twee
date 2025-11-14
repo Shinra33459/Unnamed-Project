@@ -17,21 +17,69 @@
 	<<set _type to _args[0]>>
 	<<set _id to `stats${_type}virginity`>>
 	<<capture _type _id>>
-		<span @id="_id"><<= ($player.virginity[_type] is true ? "Present" : "Taken by " + ($player.virginity[_type] is false ? "unknown" : $player.virginity[_type]))>></span> |
-		<span @id="_id + 'link'"><<link `($player.virginity[_type] is true and !$player?.virginityDetails?.[_type]?.taker ? "Take" : "Restore")`>>
+		<span @id="_id"><<= ($player.virginity[_type] is true ? "Present" : "Taken by " + ($player.virginity[_type] is false ? "Frostberg" : $player.virginity[_type]))>></span> |
+		
+		<span @id="_id + 'link'"><<link `($player.virginity[_type] is true ? "Take" : "Restore")`>>
 			<<if $player.virginity[_type] is true>>
-				<<set $player.virginity[_type] to (_virginity[_type] is true ? false : _virginity[_type])>>
-				<<if $player.virginity[_type] is false and $player?.virginityDetails?.[_type]?.taker>><<set $player.virginity[_type] to $player.virginityDetails[_type].taker>><</if>>
-				<<if $player.virginity.temple isnot false and ["penile", "vaginal"].includes(_type)>><<set $player.virginity.temple to "unknown">><</if>>
+
+				/* Auto-assign for penile */
+				<<if _type is "penile">>
+					<<set $player.virginity[_type] to "unknown">>
+					<<if $player.virginity.temple isnot false and ["penile","vaginal"].includes(_type)>>
+						<<set $player.virginity.temple to "unknown">>
+					<</if>>
+					<<run $(`#${_id}link .link-internal`).html("Restore")>>
+					<<run $(`#${_id}`).html("Taken by unknown")>>
+
+				<<else>>
+					/* Close any other open choosers globally */
+					<<run $(".vir-chooser").empty()>>
+
+					/* Build selector as a plain string and use it */
+					<<set _sel to "#" + _id + "chooser">>
+					<<replace _sel>>
+						Choose taker:
+						<<link "Frostberg">>
+							<<set $player.virginity[_type] to false>>
+							<<if $player.virginity.temple isnot false and ["penile","vaginal"].includes(_type)>>
+								<<set $player.virginity.temple to "Frostberg">>
+							<</if>>
+							<<run $(`#${_id}link .link-internal`).html("Restore")>>
+							<<run $(`#${_id}`).html("Taken by Frostberg")>>
+							<<set _sel to "#" + _id + "chooser">>
+							<<replace _sel>><</replace>>
+						<</link>> ·
+						<<link "Unknown">>
+							<<set $player.virginity[_type] to "unknown">>
+							<<if $player.virginity.temple isnot false and ["penile","vaginal"].includes(_type)>>
+								<<set $player.virginity.temple to "unknown">>
+							<</if>>
+							<<run $(`#${_id}link .link-internal`).html("Restore")>>
+							<<run $(`#${_id}`).html("Taken by unknown")>>
+							<<set _sel to "#" + _id + "chooser">>
+							<<replace _sel>><</replace>>
+						<</link>>
+					<</replace>>
+				<</if>>
+
 			<<else>>
+				/* Restore */
 				<<set $player.virginity[_type] to true>>
-				<<if $player.virginity.temple isnot false and ["penile", "vaginal"].includes(_type)>><<set $player.virginity.temple to true>><</if>>
+				<<if $player.virginity.temple isnot false and ["penile","vaginal"].includes(_type)>>
+					<<set $player.virginity.temple to true>>
+				<</if>>
+				<<run $(`#${_id}link .link-internal`).html("Take")>>
+				<<run $(`#${_id}`).html("Present")>>
+				<<set _sel to "#" + _id + "chooser">>
+				<<replace _sel>><</replace>>
 			<</if>>
-			<<run $(`#${_id}link .link-internal`).html($player.virginity[_type] is true and !$player?.virginityDetails?.[_type]?.taker ? "Take" : "Restore")>>
-			<<run $(`#${_id}`).html($player.virginity[_type] is true ? "Present" : "Taken by " + ($player.virginity[_type] is false ? "unknown" : $player.virginity[_type]))>>
 		<</link>></span>
+
+		<!-- Per-row chooser placeholder; class lets us close others -->
+		<span @id="_id + 'chooser'" class="vir-chooser"></span>
 	<</capture>>
 <</widget>>
+
 
 <<widget "cheatParasiteToggle">>
 	<<set _bodypart to _args[0]>>
@@ -323,6 +371,16 @@
 			<</link>>
 			<br>
 			<span class="description">If clothing health is set to zero, it will break. Leaving the cheats menu will destroy it, and you will not be able to get it back.</span>
+			<br>
+		</div>
+		<div class="settingsToggleItemWide">
+			<<if $godClothes is 0>>
+				<<link [[Enable Auto Repair|$passage]]>><<set $godClothes to 1>><</link>>
+			<<elseif $godClothes is 1>>
+				<<link [[Disable Auto Repair|$passage]]>><<set $godClothes to 0>><</link>>
+			<</if>>
+			<br>
+			<span class="description">Clothing is still breakable, this feature only repairs your clothes integrity every ingame second that passes.</span>
 			<br>
 		</div>
 		<<set _cl_slots to ["upper", "lower", "under_upper", "under_lower", "over_upper", "over_lower", "genitals"]>>
@@ -1080,6 +1138,48 @@
 				<</foldout>>
 			<</if>>
 		</div>
+        <hr>
+		<div class="settingsGrid">
+		<div class="settingsHeader options">
+			Skin Colour
+		</div>
+		<div class="settingsToggleItem">
+			<span class="gold">Neutral:</span><br>
+			<<link [[Light|$passage]]>><<set $player.skin.color to "light">><</link>> |
+			<<link [[Medium|$passage]]>><<set $player.skin.color to "medium">><</link>> |
+			<<link [[Dark|$passage]]>><<set $player.skin.color to "dark">><</link>> |
+            <<link [[Gyaru|$passage]]>><<set $player.skin.color to "gyaru">><</link>>
+		</div>
+		<div class="settingsToggleItem">
+			<span class="gold">Warm:</span><br>
+			<<link [[Light|$passage]]>><<set $player.skin.color to "rlight">><</link>> |
+			<<link [[Medium|$passage]]>><<set $player.skin.color to "rmedium">><</link>> |
+			<<link [[Dark|$passage]]>><<set $player.skin.color to "rdark">><</link>> |
+            <<link [[Gyaru|$passage]]>><<set $player.skin.color to "rgyaru">><</link>>
+		</div>
+		<div class="settingsToggleItem">
+			<span class="gold">Golden:</span><br>
+			<<link [[Light|$passage]]>><<set $player.skin.color to "glight">><</link>> |
+			<<link [[Medium|$passage]]>><<set $player.skin.color to "gmedium">><</link>> |
+			<<link [[Dark|$passage]]>><<set $player.skin.color to "gdark">><</link>> |
+            <<link [[Gyaru|$passage]]>><<set $player.skin.color to "ggyaru">><</link>>
+		</div>
+		<div class="settingsToggleItem">
+			<span class="gold">Olive:</span><br>
+			<<link [[Light|$passage]]>><<set $player.skin.color to "ylight">><</link>> |
+			<<link [[Medium|$passage]]>><<set $player.skin.color to "ymedium">><</link>> |
+			<<link [[Dark|$passage]]>><<set $player.skin.color to "ydark">><</link>> |
+            <<link [[Gyaru|$passage]]>><<set $player.skin.color to "ygyaru">><</link>>
+		</div>
+		<div class="settingsToggleItem">
+			<span class="gold">Cool:</span><br>
+			<<link [[Light|$passage]]>><<set $player.skin.color to "blight">><</link>> |
+			<<link [[Medium|$passage]]>><<set $player.skin.color to "bmedium">><</link>> |
+			<<link [[Dark|$passage]]>><<set $player.skin.color to "bdark">><</link>> |
+            <<link [[Gyaru|$passage]]>><<set $player.skin.color to "bgyaru">><</link>>
+		</div>
+	</div>
+	<hr>
 
 		<div class="settingsToggleItem">
 			<span class="gold">Eye Colour</span>
@@ -1229,7 +1329,7 @@
 			<<capture _tf>>
 				<<set _name to (_tf is "fallenangel" ? "Fallen Angel" : _tf)>>
 				<<set _title to `<<tficon _tf>> ${toTitleCase(_name)}`>>
-				<<set _varName to `${_tf}build`>>
+				<<set _varName to (_tf is "fallenangel" ? "fallenbuild" : `${_tf}build`)>>
 				<<numberStepper _title `V[T.varName]` {
 					callback: (value, arr) => {
 						V[arr[0]] = value;
@@ -1287,6 +1387,11 @@
 			<<numberStepper "<<symbol love>> Love" `C.npc.Whitney.love` { callback: value => { C.npc.Whitney.love = value }, max: 30 }>>
 			<<numberStepper "<<symbol lust>> Lust" `C.npc.Whitney.lust` { callback: value => { C.npc.Whitney.lust = value } }>>
 			<<numberStepper "<<symbol dominance>> Dominance" `C.npc.Whitney.dom` { callback: value => { C.npc.Whitney.dom = value }, max: 20 }>>
+			<<if C.npc.Whitney.state is "dungeon" and $bullyevent gte 1 or C.npc.Whitney.state is "pillory" and $bullyevent gte 1>>
+			<<link [[Reclaim Whitney|$passage]]>><<reclaimWhitney>><</link>>
+			<<elseif $bullyevent gte 1 and C.npc.Whitney.state isnot "dungeon" and C.npc.Whitney.state isnot "pillory">>
+			<<link [[Dismiss Whitney|$passage]]>><<dismissWhitney>><</link>>
+			<</if>>
 		</div>
 		<div class="settingsToggleItem">
 			<span class="gold">Eden</span>
@@ -1299,12 +1404,29 @@
 			<<numberStepper "<<symbol love>> Love" `C.npc.Kylar.love` { callback: value => { C.npc.Kylar.love = value } }>>
 			<<numberStepper "<<symbol lust>> Lust" `C.npc.Kylar.lust` { callback: value => { C.npc.Kylar.lust = value } }>>
 			<<numberStepper "<<symbol jealousy>> Jealousy" `C.npc.Kylar.rage` { callback: value => { C.npc.Kylar.rage = value }, reverse: true }>>
+			<br>
+			<<if $kylar_mad isnot 1>>
+				<<link [[Enable Kidnapping|$passage]]>><<set $kylar_mad to 1>><</link>>
+			<<elseif $kylar_mad is 1>>
+				<<link [[Disable Kidnapping|$passage]]>><<set $kylar_mad to 0>><</link>>
+			<</if>>
+			<<if C.npc.Kylar.state is "prison">>
+				<<link [[Reclaim Kylar|$passage]]>><<reclaimKylar>><</link>>
+			<<elseif C.npc.Kylar.state is "active">>
+				<<link [[Dismiss Kylar|$passage]]>><<dismissKylar>><</link>>
+			<</if>>
 		</div>
 		<div class="settingsToggleItem">
 			<span class="gold">Avery</span>
 			<<numberStepper "<<symbol love>> Love" `C.npc.Avery.love` { callback: value => { C.npc.Avery.love = value } }>>
 			<<numberStepper "<<symbol rage>> Rage" `C.npc.Avery.rage` { callback: value => { C.npc.Avery.rage = value }, reverse: true }>>
 			<<numberStepper "<<symbol dominance>> Dominance" `C.npc.Avery.dom` { callback: value => { C.npc.Avery.dom = value } }>>
+			<br>
+			<<if C.npc.Avery.state is "dismissed">>
+				<<link [[Reclaim Avery|$passage]]>><<unDismissAvery>><</link>>
+			<<elseif C.npc.Avery.state is "active">>
+				<<link [[Dismiss Avery|$passage]]>><<dismissAvery>><</link>>
+			<</if>>
 		</div>
 
 		<div class="settingsToggleItem">
@@ -1382,6 +1504,21 @@
 		</div>
 	</div>
 	<hr>
+	<div class="settingsGrid">
+		<div class="settingsHeader options">Hopeless Cycle Setting</div>
+		<div class="settingsToggleItem">
+			<span class="gold">Suspicion and Loved</span>
+			<br>
+			<<link [[set loved to true|$passage]]>><<set $hc.loved to true>><</link>>
+			<br>
+			<<link [[set loved to false|$passage]]>><<set $hc.loved to false>><</link>>
+			<br>
+			<<link [[Reset suspicion level|$passage]]>><<set $_susPlus to 1>><<set $hc.suspicion to 0>><</link>>
+			<br>
+			<<link [[Max suspicion level|$passage]]>><<set $hc.suspicion to 100>><</link>>
+		</div>
+	</div>
+		<hr>
 	<div class="settingsGrid">
 		<div class="settingsHeader options">Reputation</div>
 		<<if $farm_stage gte 2>>
@@ -1818,7 +1955,11 @@
 				<<compoundicon>><<link [[Elk Compound|Elk Compound]]>><<cheats-teleport-function>><</link>><br>
 				<<asylumicon  "cell">><<link [[Asylum|Asylum Cell]]>><<cheats-teleport-function>><</link>><br>
 				<<link [[Underground Brothel|Underground Cell]]>><<cheats-teleport-function>><</link>><br>
-				<<link [[Underground Farm|Livestock Cell]]>><<cheats-teleport-function>><</link>><br>
+				<<if $livestock_intro is undefined>>
+					<<link [[Underground Farm|Livestock Intro]]>><<cheats-teleport-function>><</link>><br>
+				<<else>>
+					<<link [[Underground Farm|Livestock Cell]]>><<cheats-teleport-function>><</link>><br>
+				<</if>>
 				<<link [[Tentacle Plains|Tentacle Plains]]>><<cheats-teleport-function>><</link>><br>
 				<<link [[Night Monster Lair|Monster Tower]]>><<cheats-teleport-function>><</link>><br>
 				<<link [[Great Hawk Tower|Bird Tower]]>><<cheats-teleport-function>><</link>><br>

@@ -121,9 +121,11 @@
 	<<elseif !$worn.handheld.type.includes("bookbag")>>
 		<span class="blue">You can't study without your bookbag.</span>
 		<br>
-		<<scienceicon>><<link [[Relax before class|Science Classroom Study]]>><<set $phase to 0>><</link>><<lstress>>
+		<<daydreamicon>><<link [[Daydream before class|Science Classroom Study]]>><<set $phase to 0>><</link>><<lstress>>
 	<<else>>
 		<<scienceicon>><<link [[Study science|Science Classroom Study]]>><<set $phase to 1>><</link>><<gstress>><<gscience>>
+		<br>
+		<<daydreamicon>><<link [[Daydream before class|Science Classroom Study]]>><<set $phase to 0>><</link>><<lstress>>
 	<</if>>
 	<br>
 	<<getouticon>><<link [[Leave|Hallways]]>><</link>>
@@ -206,7 +208,9 @@ Sirris looks exasperated. "Right. I'll have to inform the head of your behaviour
 
 :: Science Classroom Study
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-<<wearProp "open textbook" "blue" "science">>
+<<if $phase is 1>>
+	<<wearProp "open textbook" "blue" "science">>
+<</if>>
 <<if $worn.over_upper.name isnot "naked" or $worn.over_lower.name isnot "naked" or $worn.over_head.name isnot "naked">>
 	<<undressOverClothes "scienceClassroom">>
 	You hang your coat at the back of the class<<if $phase is 1>>, take your seat and read a science textbook<<else>> and take your seat<</if>>.
@@ -253,6 +257,8 @@ Sirris looks exasperated. "Right. I'll have to inform the head of your behaviour
 <<else>>
 	<<set _stress to _stress * -1>>
 	<<stress _stress>>
+	<<set _tiredness to _stress * -0.5>>
+	<<tiredness _tiredness>>
 <</if>>
 
 :: Science Lesson
@@ -380,10 +386,10 @@ Sirris looks exasperated. "Right. I'll have to inform the head of your behaviour
 	<br>
 	<<socialiseicon>><<link [[Socialise with classmates|Science Lesson Socialise]]>><</link>><<gcool>><<ltrauma>><<lstress>><<gharass>>
 	<br>
-	<<daydreamicon>><<link [[Daydream|Science Lesson Daydream]]>><</link>><<lstress>> <<lharass>>
+	<<daydreamicon>><<link [[Daydream|Science Lesson Daydream]]>><</link>><<lstress>><<ltiredness>><<lharass>>
 	<br>
 	<<if $tiredness gte (C.tiredness.max / 5) * 3>>
-		<<bedicon "zzz">><<link [[Sleep at your desk|Science Lesson Sleep]]>><</link>><<ltiredness>>
+		<<bedicon "zzz">><<link [[Sleep at your desk|Science Lesson Sleep]]>><</link>><<lltiredness>>
 		<br>
 	<</if>>
 	<<if hasSexStat("exhibitionism", 4)>>

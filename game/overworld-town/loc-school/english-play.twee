@@ -283,13 +283,46 @@ You open your booklet and prepare to practise. You read through the lines, tryin
 <<set _chair to Furniture.get('chair', $location)>>
 <<if $location is "home" and _chair.type.includes("comfy")>>
 	You settle back in your <span class="green">comfortable</span> chair as you recite your lines.<<set $englishPlayReadiness += 6>>
+<<elseif $location is "avery_mansion">>
+	You settle back in the <span class="green">comfortable</span> chair as you recite your lines.<<set $englishPlayReadiness += 6>>
 <<else>>
 	You shift around on your chair, <span class="red">unable to get comfortable.</span> <<if $location is "home">>If you purchase a comfier desk chair, it may be easier to focus on your lines.<<else>>A comfortable desk chair might help.<</if>> <<set $englishPlayReadiness += 3>>
 <</if>>
 <<playReadiness>>
 <br><br>
 
-<<link [[Next|Bedroom]]>><</link>>
+<<if $location is "avery_mansion">>
+	<<avery_mansion>>
+	<<if $avery_mansion.schedule is "study">>
+		Avery watches you occasionally as you immerse yourself in the role.
+		<<if C.npc.Avery.rage lte 20>>
+			<<He>> smiles and applauds your performance.
+		<<elseif C.npc.Avery.rage lte 40>>
+			<<He>> offers some critique here and there.
+		<<elseif C.npc.Avery.rage lte 60>>
+			<<He>> critiques the performance here and there, though much of it seems rather harsh.
+		<<else>>
+			<<He>> frowns and tells you to keep it down. You try your best to do so.
+		<</if>>
+		<br><br>
+	<<elseif ($avery_mansion.schedule is "lounge" or $avery_mansion.schedule is "breakfast" or $avery_mansion.schedule is "garden") and $rng gte 90>>
+		<<if C.npc.Avery.rage lte 20>>
+			You hear a knock on the door. Avery enters. "Aha, so that was you! What a soulful preformance that was, <<pcpetname "Avery">>. Bravo." <<He>> claps politely, then smiles and closes the door.
+		<<elseif C.npc.Avery.rage gte random(40, 80)>>
+			<<set $daily.avery.noRehearse to true>>
+			The door swings open, and an Avery stands glaring at you. "Do you mind?! I'm trying to relax and you're over here making a big ruckus." <<He>> turns and slams the door shut behind <<him>>.
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if $location is "home">>
+	<<link [[Next|Bedroom]]>><</link>>
+<<elseif $location is "avery_mansion">>
+	<<link [[Next|Mansion Study]]>><</link>>
+<<else>>
+	<span class="red">Error: Invalid location: $location. Please report.</span>
+	<<link [[Next|Bedroom]]>><</link>>
+<</if>>
 <br>
 
 :: English Play Rehearse Kylar
@@ -1501,7 +1534,7 @@ Sydney and <<if $englishPlayKylarReplace>>the <<person2>><<person>><<else>>Kylar
 		<<else>>
 			<<insufficientStat "promiscuity" "to break script">>
 		<</if>>
-		<br>
+		<br><br>
 		<<link [[Stick to the script|English Play Act One Script]]>><</link>>
 		<br>
 		<<if hasSexStat("promiscuity", 2)>>
@@ -1764,7 +1797,7 @@ The play resumes after a brief change in props. The curtain opens once more, to 
 <br><br>
 
 As the play reaches its climax, a daring idea strikes you.
-<br>
+<br><br>
 <<link [[Follow the script|English Play Act Two Script]]>><</link>>
 <br>
 <<link [[Break character|English Play Act Two Break]]>><</link>><<if $englishPlayRoles.Player isnot "Sterling">><<promiscuous1>><</if>>
@@ -2378,7 +2411,7 @@ The two continue to converse until Sirris starts to lead Sydney out. Sydney hesi
 <<clearNPC actor_replacement>>
 
 You could leave now, but staying to support your fellow students will endear you to them.
-<br>
+<br><br>
 <<link [[Stay and watch a performance (0:20)|English Play Watch]]>><<trauma -2>><<tiredness 2>><<status 1>><<pass 20>><</link>><<ltrauma>><<gtiredness>><<gcool>>
 <br>
 <<link [[Leave the town hall (0:01)|Cliff Street]]>><<englishplayfinish>><<pass 1>><<endevent>><<set $eventskip to 1>><</link>>
@@ -2507,12 +2540,12 @@ Doren releases you, and Kylar bolts without a word. A few moments later, you hea
 		<br>
 	<</if>>
 	<<link [[Leave with other students (0:10)|English Play Leave Students]]>><<englishplayfinish>><<status 5>><<pass 10>><</link>><<ggcool>>
-	<br><br>
+	<br>
 	<<link [[Leave alone (0:01)|Cliff Street]]>><<englishplayfinish>><<pass 1>><<endevent>><<set $eventskip to 1>><</link>>
 	<br>
 <<else>>
 	<<link [[Watch more (0:20)|English Play Watch]]>><<trauma -2>><<tiredness 2>><<status 1>><<pass 20>><</link>><<ltrauma>><<gtiredness>><<gcool>>
-	<br><br>
+	<br>
 	<<link [[Leave the town hall (0:01)|Cliff Street]]>><<englishplayfinish>><<pass 1>><<endevent>><<set $eventskip to 1>><</link>>
 	<br>
 <</if>>

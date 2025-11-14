@@ -260,8 +260,8 @@
 			<</addinlineevent>>
 		<</if>>
 		<<if $foresthunt lte 0 and ($hypnosis_traits.devotion gte 2 or ($fox gte 6 or ($transformationParts.fox.tail isnot "hidden" and $transformationParts.fox.tail isnot "disabled")) or $wolf gte 6 or $dryad gte 6) and $gwylan?.ritualMissed and !$weekly.gwylanNoLure>>
-			<<if npcCanHunt("Gwylan") and ["garden", "shop"].includes(gwylanSchedule())>>
-				<<set _lureChance to $hypnosis_traits.devotion || 1>>
+			<<if npcCanHunt("Gwylan") and ["garden", "shop"].includes(gwylanSchedule()) and !Time.isBloodMoon()>>
+				<<set _lureChance to ($hypnosis_traits.devotion / 2) || 0.5>>
 				<<addevent "forestgwylanlure" _lureChance>>
 			<</if>>
 		<<elseif $foresthunt lte 0 and !$weekly.forestLullaby and ["garden", "shop"].includes(gwylanSchedule()) and (!$gwylanSeen?.includes("ritual_beast") or $gwylan?.ritualMissed)>>
@@ -367,7 +367,7 @@
 			<<addevent "forestsnow" 0.33>>
 		<</if>>
 		<<if $foresthunt lte 0 and ($hypnosis_traits.devotion gte 2 or ($fox gte 6 or ($transformationParts.fox.tail isnot "hidden" and $transformationParts.fox.tail isnot "disabled")) or $wolf gte 6 or $dryad gte 6) and $gwylan?.ritualMissed and !$weekly.gwylanNoLure>>
-			<<if npcCanHunt("Gwylan") and ["garden", "shop"].includes(gwylanSchedule())>>
+			<<if npcCanHunt("Gwylan") and ["garden", "shop"].includes(gwylanSchedule()) and !Time.isBloodMoon()>>
 				<<set _lureChance to ($hypnosis_traits.devotion / 3) || 0.3>>
 				<<addevent "forestgwylanlure" _lureChance>>
 			<</if>>
@@ -2452,6 +2452,11 @@
 				"Breathe. It's always a trip, I know."
 				<br><br>
 
+				<<if _gwylanFirstRescue is "bear">>
+					<<nnpc_He "Gwylan">> bends down to pick up the now-empty pouch, showing it to you. "Surprised? Some spores have halluinogenic properties. That one warps your perception, making everything look larger than it really is. And making yourself look bigger is the best way of scaring off bears." <<nnpc_He "Gwylan">> takes off <<nnpc_his "Gwylan">> hat and holds it over <<nnpc_his "Gwylan">> head for emphasis, before putting it back on.
+					<br><br>
+				<</if>>
+
 				A gunshot rings out, interrupting <<nnpc_him "Gwylan">>. It pierces the ground near the still-retreating bear. You turn and see a figure emerge from the bushes.
 				<<if $edenCagedEscape or edenFreedomStatus() gte 2>>
 					<span class="red">It's Eden</span>. <<nnpc_He "Eden">> marches over to you, and doesn't look happy to see you.
@@ -2488,13 +2493,19 @@
 					Gwylan steps towards you, what you now recognize as <<nnpc_his "Gwylan">> arms pulling <<nnpc_his "Gwylan">> hat back down. <<He>> dabs something from a small bottle into a cloth and presses it to your nose. Everything returns to normal size.
 				<</if>>
 				"Breathe. It's always a trip, I know."
+				<<if _gwylanFirstRescue is "bear">>
+					<br><br>
+
+					<<nnpc_He "Gwylan">> bends down to pick up the now-empty pouch, showing it to you. "Surprised? Some spores have halluinogenic properties. That one warps your perception, making everything look larger than it really is. And making yourself look bigger is the best way of scaring off bears." <<nnpc_He "Gwylan">> takes off <<nnpc_his "Gwylan">> hat and holds it over <<nnpc_his "Gwylan">> head for emphasis, before putting it back on.
+					<br><br>
+				<</if>>
 			<</if>>
 		<<elseif $_type is "Black Wolf">>
 			/* exit case, does not continue to rest of widget */
 			You hear a sound like glass breaking nearby. A green light briefly blinds you. The Black Wolf backs away from you, becoming sluggish. You hear singing. Your head feels fuzzy. <<hallucinogen 120>><<gghallucinogens>>
 			<br><br>
 
-			<span class="forest-green">Gwylan</span> emerges from the treeline as the light slowly fades from the Black Wolf's eyes. <<bHe>> backs away and growls, still half-lucid. "Shhhh." <<nnpc_He "Gwylan">> kneels down, producing a small vial full of blue powder and smiling at you.
+			<span class="forest-green">Gwylan</span> emerges from the treeline as the light slowly fades from the Black Wolf's eyes. <<bHe>> backs away and growls, still half-lucid. "Shhhh." Gwylan kneels down, producing a small vial full of blue powder and smiling at you.
 			"You should go, <<pcpetname "Gwylan" "name">>. I'll handle..." <<nnpc_His "Gwylan">> eyes widen.
 			<br><br>
 
@@ -2670,7 +2681,7 @@
 			<br>
 			<<link [[Submit (0:30)|Eden Caged Caught]]>><<set $phase to 1>><<pass 30>><<sub 1>><<npcincr Eden dom 1>><</link>><<gdom>>
 			<br>
-		<<elseif $gwylanRescue.eden gte 4>>
+		<<elseif $gwylanRescue.eden gte 3>>
 			"Nice aim," Eden says as <<nnpc_he "Eden">>
 			<<if $_close>>
 				approaches, putting <<nnpc_his "Eden">> rifle back over <<nnpc_his "Eden">> shoulder.
@@ -2693,7 +2704,8 @@
 			<</if>>
 			<br><br>
 
-			<<if $gwylanRescue.eden is 5>>
+			<<if $gwylanRescue.eden gte 4 and !$gwylanSeen?.includes("eden_frenemies")>>
+				<<set $gwylanSeen.pushUnique("eden_frenemies")>>
 				You smile. They used to be so suspicious of each other. It's nice to see them getting along.
 				<<trauma -6>><<ltrauma>>
 				<br><br>
@@ -2898,7 +2910,7 @@
 			You hear a sound like glass breaking nearby. A green light briefly blinds you. The Black Wolf becomes sluggish. You hear singing. Your head feels fuzzy. <<hallucinogen 120>><<gghallucinogens>>
 			<br><br>
 
-			<span class="forest-green">Gwylan</span> emerges from the treeline as the light slowly fades from the Black Wolf's eyes. <<bHe>> backs away and growls, still half-lucid. "Shhhh." <<nnpc_He "Gwylan">> kneels down, producing a small vial full of blue powder and smiling at you.
+			<span class="forest-green">Gwylan</span> emerges from the treeline as the light slowly fades from the Black Wolf's eyes. <<bHe>> backs away and growls, still half-lucid. "Shhhh." Gwylan kneels down, producing a small vial full of blue powder and smiling at you.
 			<<if _gwylanStatus?.includes("reunion")>>
 				"We'll be having words later, <<pcpetname "Gwylan" "name">>. You've had me worried sick. But for now, you should go. I'll sort the alpha out."
 			<<else>>
@@ -3167,7 +3179,7 @@
 				<br><br>
 			<</if>>
 
-			<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+			<<link [[Next|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
 			<br>
 		<</if>>
 	<<elseif $canRescue.includes("Nobody")>>
@@ -3387,6 +3399,8 @@
 			I'm glad you were able to get away from the Ivory one." <<He>> steps away and rubs <<his>> neck. "It sure knows how to hold a grudge."
 		<<elseif $gwylanRescue.failed is "EdenAttack">>
 			for not being able to save you from <<= $gwylanRescue.eden gte 1 ? "Eden" : "the <<nnpc_title 'Eden'">>. I wasn't expecting <<nnpc_him "Eden">> to be such a brute."
+		<<elseif $gwylanRescue.failed is "EdenShop">>
+			for not being able to keep <<= $gwylanRescue.eden gte 1 ? "Eden" : "the <<nnpc_title 'Eden'">> from taking you. I had a plan... but I suppose <<nnpc_he "Eden">> made <<nnpc_his "Eden">> move too quickly for it to take effect."
 		<<else>>
 			for not saving you before, but I can't contest
 			<<if $gwylanRescue.failed is "Eden" and $gwylanRescue.eden gte 1>>
