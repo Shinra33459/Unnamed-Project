@@ -108,6 +108,13 @@
 			<<if _cursedPrevent is true>>
 				<<continue>>
 			<</if>>
+			/* Strip strap-on */
+			<<if $worn[_slot].type.includes("strap-on")>>
+				<<set _strap to $player.inventory.sextoys[$worn[_slot].name].find(toy => toy.worn)>>
+				<<set _strap.worn to false>>
+				You remove your <<= $worn[_slot].name>>.
+				<<set $worn[_slot] to clone(setup.clothes[_slot][0])>>
+			<</if>>
 			/*Strips equip and puts it in the wardrobe*/
 			<<if _wearId is "strip" and $worn[_slot].name isnot "naked">>
 				You remove the <<print $worn[_slot].name>>.
@@ -899,6 +906,10 @@
 			<</if>>
 		<<case "rings">>
 			<<set _altLink to ["Put on right hand", "Put on left hand"]>>
+		<<case "hands">>
+			<<switch $worn.hands.variable>>
+				<<default>><<set _altLink to ["Put on right wrist", "Put on left wrist"]>>
+			<</switch>>
 		<<default>><<exit>>
 	<</switch>>
 	<</silently>>
@@ -1631,6 +1642,9 @@
 	<<set $_equip to []>>
 	<<set _equipped to []>>
 	<<for $_slot, $_value range $randomEquipConfigure>>
+		<<if $worn[$_slot].type.includes("strap-on")>>
+			<<continue>>
+		<</if>>
 		<<if $_value>>
 			<<generalUndress $wardrobe_location $_slot>>
 			<<run $_equip.push($_slot)>>
@@ -1807,6 +1821,8 @@
 			<<if $avery_party>>
 				<<link [[Exit|Mansion Party Quinn Change 2]]>><<cleanupOnWardrobeExit>><</link>>
 				<br>
+			<<elseif $phase is 446>>
+				<<link [[Exit|Mansion Clothing Wardrobe Exit]]>><<cleanupOnWardrobeExit>><</link>>
 			<<elseif $avery_mansion_skyscraper_wardrobe>>
 				<<link [[Exit|Mansion Skyscraper Wardrobe Exit]]>><<cleanupOnWardrobeExit>><</link>>
 				<br>

@@ -167,6 +167,13 @@ function initSpecialClothes() {
 
 		{ name: "sage witch hat", 				sets: ["sage_witch_hat"] },
 		{ name: "familiar collar",				sets: ["familiar_collar"] },
+		
+		{ name: "ancient coral ring", 			sets: ["antiques"] },
+		{ name: "antique gold amulet", 			sets: ["antiques"] },
+		{ name: "antique gold necklace", 		sets: ["antiques"] },
+		{ name: "ancient gold ring", 			sets: ["antiques"] },
+		{ name: "antique copper ring", 			sets: ["antiques"] },
+		{ name: "antique silver band", 			sets: ["antiques"] },
 	];
 
 	/* must match set names above.
@@ -300,7 +307,7 @@ function initSpecialClothes() {
 			shop: ["forest"],
 			subsetOf: ["valentines"],
 			feat: true,
-			featCost: 8,
+			featCost: 5,
 			icon: "clothes",
 			iconSlot: "head",
 			iconIndex: 79,
@@ -385,7 +392,7 @@ function initSpecialClothes() {
 			shop: ["forest"],
 			subsetOf: ["bad_end"],
 			feat: true,
-			featCost: 10,
+			featCost: 5,
 			icon: "clothes/prison_jumpsuit.png",
 		},
 		asylum: {
@@ -395,7 +402,7 @@ function initSpecialClothes() {
 			shop: ["forest"],
 			subsetOf: ["bad_end"],
 			feat: true,
-			featCost: 10,
+			featCost: 5,
 			icon: "clothes/straightjacket.png",
 		},
 
@@ -423,7 +430,7 @@ function initSpecialClothes() {
 			shop: ["forest", "temple"],
 			subsetOf: ["temple"],
 			feat: true,
-			featCost: 10,
+			featCost: 5,
 			icon: "clothes/monks_habit.png",
 		},
 		temple_evangelist: {
@@ -433,7 +440,7 @@ function initSpecialClothes() {
 			shop: ["forest", "temple"],
 			subsetOf: ["temple"],
 			feat: true,
-			featCost: 10,
+			featCost: 5,
 			icon: "clothes/evangelist_uniform.png",
 		},
 		temple_confessor: {
@@ -443,7 +450,7 @@ function initSpecialClothes() {
 			shop: ["forest", "temple"],
 			subsetOf: ["temple"],
 			feat: true,
-			featCost: 12,
+			featCost: 5,
 			icon: "clothes/confessor_robes.png",
 		},
 		temple_exorcist: {
@@ -453,17 +460,17 @@ function initSpecialClothes() {
 			shop: ["forest", "temple"],
 			subsetOf: ["temple"],
 			feat: true,
-			featCost: 12,
+			featCost: 5,
 			icon: "clothes/exorcist_cassock.png",
 		},
 		temple_sparring: {
 			text: "sparring uniforms",
-			requirements: () => V.prof?.whip >= 1000 || V.prof?.baton >= 1000,
-			hint: "master one of the temple's holy tools",
+			requirements: () => V.prof?.whip >= 600 || V.prof?.baton >= 600,
+			hint: "become proficient with one of the temple's holy tools",
 			shop: ["forest", "temple"],
 			subsetOf: ["temple"],
 			feat: true,
-			featCost: 12,
+			featCost: 10,
 			icon: "clothes/monk's_sparring_habit.png",
 		},
 		temple_sexy: {
@@ -473,7 +480,7 @@ function initSpecialClothes() {
 			shop: ["forest", "adult"],
 			subsetOf: ["temple"],
 			feat: true,
-			featCost: 12,
+			featCost: 10,
 			icon: "clothes/sexy_nuns_habit.png",
 		},
 		holy_stole: {
@@ -483,7 +490,7 @@ function initSpecialClothes() {
 			shop: ["forest", "temple"],
 			subsetOf: ["temple"],
 			feat: true,
-			featCost: 4,
+			featCost: 5,
 			icon: "clothes",
 			iconSlot: "neck",
 			iconIndex: 19,
@@ -739,7 +746,7 @@ function initSpecialClothes() {
 			hint: "become addicted to nectar",
 			shop: ["forest"],
 			feat: true,
-			featCost: 10,
+			featCost: 5,
 			icon: "clothes",
 			iconSlot: "upper",
 			iconIndex: 192,
@@ -752,7 +759,7 @@ function initSpecialClothes() {
 			shop: ["forest"],
 			subsetOf: ["transformation"],
 			feat: true,
-			featCost: 15,
+			featCost: 10,
 			icon: "clothes",
 			iconSlot: "lower",
 			iconIndex: 183,
@@ -827,6 +834,10 @@ function specialClothesUpdate() {
 	if (!V.specialClothes.some(item => item.name === "familiar collar")) V.specialClothes.push({ name: "familiar collar", unlocked: 0 });
 	if (!V.specialClothes.some(item => item.name === "ancient coral ring")) V.specialClothes.push({ name: "ancient coral ring", unlocked: 0 });
 	if (!V.specialClothes.some(item => item.name === "antique gold amulet")) V.specialClothes.push({ name: "antique gold amulet", unlocked: 0 });
+	if (!V.specialClothes.some(item => item.name === "antique gold necklace")) V.specialClothes.push({ name: "antique gold necklace", unlocked: 0 });
+	if (!V.specialClothes.some(item => item.name === "antique copper ring")) V.specialClothes.push({ name: "antique copper ring", unlocked: 0 });
+	if (!V.specialClothes.some(item => item.name === "antique silver band")) V.specialClothes.push({ name: "antique silver band", unlocked: 0 });
+	if (!V.specialClothes.some(item => item.name === "ancient gold ring")) V.specialClothes.push({ name: "ancient gold ring", unlocked: 0 });
 
 	// Delete any entries that do not have a matching setup object.
 	V.specialClothes.forEach((clothing, index) => {

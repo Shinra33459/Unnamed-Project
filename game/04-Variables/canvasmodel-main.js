@@ -2175,7 +2175,7 @@ Renderer.CanvasModels.main = {
 
 				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
 					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) {
-						if ((T.activeNNPC == "black_wolf" || T.activeNNPC == "great_hawk") && V.monster != 0) {
+						if ((T.activeNNPC == "black_wolf" || T.activeNNPC == "great_hawk") && V.monster != 1) {
 							T.skin = "/monster";
 						} else if (V.NPCList[0].skincolour == "white") {
 							T.skin = "/pale";
@@ -3315,7 +3315,8 @@ Renderer.CanvasModels.main = {
 		}),
 		"lower_fitted_left": genlayer_clothing_fitted_left_acc("lower", {
 			zfn(options) {
-				return options.zupper;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
 				return options.upper_fitted_left_move_src;
@@ -3326,7 +3327,8 @@ Renderer.CanvasModels.main = {
 		}),
 		"lower_fitted_right": genlayer_clothing_fitted_right_acc("lower", {
 			zfn(options) {
-				return options.zupper;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
 				return options.upper_fitted_right_move_src;
@@ -3337,7 +3339,8 @@ Renderer.CanvasModels.main = {
 		}),
 		"lower_fitted_acc_left": genlayer_clothing_fitted_left("lower", {
 			zfn(options) {
-				return options.zupper;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
 				return options.upper_fitted_left_move_src;
@@ -3348,7 +3351,8 @@ Renderer.CanvasModels.main = {
 		}),
 		"lower_fitted_acc_right": genlayer_clothing_fitted_right("lower", {
 			zfn(options) {
-				return options.zupper;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
 				return options.upper_fitted_right_move_src;
@@ -4445,10 +4449,11 @@ Renderer.CanvasModels.main = {
 					&& options.worn.earrings.setup.altposition !== undefined
 					&& options.worn.earrings.alt === "alt";
 				const alt = isAltPosition ? '_alt' : '';
+				const pattern = options.worn.earrings.pattern && !["tertiary", "secondary"].includes(options.worn.earrings.pattern_layer) ? "_" + options.worn.earrings.pattern?.replace(/ /g,"_") : '';
 
 				const setupVar = options.worn.earrings.setup.variable;
 				const integrity = options.worn.earrings.integrity;
-				const path = `img/clothes/earrings/${setupVar}/${integrity}${alt}.png`;
+				const path = `img/clothes/earrings/${setupVar}/${integrity}${pattern}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_earrings']);
 			},
 			showfn(options) {
@@ -4456,9 +4461,6 @@ Renderer.CanvasModels.main = {
 					&& options.worn.earrings.index > 0
 					&& options.worn.earrings.setup.mainImage !== 0
 					&& !options.hideAll;
-			},
-			masksrcfn(options) {
-				return options.high_waist_suspenders ? "img/clothes/earrings/suspenders/mask.png" : null;
 			},
 			zfn(options) {
 				return ZIndices.ears + 1;
@@ -4471,9 +4473,10 @@ Renderer.CanvasModels.main = {
 					&& options.worn.earrings.alt === "alt";
 				const integrity = setup.accessory_integrity_img ? `_${options.worn.earrings.integrity}` : '';
 				const alt = isAltPosition ? '_alt' : '';
+				const pattern = options.worn.earrings?.pattern && options.worn.earrings?.pattern_layer === "secondary" ? "_" + options.worn.earrings.pattern?.replace(/ /g,"_") : '';
 
 				const setupVar = options.worn.earrings.setup.variable;
-				const path = `img/clothes/earrings/${setupVar}/acc${integrity}${alt}.png`;
+				const path = `img/clothes/earrings/${setupVar}/acc${integrity}${pattern}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_earrings_acc']);
 			},
 			showfn(options) {
