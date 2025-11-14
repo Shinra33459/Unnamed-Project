@@ -254,13 +254,13 @@ function gwylanStatusCheck() {
 	const unlockedSets = getUnlockedSpecialSets(V.specialClothes.filter(c => c.unlocked >= 2).map(c => c.name)).filter(set =>
 		setup.specialClothesSets[set].shop.includes("forest")
 	);
-	C.npc.Gwylan.love = Math.floor(unlockedSets.length + V.gwylanTalked.filter(set => setup.specialClothesSets[set]?.shop.includes("forest")).length);
+	C.npc.Gwylan.love = Math.ceil(unlockedSets.length + V.gwylanTalked.filter(set => setup.specialClothesSets[set]?.shop.includes("forest")).length);
 	if (V.gwylan.wary > 1 && ["active", "scorned"].includes(C.npc.Gwylan.state)) {
 		/* If Gwylan is around, temporarily lower love if player has worked against them until amends are made */
 		C.npc.Gwylan.love -= V.gwylan.wary * 2;
 		gwylanStatus.push("cautious");
 	}
-	T.gwylanLovePercent = Math.floor((C.npc.Gwylan.love / (totalSets.length * 2)) * 100);
+	T.gwylanLovePercent = Math.ceil((C.npc.Gwylan.love / (totalSets.length * 2)) * 100);
 
 	if (
 		T.gwylanLovePercent >= 65 &&
@@ -286,8 +286,10 @@ function gwylanStatusCheck() {
 		/* Gwylan allows themselves to become comfortable with the player again after 'breakup' */
 		gwylanStatus.push("lust");
 		if (V.gwylanSeen.includes("partners") && C.npc.Gwylan.dom >= 100 && C.npc.Gwylan.lust >= 40 && C.npc.Gwylan.dom + C.npc.Gwylan.lust >= 160)
-			/* In heat/rut */
-			gwylanStatus.push("heat");
+			if (!V.weekly.gwylanNoHeat) {
+				/* In heat/rut */
+				gwylanStatus.push("heat");
+			}
 		if (
 			T.gwylanLovePercent >= 90 &&
 			C.npc.Gwylan.dom >= 140 &&
@@ -386,7 +388,7 @@ function gwylanSchedule() {
 		!V.daily.gwylan.cafeSkip &&
 		((Time.hour === 7 && (Time.minute >= 20 || V.daily.gwylan.cafe)) || Time.hour === 8 || (Time.hour === 9 && Time.minute <= 20))
 	) {
-		if (between(V.chef_state, 7, 8)) {
+		if (between(V.chef_state, 7, 8) && V.chef_rework <= 30) {
 			return "cliff";
 		} else {
 			return "cafe";

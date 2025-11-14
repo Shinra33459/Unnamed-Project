@@ -154,6 +154,27 @@ const Time = (() => {
 			}
 		}
 
+        if (V.godClothes === 1) {
+			if (V.worn.upper.name !== "naked") { 
+			V.worn.upper.integrity = 2000;
+			}
+			if (V.worn.over_upper.name !== "naked") { 
+			V.worn.over_upper.integrity = 2000;
+			}
+			if (V.worn.over_lower.name !== "naked") { 
+			V.worn.over_lower.integrity = 2000;
+			}
+			if (V.worn.lower.name !== "naked") { 
+			V.worn.lower.integrity = 2000;
+			}
+			if (V.worn.under_lower.name !== "naked") { 
+			V.worn.under_lower.integrity = 2000;
+			}
+			if (V.worn.under_upper.name !== "naked") { 
+			V.worn.under_upper.integrity = 2000;
+			}
+		}
+
 		const minutes = Math.floor((currentDate.timeStamp - prevDate.timeStamp) / 60) || (60 + (currentDate.minute - prevDate.minute)) % 60;
 		if (!minutes) return;
 
@@ -523,6 +544,7 @@ function weekPassed() {
 	if (V.robinpaid !== 1 && V.robindebt >= V.robindebtlimit && V.robindebtevent <= 0) {
 		wikifier("robinPunishment", "docks");
 		V.robineventnote = 1;
+		V.robindebt = 0;
 	}
 	V.robinmoney += (V.robin.stayup >= 1 ? 250 : 300) + V.robin.moneyModifier;
 	// if (V.robinmoney > 4000) V.robinmoney = 4000;
@@ -965,9 +987,6 @@ function dayPassed(days) {
 		}
 		if (V.bird.clean >= 1) V.bird.clean = Math.clamp(V.bird.clean - (10 - V.bird.upgrades.shelter), 0, 100);
 
-		/* Set flag to determine Kylar's position at lunch */
-		V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
-
 		if (V.whitney_roof) {
 			delete V.whitney_roof;
 		}
@@ -982,12 +1001,19 @@ function dayPassed(days) {
 		// Activate the robin pillory
 		if (V.robinPillory && V.robinPillory.danger !== undefined && (V.robindebtevent <= 1 || !V.baileySold)) V.robinPillory.active = true;
 
+		// Save today's HC ending in local storage
+		if (V.daily.winterStoryTime && V.hcEndings)
+			localStorage.setItem("hopelessCycle", localStorage.getItem("hopelessCycle").split(",").concatUnique(V.hcEndings));
+
+		V.daily.clearProperties();
+
 		if (V.stallDeposit >= 3000) {
 			V.stallDeposit -= 3000;
 			V.daily.stallRented = 1;
 		}
 
-		V.daily.clearProperties();
+		/* Set flag to determine Kylar's position at lunch */
+		V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
 
 		if (V.bike >= 1) {
 			if (V.bikeSecurityGear == 5) {
@@ -1612,18 +1638,18 @@ function dailyNPCEffects() {
 				}
 			}
 		}
-		if (V.gwylan.timer.wrap && Time.date.dayDifference(V.gwylan.timer.wrap) <= 0) delete V.gwylan.timer.wrap;
-		if (V.gwylan.timer.randomOrgasm && Time.date.dayDifference(V.gwylan.timer.randomOrgasm) <= 0) delete V.gwylan.timer.randomOrgasm;
+		if (V.gwylan.timer.wrap && Time.date.dayDifference(new DateTime(V.gwylan.timer.wrap)) <= 0) delete V.gwylan.timer.wrap;
+		if (V.gwylan.timer.randomOrgasm && Time.date.dayDifference(new DateTime(V.gwylan.timer.randomOrgasm)) <= 0) delete V.gwylan.timer.randomOrgasm;
 		if (V.gwylan.timer.bloodVisit && Time.date.dayDifference(new DateTime(V.gwylan.timer.bloodVisit)) <= 0) delete V.gwylan.timer.bloodVisit;
 		if (V.gwylan.timer.bloodKnock && Time.date.dayDifference(new DateTime(V.gwylan.timer.bloodKnock)) <= 0) delete V.gwylan.timer.bloodKnock;
-		if (V.gwylan.timer.nobody && Time.date.dayDifference(V.gwylan.timer.nobody) <= 0) delete V.gwylan.timer.nobody;
+		if (V.gwylan.timer.nobody && Time.date.dayDifference(new DateTime(V.gwylan.timer.nobody)) <= 0) delete V.gwylan.timer.nobody;
 		if (C.npc.Gwylan.state === "scorned" && V.gwylan.timer.scorned && V.gwylan.request.event !== "yearning") {
 			if (Time.date.dayDifference(new DateTime(V.gwylan.timer.scorned)) <= 0) {
 				V.yearningLetter = 1;
 				delete V.gwylan.timer.scorned;
 			}
 		}
-		if (V.gwylan.timer.petBed && Time.date.dayDifference(V.gwylan.timer.petBed) <= 0) delete V.gwylan.timer.petBed;
+		if (V.gwylan.timer.petBed && Time.date.dayDifference(new DateTime(V.gwylan.timer.petBed)) <= 0) delete V.gwylan.timer.petBed;
 	}
 
 	wikifier("relationshipclamp");
@@ -1778,15 +1804,6 @@ function dailyPlayerEffects() {
 			}
 		}
 	}
-
-	if (V.auriga_scar && V.location !== "asylum") {
-		const scarTrauma = V.auriga_scar * 50;
-		const scarAwareness = V.auriga_scar;
-		const scarPurity = V.auriga_scar * -5;
-		if (V.trauma <= (V.traumamax / 5) * 3) statChange.trauma(scarTrauma);
-		statChange.awareness(scarAwareness);
-		statChange.purity(scarPurity);
-	}
 }
 
 function dailyTransformationEffects() {
@@ -1832,6 +1849,15 @@ function dailyTransformationEffects() {
 	if (V.plucked) {
 		V.plucked--;
 		if (V.plucked <= 0) delete V.plucked;
+	}
+
+	if (V.auriga_scar && V.location !== "asylum") {
+		const scarTrauma = V.auriga_scar * 50;
+		const scarAwareness = V.auriga_scar;
+		const scarPurity = V.auriga_scar * -5;
+		if (V.trauma <= (V.traumamax / 5) * 3) statChange.trauma(scarTrauma);
+		statChange.awareness(scarAwareness);
+		statChange.purity(scarPurity);
 	}
 
 	wikifier("transformationStateUpdate");

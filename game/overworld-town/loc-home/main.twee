@@ -1,6 +1,6 @@
 :: Bedroom
 <<bedclotheson "bed">>
-<<set $outside to 0>><<set $location to "home">><<home_effects>><<effects>><<getTarget true>>
+<<set $outside to 0>><<set $location to "home">><<home_effects>><<effects>><<getTarget true>><<godClothe>>
 You are in your bedroom.
 /* Wallpaper */
 <<set _furniture to $furniture.bedroom>>
@@ -262,7 +262,7 @@ You are in your bedroom.
 
 <<if $bedroomUI.orphanage.lock is true>>
 	Lock your door: <<checkbox "$orphanageLocked" 0 1 autocheck>><mouse class="tooltip linkBlue">(?)<span>Will stop <<if C.npc.Robin.init is 0>>???<<else>>Robin<</if>> from interrupting your sleep.</span></mouse><br>
-	Lock your window: <<checkbox "$orphanageWindowLocked" 0 1 autocheck>><mouse class="tooltip linkBlue">(?)<span>Will stop <<if C.npc.Robin.init is 0>>???<<else>>Kylar<</if>> from interrupting your sleep.</span></mouse><br><br>
+	Lock your window: <<checkbox "$orphanageWindowLocked" 0 1 autocheck>><mouse class="tooltip linkBlue">(?)<span>Will stop <<if C.npc.Kylar.init is 0>>???<<else>>Kylar<</if>> from interrupting your sleep and sneaking into your room.</span></mouse><br><br>
 <</if>>
 
 /* Desk */
@@ -2816,10 +2816,10 @@ and !$fromRobinRoom and _robin.cdquest is 2 and _robin.trauma lte 20 and !$daily
 	<<if Time.hour gte 18 and Time.hour lte 20 and _robin.trauma gte 40 and $robinmissing is 0 and !$robinTraumaVisit>>
 		<<bedicon>><<link [[Bedroom (0:01)|Robin Trauma Visit]]>><<set $phase to 0>><<pass 1>><</link>>
 		<br>
-	<<elseif $kylar.timer.home gte 100 and $kylar.home is undefined>>
+	<<elseif $kylar.timer.home gte 100 and $kylar.home is undefined and $orphanageWindowLocked is 0>>
 		<<bedicon>><<link [[Bedroom (0:01)|Kylar Bedroom 1]]>><<pass 1>><<set $kylar.timer.home to 0>><<set $kylar.home to 0>><</link>>
 		<br>
-	<<elseif $kylar.timer.home gte 100 and $kylar.home is 0 and C.npc.Kylar.state is "active">>
+	<<elseif $kylar.timer.home gte 100 and $kylar.home is 0 and C.npc.Kylar.state is "active" and $orphanageWindowLocked is 0>>
 		<<bedicon>><<link [[Bedroom (0:01)|Kylar Bedroom 2]]>><<pass 1>><<set $kylar.timer.home to 0>><<set $kylar.home to 1>><</link>>
 		<br>
 	<<else>>
@@ -4892,7 +4892,7 @@ Some of those clothes will be hard to reach. Now, I can't skip you to the end, b
 		<br><br>
 
 		<<if $worn.neck.name is "familiar collar" and $worn.neck.cursed is 1>>
-			<<link [[Next|Livestock Intro Familiar Collar]]>><<endevent>><</link>>
+			<<link [[Next|Livestock Intro Familiar Collar]]>><<endevent>><<badEndTracking "Underground Farm" { reason: "abductedMoor" }>><</link>>
 		<<else>>
 			You land with perfect grace, and a collar is clamped around your neck.
 			<br><br>

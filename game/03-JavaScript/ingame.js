@@ -406,6 +406,9 @@ function loveInterestFunction() {
 		delete T.awareChecked;
 		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
 	});
+	jQuery(document).on("change", "#listbox-loveinteresttertiary", function (e) {
+		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
+	});
 }
 DefineMacro("loveInterestFunction", loveInterestFunction);
 
@@ -1892,6 +1895,8 @@ function isPossibleLoveInterest(name) {
 			return V.farm_stage >= 7 && V.alex_countdown === undefined;
 		case "Gwylan":
 			return V.gwylanSeen?.includes("partners") || V.gwylanSeen?.includes("romance");
+		default:
+			return false;
 	}
 }
 window.isPossibleLoveInterest = isPossibleLoveInterest;
