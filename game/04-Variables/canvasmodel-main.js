@@ -3685,7 +3685,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
 				const pattern = options.worn.hands.pattern && !["tertiary", "secondary"].includes(options.worn.hands.setup.pattern_layer) ? "_" + options.worn.hands.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_hands']);
 			},
 			showfn(options) {
@@ -3705,7 +3711,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
 				const pattern = options.worn.hands.pattern && options.worn.hands.setup.pattern_layer === "secondary" ? "_" + options.worn.hands.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}_acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}${alt}_acc.png`;
 				return gray_suffix(path, options.filters['worn_hands_acc']);
 			},
 			showfn(options) {
@@ -3726,7 +3738,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
 				const pattern = options.worn.hands.pattern && !["tertiary", "secondary"].includes(options.worn.hands.setup.pattern_layer) ? "_" + options.worn.hands.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_hands']);
 			},
 			showfn(options) {
@@ -3755,7 +3773,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
 				const pattern = options.worn.hands.pattern && options.worn.hands.setup.pattern_layer === "secondary" ? "_" + options.worn.hands.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}_acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}${alt}_acc.png`;
 				return gray_suffix(path, options.filters['worn_hands_acc']);
 			},
 			showfn(options) {
@@ -3783,7 +3807,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}_${options.worn.hands.pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}_${options.worn.hands.pattern}${alt}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -3806,7 +3836,13 @@ Renderer.CanvasModels.main = {
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
 				const pattern = options.worn.hands.pattern && !["tertiary", "secondary"].includes(options.worn.hands.setup.pattern_layer) ? "_" + options.worn.hands.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}${alt}.png`;
 				return gray_suffix(path, options.filters['worn_hands']);
 			},
 			showfn(options) {
@@ -3828,7 +3864,13 @@ Renderer.CanvasModels.main = {
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
 				const pattern = options.worn.hands.pattern && options.worn.hands.setup.pattern_layer === "secondary" ? "_" + options.worn.hands.pattern?.replace(/ /g,"_") : '';
-				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}_acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				const path = `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}${pattern}${alt}_acc.png`;
 				return gray_suffix(path, options.filters['worn_hands_acc']);
 			},
 			showfn(options) {
@@ -3849,7 +3891,13 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}_${options.worn.hands.pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/${suffix}_${options.worn.hands.pattern}${alt}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
