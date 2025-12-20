@@ -2185,7 +2185,14 @@ Renderer.CanvasModels.main = {
 						return `img/ui/nnpc/${T.activeNNPC}/${T.gender}${T.skin}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
 					} else return;
 				} else {
-					T.skin = "/" + V.options.nnpcDisplaySkin;
+					T.activeNNPC = V.options.nnpcDisplay.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+					if (V.options.autoNNPCDisplay.enabled == true) {
+						if (C.npc[T.activeNNPC].skincolour == "white") {
+							T.skin = "/pale"
+						} else T.skin = "/dark"
+					} else {
+						T.skin = "/" + V.options.nnpcDisplaySkin;
+					}
 					if (V.options.nnpcDisplay == "sydney") {
 						if (C.npc.Sydney.purity >= 1) {
 							T.skin += "/pure";
