@@ -3184,9 +3184,11 @@
 						<<else>>
 							There's no more recipes you can learn.
 						<</if>>
-						<br><br>
+						<br>
 					<</if>>
 				<</if>>
+				<<link [[Steal|Avery Kitchen Steal]]>><<handheldon>><</link>>
+				<br><br>
 			<</if>>
 
 			<<if $bus is "avery_lounge">>
@@ -4193,3 +4195,134 @@
 		<br><br>
 	<</if>>
 <</widget>>
+
+
+:: Avery Kitchen Steal
+<<set $location to "avery_mansion">><<set $avery_passage to $passage>><<set $outside to 0>><<effects>><<avery_mansion>>
+<<effects>>
+<br>
+You look through the cabinets. Most of the ingredients you use during classes are here. 
+<<if $avery_mansion.schedule isnot "away" and $avery_mansion.schedule isnot "work">>
+	<<set $skulduggerydifficulty to 200>><<skulduggerycheck>>
+	Avery isn't home, so as long as you don't mess anything up, <<nnpc_he "Avery">> shouldn't find out.
+<<elseif $avery_mansion.schedule is "dinner">>
+	<<set $skulduggerydifficulty to 400>><<skulduggerycheck>>
+	Avery is in the dinning room. <<nnpc_He "Avery">> shouldn't suspect you of doing anything unless you act suspicious.
+<<else>>
+	<<set $skulduggerydifficulty to 300>><<skulduggerycheck>>
+	Avery isn't anywhere close, so as you don't mess anything up, <<nnpc_he "Avery">> shouldn't find out.
+<</if>>
+<br><br>
+
+<<ingredientsSuppliesSteal $avery_mansion.kitchen_stock.normal.concat($avery_mansion.kitchen_stock.requested)>>
+
+<<icon "avery_kitchen.png">><<link [[Go Back|Mansion Kitchen]]>><</link>>
+
+:: mansion Kitchen Steal Result
+<<set $location to "avery_mansion">><<set $avery_passage to $passage>><<set $outside to 0>><<effects>><<avery_mansion>>
+
+<<skulduggerycheck "silent">>
+<br><br>
+<<if $skulduggerysuccess is 1>>
+	You take the <<recipe_name $phase "plural">> from the cupboard. <<tending_pick $phase 3 6>>
+	You probably shouldn't take more or Avery will realize too much is missing.<br><br>
+	
+	<<icon "avery_kitchen.png">><<link [[Walk Away|Mansion Kitchen]]>><</link>>
+	<<ingredientsSuppliesSteal $avery_mansion.kitchen_stock.normal.concat($avery_mansion.kitchen_stock.requested)>>
+<<else>>
+	As you reach to take the <<recipe_name $phase "plural">>, you accidentally knock a jar off the counter, causing it to shatter.
+	<<if $avery_mansion.schedule isnot "away" and $avery_mansion.schedule isnot "work">>
+		Avery isn't home to judge you, but you spend 20 minutes cleaning it up regardless.
+	<<elseif $avery_mansion.schedule is "dinner">>
+		<<if $averyragerevealed is 1 and C.npc.Avery.rage gte random(20, 100)>>
+			<br>
+			"What the fuck was that!?" You jump as you hear Avery's voice, clearly alarmed by the situation, and clearly not in a good mood.<br>
+			<<if setup.plants[$avery_requested_food].ingredients.includes($phase)>>
+				"<<recipe_name $phase "cap">>? Is it so much to ask for <<recipe_name $avery_requested_food "article">> to be ready when I come back home?
+				<<He>> scoffs annoyed and looks barks back at you. "Clean up that mess. And hurry up." 
+			<<else>>
+				<<if $avery_mansion.rage.dinner_missed >= 0>>
+					"<<recipe_name $phase "cap">>? Are you trying to feed me a fucking <<recipe_name $phase>>?" 
+					<<He>> walks up to you and grasps your arm harshly. "You weren't planning on doing what I asked for again, didn't you? You just take and take from me and give nothing in return!"
+				<<elseif $avery_mansion.rage.dinner_wrong>>
+					"<<recipe_name $phase "cap">>? So you aren't making <<recipe_name $avery_requested_food "article">> today?" 
+					<<He>> scoffs annoyed and looks barks back at you. "Clean up that mess. And hurry up." 
+				<<else>>
+					"You don't even need <<recipe_name $phase>> for <<recipe_name $avery_requested_food "article">>, and you're making a mess over it? Can you not break anything at least once?" 
+					<<He>> scoffs annoyed and looks barks back at you. "Clean up that mess. And hurry up." 
+				<</if>>
+			<</if>>
+		<<else>>
+			<br>
+			"What's happening?" You turn to see Avery standing in the entrance, alarmed by the noise.
+			<<if setup.plants[$avery_requested_food].ingredients.includes($phase)>>
+				<<His>> expression softens when <<he>> sees you holding a <<recipe_name $phase>>. 
+				"You wanted to make sure the <<recipe_name $avery_requested_food "article">> is warm? Just clean it up after you finish. //CHANGE IF PC DOESN"T HAVE TO CLEAN THE KITCHEN
+			<<else>>
+				<<He>> sighs noticing the mess. "It's not exactly time for culinary experiments right now. Why do you exactly need <<recipe_name $phase "article">> for? I don't think it's part of <<recipe_name $avery_requested_food "article">> recipe."
+				//Option: cooking something else (lie)
+				//I wanted to make a secret stash (BECAUSE YOU CALLED ME FAT if ragerevealed, otherwise just PC being stressed or something)
+				//saving for the next time they need to cook something (works only if it's a requested ingredient.)
+				//IF EGGS AND PC FOX - burying it :)
+				//IF STEAK AND PC WOLF - I want to each raw meat :| (maybe birb works too?)
+				//IF PC HAS WOLF BABIES - I need to feed my children.
+				//IF PC has wolf-tf human babies - I need to feed my tf children (special points if with Avery, but they don't give a fuck)
+				//If Bear and ur stealing a honeycomb - I want honey. O_O
+				//Making a surprise for you! :> (answer depends on the item ur stealing, but generally pleased)
+				//Try to make something up (and fail)
+				//Admit to stealing like an idiot (low rage Avery will ask why, giving PC ONE chance exactly, probably surprised by the audacity xD Especially if it's well-behaved PC otherwise.
+			<</if>>
+		<</if>>
+	<<else>>
+		<<if $averyragerevealed is 1 and C.npc.Avery.rage gte random(20, 100)>>
+			<br>
+			"What the fuck was that!?" You jump as you hear Avery's voice, clearly alarmed by the situation, and clearly not in a good mood.
+			<<if setup.plants[$avery_requested_food].ingredients.includes($phase)>>
+				<<His>> expression softening only a little bit when <<he>> sees you holding a <<recipe_name $phase>>. 
+				<<if $avery_mansion.rage.dinner_missed >= 0>>
+					"At least this time you're actually making me what I requested. Clean it up."
+				<<else>>
+					"It's too early to make <<recipe_name $avery_requested_food "article">>, it will get cold by the evening," <<he>> comments. "Clean it up."
+				<</if>>
+			<<else>>
+				"<<recipe_name $phase>>? What were you doing with it anyways to cause this mess?"
+				//Option: cooking what requested (lie)
+				//Option: cooking something else (lie)
+				//I wanted to make a secret stash BECAUSE YOU CALLED ME FAT.
+				//saving for the next time they need to cook something (works only if it's a requested ingredient.)
+				//IF EGGS AND PC FOX - burying it :)
+				//IF STEAK AND PC WOLF - I want to each raw meat :| (maybe birb works too?)
+				//IF PC HAS WOLF BABIES - I need to feed my children.
+				//IF PC has wolf-tf human babies - I need to feed my tf children (special points if with Avery, but they don't give a fuck)
+				//If Bear and ur stealing a honeycomb - I want honey. O_O
+				//Making a surprise for you! :> (answer depends on the item ur stealing)
+				//Try to make something up (and fail)
+				//Admit to stealing like an idiot
+			<</if>>
+		<<else>>
+			<br>
+			"What's happening?" You turn to see Avery standing in the entrance, alarmed by the noise.
+			<<if setup.plants[$avery_requested_food].ingredients.includes($phase)>>
+				<<His>> expression softens when <<he>> sees you holding a <<recipe_name $phase>>. 
+				"Ah, you're making <<recipe_name $avery_requested_food "article">>. Just clean it up, and be more careful in the future."
+			<<else>>
+				<<He>> sighs noticing the mess, but looks calm otherwise. "Be more careful in the future. There are many valuable things here. What were you planning to do with <<recipe_name $phase>> anyways?"
+				//Option: cooking what requested (lie)
+				//Option: cooking something else (lie)
+				//I wanted to make a secret stash (BECAUSE YOU CALLED ME FAT if ragerevealed, otherwise just PC being stressed or something)
+				//saving for the next time they need to cook something (works only if it's a requested ingredient.)
+				//IF EGGS AND PC FOX - burying it :)
+				//IF STEAK AND PC WOLF - I want to each raw meat :| (maybe birb works too?)
+				//IF PC HAS WOLF BABIES - I need to feed my children.
+				//IF PC has wolf-tf human babies - I need to feed my tf children (special points if with Avery, but they don't give a fuck)
+				//If Bear and ur stealing a honeycomb - I want honey. O_O
+				//Making a surprise for you! :> (answer depends on the item ur stealing, but generally pleased)
+				//Try to make something up (and fail)
+				//Admit to stealing like an idiot (low rage Avery will ask why, giving PC ONE chance exactly, probably surprised by the audacity xD Especially if it's well-behaved PC otherwise.
+			<</if>>
+		<</if>>
+	<</if>>
+<</if>>
+
+<<icon "avery_kitchen.png">><<link [[Go Back|Mansion Kitchen]]>><</link>><br>
+
