@@ -104,7 +104,7 @@
 
 <<widget "avery_mansion_init">>
 <<set $avery_mansion to {}>>
-<<set $avery_mansion.version to 2>>
+<<set $avery_mansion.version to 3>>
 
 <<set $avery_mansion.pool to 0>>
 <<set $avery_mansion.kitchen to 0>>
@@ -160,6 +160,23 @@
 
 <<set $daily.avery.housekeeping_events to {}>>
 
+<<set $avery_mansion.attend to {}>>
+
+
+<<set $daily.avery.talk to {}>>
+<<set $daily.avery.talk.ignore to false>>
+<<set $daily.avery.talk.limit to false>>
+<<set $daily.avery.talk.flirt to false>>
+<<set $daily.avery.talk.seduce to false>>
+<<set $daily.avery.talk.count to 0>>
+<<set $daily.avery.talk.annoyed to 0>>
+<<set $daily.avery.talk.chat to 0>>
+
+<<set $daily.avery.ask to {}>>
+<<set $daily.avery.ask.science to false>>
+<<set $daily.avery.ask.maths to false>>
+<<set $daily.avery.ask.play to false>>
+
 <<set $avery_tower to {}>>
 <<set $avery_tower.progress to 0>>
 <<set $avery_tower.effects to []>>
@@ -171,6 +188,14 @@
 <<avery_mansion_start_clothes>>
 <<set $wardrobes.avery_mansion.unlocked to true>>
 
+<</widget>>
+
+<<widget "avery_daily_talk">>
+<<if $daily.avery.talk.count is undefined>>
+	<<set $daily.avery.talk.count to 0>>
+	<<set $daily.avery.talk.annoyed to 0>>
+	<<set $daily.avery.talk.chat to 0>>
+<</if>>
 <</widget>>
 
 <<widget "avery_antiques_init">>
@@ -243,8 +268,13 @@
 <</widget>>
 
 <<widget "avery_mansion">>
+
 <<if $avery_mansion.party_state is "started">>
 	<<run throw new Error("avery_mansion_party_end was run when current guest was already marked as 'done'! Please report this error.")>>
+<</if>>
+
+<<if $avery_mansion.schedule is "away" and $avery_mansion.away_timer gte 0 and Time.weekDay is 7 and Time.hour is 20>>
+	<<set $averydateattended to 1>>
 <</if>>
 
 <<if $avery_mansion.schedule is "away" and $avery_skyscraper_fire_time lte 0 and $avery_injury>>
@@ -254,7 +284,7 @@
 	<<set $avery_mansion.schedule to "return">>
 	<<set $avery_mansion.rage.apologetic to true>>
 	<<set $avery_mansion.rage.work to true>>
-<<elseif $avery_mansion.schedule is "away" and !$avery_injury and $avery_mansion.away_timer lte 0 and (Time.hour gte 21 or Time.hour lte 6)>>
+<<elseif $avery_mansion.schedule is "away" and !$avery_injury and $avery_mansion.away_timer lte 0 and [(Time.weekDay is 7 and Time.hour gte 4) or (Time.hour gte 21 or Time.hour lte 6)]>>
 	<<set $avery_mansion.schedule to "return">>
 	<<set $avery_mansion.rage.apologetic to true>>
 	<<set $avery_mansion.rage.work to true>>
@@ -396,6 +426,17 @@
 <<if $avery_mansion.schedule isnot "away" and $avery_mansion.schedule isnot "date" and $avery_mansion.schedules isnot "sleep" and $avery_mansion.schedule isnot "work">>
 	<<set _avery_available to true>>
 <</if>>
+<<if $avery_mansion.schedule is "pool">>
+	<<if !Weather.isOvercast and Time.dayState isnot "night">>
+		<<set $avery_pool to "sunbathe">>
+	<<elseif Weather.precipitation isnot "none">>
+		<<set $avery_pool to "coffee">>
+	<<else>>
+		<<set $avery_pool to "swim">>
+	<</if>>
+<<else>>
+	<<set $avery_pool to "none">>
+<</if>>
 <</widget>>
 
 <<widget "avery_mansion_away">>
@@ -444,6 +485,33 @@
 <</if>>
 <</widget>>
 
+<<widget "avery_current_room_dirty_check">>
+	<<if $avery_mansion.jobs.includes("pool") and $avery_mansion.pool gte 1 and $bus is "avery_pool">>
+		<<set _dirty_room to true>>
+	<</if>>
+	<<if $avery_mansion.jobs.includes("kitchen") and $avery_mansion.kitchen gte 1 and $bus is "avery_kitchen">>
+		<<set _dirty_room to true>>
+	<</if>>
+	<<if $avery_mansion.jobs.includes("lounge") and $avery_mansion.lounge gte 1 and $bus is "avery_lounge">>
+		<<set _dirty_room to true>>
+	<</if>>
+	<<if $avery_mansion.jobs.includes("display") and $avery_mansion.pool gte 1 and $bus is "avery_display">>
+		<<set _dirty_room to true>>
+	<</if>>
+	<<if $avery_mansion.jobs.includes("bedroom") and $avery_mansion.pool gte 1 and $bus is "avery_bedroom">>
+		<<set _dirty_room to true>>
+	<</if>>
+	<<if $avery_mansion.jobs.includes("bathroom") and $avery_mansion.pool gte 1 and $bus is "avery_bathroom">>
+		<<set _dirty_room to true>>
+	<</if>>
+	<<if $avery_mansion.jobs.includes("dining") and $avery_mansion.pool gte 1 and $bus is "avery_dining">>
+		<<set _dirty_room to true>>
+	<</if>>
+	<<if $avery_mansion.jobs.includes("garden") and $avery_mansion.pool gte 1 and $bus is "avery_garden">>
+		<<set _dirty_room to true>>
+	<</if>>
+<</widget>>
+
 <<widget "avery_housework_check">>
 	<<if !$avery_mansion.jobs.includes("pool")>>
 		<<set $avery_mansion.pool to 0>>
@@ -477,6 +545,10 @@
 		<<set _avery_housework_bedroom to true>>
 		<<set _avery_housework_count += $avery_mansion.bedroom>>
 	<</if>>
+<</widget>>
+
+<<widget "avery_mansion_housework_total">>
+<<set _avery_mansion_housework_total to 0 + $avery_mansion.pool + $avery_mansion.kitchen + $avery_mansion.lounge + $avery_mansion.display + $avery_mansion.bathroom + $avery_mansion.dining + $avery_mansion.garden>>
 <</widget>>
 
 <<widget "avery_mansion_description">>
@@ -1359,21 +1431,6 @@
 
 	<<endevent>>
 	<<avery_mansion_end_links>>
-<<elseif C.npc.Avery.love gte 95 and C.npc.Avery.dom gte 25 and C.npc.Avery.rage lte 0 and random(1, 75) is 75 and Time.hour lt 22>>
-		"You've been such a good <<girl>> lately.," <<he>> smiles. "A little shopping trip is in order to award such a good behaviour, don't you think?"
-		<br><br>
-
-		<<if $exposed lte 0>>
-			<<link [[Go shopping with Avery (0:30)|Mansion Return Shopping]]>><<pass 5>><</link>>
-		<<elseif exposed gte 1>>
-			<<if ($exposed gte 2 and $exhibitionism gte 75) or ($exposed gte 1 and $exhibitionism gte 35)>>
-				<<link [[Say you're too shy (lie)|Mansion Return Shopping Shy]]>><</link>>
-			<<else>>
-				<<link [[Say you're too shy (truth)|Mansion Return Shopping Shy]]>><</link>>
-			<</if>>
-		<</if>>
-		<br>
-		<<link [[Refuse|Mansion Return Shopping Refuse]]>><</link>>
 <<else>>
 	<<if $avery_mansion.jobs.includes("dungeon") and random(1, 7) is 7 and Time.weekDay isnot 1>>
 		"Come with me. I need to discipline you."
@@ -1699,6 +1756,7 @@
 	<<set $avery_mansion.chase to {}>>
 	<<set $avery_mansion.chase.victory to 0>>
 	<<set $avery_mansion.chase.health to 3>>
+	<<set $averySeen.pushUnique("chase")>>
 	<<switch $bus>>
 		<<case "avery_lounge">>
 			<<set $avery_mansion.chase.bus to "hallway_1_e">>
@@ -2991,9 +3049,9 @@
 			You hear another car door open, and close, in the garage. You investigate, and find Avery sat behind the wheel of <<his>> sports car. One arm is encased in a white cast, held aloft by a sling around <<his>> neck. The other clutches a bottle of cheap bourbon. <<He>> takes a swig.
 			<br><br>
 
-			<<link [[Approach|Mansion Return Broken Approach]]>><<set $avery_injury to false>><<set $avery_mansion.injury_timer to 90>><</link>>
+			<<link [[Approach|Mansion Return Broken Approach]]>><<set $avery_injury to false>><<set $avery_mansion.injury_timer to 90>><<set $avery_mansion.injury_stage to "fresh">><</link>>
 			<br>
-			<<link [[Just Watch (0:10)|Mansion Return Broken Watch]]>><<set $avery_injury to false>><<set $avery_mansion.injury_timer to 90>><<pass 10>><</link>>
+			<<link [[Just Watch (0:10)|Mansion Return Broken Watch]]>><<set $avery_injury to false>><<set $avery_mansion.injury_timer to 90>><<set $avery_mansion.injury_stage to "fresh">><<pass 10>><</link>>
 			<br>
 		<<elseif _avery_interrupt is "party_missed">>
 			<<set $avery_mansion.rage.work to false>>
@@ -3184,11 +3242,9 @@
 						<<else>>
 							There's no more recipes you can learn.
 						<</if>>
-						<br>
+						<br><br>
 					<</if>>
 				<</if>>
-				<<link [[Steal|Avery Kitchen Steal]]>><<handheldon>><</link>>
-				<br><br>
 			<</if>>
 
 			<<if $bus is "avery_lounge">>
@@ -4196,133 +4252,85 @@
 	<</if>>
 <</widget>>
 
+<<widget "avery_mansion_skyscraper_calc">>
+	<<set _tower_progress to 0>>
+	<<if $avery_tower.effects.includes("temple")>>
+		<<set _tower_progress -= 4>>
+	<</if>>
+	<<if $avery_tower.effects.includes("theft")>>
+		<<set _tower_progress -= 4>>
+	<</if>>
+	<<if $avery_tower.effects.includes("mayor")>>
+		<<set _tower_progress += 4>>
+	<</if>>
+	<<if $avery_tower.effects.includes("Remy")>>
+		<<set _tower_progress += 4>>
+	<</if>>
+	<<if $avery_tower.effects.includes("Harper")>>
+		<<set _tower_progress += 4>>
+	<</if>>
+<</widget>>
 
-:: Avery Kitchen Steal
-<<set $location to "avery_mansion">><<set $avery_passage to $passage>><<set $outside to 0>><<effects>><<avery_mansion>>
-<<effects>>
-<br>
-You look through the cabinets. Most of the ingredients you use during classes are here. 
-<<if $avery_mansion.schedule isnot "away" and $avery_mansion.schedule isnot "work">>
-	<<set $skulduggerydifficulty to 200>><<skulduggerycheck>>
-	Avery isn't home, so as long as you don't mess anything up, <<nnpc_he "Avery">> shouldn't find out.
-<<elseif $avery_mansion.schedule is "dinner">>
-	<<set $skulduggerydifficulty to 400>><<skulduggerycheck>>
-	Avery is in the dinning room. <<nnpc_He "Avery">> shouldn't suspect you of doing anything unless you act suspicious.
+<<widget "avery_mansion_skyscraper_week_estimate">>
+<<avery_mansion_skyscraper_calc>>
+
+<<set _weeks_remaining to Math.round((100 - $avery_tower.progress) / _tower_progress)>>
+
+<<if _weeks_remaining lte 0>>
+	It's just about finished.
+<<elseif _weeks_remaining is 1>>
+	At this rate, it will be done in about a week.
+<<elseif _weeks_remaining is 2>>
+	At this rate, it will be done in about two weeks.
+<<elseif _weeks_remaining is 3>>
+	At this rate, it will be done in about three weeks.
+<<elseif _weeks_remaining is 4>>
+	At this rate, it will be done in about four weeks.
+<<elseif _weeks_remaining is 5>>
+	At this rate, it will be done in about five weeks.
+<<elseif _weeks_remaining is 6>>
+	At this rate, it will be done in about six weeks.
+<<elseif _weeks_remaining is 7>>
+	At this rate, it will be done in about seven weeks.
+<<elseif _weeks_remaining is 8>>
+	At this rate, it will be done in about eight weeks.
+<<elseif _weeks_remaining is 9>>
+	At this rate, it will be done in about nine weeks.
+<<elseif _weeks_remaining is 10>>
+	At this rate, it will be done in about ten weeks.
+<<elseif _weeks_remaining is 11>>
+	At this rate, it will be done in about eleven weeks.
+<<elseif _weeks_remaining is 12>>
+	At this rate, it will be done in about twelve weeks.
+<<elseif _weeks_remaining is 13>>
+	At this rate, it will be done in about thirteen weeks.
+<<elseif _weeks_remaining is 14>>
+	At this rate, it will be done in about fourteen weeks.
+<<elseif _weeks_remaining is 15>>
+	At this rate, it will be done in about fifteen weeks.
+<<elseif _weeks_remaining is 16>>
+	At this rate, it will be done in about sixteen weeks.
+<<elseif _weeks_remaining is 17>>
+	At this rate, it will be done in about seventeen weeks.
+<<elseif _weeks_remaining is 18>>
+	At this rate, it will be done in about eighteen weeks.
+<<elseif _weeks_remaining is 19>>
+	At this rate, it will be done in about nineteen weeks.
+<<elseif _weeks_remaining is 20>>
+	At this rate, it will be done in about twenty weeks.
+<<elseif _weeks_remaining is 21>>
+	At this rate, it will be done in about twenty-one weeks.
+<<elseif _weeks_remaining is 22>>
+	At this rate, it will be done in about twenty-two weeks.
+<<elseif _weeks_remaining is 23>>
+	At this rate, it will be done in about twenty-three weeks.
+<<elseif _weeks_remaining is 24>>
+	At this rate, it will be done in about twenty-four weeks.
 <<else>>
-	<<set $skulduggerydifficulty to 300>><<skulduggerycheck>>
-	Avery isn't anywhere close, so as you don't mess anything up, <<nnpc_he "Avery">> shouldn't find out.
-<</if>>
-<br><br>
-
-<<ingredientsSuppliesSteal $avery_mansion.kitchen_stock.normal.concat($avery_mansion.kitchen_stock.requested)>>
-
-<<icon "avery_kitchen.png">><<link [[Go Back|Mansion Kitchen]]>><</link>>
-
-:: mansion Kitchen Steal Result
-<<set $location to "avery_mansion">><<set $avery_passage to $passage>><<set $outside to 0>><<effects>><<avery_mansion>>
-
-<<skulduggerycheck "silent">>
-<br><br>
-<<if $skulduggerysuccess is 1>>
-	You take the <<recipe_name $phase "plural">> from the cupboard. <<tending_pick $phase 3 6>>
-	You probably shouldn't take more or Avery will realize too much is missing.<br><br>
-	
-	<<icon "avery_kitchen.png">><<link [[Walk Away|Mansion Kitchen]]>><</link>>
-	<<ingredientsSuppliesSteal $avery_mansion.kitchen_stock.normal.concat($avery_mansion.kitchen_stock.requested)>>
-<<else>>
-	As you reach to take the <<recipe_name $phase "plural">>, you accidentally knock a jar off the counter, causing it to shatter.
-	<<if $avery_mansion.schedule isnot "away" and $avery_mansion.schedule isnot "work">>
-		Avery isn't home to judge you, but you spend 20 minutes cleaning it up regardless.
-	<<elseif $avery_mansion.schedule is "dinner">>
-		<<if $averyragerevealed is 1 and C.npc.Avery.rage gte random(20, 100)>>
-			<br>
-			"What the fuck was that!?" You jump as you hear Avery's voice, clearly alarmed by the situation, and clearly not in a good mood.<br>
-			<<if setup.plants[$avery_requested_food].ingredients.includes($phase)>>
-				"<<recipe_name $phase "cap">>? Is it so much to ask for <<recipe_name $avery_requested_food "article">> to be ready when I come back home?
-				<<He>> scoffs annoyed and looks barks back at you. "Clean up that mess. And hurry up." 
-			<<else>>
-				<<if $avery_mansion.rage.dinner_missed >= 0>>
-					"<<recipe_name $phase "cap">>? Are you trying to feed me a fucking <<recipe_name $phase>>?" 
-					<<He>> walks up to you and grasps your arm harshly. "You weren't planning on doing what I asked for again, didn't you? You just take and take from me and give nothing in return!"
-				<<elseif $avery_mansion.rage.dinner_wrong>>
-					"<<recipe_name $phase "cap">>? So you aren't making <<recipe_name $avery_requested_food "article">> today?" 
-					<<He>> scoffs annoyed and looks barks back at you. "Clean up that mess. And hurry up." 
-				<<else>>
-					"You don't even need <<recipe_name $phase>> for <<recipe_name $avery_requested_food "article">>, and you're making a mess over it? Can you not break anything at least once?" 
-					<<He>> scoffs annoyed and looks barks back at you. "Clean up that mess. And hurry up." 
-				<</if>>
-			<</if>>
-		<<else>>
-			<br>
-			"What's happening?" You turn to see Avery standing in the entrance, alarmed by the noise.
-			<<if setup.plants[$avery_requested_food].ingredients.includes($phase)>>
-				<<His>> expression softens when <<he>> sees you holding a <<recipe_name $phase>>. 
-				"You wanted to make sure the <<recipe_name $avery_requested_food "article">> is warm? Just clean it up after you finish. //CHANGE IF PC DOESN"T HAVE TO CLEAN THE KITCHEN
-			<<else>>
-				<<He>> sighs noticing the mess. "It's not exactly time for culinary experiments right now. Why do you exactly need <<recipe_name $phase "article">> for? I don't think it's part of <<recipe_name $avery_requested_food "article">> recipe."
-				//Option: cooking something else (lie)
-				//I wanted to make a secret stash (BECAUSE YOU CALLED ME FAT if ragerevealed, otherwise just PC being stressed or something)
-				//saving for the next time they need to cook something (works only if it's a requested ingredient.)
-				//IF EGGS AND PC FOX - burying it :)
-				//IF STEAK AND PC WOLF - I want to each raw meat :| (maybe birb works too?)
-				//IF PC HAS WOLF BABIES - I need to feed my children.
-				//IF PC has wolf-tf human babies - I need to feed my tf children (special points if with Avery, but they don't give a fuck)
-				//If Bear and ur stealing a honeycomb - I want honey. O_O
-				//Making a surprise for you! :> (answer depends on the item ur stealing, but generally pleased)
-				//Try to make something up (and fail)
-				//Admit to stealing like an idiot (low rage Avery will ask why, giving PC ONE chance exactly, probably surprised by the audacity xD Especially if it's well-behaved PC otherwise.
-			<</if>>
-		<</if>>
+	<<if $avery_tower.progress gte 76>>
+		Progress has stalled. For now.
 	<<else>>
-		<<if $averyragerevealed is 1 and C.npc.Avery.rage gte random(20, 100)>>
-			<br>
-			"What the fuck was that!?" You jump as you hear Avery's voice, clearly alarmed by the situation, and clearly not in a good mood.
-			<<if setup.plants[$avery_requested_food].ingredients.includes($phase)>>
-				<<His>> expression softening only a little bit when <<he>> sees you holding a <<recipe_name $phase>>. 
-				<<if $avery_mansion.rage.dinner_missed >= 0>>
-					"At least this time you're actually making me what I requested. Clean it up."
-				<<else>>
-					"It's too early to make <<recipe_name $avery_requested_food "article">>, it will get cold by the evening," <<he>> comments. "Clean it up."
-				<</if>>
-			<<else>>
-				"<<recipe_name $phase>>? What were you doing with it anyways to cause this mess?"
-				//Option: cooking what requested (lie)
-				//Option: cooking something else (lie)
-				//I wanted to make a secret stash BECAUSE YOU CALLED ME FAT.
-				//saving for the next time they need to cook something (works only if it's a requested ingredient.)
-				//IF EGGS AND PC FOX - burying it :)
-				//IF STEAK AND PC WOLF - I want to each raw meat :| (maybe birb works too?)
-				//IF PC HAS WOLF BABIES - I need to feed my children.
-				//IF PC has wolf-tf human babies - I need to feed my tf children (special points if with Avery, but they don't give a fuck)
-				//If Bear and ur stealing a honeycomb - I want honey. O_O
-				//Making a surprise for you! :> (answer depends on the item ur stealing)
-				//Try to make something up (and fail)
-				//Admit to stealing like an idiot
-			<</if>>
-		<<else>>
-			<br>
-			"What's happening?" You turn to see Avery standing in the entrance, alarmed by the noise.
-			<<if setup.plants[$avery_requested_food].ingredients.includes($phase)>>
-				<<His>> expression softens when <<he>> sees you holding a <<recipe_name $phase>>. 
-				"Ah, you're making <<recipe_name $avery_requested_food "article">>. Just clean it up, and be more careful in the future."
-			<<else>>
-				<<He>> sighs noticing the mess, but looks calm otherwise. "Be more careful in the future. There are many valuable things here. What were you planning to do with <<recipe_name $phase>> anyways?"
-				//Option: cooking what requested (lie)
-				//Option: cooking something else (lie)
-				//I wanted to make a secret stash (BECAUSE YOU CALLED ME FAT if ragerevealed, otherwise just PC being stressed or something)
-				//saving for the next time they need to cook something (works only if it's a requested ingredient.)
-				//IF EGGS AND PC FOX - burying it :)
-				//IF STEAK AND PC WOLF - I want to each raw meat :| (maybe birb works too?)
-				//IF PC HAS WOLF BABIES - I need to feed my children.
-				//IF PC has wolf-tf human babies - I need to feed my tf children (special points if with Avery, but they don't give a fuck)
-				//If Bear and ur stealing a honeycomb - I want honey. O_O
-				//Making a surprise for you! :> (answer depends on the item ur stealing, but generally pleased)
-				//Try to make something up (and fail)
-				//Admit to stealing like an idiot (low rage Avery will ask why, giving PC ONE chance exactly, probably surprised by the audacity xD Especially if it's well-behaved PC otherwise.
-			<</if>>
-		<</if>>
+		There's still a long way to go.
 	<</if>>
 <</if>>
-
-<<icon "avery_kitchen.png">><<link [[Go Back|Mansion Kitchen]]>><</link>><br>
-
+<</widget>>
