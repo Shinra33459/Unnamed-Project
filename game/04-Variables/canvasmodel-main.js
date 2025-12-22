@@ -2186,8 +2186,13 @@ Renderer.CanvasModels.main = {
 					} else return;
 				} else {
 					T.activeNNPC = V.options.nnpcDisplay.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+					if (T.activeNNPC == "Black_wolf") T.activeNNPC = "Black Wolf";
+					if (T.activeNNPC == "Great_hawk") T.activeNNPC = "Great Hawk";
+					if (T.activeNNPC == "Ivory_wraith") T.activeNNPC = "Ivory Wraith";
 					if (V.options.autoNNPCDisplay.enabled == true) {
-						if (C.npc[T.activeNNPC].skincolour == "white") {
+						if (C.npc[T.activeNNPC].type == "wolf" || C.npc[T.activeNNPC].type == "hawk") {
+							T.skin = "/monster"
+						} else if (C.npc[T.activeNNPC].skincolour == "white") {
 							T.skin = "/pale"
 						} else T.skin = "/dark"
 					} else {
