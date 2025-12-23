@@ -12,7 +12,7 @@ const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.5.7.5 DoLP version",
+	version: "0.5.7.6 DoLP version",
 	versionName: `"Lockers and Lockets" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
