@@ -1826,7 +1826,7 @@ function effects() {
 	}
 
 	if (V.stressMaxScalingToggle) {
-		V.stressmax = 10000 + Math.floor(currentSkillValue("willpower", 0) * 5);
+		V.stressmax = 10000 + Math.floor(currentSkillValue("willpower", 0, 1) * 5);
 	} else {
 		V.stressmax = 10000;
 	}
