@@ -2988,24 +2988,31 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 <<widget "man-combat">>
 	<<outfitChecks>>
 	<<set _n to _args[0]>>
-	<!-- Converted his1-6 to hisselect #. Person1-6 to personselect #. $intro1-6 as array $NPCList[_n].intro -->
-	<!-- Converted man1-6speech to manspeech #. Randomised penissize reaction.-->
+	<<set _npc = ($NPCList && _n !== undefined && $NPCList[_n]) ? $NPCList[_n] : null>>
 
-	<<if ["m", "f", "i", "n", "t"].includes($NPCList[_n].pronoun)>>
-		<<set $pronoun to $NPCList[_n].pronoun>>
+	<<if _npc>>
+		<!-- Converted his1-6 to hisselect #. Person1-6 to personselect #. $intro1-6 as array $NPCList[_n].intro -->
+		<!-- Converted man1-6speech to manspeech #. Randomised penissize reaction.-->
+
+		<<if ["m", "f", "i", "n", "t"].includes(_npc.pronoun)>>
+			<<set $pronoun to _npc.pronoun>>
+		<<elseif $options.debugdisable is "f">>
+			<span class="red">ERROR: Unexpected $$NPCList[_n].pronoun: [_npc.pronoun]</span>
+		<</if>>
+
+		<<personselect _n>>
+		<<switch _n>>
+			<<case 0>>
+				<<manspeech _n>>
+				<<if _npc.intro isnot -1>>
+					<<set _npc.intro to 1>>
+				<</if>>
+			<<case 1 2 3 4 5>>
+				<<manspeech _n>><<if _npc.intro isnot -1>><<set _npc.intro to 1>><</if>>
+		<</switch>>
 	<<elseif $options.debugdisable is "f">>
-		<span class="red">ERROR: Unexpected $$NPCList[_n].pronoun: [$NPCList[_n].pronoun]</span>
+		<span class="red">ERROR: man-combat called with invalid NPC index: [_n]</span>
 	<</if>>
-	<<personselect _n>>
-	<<switch _n>>
-		<<case 0>>
-			<<manspeech _n>>
-			<<if $NPCList[0].intro isnot -1>>
-				<<set $NPCList[0].intro to 1>>
-			<</if>>
-		<<case 1 2 3 4 5>>
-			<<manspeech _n>><<if $NPCList[_n].intro isnot -1>><<set $NPCList[_n].intro to 1>><</if>>
-	<</switch>>
 
 	<<if $NPCList[_n].state is "stalk">>
 		<<man-stalk>>
@@ -3798,7 +3805,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 				<!-- Notes for how double functions work are found in the NPC action select section -->
 				<<set _dap to 0>>
 				<<if $NPCList[$anustarget] is $NPCList[_n]>> /* State 1 is out of sync, state 2 is in sync */
-					<<set _dap to ($NPCList[$anusdoubletarget].penis isnot "anusdouble" ? 1 : 2)>>
+					<<set _dap to (setup.npcPenis($anusdoubletarget) isnot "anusdouble" ? 1 : 2)>>
 				<<elseif $NPCList[$anusdoubletarget] is $NPCList[_n]>>
 					<<set _dap to ($NPCList[$anustarget].penis isnot "anusdouble" ? 1 : 2)>>
 				<</if>>
@@ -3885,7 +3892,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 				<<set _dap to 0>>
 				<<set _otherNPCindex to "f">>
 				<<if $NPCList[$anustarget] is $NPCList[_n]>> /* State 1 is out of sync, state 2 is in sync */
-					<<set _dap to ($NPCList[$anusdoubletarget].penis isnot "anusdouble" ? 1 : 2)>>
+					<<set _dap to (setup.npcPenis($anusdoubletarget) isnot "anusdouble" ? 1 : 2)>>
 					<<set _otherNPCindex to $anusdoubletarget>>
 				<<elseif $NPCList[$anusdoubletarget] is $NPCList[_n]>>
 					<<set _dap to ($NPCList[$anustarget].penis isnot "anusdouble" ? 1 : 2)>>
@@ -3911,7 +3918,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 								<<if $enemyanger gte 100>><<set _pain *= 1.5>><</if>><<pain _pain>>
 							<<elseif $player.virginity.anal is true>>
 								<span class="pink"><<He>> thrusts <<his>> $NPCList[_n].penisdesc deep into your virgin anus<<alongsideButtPlug>>,</span> <span class="red">violating you in a way you hadn't conceived of.</span>
-								<<if $NPCList[$anustarget].penis is "anusdouble" and $NPCList[$anusdoubletarget].penis is "anusdouble">>
+								<<if setup.npcPenis($anustarget) is "anusdouble" and setup.npcPenis($anusdoubletarget) is "anusdouble">>
 									<<switch $NPCList[_n].penissize>>
 										<<default>>
 											<span class="red"> You scream as your ass struggles to accommodate both cocks.</span>
@@ -3947,7 +3954,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 								<<if $enemyanger gte 100>><<set _pain *= 1.5>><</if>><<pain _pain>>
 							<<elseif $player.virginity.anal is true>>
 								<span class="pink"><<He>> thrusts <<his>> $NPCList[_n].penisdesc deep into your virgin anus<<alongsideButtPlug>>,</span> <span class="red">violating you in a way you hadn't conceived of.</span>
-								<<if $NPCList[$anustarget].penis is "anusdouble" and $NPCList[$anusdoubletarget].penis is "anusdouble">>
+								<<if setup.npcPenis($anustarget) is "anusdouble" and setup.npcPenis($anusdoubletarget) is "anusdouble">>
 									<<switch $NPCList[_n].penissize>>
 									<<default>>
 										<span class="red"> You scream as your ass struggles to accommodate <<his>> cock.</span>
@@ -3980,7 +3987,7 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<if $NPCList[_n].penis is "anusentrancedouble">>
 				<<set _dap to 0>>
 				<<if $NPCList[$anustarget] is $NPCList[_n]>> /* State 1 is out of sync, state 2 is in sync */
-					<<set _dap to ($NPCList[$anusdoubletarget].penis isnot "anusdouble" ? 1 : 2)>>
+					<<set _dap to (setup.npcPenis($anusdoubletarget) isnot "anusdouble" ? 1 : 2)>>
 				<<elseif $NPCList[$anusdoubletarget] is $NPCList[_n]>>
 					<<set _dap to ($NPCList[$anustarget].penis isnot "anusdouble" ? 1 : 2)>>
 				<</if>>
