@@ -129,8 +129,8 @@ Macro.add("runeventpool", {
 		if (!pick) throw new Error("Event pool is empty");
 		// Jimmy: For tracking where in the code you may be.
 		// E.G: ['eventAmbient', >>'autumn_anystreet_2'<<, 'generate1']
-		ExecutionContext.instance.callStack.push(new StackMacroMeta(pick.name));
+		DOL.Stack.push(pick.name);
 		jQuery(this.output).wiki(pick.content);
-		ExecutionContext.instance.callStack.pop();
+		DOL.Stack.pop();
 	},
 });

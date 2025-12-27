@@ -1091,7 +1091,7 @@ function initLegs() {
 			integrity_max: 100,
 			fabric_strength: 20,
 			reveal: 500,
-			word: "n",
+			word: "a",
 			state: "knees",
 			state_base: "knees",
 			plural: 1,

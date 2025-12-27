@@ -117,8 +117,7 @@ class CloseCombatMapper {
 		const chastityDevice = playerChastity() ? chastityTypes[V.worn.genitals.name] || "base" : false;
 		options.chastity = `chastity-${chastityDevice}`;
 		if (playerChastity("cage")) {
-			if (V.worn.genitals.name === "chastity parasite") options.penis.concealed = true;
-			else options.chastity = `chastity-cage-${chastityDevice}`;
+			options.chastity = `chastity-cage-${chastityDevice}`;
 			options.penis.size = `chastity-${chastityDevice}`;
 		}
 

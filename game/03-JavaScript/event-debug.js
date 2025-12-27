@@ -41,8 +41,7 @@ class EventData {
 		V.event.buffer.push({
 			slot: index,
 			time,
-			// dnac: keeping it consistent with docs
-			area: [passage, ...ExecutionContext.instance.callStack.map(meta => meta.name).slice(0, -1)],
+			area: [passage, ...DOL.Stack.slice(0, -1)],
 		});
 	}
 
