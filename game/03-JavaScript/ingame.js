@@ -1220,8 +1220,9 @@ function clothesIndex(slot, itemToIndex) {
 window.clothesIndex = clothesIndex;
 
 function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
+	let result = V[skill];
 	if (disableStatNerf == 0) {
-		let result = V[skill] * (V.options.statNerf / 100);
+		result *= (V.options.statNerf / 100);
 	}
 	if (!result && result !== 0) {
 		/* console.log(`currentSkillValue - skill '${skill}' unknown`); */
