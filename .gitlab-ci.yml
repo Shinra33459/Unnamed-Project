@@ -511,6 +511,33 @@ build_upload_aumasc_job:
     only:
         - master
 
+build_upload_rotting_job:
+    stage: compilation
+    script:
+        - echo "Building DoLP rotting v0.$CI_PIPELINE_IID"
+        - find ./version -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./devTools/apkbuilder/config.xml -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - find ./game/01-config/sugarcubeConfig.js -type f -exec sed -i "s/DoLP version/DoLP v0.$CI_PIPELINE_IID/g" {} +
+        - version=$(cat version)
+        - mkdir -p DoLP_rotting/img/
+        - sh ./compile.sh
+        - cp "Degrees of Lewdity.html" ./DoLP_rotting/
+        - cp -r -f ./imagepacks/vanilla/* ./DoLP_rotting/img/
+        - cp -r -f ./imagepacks/dolp/* ./DoLP_rotting/img/
+        - cp -r -f ./imagepacks/rotting/* ./DoLP_rotting/img/
+        - echo "Finished Building rotting v0.$CI_PIPELINE_IID"
+        - echo "Uploading DoLP rotting v0.$CI_PIPELINE_IID"
+        - zip -r ./DoLP_rotting_v0.$CI_PIPELINE_IID.zip ./DoLP_rotting/ 1>NUL
+        - 'curl
+            --header "JOB-TOKEN: $CI_JOB_TOKEN"
+            --upload-file ./DoLP_rotting_v0.$CI_PIPELINE_IID.zip
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_rotting/v0.$CI_PIPELINE_IID/DoLP_rotting_v0.$CI_PIPELINE_IID.zip"'
+        - rm -rf ./DoLP_rotting
+        - rm -rf ./DoLP_rotting_v0.$CI_PIPELINE_IID.zip
+        - echo "Finished Uploading DoLP rotting v0.$CI_PIPELINE_IID"
+    only:
+        - master
+
 # build_upload_modloader_job:
 #     stage: compilation
 #     script:
@@ -586,6 +613,7 @@ release_job:
         - job: build_upload_au_job
         - job: build_upload_au_mys_job
         - job: build_upload_aumasc_job
+        - job: build_upload_rotting_job
         # - job: build_upload_modloader_job
         - job: build_upload_html_only_job
     rules:
@@ -635,6 +663,8 @@ release_job:
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage_mys/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_mys_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_aoki_utage_masc'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_aoki_utage_masc/v0.$CI_PIPELINE_IID/DoLP_aoki_utage_masc_v0.$CI_PIPELINE_IID.zip"
+                - name: 'DoLP_rotting'
+                  url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_rotting/v0.$CI_PIPELINE_IID/DoLP_rotting_v0.$CI_PIPELINE_IID.zip"
                 - name: 'DoLP_HTML_only'
                   url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/DoLP_HTML_only/v0.$CI_PIPELINE_IID/DoLP_HTML_only_v0.$CI_PIPELINE_IID.zip"
     after_script:
