@@ -2226,7 +2226,7 @@ Renderer.CanvasModels.main = {
 					if (!cfg || cfg.slot === 0) return;
 
 					// Gender
-					const gender =
+					let gender =
 						(cfg.genderOverride === true && cfg.gender)
 							? cfg.gender
 							: (V.NPCList[0]?.pronoun === "m" ? "male" : "female");
@@ -2254,8 +2254,8 @@ Renderer.CanvasModels.main = {
 				// OPTIONS MENU PREVIEW ONLY
 				// =============================
 				if (V.options.nnpcDisplaySlot === 0) return;
-
-				const gender = V.options.nnpcDisplayGender;
+				
+				let gender = V.options.nnpcDisplayGender;
 				let skinChoice = V.options.nnpcDisplaySkin;
 
 				// Guard: monster only for beasts (in preview too)
@@ -2268,7 +2268,8 @@ Renderer.CanvasModels.main = {
 				if (V.options.nnpcDisplay === "sydney") {
 					skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
 				}
-				if (V.options.nnpcDisplay === "ivory_wraith") skin = "";
+				if (V.options.nnpcDisplay === "ivory_wraith" || V.options.nnpcDisplay === "others") skin = "";
+				if ((V.options.nnpcDisplay != "ivory_wraith" && V.options.nnpcDisplay != "others") && V.options.nnpcDisplayGender == "") gender = "male";
 
 				return `img/ui/nnpc/${V.options.nnpcDisplay}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
 			},
