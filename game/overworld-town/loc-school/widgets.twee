@@ -3766,22 +3766,6 @@
 <</widget>>
 
 <<widget "bookRentalOptions">>
-	<<if $studyBooks is undefined>>
-		<<set $studyBooks to {}>>
-		<<set $studyBooks.rented.count to 0>>
-		<<set $studyBooks.rented.science to 0>>
-		<<set $studyBooks.rented.maths to 0>>
-		<<set $studyBooks.rented.english to 0>>
-		<<set $studyBooks.rented.history to 0>>
-		<<set $studyBooks.rented.RaulAndJanet to 0>>
-		<<set $studyBooks.rented.pinch to 0>>
-		<<set $studyBooks.stolen.science to 0>>
-		<<set $studyBooks.stolen.maths to 0>>
-		<<set $studyBooks.stolen.english to 0>>
-		<<set $studyBooks.stolen.history to 0>>
-		<<set $studyBooks.stolen.RaulAndJanet to 0>>
-		<<set $studyBooks.stolen.pinch to 0>>
-	<</if>>
 	<<if (!Time.schoolDay or $schoolstate is "early" or $schoolstate is "late")>>
 		The library is eerily quiet.
 	<<else>>
@@ -3866,7 +3850,6 @@
 		<br>
 	<</if>>
 	<<sydneySchedule>>
-	<<if _sydney_location is "library">>
 		/* <<if $money gte 2000 and $studyBooks.rented is "none">>
 			<<if $studyBooks.stolen isnot "science">>
 				<<scienceicon>><<link [[Rent a science textbook (£20)|Book Rental]]>><<money -2000 "libraryBooks">><<set $phase2 to "rent">><<set $phase to 1>><</link>><<note "+ Passive Science" "green">>
@@ -3906,7 +3889,9 @@
 				<<else>>
 				<</if>>
 			<</if>> */
-
+	<<if _sydney_location is "library">>
+		<<set _rentPrice to Math.round(2000 * (1 + ($studyBooks.rented.count * $studyBooks.rented.count)))>>
+		<<if $money gte _rentPrice>>
 			<<if $studyBooks.rented.science is 0 and $studyBooks.stolen.science is 0>>
 				<<scienceicon>><<link [["Rent a science textbook (£" + _rentPrice / 100 + ")"|Book Rental]]>><<handheldon>><<wearProp "textbook" "blue" "science">><<money `-_rentPrice` "libraryBooks">><<set $studyBooks.rented.count += 1>><<set $phase2 to "rent">><<set $phase to 1>><<set $studyBooks.rented.science to 1>><</link>><<note "+ Passive Science" "green">>
 				<br>
@@ -3931,10 +3916,10 @@
 				<<oliveicon>><<link [["Rent the olive-coloured book (£" + _rentPrice / 100 + ")"|Book Rental]]>><<set $phase to 6>><<set $studyBooks.rented.count += 1>><<handheldon>><<wearProp "book" 0 "olive">><<money `-_rentPrice` "libraryBooks">><<set $phase2 to "rent">><<set $studyBooks.rented.pinch to 1>><</link>>
 				<br>
 			<</if>>
-		/* <<elseif $money lt _rentPrice and $studyBooks.rented.count is 0>>
+		<<elseif $money lt _rentPrice and $studyBooks.rented.count is 0>>
 			<span class=purple>You can't afford to rent a textbook.</span>
 			<br>
-		<</if>> */
+		<</if>>
 		<<if $studyBooks.rented.count gte 1>>
 			<<set _totalRentPrice to 0>>
 			<<for _i to 1; _i lte $studyBooks.rented.count; _i++>>
