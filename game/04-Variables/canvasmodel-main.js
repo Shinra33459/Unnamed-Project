@@ -2160,96 +2160,164 @@ Renderer.CanvasModels.main = {
 
 		"nnpc": {
 			srcfn() {
-				if (V.NPCList[0].fullDescription != undefined && setup.NPCNameList.includes(V.NPCList[0].fullDescription)) {	
-					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
-				} else T.activeNNPC = 0;
+				// Helpers
+				const norm = (name) => {
+					if (!name || name === 0) return null;
+					let key = String(name).trim().toLowerCase().replace(/\s+/g, "_");
+					// Normalize folder names
+					if (key === "black_wolf") key = "black_wolf";
+					if (key === "great_hawk") key = "great_hawk";
+					if (key === "ivory_wraith") key = "ivory_wraith";
+					return key;
+				};
 
-				if (T.activeNNPC == "black wolf") T.activeNNPC = "black_wolf";
-				if (T.activeNNPC == "great hawk") T.activeNNPC = "great_hawk";
-				if (T.activeNNPC == "ivory wraith") T.activeNNPC = "ivory_wraith";
+				const autoEnabled = V.options?.autoNNPCDisplay?.enabled === true;
+				const inOptions = !!T.optionsEnabled;
 
-				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
-					if (T.activeNNPC == 0 || V.options.autoNNPCDisplay[T.activeNNPC].slot == 0) return;
-				} else if (V.options.nnpcDisplay == 0 || V.options.nnpcDisplaySlot == 0) return;
+				// =============================
+				// OPTIONS MENU PREVIEW ONLY
+				// =============================
+				if (inOptions) {
+					if (!V.options.nnpcDisplay || V.options.nnpcDisplaySlot === 0) return;
 
-				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
-					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) {
-						if ((T.activeNNPC == "black_wolf" || T.activeNNPC == "great_hawk") && V.monster != 1) {
-							T.skin = "/monster";
-						} else if (V.NPCList[0].skincolour == "white") {
-							T.skin = "/pale";
-						} else {
-							T.skin = "/dark";
-						}
+					const active = norm(V.options.nnpcDisplay);
+					if (!active) return;
 
-						if (T.activeNNPC == "sydney") {
-							if (C.npc.Sydney.purity >= 1) {
-								T.skin += "/pure";
-							} else {
-								T.skin += "/corrupt";
-							}
-						} else if (T.activeNNPC == "ivory_wraith") {
-							T.skin = "";
-						}
-						
-						if (V.options.autoNNPCDisplay[T.activeNNPC].genderOverride == true && V.options.autoNNPCDisplay[T.activeNNPC].gender != "") {
-							T.gender = V.options.autoNNPCDisplay[T.activeNNPC].gender;
-						} else {
-							if (V.NPCList[0].pronoun == "m") {
-								T.gender = "male";
-							} else {
-								T.gender = "female";
-							} 
-						}
-						return `img/ui/nnpc/${T.activeNNPC}/${T.gender}${T.skin}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
-					} else return;
-				} else {
-					T.activeNNPC = V.options.nnpcDisplay.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-					if (V.options.autoNNPCDisplay.enabled == true) {
-						if (C.npc[T.activeNNPC].skincolour == "white") {
-							T.skin = "/pale"
-						} else T.skin = "/dark"
-					} else {
-						T.skin = "/" + V.options.nnpcDisplaySkin;
+					T.activeNNPC = active;
+
+					const isBeast = (active === "black_wolf" || active === "great_hawk");
+
+					let gender = V.options.nnpcDisplayGender || "male";
+					let skinChoice = V.options.nnpcDisplaySkin || "pale";
+
+					// Guard: monster only for beasts (in preview too)
+					if (skinChoice === "monster" && !isBeast) skinChoice = "pale";
+
+					let skin = "/" + skinChoice;
+
+					if (active === "sydney") {
+						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
 					}
-					if (V.options.nnpcDisplay == "sydney") {
-						if (C.npc.Sydney.purity >= 1) {
-							T.skin += "/pure";
-						} else {
-							T.skin += "/corrupt";
-						}
-					} else if (V.options.nnpcDisplay == "ivory_wraith") {
-						T.skin = "";
-					}
-					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplayGender}${T.skin}/${V.options.nnpcDisplaySlot}.png`;
+					if (active === "ivory_wraith" || active === "others") skin = "";
+
+					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
 				}
+
+				// =============================
+				// GAMEPLAY: AUTO OFF = PERSISTENT MANUAL
+				// =============================
+				if (!autoEnabled) {
+					if (!V.options.nnpcDisplay || V.options.nnpcDisplaySlot === 0) return;
+
+					const active = norm(V.options.nnpcDisplay);
+					if (!active) return;
+
+					T.activeNNPC = active;
+
+					const isBeast = (active === "black_wolf" || active === "great_hawk");
+
+					let gender = V.options.nnpcDisplayGender || "male";
+					let skinChoice = V.options.nnpcDisplaySkin || (isBeast ? "monster" : "pale");
+
+					// Guard: monster only for beasts
+					if (skinChoice === "monster" && !isBeast) skinChoice = "pale";
+
+					let skin = "/" + skinChoice;
+
+					if (active === "sydney") {
+						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+					}
+					if (active === "ivory_wraith" || active === "others") skin = "";
+
+					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+				}
+
+				// =============================
+				// GAMEPLAY: AUTO ON = CONTEXT DETECTION
+				// =============================
+				// Detect active NPC (robust)
+				let rawName = null;
+
+				if (V.NPCList?.[0]?.fullDescription) {
+					rawName = V.NPCList[0].fullDescription;
+				} else if (V.npc?.name) {
+					rawName = V.npc.name;
+				} else if (V.person1?.name) {
+					rawName = V.person1.name;
+				} else if (V.NPCName) {
+					rawName = V.NPCName;
+				}
+
+				// No NPC detected -> show nothing in auto mode
+				if (!rawName) return;
+
+				let active = norm(rawName);
+				if (!active) return;
+
+				// Special casing if the rawName comes in with spaces
+				if (active === "black_wolf") active = "black_wolf";
+				if (active === "great_hawk") active = "great_hawk";
+				if (active === "ivory_wraith") active = "ivory_wraith";
+
+				T.activeNNPC = active;
+
+				const isBeast = (active === "black_wolf" || active === "great_hawk");
+
+				// Per-NPC config required in auto mode
+				const cfg = V.options.autoNNPCDisplay?.[active];
+				if (!cfg || cfg.slot === 0) return;
+
+				// Gender (respect override if enabled)
+				const pronoun =
+					V.NPCList?.[0]?.pronoun ??
+					C?.npc?.[active]?.pronoun;
+
+				let gender =
+					(cfg.genderOverride === true && cfg.gender)
+						? cfg.gender
+						: (pronoun === "m" ? "male" : "female");
+
+				// Skin: respect saved choice first
+				let skinChoice = cfg.skin;
+				if (!skinChoice) {
+					const skincolour =
+						V.NPCList?.[0]?.skincolour ??
+						C?.npc?.[active]?.skincolour;
+					skinChoice = isBeast ? "monster" : (skincolour === "white" ? "pale" : "dark");
+				}
+
+				// Guard: monster only for beasts
+				if (skinChoice === "monster" && !isBeast) skinChoice = "pale";
+
+				let skin = skinChoice ? ("/" + skinChoice) : "";
+
+				// Special cases
+				if (active === "sydney") {
+					skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+				}
+				if (active === "ivory_wraith" || active === "others") skin = "";
+
+				return `img/ui/nnpc/${active}/${gender}${skin}/${cfg.slot}.png`;
 			},
+
 			showfn(options) {
-				return options.show_nnpc;
+				// Allow NNPC even during <<effects>>
+				if (T.effects === true) return true;
+				return options.show_nnpc === true;
 			},
+
 			zfn() {
-				if (T.optionsEnabled) {
-					T.activeNNPC = V.options.nnpcDisplay;
-				} else if (V.NPCList[0].fullDescription != undefined && setup.NPCNameList.includes(V.NPCList[0].fullDescription)) {	
-					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
-				} else return;
-				if (T.activeNNPC == "black wolf") T.activeNNPC = "black_wolf";
-				if (T.activeNNPC == "great hawk") T.activeNNPC = "great_hawk";
-				if (T.activeNNPC == "ivory wraith") T.activeNNPC = "ivory_wraith";
-				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
-					if (V.options.autoNNPCDisplay[T.activeNNPC].layer === "front") {
-						return ZIndices.deco_fg1 + 1;
-					} else {
-						return ZIndices.deco_bg2 + 1;
-					}
-				} else {
-					if (V.options.nnpcDisplayLayer === "front") {
-						return ZIndices.deco_fg1 + 1;
-					} else {
-						return ZIndices.deco_bg2 + 1;
-					}
-				}
+				// Always return a number
+				if (!T.activeNNPC) return ZIndices.deco_bg2 + 1;
+
+				const cfg = V.options.autoNNPCDisplay?.[T.activeNNPC];
+				const layer = (!T.optionsEnabled && cfg && cfg.layer) ? cfg.layer : V.options.nnpcDisplayLayer;
+
+				return layer === "front"
+					? ZIndices.deco_fg1 + 1
+					: ZIndices.deco_bg2 + 1;
 			},
+
 			animation: "idle"
 		},
 

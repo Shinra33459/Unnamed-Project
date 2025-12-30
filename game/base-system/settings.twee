@@ -1013,10 +1013,13 @@
 
 			<div class="settingsToggleItem">
 				<span class="gold">Body Size:</span><br>
+				<label>Miniature <<radiobutton "$bodysize" -1 autocheck>></label> |
 				<label>Tiny <<radiobutton "$bodysize" 0 autocheck>></label> |
 				<label>Small <<radiobutton "$bodysize" 1 autocheck>></label> |
 				<label>Normal <<radiobutton "$bodysize" 2 autocheck>></label> |
-				<label>Large <<radiobutton "$bodysize" 3 autocheck>></label><br>
+				<label>Tall <<radiobutton "$bodysize" 2.5 autocheck>></label> |
+				<label>Large <<radiobutton "$bodysize" 3 autocheck>></label> |
+				<label>Giant <<radiobutton "$bodysize" 4 autocheck>></label><br>
 				<span class="small-description">Larger sizes have higher max physique and damage output.</span>
 			</div>
 
@@ -2305,7 +2308,7 @@
 			<</if>>
 				<div class="settingsToggleItem numberslider-inline humanPregnancyMonths-container" data-target="humanPregnancyMonths" @data-disabledif="playerPregnancyProgress() gte 0.9">
 					<span class="gold">Human Pregnancy Length:</span>
-					<<numberslider "$settings.humanPregnancyMonths" $settings.humanPregnancyMonths 1 9 1>>
+					<<numberslider "$settings.humanPregnancyMonths" $settings.humanPregnancyMonths 1 9 1 { value: (v) => v + pluralise(v, " month") }>>
 				</div>
 				<div class="settingsToggleItem numberslider-inline wolfPregnancyWeeks-container" data-target="wolfPregnancyWeeks" @data-disabledif="playerPregnancyProgress() gte 0.9">
 					<span class="gold">Wolf Pregnancy Length:</span>
@@ -3013,6 +3016,7 @@
 				<label><<radiobutton "$per_npc[_pNPCId].skincolour" "black" autocheck>> Dark</label>
 			</div>
 		<</if>>
+	</div>
 	<<run settingsDisableElement()>>
 <</widget>>
 
@@ -4375,7 +4379,7 @@
 				<label>Randomized <<radiobutton "$npcDescGenType" "randomized" autocheck>></label>
 				<br>
 				<<checkbox "$npcDescDemonDisable" 0 1 autocheck>> Disable Demon descriptions.
-				<mouse class="tooltip linkBlue">(?)<span>Prevents Demon and Minor Demon descriptions.</span></mouse>
+				<mouse class="tooltip linkBlue">(?)<span>Prevents Demon and lesser demon descriptions.</span></mouse>
 				<br>
 			</div>
 
@@ -4566,6 +4570,13 @@
 <<set $attitudesControl.showGoldLink to "false">>
 <div class="settingsGrid">
 	<<button [[Confirm|$attitudesExitPassage]]>>
+	
+		<<switch $speech_attitude_special>>
+			<<case "meek" "docile">><<set $speech_attitude to "meek">>
+			<<case "bratty" "cruel">><<set $speech_attitude to "bratty">>
+			<<default>><<set $speech_attitude to $speech_attitude_special>>
+		<</switch>>
+		
 		<<unset $attitudesExitPassage>>
 		<<run DefaultActions.save(T.defaultActions)>>
 		<<if $LIChanged>>

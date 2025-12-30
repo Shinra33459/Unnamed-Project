@@ -548,7 +548,7 @@
 <</widget>>
 
 <<widget "avery_mansion_housework_total">>
-<<set _avery_mansion_housework_total to 0 + $avery_mansion.pool + $avery_mansion.kitchen + $avery_mansion.lounge + $avery_mansion.display + $avery_mansion.bathroom + $avery_mansion.dining + $avery_mansion.garden>>
+	<<set _avery_mansion_housework_total to 0 + $avery_mansion.pool + $avery_mansion.kitchen + $avery_mansion.lounge + $avery_mansion.display + $avery_mansion.bathroom + $avery_mansion.dining + $avery_mansion.garden>>
 <</widget>>
 
 <<widget "avery_mansion_description">>
@@ -1475,7 +1475,7 @@
 			"I could use a massage."
 		<</if>>
 		<br><br>
-		<<if $bus is "mansion_bathroom">>
+		<<if $bus is "avery_bathroom">>
 			<<link [[Give Avery a massage (0:30)|Mansion Return Massage Accept]]>><<pass 30>><<npcincr Avery dom -1>><</link>><<gdom>>
 			<br>
 		<<else>>
@@ -3257,9 +3257,11 @@
 						<<else>>
 							There's no more recipes you can learn.
 						<</if>>
-						<br><br>
+						<br>
 					<</if>>
 				<</if>>
+				<<link [[Steal|Avery Kitchen Steal]]>><<handheldon>><</link>>
+				<br><br>
 			<</if>>
 
 			<<if $bus is "avery_lounge">>
@@ -4265,6 +4267,38 @@
 		<<avery_mansion_tower_negative_effects $avery_mansion.party_missed_guest>><<ggarage>><<lllove>><<npcincr Avery love -3>><<npcincr Avery rage 3>>
 		<br><br>
 	<</if>>
+<</widget>>
+
+<<widget "IngredientCheck">>
+    <<set _knownRecipes = []>>
+    <<set _validRecipes = []>>
+    <<set _unvalidRecipes = []>>
+	<<run Object.keys(setup.plants).forEach(item => {
+		if (setup.plants[item]?.ingredients.includes($phase)) {
+			_possibleRecipes++;
+			if ($plants[item].recipe) _knownRecipes.pushUnique(item);
+		}
+	})>>
+		
+    <<run Object.keys(setup.plants).forEach(item => {
+        const plant = setup.plants[item];
+        if (plant && Array.isArray(plant.ingredients) && plant.ingredients.length > 0) {
+			if (plant?.ingredients?.includes($phase)) {
+				if (!_validRecipes.includes(item)) _validRecipes.push(item);
+				if (plant.recipe && !_knownRecipes.includes(item)) _knownRecipes.push(item);
+			} else {
+				if (!_unvalidRecipes.includes(item)) _unvalidRecipes.push(item);
+			}
+		}
+    })>>
+    
+    <<set _unvalid = _unvalidRecipes[Math.floor(Math.random() * _unvalidRecipes.length)]>>
+    
+    <<if _knownRecipes.length>>
+        <<set _valid = _knownRecipes[Math.floor(Math.random() * _knownRecipes.length)]>>
+    <<else>>
+        <<set _valid = _validRecipes[Math.floor(Math.random() * _validRecipes.length)]>>
+    <</if>>
 <</widget>>
 
 <<widget "avery_mansion_skyscraper_calc">>

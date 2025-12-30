@@ -718,7 +718,7 @@
 				<</for>>
 			<</if>>
 			
-			<<if $avery_mansion?.landry is 1>>
+			<<if $avery_mansion?.landry is 1 and !$avery_fate>>
 				<li><<harvesticon>> Someone dropped a note for you outside Avery's mansion, asking you to visit them in the pub on Harvest Street.</li>
 			<</if>>
 
@@ -1019,7 +1019,8 @@
 					<</if>>
 					<<if ["lounge", "dining", "bedroom", "pool", "garden", "display", "kitchen", "bathroom"].includesAny($avery_mansion.jobs)>>
 						<br>
-						<<set $_averyCleanColor to ["","purple","pink","red"][Math.clamp(Math.floor(($avery_mansion.rage.assess - $avery_mansion.rage.dinner_missed) / 3),0,3)]>>
+						<<avery_mansion_housework_total>>
+						<<set $_averyCleanColor to ["","purple","pink","red"][Math.clamp(Math.floor((_avery_mansion_housework_total) / 3),0,3)]>>
 						<<if $_averyCleanColor is "">>
 							<span class='fa-icon fa-selected'></span>
 						<<else>>
@@ -1312,8 +1313,11 @@
 				<summary class="journal">Products</summary>
 				<<set $_types to []>>
 				<<for _t to 0; _t lt _plant_keys.length; _t++>>
-					<<set _produce to setup.plants[$plants[_plant_keys[_t]].name]>>
-					<<set $_types.pushUnique(_produce.type.toUpperFirst())>>
+					<<set _plantObj = $plants[_plant_keys[_t]]>>
+					<<if _plantObj?.name && setup.plants[_plantObj.name]>>
+						<<set _produce = setup.plants[_plantObj.name]>>
+						<<set $_types.pushUnique(_produce.type?.toUpperFirst() ?? "Unknown")>>
+					<</if>>
 				<</for>>
 				<<set $_types.sort()>>
 				<<if $_types.length>>

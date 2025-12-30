@@ -959,30 +959,35 @@
 <<widget "passiveStudy">>
 	<<if $statFreeze isnot true>>
 		<<set _chair to Furniture.get('chair', $location)>>
-		<<if _chair.name is "chair">>
-			<<set _studyGain to 0.25>>
-		<<elseif _chair.name is "stools">>
-			<<set _studyGain to 0.5>>
-		<<elseif _chair.name is "wooden chairs">>
-			<<set _studyGain to 0.75>>
-		<<elseif _chair.name is "swivel chairs">>
-			<<set _studyGain to 1>>
-		<<elseif _chair.name is "shell chairs">>
-			<<set _studyGain to 1.25>>
-		<<elseif _chair.name is "armchairs">>
-			<<set _studyGain to 1.5>>
+		<<if $location is "avery_mansion">>
+			<<set _studyGain to 2>>
 		<<elseif _chair.name is "egg armchairs">>
 			<<set _studyGain to 1.75>>
+		<<elseif _chair.name is "armchairs">>
+			<<set _studyGain to 1.5>>
+		<<elseif _chair.name is "shell chairs">>
+			<<set _studyGain to 1.25>>
+		<<elseif _chair.name is "swivel chairs">>
+			<<set _studyGain to 1>>
+		<<elseif _chair.name is "wooden chairs" or $location is "cabin">>
+			<<set _studyGain to 0.75>>
+		<<elseif _chair.name is "stools">>
+			<<set _studyGain to 0.5>>
+		<<elseif _chair.name is "chair">>
+			<<set _studyGain to 0.25>>
 		<</if>>
-		<<set _desk to Furniture.get('desk', $lastHome)>>
-		<<if _desk.name is "basic desk">>
-			<<set _studyGain += 0>>
-		<<elseif _desk.name is "glass desk">>
-			<<set _studyGain += 0.5>>
-		<<elseif _desk.name is "mid-century modern desk">>
-			<<set _studyGain += 1>>
+
+		<<set _desk to Furniture.get('desk', $location)>>
+		<<if $location is "avery_mansion">>
+			<<set _studyGain += 2>>
 		<<elseif _desk.name is "antique desk">>
 			<<set _studyGain += 1.5>>
+		<<elseif _desk.name is "mid-century modern desk">>
+			<<set _studyGain += 1>>
+		<<elseif _desk.name is "glass desk">>
+			<<set _studyGain += 0.5>>
+		<<elseif _desk.name is "basic desk">>
+			<<set _studyGain += 0>>
 		<</if>>
 		<<if $studyBooks.rented.science is 1>>
 			<<scienceskill _studyGain "no_star">>
@@ -4843,23 +4848,6 @@
 <</widget>>
 
 <<widget "deskText">>
-	<<if $studyBooks is undefined>>
-		<<set $studyBooks to {}>>
-		/* <<set $studyBooks.rented to "none">>
-		<<set $studyBooks.stolen.count to 0>><<set $studyBooks.stolen.science to 0>><<set $studyBooks.stolen.maths to 0>><<set $studyBooks.stolen.english to 0>><<set $studyBooks.stolen.history to 0>><<set $studyBooks.stolen.RaulAndJanet to 0>><<set $studyBooks.stolen.pinch to 0>> */
-		<<set $studyBooks.rented.science to 0>>
-		<<set $studyBooks.rented.maths to 0>>
-		<<set $studyBooks.rented.english to 0>>
-		<<set $studyBooks.rented.history to 0>>
-		<<set $studyBooks.rented.RaulAndJanet to 0>>
-		<<set $studyBooks.rented.pinch to 0>>
-		<<set $studyBooks.stolen.science to 0>>
-		<<set $studyBooks.stolen.maths to 0>>
-		<<set $studyBooks.stolen.english to 0>>
-		<<set $studyBooks.stolen.history to 0>>
-		<<set $studyBooks.stolen.RaulAndJanet to 0>>
-		<<set $studyBooks.stolen.pinch to 0>>
-	<</if>>
 	<<set _desk to Furniture.get('desk', $location)>>
 	<<set _chair to Furniture.get('chair', $location)>>
 	<<set _projectOptions to [$scienceproject, $mathsproject].includes("ongoing")>>
@@ -5092,7 +5080,7 @@
 		<<set $schoolrep[$_rep] to Math.min($schoolrep[$_rep] + $_val, 5)>>
 
 		<!-- for herm pcs, some students can still assume you're crossdressing if they don't know any better. ensure they know better -->
-		<<set $schoolrep.crossdressing to Math.min(5 - $schoolrep.herm, $schoolrep.crossdressing)>>
+		<<set $schoolrep.crossdress to Math.min(5 - $schoolrep.herm, $schoolrep.crossdress)>>
 
 		<<if $schoolrep[$_rep] is 5>>
 			<!-- now all of china knows you're $_rep -->
