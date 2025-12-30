@@ -3828,7 +3828,7 @@
 	<<sydneySchedule>>
 	<<if _sydney_location is "library">>
 		<<set _rentPrice to Math.round(2000 * (1 + ($studyBooks.rented.count * $studyBooks.rented.count)))>>
-		<<if $money gte _rentPrice>>
+		<<if $money gte _rentPrice and $bookOverdue is undefined>>
 			<<if $studyBooks.rented.science is 0 and $studyBooks.stolen.science is 0>>
 				<<scienceicon>><<link [["Rent a science textbook (£" + _rentPrice / 100 + ")"|Book Rental]]>><<handheldon>><<wearProp "textbook" "blue" "science">><<money `-_rentPrice` "libraryBooks">><<set $studyBooks.rented.count += 1>><<set $phase2 to "rent">><<set $phase to 1>><<set $studyBooks.rented.science to 1>><</link>><<note "+ Passive Science" "green">>
 				<br>
@@ -3853,8 +3853,15 @@
 				<<oliveicon>><<link [["Rent the olive-coloured book (£" + _rentPrice / 100 + ")"|Book Rental]]>><<set $phase to 6>><<set $studyBooks.rented.count += 1>><<handheldon>><<wearProp "book" 0 "olive">><<money `-_rentPrice` "libraryBooks">><<set $phase2 to "rent">><<set $studyBooks.rented.pinch to 1>><</link>>
 				<br>
 			<</if>>
-		<<elseif $money lt _rentPrice and $studyBooks.rented.count is 0>>
-			<span class=purple>You can't afford to rent a textbook.</span>
+		<<elseif $bookOverdue>>
+			<span class=purple>You can't rent another textbook while overdue.</span>
+			<br>
+		<<elseif $money lt _rentPrice>>
+			<<if $studyBooks.rented.count is 0>>
+				<span class=purple>You can't afford to rent a textbook.</span>
+			<<else>>
+				<span class=purple>You can't afford to rent another textbook.</span>
+			<</if>>
 			<br>
 		<</if>>
 		<<if $studyBooks.rented.count gte 1>>
