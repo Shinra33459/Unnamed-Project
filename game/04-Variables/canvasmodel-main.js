@@ -786,6 +786,7 @@ Renderer.CanvasModels.main = {
 		options.lowerShadowMask = [];
 		options.underLowerMask = [];
 		options.underLowerShadowMask = [];
+		options.underUpperMask = [];
 		options.upperMask = [];
 		options.legsMask = [];
 		if (options.worn.lower.setup.mask_img === 1) {
@@ -971,8 +972,10 @@ Renderer.CanvasModels.main = {
 		}
 
 		if (options.shirt_mask_clip_src) {
+			options.underUpperMask.push(options.shirt_mask_clip_src)
 			options.upperMask.push(options.shirt_mask_clip_src)
 		} else {
+			options.underUpperMask.push(options.upper_fitted_clip_src)
 			options.upperMask.push(options.upper_fitted_clip_src)
 		};
 
@@ -3674,7 +3677,7 @@ Renderer.CanvasModels.main = {
 					return options.worn.under_upper.setup.pregType === "split"
 						&& options.shirt_mask_clip_src;
 
-				return options.upperMask;
+				return options.underUpperMask;
 			}
 		}),
 		"under_upper_fitted_left": genlayer_clothing_fitted_left("under_upper", {
@@ -3741,7 +3744,7 @@ Renderer.CanvasModels.main = {
 					return options.worn.under_upper.setup.pregType === "split"
 						&& options.shirt_mask_clip_src;
 
-				return options.upperMask;
+				return options.underUpperMask;
 			}
 		}),
 		"under_upper_breasts_acc": genlayer_clothing_breasts_acc('under_upper'),
