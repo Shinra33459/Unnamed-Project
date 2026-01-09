@@ -288,6 +288,18 @@
 		<<tendingicon setup.plants[_args[0]].icon>>
 	<</if>>
 	<<set $plants[_args[0]].recipe to true>>
+	<<switch $plants[_args[0]]>>
+		<<case "banana_bread">>
+			<br><span class="gold">With your new knowledge, you are sure you can make both zucchini and pumpkin bread as well!</span>
+			<<set $plants.zucchini_bread.recipe to true>>
+			<<set $plants.pumpkin_bread.recipe to true>>
+		<<case "belgian_bun">>
+			<br><span class="gold">Knowing how to make a belgian bun, means you can make the classic cinnamon rolls as well!</span>
+			<<set $plants.cinnamon_roll.recipe to true>>
+		<<case "lemonade">>
+			<br><span class="gold">Knowing how to make lemonade, you are sure you could make a limenade too!</span>
+			<<set $plants.limenade.recipe to true>>
+	<</switch>>
 
 	<<set _recipes_known to 0>>
 	<<set _food_keys_recipes to Object.keys(setup.plants)>>
@@ -458,7 +470,7 @@ Should probably be removed once said feature has been implemented
 	<<unset $chosen_recipe>>
 	<<set _food_keys to Object.keys(setup.plants)>>
 	<<set _possible_recipes to []>>
-	<<set $_foodOptions to Object.entries(clone(setup.plants)).filter(([key, item]) => !$plants[key].recipe and item.ingredients?.length)>>
+	<<set $_foodOptions to Object.entries(clone(setup.plants)).filter(([key, item]) => !$plants[key].recipe and item.ingredients?.length and !item.source?.length)>>
 	<<for $_difficulty to 1; $_difficulty lt 5; $_difficulty++>>
 		<<run $_foodOptions.forEach(([key, item]) => {
 			if (item.difficulty is $_difficulty and item.ingredients.every(ingredient => !setup.plants[ingredient].ingredients?.length or $plants[ingredient].recipe)) {
@@ -614,6 +626,8 @@ Should probably be removed once said feature has been implemented
 				"Chilli con carne has a thicker sauce than standard chilli and uses chunks of beef rather than ground beef. Many of the fundamentals are the same, however."
 			<<case "chips">>
 				"One of the most popular side dishes there is, and for a reason."
+			<<case "oatmeal_cookie">>
+				"It's hard to make them wrong, as long as they are not overbaked."
 			<<case "choc_chip_cookie">>
 				"Do not flatten them before putting them in the oven. Keep the dough in balls. They flatten out while baking."
 			<<case "chocolate">>
@@ -691,6 +705,10 @@ Should probably be removed once said feature has been implemented
 				"A good breakfast for when you're in a hurry. I'd recommend adding fruit or honey for taste, but it's edible without."
 			<<case "potato_pancake">>
 				"Very similar to bubble and squeak, but without the vegetables on the side. This makes potato pancakes more fitting as a breakfast, or a snack."
+			<<case "zucchini_fritters">>
+				"It's very similar to making a pancake, but straining the water out of the zucchini is crucial for the texture."
+			<<case "crepes">>
+				"As long as you spread the batter evenly and not tear it while flipping, you should have no problems with making them."
 			<<case "prawn_bisque">>
 				"Do not remove the shells until the prawns have been simmered. This helps the broth gain a lot of flavour you would otherwise lose. The shells are sieved out later."
 			<<case "quiche">>
@@ -719,6 +737,10 @@ Should probably be removed once said feature has been implemented
 				"The ideal sponge cake should be so fluffy, you barely notice it's there. ...That's a joke. If you can't notice if your cake is there, you likely haven't made anything."
 			<<case "steak">>
 				"I'm sure many of you have been waiting for this one. To be quite honest, I've been waiting for it too."
+			<<case "steak_tartare">>
+				"The hardest part of making steak tartare is ensuring the safety. Once you understand how to, the preparation process is fairly easy."
+			<<case "mettbrotchen">>
+				"We'll be mainly focusing on proper seasoning, though remember that ensuring the meat is good quality is much more important for your safety."
 			<<case "sticky_toffee_pudding">>
 				"As with all cakes, be careful not to overbake it. When in doubt, use the toothpick trick."
 			<<case "stuffing">>
@@ -729,8 +751,18 @@ Should probably be removed once said feature has been implemented
 				"Most Swiss rolls are dark brown, due to the chocolate used. However, the chocolate is optional. We'll be skipping it for this recipe."
 			<<case "tart">>
 				"It tastes exactly how the name suggests."
+			<<case "fried_mushrooms">>
+				"It's important to let them cook off their own moisture before adding the oil. If you don't do it, they might become soggy."
 			<<case "turnip_soup">>
 				"This is a meal I've made more times than I can count. Not the most exciting dish, but keeps your stomach full and warm."
+			<<case "pumpkin_soup">>
+				"It's going to be creamy. We will also use chicken soup as a bse to add more taste, though it is not necessary."
+			<<case "chicken_soup">>
+				"It's known as a comfort food pretty much all around the world. Also makes a good base for other soups."
+			<<case "fruit_pierogi">>
+				"It was a request from one of the student. It's a traditional form of dumplings in Poland. They are usually savory, but we will start from the fruit version."
+			<<case "meat_pierogi">>
+				"Do you remember the fruit version? Since you've grasped making the base already, changing the filling should be easy."
 			<<case "wolfbrew">>
 				<!-- failsafe -->
 				<<He>> pauses. "Wait. This wasn't in the syllabus. You shouldn't be learning about this." <<He>> clicks <<his>> tongue. "<span class="red">Report this to Vrelnir when you have a second.</span> In the meantime, I suppose we'll just... push on."
@@ -747,10 +779,25 @@ Should probably be removed once said feature has been implemented
 			<br><br>
 			"Most recipes will call for standard eggs, those being chicken eggs," <<he>> adds. "But keep in mind that <span class="gold">any type of egg can be used as a substitute</span> if you don't have chicken eggs."
 		<</if>>
+		<<if setup.plants[_args[0]].ingredients.includes("mushroom") and !$housekeepingTips.includes("alternativeMushroom")>>
+			<<set $housekeepingTips.pushUnique("alternativeMushroom")>>
+			<br><br>
+			"You don't need to use a common mushroom in particular," <<he>> adds. "As long as you ensure it's edible, <span class="gold">you can substitute it for different mushrooms</span>."
+		<</if>>
 		<<if _args[0] is "lasagne" and !$housekeepingTips.includes("alternativeLasagne")>>
 			<<set $housekeepingTips.pushUnique("alternativeLasagne")>>
 			<br><br>
 			"Lasagne is typically made with beef," <<he>> adds. "But if you don't have any beef, or if you'd just prefer a different flavour, <span class="gold">you can also substitute chicken instead</span>. Not pork, though."
+		<</if>>
+		<<if _args[0] is "fruit_pierogi" and !$housekeepingTips.includes("alternativeFruitPierogi")>>
+			<<set $housekeepingTips.pushUnique("alternativeFruitPierogi")>>
+			<br><br>
+			"We are using apples today," <<he>> adds. "But keep in mind that <span class="gold">most fruits will work as well</span>."
+		<</if>>
+		<<if _args[0] is "meat_pierogi" and !$housekeepingTips.includes("alternativeFruitPierogi")>>
+			<<set $housekeepingTips.pushUnique("alternativeFruitPierogi")>>
+			<br><br>
+			"We are using beef today," <<he>> adds. "But keep in mind that <span class="gold">any meat will do/span>. You can also try fish."
 		<</if>>
 	<</if>>
 	<br><br>
@@ -786,7 +833,7 @@ Should probably be removed once said feature has been implemented
                     <<link "Steal <<recipe_name _keyObject 'plural'>>" _resultPassage>>
                         <<set $phase = _keyObject.toString()>>
                         <<set $weekly.theft[$location][_keyObject] = true>>
-                    <</link>><br>
+                    <</link>><br><br>
                 <<else>>
                     <span class="blue">If you steal any more <<recipe_name _keyObject 'plural'>>, 
 					<<switch $location>>

@@ -912,7 +912,7 @@ window.DefaultActions = {
 
 function selectWardrobe(targetLocation = V.wardrobe_location, type) {
 	let wardrobe = V.wardrobes[targetLocation];
-	if (type !== "return" && wardrobe?.locationRequirement && !wardrobe.locationRequirement.includes(V.location)) {
+	if (type !== "return" && wardrobe?.locationRequirement?.length && !wardrobe.locationRequirement.includes(V.location)) {
 		V.wardrobe_location = "wardrobe";
 		wardrobe = V.wardrobe;
 	}
@@ -1219,8 +1219,11 @@ function clothesIndex(slot, itemToIndex) {
 }
 window.clothesIndex = clothesIndex;
 
-function currentSkillValue(skill, disableModifiers = 0) {
-	let result = V[skill] * (V.options.statNerf / 100);
+function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
+	let result = V[skill];
+	if (disableStatNerf == 0) {
+		result *= (V.options.statNerf / 100);
+	}
 	if (!result && result !== 0) {
 		/* console.log(`currentSkillValue - skill '${skill}' unknown`); */
 		Errors.report(`[currentSkillValue]: skill '${skill}' unknown.`, {
@@ -1937,38 +1940,57 @@ window.checkTFparts = checkTFparts;
 	Might be good to convert the whole TF mechanic, including `transformationStateUpdate` to something like below at some point.
 	Part of the transformationParts is unused right now, but its to account for this potential.
 */
-function validateTransformations() {
-	if (V.cat >= 1 || V.wolfgirl >= 1 || V.cow >= 1 || V.harpy >= 1) {
-		V.physicalTransform = 1;
-	} else {
-		V.physicalTransform = 0;
-	}
-	if (V.demon >= 1 || V.angel >= 1 || V.fallenangel >= 2) {
-		V.specialTransform = 1;
-	} else {
-		V.specialTransform = 0;
-	}
-
-	const transformationParts = [
+function setupTransformations() {
+	setup.transformations = [
 		{
-			nameOveride: "wolf",
-			level: "wolfgirl",
-			build: "wolfbuild",
-			type: "physicalTransform",
+			/*
+			name: tf name, used in V.transformationParts[name], <<tficon name>>, <<transform name>>, etc.
+			level: transformation level getter,
+			build: transformation points counter getter,
+			type: "physicalTransform" or "specialTransform",
+			parts: conditions for unlocking tf parts,
+			traits: same but for traits
+			*/
+			name: "wolf",
+			get level() {
+				return V.wolfgirl;
+			},
+			get build() {
+				return V.wolfbuild;
+			},
+			type: "beast",
 			parts: [
 				{ name: "ears", tfRequired: 4 },
-				{ name: "pubes", tfRequired: 4, default: V.settings.pubicHairEnabled === true ? "default" : "hidden" },
-				{ name: "pits", tfRequired: 4, default: V.settings.pubicHairEnabled === true ? "default" : "hidden" },
+				{
+					name: "pubes",
+					tfRequired: 4,
+					get default() {
+						return V.settings.pubicHairEnabled === true ? "default" : "hidden";
+					},
+				},
+				{
+					name: "pits",
+					tfRequired: 4,
+					get default() {
+						return V.settings.pubicHairEnabled === true ? "default" : "hidden";
+					},
+				},
 				{ name: "cheeks", tfRequired: 5, default: "feral" },
 				{ name: "tail", tfRequired: 6 },
 			],
 			traits: [{ name: "fangs", tfRequired: 2 }],
 		},
 		{
-			level: "cat",
-			build: "catbuild",
+			name: "cat",
+			get level() {
+				return V.cat;
+			},
+			get build() {
+				return V.catbuild;
+			},
 			type: "physicalTransform",
 			parts: [
+				{ name: "ears", tfRequired: 4 },
 				{ name: "ears", tfRequired: 4 },
 				{ name: "tail", tfRequired: 6 },
 				{ name: "heterochromia", tfRequired: 7 },
@@ -1979,8 +2001,13 @@ function validateTransformations() {
 			],
 		},
 		{
-			level: "cow",
-			build: "cowbuild",
+			name: "cow",
+			get level() {
+				return V.cow;
+			},
+			get build() {
+				return V.cowbuild;
+			},
 			type: "physicalTransform",
 			parts: [
 				{ name: "horns", tfRequired: 2 },
@@ -1990,9 +2017,13 @@ function validateTransformations() {
 			traits: [],
 		},
 		{
-			nameOveride: "bird",
-			level: "harpy",
-			build: "birdbuild",
+			name: "bird",
+			get level() {
+				return V.harpy;
+			},
+			get build() {
+				return V.birdbuild;
+			},
 			type: "physicalTransform",
 			parts: [
 				{ name: "eyes", tfRequired: 2 },
@@ -2000,7 +2031,13 @@ function validateTransformations() {
 				{ name: "tail", tfRequired: 4 },
 				{ name: "plumage", tfRequired: 4 },
 				{ name: "wings", tfRequired: 6 },
-				{ name: "pubes", tfRequired: 6, default: V.settings.pubicHairEnabled === true ? "default" : "hidden" },
+				{
+					name: "pubes",
+					tfRequired: 6,
+					get default() {
+						return V.settings.pubicHairEnabled === true ? "default" : "hidden";
+					},
+				},
 			],
 			traits: [
 				{ name: "sharpEyes", tfRequired: 2 },
@@ -2008,8 +2045,13 @@ function validateTransformations() {
 			],
 		},
 		{
-			level: "fox",
-			build: "foxbuild",
+			name: "fox",
+			get level() {
+				return V.fox;
+			},
+			get build() {
+				return V.foxbuild;
+			},
 			type: "physicalTransform",
 			parts: [
 				{ name: "ears", tfRequired: 4 },
@@ -2024,8 +2066,13 @@ function validateTransformations() {
 			],
 		},
 		{
-			level: "angel",
-			build: "angelbuild",
+			name: "angel",
+			get level() {
+				return V.angel;
+			},
+			get build() {
+				return V.angelbuild;
+			},
 			type: "specialTransform",
 			parts: [
 				{ name: "halo", tfRequired: 4 },
@@ -2034,8 +2081,13 @@ function validateTransformations() {
 			traits: [],
 		},
 		{
-			level: "fallen",
-			build: "fallenbuild",
+			name: "fallenangel",
+			get level() {
+				return V.fallenangel;
+			},
+			get build() {
+				return V.fallenbuild;
+			},
 			type: "specialTransform",
 			parts: [
 				{ name: "halo", tfRequired: 2 },
@@ -2044,8 +2096,13 @@ function validateTransformations() {
 			traits: [],
 		},
 		{
-			level: "demon",
-			build: "demonbuild",
+			name: "demon",
+			get level() {
+				return V.demon;
+			},
+			get build() {
+				return V.demonbuild;
+			},
 			type: "specialTransform",
 			parts: [
 				{ name: "horns", tfRequired: 2 },
@@ -2055,22 +2112,37 @@ function validateTransformations() {
 			traits: [],
 		},
 	];
+}
+DefineMacro("setupTransformations", setupTransformations);
+
+function validateTransformations() {
+	const physTFs = setup.transformations.filter(tf => tf.type === "physicalTransform" && tf.level >= 1);
+	if (physTFs.length >= 2)
+		Errors.report(
+			"Too many physical transformations!",
+			physTFs.map(tf => tf.name)
+		);
+	if (V.physicalTransform === 1 && physTFs.length === 0) Errors.report("Couldn't find active physical transformation, modded save?");
+	V.physicalTransform = Math.max(physTFs.length, 1);
+
+	const specTFs = setup.transformations.filter(tf => tf.type === "specialTransform" && tf.level >= (tf.name === "fallenangel" ? 2 : 1));
+	V.specialTransform = Math.max(specTFs.length, 1);
+
 	const confirmedTraits = [];
-	transformationParts.forEach(tf => {
-		const tdLevel = V[tf.level];
-		const name = tf.nameOveride || tf.level;
+	setup.transformations.forEach(tf => {
+		const tfname = tf.name === "fallenangel" ? "fallenAngel" : tf.name;
 		tf.parts.forEach(part => {
-			if (tdLevel >= part.tfRequired && V.transformationParts[name][part.name] === "disabled") {
-				V.transformationParts[name][part.name] = part.default || "default";
-			} else if (tdLevel < part.tfRequired && V.transformationParts[name][part.name] !== "disabled") {
-				V.transformationParts[name][part.name] = "disabled";
+			if (tf.level >= part.tfRequired && V.transformationParts[tfname][part.name] === "disabled") {
+				V.transformationParts[tfname][part.name] = part.default || "default";
+			} else if (tf.level < part.tfRequired && V.transformationParts[tfname][part.name] !== "disabled") {
+				V.transformationParts[tfname][part.name] = "disabled";
 			}
 		});
 		tf.traits.forEach(trait => {
-			if (tdLevel >= trait.tfRequired) confirmedTraits.pushUnique(trait.name);
-			if (tdLevel >= trait.tfRequired && V.transformationParts.traits[trait.name] === "disabled") {
+			if (tf.level >= trait.tfRequired) confirmedTraits.pushUnique(trait.name);
+			if (tf.level >= trait.tfRequired && V.transformationParts.traits[trait.name] === "disabled") {
 				V.transformationParts.traits[trait.name] = trait.default || "default";
-			} else if (tdLevel < trait.tfRequired && V.transformationParts.traits[trait.name] !== "disabled" && !confirmedTraits.includes(trait.name)) {
+			} else if (tf.level < trait.tfRequired && V.transformationParts.traits[trait.name] !== "disabled" && !confirmedTraits.includes(trait.name)) {
 				V.transformationParts.traits[trait.name] = "disabled";
 			}
 		});
@@ -2949,6 +3021,8 @@ function ingredientAlternativesSetup(recipe) {
 		strange_flower: ["blood_lemon"],
 		chicken_egg: ["bird_egg"],
 		beef: [],
+		apple: [],
+		mushroom: ["hen_of_the_woods"],
 	};
 	if (V.chef_state >= 3 && T.allowLewdIngredients && (!V.options.ingredientsAutoManage || V.options.ingredientsAutoManageLewd)) {
 		alternatives.bottle_of_milk.pushUnique("baby_bottle_of_breast_milk");
@@ -2957,6 +3031,15 @@ function ingredientAlternativesSetup(recipe) {
 	switch (recipe) {
 		case "lasagne":
 			alternatives.beef.pushUnique("chicken");
+			break;
+		case "meat_pierogi":
+			alternatives.beef.pushUnique("chicken", "pork", "salmon", "trout", "cod");
+			break;
+		case "fruit_pierogi":
+			alternatives.apple.pushUnique("strawberry", "blackberry", "cherry", "peach", "pear", "cloudberry");
+			break;
+		case "vegetable_pierogi":
+			alternatives.apple.pushUnique("potato", "cabbage", "pumpkin", "spinach", "pepper", "carrot", "cauliflower", "broccoli", "turnip");
 			break;
 	}
 
@@ -3030,36 +3113,66 @@ window.ingredientsNextAlternative = ingredientsNextAlternative;
 function kitchenFilter() {
 	T.recipeKeys = [];
 	T.recipesGroups = ["ingredients", "sweets", "savouries", "drinks"];
-	const kitchenFilter = T.foodSearch ? T.foodSearch.split(/[_ ]/g) : false;
+
+	// Make search case-insensitive + avoid empty terms
+	const terms = (T.foodSearch ?? "")
+		.trim()
+		.toLowerCase()
+		.split(/[_\s]+/g)
+		.filter(Boolean);
+
+	const norm = (v) => {
+		if (v == null) return "";
+		if (Array.isArray(v)) return v.join(" ").toLowerCase();
+		return String(v).toLowerCase();
+	};
 
 	let missingIngredients = false;
 	let providedIngredients = false;
 	let knownRestrictions = false;
 
-	Object.keys(setup.plants).forEach(recipe => {
+	Object.keys(setup.plants).forEach((recipe) => {
 		const item = setup.plants[recipe];
 
-		if (
-			kitchenFilter &&
-			!kitchenFilter.find(
-				term =>
-					(V.options.ingredientsSearch !== "ingredients" &&
-						(item.name.includes(term) || item.type.includes(term) || item.plural?.includes(term) || item.singular?.includes(term))) ||
-					(V.options.ingredientsSearch !== "recipes" &&
-						item.ingredients.find(ingredient => ingredient.includes(term) || ingredientUsed(ingredient)?.includes(term)))
-			)
-		) {
-			return;
+		// FILTER: only keep items that match at least one term (case-insensitive)
+		if (terms.length) {
+			const matchesAnyTerm = terms.some((term) => {
+				const matchesInfo =
+					V.options.ingredientsSearch !== "ingredients" &&
+					(
+						norm(item.name).includes(term) ||
+						norm(item.type).includes(term) ||
+						norm(item.plural).includes(term) ||
+						norm(item.singular).includes(term)
+					);
+
+				const matchesRecipe =
+					V.options.ingredientsSearch !== "recipes" &&
+					(item.ingredients ?? []).some((ingredient) =>
+						norm(ingredient).includes(term) ||
+						norm(ingredientUsed(ingredient)).includes(term)
+					);
+
+				return matchesInfo || matchesRecipe;
+			});
+
+			if (!matchesAnyTerm) return;
 		}
 
+		// Provided ingredients group
 		if (T.ingredientsSupplied?.includes(recipe)) {
 			providedIngredients = true;
-			if (!T.recipeKeys.some(recipe => recipe.key === recipe)) T.recipeKeys.push({ key: recipe, group: "Provided Ingredients" });
+
+			// FIX: don't shadow "recipe" (was comparing string to object)
+			if (!T.recipeKeys.some((r) => r.key === recipe)) {
+				T.recipeKeys.push({ key: recipe, group: "Provided Ingredients" });
+			}
 			return;
 		}
-		if (!V.plants[recipe].recipe || !item.ingredients) return;
-		let group;
 
+		if (!V.plants[recipe].recipe || !item.ingredients) return;
+
+		let group;
 		if (item.special.includes("sweet")) {
 			group = "sweets";
 		} else if (item.special.includes("drink")) {
@@ -3071,8 +3184,10 @@ function kitchenFilter() {
 		}
 
 		let missingIngredientsFound = false;
-		item.ingredients.forEach(ingredient => {
-			if (ingredientsTotal(ingredient, recipe, true) <= 0 && !ingredientsProvided(ingredient, recipe)) missingIngredientsFound = true;
+		item.ingredients.forEach((ingredient) => {
+			if (ingredientsTotal(ingredient, recipe, true) <= 0 && !ingredientsProvided(ingredient, recipe)) {
+				missingIngredientsFound = true;
+			}
 		});
 
 		if (!ingredientIsAllowed(recipe)) {
@@ -3082,7 +3197,10 @@ function kitchenFilter() {
 			group = "Missing Ingredients";
 			missingIngredients = true;
 		}
-		if (!T.recipeKeys.some(recipeObj => recipeObj.key === recipe)) T.recipeKeys.push({ key: recipe, group });
+
+		if (!T.recipeKeys.some((recipeObj) => recipeObj.key === recipe)) {
+			T.recipeKeys.push({ key: recipe, group });
+		}
 	});
 
 	if (providedIngredients) T.recipesGroups.unshift("Provided Ingredients");
@@ -3200,3 +3318,15 @@ function hasSharpSenses(sense = "any") {
 	return false;
 }
 window.hasSharpSenses = hasSharpSenses;
+
+function displayDefiantOption(amount) {
+	if (isNaN(amount)) paramError("displayDefiantOption", "amount", amount, "Expected a number.");
+	amount = Number(amount);
+	if (amount) {
+		if (V.submissive <= amount || V.wolfgirl >= 6) {
+			return true;
+		}
+		return false;
+	}
+}
+window.displayDefiantOption = displayDefiantOption;
