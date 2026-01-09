@@ -151,14 +151,8 @@ var IronMan = (Save => {
 	}
 
 	function uiCheckBox(mode = "normal") {
-		const init = () => {
+		$(function () {
 			const checkbox = document.getElementById("checkbox-ironmanmode");
-			if (!checkbox) {
-				// wait until the Start/options UI is rendered
-				requestAnimationFrame(init);
-				return;
-			}
-
 			if (mode === "normal") {
 				V.ironmanmode = checkbox.checked;
 				if (checkbox.checked) {
@@ -196,9 +190,7 @@ var IronMan = (Save => {
 				checkbox.checked = V.ironmanmode === true;
 				if (V.passage !== "Start") checkbox.disabled = true;
 			}
-		};
-
-		$(init);
+		});
 	}
 
 	function getDatestamp() {

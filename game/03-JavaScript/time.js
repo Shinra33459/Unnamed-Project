@@ -402,11 +402,13 @@ const Time = (() => {
 		},
 		get dayState() {
 			const hour = currentDate.hour;
-			if (hour < 6) return "night";
-			if (hour < 9) return "dawn";
-			if (hour < 18) return "day";
-			if (hour < 21) return "dusk";
-			return "night";
+			if (hour < 6 || hour >= 21) {
+				return "night";
+			}
+			if (hour >= 18) {
+				return "dusk";
+			}
+			return hour >= 9 ? "day" : "dawn";
 		},
 		get nextSchoolTermStartDate() {
 			return getNextSchoolTermStartDate(currentDate);
@@ -1458,24 +1460,12 @@ function dailyNPCEffects() {
 				V.avery_mansion.rage.assess--;
 			}
 
-			// Avery injury healing progress. Stops at 0. "<stage>_done" and "healed" are set after talking to Avery to prevent asking again
-			if (V.avery_mansion.injury_timer !== undefined) {
-				if (V.avery_mansion.injury_timer >= 1) {
-					V.avery_mansion.injury_timer--;
-				}
-				if (V.avery_mansion.injury_timer <= 0 && !["healing", "healed"].includes(V.avery_mansion.injury_stage)) {
-					V.avery_mansion.injury_stage = "healing";
-				} else if (V.avery_mansion.injury_timer <= 15 && !["cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)) {
-					V.avery_mansion.injury_stage = "cast";
-				} else if (V.avery_mansion.injury_timer <= 30 && !["sling", "sling_done", "cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)) {
-					V.avery_mansion.injury_stage = "sling";
-				}
+			if (V.avery_mansion.injury_timer >= 1) {
+				V.avery_mansion.injury_timer--;
 			}
-
 			if (V.avery_mansion.rage.timer >= 1) {
 				V.avery_mansion.rage.timer--;
 			}
-
 			if (V.avery_mansion.jobs.includes("pool") && V.avery_mansion.pool < 4) {
 				V.avery_mansion.pool++;
 			}

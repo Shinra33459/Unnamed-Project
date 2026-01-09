@@ -15,11 +15,6 @@ declare module "twine-sugarcube" {
 declare global {
 	export interface Window {
 		EventSystem: EventData;
-		ExecutionContext: {
-			instance: {
-				callStack: any;
-			};
-		};
 	}
 
 	export interface EventNpc {
