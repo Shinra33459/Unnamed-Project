@@ -267,6 +267,27 @@ const statChange = (() => {
 	}
 	DefineMacro("stress", stress);
 
+	/*
+		When the player has the full wolf transformation, choosing Defiant dialogue options
+		in lists of links lowers stress, but submissive characters are traumatized and
+		lose control for acting unlike themselves. This function is inserted inside links,
+		takes a target value (usually 500 or 850), and makes extra stat adjustments if too submissive.
+	*/
+	function wolfDefiant(amount) {
+		if (isNaN(amount)) paramError("wolfDefiant", "amount", amount, "Expected a number.");
+		amount = Number(amount);
+		if (amount) {
+			if (V.wolfgirl >= 6) {
+				stress(-6);
+				if (V.submissive > amount) {
+					trauma(30);
+					control(-10);
+				}
+			}
+		}
+	}
+	DefineMacro("wolfDefiant", wolfDefiant);
+
 	function sensitivity(amount, key) {
 		if (isNaN(amount)) paramError("sensitivity", "amount", amount, "Expected a number.");
 		amount = Number(amount);
@@ -1029,6 +1050,7 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("hallucinogen", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
+			if (V.substanceRebalance == 1 && V.passage.includes("Gwylan")) amount /= 2;
 			V.hallucinogen = Math.clamp(V.hallucinogen + amount, 0, 1000);
 		}
 	}
@@ -1209,7 +1231,7 @@ const statChange = (() => {
 		if (startTracking) {
 			V.timeStats[source].trackedStart = Time.date.timeStamp;
 		} else if (V.timeStats[source].trackedStart) {
-			// Clamped to 24 hours to prevent crazy values from occuring
+			// Clamped to 24 hours to prevent crazy values from occurring
 			V.timeStats[source].total += Math.clamp(Time.date.timeStamp - V.timeStats[source].trackedStart, 0, 3600 * 24);
 			V.timeStats[source].trackedStart = 0;
 		}
@@ -1231,7 +1253,7 @@ const statChange = (() => {
 			if (timeType === "hour") amount *= 3600;
 			if (timeType === "minute") amount *= 60;
 
-			// Clamped to 24 hours to prevent crazy values from occuring
+			// Clamped to 24 hours to prevent crazy values from occurring
 			V.timeStats[source].total += Math.clamp(amount, 0, 3600 * 24);
 		}
 	}

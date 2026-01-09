@@ -518,11 +518,28 @@
 			<</if>>
 		<</if>>
 
+		/* Merge action text if resting a combination of arms and feet for better writing flow */
+		<<if $leftaction is "rest" and $rightaction is "rest" and $feetaction is "rest">>
+			<<set $leftaction to 0>><<set $rightaction to 0>><<set $feetaction to 0>><<set $leftactiondefault to "rest">><<set $rightactiondefault to "rest">><<set $feetactiondefault to "rest">>
+			You rest your arms and legs.
+		<</if>>
+
 		<<if $leftaction is "rest" and $rightaction is "rest">>
 			<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "rest">><<set $rightactiondefault to "rest">>
 			You rest your arms.
 		<</if>>
 
+		<<if $leftaction is "rest" and $feetaction is "rest">>
+			<<set $leftaction to 0>><<set $feetaction to 0>><<set $leftactiondefault to "rest">><<set $feetactiondefault to "rest">>
+			You rest your legs and left arm.
+		<</if>>
+
+		<<if $rightaction is "rest" and $feetaction is "rest">>
+			<<set $rightaction to 0>><<set $feetaction to 0>><<set $rightactiondefault to "rest">><<set $feetactiondefault to "rest">>
+			You rest your legs and right arm.
+		<</if>>
+
+		/* Back to individual arm actions */
 		<<if $leftaction is "rest">>
 			<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
 			You rest your left arm.
@@ -3635,7 +3652,8 @@
 		<</if>>
 
 		<<if $feetaction is "rest">>
-			<<set $feetaction to 0>><<set $feetactiondefault to "rest">>You rest your legs.
+			<<set $feetaction to 0>><<set $feetactiondefault to "rest">>
+			You rest your legs.
 		<</if>>
 
 		<<if $feetaction is "kick">>
@@ -4704,13 +4722,28 @@
 
 		<<if $mouthaction is "demand">>
 			<<set $mouthaction to 0>><<set _sound to 1>>
+			<<if $wolfgirl gte 6>>
+				<<stress -1>>
+				<<if $submissive gte 850>>
+					<<trauma 6>><<control -1>>
+				<</if>>
+			<</if>>
 			<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $settings.asphyxiaLevel gte 2>>
-				<<wheeze "demand something">>
+				<<if $submissive gte 850 and $wolfgirl gte 6>>
+					<span @class=basicJitterCss()><<wheeze "demand something">></span>
+				<<else>>
+					<<wheeze "demand something">>
+				<</if>>
 			<<else>>
 				<<set $mouthactiondefault to "demand">>
-				<<actionsdemand>><<set $speechdemand to 1>>
+				<<if $submissive gte 850 and $wolfgirl gte 6>>
+					<span @class=basicJitterCss()><<actionsdemand>></span>
+				<<else>>
+					<<actionsdemand>>
+				<</if>>
+				<<set $speechdemand to 1>>
 				<<if $role is "islander" and (!$islander_language or $islander_language lt 100)>>
-					<<if $enemyno gte 2>>They don't<<else>><<He>> doesn't<</if>> understand your words, but <<if $enemyno gte 2>>flinch<<else>>flinches<</if>> at your tone.
+					<<if $enemyno gte 2>>They don't understand your words, but flinch<<else>><<He>> doesn't understand your words, but flinches<</if>> at your tone.
 				<</if>>
 				<<defiance `1 + $englishtrait`>>
 			<</if>>
@@ -5533,7 +5566,7 @@
 					<<set $noanal to 1>><span class="green"><<if $enemyno gte 2>>They nod<<else>><<He_Short>> nods<</if>> in acknowledgement.</span>
 					<<if $anusstate is "doublepenetrated">>
 						<<set $anusstate to "doubleentrance">><<set $anusaction to 0>>
-						<<if $NPCList[$anustarget].penis is "anusdouble" and $NPCList[$anusdoubletarget].penis is "anusdouble">>
+						<<if setup.npcPenis($anustarget) is "anusdouble" and setup.npcPenis($anusdoubletarget) is "anusdouble">>
 							<<set $NPCList[$anustarget].penis to "anusentrancedouble">>
 							<<set $NPCList[$anusdoubletarget].penis to "anusentrancedouble">>
 							<<combatPerson>> and <<personselect $anusdoubletarget>><<combatperson>> withdraw their penises from your vagina.
@@ -6343,7 +6376,7 @@
 			<<set $mouthaction to 0>><<set $mouthactiondefault to "rest">>
 			<<if $money gte $rentmoney + ($babyRent or 0)>>
 				<<set $speechpay to 1>>
-				<<if $speech_attitude is "meek">>
+				<<if $speech_attitude is "meek" or $speech_attitude is "shy" or $speech_attitude is "special">>
 					"S-stop!" you shout. "I'll pay you, so... j-just let Robin go."
 				<<elseif $speech_attitude is "bratty">>
 					"I'll pay you," you say through gritted teeth. "So get your hands off <<nnpc_him "Robin">>."
@@ -6352,9 +6385,9 @@
 				<</if>>
 			<<else>>
 				<<set $speechpay to -1>>
-				<<if $speech_attitude is "meek">>
+				<<if $speech_attitude is "meek" or $speech_attitude is "shy" or $speech_attitude is "special">>
 					"S-stop!" you shout. "I don't have enough, b-but... just let <<nnpc_him "Robin">> go, please!"
-				<<elseif $speech_attitude is "bratty">>
+				<<elseif $speech_attitude is "bratty" or $speech_attitude is "confident" or $speech_attitude is "flamboyant">>
 					"I don't have enough," you say through gritted teeth. "So get your hands off <<nnpc_him "Robin">>."
 				<<else>>
 					"Let go of <<nnpc_him "Robin">>!" you shout. "I don't have your money. I can't pay."

@@ -451,12 +451,12 @@ Briar's goon keeps a close eye on you as you peek out the front exit. The street
 <<danceaudience>>
 <<danceactions>>
 
-<<if $corruptionDancing gt 0 and $danceevent is 0 and (($exhibitionism lte 74 and $exposed gte 2) or ($exhibitionism lte 34 and $exposed gte 1))>>
+<<if $corruptionDancing gt 0 and $danceevent is 0 and ((!hasSexStat("exhibitionism", 5) and $exposed gte 2) or (!hasSexStat("exhibitionism", 3) and $exposed gte 1))>>
 	There's no way you could normally continue dancing while so exposed.
-<<elseif $danceevent is 0 and $exhibitionism lte 74 and $exposed gte 2>>
+<<elseif $danceevent is 0 and !hasSexStat("exhibitionism", 5) and $exposed gte 2>>
 	There's no way you can continue dancing while so exposed! Face reddening, you flee the scene.
 	<br><br>
-<<elseif $danceevent is 0 and $exhibitionism lte 34 and $exposed gte 1 and !$worn.under_lower.type.includes("dance")>>
+<<elseif $danceevent is 0 and !hasSexStat("exhibitionism", 3) and $exposed gte 1 and !$worn.under_lower.type.includes("dance")>>
 	There's no way you can continue dancing while so exposed! Face reddening, you flee the scene.
 	<br><br>
 <</if>>
@@ -521,7 +521,7 @@ Briar's goon keeps a close eye on you as you peek out the front exit. The street
 		<br><br>
 		"People have been asking for you. Seems you've made a name for yourself." <<He>> turns and sizes you up. "I'd like to hold a little show on <span class="gold">Fridays</span>. Get the punters in. How'd you like to be the star?"
 		<br><br>
-		<<He>> doesn't wait for a response. "Not your usual work I know, and I'll need time to prepare. Think about it, then come visit me and we'll talk specifics. And money."
+		<<He>> doesn't wait for a response. "Not your usual work, I know, and I'll need time to prepare. Think about it, then come visit me and we'll talk specifics. And money."
 		<br><br>
 
 		<<specialClothesUnlock "set" "brothel">>
@@ -674,7 +674,7 @@ Briar's goon keeps a close eye on you as you peek out the front exit. The street
 :: Briar Machine Ask
 <<effects>>
 
-<<if $speech_attitude is "meek">>
+<<if $speech_attitude is "meek" or $speech_attitude is "shy">>
 	"Th-there's a lewd machine," you say. "Behind the stage—"
 <<elseif $speech_attitude is "bratty">>
 	"There's a fuck machine," you say. "Behind the stage—"
@@ -733,7 +733,7 @@ Briar walks across the room and leans beside the window, looking over the buildi
 :: Briar Machine Ask 3
 <<effects>>
 
-<<if $speech_attitude is "meek">>
+<<if $speech_attitude is "meek" or $speech_attitude is "shy">>
 	"Y-you must have found some gel before," you say.
 <<elseif $speech_attitude is "bratty">>
 	"You used the machine before," you say. "But I imagine they don't sell that either, do they?"
@@ -811,7 +811,7 @@ Before you can turn around, the <<person>> has <<his>> hands wrapped around your
 
 	<<link [[Pull away|Brothel Private]]>><<set $phase to 1>><</link>>
 	<br>
-	<<link [[Try to negotiate while being fondled|Brothel Private]]>><<arousal 300 "genitals">><<arousal 300 "breasts">><<set $phase to 2>><<submission 5>><<garousal>><</link>>
+	<<link [[Try to negotiate while being fondled|Brothel Private]]>><<arousal 300 "genitals">><<arousal 300 "breasts">><<set $phase to 2>><<submission 5>><</link>><<garousal>>
 	<br>
 
 	<<else>>
@@ -1481,7 +1481,7 @@ Briar swirls <<his>> wine, then looks up at you. "Well, now that depends on if t
 <<if $awarelevel gte 1>>
 	<<if $speech_attitude is "meek">>
 		You blush and smile.
-	<<elseif $speech_attitude is "bratty">>
+	<<elseif $speech_attitude is "bratty" or $speech_attitude is "confident">>
 		You smirk but blush all the same.
 	<<else>>
 		You attempt to keep a straight face but blush all the same.
@@ -1530,7 +1530,7 @@ Briar continues, "But, if you pass a virginity test, I am willing to pay for you
 <<elseif $phase is 1>> /* Refuse to do such a thing */
 	<<set $brothelVirginityState to "refuse">>
 	<<if $awarelevel gte 1>>
-		<<if $speech_attitude is "meek">>
+		<<if $speech_attitude is "meek" or $speech_attitude is "shy">>
 			You quickly shake your head, blushing at the thought. "I-I can't do that."
 		<<elseif $speech_attitude is "bratty">>
 			"Yeah right, like I would ever take you up on that," you scoff with a scowl.
@@ -1546,9 +1546,9 @@ Briar continues, "But, if you pass a virginity test, I am willing to pay for you
 	<<set $brothelVirginityState to "lie">>
 
 	<<if $awarelevel gte 1>>
-		<<if $speech_attitude is "meek">>
+		<<if $speech_attitude is "meek" or $speech_attitude is "shy">>
 			You quietly shake your head, demurely looking away from Briar. "B-but I'm not a virgin." It's a lie,
-		<<elseif $speech_attitude is "bratty">>
+		<<elseif $speech_attitude is "bratty" or $speech_attitude is "confident">>
 			You crack a smile. "I'm no virgin though." It's a baldfaced lie,
 		<<else>>
 			You clear your throat awkwardly. "I'm not a virgin though." It's a lie,
@@ -2096,7 +2096,7 @@ Two police officers lead you towards the main part of the brothel. They stop nea
 
 You pass through the opened door and quietly slip away through a couple of alleyways.
 <br><br>
-Due to the high police presence, you have a to wait for things to calm down before you can get back to the main street.
+Due to the high police presence, you have to wait for things to calm down before you can get back to the main street.
 <br><br>
 <<link [[Next (0:40)|Harvest Street]]>><<pass 40>><</link>>
 
@@ -2245,10 +2245,11 @@ You enter the brothel, passing Briar's goon, who leers at you but says nothing.
 	<br>
 	<<link [[Get angry|Brothel Exposed Angry]]>><<def 1>><<pain 6>><<trauma -6>><</link>><<ltrauma>><<gpain>>
 	<br>
-	/* <<if $submissive lte 500>> */
-		<<link [[Intimidate|Brothel Exposed Intimidate]]>><<trauma -6>><<stress -6>><</link>><<defianttext>><<ltrauma>><<lstress>>
+	/* <<if displayDefiantOption(500)>> */
+		<<link [[Intimidate|Brothel Exposed Intimidate]]>><<trauma -6>><<stress -6>><<wolfDefiant 500>><</link>><<defianttext 500>><<ltrauma>><<lstress>>
 		<br>
-	/* <<elseif $submissive gte 1500>> */
+	/* <</if>>
+	<<if $submissive gte 1500>> */
 		<<link [[Plead|Brothel Exposed Plead]]>><<trauma -6>><<stress -6>><</link>><<submissivetext>><<ltrauma>><<lstress>>
 		<br>
 	/* <</if>> */
@@ -2269,8 +2270,10 @@ You stand still and wait for the <<person1>><<person>> to get bored, enduring <<
 :: Brothel Exposed Angry
 <<effects>>
 
-<<if $speech_attitude is "meek">>
+<<if $speech_attitude is "meek" or $speech_attitude is "shy">>
 	"D-Don't," you say. "You shouldn't touch people without permission."
+<<elseif $speech_attitude is "polite" or $speech_attitude is "flamboyant">>
+	"Don't," you say. "You shouldn't touch people without permission."
 <<elseif $speech_attitude is "bratty">>
 	"Keep your hands to yourself," you say. "Creep."
 <<else>>
@@ -2417,8 +2420,10 @@ You ask the <<person>> to help distract Briar.
 :: Briar Hack
 <<effects>>
 
-<<if $speech_attitude is "meek">>
+<<if $speech_attitude is "meek" or $speech_attitude is "shy">>
 	"Y-you might want to take a look downstairs," you say. "I heard there was going to be a p-police raid."
+<<elseif $speech_attitude is "polite" or $speech_attitude is "flamboyant">>
+	"You might want to take a look downstairs," you say. "I heard there was going to be a police raid."
 <<elseif $speech_attitude is "bratty">>
 	"Heads up," you say, jerking your head toward the stairs. "The fuzz are gonna be here any minute. You're welcome for the advance warning."
 <<else>>
@@ -2834,9 +2839,10 @@ You are bound and suspended, unable to move or see. Laughter and lively chatter 
 <br>
 
 /* <<if $submissive gte 1150>> */
-    <<link [[Be obedient|Brothel Escort Job 2]]>><<set $phase to 2>><<set $brothel_escortjob.sub += 1>><<endevent "phaseless">><</link>><<submissivetext>><br>
-/* <<elseif $submissive lte 850>> */
-    <<link [[Be defiant|Brothel Escort Job 2]]>><<set $phase to 3>><<endevent "phaseless">><</link>><<defianttext>>
+	<<link [[Be obedient|Brothel Escort Job 2]]>><<set $phase to 2>><<set $brothel_escortjob.sub += 1>><<endevent "phaseless">><</link>><<submissivetext>>
+/* <</if>>
+<<if displayDefiantOption(850)>> */
+	<<link [[Be defiant|Brothel Escort Job 2]]>><<set $phase to 3>><<endevent "phaseless">><<wolfDefiant 850>><</link>><<defianttext 850>>
 /* <</if>> */
 <br>
 
@@ -2979,9 +2985,10 @@ The <<person1>><<person>> grabs you by the chin and lifts your head to get a goo
 <br><br>
 
 /* <<if $submissive gte 1150>> */
-    <<link [[Be submissive|Brothel Escort Job End 2]]>><<set $phase to 1>><<set $brothel_escortjob.sub += 1>><</link>><<submissivetext>><br>
-/* <<elseif $submissive lte 850>> */
-    <<link [[Look into <<his>> eyes|Brothel Escort Job End 2]]>><<set $phase to 2>><</link>><<defianttext>>
+	<<link [[Be submissive|Brothel Escort Job End 2]]>><<set $phase to 1>><<set $brothel_escortjob.sub += 1>><</link>><<submissivetext>>
+/* <</if>>
+<<if displayDefiantOption(850)>> */
+	<<link [[Look into <<his>> eyes|Brothel Escort Job End 2]]>><<set $phase to 2>><<wolfDefiant 850>><</link>><<defianttext 850>>
 /* <</if>> */
 <br>
 

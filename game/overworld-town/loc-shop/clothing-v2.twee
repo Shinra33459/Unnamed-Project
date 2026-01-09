@@ -687,7 +687,7 @@
 				<br>
 			<</if>>
 
-			<<if $settings.multipleWardrobes && Object.values($wardrobes).filter(w=>w.unlocked&&w.shopSend && w.isolated).length > 1>>
+			<<if $settings.multipleWardrobes && Object.values($wardrobes).filter(w=>w.unlocked && w.shopSend).length > 1>>
 				<div id="sendItemsTo">
 					<<sendItemsTo>>
 				</div>
@@ -809,7 +809,7 @@
 			<</if>>
 
 			<<if _spaceLeft < 1>>
-			<<elseif _cursedPrevent != true and _preggyPrevent != true and !_wearingBlocked and $tryOn.tryingOn>>
+			<<elseif _cursedPrevent != true and _preggyPrevent != true and !_wearingBlocked and $tryOn.tryingOn and (!["earrings"].includes($clothingShopSlot) or $ears_pierced)>>
 				<div class="try-buttons">
 					<div class="try-button div-link">
 						<<link "Try On">>
@@ -862,10 +862,6 @@
 					<<if ["lower"].includes($clothingShopSlot) and $player.bodyshape is "soft" and $worn.lower.name isnot "naked" and (!setup.clothes.lower[clothesIndex("lower",$worn.lower)].outfitSecondary or setup.clothes.lower[clothesIndex("lower",$worn.lower)]?.outfitSecondary[1] isnot $worn.upper.name)>>
 						<div class="try-button div-link"><<toggleBellyTuck>></div>
 					<</if>>
-					<<if ["rings"].includes($clothingShopSlot) and $worn[$clothingShopSlot].name is _temp_choice.name>>
-						<div class="try-button div-link"></div>
-						<br>
-					<</if>>
 					<<if _temp_choice.variable is $worn[$clothingShopSlot].variable and _temp_choice.altsleeve and !($worn.upper.variable is "schoolcardigan" and $worn.upper.altposition isnot "alt")>>
 						<div class="try-button div-link"><<toggleAltSleeve>></div>
 						<br>
@@ -896,7 +892,7 @@
 	<<set _canAfford = ($money >= _clothingCost * $buyMultiple and _spaceLeft >= $buyMultiple) ? "" : "disabled">>
 	<div class="buy-button">
 		<div @class="'buy-button-inner buy-multiple div-link ' + _canAfford">
-			<<link `'Buy and send home × ' + $buyMultiple`>>
+			<<link `'Buy and send <<if $wardrobes.shopReturn is "wardrobe">>home<<else>>to $wardrobes[$wardrobes.shopReturn].name<</if>> × ' + $buyMultiple`>>
 				<<if $money >= _clothingCost * $buyMultiple and _spaceLeft >= $buyMultiple>>
 					<<clothingReset _realSlot>>
 					<<shopbuyv2 _realSlot "buy" "send" _realIndex $buyMultiple>>
@@ -1754,7 +1750,7 @@
 	<div class="returnOptions no-numberify">
 		Send items to: <<ind>>
 		<<for _label, _value range $wardrobes>>
-			<<if _value.unlocked and _value.shopSend && _value.isolated>>
+			<<if _value.unlocked and _value.shopSend>>
 				<<if $wardrobes.shopReturn is _label>>
 					<div class="try-button div-link">
 						<span class="gold"><<print _value.name>></span>
