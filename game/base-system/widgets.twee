@@ -5736,6 +5736,50 @@
 <</widget>>
 
 <<widget "tfcheck">>
+
+/* Seraphim detection (safe) */
+<<set _seraphimWingsVisible to false>>
+<<if $transformationParts isnot undefined and $transformationParts.seraphim isnot undefined>>
+	<<set _seraphimWingsVisible to (
+		$transformationParts.seraphim.wings isnot "hidden"
+		and $transformationParts.seraphim.wings isnot "disabled"
+	)>>
+<</if>>
+/* Initialize backup storage once */
+<<if $seraphimBackup is undefined>>
+	<<set $seraphimBackup to {
+		active: false,
+		harpy: 0,
+		birdbuild: 0,
+		angel: 0,
+		angelbuild: 0,
+		specialTransform: 0
+	}>>
+<</if>>
+/* Transition: OFF -> ON (store old values, then enforce) */
+<<if _seraphimWingsVisible and $seraphimBackup.active isnot true>>
+	<<set $seraphimBackup.active to true>>
+	<<set $seraphimBackup.harpy to $harpy>>
+	<<set $seraphimBackup.birdbuild to $birdbuild>>
+	<<set $seraphimBackup.angel to $angel>>
+	<<set $seraphimBackup.angelbuild to $angelbuild>>
+	<<set $seraphimBackup.specialTransform to $specialTransform>>
+	<<set $harpy to Math.max($harpy, 6)>>
+	<<set $birdbuild to Math.max($birdbuild, 100)>>
+	<<set $angel to Math.max($angel, 6)>>
+	<<set $angelbuild to Math.max($angelbuild, 50)>>
+	<<set $specialTransform to 1>>
+<</if>>
+/* Transition: ON -> OFF (restore) */
+<<if !_seraphimWingsVisible and $seraphimBackup.active is true>>
+	<<set $harpy to $seraphimBackup.harpy>>
+	<<set $birdbuild to $seraphimBackup.birdbuild>>
+	<<set $angel to $seraphimBackup.angel>>
+	<<set $angelbuild to $seraphimBackup.angelbuild>>
+	<<set $specialTransform to $seraphimBackup.specialTransform>>
+	<<set $seraphimBackup.active to false>>
+<</if>>
+
 	<<if ($fallenangel gte 2 or ($transformationParts.fallenAngel.wings isnot "hidden" and $transformationParts.fallenAngel.wings isnot "disabled"))>>
 		<<set $fallenangeltf to 1>>
 	<</if>>
