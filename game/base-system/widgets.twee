@@ -5780,6 +5780,50 @@
 	<<set $seraphimBackup.active to false>>
 <</if>>
 
+/* Kitsune detection (safe) */
+<<set _kitsuneTailVisible to false>>
+<<if $transformationParts isnot undefined and $transformationParts.kitsune isnot undefined>>
+	<<set _kitsuneTailVisible to (
+		$transformationParts.kitsune.tail isnot "hidden"
+		and $transformationParts.kitsune.tail isnot "disabled"
+	)>>
+<</if>>
+/* Initialize Kitsune backup once */
+<<if $kitsuneBackup is undefined>>
+	<<set $kitsuneBackup to {
+		active: false,
+		fox: 0,
+		foxbuild: 0,
+		angel: 0,
+		angelbuild: 0,
+		specialTransform: 0
+	}>>
+<</if>>
+/* Transition OFF -> ON */
+<<if _kitsuneTailVisible and $kitsuneBackup.active isnot true>>
+	<<set $kitsuneBackup.active to true>>
+	<<set $kitsuneBackup.fox to $fox>>
+	<<set $kitsuneBackup.foxbuild to $foxbuild>>
+	<<set $kitsuneBackup.angel to $angel>>
+	<<set $kitsuneBackup.angelbuild to $angelbuild>>
+	<<set $kitsuneBackup.specialTransform to $specialTransform>>
+	/* Kitsune = Fox + Angel mechanics */
+	<<set $fox to Math.max($fox, 6)>>
+	<<set $foxbuild to Math.max($foxbuild, 100)>>
+	<<set $angel to Math.max($angel, 6)>>
+	<<set $angelbuild to Math.max($angelbuild, 50)>>
+	<<set $specialTransform to 1>>
+<</if>>
+/* Transition ON -> OFF */
+<<if !_kitsuneTailVisible and $kitsuneBackup.active is true>>
+	<<set $fox to $kitsuneBackup.fox>>
+	<<set $foxbuild to $kitsuneBackup.foxbuild>>
+	<<set $angel to $kitsuneBackup.angel>>
+	<<set $angelbuild to $kitsuneBackup.angelbuild>>
+	<<set $specialTransform to $kitsuneBackup.specialTransform>>
+	<<set $kitsuneBackup.active to false>>
+<</if>>
+
 	<<if ($fallenangel gte 2 or ($transformationParts.fallenAngel.wings isnot "hidden" and $transformationParts.fallenAngel.wings isnot "disabled"))>>
 		<<set $fallenangeltf to 1>>
 	<</if>>
