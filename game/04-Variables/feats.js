@@ -3080,6 +3080,7 @@ function earnHourlyFeats() {
 	if (V.fallenangel >= 2 || (V.transformationParts.fallenAngel.wings !== "hidden" && V.transformationParts.fallenAngel.wings !== "disabled")) earnFeat("Fallen Angel");
 	if (V.demon >= 6 || (V.transformationParts.demon.wings !== "hidden" && V.transformationParts.demon.wings !== "disabled")) earnFeat("Demon");
 	if (V.cow >= 6 || (V.transformationParts.cow.tail !== "hidden" && V.transformationParts.cow.tail !== "disabled")) earnFeat("Cattle");
+	if (V.waterdragon >= 7 || (V.transformationParts.waterdragon && V.transformationParts.waterdragon.tail !== "hidden" && V.transformationParts.waterdragon.tail !== "disabled")) earnFeat("Lost Legacy");
 	if (V.bear >= 6|| (V.transformationParts.bear.tail !== "hidden" && V.transformationParts.bear.tail !== "disabled")) earnFeat("Bear");
 	if (V.harpy >= 6 || (V.transformationParts.bird.wings !== "hidden" && V.transformationParts.bird.wings !== "disabled")) earnFeat("Harpy");
 	if (V.fox >= 6|| (V.transformationParts.fox.tail !== "hidden" && V.transformationParts.fox.tail !== "disabled")) earnFeat("Fox");
@@ -3880,6 +3881,9 @@ function applyFeatBoosts() {
 				break;
 			case "cow":
 				wikifier("cowTransform");
+				break;
+			case "waterdragon":
+				wikifier("waterdragonTransform");
 				break;
 			case "bear":
 				wikifier("bearTransform");

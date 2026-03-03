@@ -1407,8 +1407,8 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
-				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.DoLPTFBuffs === 1) {
 				if (V.TFCatBuffs === 1) {
@@ -1422,6 +1422,9 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 				}
 				if (V.TFFoxBuffs === 1) {
 					result = Math.round(result * 0.9);
+				}
+				if (V.TFWaterDragonBuffs === 1) {
+					result = Math.round(result * 1.5);
 				}
 			}
 			if (V.worn.upper.type.includes("heavy") || V.worn.lower.type.includes("heavy")) {
@@ -1440,7 +1443,7 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.transformationParts.traits.chase !== "disabled") result = Math.floor(result * 1.1);
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
 			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
-				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
 			if (V.DoLPTFBuffs === 1) {
 				if (V.TFWolfBuffs === 1) {
@@ -1463,6 +1466,9 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 				}
 				if (V.TFBunnyBuffs === 1) {
 					result = Math.round(result * 1.5);
+				}
+				if (V.TFWaterDragonBuffs == 1) {
+					result = Math.round(result * 1.2);
 				}
 			}
 			if (V.worn.upper.type.includes("heavy") || V.worn.lower.type.includes("heavy")) {
