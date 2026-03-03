@@ -273,11 +273,6 @@ function effects() {
 		element("span", `The school plays are being held on Cliff Street tonight from ${ampm(17, 0)} until ${ampm(21, 0)}.`, "gold");
 	}
 
-	if (V.studyBooks?.rented !== "none" && V.book_rent_timer === 0 && !V.studyBookDueWarning && Time.schoolTerm) {
-		V.studyBookDueWarning = 1;
-		element("span", `You have a library book due today.`, "gold");
-	}
-
 	if (V.innocencemessage === "start") {
 		delete V.innocencemessage;
 		element("span", "A profound sense of peace falls on your mind. You were upset a moment ago, but you can't remember why.", "red");
@@ -408,7 +403,7 @@ function effects() {
 					if (V.gwylan.request.missed) {
 						sWikifier(`<<hypnosisText "You still haven't completed Gwylan's request.">> `);
 					} else {
-						sWikifier(`<<hypnosisText "You didn't complete Gwylan's request yesterday.">> `);
+						sWikifier(`<<hypnosisText "You didnt't complete Gwylan's request yesterday.">> `);
 					}
 					break;
 				case "meetAtShop":
@@ -1492,56 +1487,6 @@ function effects() {
 				case "cowDown5":
 					element("span", "Your balance feels different. Your cow tail has disappeared.", "gold");
 					break;
-				case "bearUp1":
-					element("span", "You have a strange toothache and a strange craving for honey.", "gold");
-					break;
-				case "bearUp2":
-					element(
-						"span",
-						"Your mouth feels different. You explore your mouth and wince as your tongue presses against your new fangs.",
-						"gold"
-					);
-					break;
-				case "bearUp3":
-					element("span", "Your scalp and neck itch.", "gold");
-					break;
-				case "bearUp4":
-					element(
-						"span",
-						"Your scalp twitches. You reach up and feel your new pair of bear ears and a patch of fur covering your neck.",
-						"gold"
-					);
-					break;
-				case "bearUp5":
-					element("span", "Your lower back tingles.", "gold");
-					break;
-				case "bearUp6":
-					element(
-						"span",
-						"Your bottom feels fluffier than usual. You reach behind you and feel your new bear tail. You suppress the urge to growl.",
-						"gold"
-					);
-					fragment.append(wikifier("earnFeat", "'Bear'"));
-					break;
-
-				case "bearDown0":
-					element("span", "Your toothache has stopped.", "gold");
-					break;
-				case "bearDown1":
-					element("span", "Your fangs have turned into regular teeth.", "gold");
-					break;
-				case "bearDown2":
-					element("span", "Your scalp and neck no longer itch.", "gold");
-					break;
-				case "bearDown3":
-					element("span", "Your bear ears have disappeared. There appears to be no more fur covering your neck.", "gold");
-					break;
-				case "bearDown4":
-					element("span", "Your lower back has stopped tingling.", "gold");
-					break;
-				case "bearDown5":
-					element("span", "Your balance feels different. Your bear tail has disappeared.", "gold");
-					break;					
 				case "harpyUp1":
 					element("span", "Your vision feels sharper.", "gold");
 					break;
@@ -1663,56 +1608,6 @@ function effects() {
 				case "foxDown5":
 					element("span", "Your balance feels different. Your fox tail has disappeared.", "gold");
 					break;
-				case "bunnyUp1":
-					element("span", "Your legs begin to ache.", "gold");
-					break;
-				case "bunnyUp2":
-					element("span", "The ache in your legs is gone and you feel more agile.", "gold");
-					break;
-				case "bunnyUp3":
-					element("span", "Your scalp begins to itch.", "gold");
-					break;
-				case "bunnyUp4":
-					element(
-						"span",
-						"You feel the urge to scratch at your head and when you do, you discover a pair of bunny ears. You tug at them.",
-						"gold"
-					);
-					break;
-				case "bunnyUp5":
-					element(
-						"span",
-						"Your lower back begins to itch. You can barely scratch at it without being obvious.",
-						"gold"
-					);
-					break;
-				case "bunnyUp6":
-					element(
-						"span",
-						"You feel a bump on your lower back and as you go to check, you discover a soft bunny tail. You continue to pet it, enjoying the sensation.",
-						"gold"
-					);
-					fragment.append(wikifier("earnFeat", "'Bunny'"));
-					break;
-
-				case "bunnyDown0":
-					element("span", "The pain you were feeling has disappeared.", "gold");
-					break;
-				case "bunnyDown1":
-					element("span", "Walking suddenly feels heavier.", "gold");
-					break;
-				case "bunnyDown2":
-					element("span", "Your scalp no longer itches.", "gold");
-					break;
-				case "bunnyDown3":
-					element("span", "Your bunny ears have disappeared.", "gold");
-					break;
-				case "bunnyDown4":
-					element("span", "Your lower back no longer itches.", "gold");
-					break;
-				case "bunnyDown5":
-					element("span", "Your bunny tail has disappeared.", "gold");
-					break;					
 				// Clothes
 				case "bimboMessage1":
 					element(
@@ -1820,13 +1715,13 @@ function effects() {
 	if (V.combat === 0 && V.ironmanmode === true) IronMan.scheduledSaves();
 
 	if (V.tirednessMaxScalingToggle) {
-		C.tiredness.max = 2000 + Math.floor(currentSkillValue("physique", 0, 1) / 32);
+		C.tiredness.max = 2000 + Math.floor(currentSkillValue("physique") / 32);
 	} else {
 		C.tiredness.max = 2000;
 	}
 
 	if (V.stressMaxScalingToggle) {
-		V.stressmax = 10000 + Math.floor(currentSkillValue("willpower", 0, 1) * 5);
+		V.stressmax = 10000 + Math.floor(currentSkillValue("willpower") * 5);
 	} else {
 		V.stressmax = 10000;
 	}

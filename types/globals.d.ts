@@ -46,10 +46,8 @@ declare global {
 			max: number;
 		};
 	};
-	const ExecutionContext: {
-		instance: {
-			callStack: any;
-		};
+	const DOL: {
+		Stack: string[];
 	};
 	const EventSystem: EventData;
 

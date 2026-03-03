@@ -245,7 +245,6 @@ Weather.Temperature = (() => {
 			"market",
 			"museum",
 			"office",
-			"avery_mansion",
 			"avery_skyscraper",
 			"park",
 			"police_station",

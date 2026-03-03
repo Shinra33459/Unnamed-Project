@@ -786,7 +786,6 @@ Renderer.CanvasModels.main = {
 		options.lowerShadowMask = [];
 		options.underLowerMask = [];
 		options.underLowerShadowMask = [];
-		options.underUpperMask = [];
 		options.upperMask = [];
 		options.legsMask = [];
 		if (options.worn.lower.setup.mask_img === 1) {
@@ -917,6 +916,7 @@ Renderer.CanvasModels.main = {
 		} else if (soft) {
 			const upperCheck = !(options.worn.lower.setup.outfitSecondary && options.worn.lower.setup.outfitSecondary[1] === options.worn.upper.setup.name) && !options.worn.lower.setup.type.includes("covered") && !options.high_waist_suspenders && !options.belly_mask_clip_src;
 			const underUpperCheck = !(options.worn.under_lower.setup.outfitSecondary && options.worn.under_lower.setup.outfitSecondary[1] === options.worn.under_upper.setup.name) && !options.belly_mask_clip_src;
+			options.shirt_mask_clip_src = "img/clothes/masks/soft_clip.png";
 			["upper", "under_upper"].forEach(slot => {
 				options[`${slot}_fitted_right_move_src`] = "img/clothes/masks/soft_right_move.png";
 				options[`${slot}_fitted_left_move_src`]  = "img/clothes/masks/soft_left_move.png";
@@ -972,10 +972,8 @@ Renderer.CanvasModels.main = {
 		}
 
 		if (options.shirt_mask_clip_src) {
-			options.underUpperMask.push(options.shirt_mask_clip_src)
 			options.upperMask.push(options.shirt_mask_clip_src)
 		} else {
-			options.underUpperMask.push(options.upper_fitted_clip_src)
 			options.upperMask.push(options.upper_fitted_clip_src)
 		};
 
@@ -2163,164 +2161,89 @@ Renderer.CanvasModels.main = {
 
 		"nnpc": {
 			srcfn() {
-				// Helpers
-				const norm = (name) => {
-					if (!name || name === 0) return null;
-					let key = String(name).trim().toLowerCase().replace(/\s+/g, "_");
-					// Normalize folder names
-					if (key === "black_wolf") key = "black_wolf";
-					if (key === "great_hawk") key = "great_hawk";
-					if (key === "ivory_wraith") key = "ivory_wraith";
-					return key;
-				};
+				if (V.NPCList[0].fullDescription != undefined && setup.NPCNameList.includes(V.NPCList[0].fullDescription)) {	
+					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
+				} else T.activeNNPC = 0;
 
-				const autoEnabled = V.options?.autoNNPCDisplay?.enabled === true;
-				const inOptions = !!T.optionsEnabled;
+				if (T.activeNNPC == "black wolf") T.activeNNPC = "black_wolf";
+				if (T.activeNNPC == "great hawk") T.activeNNPC = "great_hawk";
+				if (T.activeNNPC == "ivory wraith") T.activeNNPC = "ivory_wraith";
 
-				// =============================
-				// OPTIONS MENU PREVIEW ONLY
-				// =============================
-				if (inOptions) {
-					if (!V.options.nnpcDisplay || V.options.nnpcDisplaySlot === 0) return;
+				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
+					if (T.activeNNPC == 0 || V.options.autoNNPCDisplay[T.activeNNPC].slot == 0) return;
+				} else if (V.options.nnpcDisplay == 0 || V.options.nnpcDisplaySlot == 0) return;
 
-					const active = norm(V.options.nnpcDisplay);
-					if (!active) return;
+				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
+					if (V.options.autoNNPCDisplay[T.activeNNPC].slot != 0) {
+						if ((T.activeNNPC == "black_wolf" || T.activeNNPC == "great_hawk") && V.monster != 1) {
+							T.skin = "/monster";
+						} else if (V.NPCList[0].skincolour == "white") {
+							T.skin = "/pale";
+						} else {
+							T.skin = "/dark";
+						}
 
-					T.activeNNPC = active;
-
-					const isBeast = (active === "black_wolf" || active === "great_hawk");
-
-					let gender = V.options.nnpcDisplayGender || "male";
-					let skinChoice = V.options.nnpcDisplaySkin || "pale";
-
-					// Guard: monster only for beasts (in preview too)
-					if (skinChoice === "monster" && !isBeast) skinChoice = "pale";
-
-					let skin = "/" + skinChoice;
-
-					if (active === "sydney") {
-						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+						if (T.activeNNPC == "sydney") {
+							if (C.npc.Sydney.purity >= 1) {
+								T.skin += "/pure";
+							} else {
+								T.skin += "/corrupt";
+							}
+						} else if (T.activeNNPC == "ivory_wraith") {
+							T.skin = "";
+						}
+						
+						if (V.options.autoNNPCDisplay[T.activeNNPC].genderOverride == true && V.options.autoNNPCDisplay[T.activeNNPC].gender != "") {
+							T.gender = V.options.autoNNPCDisplay[T.activeNNPC].gender;
+						} else {
+							if (V.NPCList[0].pronoun == "m") {
+								T.gender = "male";
+							} else {
+								T.gender = "female";
+							} 
+						}
+						return `img/ui/nnpc/${T.activeNNPC}/${T.gender}${T.skin}/${V.options.autoNNPCDisplay[T.activeNNPC].slot}.png`;
+					} else return;
+				} else {
+					T.skin = "/" + V.options.nnpcDisplaySkin;
+					if (V.options.nnpcDisplay == "sydney") {
+						if (C.npc.Sydney.purity >= 1) {
+							T.skin += "/pure";
+						} else {
+							T.skin += "/corrupt";
+						}
+					} else if (V.options.nnpcDisplay == "ivory_wraith") {
+						T.skin = "";
 					}
-					if (active === "ivory_wraith" || active === "others") skin = "";
-
-					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					return `img/ui/nnpc/${V.options.nnpcDisplay}/${V.options.nnpcDisplayGender}${T.skin}/${V.options.nnpcDisplaySlot}.png`;
 				}
-
-				// =============================
-				// GAMEPLAY: AUTO OFF = PERSISTENT MANUAL
-				// =============================
-				if (!autoEnabled) {
-					if (!V.options.nnpcDisplay || V.options.nnpcDisplaySlot === 0) return;
-
-					const active = norm(V.options.nnpcDisplay);
-					if (!active) return;
-
-					T.activeNNPC = active;
-
-					const isBeast = (active === "black_wolf" || active === "great_hawk");
-
-					let gender = V.options.nnpcDisplayGender || "male";
-					let skinChoice = V.options.nnpcDisplaySkin || (isBeast ? "monster" : "pale");
-
-					// Guard: monster only for beasts
-					if (skinChoice === "monster" && !isBeast) skinChoice = "pale";
-
-					let skin = "/" + skinChoice;
-
-					if (active === "sydney") {
-						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
-					}
-					if (active === "ivory_wraith" || active === "others") skin = "";
-
-					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
-				}
-
-				// =============================
-				// GAMEPLAY: AUTO ON = CONTEXT DETECTION
-				// =============================
-				// Detect active NPC (robust)
-				let rawName = null;
-
-				if (V.NPCList?.[0]?.fullDescription) {
-					rawName = V.NPCList[0].fullDescription;
-				} else if (V.npc?.name) {
-					rawName = V.npc.name;
-				} else if (V.person1?.name) {
-					rawName = V.person1.name;
-				} else if (V.NPCName) {
-					rawName = V.NPCName;
-				}
-
-				// No NPC detected -> show nothing in auto mode
-				if (!rawName) return;
-
-				let active = norm(rawName);
-				if (!active) return;
-
-				// Special casing if the rawName comes in with spaces
-				if (active === "black_wolf") active = "black_wolf";
-				if (active === "great_hawk") active = "great_hawk";
-				if (active === "ivory_wraith") active = "ivory_wraith";
-
-				T.activeNNPC = active;
-
-				const isBeast = (active === "black_wolf" || active === "great_hawk");
-
-				// Per-NPC config required in auto mode
-				const cfg = V.options.autoNNPCDisplay?.[active];
-				if (!cfg || cfg.slot === 0) return;
-
-				// Gender (respect override if enabled)
-				const pronoun =
-					V.NPCList?.[0]?.pronoun ??
-					C?.npc?.[active]?.pronoun;
-
-				let gender =
-					(cfg.genderOverride === true && cfg.gender)
-						? cfg.gender
-						: (pronoun === "m" ? "male" : "female");
-
-				// Skin: respect saved choice first
-				let skinChoice = cfg.skin;
-				if (!skinChoice) {
-					const skincolour =
-						V.NPCList?.[0]?.skincolour ??
-						C?.npc?.[active]?.skincolour;
-					skinChoice = isBeast ? "monster" : (skincolour === "white" ? "pale" : "dark");
-				}
-
-				// Guard: monster only for beasts
-				if (skinChoice === "monster" && !isBeast) skinChoice = "pale";
-
-				let skin = skinChoice ? ("/" + skinChoice) : "";
-
-				// Special cases
-				if (active === "sydney") {
-					skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
-				}
-				if (active === "ivory_wraith" || active === "others") skin = "";
-
-				return `img/ui/nnpc/${active}/${gender}${skin}/${cfg.slot}.png`;
 			},
-
 			showfn(options) {
-				// Allow NNPC even during <<effects>>
-				if (T.effects === true) return true;
-				return options.show_nnpc === true;
+				return options.show_nnpc;
 			},
-
 			zfn() {
-				// Always return a number
-				if (!T.activeNNPC) return ZIndices.deco_bg2 + 1;
-
-				const cfg = V.options.autoNNPCDisplay?.[T.activeNNPC];
-				const layer = (!T.optionsEnabled && cfg && cfg.layer) ? cfg.layer : V.options.nnpcDisplayLayer;
-
-				return layer === "front"
-					? ZIndices.deco_fg1 + 1
-					: ZIndices.deco_bg2 + 1;
+				if (T.optionsEnabled) {
+					T.activeNNPC = V.options.nnpcDisplay;
+				} else if (V.NPCList[0].fullDescription != undefined && setup.NPCNameList.includes(V.NPCList[0].fullDescription)) {	
+					T.activeNNPC = V.NPCList[0].fullDescription.toLowerCase();
+				} else return;
+				if (T.activeNNPC == "black wolf") T.activeNNPC = "black_wolf";
+				if (T.activeNNPC == "great hawk") T.activeNNPC = "great_hawk";
+				if (T.activeNNPC == "ivory wraith") T.activeNNPC = "ivory_wraith";
+				if (V.options.autoNNPCDisplay.enabled == true && !T.optionsEnabled) {
+					if (V.options.autoNNPCDisplay[T.activeNNPC].layer === "front") {
+						return ZIndices.deco_fg1 + 1;
+					} else {
+						return ZIndices.deco_bg2 + 1;
+					}
+				} else {
+					if (V.options.nnpcDisplayLayer === "front") {
+						return ZIndices.deco_fg1 + 1;
+					} else {
+						return ZIndices.deco_bg2 + 1;
+					}
+				}
 			},
-
 			animation: "idle"
 		},
 
@@ -3390,7 +3313,7 @@ Renderer.CanvasModels.main = {
 				return options.acc_layer_under ? ZIndices.lower_high + 1 : ZIndices.lower_high;
 			},
 		}),
-		"lower_fitted_left": genlayer_clothing_fitted_left("lower", {
+		"lower_fitted_left": genlayer_clothing_fitted_left_acc("lower", {
 			zfn(options) {
 				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
@@ -3402,7 +3325,7 @@ Renderer.CanvasModels.main = {
 				return options.body_type === "soft" ? 2 : -2;
 			},
 		}),
-		"lower_fitted_right": genlayer_clothing_fitted_right("lower", {
+		"lower_fitted_right": genlayer_clothing_fitted_right_acc("lower", {
 			zfn(options) {
 				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
@@ -3414,7 +3337,7 @@ Renderer.CanvasModels.main = {
 				return options.body_type === "soft" ? -2 : 2;
 			},
 		}),
-		"lower_fitted_acc_left": genlayer_clothing_fitted_left_acc("lower", {
+		"lower_fitted_acc_left": genlayer_clothing_fitted_left("lower", {
 			zfn(options) {
 				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
@@ -3426,7 +3349,7 @@ Renderer.CanvasModels.main = {
 				return options.body_type === "soft" ? 2 : -2;
 			},
 		}),
-		"lower_fitted_acc_right": genlayer_clothing_fitted_right_acc("lower", {
+		"lower_fitted_acc_right": genlayer_clothing_fitted_right("lower", {
 			zfn(options) {
 				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
@@ -3509,9 +3432,6 @@ Renderer.CanvasModels.main = {
 			},
 		},
 		"lower_back": genlayer_clothing_back_img('lower', {
-			z: ZIndices.back_lower
-		}),
-		"lower_back_acc": genlayer_clothing_back_img_acc('lower', {
 			z: ZIndices.back_lower
 		}),
 		/***
@@ -3677,7 +3597,8 @@ Renderer.CanvasModels.main = {
 					return options.worn.under_upper.setup.pregType === "split"
 						&& options.shirt_mask_clip_src;
 
-				return options.underUpperMask;
+				return options.worn.under_upper.setup.formfitting
+					&& options.under_upper_fitted_clip_src;
 			}
 		}),
 		"under_upper_fitted_left": genlayer_clothing_fitted_left("under_upper", {
@@ -3689,22 +3610,6 @@ Renderer.CanvasModels.main = {
 			},
 		}),
 		"under_upper_fitted_right": genlayer_clothing_fitted_right("under_upper", {
-			masksrcfn(options) {
-				return options.under_upper_fitted_right_move_src;
-			},
-			dxfn(options) {
-				return options.body_type === "soft" ? -2 : 2;
-			},
-		}),
-		"under_upper_fitted_left_acc": genlayer_clothing_fitted_left_acc("under_upper", {
-			masksrcfn(options) {
-				return options.under_upper_fitted_left_move_src;
-			},
-			dxfn(options) {
-				return options.body_type === "soft" ? 2 : -2;
-			},
-		}),
-		"under_upper_fitted_right_acc": genlayer_clothing_fitted_right_acc("under_upper", {
 			masksrcfn(options) {
 				return options.under_upper_fitted_right_move_src;
 			},
@@ -3738,15 +3643,7 @@ Renderer.CanvasModels.main = {
 			},
 		}),
 		"under_upper_breasts": genlayer_clothing_breasts("under_upper"),
-		"under_upper_acc": genlayer_clothing_accessory('under_upper', {
-			masksrcfn(options) {
-				if (options.belly >= 19 && options.worn.upper.setup.pregType == "split")
-					return options.worn.under_upper.setup.pregType === "split"
-						&& options.shirt_mask_clip_src;
-
-				return options.underUpperMask;
-			}
-		}),
+		"under_upper_acc": genlayer_clothing_accessory('under_upper'),
 		"under_upper_breasts_acc": genlayer_clothing_breasts_acc('under_upper'),
 		"under_upper_breasts_detail": genlayer_clothing_breasts_detail("under_upper"),
 		"under_upper_back": genlayer_clothing_back_img('under_upper'),
@@ -5245,7 +5142,7 @@ function genlayer_clothing_fitted_left(slot, overrideOptions) {
 			const checks = options.show_clothes
 				&& options.worn[slot].index > 0
 				&& options.worn[slot].setup.mainImage !== 0
-				&& ((options.worn[slot].setup.formfitting === 1 && ["curvy", "slender"].includes(options.body_type)) || (options.body_type === "soft" && ((V.bellyTucked && ["under_lower", "lower"].includes(slot)) || V.worn[slot].setup.one_piece)))
+				&& ((options.worn[slot].setup.formfitting === 1 && ["curvy", "slender"].includes(options.body_type)) || options.body_type === "soft")
 				&& !between(options.belly, 8, 24);
 			return checks;
 		},
@@ -5258,7 +5155,7 @@ function genlayer_clothing_fitted_right(slot, overrideOptions) {
 			const checks = options.show_clothes
 				&& options.worn[slot].index > 0
 				&& options.worn[slot].setup.mainImage !== 0
-				&& ((options.worn[slot].setup.formfitting === 1 && options.body_type == "curvy") || (options.body_type === "soft" && ((V.bellyTucked && ["under_lower", "lower"].includes(slot)) || V.worn[slot].setup.one_piece)))
+				&& ((options.worn[slot].setup.formfitting === 1 && options.body_type == "curvy") || options.body_type === "soft")
 				&& !between(options.belly, 8, 24);
 			return checks;
 		},
@@ -5271,7 +5168,7 @@ function genlayer_clothing_fitted_left_acc(slot, overrideOptions) {
 			const checks = options.worn[slot].index > 0
 				&& options.worn[slot].setup.accImage !== 0
 				&& options.worn[slot].setup.accessory === 1
-				&& ((options.worn[slot].setup.formfitting === 1 && ["curvy", "slender"].includes(options.body_type)) || (options.body_type === "soft" && (V.bellyTucked || V.worn[slot].setup.one_piece)))
+				&& ((options.worn[slot].setup.formfitting === 1 && ["curvy", "slender"].includes(options.body_type)) || options.body_type === "soft")
 				&& !between(options.belly, 8, 24);
 			return checks;
 		},
@@ -5302,7 +5199,7 @@ function genlayer_clothing_fitted_right_acc(slot, overrideOptions) {
 			const checks = options.worn[slot].index > 0
 				&& options.worn[slot].setup.accImage !== 0
 				&& options.worn[slot].setup.accessory === 1
-				&& ((options.worn[slot].setup.formfitting === 1 && options.body_type == "curvy") || (options.body_type === "soft" && (V.bellyTucked || V.worn[slot].setup.one_piece)))
+				&& ((options.worn[slot].setup.formfitting === 1 && options.body_type == "curvy") || options.body_type === "soft")
 				&& !between(options.belly, 8, 24);
 			return checks;
 		},
@@ -5714,11 +5611,10 @@ function genlayer_clothing_back_img_acc(slot, overrideOptions) {
 				&& options.worn[slot].alt === "alt"
 				&& !options.worn[slot].setup.altdisabled.includes("back");
 
-			const prefix = isAltPosition ? 'back_alt' : 'back';
-			const suffix = options.worn[slot].setup.back_integrity_img ? `_${options.worn[slot].integrity}` : '';
+			const suffix = isAltPosition ? 'back_alt' : 'back';
 			const pattern = options.worn[slot].pattern && options.worn[slot].setup.pattern_layer === "secondary" ? "_" + options.worn[slot].pattern?.replace(/ /g,"_") : '';
 
-			const path = `img/clothes/${slot}/${options.worn[slot].setup.variable}/${prefix}${suffix}${pattern}_acc.png`;
+			const path = `img/clothes/${slot}/${options.worn[slot].setup.variable}/${suffix}${pattern}_acc.png`;
 			return gray_suffix(path, options.filters[this.filtersfn(options)[0]]);
 		},
 	}, overrideOptions));

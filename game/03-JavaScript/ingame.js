@@ -3021,6 +3021,8 @@ function ingredientAlternativesSetup(recipe) {
 		strange_flower: ["blood_lemon"],
 		chicken_egg: ["bird_egg"],
 		beef: [],
+		apple: [],
+		mushroom: ["hen_of_the_woods"],
 	};
 	if (V.chef_state >= 3 && T.allowLewdIngredients && (!V.options.ingredientsAutoManage || V.options.ingredientsAutoManageLewd)) {
 		alternatives.bottle_of_milk.pushUnique("baby_bottle_of_breast_milk");
@@ -3029,6 +3031,15 @@ function ingredientAlternativesSetup(recipe) {
 	switch (recipe) {
 		case "lasagne":
 			alternatives.beef.pushUnique("chicken");
+			break;
+		case "meat_pierogi":
+			alternatives.beef.pushUnique("chicken", "pork", "salmon", "trout", "cod");
+			break;
+		case "fruit_pierogi":
+			alternatives.apple.pushUnique("strawberry", "blackberry", "cherry", "peach", "pear", "cloudberry");
+			break;
+		case "vegetable_pierogi":
+			alternatives.apple.pushUnique("potato", "cabbage", "pumpkin", "spinach", "pepper", "carrot", "cauliflower", "broccoli", "turnip");
 			break;
 	}
 

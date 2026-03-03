@@ -98,9 +98,7 @@ declare global {
 		| "handheld"
 		| "legs"
 		| "feet"
-		| "genitals"
-		| "rings"
-		| "earrings";
+		| "genitals";
 
 	export type SexToySlots = "strap-on" | "vibrator" | "dildo" | "butt_plug" | "lube" | "stroker" | "aphrodisiacpill" | "breastpump";
 

@@ -401,15 +401,12 @@ function gwylanSchedule() {
 window.gwylanSchedule = gwylanSchedule;
 
 function averyMansionScore() {
-	if (C.npc.Avery.love < 50) return 0; // 50 love is a hard requirement
-	if (V.housekeeping < 400) return 0; // C housekeeping is a hard requirement
-	if (Object.values(V.plants).filter(food => food.recipe).length < 6) return 0; // 6 recipes is a hard requirement
-	if (V.dateCount.Avery < 6) return 0; // 6 dates is a hard requirement
+	if (C.npc.Avery.love < 50) return 0; // 50 love is hard requirement
 	let score = 0;
-	score += V.housekeeping / 20; // 1 point for every 20 housekeeping skill
-	score += C.npc.Avery.love / 2; // 1 point for every 2 points of love
+	score += Math.floor(V.housekeeping / 20); // 1 point for every 20 housekeeping skill
+	score += C.npc.Avery.love - 50; // 1 point for every point of love above 50
 	score += Object.values(V.plants).filter(food => food.recipe).length * 2; // 2 points for each known recipe
-	score += V.dateCount.Avery * 3; // 3 points per date
+	if (Object.values(V.plants).some(food => food.knownFavorite?.includes("Avery"))) score += 50; // 50 points if has ever given Avery a favourite food
 	return score;
 }
 window.averyMansionScore = averyMansionScore;

@@ -111,7 +111,7 @@ function initOverUpper() {
 			state_base: "waist",
 			state_top: "chest",
 			state_top_base: "chest",
-			plural: 0,
+			plural: 1,
 			colour: 0,
 			colour_options: [],
 			colour_combat: "white",
