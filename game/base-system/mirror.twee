@@ -2597,7 +2597,10 @@
 	<<set _catFullCheck to ($cat gte 6) or $cattf is 1>>
 	<<set _cowFullCheck to ($cow gte 6) or $cowtf is 1>>
 	<<set _bearFullCheck to ($bear gte 6) or $beartf is 1>>
+	<<if $waterdragonSkinLock is undefined>><<set $waterdragonSkinLock to 0>><</if>>
+	<<if $waterdragonCosmeticUnlocked is undefined>><<set $waterdragonCosmeticUnlocked to 0>><</if>>
 	<<set _waterdragonFullCheck to ($waterdragon gte 6 or (_waterdragon.tail isnot "hidden" and _waterdragon.tail isnot "disabled")) or $waterdragontf is 1>>
+	<<set _waterdragonSkinMenuCheck to (_waterdragonFullCheck or $waterdragonCosmeticUnlocked is 1 or $waterdragonSkinLock isnot 0)>>
 	<<set _wolfFullCheck to ($wolfgirl gte 6) or $wolftf is 1>>
 	<<set _birdFullCheck to ($harpy gte 6) or $harpytf is 1>>
 	<<set _foxFullCheck to ($fox gte 6) or $foxtf is 1>>
@@ -2654,6 +2657,15 @@
 		<<if $waterdragon gte 7 or $waterdragontf is 1>>
 			Aquatic Lungs: <<checkbox "_traits.aquatic" "disabled" "default" autocheck>><br>
 		<</if>>
+		<<if _waterdragonSkinMenuCheck>>
+			Water Dragon Skin:
+			<<if $waterdragonSkinLock isnot 1>>
+				<<link [[Set|$passage]]>><<set $waterdragonSkinLock to 1>><<syncWaterDragonSkin>><<updatesidebarimg>><</link>>
+			<<elseif $waterdragonSkinLock isnot -1>>
+				<<link [[Clear|$passage]]>><<set $waterdragonSkinLock to -1>><<syncWaterDragonSkin>><<updatesidebarimg>><</link>>
+			<</if>>
+			<br>
+		<</if>>
 		<<if $cat gte 7 or $cattf is 1>>
 			Heterochromia:
 			<<if _cat.heterochromia isnot "default">>
@@ -2676,7 +2688,7 @@
 			<<if _bearFullCheck>>
 				Ursine Strength: <<checkbox "$TFBearBuffs" 0 1 autocheck>><br>
 			<</if>>
-			<<if _waterdragonFullCheck>>
+			<<if _waterdragonFullCheck or $waterdragonCosmeticUnlocked is 1>>
 				Dragon's Grace: <<checkbox "$TFWaterDragonBuffs" 0 1 autocheck>><br>
 			<</if>>
 			<<if _birdFullCheck>>
@@ -3803,7 +3815,7 @@
 	Bear Transform: <<link [[Reset|$passage]]>><<bearTransform 99>><<updatesidebarimg>><</link>><<if $beartf is 1>><span class="green">Safe</span><<else>><span class="red">Unsafe</span><</if>><br>
 	<</if>>
 	<<if $waterdragonbuild gte 1>>
-	Water Dragon Transform: <<link [[Reset|$passage]]>><<waterdragonTransform 99>><<updatesidebarimg>><</link>><<if $waterdragontf is 1>><span class="green">Safe</span><<else>><span class="red">Unsafe</span><</if>><br>
+	Water Dragon Transform: <<link [[Reset|$passage]]>><<if $waterdragontf is 1>><<set $waterdragonCosmeticUnlocked to 1>><</if>><<waterdragonTransform 99>><<syncWaterDragonSkin>><<updatesidebarimg>><</link>><<if $waterdragontf is 1>><span class="green">Safe</span><<else>><span class="red">Unsafe</span><</if>><br>
 	<</if>>
 	<<if $birdbuild gte 1>>
 	Bird Transform: <<link [[Reset|$passage]]>><<harpyTransform 99>><<updatesidebarimg>><</link>><<if $harpytf is 1>><span class="green">Safe</span><<else>><span class="red">Unsafe</span><</if>><br>
