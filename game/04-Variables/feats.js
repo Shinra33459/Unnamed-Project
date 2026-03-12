@@ -3884,6 +3884,7 @@ function applyFeatBoosts() {
 				break;
 			case "waterdragon":
 				wikifier("waterdragonTransform");
+				V.waterdragonCosmeticUnlocked = 1;
 				break;
 			case "bear":
 				wikifier("bearTransform");
