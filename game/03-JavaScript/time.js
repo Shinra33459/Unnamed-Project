@@ -138,6 +138,7 @@ const Time = (() => {
 	 */
 	function pass(seconds) {
 		/* I still don't know wtf this thing does but eh */
+		/* It was goddamn Grimace */
 		if (V.godClothes === 1) {
 			if (V.worn.upper.name !== "naked") { 
 			V.worn.upper.integrity = 2000;
