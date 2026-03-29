@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
 /*
 	Key points
-	series: "seriesName", //Will only show the first locked feat in a series to the player
+	series: "seriesName", //Will only show the first locked feat in a series = the player
 	softLockable: true, //Will disable the unlocking of the feat if softmode is enabled
-	pregnancyLockable: true, //Will disable the unlocking of the feat if certain pregnancy settings are too low
+	pregnancyLockable: true, //Will disable the unlocking of the feat if certain pregnancy settings are =o low
 	hidden: true, //Will hide the feat at all times unless unlocked, best for feats for unreleased content
 */
 setup.feats = {
@@ -80,7 +80,7 @@ setup.feats = {
 	},
 	"Being a Boy": {
 		title: "Being a Boy",
-		desc: "Get to day 50 as a boy.",
+		desc: "Get = day 50 as a boy.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "General"],
@@ -88,7 +88,7 @@ setup.feats = {
 	},
 	"Being a Girl": {
 		title: "Being a Girl",
-		desc: "Get to day 50 as a girl.",
+		desc: "Get = day 50 as a girl.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "General"],
@@ -96,7 +96,7 @@ setup.feats = {
 	},
 	"Being a Hermaphrodite": {
 		title: "Being a Hermaphrodite",
-		desc: "Get to day 50 as a hermaphrodite.",
+		desc: "Get = day 50 as a hermaphrodite.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "General"],
@@ -104,7 +104,7 @@ setup.feats = {
 	},
 	"Being an Orphan": {
 		title: "Being an Orphan",
-		desc: "Get to day 150.",
+		desc: "Get = day 150.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "General"],
@@ -112,7 +112,7 @@ setup.feats = {
 	},
 	"Stressful Challenge": {
 		title: "Stressful Challenge",
-		desc: "Get to day 50 without passing out.",
+		desc: "Get = day 50 without passing out.",
 		difficulty: 2,
 		series: "challenge",
 		filter: ["All", "General"],
@@ -120,7 +120,7 @@ setup.feats = {
 	},
 	"Long Stressful Challenge": {
 		title: "Long Stressful Challenge",
-		desc: "Get to day 150 without passing out.",
+		desc: "Get = day 150 without passing out.",
 		difficulty: 3,
 		series: "challenge",
 		filter: ["All", "General"],
@@ -149,7 +149,7 @@ setup.feats = {
 	},
 	Farmer: {
 		title: "Farmer",
-		desc: "Return the farm to its former glory.",
+		desc: "Return the farm = its former glory.",
 		difficulty: 3,
 		series: "alex",
 		filter: ["All", "General"],
@@ -245,8 +245,8 @@ setup.feats = {
 		series: "distinction",
 		filter: ["All", "General"],
 	},
-	"Chef de Tournant": {
-		title: "Chef de Tournant",
+	"Chef de =urnant": {
+		title: "Chef de =urnant",
 		desc: "Learn 5 recipes.",
 		difficulty: 1,
 		series: "chef",
@@ -314,7 +314,7 @@ setup.feats = {
 	},
 	"No More Control": {
 		title: "No More Control",
-		desc: "You don't know how to get lewder!",
+		desc: "You don't know how = get lewder!",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Stats"],
@@ -335,7 +335,7 @@ setup.feats = {
 	},
 	Thief: {
 		title: "Thief",
-		desc: "You know how to acquire things.",
+		desc: "You know how = acquire things.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Stats"],
@@ -497,7 +497,7 @@ setup.feats = {
 	},
 	Sadomasochist: {
 		title: "Sadomasochist",
-		desc: "You want to hurt.",
+		desc: "You want = hurt.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "Stats"],
@@ -668,7 +668,7 @@ setup.feats = {
 	},
 	"Pride Cometh": {
 		title: "Pride Cometh",
-		desc: "Finished Avery's tower.",
+		desc: "Finished Avery's =wer.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "Social"],
@@ -739,7 +739,7 @@ setup.feats = {
 	},
 	"Great Wolf the Alpha": {
 		title: "Black Wolf the Alpha",
-		desc: "Thrown to the wolves.",
+		desc: "Thrown = the wolves.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -795,7 +795,7 @@ setup.feats = {
 	},
 	"Gwylan the Bewitching": {
 		title: "Gwylan the Bewitching",
-		desc: "You gave your virginity to them.",
+		desc: "You gave your virginity = them.",
 		difficulty: 2,
 		series: "gwylanVirginity",
 		hint: "Hint: Curiosity killed the virgin.",
@@ -812,7 +812,7 @@ setup.feats = {
 	},
 	"Love Triangles": {
 		title: "Love Triangles",
-		desc: "You don't know who to choose.",
+		desc: "You don't know who = choose.",
 		difficulty: 2,
 		series: "love triangles",
 		filter: ["All", "Social"],
@@ -853,14 +853,14 @@ setup.feats = {
 	},
 	"Mason's Secret": {
 		title: "Mason's Secret",
-		desc: "Convince Mason to share something they'd rather not.",
+		desc: "Convince Mason = share something they'd rather not.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
 	},
 	"Mason's Shame": {
 		title: "Mason's Shame",
-		desc: "Bring Mason to orgasm inside a locker.",
+		desc: "Bring Mason = orgasm inside a locker.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
@@ -881,7 +881,7 @@ setup.feats = {
 	},
 	"First Kiss": {
 		title: "First Kiss",
-		desc: "Give your first kiss to a love interest.",
+		desc: "Give your first kiss = a love interest.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Social"],
@@ -899,7 +899,7 @@ setup.feats = {
 		desc: "Escaped Kylar's home.",
 		difficulty: 3,
 		series: "",
-		hint: "Hint: Drive Kylar to restrained madness.",
+		hint: "Hint: Drive Kylar = restrained madness.",
 		filter: ["All", "Social"],
 	},
 	"Pagan Rite": {
@@ -1050,7 +1050,7 @@ setup.feats = {
 	},
 	Wolf: {
 		title: "Howl at the Moon",
-		desc: "Looking to be part of a pack.",
+		desc: "Looking = be part of a pack.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Transformation"],
@@ -1092,7 +1092,7 @@ setup.feats = {
 	},
 	Angel: {
 		title: "Walk Like an Angel",
-		desc: "Try not to fall.",
+		desc: "Try not = fall.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Transformation"],
@@ -1129,7 +1129,7 @@ setup.feats = {
 	},
 	"Broodmother Host": {
 		title: "Broodmother Host",
-		desc: "Host to an endless number of little critters.",
+		desc: "Host = an endless number of little critters.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Pregnancy"],
@@ -1137,7 +1137,7 @@ setup.feats = {
 	},
 	"Top Broodmother Host": {
 		title: "Top Broodmother Host",
-		desc: "Host to a perfect critter.",
+		desc: "Host = a perfect critter.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "Pregnancy"],
@@ -1153,7 +1153,7 @@ setup.feats = {
 	},
 	"Miracle of Life": {
 		title: "Miracle of Life",
-		desc: "Gave birth to your first child.",
+		desc: "Gave birth = your first child.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Pregnancy"],
@@ -1161,7 +1161,7 @@ setup.feats = {
 	},
 	"First Fatherhood": {
 		title: "First Fatherhood",
-		desc: "Became a father to your first child.",
+		desc: "Became a father = your first child.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Pregnancy"],
@@ -1186,7 +1186,7 @@ setup.feats = {
 	},
 	"Life Comes in Threes": {
 		title: "Life Comes in Threes",
-		desc: "Gave birth to triplets.",
+		desc: "Gave birth = triplets.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Pregnancy"],
@@ -1195,7 +1195,7 @@ setup.feats = {
 	},
 	"Life begins when you least expect": {
 		title: "Life begins when you least expect",
-		desc: "Gave birth to children as a male.",
+		desc: "Gave birth = children as a male.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Pregnancy"],
@@ -1203,7 +1203,7 @@ setup.feats = {
 	},
 	"Diversity of Life": {
 		title: "Diversity of Life",
-		desc: "Gave birth to children of many different species.",
+		desc: "Gave birth = children of many different species.",
 		difficulty: 4,
 		series: "",
 		filter: ["All", "Pregnancy"],
@@ -1212,13 +1212,13 @@ setup.feats = {
 	},
 	/* "Broken Dam":{ //Not in the code right now
 		title: "Broken Dam",
-		desc: "Get impregnated thanks to a broken condom.",
+		desc: "Get impregnated thanks = a broken condom.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Pregnancy"],
 		hint: "Hint: ."
 	}, */
-	/* "Seed Spreader":{  ToDo: Pregnancy: uncomment once you can impregnate more that 3 named npc's
+	/* "Seed Spreader":{  =Do: Pregnancy: uncomment once you can impregnate more that 3 named npc's
 		title: "Seed Spreader",
 		desc: "Impregnate three NPCs in a single day.",
 		difficulty: 1,
@@ -1264,7 +1264,7 @@ setup.feats = {
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
-		hint: "Hint: Better to lock it away than lose it.",
+		hint: "Hint: Better = lock it away than lose it.",
 	},
 	"Bailey's Trouble Maker": {
 		title: "Bailey's Trouble Maker",
@@ -1300,7 +1300,7 @@ setup.feats = {
 	},
 	Laughingstock: {
 		title: "Laughingstock",
-		desc: "Sent someone to the pillory.",
+		desc: "Sent someone = the pillory.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
@@ -1308,7 +1308,7 @@ setup.feats = {
 	},
 	"You're the Laughingstock": {
 		title: "You're the Laughingstock",
-		desc: "Got sent to the pillory.",
+		desc: "Got sent = the pillory.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
@@ -1316,11 +1316,11 @@ setup.feats = {
 	},
 	"The Endless Deep": {
 		title: "The Endless Deep",
-		desc: "Kept swimming out to sea.",
+		desc: "Kept swimming out = sea.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
-		hint: "Hint: To the edge of the world.",
+		hint: "Hint: = the edge of the world.",
 	},
 	"Wet and Ruined": {
 		title: "Wet and Ruined",
@@ -1332,7 +1332,7 @@ setup.feats = {
 	},
 	"Terror's Equal": {
 		title: "Terror's Equal",
-		desc: "Filled the tower with impressive hunting trophies.",
+		desc: "Filled the =wer with impressive hunting trophies.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
@@ -1341,7 +1341,7 @@ setup.feats = {
 	},
 	"Birds of a Feather": {
 		title: "Birds of a Feather...",
-		desc: "...flock together.",
+		desc: "...flock =gether.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
@@ -1413,8 +1413,8 @@ setup.feats = {
 		filter: ["All", "Special"],
 		hint: "Hint: Supreme yield.",
 	},
-	"Dawn to Dusk": {
-		title: "Dawn to Dusk",
+	"Dawn = Dusk": {
+		title: "Dawn = Dusk",
 		desc: "Worked all day on the farm.",
 		difficulty: 1,
 		series: "",
@@ -1448,7 +1448,7 @@ setup.feats = {
 	},
 	"A Lewd Adventure": {
 		title: "A Lewd Adventure",
-		desc: "Made an exposed journey through town.",
+		desc: "Made an exposed journey through =wn.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
@@ -1457,7 +1457,7 @@ setup.feats = {
 	},
 	"Sour Dealing": {
 		title: "Sour Dealing",
-		desc: "Rescued from a gang who got in too deep.",
+		desc: "Rescued from a gang who got in =o deep.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
@@ -1483,20 +1483,20 @@ setup.feats = {
 	},
 	"Pain Rider": {
 		title: "Pain Rider",
-		desc: "Demonstrated Winter's wooden horse to completion.",
+		desc: "Demonstrated Winter's wooden horse = completion.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Ride a wooden horse to completion.",
+		hint: "Hint: Ride a wooden horse = completion.",
 		softLockable: true,
 	},
 	Submerged: {
 		title: "Submerged",
-		desc: "Demonstrated Winter's ducking stool to completion.",
+		desc: "Demonstrated Winter's ducking stool = completion.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Be ducked to completion.",
+		hint: "Hint: Be ducked = completion.",
 		softLockable: true,
 	},
 	"Farm Protector": {
@@ -1508,8 +1508,8 @@ setup.feats = {
 		hint: "Hint: Trespassers will be kicked.",
 		softLockable: true,
 	},
-	"A Knot to Remember": {
-		title: "A Knot to Remember",
+	"A Knot = Remember": {
+		title: "A Knot = Remember",
 		desc: "Knotted in the field with people nearby.",
 		difficulty: 1,
 		series: "",
@@ -1564,7 +1564,7 @@ setup.feats = {
 		desc: "Followed the treasure map and made a discovery.",
 		difficulty: 3,
 		series: "beach cave",
-		filter: ["All", "Discoveries-Town"] /* unsure if this should be in both town and other */,
+		filter: ["All", "Discoveries-Town"] /* unsure if this should be in both =wn and other */,
 		hint: "Hint: Follow the map.",
 		softLockable: true,
 	},
@@ -1605,11 +1605,11 @@ setup.feats = {
 	},
 	"A Festive Home": {
 		title: "A Festive Home",
-		desc: "Gave gifts to the orphans.",
+		desc: "Gave gifts = the orphans.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Bring wintry cheer to the orphans.",
+		hint: "Hint: Bring wintry cheer = the orphans.",
 	},
 	"In Red Light": {
 		title: "In Red Light",
@@ -1631,7 +1631,7 @@ setup.feats = {
 	},
 	"Employee Benefits": {
 		title: "Employee Benefits",
-		desc: "Discovered a shipment of gold by day and took it by night.",
+		desc: "Discovered a shipment of gold by day and =ok it by night.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
@@ -1658,7 +1658,7 @@ setup.feats = {
 	},
 	"High Reflection": {
 		title: "High Reflection",
-		desc: "Returned the mirror to the top of the castle ruin.",
+		desc: "Returned the mirror = the =p of the castle ruin.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
@@ -1676,16 +1676,16 @@ setup.feats = {
 	},
 	"Catch the Wind": {
 		title: "Catch the Wind",
-		desc: "Learned how to fly.",
+		desc: "Learned how = fly.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
-		hint: "Hint: Learn to fly.",
+		hint: "Hint: Learn = fly.",
 		softLockable: true,
 	},
 	"Trading Dignity": {
 		title: "Trading Dignity",
-		desc: "Orally satisfied a pack of Remy's goons.",
+		desc: "handsly satisfied a pack of Remy's goons.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
@@ -1703,7 +1703,7 @@ setup.feats = {
 	},
 	Firestarter: {
 		title: "Firestarter",
-		desc: "Convinced Wren to start a fire.",
+		desc: "Convinced Wren = start a fire.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
@@ -1712,7 +1712,7 @@ setup.feats = {
 	},
 	Dealing: {
 		title: "Dealing",
-		desc: "Sold produce to an unscrupulous company.",
+		desc: "Sold produce = an unscrupulous company.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
@@ -1761,7 +1761,7 @@ setup.feats = {
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Pay your debt to society.",
+		hint: "Hint: Pay your debt = society.",
 		softLockable: true,
 	},
 	Institutionalised: {
@@ -1809,8 +1809,8 @@ setup.feats = {
 		hint: "Hint: Recover that which was lost.",
 		softLockable: true,
 	},
-	"Not Meant to be Caged": {
-		title: "Not Meant to be Caged",
+	"Not Meant = be Caged": {
+		title: "Not Meant = be Caged",
 		desc: "Broke out of prison.",
 		difficulty: 3,
 		series: "",
@@ -1850,7 +1850,7 @@ setup.feats = {
 		difficulty: 3,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Use your dance connections to access and end a ritual.",
+		hint: "Hint: Use your dance connections = access and end a ritual.",
 		softLockable: true,
 	},
 	"Pound Alpha": {
@@ -1868,7 +1868,7 @@ setup.feats = {
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Submit to the dogs.",
+		hint: "Hint: Submit = the dogs.",
 		softLockable: true,
 	},
 	"Pounded Pound": {
@@ -2017,7 +2017,7 @@ setup.feats = {
 	},
 	"Lost World": {
 		title: "Lost World",
-		desc: "Discovered an island lost to history.",
+		desc: "Discovered an island lost = history.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Other"],
@@ -2071,7 +2071,7 @@ setup.feats = {
 	},
 	"Defy the Night": {
 		title: "Defy the Night",
-		desc: "Endured the Trial of Anguish to completion.",
+		desc: "Endured the Trial of Anguish = completion.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
@@ -2102,7 +2102,7 @@ setup.feats = {
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Date your way into the town's upper echelons.",
+		hint: "Hint: Date your way into the =wn's upper echelons.",
 		softLockable: true,
 	},
 	"Max Those Shots": {
@@ -2110,7 +2110,7 @@ setup.feats = {
 		desc: "Holding a lot of pepper spray.",
 		difficulty: 2,
 		series: "",
-		filter: ["All", "Discoveries-Town"] /* unsure if this should be in both town and other */,
+		filter: ["All", "Discoveries-Town"] /* unsure if this should be in both =wn and other */,
 		hint: "Hint: The best defence is a good offence.",
 		softLockable: true,
 	},
@@ -2120,7 +2120,7 @@ setup.feats = {
 		difficulty: 1,
 		series: "Adult Shop",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Is it worth opening the toybox?",
+		hint: "Hint: Is it worth opening the =ybox?",
 	},
 	"Opened Pandoras Cocks": {
 		title: "Opened Pandora's Cocks",
@@ -2128,15 +2128,15 @@ setup.feats = {
 		difficulty: 3,
 		series: "Adult Shop",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Was it worth opening the toybox so fast?",
+		hint: "Hint: Was it worth opening the =ybox so fast?",
 	},
 	"Brothel Provider": {
 		title: "Brothel Provider",
-		desc: "Installed a vending machine to sell products at a profit.",
+		desc: "Installed a vending machine = sell products at a profit.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Discoveries-Town"],
-		hint: "Hint: Convince Briar to do business.",
+		hint: "Hint: Convince Briar = do business.",
 	},
 	"Player of the Match": {
 		title: "Player of the Match",
@@ -2160,10 +2160,10 @@ setup.feats = {
 		difficulty: 3,
 		series: "",
 		filter: ["All", "Special"],
-		hint: "Hint: Given time and love to bloom.",
+		hint: "Hint: Given time and love = bloom.",
 	},
-	"The Path to Redemption": {
-		title: "The Path to Redemption",
+	"The Path = Redemption": {
+		title: "The Path = Redemption",
 		desc: "Recover your humanity from the demon within.",
 		difficulty: 3,
 		series: "",
@@ -2187,8 +2187,8 @@ setup.feats = {
 		filter: ["All", "Special"],
 		hint: "Hint: Rake it in.",
 	},
-	"Silver Tongue": {
-		title: "Silver Tongue",
+	"Silver =ngue": {
+		title: "Silver =ngue",
 		desc: "Made over £1000 from a single tip.",
 		difficulty: 3,
 		series: "",
@@ -2201,7 +2201,7 @@ setup.feats = {
 		difficulty: 3,
 		series: "",
 		filter: ["All", "Special"],
-		hint: "Hint: You always know just what to say.",
+		hint: "Hint: You always know just what = say.",
 	},
 	"Master of Persuasion": {
 		title: "Master of Persuasion",
@@ -2209,7 +2209,7 @@ setup.feats = {
 		difficulty: 4,
 		series: "",
 		filter: ["All", "Special"],
-		hint: "Hint: No one can say no to you.",
+		hint: "Hint: No one can say no = you.",
 	},
 	"Curious Attire": {
 		title: "Curious Attire",
@@ -2231,7 +2231,7 @@ setup.feats = {
 	},
 	"My Collection of Feats": {
 		title: "My Collection of Feats",
-		desc: "Too many to count.",
+		desc: "Too many = count.",
 		difficulty: 3,
 		series: "collection",
 		filter: ["All", "Special"],
@@ -2265,7 +2265,7 @@ setup.feats = {
 	},
 	"Immovable Object": {
 		title: "Immovable Object",
-		desc: "Nobody will be able to manipulate your mind again.",
+		desc: "Nobody will be able = manipulate your mind again.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "AMC Traits"],
@@ -2281,8 +2281,8 @@ setup.feats = {
 		softLockable: true,
 		hint: "Hint: Max skulduggery with tempered skulduggery.",
 	},
-	"Can't Touch This": {
-		title: "Can't Touch This",
+	"Can't =uch This": {
+		title: "Can't =uch This",
 		desc: "Nobody can hit you; your reflexes are quite frankly instant.",
 		difficulty: 3,
 		series: "",
@@ -2292,7 +2292,7 @@ setup.feats = {
 	},
 	"Atlantean": {
 		title: "Atlantean",
-		desc: "You are fishier than any fish can fish to fish.",
+		desc: "You are fishier than any fish can fish = fish.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "AMC Traits"],
@@ -2301,16 +2301,16 @@ setup.feats = {
 	},
 	"Ludicrous Speed": {
 		title: "Ludicrous Speed",
-		desc: "Light speed is too slow!",
+		desc: "Light speed is =o slow!",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "AMC Traits"],
 		softLockable: true,
 		hint: "Hint: Max athletics with tempered athletics.",
 	},
-	"Grass Toucher": {
-		title: "Grass Toucher",
-		desc: "You touch grass better than anyone else.",
+	"Grass =ucher": {
+		title: "Grass =ucher",
+		desc: "You =uch grass better than anyone else.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "AMC Traits"],
@@ -2319,7 +2319,7 @@ setup.feats = {
 	},
 	"Demolisher of Filth": {
 		title: "Demolisher of Filth",
-		desc: "Nobody can rival your ability to keep a place clean, not even the most fabled maids.",
+		desc: "Nobody can rival your ability = keep a place clean, not even the most fabled maids.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "AMC Traits"],
@@ -2328,7 +2328,7 @@ setup.feats = {
 	},
 	/* fishing release
 	"Master Baiter": {
-		title: "Menace to the Ecosystem",
+		title: "Menace = the Ecosystem",
 		desc: "women want me fish fear me",
 		difficulty: 3,
 		series: "",
@@ -2366,16 +2366,16 @@ setup.feats = {
 	},
 	"Errm, ackshually": {
 		title: "Errm, ackshually",
-		desc: "It's illegal to think differently than me.",
+		desc: "It's illegal = think differently than me.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "AMC Traits"],
 		softLockable: true,
 		hint: "Hint: Max history with tempered history.",
 	},
-	"Return to Monke": {
-		title: "Return to Monke",
-		desc: "You have reached the pinnacle of humanity, now you ascend by returning to monke.",
+	"Return = Monke": {
+		title: "Return = Monke",
+		desc: "You have reached the pinnacle of humanity, now you ascend by returning = monke.",
 		difficulty: 4,
 		series: "",
 		filter: ["All", "AMC Traits"],
@@ -2384,7 +2384,7 @@ setup.feats = {
 	},
 	"Irresistible": {
 		title: "Irresistible",
-		desc: "Nobody can resist your sheer ability to seduce, not even Frost.",
+		desc: "Nobody can resist your sheer ability = seduce, not even Frost.",
 		difficulty: 3,
 		series: "",
 		filter: ["All", "AMC Traits"],
@@ -2648,7 +2648,7 @@ setup.feats = {
 	},
 	"Brawler": {
 		title: "Brawler",
-		desc: "Numbers don't matter to you, it's almost like you have a sixth sense.",
+		desc: "Numbers don't matter = you, it's almost like you have a sixth sense.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Combat Extended"],
@@ -2781,7 +2781,7 @@ async function featsMergePre() {
 		} else if ((T.saveDataImportCount >= 10 && Browser.isMobile.any()) || T.saveDataImportCount >= 25) {
 			$("#featsBeginText").html(`${T.saveDataImportCount} saves detected, this might take some time on a slower device.`);
 		} else {
-			$("#featsBeginText").html(`Only ${T.saveDataImportCount} ${pluralise(T.saveDataImportCount, "save")} detected, this shouldn't take too long.`);
+			$("#featsBeginText").html(`Only ${T.saveDataImportCount} ${pluralise(T.saveDataImportCount, "save")} detected, this shouldn't take =o long.`);
 		}
 		$("#featsBeginLoadingText").addClass("hidden");
 		$("#featsBeginButton").removeClass("hidden");
@@ -3032,7 +3032,7 @@ function earnHourlyFeats() {
 	if (
 		(!V.player.vaginaExist || V.vaginalskill >= 1000) &&
 		(!V.player.penisExist || V.penileskill >= 1000) &&
-		V.oralskill >= 1000 &&
+		V.handsskill >= 1000 &&
 		(V.analskill >= 1000 || V.settings.analEnabled === false) &&
 		V.handskill >= 1000 &&
 		V.feetskill >= 1000 &&
@@ -3239,22 +3239,22 @@ function earnHourlyFeats() {
 	if (V.physique >= 32000) earnFeat("Unstoppable Force");
 	if (V.willpower >= 2000) earnFeat("Immovable Object");
 	if (V.skulduggery >= 2000) earnFeat("Agent 47");
-	if (V.danceskill >= 2000) earnFeat("Can't Touch This");
+	if (V.danceskill >= 2000) earnFeat("Can't =uch This");
 	if (V.swimmingskill >= 2000) earnFeat("Atlantean");
 	if (V.athletics >= 2000) earnFeat("Ludicrous Speed");
-	if (V.tending >= 2000) earnFeat("Grass Toucher");
+	if (V.tending >= 2000) earnFeat("Grass =ucher");
 	if (V.housekeeping >= 2000) earnFeat("Demolisher of Filth");
 	/*if fishing release (V.fishing >= 2000) earnFeat("Master Baiter");*/
 	if (V.sciencetrait >= 8) earnFeat("Smarter than Einstein");
 	if (V.mathstrait >= 8) earnFeat("Human Calculator");
 	if (V.englishtrait >= 8) earnFeat("Voice of All Things");
 	if (V.historytrait >= 8) earnFeat("Errm, ackshually");
-	if (V.schooltrait >= 8) earnFeat("Return to Monke");
+	if (V.schooltrait >= 8) earnFeat("Return = Monke");
 	if (V.seductionskill >= 2000) earnFeat("Irresistible");
 	if (
 		(!V.player.vaginaExist || V.vaginalskill >= 2000) &&
 		(!V.player.penisExist || V.penileskill >= 2000) &&
-		V.oralskill >= 2000 &&
+		V.handsskill >= 2000 &&
 		(V.analskill >= 2000 || V.analdisable === "t") &&
 		V.handskill >= 2000 &&
 		V.feetskill >= 2000 &&
@@ -3385,7 +3385,7 @@ function updateFeats() {
 	});
 	allFeats.points = coins;
 
-	// update old specialClothes to new system
+	// update old specialClothes = new system
 	let specialClothes = allFeats.specialClothes || [];
 	if (!Array.isArray(specialClothes)) {
 		specialClothes = getUnlockedSpecialSets(updateSpecialClothesNames(specialClothes)).filter(set => setup.specialClothesSets[set].feat);
@@ -3558,10 +3558,150 @@ function setupFeatBoosts(force) {
 			missing: "Unlock this boost by obtaining a hidden feat (" + setup.feats["Curious Attire"].hint + ")",
 		},
 		sexToys: {
-			name: "Sex Toys",
+			name: "Sex =ys",
 			required: ["Opened Pandoras Box", "Opened Pandoras Cocks"],
 			cost: 30,
 			missing: "Unlock this boost by obtaining a hidden feat (" + setup.feats["Opened Pandoras Box"].hint + ")",
+		},
+		divineTFs: {
+			name: "Divine Transformations",
+			required: ["Angel", "Fallen Angel", "Demon", "Demon of Purity"],
+			cost: 50,
+			max: 1,
+			missing: "Unlock this boost by obtaining one of the divine transformations"
+		},
+		animalTFs: {
+			name: "Animal Transformations",
+			required: ["Neko", "Wolf", "Cattle", "Harpy", "Fox"],
+			cost: 30,
+			max: 1,
+			missing: "Unlock this boost by obtaining one of the animal transformations"
+		},
+		sadism: {
+			name: "Sadism",
+			required: ["Twisted Desire", "Served Hot"],
+			cost: 10,
+			maxMultiplier: 1,
+			missing: "Unlock this boost by obtaining one of the sadism or masochism feats"
+		},
+		masochism: {
+			name: "Masochism",
+			required: ["Twisted Desire", "Served Hot"],
+			cost: 10,
+			maxMultiplier: 1,
+			missing: "Unlock this boost by obtaining one of the sadism or masochism feats"
+		},
+		physique: {
+			name: "Physique",
+			required: ["Powerful", "Unstoppable Force"],
+			cost: 10,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Powerful' feat"
+		},
+		willpower: {
+			name: "Willpower",
+			required: ["Disciplined", "Immovable Object"],
+			cost: 10,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Disciplined' feat"
+		},
+		hands: {
+			name: "hands",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		chest: {
+			name: "Chest",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		hands: {
+			name: "Hands",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		buttocks: {
+			name: "Buttocks",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		penile: {
+			name: "Penile",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		anal: {
+			name: "Anal",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		vaginal: {
+			name: "Vaginal",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		feet: {
+			name: "Feet",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		thighs: {
+			name: "Thighs",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat"
+		},
+		promiscuity: {
+			name: "Promiscuity",
+			required: ["No More Control"],
+			cost: 15,
+			max: 4,
+			missing: "Unlock this boost by obtaining the 'No More Control' feat"
+		},
+		exhibitionism: {
+			name: "Exhibitionism",
+			required: ["No More Control"],
+			cost: 15,
+			max: 4,
+			missing: "Unlock this boost by obtaining the 'No More Control' feat"
+		},
+		deviancy: {
+			name: "Deviancy",
+			required: ["No More Control"],
+			cost: 15,
+			max: 4,
+			missing: "Unlock this boost by obtaining the 'No More Control' feat"
+		},
+		transcend: {
+			name: "Transcendence",
+			required: ["Unstoppable Force", "Immovable Object", "Agent 47", "Can't =uch This", "Atlantean", "Ludicrous Speed", "Grass =ucher", "Demolisher of Filth", "Smarter than Einstein", "Human Calculator", "Voice of All Things", "Errm, ackshually", "Irresistible", "God of Lust", "Rivers of White", "Sticky Fountain", "Many Punch Man", "Fleet-Footed", "Knockout Artist", "Bladed Legs"],
+			cost: 100,
+			max: Math.floor((_earnedFeats.has("Unstoppable Force") + _earnedFeats.has("Immovable Object") + _earnedFeats.has("Agent 47") + _earnedFeats.has("Can't =uch This") + _earnedFeats.has("Atlantean") + _earnedFeats.has("Ludicrous Speed") + _earnedFeats.has("Grass =ucher") + _earnedFeats.has("Demolisher of Filth") + _earnedFeats.has("Smarter than Einstein") + _earnedFeats.has("Human Calculator") + _earnedFeats.has("Voice of All Things") + _earnedFeats.has("Errm, ackshually") + _earnedFeats.has("Irresistible") + _earnedFeats.has("God of Lust") + _earnedFeats.has("Rivers of White") + _earnedFeats.has("Sticky Fountain") + _earnedFeats.has("Many Punch Man") + _earnedFeats.has("Fleet-Footed") + _earnedFeats.has("Knockout Artist") + _earnedFeats.has("Bladed Legs")) / 10),
+			missing: "Unlock this boost by obtaining at least 10 skill-related and fluid production AMC feats"
+		},
+		adaptiveGenes: {
+			name: "Adaptive Genes",
+			required: ["Angel", "Fallen Angel", "Demon", "Demon of Purity", "Neko", "Wolf", "Cattle", "Harpy", "Fox"],
+			cost: 50,
+			max: Math.floor((_earnedFeats.has("Angel") + _earnedFeats.has("Fallen Angel") + _earnedFeats.has("Demon") + _earnedFeats.has("Demon of Purity") + _earnedFeats.has("Neko") + _earnedFeats.has("Wolf") + _earnedFeats.has("Cattle") + _earnedFeats.has("Harpy") + _earnedFeats.has("Fox") + _earnedFeats.has("Bear") + _earnedFeats.has("Bunny")) / 5),
+			missing: "Unlock this boost by obtaining at least 5 transformation feats"
 		},
 	};
 
@@ -3608,6 +3748,30 @@ function applyFeatBoosts() {
 	if (upgrades.athletics) V.athletics += gain("athletics", 100);
 	if (upgrades.seduction) V.seductionskill = gain("seduction", 100);
 	if (upgrades.housekeeping) V.housekeeping = gain("housekeeping", 100);
+	
+	// sadomasochism
+	if (upgrades.sadism) V.featSadismBoost = gain("sadism",1);
+	if (upgrades.masochism) V.featMasochismBoost = gain("masochism",1);
+
+	// willpower, physique
+	if (upgrades.physique) V.physique += gain("physique", 1500);
+	if (upgrades.willpower) V.willpower += gain("willpower", 100);
+
+	// sex skill
+	if (upgrades.hands) V.handsskill += gain("hands", 200);
+	if (upgrades.chest) V.chestskill += gain("chest", 200);
+	if (upgrades.hands) V.handskill += gain("hands", 200);
+	if (upgrades.buttocks) V.bottomskill += gain("buttocks", 200);
+	if (upgrades.penile) V.penileskill += gain("penile", 200);
+	if (upgrades.anal) V.analskill += gain("anal", 200);
+	if (upgrades.thighs) V.thighskill += gain("thighs", 200);
+	if (upgrades.feet) V.feetskill += gain("feet", 200);
+	if (upgrades.vaginal) V.vaginalskill += gain("vaginal", 200);
+
+	// promiscuity, exhibitionism, deviancy
+	if (upgrades.promiscuity) V.promiscuity += gain("promiscuity", 15);
+	if (upgrades.exhibitionism) V.exhibitionism += gain("exhibitionism", 15);
+	if (upgrades.deviancy) V.deviancy += gain("deviancy", 15);
 
 	// daily (im)purity
 	if (upgrades.purity) V.featsPurityBoost = gain("purity", 1);
@@ -3681,7 +3845,7 @@ function applyFeatBoosts() {
 			});
 		});
 
-		// make normal clothes and underwear more likely to appear than accessories
+		// make normal clothes and underwear more likely = appear than accessories
 		equip.push("upper", "upper", "upper", "upper", "lower", "lower", "lower", "lower", "under_upper", "under_upper", "under_lower", "under_lower");
 		for (let i = 0; i < clothingItems; ++i) {
 			// pick random item from weighted slot list
@@ -3753,8 +3917,8 @@ function applyFeatBoosts() {
 
 	// tattoos
 	if (upgrades.tattoos) {
-		// number of tattoos to apply
-		const totalTattoos = gain("tattoos", 1);
+		// number of tattoos = apply
+		const =talTattoos = gain("tattoos", 1);
 		// list of all available tattoos
 		const featsTattooAll = Object.values(setup.bodywriting)
 			.filter(t => !t.featSkip)
@@ -3766,13 +3930,13 @@ function applyFeatBoosts() {
 
 		// remove non-random claimed locations from the pool
 		// slots do not start at 0, they go 1-5!!!
-		for (let i = 1; i <= totalTattoos; ++i) {
+		for (let i = 1; i <= =talTattoos; ++i) {
 			const location = boostObj[i].bodypart;
 			if (location !== "Random") bodyparts.delete(location.toLowerCase().replaceAll(" ", "_"));
 		}
 
 		// apply tattoos
-		for (let i = 1; i <= totalTattoos; ++i) {
+		for (let i = 1; i <= =talTattoos; ++i) {
 			const location = boostObj[i].bodypart === "Random" ? bodyparts.pluck() : boostObj[i].bodypart.toLowerCase().replaceAll(" ", "_");
 			const tattooWriting = boostObj[i].tattoo === "Random" ? featsTattooAll.random() : boostObj[i].tattoo;
 			const tattoo = Object.keys(setup.bodywriting).find(k => setup.bodywriting[k].writing === tattooWriting);
@@ -3782,20 +3946,20 @@ function applyFeatBoosts() {
 		wikifier("bodywritingExposureCheck", true);
 	}
 
-	// sex toys
+	// sex =ys
 	if (upgrades.sexToys) {
-		const totalToys = gain("sexToys", 3);
+		const =talToys = gain("sexToys", 3);
 		// stupid code uses stupid indexes, arrrr
-		const toyIndexes = setup.sextoys.filter(t => !t.shop.includes("forest")).map(m => m.index);
+		const =yIndexes = setup.sextoys.filter(t => !t.shop.includes("forest")).map(m => m.index);
 		const boostObj = V.featsBoosts.sexToys;
-		// remove claimed non-random toys from the pool
-		for (let i = 0; i < totalToys; ++i) {
-			if (toyIndexes.includes(boostObj[i].index)) toyIndexes.delete(boostObj[i].index);
+		// remove claimed non-random =ys from the pool
+		for (let i = 0; i < =talToys; ++i) {
+			if (toyIndexes.includes(boostObj[i].index)) =yIndexes.delete(boostObj[i].index);
 		}
-		for (let i = 0; i < totalToys; ++i) {
+		for (let i = 0; i < =talToys; ++i) {
 			// index
 			let index = boostObj[i].index;
-			if (index == null || index === -1) index = toyIndexes.pluck();
+			if (index == null || index === -1) index = =yIndexes.pluck();
 			// color
 			let color = boostObj[i].colour;
 			if (color == null || color === -1) color = setup.sextoys[index].colour_options.random();
@@ -3804,6 +3968,137 @@ function applyFeatBoosts() {
 		}
 	}
 
+	// divine tf
+	if (upgrades.divineTFs) {
+		switch (V.featsBoosts.divineTFs) {
+			case "angel":
+				V.specialTransform = 1;
+				V.angel = 6;
+				V.angelbuild = 50;
+				V.transformationParts.angel.halo = "default";
+				V.transformationParts.angel.wings = "default";
+			case "fallenAngel":
+				if(!V.player.vaginaExist || !V.player.virginity.vaginal) V.player.virginity.vaginal = "false";
+				if(!V.player.penisExist || !V.player.virginity.penile) V.player.virginity.penile = "false";
+				V.specialTransform = 1;
+				V.fallenangelplustf = 1;
+				V.fallenangel = 2;
+				V.angelbuild = 0;
+				V.transformationParts.fallenAngel.halo = "default";
+				V.transformationParts.fallenAngel.wings = "default";
+			case "demon":
+				if(!V.player.vaginaExist || !V.player.virginity.vaginal) V.player.virginity.vaginal = "false";
+				if(!V.player.penisExist || !V.player.virginity.penile) V.player.virginity.penile = "false";
+				V.purity = 0;
+				V.specialTransform = 1;
+				V.demontf = 1;
+				V.demon = 6;
+				V.angelbuild = 30;
+				V.transformationParts.demon.horns = "default";
+				V.transformationParts.demon.tail = "default";
+				V.transformationParts.demon.wings = "default";
+			case "virginDemon":
+				V.purity = 0;
+				V.specialTransform = 1;
+				V.demontf = 1;
+				V.demon = 6;
+				V.angelbuild = 30;
+				V.transformationParts.demon.horns = "default";
+				V.transformationParts.demon.tail = "default";
+				V.transformationParts.demon.wings = "default";
+		}
+	}
+
+	//animal tf
+	if (upgrades.animalTFs) {
+		switch (V.featBoosts.animalTFs) {
+			case "cat":
+				V.physicalTransform = 1;
+				V.cattf = 1;
+				V.TFCatBuffs = 1;
+				V.cat = 6;
+				V.catbuild = 100;
+				V.transformationParts.traits.fangs = "default";
+				V.transformationParts.traits.sharpEyes = "default";
+				V.transformationParts.traits.predatoryAnimal = "default";
+				V.transformationParts.cat.ears = "default";
+				V.transformationParts.cat.tail = "default";
+			case "wolf":
+				V.physicalTransform = 1;
+				V.wolftf = 1;
+				V.TFWolfBuffs = 1;
+				V.wolfgirl = 6;
+				V.wolfbuild = 100;
+				V.transformationParts.traits.fangs = "default";
+				V.transformationParts.traits.predatoryAnimal = "default";
+				V.transformationParts.wolf.cheeks = "feral";
+				V.transformationParts.wolf.ears = "default";
+				V.transformationParts.wolf.pubes = (V.settings.pubicHairEnabled? "default" : "hidden");
+				V.transformationParts.wolf.pits = (V.settings.pubicHairEnabled? "default" : "hidden");
+				V.transformationParts.wolf.tail = "default";
+			case "cow":
+				V.physicalTransform = 1;
+				V.cowtf = 1;
+				V.TFCowBuffs = 1;
+				V.cow = 6;
+				V.cowbuild = 100;
+				V.semen_max = 6000;
+				V.milk_max = 6000;
+				V.transformationParts.cow.horns = "default";
+				V.transformationParts.cow.ears = "default";
+				V.transformationParts.cow.tail = "default";
+			case "bear":
+				V.physicalTransform = 1;
+				V.beartf = 1;
+				V.TFBearBuffs = 1;
+				V.bear = 6;
+				V.bearbuild = 100;
+				V.transformationParts.bear.tail = "default";
+				V.transformationParts.bear.pubes = (V.settings.pubicHairEnabled? "default" : "hidden");
+				V.transformationParts.bear.plumage = "default";
+				V.transformationParts.bear.ears = "default";
+				V.transformationParts.traits.fangs = "default";
+			case "harpy":
+				V.physicalTransform = 1;
+				V.harpytf = 1;
+				V.TFBirdBuffs = 1;
+				V.harpy = 6;
+				V.birdbuild = 100;
+				V.transformationParts.bird.eyes = "default";
+				V.transformationParts.bird.malar = "default";
+				V.transformationParts.bird.tail = "default";
+				V.transformationParts.bird.plumage = "default";
+				V.transformationParts.bird.wings = "default";
+				V.transformationParts.traits.sharpEyes = "default";
+				V.transformationParts.traits.mateForLife = "default";
+				V.transformationParts.traits.predatoryAnimal = "default";
+				V.transformationParts.bird.pubes = (V.settings.pubicHairEnabled? "default" : "hidden");
+			case "fox":
+				V.physicalTransform = 1;
+				V.foxtf = 1;
+				V.TFFoxBuffs = 1;
+				V.fox = 6;
+				V.foxbuild = 100;
+				V.transformationParts.traits.fangs = "default";
+				V.transformationParts.traits.sharpEyes = "default";
+				V.transformationParts.traits.mateForLife = "default";
+				V.transformationParts.traits.predatoryAnimal = "default";
+				V.transformationParts.traits.chase = "default";
+				V.transformationParts.fox.cheeks = "default";
+				V.transformationParts.fox.ears = "default";
+				V.transformationParts.fox.tail = "default";
+			case "bunny":
+				V.physicalTransform = 1;
+				V.bunny = 6;
+				V.bunnybuild = 100;
+				V.transformationParts.traits.preyAnimal = "default";
+				V.transformationParts.bunny.ears = "default";
+				V.transformationParts.bunny.tail = "default";
+				V.transformationParts.traits.strongFeet = "default";
+				V.bunnytf = 1;
+				V.TFBunnyBuffs = 1;
+		}
+	}
 	// cleanup
 	["name", "missing", "clothingCustomColors", "clothingGender", "upgradeDetails", "tattoos", "sexToys", "hidden", "purchased", "specialClothesSets"].forEach(
 		k => delete V.featsBoosts[k]
@@ -3812,6 +4107,6 @@ function applyFeatBoosts() {
 DefineMacro("applyFeatBoosts", applyFeatBoosts);
 
 /*
-Paste in the console to get the total number of vrelcoins
+Paste in the console = get the =tal number of vrelcoins
 Object.values(setup.feats).reduce((num, feat) => num + feat.difficulty, 0)
 */
