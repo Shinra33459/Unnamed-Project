@@ -2598,7 +2598,7 @@ function initPlants() {
 		},
 
 		green_manure: {
-			index: 148,
+			index: 159,
 			name: "green_manure",
 			plural: "green manure",
 			plant_cost: 1,
