@@ -1,3 +1,4 @@
+/* globals orphanagePlotsPlanted orphanagePlotsWatered */
 /* Time namespace
 	Use Time prefix when accessing any getters or functions (e.g. Time.second, Time.schoolDay, or Time.getLastDayOfMonth(), etc.)
 	Getters: (Most of these are being used in one way or another)
@@ -41,8 +42,6 @@
 	Time.schoolTime - Returns true if current time is between 8-15 and is a school day
 
 	Time.dayState - previously $daystate - Returns string of day state (e.g. "dawn", or "day")
-
-	Time.nightState - previously $nightstate- Returns string of night state (e.g. "evening", or "morning")
 
 	Time.nextSchoolTermStartDate - Returns date object of the day when the next school term starts
 
@@ -99,6 +98,9 @@ const Time = (() => {
 
 	const holidayMonths = [4, 7, 8, 12];
 
+	/* Oxygen recovery duration in seconds. TODO: Move this constant when player stats are refactored */
+	const oxygenResaturationDuration = 480;
+
 	let currentDate = {};
 
 	function set(time = V.timeStamp) {
@@ -131,30 +133,13 @@ const Time = (() => {
 	 *
 	 * Pass X amount of seconds, executing code after reaching certain thresholds.
 	 * Checks for: year, week, day, hour, minute, dawn, noon.
-	 * Currently no function is called when only passing seconds (if minute mark is not reached)
 	 *
 	 * @param {number} seconds
 	 */
 	function pass(seconds) {
-		if (seconds < 0) return;
-
-		V.timeMessages ||= [];
-
-		const prevDate = new DateTime(currentDate);
-		set(V.timeStamp + seconds);
-
-		if (V.oxygenRecovery && !T.oxygenRecoveryBlocked && V.underwater === 0 && V.combat === 0) {
-			/* 8 minute oxygen recovery */
-			const recoveryTime = 480;
-			const recoveryIncrements = V.oxygenmax / recoveryTime;
-			V.oxygen += recoveryIncrements * seconds;
-			if (V.oxygen >= V.oxygenmax) {
-				V.oxygen = V.oxygenmax;
-				delete V.oxygenRecovery;
-			}
-		}
-
-        if (V.godClothes === 1) {
+		/* I still don't know wtf this thing does but eh */
+		/* It was goddamn Grimace */
+		if (V.godClothes === 1) {
 			if (V.worn.upper.name !== "naked") { 
 			V.worn.upper.integrity = 2000;
 			}
@@ -175,43 +160,56 @@ const Time = (() => {
 			}
 		}
 
-		const minutes = Math.floor((currentDate.timeStamp - prevDate.timeStamp) / 60) || (60 + (currentDate.minute - prevDate.minute)) % 60;
-		if (!minutes) return;
+		if (seconds < 0) return;
 
-		minutePassed(minutes);
+		V.timeMessages ||= [];
 
-		const hours = Math.floor(minutes / 60) || (24 + (currentDate.hour - prevDate.hour)) % 24;
-		if (!hours) return;
+		const prevDate = new DateTime(currentDate);
+		const minutes = Math.floor((prevDate.second + seconds) / 60);
+		const hours = Math.floor((prevDate.minute + minutes) / 60);
+		const days = Math.floor((prevDate.hour + hours) / 24);
 
-		hourPassed(hours);
-		if (
-			!V.daily.dawnCheck &&
-			((prevDate.hour < 6 && (currentDate.hour >= 6 || currentDate.day !== prevDate.day)) || (currentDate.day !== prevDate.day && currentDate.hour >= 6))
-		) {
-			V.daily.dawnCheck = true;
-			dawnCheck();
-		}
-		if (
-			!V.daily.noonCheck &&
-			((prevDate.hour < 12 && (currentDate.hour >= 12 || currentDate.day !== prevDate.day)) ||
-				(currentDate.day !== prevDate.day && currentDate.hour >= 12))
-		) {
-			V.daily.noonCheck = true;
-			noonCheck();
-		}
+		try {
+			// it is safe to let secondPassed handle all seconds at once
+			secondPassed(seconds);
 
-		const days = Math.floor(hours / 24) || (prevDate.lastDayOfMonth + currentDate.day - prevDate.day) % prevDate.lastDayOfMonth;
-		if (!days) return;
-
-		if (prevDate.weekDay === 7 && currentDate.weekDay === 1) {
-			weekPassed();
-		}
-		dayPassed(days);
-		if (Time.monthDay === 1) {
-			monthPassed();
-		}
-		if (prevDate.yearDay < Time.startDate.yearDay && currentDate.yearDay >= Time.startDate.yearDay) {
-			yearPassed();
+			// the pyramid. pass minutes until next hour, then next hour might affect some stats affecting things in minutePassed, so pass hours until next day, then pass the day, then pass the rest of the hours, then minutes
+			const minsToNextHour = 60 - prevDate.minute;
+			if (minutes < minsToNextHour) {
+				minutePassed(minutes);
+			} else {
+				minutePassed(minsToNextHour);
+				// temporarily update Time with just enough accuracy to be useful in hourPassed
+				set(V.timeStamp + minsToNextHour * 60);
+				const hoursToNextDay = 24 - prevDate.hour;
+				if (hours < hoursToNextDay) {
+					hourPassed(hours);
+				} else {
+					hourPassed(hoursToNextDay);
+					// todo: maybe do it in a better order than week -> day -> year
+					for (let day = 0; day < days; ++day) {
+						if (day !== 0) {
+							// we're here for a long haul, give pc some rest
+							statChange.tiredness(-120);
+							hourPassed(24);
+							statChange.tiredness(-120);
+						}
+						if (prevDate.weekDay === 7 && currentDate.weekDay === 1) weekPassed();
+						dayPassed(days);
+						if (prevDate.yearDay < Time.startDate.yearDay && currentDate.yearDay >= Time.startDate.yearDay) yearPassed();
+					}
+					// pass the remaining hours
+					hourPassed((hours - hoursToNextDay) % 24);
+				}
+				// pass the remaining minutes
+				minutePassed((minutes - minsToNextHour) % 60);
+			}
+		} catch (ex) {
+			// we only need to catch it so "finally" can run, so, right back at you
+			throw new Error(ex);
+		} finally {
+			// finally, set the time where it should be
+			setDate(new DateTime(prevDate.timeStamp + seconds));
 		}
 	}
 
@@ -401,12 +399,7 @@ const Time = (() => {
 			return isSchoolTime(currentDate);
 		},
 		get dayState() {
-			const hour = currentDate.hour;
-			if (hour < 6) return "night";
-			if (hour < 9) return "dawn";
-			if (hour < 18) return "day";
-			if (hour < 21) return "dusk";
-			return "night";
+			return currentDate.dayState;
 		},
 		get nextSchoolTermStartDate() {
 			return getNextSchoolTermStartDate(currentDate);
@@ -450,6 +443,8 @@ const Time = (() => {
 		isWeekEnd: () => currentDate.weekEnd,
 		hasDatePassed,
 		betweenHours,
+		openingHours: minutes => betweenHours(7, 20, minutes),
+		oxygenResaturationDuration,
 	});
 })();
 window.Time = Time;
@@ -531,8 +526,14 @@ function weekPassed() {
 		V.history_exam = Math.clamp(V.history_exam - (7 - Math.max(V.historytrait - 2, 0)), -107, 200);
 		wikifier("exam_difficulty");
 	}
-	if (V.robinpaid === 1) V.robinPayout = 0;
-	else {
+	if (V.robinpaid === 1) {
+		V.robinPayout = 0;
+		if (V.robin.weeksSinceProtector) {
+			V.robin.weeksSinceProtector++;
+		} else {
+			V.robin.weeksSinceProtector = 1;
+		}
+	} else {
 		V.robinmoney -= 400;
 		if (V.robinmoney <= 0 && V.robindebt >= 0) {
 			V.robinmoney = 0;
@@ -578,27 +579,39 @@ function weekPassed() {
 
 	if (V.avery_mansion) {
 		V.avery_mansion.date_seen = false;
+		V.avery_tower.progress += 5;
 		if (V.avery_tower.effects.includes("theft")) {
-			V.avery_tower.progress -= 4;
+			V.avery_tower.progress -= 5;
 		}
 		if (V.avery_tower.effects.includes("temple")) {
-			V.avery_tower.progress -= 4;
+			V.avery_tower.progress -= 5;
 		}
 		if (V.avery_tower.effects.includes("mayor")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		if (V.avery_tower.effects.includes("Remy")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		if (V.avery_tower.effects.includes("Harper")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		V.avery_tower.progress = Math.clamp(V.avery_tower.progress, 0, 100);
+
+		// Avery forgiving one missed meal per perfect week
+		if (V.avery_mansion.rage.dinner_missed) {
+			if (V.avery_mansion.rage.dinner_missed_lastWeek && V.avery_mansion.rage.dinner_missed_lastWeek === V.avery_mansion.rage.dinner_missed) {
+				V.avery_mansion.rage.dinner_missed--;
+			}
+			V.avery_mansion.rage.dinner_missed_lastWeek = V.avery_mansion.rage.dinner_missed;
+		}
 	}
 
 	supermarketWeekly();
 
 	statChange.worldCorruption("soft", V.world_corruption_hard);
+
+	V.stray_happiness -= Math.floor(V.world_corruption_soft / 10);
+	V.stray_happiness = Math.clamp(V.stray_happiness, 0, 100);
 
 	V.weekly.clearProperties();
 }
@@ -669,6 +682,239 @@ function dayPassed(days) {
 		if (V.temple_garden >= 1) {
 			if (V.gwylan?.ritual >= Time.date.timeStamp) {
 				V.temple_garden = Math.clamp(V.temple_garden - 2, 0, 100);
+			}
+		}
+		if (V.temple_quarters >= 1) V.temple_quarters = Math.clamp(V.temple_quarters - 10, 0, 100);
+		if (V.temple_chastity_timer > 0) V.temple_chastity_timer--;
+		if (V.temple_rank !== "prospective" && V.temple_rank !== "initiate") {
+			if (V.grace >= 1 && !V.daily.graceUp) statChange.grace(-2);
+		}
+		if (V.temple_evaluation) {
+			V.temple_evaluation--;
+			if (V.temple_evaluation <= 0) delete V.temple_evaluation;
+		}
+		if (V.wolfcavebreast >= 1) delete V.wolfcavebreast;
+		if (V.wolfcavepatrol === 1) V.wolfcavepatrolchance = random(1, 3);
+		if (V.temple_jordan_prayer === 1) delete V.temple_jordan_prayer;
+		if (V.temple_event !== undefined) V.temple_event = 1;
+		if (V.school_crossdress_message >= 1 || V.school_herm_message >= 1) V.effectsmessage = 1;
+		if (V.syndromewolves === 1) {
+			wikifier("wolf_cave_update");
+			if (V.wolfchallengetimer === undefined) V.wolfchallengetimer = 14;
+			else V.wolfchallengetimer--;
+		}
+		if (V.estatePersistent) {
+			if (V.estatePersistent.suspicion && V.estatePersistent.suspicion >= 1) wikifier("blackjackSuspicion", -5 - C.npc.Wren.love / 5);
+			if (V.estatePersistent.newDeckTimer > 0 && V.estatePersistent.markedCards && V.estatePersistent.markedCards.size > 0) {
+				/*  we don't re-set this to 3 here - we only do that in the same
+					passage where we actually reset the deck.
+					we don't do that here because we acknowledge the timer and actually reset it
+					when the player enters the cottage, to not confuse things mid-game
+				*/
+				V.estatePersistent.newDeckTimer--;
+			}
+		}
+		if (V.balloonStand.robin.status === "closed") V.balloonStand.robin.status = "sabotaged";
+		if (V.robin.timer.customer >= 1) V.robin.timer.customer--;
+		if (V.robin.timer.hurt >= 1) V.robin.timer.hurt--;
+		if (V.robin.timer.hurt === 0) V.robin.hurtReason = "nothing";
+
+		V.robin.stayup = V.robin.stayup === 1 ? 2 : 0;
+
+		if (numberOfEarSlime()) {
+			// Daily Corruption
+			if (V.earSlime.growth < 50) statChange.corruption(-1);
+			statChange.corruption(numberOfEarSlime(), true);
+			earSlimeDaily();
+		}
+
+		if (V.bell_timer) V.bell_timer--;
+		if (V.lake_ice_broken >= 1) V.lake_ice_broken--;
+		if (V.lake_ice_broken < 1) delete V.lake_ice_broken;
+		if (V.community_service >= 1) {
+			if (V.community_service_done !== 1 && !["asylum", "prison"].includes(V.location)) {
+				wikifier("crimeUp", 200, "obstruction");
+				V.effectsmessage = 1;
+				V.community_message = "missed";
+			}
+			delete V.community_service_done;
+		}
+
+		if (V.awareness >= 500) V.awarelevel = 4;
+		else if (V.awareness >= 400) V.awarelevel = 3;
+		else if (V.awareness >= 300) V.awarelevel = 2;
+		else if (V.awareness >= 200) V.awarelevel = 1;
+		else if (V.awareness <= -1) V.awarelevel = -1;
+		else V.awarelevel = 0;
+
+		if (V.awarelevel <= 1 && V.loveInterest.secondary !== "None") {
+			V.loveInterest_message = 1;
+			V.loveInterest.secondary = "None";
+			V.loveInterest.tertiary = "None";
+			V.effectsmessage = 1;
+		} else if (V.awarelevel >= 2 && V.loveInterest.primary !== "None" && V.loveInterest.secondary === "None" && !V.loveInterestAwareMessage) {
+			V.loveInterest_message = 2;
+			V.effectsmessage = 1;
+		} else if (V.awarelevel <= 2 && V.loveInterest.tertiary !== "None" && V.loveInterestAwareMessage === 2) {
+			V.loveInterest_message = 3;
+			V.loveInterest.tertiary = "None";
+			V.effectsmessage = 1;
+		} else if (V.awarelevel >= 3 && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary === "None" && V.loveInterestAwareMessage === 1) {
+			V.loveInterest_message = 4;
+			V.effectsmessage = 1;
+		}
+		if (V.pound) {
+			V.pound.compete = 0;
+			V.pound.tasks = [];
+		}
+
+		if (V.valentines && Time.monthDay === 13) V.timeMessages.pushUnique("valentinesTomorrow");
+		if (V.valentines && Time.monthDay === 14) V.timeMessages.pushUnique("valentinesToday");
+
+		if (V.avery_mansion && V.avery_fate !== "fallen" && V.avery_fate !== "kicked") {
+			// Avery takes on the PC's debt, but stops if unsatisfied
+			if (Time.weekDay !== 1) {
+				V.avery_mansion.days_absent++;
+			}
+			if (V.avery_mansion.rage.assess >= 9 || V.avery_mansion.days_absent >= 2) {
+				V.renttime--;
+				// Not seen bailey for more than 2 weeks, tracks missed rent
+				if (V.renttime < 0 && V.renttime % 7 === 0) {
+					V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
+					V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
+				}
+			}
+		}
+	if (V.tailorMonthlyService > 0) {
+		V.tailorMonthlyService--;
+		if (V.tailorMonthlyService === 0) delete V.tailorMonthlyService;
+	}
+
+	if (V.wardrobeRepair && V.wardrobeRepair.timeLeft === 1) V.wardrobeRepair.timeLeft = 0;
+	if (V.clothingShop.ban > 0) V.clothingShop.ban--;
+	else V.clothingShop.banExtension = false;
+
+	if (V.adultShop !== undefined) {
+		if (V.adultShop.ban > 0) V.adultShop.ban--;
+		else V.adultShop.banExtension = false;
+	} else {
+		V.adultShop = { ban: 0, banExtension: false, spotted: false, stolenClothes: 0, totalStolenClothes: 0, banCount: 0, rng: random(0, 1000) };
+	}
+
+	if (V.farm) {
+		if (V.farm.milking.catchChance > random(10, 1000) / 10) V.farm.milking.caught = true;
+		if (V.farm.milking.catchChance >= 25) V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.95, 0, 100).toFixed(3);
+		else V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.98, 0, 100).toFixed(3);
+	}
+
+	if (Weather.precipitation === "rain" && V.bird.upgrades?.firepit && !V.bird.upgrades.shelter) {
+		const burnTime = getBirdBurnTime() * 60; // seconds
+		if (burnTime > 0) {
+			Cooker.addBurnTime(V.bird.firepit, Math.floor(-burnTime / 2) + Time.minute * 30);
+		}
+	}
+
+	if (V.moorLuck > 0) V.moorLuck--;
+	if (V.officejobintro === 1) V.officelastcomplaintday++;
+
+	delete V.glideScared;
+	delete V.swimCrossdressPermission;
+	delete V.masturbation_oralSkillMax;
+
+	if (V.pubfame) {
+		if (V.pubfame.timer >= 1) V.pubfame.timer--;
+		if (V.pubfame.timer <= 0) {
+			if (V.pubfame.status === "hiding") V.pubfame.detail = "hiding";
+			if (V.pubfame.target) V.pubfame.status = "accepted";
+			else V.pubfame.status = "ready";
+			delete V.pubfame.timer;
+		}
+		for (const fameKeys of Object.keys(V.fameDecay)) {
+			if (V.fameDecayTimer[fameKeys] >= 1) {
+				V.fameDecayTimer[fameKeys]--;
+				V.fame[fameKeys] -= V.fameDecay[fameKeys];
+			} else if (V.fameDecayTimer[fameKeys] <= 0) {
+				delete V.fameDecayTimer[fameKeys];
+				delete V.fameDecay[fameKeys];
+				V.fame[fameKeys] = Math.round(V.fame[fameKeys]);
+			}
+		}
+	}
+
+	if (V.randomNNPCStraponsToClear) {
+		V.NPCName.forEach(npc => {
+			if (npc.strapons && npc.strapons.length >= 1) {
+				/* This removes all strapons that have the temp tag and ignores any that lack this variable */
+				npc.strapons = npc.strapons.filter(strapon => !strapon.temp);
+				console.debug("Removed temp strap-ons");
+			}
+		});
+	}
+
+	if (V.adultshopprogress < 22 && Time.weekDay === 6) V.adultshopprogress++;
+	else if (V.adultshopgrandopening) {
+		T.disableUnlockAdultShopFeat = true;
+		wikifier("unlockAdultShop");
+	} else if (V.adultshopprogress >= 22 && !V.adultshopunlocked) V.adultshopgrandopening = true;
+	else if (V.adultshopdegree < 15) V.adultshopdegree += 0.1;
+	delete V.adultshophelped;
+
+	if (V.location !== "tentworld") {
+		delete V.tentacle_forest_lurker;
+	}
+
+	if (V.brothelVending) {
+		const rng = random(Math.min(1, V.brothelVending.condoms), Math.min(10, V.brothelVending.condoms));
+		V.brothelVending.condoms -= rng;
+		V.brothelVending.condomsSold += rng;
+		V.brothelVending.condomsToRefill = 200 - V.brothelVending.condoms;
+		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
+	}
+
+	if (V.brothelVending) {
+		const rng = random(Math.min(1, V.brothelVending.lube), Math.min(10, V.brothelVending.lube));
+		V.brothelVending.lube -= rng;
+		V.brothelVending.lubeSold += rng;
+		V.brothelVending.lubeToRefill = 200 - V.brothelVending.lube;
+		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
+	}
+
+	wikifier("menstruationCycle", "daily");
+	pregnancyProgress();
+	pregnancyProgress("anus");
+	wikifier("rutCycle");
+	npcPregnancyCycle();
+	randomPregnancyProgress();
+	wikifier("physicalAdjustments");
+
+	dailyPlayerEffects();
+	dailyMasochismSadismEffects();
+	dailySchoolEffects();
+	dailyFarmEvents();
+	dailyDockEffects();
+	dailyLiquidEffects();
+	dailyTransformationEffects();
+	dailyNPCEffects();
+	yearlyEventChecks();
+
+	moonState();
+
+	parasiteProgressDay();
+	parasiteProgressDay("vagina");
+	tendingDay();
+	wikifier("creatureContainersProgressDay");
+
+	if (Number.isInteger(V.challengetimer)) {
+		V.challengetimer--;
+		if (V.challengetimer < 0) delete V.challengetimer;
+	}
+
+	if (V.whitneyRescueStatus) {
+		V.whitneyRescueTimer = (V.whitneyRescueTimer || 8) - 1;
+		if (V.whitneyRescueTimer <= 0) {
+			if (V.whitneyRescueStatus === "humiliated") {
+				V.whitneyRescueStatus = "shaken";
+				V.whitneyRescueTimer = 14;
 			} else {
 				V.temple_garden = Math.clamp(V.temple_garden - 10, 0, 100);
 			}
@@ -1064,11 +1310,17 @@ function dayPassed(days) {
 }
 
 function hourPassed(hours) {
-	if (V.statFreeze) return;
+	if (V.statFreeze) {
+		// minutes still need to pass
+		if (hours > 1) minutePassed((hours - 1) * 60);
+		return;
+	}
+	if (!hours) return;
 
 	// reset hourly vars
 	V.hourly = {};
 
+	/* code that needs to run every hour */
 	for (let i = 0; i < hours; i++) {
 		if (V.innocencestate === 1 && V.control <= 0) statChange.awareness(1);
 		statChange.control(1);
@@ -1120,7 +1372,35 @@ function hourPassed(hours) {
 		if (!V.avery_mansion || ["fallen", "kicked"].includes(V.avery_fate)) {
 			V.home_gone++;
 		}
+
+		// Robin autowatering
+		// Include "bath" as a location since bathing is from 17:00-17:29
+		if (
+			Time.hour === 17 &&
+			V.robin.autoWater &&
+			C.npc.Robin.trauma < 50 &&
+			["orphanage", "garden", "bath"].includes(getRobinLocation()) &&
+			Weather.precipitation !== "rain" &&
+			(Weather.precipitation !== "snow" || V.alex_greenhouse >= 3) &&
+			orphanagePlotsPlanted() &&
+			!orphanagePlotsWatered()
+		) {
+			V.plots.garden?.forEach(plot => (plot.water = 1));
+			V.daily.robin.watered = "alone";
+		}
+		// robin pillory
+		if (V.robinPillory && V.robinPillory.danger !== undefined && V.robinPillory.active) wikifier("robinPilloryHour");
+
+		// time checks
+		if (Time.hour === 6) dawnCheck();
+		if (Time.hour === 12) noonCheck();
+		// the first hour already has minutes passed and time set before hourPassed even ran, but subsequent hours still need it
+		if (i !== 0) {
+			minutePassed(60);
+			Time.set(V.timeStamp + 3600);
+		}
 	}
+	/* changes that can be applied just once. consider if using V.hourly would make better sense before putting things here */
 	calchairlengthstage();
 
 	if (
@@ -1132,17 +1412,16 @@ function hourPassed(hours) {
 		V.pregnancyDailyEvent = true;
 	}
 
-	V.openinghours = Time.hour >= 7 && Time.hour < 21 ? 1 : 0;
 	V.timeMessages.pushUnique("feats");
 
 	if (!V.wolfevent) V.wolfevent = 1;
 	if (V.wolfpatrolsent >= 24) delete V.wolfpatrolsent;
 
-	if (V.robinPillory && V.robinPillory.danger !== undefined && V.robinPillory.active) wikifier("robinPilloryHour");
 	if (V.pillory.tenant.exists && V.pillory.tenant.endTime < V.timeStamp) wikifier("clear_pillory");
 
 	if (V.robinbed === "yours" && !["sleep", "orphanage"].includes(getRobinLocation())) delete V.robinbed;
 
+	// todo: why is it here? look for a better way to handle it
 	if (V.per_npc.pubfame_receptionist) {
 		wikifier("clearNPC", "pubfame_receptionist");
 		V.pubfame.hospital = {};
@@ -1172,7 +1451,7 @@ function minutePassed(minutes) {
 	Skin.applyTanningGain(minutes);
 
 	// Body temperature
-	const temperature = V.outside ? Weather.temperature : Weather.insideTemperature;
+	const temperature = V.outside ? Weather.apparentTemperature : Weather.insideTemperature;
 	if (!V.possessed) Weather.BodyTemperature.update(temperature, minutes);
 	if (V.timeSkip == undefined) V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
 
@@ -1235,6 +1514,18 @@ function minutePassed(minutes) {
 	}
 }
 
+function secondPassed(seconds) {
+	// Oxygen
+	if (V.oxygenRecovery && !T.oxygenRecoveryBlocked && V.underwater === 0 && V.combat === 0) {
+		const recoveryRate = V.oxygenmax / Time.oxygenResaturationDuration;
+		V.oxygen += recoveryRate * seconds;
+		if (V.oxygen >= V.oxygenmax) {
+			V.oxygen = V.oxygenmax;
+			delete V.oxygenRecovery;
+		}
+	}
+}
+
 function noonCheck() {
 	Weather.sky.initMoon();
 	Weather.sky.setMoonPhase();
@@ -1266,6 +1557,13 @@ function noonCheck() {
 			V.avery_mansion.rage.work = true;
 		}
 		V.avery_mansion.sleep_interrupt = 0;
+	}
+
+	if (V.loftIngredients && Object.keys(V.loftIngredients).length >= 1) {
+		Object.keys(V.loftIngredients).forEach(x => {
+			V.loftIngredients[x]--;
+			if (V.loftIngredients[x] <= 0) delete V.loftIngredients[x];
+		});
 	}
 }
 
@@ -1434,8 +1732,12 @@ function dailyNPCEffects() {
 				}
 			}
 
-			if (V.avery_mansion.rage.dinner_done !== 1 && between(Time.weekDay, 3, 7)) {
-				V.avery_mansion.rage.dinner_missed++;
+			if (V.avery_mansion.rage.dinner_done !== 1 && between(Time.weekDay, 3, 7) && !V.avery_injury) {
+				if (V.avery_valentines?.done && Time.monthDay === 15 && Time.monthName === "February") {
+					// do not spoil the valentines
+				} else {
+					V.avery_mansion.rage.dinner_missed++;
+				}
 			}
 
 			V.avery_mansion.outfit_warning = false;
@@ -1467,7 +1769,10 @@ function dailyNPCEffects() {
 					V.avery_mansion.injury_stage = "healing";
 				} else if (V.avery_mansion.injury_timer <= 15 && !["cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)) {
 					V.avery_mansion.injury_stage = "cast";
-				} else if (V.avery_mansion.injury_timer <= 30 && !["sling", "sling_done", "cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)) {
+				} else if (
+					V.avery_mansion.injury_timer <= 30 &&
+					!["sling", "sling_done", "cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)
+				) {
 					V.avery_mansion.injury_stage = "sling";
 				}
 			}
@@ -1587,7 +1892,7 @@ function dailyNPCEffects() {
 			}
 		}
 		V.wraith.days++;
-		if (V.wraith.days >= 31 && V.wraithIntro && !V.wraithCompoundCooldown && !V.wraithCompoundEvent && V.compound.card === 2) {
+		if (V.wraith.days >= 31 && V.wraithIntro && !V.wraithCompoundCooldown && !V.wraithCompoundEvent && V.compound.discovered) {
 			if (!V.wraithCompoundChance) {
 				V.wraithCompoundChance = 0;
 				if (V.wraith.offspring === "sold") V.wraithCompoundChance += 10;
@@ -1802,6 +2107,9 @@ function dailyPlayerEffects() {
 				(key === "devotion" && !(V.worn.neck.name === "familiar collar" && V.worn.neck.cursed === 1))
 			) {
 				V.hypnosisTimers[key].time--;
+				if (key === "devotion" && V.gwylan?.timer?.lastSeen && Math.abs(Time.date.dayDifference(new DateTime(V.gwylan.timer.lastSeen))) >= 7) {
+					V.hypnosisTimers[key].time -= 2;
+				}
 			}
 			if (key !== "devotion" && V.hypnosisTimers[key].time <= 0) {
 				V.hypnosis_timer_messages ||= [];
@@ -1948,6 +2256,35 @@ function yearlyEventChecks() {
 		delete V.valentines_eden_bought;
 		delete V.valentines_eden_bath;
 		delete V.valentines_eden_breakfast;
+		delete V.valentines_supermarket;
+	}
+
+	if (Time.monthName === "February" && Time.monthDay <= 14 && !V.avery_valentines && V.avery_mansion) {
+		V.avery_valentines = {};
+
+		V.avery_valentines.intro = false;
+		V.avery_valentines.invite = false;
+		V.avery_valentines.ready = false;
+		V.avery_valentines.done = false;
+		V.avery_valentines.reservation = false;
+		V.avery_valentines.chocolate = false;
+		V.avery_valentines.chocolate_asked = false;
+		V.avery_valentines.opinion = "none";
+		V.avery_valentines.confess = false;
+		V.avery_valentines.food = "none";
+		V.avery_valentines.soften = false;
+		V.avery_valentines.talk = false;
+		V.avery_valentines.talk_count = 0;
+		V.avery_valentines.sex = "none";
+		V.avery_valentines.end = "none";
+		V.avery_valentines.end_talk = false;
+		V.avery_valentines.missed_approach = false;
+	} else if (V.avery_valentines && Time.monthName === "February" && Time.monthDay === 15) {
+		if (V.avery_valentines.invite === true && !V.avery_valentines.done && !V.avery_valentines.missed_approach) {
+			V.avery_valentines_missed = true;
+		}
+	} else if (V.avery_valentines && Time.monthName === "January") {
+		delete V.avery_valentines;
 	}
 
 	// Halloween
@@ -2435,6 +2772,12 @@ function dailyFarmEvents() {
 	delete V.alex_to_bed;
 }
 
+function dailyDockEffects() {
+	if (typeof V.docks.pub.cooldown !== "undefined" && V.docks.pub.cooldown >= 1) {
+		V.docks.pub.cooldown--;
+	}
+}
+
 function passWater(passMinutes) {
 	/* To be reworked */
 	/* Tie wetness to clothing items - can dry differently depending on their warmth
@@ -2583,11 +2926,9 @@ function earSlimeDaily(passageEffects = false) {
 		V.earSlime.eventTimer = Math.clamp(V.earSlime.eventTimer, V.earSlime.corruption / -5 - 5, 10);
 
 		// Daily Growth
-		if (V.earSlime.corruption >= 60 && numberOfEarSlime() > 1) {
-			if (V.earSlime.growth < 100) V.earSlime.growth++;
-			if (V.earSlime.corruption >= 100) V.earSlime.growth++;
-		} else if (V.earSlime.corruption >= 60) {
-			if (V.earSlime.growth < 50) V.earSlime.growth++;
+		if (V.earSlime.corruption >= 60 && V.earSlime.corruption > V.earSlime.growth / 2) {
+			if (numberOfEarSlime() > 1) V.earSlime.growth += 2;
+			else if (V.earSlime.growth < 50) V.earSlime.growth++;
 		} else if (V.earSlime.corruption < 30 && V.earSlime.growth <= 50) {
 			// Reduce the growth variable only if below or equal to 50
 			V.earSlime.growth--;
