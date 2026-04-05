@@ -23,14 +23,66 @@
 		<<set _loopCount to 1>>
 	<</if>>
 
-	<<for _n = 0; _n <= _loopCount; _n++>>
-		<<if $NPCList[_n].pronoun is "m">>
-			<<set $pronoun to "m">>
-		<<elseif $NPCList[_n].pronoun is "f">>
-			<<set $pronoun to "f">>
-		<<else>>
-			<<set $pronoun to "i">>
+<<for _n = 0; _n <= _loopCount; _n++>>
+	<<if $NPCList[_n].pronoun is "m">>
+		<<set $pronoun to "m">>
+	<<elseif $NPCList[_n].pronoun is "f">>
+		<<set $pronoun to "f">>
+	<<else>>
+		<<set $pronoun to "i">>
+	<</if>>
+
+	<<if $hypnosis_deviancy_check is undefined>>
+		<<set $hypnosis_deviancy_check to 1>>
+		<<if $hypnosis_traits.deviancy gte random(1, 5) and $NPCList[_n].stance is "approach">>
+			<<if $hypnosis_traits.devotion gte 5>>
+				A primal urge briefly swells within you,
+				<span class="forest-green">
+					before being snuffed out.
+					<<if $worn.neck.collared gte 1>>
+						It feels as though your $worn.neck.name is tugged,
+					<<else>>
+						Your skin tingles at the phantom sensation of a collar being placed over your neck. The leash is tugged,
+					<</if>>
+					snapping you out of the trance.
+				</span>
+			<<elseif $uncomfortable.hypnosis is false>>
+				<<if $water is 1 or $underwater is 1>>
+					<<hypnosisText 'A primal urge swells within you. <span class="purple">You give a provocative wiggle.</span>'>>
+				<<else>>
+					<<hypnosisText 'A primal urge swells within you. <span class="purple">You drop to your knees and give a provocative wiggle.</span>'>>
+				<</if>>
+				<span class="pink">The <<beasttype>> takes advantage of your display.</span>
+				<<if $rng gte 71 and $position isnot "wall" and $NPCList[_n].location.head is 0>>
+					<<set $NPCList[_n].stance to "topface">><<set $NPCList[_n].mouth to 0>>
+				<<else>>
+					<<set $NPCList[_n].stance to "top">><<set $head to "grappled">><<set $NPCList[_n].mouth to 0>>
+				<</if>>
+			<<elseif $willpower lt random(1, 1000)>>
+				<<if $water is 1 or $underwater is 1>>
+					<<hypnosisText 'A primal urge swells within you. <span class="purple">You give a provocative wiggle.</span>'>>
+				<<else>>
+					<<hypnosisText 'A primal urge swells within you. <span class="purple">You drop to your knees and give a provocative wiggle.</span>'>>
+				<</if>>
+				<span class="pink">The <<beasttype>> takes advantage of your display.</span>
+				<<if $rng gte 71 and $position isnot "wall" and $NPCList[_n].location.head is 0>>
+					<<set $NPCList[_n].stance to "topface">><<set $NPCList[_n].mouth to 0>>
+				<<else>>
+					<<set $NPCList[_n].stance to "top">><<set $head to "grappled">><<set $NPCList[_n].mouth to 0>>
+				<</if>>
+			<<else>>
+				You feel a primal urge swell within you, <span class="teal">but you ignore the resulting impulse.</span><<gwillpower>><<willpower 2>>
+			<</if>>
 		<</if>>
+	<</if>>
+
+	<<if $NPCList[_n].stance is "top">>
+		<<if $NPCList[_n].type is "horse" or $NPCList[_n].type is "centaur">>
+			<<if $position is "wall">>
+				The $NPCList[_n].type rears above your restrained body in a mating posture.
+			<<else>>
+				The $NPCList[_n].type rears above you in a mating posture.
+			<</if>>
 
 		<<if $finish isnot 1>>
 			<<if $setupMidOrgasm is true>>
@@ -56,24 +108,14 @@
 							snapping you out of the trance.
 						</span>
 					<<elseif $uncomfortable.hypnosis is false>>
-						<<if $water is 1 or $underwater is 1>>
-							<<hypnosisText 'A primal urge swells within you. <span class="purple">You give a provocative wiggle.</span>'>>
-						<<else>>
-							<<hypnosisText 'A primal urge swells within you. <span class="purple">You drop to your knees and give a provocative wiggle.</span>'>>
-						<</if>>
-						<span class="pink">The <<beasttype>> takes advantage of your display.</span>
+						<<hypnosisText 'A primal urge swells within you. <span class="purple">You drop to your knees and give a provocative wiggle.</span>'>> <span class="pink">The <<beasttype>> takes advantage of your display.</span>
 						<<if $rng gte 71 and $position isnot "wall" and $NPCList[_n].location.head is 0>>
 							<<set $NPCList[_n].stance to "topface">><<set $NPCList[_n].mouth to 0>>
 						<<else>>
 							<<set $NPCList[_n].stance to "top">><<set $head to "grappled">><<set $NPCList[_n].mouth to 0>>
 						<</if>>
 					<<elseif $willpower lt random(1, 1000)>>
-						<<if $water is 1 or $underwater is 1>>
-							<<hypnosisText 'A primal urge swells within you. <span class="purple">You give a provocative wiggle.</span>'>>
-						<<else>>
-							<<hypnosisText 'A primal urge swells within you. <span class="purple">You drop to your knees and give a provocative wiggle.</span>'>>
-						<</if>>
-						<span class="pink">The <<beasttype>> takes advantage of your display.</span>
+						<<hypnosisText 'A primal urge swells within you. <span class="purple">You drop to your knees and give a provocative wiggle.</span>'>> <span class="pink">The <<beasttype>> takes advantage of your display.</span>
 						<<if $rng gte 71 and $position isnot "wall" and $NPCList[_n].location.head is 0>>
 							<<set $NPCList[_n].stance to "topface">><<set $NPCList[_n].mouth to 0>>
 						<<else>>
@@ -774,12 +816,12 @@
 							<<elseif $enemyarousal gte $enemyarousalmax * 0.6>>
 								<<bHe>> thrusts <<bhis>> $NPCList[_n].penisdesc against your $worn.genitals.name with increasing fervour.
 							<<elseif $enemyarousal gte $enemyarousalmax * 0.4>>
-								<<bHe>> savagely fences your $worn.genitals.name and <<bhis>> $NPCList[_n].penisdesc together.
+								<<bHe>> savagely fences your $worn.genitals.name and <<his>> $NPCList[_n].penisdesc together.
 							<<else>>
-								<<bHe>> kneads your $worn.genitals.name and <<bhis>> $NPCList[_n].penisdesc together.
+								<<bHe>> kneads your $worn.genitals.name and <<his>> $NPCList[_n].penisdesc together.
 							<</if>>
 							<<if $enemyarousal gte $enemyarousalmax * 0.6 and $worn.genitals.name is "chastity parasite">>
-								<span class="purple"><<bHis>> precum coats your $worn.genitals.name,</span> <span class="lewd">the parasite sending a wave of pleasure through your <<penis>>.</span>
+								<span class="purple"><<His>> precum coats your $worn.genitals.name,</span> <span class="lewd">the parasite sending a wave of pleasure through your <<penis>>.</span>
 								<<arousal 400 "genitals">><<if !$earSlime.defyCooldown and $earSlime.vibration lt 120>><<set $earSlime.vibration += 10>><</if>>
 								<<set $worn.genitals.integrity -= 5>>
 							<<elseif $enemyarousal gte $enemyarousalmax * 0.6>>
