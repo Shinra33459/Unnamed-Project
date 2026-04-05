@@ -1255,9 +1255,8 @@
 			// Detect if the event is a touch event by checking if it has the `touches` property
 			// If it is a touch event, use the first touch input
 			var point = e.touches ? e.changedTouches[0] : e;
-			const zoomScale = (V.options?.zoom / 100) || 1;
-			var x = (point.clientX - bounds.left) / zoomScale;
-			var y = (point.clientY - bounds.top) / zoomScale;
+			var x = point.clientX - bounds.left;
+			var y = point.clientY - bounds.top;
 			switch (e.type) {
 				case "mousedown" /* MouseDown */:
 				case "touchstart" /* TouchStart */:

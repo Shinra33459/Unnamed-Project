@@ -244,7 +244,6 @@ module.exports = {
 		tanned: "readonly",
 		updateCustomColour: "readonly",
 		updateExportDay: "readonly",
-		updateFeats: "readonly",
 		updateMannequin: "readonly",
 		updateSavesCount: "readonly",
 		validateValue: "readonly",

@@ -689,7 +689,7 @@ function initSpecialClothes() {
 		},
 		dance_studio: {
 			text: "swan lake dress",
-			requirements: () => V.danceStudio?.jobOffered,
+			requirements: () => V.dance_job_intro === 1,
 			hint: "be offered special dancing jobs",
 			shop: ["forest"],
 			feat: true,

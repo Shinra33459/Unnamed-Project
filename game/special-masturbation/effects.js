@@ -156,7 +156,7 @@ function masturbationEffects() {
 		fragment.append(possessedMasturbation(span, br, sWikifier));
 	}
 
-	// Reset the record of the player's current actions
+	// Reset the record of the player's  current actions
 	V.masturbationActions = {};
 
 	fragment.append(masturbationEffectsVaginaAnus(otherVariables));
@@ -281,8 +281,7 @@ function masturbationEffects() {
 	if (
 		random(0, 100) >= Math.clamp(135 - V.earSlime.corruption / 2, 80, 98) &&
 		V.earSlime.corruption > currentSkillValue("willpower") / 10 &&
-		V.corruptionMasturbation === undefined &&
-		!V.hypnosis_traits.silence
+		V.corruptionMasturbation === undefined
 	) {
 		V.corruptionMasturbation = true;
 		V.corruptionMasturbationCount = random(1, 4);
@@ -330,7 +329,7 @@ function masturbationEffectsArms(
 	if (V[armAction] === 0) return fragment;
 
 	if (V[armAction] === "mrest") {
-		if (random(0, 100) >= 91 && V.earSlime.corruption > currentSkillValue("willpower") / 10 && V.corruptionMasturbation === undefined && !V.hypnosis_traits.silence) {
+		if (random(0, 100) >= 91 && V.earSlime.corruption > currentSkillValue("willpower") / 10 && V.corruptionMasturbation === undefined) {
 			V.corruptionMasturbation = true;
 			V.corruptionMasturbationCount = random(2, 6);
 			fragment.append(span("The slime in your ear decides that it will continue for you.", "red"));
@@ -342,7 +341,7 @@ function masturbationEffectsArms(
 		return fragment;
 	}
 
-	// Dealing with the player's clothes, needs work; what if layer above is not exposed?
+	// Dealing with the player's  clothes, needs work; what if layer above is not exposed?
 	switch (V[armAction]) {
 		case "moverupper":
 			clearAction("mrest");
@@ -594,7 +593,7 @@ function masturbationEffectsArms(
 	wikifier("testicles");
 	balls += T.text_output;
 
-	// Dealing with the player's actions
+	// Dealing with the player's  actions
 	switch (V[armAction]) {
 		case "msemencover":
 			clearAction("mrest");
@@ -849,7 +848,7 @@ function masturbationEffectsArms(
 				fragment.append(span(`You let go of your ${arm} breast.`));
 			}
 
-			// Deal with the player's mouth actions
+			// Deal with the player's  mouth actions
 			if (V[otherArm + "arm"] !== "mbreasthold") {
 				if (V.mouth === "mbreast") {
 					V.mouth = 0;
@@ -2910,7 +2909,7 @@ function masturbationEffectsMouth({
 
 	const altText = {};
 
-	// Dealing with the player's actions
+	// Dealing with the player's  actions
 	switch (V.mouthaction) {
 		case "mbreastentrance":
 			clearAction("mbreastlick");

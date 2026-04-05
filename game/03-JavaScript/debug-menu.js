@@ -194,11 +194,11 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Wear sundress`, stayOnPassageFn],
-			widgets: [`<<upperwear "sundress">>`],
+			widgets: [`<<upperwear 1>>`],
 		},
 		{
 			link: [`Wear swimsuit`, stayOnPassageFn],
-			widgets: [`<<underupperwear "school swimsuit">>`],
+			widgets: [`<<underupperwear 2>>`],
 		},
 		{
 			link: [`Testing Room`, `Testing Room`],

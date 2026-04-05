@@ -1259,12 +1259,12 @@ setup.LocationImages = {
 		folder: "farm_manors",
 		base: {
 			default: {
-				condition: () => Time.season !== "winter",
+				condition: () => !Weather.isSnow,
 				image: "base.png",
 			},
 			winter: {
 				condition: () => Time.season === "winter",
-				image: "base_winter.png",
+				image: "base.png",
 			},
 			snow: {
 				condition: () => Weather.isSnow,

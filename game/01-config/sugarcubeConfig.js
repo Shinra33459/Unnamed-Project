@@ -12,8 +12,8 @@ const StartConfig = {
 	debug: false,
 	enableImages: true,
 	enableLinkNumberify: true,
-	version: "0.5.8.10 DoLP version",
-	versionName: `"Assorted Chocolates" edition`,
+	version: "0.5.7.9 DoLP version",
+	versionName: `"Lockers and Lockets" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
 	sourceLinkEnabled: false,
@@ -21,8 +21,6 @@ const StartConfig = {
 window.StartConfig = StartConfig;
 
 State.prng.init();
-// disable widget performance logs for the release
-Perflog.enabled = false;
 
 window.versionUpdateCheck = true;
 window.onLoadUpdateCheck = false;
@@ -103,7 +101,7 @@ function incSavesCount(storyVars = V, type, date) {
 
 function onSave(save, details) {
 	// * update feats * //
-	updateFeats();
+	Wikifier.wikifyEval("<<updateFeats>>");
 
 	// Save the recently loaded version
 	save.state.loadedVersion = StartConfig.version;
@@ -156,6 +154,8 @@ importStyles("style.css")
 	});
 
 console.log("Game Version:", StartConfig.version);
+
+l10nStrings.errorTitle = StartConfig.version + " Error";
 
 // delete parser that adds unneeded line breaks -ng
 Wikifier.Parser.delete("lineBreak");
@@ -712,25 +712,6 @@ Config.navigation.override = function (dest) {
 				}
 			case "Street Eden Rage":
 				return "Eden Caged Caught";
-
-			case "Farm Shave":
-			case "Farm shave clean":
-			case "Shave clean":
-			case "Farm shave pubis":
-			case "Shave pubis":
-			case "Farm shave balls":
-			case "Shave balls":
-			case "Farm shave strip":
-			case "Shave strip":
-			case "Farm shave trim":
-			case "Shave trim":
-				return "Shave";
-
-			case "Dye pubic hair":
-			case "Farm Dye":
-			case "Dye pubic hair Finish":
-			case "Farm dye pubic hair Finish":
-				return "Dye Hair";
 
 			default:
 				return false;

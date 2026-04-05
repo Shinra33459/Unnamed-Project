@@ -28,7 +28,8 @@ const Weather = (() => {
 
 	function setAccumulatedSnow(minutes) {
 		const precipitationIntensity = Weather.type.precipitationIntensity;
-		const temperature = Weather.temperature;
+		// Don't affect snow if override is set
+		const temperature = Weather.temperature - (T.weatherOverride?.outside ?? 0);
 		const snowfallRate = Weather.tempSettings.snow.snowfallRate;
 		const meltingRate = Weather.tempSettings.snow.meltingRate;
 		const maxSnow = Weather.tempSettings.snow.maxAccumulation;
@@ -49,7 +50,8 @@ const Weather = (() => {
 	}
 
 	function setIceThickness(minutes) {
-		const temperature = Weather.temperature;
+		// Don't affect ice if override is set
+		const temperature = Weather.temperature - (T.weatherOverride?.outside ?? 0);
 		const freezingRate = Weather.tempSettings.ice.freezingRate;
 		const meltingRate = Weather.tempSettings.ice.meltingRate;
 		const maxThickness = Weather.tempSettings.ice.maxThickness;
@@ -143,9 +145,6 @@ const Weather = (() => {
 		},
 		get isSnow() {
 			return !Weather.skyDisabled && V.weatherObj.snow > setup.WeatherTemperature.snow.minAccumulation;
-		},
-		get apparentTemperature() {
-			return T.temperatureOverride?.outsideApparent ?? this.temperature;
 		},
 		get insideTemperature() {
 			return Weather.Temperature.getInsideTemperature();

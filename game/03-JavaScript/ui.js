@@ -481,7 +481,7 @@ function moneyStatsProcess(stats) {
 					case "pubAlcohol":
 						compressTo = "pub";
 						break;
-					case "docksWage":
+					case "dockWage":
 						compressTo = "docks";
 						break;
 					case "stripClubBartender":

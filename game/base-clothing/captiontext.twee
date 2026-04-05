@@ -151,8 +151,18 @@
 
 <<widget "clothingCaptionTextHandheld">>
 	<<silently>>
-	<<if $worn.handheld.name isnot "naked" and !pcAreArmsBound("right") and !_prop>>
-		<<set $_text_output to `<<possessedWord 'You'>> are carrying ${$worn.handheld?.pattern_caption ? ($worn.handheld.pattern.match(/^[aeiou]/i) ? "an " : "a ") + $worn.handheld.pattern : "<<word 'handheld'>>"} ${$worn.handheld.name}.`>>
+	<<if $worn.handheld.name isnot "naked" and $rightarm isnot "bound">>
+		<<set $_text_output to "<<possessedWord 'You'>> are carrying ">>
+		<<if $worn.handheld.integrity lte 24>>
+			<<set _state to "a tattered ">>
+		<<elseif $worn.handheld.integrity lte 60>>
+			<<set _state to "a torn ">>
+		<<elseif $worn.handheld.integrity lte 108>>
+			<<set _state to "a frayed ">>
+		<<else>>
+			<<set _state to "">>
+		<</if>>
+		<<set $_text_output += _state + "<<word 'handheld'>> $worn.handheld.name.">>
 	<</if>>
 	<</silently>>
 	<<if $_text_output>><<print $_text_output>><</if>>
