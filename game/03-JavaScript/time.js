@@ -143,17 +143,6 @@ const Time = (() => {
 		const prevDate = new DateTime(currentDate);
 		set(V.timeStamp + seconds);
 
-		if (V.oxygenRecovery && !T.oxygenRecoveryBlocked && V.underwater === 0 && V.combat === 0) {
-			/* 8 minute oxygen recovery */
-			const recoveryTime = 480;
-			const recoveryIncrements = V.oxygenmax / recoveryTime;
-			V.oxygen += recoveryIncrements * seconds;
-			if (V.oxygen >= V.oxygenmax) {
-				V.oxygen = V.oxygenmax;
-				delete V.oxygenRecovery;
-			}
-		}
-
         if (V.godClothes === 1) {
 			if (V.worn.upper.name !== "naked") { 
 			V.worn.upper.integrity = 2000;
@@ -175,43 +164,47 @@ const Time = (() => {
 			}
 		}
 
-		const minutes = Math.floor((currentDate.timeStamp - prevDate.timeStamp) / 60) || (60 + (currentDate.minute - prevDate.minute)) % 60;
-		if (!minutes) return;
+		try {
+			// it is safe to let secondPassed handle all seconds at once
+			secondPassed(seconds);
 
-		minutePassed(minutes);
-
-		const hours = Math.floor(minutes / 60) || (24 + (currentDate.hour - prevDate.hour)) % 24;
-		if (!hours) return;
-
-		hourPassed(hours);
-		if (
-			!V.daily.dawnCheck &&
-			((prevDate.hour < 6 && (currentDate.hour >= 6 || currentDate.day !== prevDate.day)) || (currentDate.day !== prevDate.day && currentDate.hour >= 6))
-		) {
-			V.daily.dawnCheck = true;
-			dawnCheck();
-		}
-		if (
-			!V.daily.noonCheck &&
-			((prevDate.hour < 12 && (currentDate.hour >= 12 || currentDate.day !== prevDate.day)) ||
-				(currentDate.day !== prevDate.day && currentDate.hour >= 12))
-		) {
-			V.daily.noonCheck = true;
-			noonCheck();
-		}
-
-		const days = Math.floor(hours / 24) || (prevDate.lastDayOfMonth + currentDate.day - prevDate.day) % prevDate.lastDayOfMonth;
-		if (!days) return;
-
-		if (prevDate.weekDay === 7 && currentDate.weekDay === 1) {
-			weekPassed();
-		}
-		dayPassed(days);
-		if (Time.monthDay === 1) {
-			monthPassed();
-		}
-		if (prevDate.yearDay < Time.startDate.yearDay && currentDate.yearDay >= Time.startDate.yearDay) {
-			yearPassed();
+			// the pyramid. pass minutes until next hour, then next hour might affect some stats affecting things in minutePassed, so pass hours until next day, then pass the day, then pass the rest of the hours, then minutes
+			const minsToNextHour = 60 - prevDate.minute;
+			if (minutes < minsToNextHour) {
+				minutePassed(minutes);
+			} else {
+				minutePassed(minsToNextHour);
+				// temporarily update Time with just enough accuracy to be useful in hourPassed
+				set(V.timeStamp + minsToNextHour * 60);
+				const hoursToNextDay = 24 - prevDate.hour;
+				if (hours < hoursToNextDay) {
+					hourPassed(hours);
+				} else {
+					hourPassed(hoursToNextDay);
+					// todo: maybe do it in a better order than week -> day -> year
+					for (let day = 0; day < days; ++day) {
+						if (day !== 0) {
+							// we're here for a long haul, give pc some rest
+							statChange.tiredness(-120);
+							hourPassed(24);
+							statChange.tiredness(-120);
+						}
+						if (prevDate.weekDay === 7 && currentDate.weekDay === 1) weekPassed();
+						dayPassed(days);
+						if (prevDate.yearDay < Time.startDate.yearDay && currentDate.yearDay >= Time.startDate.yearDay) yearPassed();
+					}
+					// pass the remaining hours
+					hourPassed((hours - hoursToNextDay) % 24);
+				}
+				// pass the remaining minutes
+				minutePassed((minutes - minsToNextHour) % 60);
+			}
+		} catch (ex) {
+			// we only need to catch it so "finally" can run, so, right back at you
+			throw new Error(ex);
+		} finally {
+			// finally, set the time where it should be
+			setDate(new DateTime(prevDate.timeStamp + seconds));
 		}
 	}
 
@@ -408,6 +401,7 @@ const Time = (() => {
 			if (hour < 21) return "dusk";
 			return "night";
 		},
+
 		get nextSchoolTermStartDate() {
 			return getNextSchoolTermStartDate(currentDate);
 		},
@@ -760,7 +754,6 @@ function dayPassed(days) {
 		}
 		if (V.pound) {
 			V.pound.compete = 0;
-			wikifier("stray_happiness", -1);
 			V.pound.tasks = [];
 		}
 
@@ -768,6 +761,9 @@ function dayPassed(days) {
 			Math.min(Math.max(V.rentstage - 1, 0), 6)
 		];
 		wikifier("rentmod");
+
+		if (V.valentines && Time.monthDay === 13) V.timeMessages.pushUnique("valentinesTomorrow");
+		if (V.valentines && Time.monthDay === 14) V.timeMessages.pushUnique("valentinesToday");
 		
 		if (V.avery_mansion && V.avery_fate !== "fallen" && V.avery_fate !== "kicked") {
 			// Avery takes on the PC's debt, but stops if unsatisfied
@@ -831,8 +827,11 @@ function dayPassed(days) {
 			delete V.smuggler_known;
 		}
 
-		if (V.tailorMonthlyService > 0) V.tailorMonthlyService--;
-		else if (V.tailorMonthlyService === 0) delete V.tailorMonthlyService;
+		if (V.tailorMonthlyService > 0) {
+			V.tailorMonthlyService--;
+			if (V.tailorMonthlyService === 0) delete V.tailorMonthlyService;
+		}
+
 
 		if (V.wardrobeRepair && V.wardrobeRepair.timeLeft === 1) V.wardrobeRepair.timeLeft = 0;
 		if (V.clothingShop.ban > 0) V.clothingShop.ban--;
@@ -940,6 +939,7 @@ function dayPassed(days) {
 		dailyMasochismSadismEffects();
 		dailySchoolEffects();
 		dailyFarmEvents();
+		dailyDockEffects();
 		dailyLiquidEffects();
 		dailyTransformationEffects();
 		dailyNPCEffects();
@@ -1064,7 +1064,11 @@ function dayPassed(days) {
 }
 
 function hourPassed(hours) {
-	if (V.statFreeze) return;
+	if (V.statFreeze) {
+		// minutes still need to pass
+		if (hours > 1) minutePassed((hours - 1) * 60);
+		return;
+	}
 
 	// reset hourly vars
 	V.hourly = {};
@@ -1215,7 +1219,7 @@ function minutePassed(minutes) {
 	}
 	// prevent fatigue from being an issue when passing days (actually 20+ hours) at a time
 	if (minutes < 1200 && V.timeSkip == undefined) statChange.tiredness(minutes / 15);
-	statChange.pain(minutes, -1);
+	statChange.pain(minutes, -0.5);
 
 	// Arousal
 	const arousalMultiplier = V.backgroundTraits.includes("lustful") ? 0.2 * (12 - Math.floor(V.purity / 80)) + 1 + (V.purity <= 50 ? 1 : 0) : -10;
@@ -1689,7 +1693,7 @@ function dailyPlayerEffects() {
 	V.hairlength += 3;
 	V.fringelength += 3;
 	calchairlengthstage();
-	statChange.skill("beauty", (100 - (V.trauma / V.traumamax) * 100) * V.beautyMult);
+	statChange.skill("beauty", (70 - (V.trauma / V.traumamax) * 100) * V.beautyMult);
 	if (V.stressBeauty == 1) statChange.skill("beauty", (100 - (V.stress / V.stressmax) * 100) * V.beautyMult);
 	lustfulUpdate();
 
@@ -2592,6 +2596,7 @@ function earSlimeDaily(passageEffects = false) {
 			// Reduce the growth variable only if below or equal to 50
 			V.earSlime.growth--;
 		}
+
 	}
 	V.earSlime.growth = Math.clamp(V.earSlime.growth, 0, V.earSlime.focus === "none" ? 50 : 200);
 

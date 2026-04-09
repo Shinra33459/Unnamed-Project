@@ -2010,7 +2010,8 @@ Hands are 'inverted': NPC holds PC's left hand with their right one, and vice ve
 			<<set $NPCList[_n].righthand to "pen">>
 		<</if>>
 		<<neutral 1 _n>>
-	<<elseif $enemyanger + $rng lte 15 and $NPCList[_n].traits.includes("hypnotist") and $settings.hypnosisEnabled and !$noHypnosis and ($combatExtended.stabilityLost is 1 or $combatExtended.standingFights is 0)>>
+	<<elseif $enemyanger + $rng lte 15 and $NPCList[_n].traits.includes("hypnotist") and $settings.hypnosisEnabled and !$noHypnosis and !$NPCList[_n].lefthand.toString().includes("hypnosis") and !$NPCList[_n].righthand.toString().includes("hypnosis") and ($combatExtended.stabilityLost is 1 or $combatExtended.standingFights is 0)>>
+		/* lefthand/righthand input can be 0 or a string, requiring a toString() for string methods. includes() performs a partial match for strings, which catches all hypnosis-category actions and prevents another hypnosis action from starting at the same time */
 		<<if $NPCList[_n].fullDescription is "Gwylan">>
 			<<set _tool to $hallucinations gte 2 and $hypnosis_traits.devotion gte 3 ? "light" : "jasper pendant">>
 		<<else>>

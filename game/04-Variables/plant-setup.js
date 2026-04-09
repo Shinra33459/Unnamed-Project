@@ -2747,13 +2747,29 @@ function initPlants() {
 			icon: "pink_rose.png",
 		},
 
-		green_manure: {
+		valentines_chocolate: {
 			index: 148,
+			name: "valentines_chocolate",
+			singular: "slab of valentines chocolate",
+			plural: "slabs of valentines chocolate",
+			plant_cost: 900,
+			difficulty: 1,
+			bed: "kitchen",
+			type: "food",
+			days: 15,
+			multiplier: 1,
+			special: ["vegetarian", "sweet"],
+			season: [],
+			ingredients: ["butter", "bottle_of_milk", "cocoa_powder", "pear"],
+			icon: "valentines_chocolate.png",
+		},
+
+		green_manure: {
+			index: 149,
 			name: "green_manure",
 			plural: "green manure",
 			plant_cost: 1,
 			difficulty: 1,
-			handheld: "green manure|0",
 			bed: "earth",
 			type: "vegetable",
 			days: 7,
@@ -2765,13 +2781,12 @@ function initPlants() {
 		},
 
 		ghost_orchid: {
-			index: 149,
+			index: 150,
 			name: "ghost_orchid",
 			singular: "ghost orchid (epipogium aphyllum)",
 			plural: "ghost orchids (epipogium aphyllum)",
 			plant_cost: 5000000,
 			difficulty: 1,
-			handheld: "ghost orchid|0",
 			bed: "earth",
 			type: "flower",
 			days: 7,
@@ -2783,13 +2798,12 @@ function initPlants() {
 		},
 
 		hen_of_the_woods: {
-			index: 150,
+			index: 151,
 			name: "hen_of_the_woods",
 			singular: "hen of the woods",
 			plural: "hen of the woods",
 			plant_cost: 12500,
 			difficulty: 1,
-			handheld: "hen of the woods|0",
 			bed: "earth",
 			type: "shroom",
 			days: 7,
@@ -2801,13 +2815,12 @@ function initPlants() {
 		},
 
 		red_helleborine: {
-			index: 151,
+			index: 152,
 			name: "red_helleborine",
 			singular: "red helleborine (Cephalanthera rubra)",
 			plural: "red helleborines (Cephalanthera rubra)",
 			plant_cost: 300000,
 			difficulty: 1,
-			handheld: "red helleborine|0",
 			bed: "earth",
 			type: "flower",
 			days: 7,
@@ -2819,13 +2832,12 @@ function initPlants() {
 		},
 
 		lady_orchid: {
-			index: 152,
+			index: 153,
 			name: "lady_orchid",
 			singular: "lady orchid",
 			plural: "lady orchids",
 			plant_cost: 150000,
 			difficulty: 1,
-			handheld: "lady orchid|0",
 			bed: "earth",
 			type: "flower",
 			days: 7,
@@ -2837,13 +2849,12 @@ function initPlants() {
 		},
 
 		fly_agaric: {
-			index: 153,
+			index: 154,
 			name: "fly_agaric",
 			singular: "fly agaric",
 			plural: "fly agarics",
 			plant_cost: 20000,
 			difficulty: 1,
-			handheld: "fly agaric|0",
 			bed: "earth",
 			type: "shroom",
 			days: 7,
@@ -2855,13 +2866,12 @@ function initPlants() {
 		},
 
 		spiked_rampion: {
-			index: 154,
+			index: 155,
 			name: "spiked_rampion",
 			singular: "spiked rampion",
 			plural: "spiked rampions",
 			plant_cost: 150000,
 			difficulty: 1,
-			handheld: "spiked rampion|0",
 			bed: "earth",
 			type: "flower",
 			days: 7,
@@ -2873,13 +2883,12 @@ function initPlants() {
 		},
 
 		cloudberry: {
-			index: 155,
+			index: 156,
 			name: "cloudberry",
 			singular: "cloudberry",
 			plural: "cloudberries",
 			plant_cost: 2000,
 			difficulty: 1,
-			handheld: "cloudberry|0",
 			bed: "earth",
 			type: "fruit",
 			days: 7,
@@ -2891,13 +2900,12 @@ function initPlants() {
 		},
 
 		scottish_bog_myrtle: {
-			index: 156,
+			index: 157,
 			name: "scottish_bog_myrtle",
 			singular: "scottish bog myrtle",
 			plural: "scottish bog myrtles",
 			plant_cost: 10000,
 			difficulty: 1,
-			handheld: "scottish bog myrtle|0",
 			bed: "earth",
 			type: "shroom",
 			days: 7,
@@ -2909,13 +2917,12 @@ function initPlants() {
 		},
 
 		bog_orchid: {
-			index: 157,
+			index: 158,
 			name: "bog_orchid",
 			singular: "bog orchid (hammarbya paludosa)",
 			plural: "bog orchids (hammarbya paludosa)",
 			plant_cost: 120000,
 			difficulty: 1,
-			handheld: "bog orchid|0",
 			bed: "earth",
 			type: "flower",
 			days: 7,
@@ -2927,13 +2934,12 @@ function initPlants() {
 		},
 
 		marsh_saxifrage: {
-			index: 158,
+			index: 159,
 			name: "marsh_saxifrage",
 			singular: "marsh saxifrage",
 			plural: "marsh saxifrages",
 			plant_cost: 250000,
 			difficulty: 1,
-			handheld: "marsh saxifrage|0",
 			bed: "earth",
 			type: "flower",
 			days: 7,

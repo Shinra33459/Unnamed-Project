@@ -51,11 +51,109 @@
 
 <<widget "dockstatus">>
 	<<if _args[0]>>
-		<<set $dockstatus += (_args[0] * 2)>>
-		<<if _args[0] gt 0>>
-			<<set $dockbonus += (_args[0] * 500)>>
+		<<set $docks.status += (_args[0] * 2)>>
+		<<set $docks.status to Math.clamp($docks.status, 0, 100)>>
+	<</if>>
+<</widget>>
+
+<<widget "dockleave">>
+	/* Leaving after a shift or overtime */
+	<<if Time.hour gte 16>>
+		<<if Time.hour gte 19>>
+			You help put away equipment and make sure the containers are locked for the evening.
+			<br><br>
+		<<elseif $docks.dayType is "slow" and Time.hour gte 16>>
+			There's no more cargo left to move today, so nobody is allowed to work overtime. You help put away equipment and make sure the containers are locked for evening.
+			<br><br>
 		<</if>>
-		<<set $dockstatus = Math.clamp($dockstatus, 0, 100)>>
+		<<dockclotheson>>
+		You join the queue in front of security, where a surly <<generate1>><<person1>><<personsimple>> hands out brown envelopes containing the day's pay.
+		<br><br>
+
+		/* Calculating pay. The constant 8 for eight hours of work can't be used since the player can start late */
+		<<if $docks.dayType is "busy" or $docks.dayType is "lewd" or (Time.month is 12 and Time.monthDay is 25)>>
+			<<set _overtime_multiplier to 2>>
+		<<else>>
+			<<set _overtime_multiplier to 1.5>>
+		<</if>>
+		<<set _shift_wage to ($docks.wage * ($docks.dailyHours.shift.total - $docks.dailyHours.shift.unpaid))>>
+		<<if Time.month is 12 and Time.monthDay is 25>> /* All day overtime rates on Christmas */
+			<<set _shift_wage to (_shift_wage * _overtime_multiplier)>>
+		<</if>>
+		<<set _overtime_wage to ($docks.wage * ($docks.dailyHours.overtime.total - $docks.dailyHours.overtime.unpaid) * _overtime_multiplier)>>
+		<<set _bonus to 0>>
+		<<if $christmas is 1>> /* £25 bonus on Christmas week, £100 bonus on Christmas day */
+			<<if $docks.dailyHours.shift.unpaid is $docks.dailyHours.shift.total>>
+				<<set _bonus to 0>>
+			<<elseif Time.monthDay is 25>>
+				<<set _bonus to 10000>>
+			<<else>>
+				<<set _bonus to 2500>>
+			<</if>>
+		<</if>>
+		<<set _total_wage to (_shift_wage + _overtime_wage + _bonus)>>
+		<<set _shift_wage_display to (_shift_wage / 100)>>
+		<<set _overtime_wage_display to (_overtime_wage / 100)>>
+		<<set _bonus_display to (_bonus / 100)>>
+		<<set _total_wage_display to (_total_wage / 100)>>
+
+		<<if $docks.dailyHours.shift.unpaid is $docks.dailyHours.shift.total>> /* slacked the entire shift with max suspicion */
+			<<if $docks.dailyHours.overtime.unpaid is $docks.dailyHours.overtime.total>> /* slacked all of overtime with max suspicion */
+				You are not given an envelope<<if $christmas is 1>>, not even your Christmas bonus<</if>>. <span class="red">"No work, no pay,"</span> <<he>> says. "<<if $christmas is 1>>We're not a charity. You can't just sit on your arse to collect a bonus.<<else>>If you're not working, why are you here?<</if>>" <<He>> eyes you for a moment, but doesn't stop you from leaving.
+			<<else>>
+				You are given a light envelope containing <span class="gold">£<<print _overtime_wage_display>></span> overtime pay<<if $christmas is 1>>, but your Christmas bonus is withheld<</if>>. <span class="purple">"We expect you to work during your shift,"</span> the <<personsimple>> says. "No, only working during overtime doesn't count. You're not going to last here if you stay that course." <<He>> eyes you for a moment, but doesn't stop you from leaving.
+				<<wearProp "manila envelope">>
+			<</if>>
+		<<elseif $docks.dailyHours.overtime.total gte 1 and $docks.dailyHours.overtime.total gt $docks.dailyHours.overtime.unpaid>> /* worked during shift and overtime */
+			You make <span class="gold">£<<print _shift_wage_display>></span> for your shift, plus <span class="gold">£<<print _overtime_wage_display>></span> overtime pay<<if $christmas is 1>> and your <span class="gold">£<<print _bonus_display>></span> Christmas bonus<</if>>, totalling <span class="gold">£<<print _total_wage_display>></span>.
+			<<wearProp "manila envelope">>
+		<<else>> /* no overtime */
+			You make <span class="gold">£<<print _shift_wage_display>></span><<if $christmas is 1>>, plus your <span class="gold">£<<print _bonus_display>></span> Christmas bonus, totalling <span class="gold">£<<print _total_wage_display>></span><</if>>.
+			<<wearProp "manila envelope">>
+		<</if>>
+		<<money `_total_wage` "docksWage">>
+		<br><br>
+
+		<<if $docks.status gte 60 and $docks.pub.cooldown is 0>>
+			<<set $docks.pub.cooldown to 2>> /* reduced in dailyDockEffects() */
+			<<generate2>><<person2>>
+
+			A group of your colleagues gather at the gate. A <<person>> waves you over. "We're going on a pub crawl," <<he>> says.
+			<<if playerBellyVisible()>>
+				"You'd be welcome to join us, but..."
+				<<He>> looks down at your <<bellyDescription "pc">>. "I'm sure you don't want your kid coming out as messed up as any of us." They share a playful laugh with you.
+				<br><br>
+
+				<<link [[Next|Docks]]>><<endevent>><</link>>
+				<br>
+			<<else>>
+				"You in?"
+				<br><br>
+
+				<<if playerIsPregnant() and playerAwareTheyArePregnant()>>
+					<span class="blue">You can't bring yourself to a night of such debauchery while you know you're with child.</span><br>
+				<<elseif $money gte 500>>
+					<<pubicon>><<link [[Accept (1:00 £5)|Docks Pub Crawl]]>><<endevent>><<set $docks.pub.count to 0>><<money -500>><<alcohol 120>><<dockstatus 1>><<stress -6>><<pass 60>><</link>><<gcool>><<lstress>><<ggalcohol>>
+					<br>
+				<</if>>
+				<<refuseicon>><<link [[Decline|Docks]]>><<endevent>><</link>>
+				<br>
+			<</if>>
+		<<else>>
+			<<link [[Next|Docks]]>><<endevent>><</link>>
+			<br>
+		<</if>>
+	/* Leaving before the end of the shift */
+	<<else>>
+		You inform a manager that you need to leave.
+		<br><br>
+
+		"Security won't let you in again, and you won't be paid for the day. Are you sure?"
+		<br><br>
+
+		<<link [[Reconsider|Docks Options]]>><<set $docks.returnedToWork to true>><</link>>
+		<br>
+		<<link [[Leave anyways|Docks]]>><<set $daily.docksLeftEarly to true>><</link>>
 	<</if>>
 <</widget>>
 
@@ -82,22 +180,11 @@
 		<<dockclotheson>>
 		You join the queue in front of security, where a surly <<generate1>><<person1>><<person>> hands out brown envelopes containing the day's pay.
 		<<endevent>>
-		<<wearProp "envelope" 0 "manila">>
-		<br><br>
-		You make <span class="gold">£<<print (($dockwage * 12) / 100)>></span>.
-		<<money `($dockwage * 12)` "dockWage">>
-		<<if $dockbonus gt 0>>
-			<br>
-			They've also given you a bonus of <span class="gold">£<<print ($dockbonus / 100)>></span>.
-			<<money $dockbonus "dockWage">>
-		<</if>>
-		<<set $dockbonus to 0>>
-		<br><br>
-		<<if $dockstatus gte 80>>
-			<<if playerBellyVisible()>>
-				<<generate1>><<person1>>A group of your colleagues gather at the gate. A <<person>> waves you over. "We're going on a pub crawl," <<he>> says. "You'd be welcome to join us, but..."
-				<<He>> looks down at your <<bellyDescription "pc">>. "I'm sure you don't want your kid coming out as messed up as any of us." They share a playful laugh with you.
-				<br><br>
+		<<dockoptions>>
+	<<else>> /* Regular work events */
+		<<dockworkevents>>
+	<</if>>
+<</widget>>
 
 				<<link [[Next|Docks]]>><<endevent>><</link>>
 				<br>
@@ -105,163 +192,82 @@
 				<<generate1>><<person1>>A group of your colleagues gather at the gate. A <<person>> waves you over. "We're going on a pub crawl," <<he>> says. "You in?"
 				<br><br>
 
-				<<if playerIsPregnant() and playerAwareTheyArePregnant()>>
-					<span class="blue">You can't bring yourself to a night of such debauchery while you know you're with child.</span><br>
-				<<elseif $money gte 500>>
-					<<pubicon>><<link [[Accept (1:00 £5)|Docks Pub Crawl]]>><<endevent>><<set $dockpubcount to 0>><<money -500>><<alcohol 120>><<dockstatus 1>><<stress -6>><<pass 60>><</link>><<gcool>><<lstress>><<ggalcohol>>
+	<<addinlineevent "docks_work_container_inspect">>
+		You're tasked with inspecting the contents of the containers after they're lifted from the deck.
+		<<rng>>
+		<<if $rng gte 81 and $money gte 12000 and !$docks.slave.seen>>
+			<<generatey1>><<generate2>><<person2>>You hear a muffled cry from one of them.
+			<br><br>
+			You enter the keycode, but it doesn't unlock. "Not that one," another docker says. <<He>> points at the initials printed on the door. "We don't inspect these." If <<he>> hears the crying, <<he>> ignores it.
+			<br><br>
+			<<set $lock to 400>>
+			<<if currentSkillValue('skulduggery') gte $lock>>
+				<<if pcAreArmsBound("both")>>
+					You think you'd be able to pick the lock, <span class="blue">if your arms weren't bound.</span>
+					<br><br>
+				<<else>>
+					<<wearProp "lockpick">>
+					<span class="green">The lock looks easy to pick.</span>
+					<br><br>
+					<<link [[Break in anyway (£100 1:00)|Docks Slave Open]]>><<set $docks.slave.seen to true>><<crimeUp 1 "trespassing">><</link>><<crime "trespassing">>
 					<br>
 				<</if>>
-				<<refuseicon>><<link [[Decline|Docks]]>><<endevent>><</link>>
+			<<else>>
+				<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
+				<br><br>
+			<</if>>
+			<<link [[Ignore the voice|Docks Slave Ignore]]>><</link>>
+			<br>
+		<<else>>
+			<<rng>>
+			<<if $rng gte 81>>
+				Many containers contain goods ordered by private citizens. A package in one of them is torn open, and something glints from inside.
+				<br><br>
+				<<link [[Steal|Docks Steal]]>><<crimeUp 60 "thievery">><<set $blackmoney += 60>><</link>><<crime "thievery">>
 				<br>
 			<</if>>
 		<<else>>
 			<<link [[Next|Docks]]>><<endevent>><</link>>
 			<br>
 		<</if>>
-	<<else>>
-		<<if $rng gte 91>>
-			You're tasked with inspecting the contents of the containers after they're lifted from the deck.
-			<<rng>>
-			<<if $rng gte 81 and $money gte 12000 and $dockslave isnot 1>>
-				<<generateyv1>><<generate2>><<person2>>You hear a muffled cry from one of them.
-				<br><br>
-				You enter the keycode, but it doesn't unlock. "Not that one," another docker says. <<He>> points at the initials printed on the door. "We don't inspect these." If <<he>> hears the crying, <<he>> ignores it.
-				<br><br>
-				<<set $lock to 400>>
-				<<if currentSkillValue('skulduggery') gte $lock>>
-					<<if pcAreArmsBound("both")>>
-						You think you'd be able to pick the lock, <span class="blue">if your arms weren't bound.</span>
-						<br><br>
-					<<else>>
-						<<wearProp "lockpick">>
-						<span class="green">The lock looks easy to pick.</span>
-						<br><br>
-						<<link [[Break in anyway (£100 1:00)|Docks Slave Open]]>><<handheldon>><<set $dockslave to 1>><<crimeUp 1 "trespassing">><</link>><<crime "trespassing">>
-						<br>
-					<</if>>
-				<<else>>
-					<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
-					<br><br>
-				<</if>>
-				<<link [[Ignore the voice|Docks Slave Ignore]]>><<handheldon>><</link>>
-				<br>
-			<<else>>
-				<<rng>>
-				<<if $rng gte 81>>
-					Many containers contain goods ordered by private citizens. A package in one of them is torn open, and something glints from inside.
-					<br><br>
-					<<link [[Steal|Docks Steal]]>><<crimeUp 60 "thievery">><<set $blackmoney += 60>><</link>><<crime "thievery">>
-					<br>
-					<<link [[Don't steal|Docks Don't Steal]]>><</link>>
-					<br>
-				<<else>>
-					There's lots of machinery. You don't understand what it's for, but it's all tagged properly.
-					<br><br>
-					<<dockoptions>>
-				<</if>>
-			<</if>>
-		<<elseif $rng gte 81>>
-			A vessel requests help making it to the dock. You, a <<generate1>><<person1>><<person>>, and a <<generate2>><<person2>><<person>> are tasked with helping. You board a small ship and sail to meet it.
-			<br><br>
+		/* <<if displayDefiantOption(500)>> */
+			<<link [[Scare the passengers|Docks Tourist Intimidate]]>><<dockstatus 3>><<wolfDefiant 500>><</link>><<defianttext 500>><<ggcool>>
+			<br>
+		/* <</if>> */
+		<<link [[Return to dock|Docks Tourist Return]]>><</link>>
+		<br>
+	<</addinlineevent>>
 
-			<<if dangerEvent()>>
-				You're halfway there when the <<person>> cuts out the engine. <<He>> and the <<person1>><<person>> stare at you. "A fresh <<girl>>, all alone at sea," <<he>> says. "Hows about you let us have some fun, and we won't need to hurt you." The <<person>> brandishes a length of rope.
-				<br><br>
-				<<link [[Nod|Docks Rape]]>><<set $molestationstart to 1>><</link>>
-				<br>
-				<<link [[Fight|Docks Rape]]>><<set $fightstart to 1>><</link>>
-				<br>
-				<<link [[Capsize the boat|Docks Rape Capsize]]>><<dockstatus -1>><</link>><<lcool>>
-				<br>
-			<<else>>
-				The <<person>> guides the captain while you and the <<person1>><<person>> help the crew with the spring lines. <<if $exposed gte 1>>The sailors ogle you, though they try to hide it. <</if>>You swing the vessel around and make a successful landing.
-				<br><br>
-				<<endevent>>
-				<<dockoptions>>
-			<</if>>
-		<<elseif $rng gte 71>>
-			A tourist vessel cuts across the docks, delaying the launch of other ships. They won't respond to hails. You're sent in a small boat to deliver a message.
-			<br><br>
-			<<generate1>><<person1>>
-			<<if $exposed gte 1>>
-				You climb aboard. The arrival of an undressed <<girl>> aboard the ship sends murmurs through the well-dressed crowd. You find the captain flirting with a passenger. <<He>> drops <<his>> glass when <<he>> sees you.
-			<<else>>
-				You climb aboard and push through the well-dressed crowd in search of the captain. You find <<him>> flirting with a passenger.
-				<br><br>
-			<</if>>
-			<<if $speech_attitude is "meek">>
-				"Please <<sir>>," you say. "Your ship isn't meant to approach this way. You're blocking other ships."
-			<<elseif $speech_attitude is "bratty">>
-				"Sorry to interrupt," you say. "But your dumb arse is about to collide with another ship."
-			<<else>>
-				"I'm delivering a message," you say. "Your course is wrong. You need to pull away and approach from the proper angle. You're delaying other ships."
-			<</if>>
-			<br><br>
-			"They can wait," <<he>> laughs. "Lots of important passengers. They're anxious to be back on land." <<He>> turns away.
-			<br><br>
-			<<if hasSexStat("promiscuity", 4)>>
-				<<link [[Seduce <<him>>|Docks Tourist Seduce]]>><</link>><<promiscuous4>>
-				<br>
-			<</if>>
-			/* <<if displayDefiantOption(500)>> */
-				<<link [[Scare the passengers|Docks Tourist Intimidate]]>><<dockstatus 3>><<wolfDefiant 500>><</link>><<defianttext 500>><<ggcool>>
-				<br>
-			/* <</if>> */
-			<<link [[Return to dock|Docks Tourist Return]]>><</link>>
-			<br>
-		<<elseif $rng gte 61>>
-			You're tasked with unloading a lorry. You notice another vehicle being unloaded nearby, but the workers wear a strange uniform. A <<generate1>><<person1>><<generate2>><<person>> supervises them.
-			<br><br>
-			"Don't pay them no mind," the <<person2>><<person>> working beside you says. "They handle their own shipments."
-			<br><br>
-			<<link [[Sneak closer for a look|Docks Compound]]>><<drugs 240>><<stress -6>><</link>><<garousal>><<lstress>>
-			<br>
-			<<link [[Ignore|Docks Compound Ignore]]>><</link>>
-			<br>
-		<<elseif $rng gte 51>>
-			You're tasked with recording cargo information onto a computer. While working through the notes you notice an inconsistency.
-			<br><br>
-			<<link [[Examine the inconsistency|Docks Examine]]>><<set $phase to 0>><<stress 6>><</link>><<skill_difficulty `currentSkillValue("maths")` "Maths" 1 1000>><<gstress>>
-			<br>
-			<<if currentSkillValue('skulduggery') gte 400>>
-				<<set $skulduggerydifficulty to 500>>
-				<<link [[Note the location of valuable goods|Docks Examine Valuables]]>><<set $phase to 2>><</link>><<skulduggerydifficulty>>
-				<br>
-			<</if>>
-			<<link [[Ignore|Docks Examine]]>><<set $phase to 1>><</link>>
-			<br>
-		<<elseif $rng gte 41>>
-			You're tasked with cleaning the pier.
-			<<rng>>
-			<<if $rng gte 61>>
-				You notice a pink shape in the water, in front of an approaching ship.
-				<br><br>
-				<!-- Convert to proper history skill check? -->
-				<<link [[Examine|Docks History]]>><<set $phase to 0>><<stress 6>><</link>><<note "History" "blue">><<gstress>>
-				<br>
-				<<link [[Ignore|Docks History]]>><<set $phase to 1>><</link>>
-				<br>
-			<<else>>
-				You finish without a problem.
-				<br><br>
-				<<dockoptions>>
-			<</if>>
-		<<elseif $rng gte 31>>
-			You're tasked with moving some crates so they can be loaded onto vehicles. <<generate1>><<person1>>"You'll need a forklift," the supervisor says. "Let me find the keys."
-			<br><br>
-			<<if currentSkillValue('physique') gte 15000>>
-				The crates don't look too heavy. By the time <<he>> returns you've already finished. "You're stronger than you look," <<he>> chuckles.
-				<<gcool>><<dockstatus 1>>
-				<br><br>
-				<<dockoptions>>
-			<<else>>
-				<<He>> keeps an eye on you as you move the crates, but you manage it without a problem.
-				<br><br>
-				<<dockoptions>>
-			<</if>>
-		<<elseif $rng gte 21>>
+	<<addinlineevent "docks_work_compound_lorry">>
+		You're tasked with unloading a lorry. You notice another vehicle being unloaded nearby, but the workers wear a strange uniform. A <<generate1>><<person1>><<generate2>><<person>> supervises them.
+		<br><br>
+		"Don't pay them no mind," the <<person2>><<person>> working beside you says. "They handle their own shipments."
+		<br><br>
+		<<link [[Sneak closer for a look|Docks Compound]]>><<drugs 240>><<stress -6>><</link>><<garousal>><<lstress>>
+		<br>
+		<<link [[Ignore|Docks Compound Ignore]]>><</link>>
+		<br>
+	<</addinlineevent>>
 
-			You're tasked with untying a moored ship from the pier. The ropes are thick and heavy, and you don't have long before another ship needs the space.
+	<<addinlineevent "docks_work_data_inconsistency">>
+		You're tasked with recording cargo information onto a computer. While working through the notes you notice an inconsistency.
+		<br><br>
+		<<link [[Examine the inconsistency|Docks Examine]]>><<set $phase to 0>><<stress 6>><</link>><<skill_difficulty `currentSkillValue("maths")` "Maths" 1 1000>><<gstress>>
+		<br>
+		<<if currentSkillValue('skulduggery') gte 400>>
+			<<set $skulduggerydifficulty to 500>>
+			<<link [[Note the location of valuable goods|Docks Examine Valuables]]>><<set $phase to 2>><</link>><<skulduggerydifficulty>>
+			<br>
+		<</if>>
+		<<link [[Ignore|Docks Examine]]>><<set $phase to 1>><</link>>
+		<br>
+	<</addinlineevent>>
+
+	<<addinlineevent "docks_work_cleaning_pier">>
+		You're tasked with cleaning the pier.
+		<<rng>>
+		<<if $rng gte 61>>
+			You notice a pink shape in the water, in front of an approaching ship.
 			<br><br>
 			<<if currentSkillValue('physique') gte 5000 and $feetuse isnot "bound">>
 				You make it in time.
@@ -560,48 +566,48 @@
 
 <<widget "skul_dock_nav">>
 	<<if $bus is "W">>
-		<<icon "anchor.png">><<link [[Sneak to the anchored ship (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>>
+		<<icon "anchor.png">><<link [[Sneak to the anchored ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>>
 		<br>
 	<</if>>
 	<<if $bus is "N">>
-		<<getouticon>><<link [[Sneak off the ship (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>>
+		<<getouticon>><<link [[Sneak off the ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>>
 		<br>
 	<</if>>
 	<<if $bus is "NW">>
-		<<icon "anchor.png">><<link [[Sneak aboard the anchored ship (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "N">><</link>><<skul_dock_state N>>
+		<<icon "anchor.png">><<link [[Sneak aboard the anchored ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "N">><</link>><<skul_dock_state N>>
 		<br>
 	<</if>>
 	<<if $bus is "E">>
-		<<icon "storageunit.png">><<link [[Sneak to the warehouse (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "NE">><</link>><<skul_dock_state NE>>
+		<<icon "storageunit.png">><<link [[Sneak to the warehouse (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NE">><</link>><<skul_dock_state NE>>
 		<br>
 	<</if>>
 	<<if $bus is "SW" or $bus is "NW">>
-		<<skyscrapericon "construction">><<link [[Sneak to the cranes (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "W">><</link>><<skul_dock_state W>>
+		<<skyscrapericon "construction">><<link [[Sneak to the cranes (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "W">><</link>><<skul_dock_state W>>
 		<br>
 	<</if>>
 	<<if $bus is "E">>
-		<<icon "cargostack.png">><<link [[Sneak to the tallest stacks of cargo containers (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "M">><</link>><<skul_dock_state M>>
+		<<icon "cargostack.png">><<link [[Sneak to the tallest stacks of cargo containers (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "M">><</link>><<skul_dock_state M>>
 		<br>
 	<</if>>
 	<<if $bus is "SE" or $bus is "M" or $bus is "NE">>
-		<<officeicon>><<link [[Sneak to the office (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "E">><</link>><<skul_dock_state E>>
+		<<officeicon>><<link [[Sneak to the office (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "E">><</link>><<skul_dock_state E>>
 		<br>
 	<</if>>
 	<<if $bus is "W" or $bus is "S">>
-		<<icon "lorry.png">><<link [[Sneak to the lorry unloading area (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "SW">><</link>><<skul_dock_state SW>>
+		<<icon "lorry.png">><<link [[Sneak to the lorry unloading area (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "SW">><</link>><<skul_dock_state SW>>
 		<br>
 	<</if>>
 	<<if $bus is "SE" or $bus is "SW">>
-		<<lockicon "gate">><<link [[Sneak to the gate (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "S">><</link>><<skul_dock_state S>>
+		<<lockicon "gate">><<link [[Sneak to the gate (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "S">><</link>><<skul_dock_state S>>
 		<br>
 		<br>
 	<</if>>
 	<<if $bus is "S" or $bus is "E">>
-		<<icon "carpark.png">><<link [[Sneak to the car park (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "SE">><</link>><<skul_dock_state SE>>
+		<<icon "carpark.png">><<link [[Sneak to the car park (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "SE">><</link>><<skul_dock_state SE>>
 		<br>
 	<</if>>
 	<<if $bus is "S">>
-		<<docksicon>><<link [[Leave|Docks]]>><<handheldon true>><<set $bus to "mer">><</link>>
+		<<docksicon>><<link [[Leave|Docks]]>><<set $bus to "mer">><</link>>
 		<br>
 	<</if>>
 <</widget>>

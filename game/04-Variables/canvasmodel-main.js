@@ -943,10 +943,7 @@ Renderer.CanvasModels.main = {
 
 		if (options.worn.handheld.setup.type.includes("rainproof")) {
 			options.handheld_overhead = true;
-			if ((options.angel_halo_type === "default" || options.fallen_halo_type === "default") && V.options.lowerHalo == true) options.angel_halo_lower = true;
-		} else if (["right_cover", "over_head"].includes(options.worn.handheld.setup.holdPosition)) {
-			options.handheld_overhead = true;
-			options.angel_halo_lower = false;
+			options.angel_halo_lower = options.arm_right !== "cover";
 		} else {
 			options.handheld_overhead = null;
 			options.angel_halo_lower = false;
@@ -1230,8 +1227,8 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.arms_cover;
-				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right - 0.2 : options.zarms;
+				if (["cover", "hold"].includes(options.arm_right)) return ZIndices.right_cover_arm;
+				return options.zarms;
 			},
 			showfn(options) {
 				return options.arm_right !== "none";
@@ -2700,8 +2697,8 @@ Renderer.CanvasModels.main = {
 				return 0;
 			},
 			zfn(options) {
-				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.01 : ZIndices.under_upper_arm_right - 0.2;
-				return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.01 : options.zarms + 0.01;
+				if (["cover", "hold"].includes(options.arm_right)) return ZIndices.right_cover_arm + 0.5;
+				return ZIndices.armsidle + 0.5;
 			},
 		},
 		"writing_pubic": {
@@ -3752,8 +3749,8 @@ Renderer.CanvasModels.main = {
 		"under_upper_back": genlayer_clothing_back_img('under_upper'),
 		"under_upper_rightarm": genlayer_clothing_arm("right", "under_upper", {
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.under_upper_arms_cover;
-				return V.rightArmPosition == "above" ? ZIndices.under_upper_arm_right : ZIndices.under_upper_arms;
+				return options.arm_right === "cover" || options.arm_right === "hold" ?
+					options.zupperright - 1 : ZIndices.under_upper_arms;
 			},
 		}),
 		"under_upper_leftarm": genlayer_clothing_arm("left", "under_upper", {
@@ -3955,8 +3952,7 @@ Renderer.CanvasModels.main = {
 					&& options.arm_right !== "none";
 			},
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
-				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
+				return ["cover", "hold"].includes(options.arm_right) ? options.zupperright - 0.5 : options.zarms + 0.2;
 			},
 		},
 		"hands_right_acc": {
@@ -3984,8 +3980,7 @@ Renderer.CanvasModels.main = {
 					&& options.arm_right !== "none";
 			},
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
-				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
+				return ["cover", "hold"].includes(options.arm_right) ? options.zupperright - 0.5 : options.zarms + 0.2;
 			},
 		},
 		"hands_right_detail": {

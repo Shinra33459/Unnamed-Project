@@ -134,14 +134,14 @@ The dance studio is closed. <<openinghours>>
 		<<wearProp "lockpick">>
 		<span class="green">The lock looks easy to pick.</span>
 		<br><br>
-		<<lockicon "pick">><<link [[Pick it (0:10)|Dance Studio]]>><<handheldon>><<pass 10>><<crimeUp 5 "trespassing">><</link>><<crime "trespassing">>
+		<<lockicon "pick">><<link [[Pick it (0:10)|Dance Studio]]>><<pass 10>><<crimeUp 5 "trespassing">><</link>><<crime "trespassing">>
 		<br>
 	<</if>>
 <<else>>
 	<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
 	<br><br>
 <</if>>
-<<getouticon>><<link [[Leave|Barb Street]]>><<handheldon>><</link>>
+<<getouticon>><<link [[Leave|Barb Street]]>><</link>>
 <br>
 
 :: Dance Studio Introduction
@@ -672,8 +672,9 @@ You enter the changing room, and think about how you would like to dress for the
 <<if Array.isArray(_pregnancyDailyEvent)>>
 	<<set _pregnancyDailyEvent to _pregnancyDailyEvent[random(0, _pregnancyDailyEvent.length - 1)]>>
 <</if>>
-<<tiredness 4>><<set $dancestage += 1>><<stress -6>><<wearandtear "dance">><<physique 2>><<pass 20>><<willpower 1>>
-<<if ["tired"].includes(_event) and $dancestage gte 3>>
+<<tiredness 4>><<set $danceStudio.stage += 1>><<stress -6>><<wearandtear "dance">><<physique 2>><<pass 20>>
+<<if !$daily.yogaWillpower>><<set $daily.yogaWillpower to 1>><<willpower 4>><</if>>
+<<if ["tired"].includes(_event) and $danceStudio.stage gte 3>>
 	At the end of the lesson, Charlie tells everyone to recline on their backs. You lie down as instructed, and <<nnpc_he "Charlie">> leads you in guided meditation. "Close your eyes," <<nnpc_he "Charlie">> says, <<nnpc_his "Charlie">> voice barely audible over the soothing music playing in the background. "Allow your body to become soft and heavy. Sink into the floor, and relax..." Whatever else Charlie has to say is lost to you, as you drift off to sleep.
 	<br><br>
 	A gentle hand on your shoulder nudges you back into the realm of consciousness. You groggily look around the room to see students chattering amongst themselves as they roll up their yoga mats and leave the studio.
@@ -681,15 +682,8 @@ You enter the changing room, and think about how you would like to dress for the
 	"It's not unusual for one to fall asleep in shavasana," Charlie says with a smile. "But I'm afraid it's time to leave now." <<nnpc_He "Charlie">> sounds apologetic as <<nnpc_he "Charlie">> offers you a hand to help you to your feet. "You and your little one should go get some rest." <<nnpc_He "Charlie">> holds the door open for you as you leave.
 	<<ltiredness>><<glove>><<tiredness -12>><<npcincr Charlie love 1>>
 	<br><br>
-	<<if Time.hour is $closinghour>>
-		<<link [[Next|Dance Studio Changing Room]]>><<money -2200 "danceStudioLessons">><<if $exposed gte 2>><<clotheson>><</if>><<endevent>><</link>>
-	<<else>>
-		<<if $money gte 2200>>
-			<<ind>><<link [[Take a yoga lesson (£22 1:00)|Yoga Classes Enter]]>><</link>><<gtiredness>><<gwillpower>><<llstress>><br>
-		<</if>>
-		<<link [[Next|Dance Studio Changing Roomm]]>><<money -2200 "danceStudioLessons">><<if $exposed gte 2>><<clotheson>><</if>><<endevent>><</link>>
-	<</if>>
-<<elseif $dancestage gte 3>>
+	<<link [[Next|Dance Studio Changing Room]]>><<money -2200 "danceStudioLessons">><<if $exposed gte 2>><<clotheson>><</if>><<endevent>><</link>>
+<<elseif $danceStudio.stage gte 3>>
 	The rest of the lesson passes uneventfully.
 	<br><br>
 	<<if Time.hour is $closinghour>>

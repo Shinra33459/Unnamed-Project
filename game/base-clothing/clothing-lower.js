@@ -4811,7 +4811,7 @@ function initLower() {
 			vagina_exposed_base: 0,
 			anus_exposed: 0,
 			anus_exposed_base: 0,
-			type: ["formal", "antitransparent"],
+			type: ["formal", "school", "antitransparent"],
 			set: "lower",
 			gender: "n",
 			femininity: 0,
