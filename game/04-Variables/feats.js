@@ -3862,7 +3862,7 @@ function applyFeatBoosts() {
 		}
 	}
 
-	// AMC-adjacent and sex specialist legacy DoLX boosts
+	// AMC-adjacent and sex specialist
 	if (upgrades.sadism) V.featsSadismBoost = gain("sadism", 1);
 	if (upgrades.masochism) V.featsMasochismBoost = gain("masochism", 1);
 	if (upgrades.physique) V.physique += gain("physique", 1500);
