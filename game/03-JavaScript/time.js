@@ -642,6 +642,7 @@ function dayPassed(days) {
 		if (V.whitneyromance || C.npc.Whitney.dom >= 20) {
 			V.bullytimer += 20;
 			V.bullytimeroutside += 10;
+			V.whitney_home_timer += 1;
 		} else {
 			V.bullytimer += 10;
 			V.bullytimeroutside += 5;
@@ -1356,6 +1357,7 @@ function dawnCheck() {
 	delete V.robin_kicked_out;
 	delete V.gwylanWake;
 	delete V.gwylanCafeWake;
+	delete V.whitney_night_knock;
 
 	if (V.schoolBlocked) delete V.schoolBlocked;
 

@@ -37,7 +37,7 @@ function updateClothingColours(item, itemRef) {
 			break;
 		case "aviators":
 			if (!item.colour || item.colour === 0) item.colour = "grey";
-			if (!item.accessory_colour || item.accessory_colour === 0) item.accessory_colour = "original";
+			if (!item.accessory_colour || item.accessory_colour === 0 || item.accessory_colour === "original") item.accessory_colour = "black";
 			break;
 		case "glasses":
 			if (!item.colour || item.colour === 0) item.colour = "silver";
@@ -687,7 +687,7 @@ function wardrobesUpdate() {
 		V.wardrobes.avery_mansion.shopSend = true;
 		V.wardrobes.avery_mansion.space = 80;
 		if (V.avery_mansion) V.wardrobes.avery_mansion.unlocked = true;
-		V.wardrobes.avery_mansion.locationRequirement.push("avery_mansion");
+		V.wardrobes.avery_mansion.locationRequirement.push("avery_mansion", "alley");
 		/* add .lastTaken prop to everything */
 		if (V.worn !== undefined) Object.keys(V.worn).forEach(s => (V.worn[s].lastTaken = "wardrobe"));
 		if (V.carried !== undefined) Object.keys(V.carried).forEach(s => (V.carried[s].lastTaken = "wardrobe"));
@@ -795,6 +795,11 @@ function wardrobesUpdate() {
 			if (wardrobe && Array.isArray(wardrobe.upper) && !wardrobe.rings) wardrobe.rings = [];
 			if (wardrobe && Array.isArray(wardrobe.upper) && !wardrobe.earrings) wardrobe.earrings = [];
 		});
+	}
+	if (V.objectVersion.wardrobes < 17) {
+		V.wardrobes.avery_mansion.locationRequirement.pushUnique("alley");
+		/* remove broken temporary clothes creeped into main wardrobe */
+		V.wardrobe.lower = V.wardrobe.lower.filter(s => !s.temp);
 	}
 }
 DefineMacro("wardrobesUpdate", wardrobesUpdate);
