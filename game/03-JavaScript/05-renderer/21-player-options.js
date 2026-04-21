@@ -1920,7 +1920,7 @@ class PlayerCombatMapper {
 		}
 
 		/** @type {TransformationKeys[]} */
-		const transformations = ["angel", "bird", "cat", "cow", "demon", "fallenAngel", "fox", "wolf", "bear", "waterdragon", "bunny"];
+		const transformations = ["angel", "bird", "cat", "cow", "demon", "fallenAngel", "fox", "wolf", "bear", "bunny"];
 		options.transformations = options.transformations || {};
 		transformations.forEach(transformation => {
 			options.transformations[transformation] = {
