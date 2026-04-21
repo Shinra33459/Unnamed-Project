@@ -2781,7 +2781,7 @@ async function featsMergePre() {
 		} else if ((T.saveDataImportCount >= 10 && Browser.isMobile.any()) || T.saveDataImportCount >= 25) {
 			$("#featsBeginText").html(`${T.saveDataImportCount} saves detected, this might take some time on a slower device.`);
 		} else {
-			$("#featsBeginText").html(`Only ${T.saveDataImportCount} ${pluralise(T.saveDataImportCount, "save")} detected, this shouldn't take too long.`);
+			$("#featsBeginText").html(`Only ${T.saveDataImportCount} saves detected, this shouldn't take too long.`);
 		}
 		$("#featsBeginLoadingText").addClass("hidden");
 		$("#featsBeginButton").removeClass("hidden");
@@ -3055,15 +3055,15 @@ function earnHourlyFeats() {
 	if (loveCount >= 3) earnFeat("Love Triangles");
 	if (loveCount >= 4) earnFeat("Love Trapezoids");
 
-	if (V.cat >= 6) earnFeat("Neko");
-	if (V.wolfgirl >= 6) earnFeat("Wolf");
-	if (V.angel >= 6) earnFeat("Angel");
-	if (V.fallenangel >= 2) earnFeat("Fallen Angel");
-	if (V.demon >= 6) earnFeat("Demon");
-	if (V.cow >= 6) earnFeat("Cattle");
-	if (V.bear >= 6) earnFeat("Bear");
-	if ((V.harpy >= 6 || V.transformationParts.bird.wings == "default")) earnFeat("Harpy");
-	if (V.fox >= 6) earnFeat("Fox");
+	if (V.cat >= 6 || (V.transformationParts.cat.tail !== "hidden" && V.transformationParts.cat.tail !== "disabled")) earnFeat("Neko");
+	if (V.wolfgirl >= 6 || (V.transformationParts.wolf.tail !== "hidden" && V.transformationParts.wolf.tail !== "disabled")) earnFeat("Wolf");
+	if (V.angel >= 6 || (V.transformationParts.angel.wings !== "hidden" && V.transformationParts.angel.wings !== "disabled")) earnFeat("Angel");
+	if (V.fallenangel >= 2 || (V.transformationParts.fallenAngel.wings !== "hidden" && V.transformationParts.fallenAngel.wings !== "disabled")) earnFeat("Fallen Angel");
+	if (V.demon >= 6 || (V.transformationParts.demon.wings !== "hidden" && V.transformationParts.demon.wings !== "disabled")) earnFeat("Demon");
+	if (V.cow >= 6 || (V.transformationParts.cow.tail !== "hidden" && V.transformationParts.cow.tail !== "disabled")) earnFeat("Cattle");
+	if (V.bear >= 6|| (V.transformationParts.bear.tail !== "hidden" && V.transformationParts.bear.tail !== "disabled")) earnFeat("Bear");
+	if (V.harpy >= 6 || (V.transformationParts.bird.wings !== "hidden" && V.transformationParts.bird.wings !== "disabled")) earnFeat("Harpy");
+	if (V.fox >= 6|| (V.transformationParts.fox.tail !== "hidden" && V.transformationParts.fox.tail !== "disabled")) earnFeat("Fox");
 
 	const specialTraits =
 		(V.orgasmtrait >= 1 ? 1 : 0) +
@@ -3447,73 +3447,74 @@ function setupFeatBoosts(force) {
 	const boostData = {
 		money: {
 			name: "Starting Money",
-			required: ["Pocket Change", "Money Maker", "Tycoon", "Millionaire"],
+			required: ["Pocket Change", "Money Maker", "Tycoon", "Millionaire", "Decamillionaire", "Hectomillionaire", "Billionaire"],
 			cost: 5,
 			maxMultiplier: 2,
 			missing: "Unlock this boost by obtaining the 'Pocket Change' feat",
 		},
 		grades: {
 			name: "School Grades",
-			required: ["Perfect Record"],
+			required: ["Perfect Record", "Return to Monke"],
 			cost: 15,
 			max: 2,
 			missing: "Unlock this boost by obtaining the 'Perfect Record' feat",
 		},
 		skulduggery: {
 			name: "Skulduggery Grade",
-			required: ["Thief"],
+			required: ["Thief", "Agent 47"],
 			cost: 5,
-			max: 4,
-			missing: "Unlock this boost by obtaining the 'Thief' feat",
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Thief' feat"
+
 		},
 		dancing: {
 			name: "Dancing Grade",
-			required: ["May I have this Dance?"],
+			required: ["May I have this Dance?", "Can't Touch This"],
 			cost: 5,
-			max: 4,
-			missing: "Unlock this boost by obtaining the 'May I have this Dance?' feat",
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'May I have this Dance?' feat"
 		},
 		swimming: {
 			name: "Swimming Grade",
-			required: ["Aquanaut"],
+			required: ["Aquanaut", "Atlantean"],
 			cost: 5,
-			max: 4,
-			missing: "Unlock this boost by obtaining the 'Aquanaut' feat",
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Aquanaut' feat"
 		},
 		athletics: {
 			name: "Athletics Grade",
-			required: ["Swift"],
+			required: ["Swift", "Ludicrous Speed"],
 			cost: 5,
-			max: 4,
-			missing: "Unlock this boost by obtaining the 'Swift' feat",
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Swift' feat"
 		},
 		tending: {
 			name: "Tending Grade",
-			required: ["Green Fingered"],
+			required: ["Green Fingered", "Grass Toucher"],
 			cost: 5,
-			max: 4,
-			missing: "Unlock this boost by obtaining the 'Green Fingered' feat",
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Green Fingered' feat"
 		},
 		greenThumb: {
 			name: "Green Thumb Trait",
-			required: ["Green Fingered"],
+			required: ["Green Fingered", "Grass Toucher"],
 			cost: 40,
 			max: 1,
-			missing: "Unlock this boost by obtaining the 'Green Fingered' feat",
+			missing: "Unlock this boost by obtaining the 'Green Fingered' feat"
 		},
 		housekeeping: {
 			name: "Housekeeping Grade",
-			required: ["Majordomo"],
+			required: ["Majordomo", "Demolisher of Filth"],
 			cost: 5,
-			max: 4,
-			missing: "Unlock this boost by obtaining the 'Majordomo' feat",
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Majordomo' feat"
 		},
 		seduction: {
 			name: "Seduction Grade",
-			required: ["Seductress"],
+			required: ["Seductress", "Irresistible"],
 			cost: 5,
-			max: 4,
-			missing: "Unlock this boost by obtaining the 'Seductress' feat",
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Seductress' feat"
 		},
 		purity: {
 			name: "Daily Purity Boost",
@@ -3876,7 +3877,7 @@ function applyFeatBoosts() {
 		}
 	}
 
-	// AMC-adjacent and sex specialist legacy DoLX boosts
+	// AMC-adjacent and sex specialist
 	if (upgrades.sadism) V.featsSadismBoost = gain("sadism", 1);
 	if (upgrades.masochism) V.featsMasochismBoost = gain("masochism", 1);
 	if (upgrades.physique) V.physique += gain("physique", 1500);
