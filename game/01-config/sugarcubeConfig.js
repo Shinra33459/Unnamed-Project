@@ -13,7 +13,7 @@ const StartConfig = {
 	enableImages: true,
 	enableLinkNumberify: true,
 	version: "0.5.8.10 DoLP version",
-	versionName: `"Lockers and Lockets" edition`,
+	versionName: `"Assorted Chocolate" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
 	sourceLinkEnabled: false,
