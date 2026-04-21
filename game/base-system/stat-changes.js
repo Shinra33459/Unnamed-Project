@@ -17,12 +17,11 @@ const statChange = (() => {
 	}
 
 	function trauma(amount) {
-		if (isNaN(amount)) paramError("trauma", "amount", amount, "Expected a number.");
+		if (isNaN(amount)) return paramError("trauma", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
+			let traumaMod = 1;
 			if (amount >= 0) {
-				let traumaMod = 1;
-
 				if (V.rapetrait) traumaMod *= 0.7;
 				if (V.bestialitytrait >= 1 && V.enemytype === "beast") traumaMod *= 0.7;
 				if (V.tentacletrait >= 1 && V.enemytype === "tentacles") traumaMod *= 0.7;
@@ -31,8 +30,10 @@ const statChange = (() => {
 				// eslint-disable-next-line prettier/prettier
 				V.trauma += Math.trunc(((amount * 3) - ((amount * 1.5) * (V.control / V.controlmax))) * traumaMod)
 			} else {
-				// eslint-disable-next-line prettier/prettier
-				V.trauma += Math.trunc((amount * 3) + ((amount * 1.5) * (V.control / V.controlmax)));
+				// good doctors know how to help you
+				if (["asylum", "hospital"].includes(V.location)) traumaMod *= 2;
+				// decrease trauma by 1.5x amount with no control, 3x with full control
+				V.trauma += Math.trunc(amount * (1.5 + 1.5 * (V.control / V.controlmax)) * traumaMod);
 			}
 		}
 
@@ -140,17 +141,21 @@ const statChange = (() => {
 	function control(amount, combat) {
 		if (isNaN(amount)) paramError("control", "amount", amount, "Expected a number.");
 		if (V.gamemode === "soft") {
+			// everything is a consensual consensual roleplay
 			V.control = V.controlmax;
 			V.controlled = 1;
 			return;
 		}
 		amount = Number(amount);
-		if (amount) {
-			V.control += amount * 10;
-			if (combat && V.control >= V.controlstart) V.control = V.controlstart;
-			else if (V.controlstart < V.control) V.controlstart = Math.min(V.control, V.controlmax);
-			V.controlled = V.control >= (V.controlmax / 5) * 2 ? 1 : 0;
-		}
+
+		// halve control gains outside of combat
+		if (amount > 0 && !V.combat) amount /= 2;
+		V.control += amount * 10;
+		// if you're looking here to fix a bug where an action that should increase control in combat actually lowers it instead - check State.history/State.expired for the combat start passage and look for a missing <<controlloss>> that failed to set $controlstart to the right value
+		if (combat && V.control >= V.controlstart) V.control = V.controlstart;
+		else if (!combat) V.controlstart = Math.min(V.control, V.controlmax);
+		const threshold = V.controltrait ? V.controlmax / 3 : V.controlmax / 2;
+		V.controlled = V.control > threshold ? 1 : 0;
 		V.control = Math.clamp(V.control, 0, V.controlmax);
 	}
 	DefineMacro("control", amount => control(amount));
@@ -263,16 +268,12 @@ const statChange = (() => {
 				}
 				V.stress += amount * stressMod;
 			}
+			V.stress = Math.clamp(V.stress, 0, V.stressmax);
 		}
 	}
 	DefineMacro("stress", stress);
 
-	/*
-		When the player has the full wolf transformation, choosing Defiant dialogue options
-		in lists of links lowers stress, but submissive characters are traumatized and
-		lose control for acting unlike themselves. This function is inserted inside links,
-		takes a target value (usually 500 or 850), and makes extra stat adjustments if too submissive.
-	*/
+	/* See wolfDefiant in twee-config for information */
 	function wolfDefiant(amount) {
 		if (isNaN(amount)) paramError("wolfDefiant", "amount", amount, "Expected a number.");
 		amount = Number(amount);
@@ -447,6 +448,13 @@ const statChange = (() => {
 			} else {
 				V.tiredness += Math.round(amount * Weather.BodyTemperature.fatigueModifier * (amount > 0 ? 15 : 20));
 			}
+		}
+		const overflow = V.tiredness - C.tiredness.max;
+		if (overflow > 0) {
+			// channel excessive fatigue into stress and trauma
+			stress(overflow / 3);
+			trauma(overflow / 6);
+			V.tiredness -= overflow;
 		}
 	}
 	DefineMacro("tiredness", tiredness);
@@ -1028,7 +1036,7 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("alcohol", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
-			let mod = 1;
+			let mod = V.alcoholMod;
 			if (V.backgroundTraits.includes("plantlover") && amount > 0) mod = 1.5;
 			V.drunk = Math.clamp(V.drunk + amount * mod, 0, 1000);
 		}

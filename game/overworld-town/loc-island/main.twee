@@ -144,8 +144,8 @@ The slugs don't molest you further, but pulling yourself from the muck is a stru
 
 <</if>>
 <<water>>
+<<waterbr 1>>
 <<statetentacles>>
-
 
 <<effects>>
 <<effectstentacles>>
@@ -507,7 +507,7 @@ Where do you want to explore?
 		<<islandicon "mask">><<link [[Store mask|Island]]>><<set $island.mask_stored to 1>><<faceruined true>><</link>>
 		<br>
 	<<elseif $island.mask_stored is 1>>
-		<<islandicon "mask">><<link [[Retrieve mask|Island]]>><<set $island.mask_stored to undefined>><<facewear 38>><</link>>
+		<<islandicon "mask">><<link [[Retrieve mask|Island]]>><<set $island.mask_stored to undefined>><<facewear "islander mask">><</link>>
 		<br>
 	<</if>>
 	<<if $debug is 1>>
@@ -1542,7 +1542,7 @@ The islanders flee, disappearing into the shadowed ruins surrounding you. Stones
 The floor carries you with it, until you're pressed against the wall. It continues to retract, disappearing into some unseen place, until you plummet into the abyss below.<<ggstress>><<stress 6>>
 <br><br>
 
-<<link [[Next|Islander]]>><<endcombat>><<island_pass 60>><</link>>
+<<link [[Next|Islander]]>><<if $combat is 1>><<endcombat>><<else>><<endevent>><</if>><<island_pass 60>><</link>>
 <br>
 
 
@@ -1561,6 +1561,7 @@ The floor carries you with it, until you're pressed against the wall. It continu
 
 	<<link [[Next|Islander Return Held]]>><</link>>
 	<br>
+	<<link [[Tell you still want to explore|Islander Later ]]>><<handheldon>><</link>>
 <<elseif $spear_vessel is "sea">>
 	<<loadNPC 0 "old_islander">>
 	<<loadNPC 1 "sleeper">>
@@ -1576,7 +1577,7 @@ The floor carries you with it, until you're pressed against the wall. It continu
 	<br>
 	<<link [[Don't tell them|Islander Return Refrain]]>><</link>>
 	<br>
-
+	<<link [[Tell you still want to explore|Islander Later ]]>><<handheldon>><</link>>
 <<elseif $spear_vessel is "Zephyr">>
 	<<loadNPC 0 "old_islander">>
 	<<loadNPC 1 "sleeper">>
@@ -1592,6 +1593,7 @@ The floor carries you with it, until you're pressed against the wall. It continu
 	<br>
 	<<link [[Don't tell them|Islander Return Refrain]]>><</link>>
 	<br>
+	<<link [[Tell you still want to explore|Islander Later]]>><<handheldon>><</link>>
 <<elseif $spear_vessel is "temple">>
 	<<loadNPC 0 "old_islander">>
 	<<loadNPC 1 "sleeper">>
@@ -1607,6 +1609,7 @@ The floor carries you with it, until you're pressed against the wall. It continu
 	<br>
 	<<link [[Don't tell them|Islander Return Refrain]]>><</link>>
 	<br>
+	<<link [[Tell you still want to explore|Islander Later]]>><<handheldon>><</link>>
 <<elseif $spear_vessel>>
 	<<loadNPC 0 "old_islander">>
 	<<loadNPC 1 "sleeper">>
@@ -1620,6 +1623,7 @@ The floor carries you with it, until you're pressed against the wall. It continu
 
 	<<link [[Next|Islander Return Refrain]]>><</link>>
 	<br>
+	<<link [[Tell you still want to explore|Islander Later]]>><<handheldon>><</link>>
 <<else>>
 	<<generateRole 0 0 "old islander">><<person1>>
 	<<set _generate_victim to 1>>
@@ -1642,6 +1646,12 @@ The floor carries you with it, until you're pressed against the wall. It continu
 	<<link [[Remain silent|Islander 2]]>><<set $phase to 3>><</link>>
 	<br>
 <</if>>
+
+:: Islander Later
+<<effects>>
+The elderly nodding. "Suit yourself."
+<br><br>
+<<link [[Next|Island]]>><<endevent>><</link>>
 
 :: Islander 2
 <<effects>><<wearProp "tea">>
@@ -1672,7 +1682,7 @@ The floor carries you with it, until you're pressed against the wall. It continu
 <br>
 
 :: Islander Play
-<<effects>>
+<<effects>><<wearProp "tea">>
 
 You nod, blow the steam off the tea, and sip. It's rather stale and flavourless, as the <<person1>><<person>> warned. <<He>> smiles bashfully. "Again, I'm sorry about the quality. It's hard to get supplies down here."
 <br><br>
@@ -1682,7 +1692,7 @@ You nod, blow the steam off the tea, and sip. It's rather stale and flavourless,
 
 
 :: Islander Understand
-<<effects>>
+<<effects>><<wearProp "tea">>
 
 <<if $speech_attitude is "meek">>
 	"Forgive me," you say. "But I don't know what you mean."
@@ -1764,7 +1774,7 @@ You kneel before the sleeping figure. There's no response. The <<person1>><<pers
 
 
 :: Islander Spear
-<<effects>><<wearProp "spear" 0 "tarnished">>
+<<effects>><<wearProp "tarnished spear">>
 
 <<set $spear_vessel to "held">>
 <<earnFeat "Gilded Spear">>
@@ -1833,7 +1843,7 @@ You emerge above a lagoon, surrounded by high rocks on most sides. On the water,
 
 
 :: Islander End 3
-<<set $location to "pirate_ship">><<effects>><<wearProp "spear" 0 "tarnished">>
+<<set $location to "pirate_ship">><<effects>><<wearProp "tarnished spear">>
 
 The ship carries you over serene waters.
 <<if Time.dayState is "night">>
@@ -2085,7 +2095,7 @@ The <<person>> leads you through <<his>> tunnels, past the <<person2>><<person>>
 
 
 :: Islander Return Held
-<<effects>><<wearProp "spear" 0 "tarnished">>
+<<effects>><<wearProp "tarnished spear">>
 
 The <<person>> leads you through <<his>> tunnels, past the <<person2>><<person>>, and toward the sea.<<person1>> "I'm glad the spear is safe," the <<person>> says. "<span class="gold">Take it to the temple.</span> They'll know what to do."
 <br><br>
@@ -2174,6 +2184,25 @@ You disembark. Curiously, the boat starts floating in the return direction as so
 	<<island_events_wood>>
 <<elseif !$island.explore_locations.includes("shore")>>
 	<<island_events_shore>>
+<<elseif ($waterdragontf is 1 or $waterdragon gte 7 or $transformationParts.traits.aquatic isnot "disabled") and random(1, 4) is 4>>
+	<<cleareventpool>>
+	<<addevent "waterdragon_island_event_home" 1.3>>
+	<<addevent "waterdragon_island_event_language" 1>>
+	<<addevent "waterdragon_island_event_trill" 1.1>>
+	<<addevent "waterdragon_island_event_tidepool" 0.9>>
+	<<addevent "waterdragon_island_event_carving" 0.8>>
+	<<addevent "waterdragon_island_event_spring" 0.9>>
+	<<if $island.explore is "shore">>
+		<<addevent "waterdragon_island_event_home" 0.4>>
+		<<addevent "waterdragon_island_event_tidepool" 0.6>>
+	<<elseif $island.explore is "wood">>
+		<<addevent "waterdragon_island_event_trill" 0.7>>
+		<<addevent "waterdragon_island_event_spring" 0.6>>
+	<<elseif $island.explore is "battleground" or $island.explore is "plain">>
+		<<addevent "waterdragon_island_event_carving" 0.6>>
+		<<addevent "waterdragon_island_event_language" 0.4>>
+	<</if>>
+	<<runeventpool>>
 <<elseif random(1, 2) is 2 and dangerEvent()>>
 	<<cleareventpool>>
 
@@ -2196,20 +2225,31 @@ You disembark. Curiously, the boat starts floating in the return direction as so
 
 	<<runeventpool>>
 <<else>>
+	/*
+	Set up broad categories of events.
+	These allow understanding the odds of each category per location, then performing weight adjustments within each event pool.
+	*/
 	<<cleareventpool>>
-	<<addevent "island_events_plumeria" 1>>
-	<<if $island.home isnot "rocky_hillock">>
-		<<addevent "island_events_rocky" 1>>
-	<</if>>
-	<<if $island.home isnot "waterfall">>
-		<<addevent "island_events_waterfall" 1>>
-	<</if>>
-	<<if $island.home isnot "gulch">>
-		<<addevent "island_events_gulch" 1>>
-	<</if>>
-	<<addevent "island_events_birds" 1>>
-	<<addevent "island_events_pleasant_flower" 1>>
-	<<addevent "island_events_squirrel" 1>>
+	<<switch $island.home>> /* Weight adds up to 100. Food and antique pools shift weight for risk-reward */
+		<<case "rocky_hillock">>
+			<<set _weightWalnuts to $island.explore is "shore" ? 35 : 15>>
+			<<set _weightAntiques to $island.explore is "plain" ? 30 : 10>>
+		<<case "waterfall">>
+			<<set _weightWalnuts to $island.explore is "shore" ? 30 : 10>>
+			<<set _weightAntiques to $island.explore is "plain" ? 35 : 15>>
+		<<case "gulch">>
+			<<set _weightWalnuts to $island.explore is "shore" ? 25 : 5>>
+			<<set _weightAntiques to $island.explore is "plain" ? 40 : 20>>
+		<<default>>
+			<<error {
+				message	: `No island home was set when checked in ${$passage}. Please report this to Vrelnir.`,
+				source	: `Previous passage: ${$passagePrev}.`
+			}>>
+			<br><br>
+	<</switch>>
+	<<set _weightMiscellaneous to $island.explore is "none" ? 35 : 15>>
+	<<set _weightWood to $island.explore is "wood" ? 40 : 20>>
+	<<set _weightIslanders to $island.explore is "battleground" ? 40 : 20>>
 
 	<<addevent "island_events_category_miscellaneous" _weightMiscellaneous>>
 	<<addevent "island_events_category_walnuts" _weightWalnuts>>
@@ -2218,7 +2258,6 @@ You disembark. Curiously, the boat starts floating in the return direction as so
 	<<addevent "island_events_category_antiques" _weightAntiques>>
 
 	<<runeventpool>>
-
 <</if>>
 
 :: Island Passout
@@ -2741,7 +2780,7 @@ You drink warm soup straight from the bowl. Then, lick the dregs. You notice the
 
 
 :: Island Hunger 2
-<<effects>>
+<<effects>><<wearProp "soup bowl">>
 
 You eat another bowl, then another, until you lie on the grass, satisfied and immobile.<<lllhunger>><<set $hunger -= 2000>>
 <br><br>

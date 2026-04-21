@@ -169,7 +169,7 @@ function effectsWater(waterType = "liquid") {
 			}
 			sWikifier("<<covered>>");
 			br();
-			br();
+			if (V.makeupWashed) br();
 		} else if (wetIntro >= 1) {
 			if (V.exhibitionism >= 35) {
 				span(
@@ -185,7 +185,7 @@ function effectsWater(waterType = "liquid") {
 				);
 			}
 			br();
-			br();
+			if (V.makeupWashed) br();
 		}
 	}
 	return fragment;
@@ -273,7 +273,9 @@ function effects() {
 		element("span", `The school plays are being held on Cliff Street tonight from ${ampm(17, 0)} until ${ampm(21, 0)}.`, "gold");
 	}
 
-	if (V.studyBooks?.rented !== "none" && V.book_rent_timer === 0 && !V.studyBookDueWarning && Time.schoolTerm) {
+	const rentedCount = V.studyBooks?.rented?.count ?? 0;
+
+	if (rentedCount >= 1 && V.book_rent_timer === 0 && !V.studyBookDueWarning && Time.schoolTerm) {
 		V.studyBookDueWarning = 1;
 		element("span", `You have a library book due today.`, "gold");
 	}
@@ -1128,6 +1130,37 @@ function effects() {
 			delete V.pregnancyDailyEvent;
 		}
 
+		// Check if any parasites are present before running events. If not, clear events.
+		// TODO: Clear event messages in the case of "staggered" births where some parasites remain in that category. Otherwise, all events will continue to play until the daily reset, even if some parasites have already been birthed.
+		if (V.daily.parasiteEvent) {
+			if (V.sexStats.vagina.pregnancy.type === "parasite") {
+				for (let i = 0; i < maxParasites("vagina"); i++) {
+					if (V.sexStats.vagina.pregnancy.fetus[i] != undefined) {
+						T.hasVaginaParasiteForEvent = true;
+						break;
+					}
+				}
+			}
+			if (V.sexStats.anus.pregnancy.type === "parasite") {
+				for (let i = 0; i < maxParasites("anus"); i++) {
+					if (V.sexStats.anus.pregnancy.fetus[i] != undefined) {
+						T.hasAnusParasiteForEvent = true;
+						break;
+					}
+				}
+			}
+			if (!T.hasVaginaParasiteForEvent) {
+				V.daily.parasiteEvent = V.daily.parasiteEvent.filter(function(event) {
+					return !event.includes("vagina");
+				});
+			}
+			if (!T.hasAnusParasiteForEvent) {
+				V.daily.parasiteEvent = V.daily.parasiteEvent.filter(function(event) {
+					return !event.includes("anus");
+				});
+			}
+		}
+
 		if (V.daily.parasiteEvent) {
 			let minDaysLeft;
 			if (V.sexStats.vagina.pregnancy.type === "parasite") {
@@ -1492,6 +1525,49 @@ function effects() {
 				case "cowDown5":
 					element("span", "Your balance feels different. Your cow tail has disappeared.", "gold");
 					break;
+				case "waterdragonUp1":
+					element("span", "You feel an intense desire to go swimming underwater.", "gold");
+					break;
+				case "waterdragonUp2":
+					element("span", "Your mouth feels different. You explore your mouth and wince as your tongue presses against your new fangs.", "gold");
+					break;
+				case "waterdragonUp3":
+					element("span", "Your head feels heavier. You reach up, and find that a pair of horns have sprouted.", "gold");
+					break;
+				case "waterdragonUp4":
+					element("span", "Your ears itch. You reach up to them, and find them much bigger than you expected. You've grown a pair of dragon ears.", "gold");
+					break;
+				case "waterdragonUp5":
+					element("span", "Your lower back tingles.", "gold");
+					break;
+				case "waterdragonUp6":
+					element("span", "Your bottom feels heavier than usual. You reach behind you and feel your new scaly tail. It's strong.", "gold");
+					break;
+				case "waterdragonUp7":
+					element("span", "Your skin feels different. You look at your hands and see them take on an indigo hue. You feel the depths call.", "gold");
+					fragment.append(wikifier("earnFeat", "'Lost Legacy'"));
+					break;
+				case "waterdragonDown0":
+					element("span", "You no longer feel the need to swim.", "gold");
+					break;
+				case "waterdragonDown1":
+					element("span", "Your fangs have turned into regular teeth.", "gold");
+					break;
+				case "waterdragonDown2":
+					element("span", "Your horns have disappeared.", "gold");
+					break;
+				case "waterdragonDown3":
+					element("span", "Your dragon ears have disappeared.", "gold");
+					break;
+				case "waterdragonDown4":
+					element("span", "Your lower back has stopped tingling.", "gold");
+					break;
+				case "waterdragonDown5":
+					element("span", "Your balance feels different. Your dragon tail has disappeared.", "gold");
+					break;
+				case "waterdragonDown6":
+					element("span", "Your body feels different. You look at your hands and notice them return to normal.", "gold");
+					break;
 				case "bearUp1":
 					element("span", "You have a strange toothache and a strange craving for honey.", "gold");
 					break;
@@ -1778,6 +1854,18 @@ function effects() {
 				case "adultShopContribution":
 					if (V.adultshopcontribution) fragment.append(wikifier("earnFeat", "'Opened Pandoras Box'"));
 					if (V.adultshopcontribution >= 12) fragment.append(wikifier("earnFeat", "'Opened Pandoras Cocks'"));
+					break;
+				case "valentinesTomorrow":
+					sWikifier(
+						`<span class="gold">Tomorrow is Valentine's Day. You find yourself looking forward to spending quality time with someone special.</span> <<stress -6>><<lstress>><<trauma -6>><<ltrauma>>`
+					);
+					br();
+					break;
+				case "valentinesToday":
+					sWikifier(
+						`<span class="gold">Today is Valentine's Day. You look forward to spending quality time with someone special today. You sense that doing so will be extra rewarding.</span> <<stress -6>><<lstress>><<trauma -6>><<ltrauma>>`
+					);
+					br();
 					break;
 				default:
 					// Report error
