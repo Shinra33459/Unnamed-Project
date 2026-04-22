@@ -616,7 +616,7 @@ function weekPassed() {
 }
 
 function dayPassed(days) {
-	Weather.sky.initSun();
+	Weather.sidebar.initSun();
 
 	if (V.statFreeze) return;
 
@@ -1231,10 +1231,6 @@ function minutePassed(minutes) {
 	Weather.setAccumulatedSnow(minutes);
 	Weather.setIceThickness(minutes);
 
-	// Overcast
-	Weather.sky.updateFade();
-	V.weatherObj.overcast = round(Weather.sky.fadables.overcast.factor, 2);
-
 	// Effects
 	V.stress = Math.min(V.stress, V.stressmax);
 	if (V.substanceRebalance == 1) {
@@ -1299,8 +1295,8 @@ function secondPassed(seconds) {
 }
 
 function noonCheck() {
-	Weather.sky.initMoon();
-	Weather.sky.setMoonPhase();
+	Weather.sidebar.initMoon();
+	Weather.sidebar.setMoonPhase();
 
 	if (V.statFreeze) return;
 
