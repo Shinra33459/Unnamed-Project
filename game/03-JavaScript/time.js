@@ -869,6 +869,22 @@ function dayPassed(days) {
 			else V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.98, 0, 100).toFixed(3);
 		}
 
+		if (V.livestock.winter.active === false) {
+			if (Weather.temperature <= 0 && Time.month.between(9, 10)) V.livestock.winter.trigger++;
+			else if (Time.month >= 11 || Time.month === 1) {
+				if (V.bus === "livestock") V.livestock.winter.trigger = 5;
+				else V.livestock.winter.active = true;
+				V.livestock.winter.exam = false;
+			} else V.livestock.winter.trigger = 0;
+		} else {
+			if (Weather.temperature > 0 && Time.month === 2) V.livestock.winter.trigger++;
+			else if (Time.month >= 3 && Time.month <= 8) {
+				if (V.bus === "livestock") V.livestock.winter.trigger = 5;
+				else V.livestock.winter.active = false;
+				V.livestock.winter.exam = false;
+			} else V.livestock.winter.trigger = 0;
+		}
+
 		if (Weather.precipitation === "rain" && V.bird.upgrades?.firepit && !V.bird.upgrades.shelter) {
 			const burnTime = getBirdBurnTime() * 60; // seconds
 			if (burnTime > 0) {
@@ -1100,7 +1116,7 @@ function hourPassed(hours) {
 		statChange.arousal(0, "time");
 		wikifier("wetnessCalculate");
 		// special clothes effects
-		// currently, only these slots can have lustful traits, consider universalizing
+		// currently, only these slots can have lustful traits, consider universalising
 		["upper", "lower", "feet", "head"].forEach(slot => {
 			["bimbo", "pimp"].forEach(type => {
 				if (V.worn[slot].type.includes(type)) ++V.specialClothesEffects[type].progress;
@@ -1142,7 +1158,7 @@ function hourPassed(hours) {
 			}
 		}
 		if (!V.avery_mansion || ["fallen", "kicked"].includes(V.avery_fate)) {
-			V.home_gone++;
+			V.hoursGoneFromHome++;
 		}
 
 		// Robin autowatering
@@ -1300,6 +1316,8 @@ function noonCheck() {
 
 	if (V.statFreeze) return;
 
+	V.robinwakeday = 0;
+	delete V.robin_kicked_out;
 	delete V.bartend_info;
 	delete V.bartend_info_other;
 	if (V.per_npc.bartend) wikifier("clearNPC", "bartend");
@@ -1338,7 +1356,6 @@ function noonCheck() {
 function dawnCheck() {
 	if (V.statFreeze) return;
 
-	V.robinwakeday = 0;
 	V.wolfwake = 0;
 	V.edenwake = 0;
 	delete V.skul_dock_init;
@@ -1350,7 +1367,6 @@ function dawnCheck() {
 	delete V.alexSomno;
 	delete V.alexSomnoAngry;
 	delete V.connudatus_stripped;
-	delete V.robin_kicked_out;
 	delete V.gwylanWake;
 	delete V.gwylanCafeWake;
 	delete V.whitney_night_knock;
@@ -1852,8 +1868,8 @@ function dailyPlayerEffects() {
 
 	/* Disabled due to bug, and I'm not sure it's necessary anyway - Vrel
 	// Lower acceptance when it no longer applies, takes 200 days for it to drop to 0 from max
-	if (!(V.player.penisExist && V.player.penissize <= 1)) statChange.acceptance("penis_small", -5);
-	if (!(V.player.penisExist && V.player.penissize >= (V.player.sex === "m" ? 4 : 2))) statChange.acceptance("penis_big", -5);
+	if (!(V.player.penisExist && V.player.penissize <= 3)) statChange.acceptance("penis_small", -5);
+	if (!(V.player.penisExist && V.player.penissize >= (V.player.sex === "m" ? 6 : 4))) statChange.acceptance("penis_big", -5);
 	if (V.player.sex === "f" && !between(V.player.breastsize, 0, 4)) statChange.acceptance("breasts_small", -5);
 	if (!(V.player.breastsize >= (V.player.sex === "m" ? 1 : 8))) statChange.acceptance("breasts_big", -5);
 	*/
@@ -2827,8 +2843,9 @@ window.getShortFormattedDate = function (date) {
 
 /* Determines and replenishes stock at supermarket */
 function supermarketWeekly() {
-	Object.keys(setup.plants).forEach(key => {
-		if (setup.plants[key].shop?.includes("supermarket")) V.plants[key].supermarket = Math.trunc(3000 / setup.plants[key].plant_cost);
+	Object.keys(setup.foodstuff).forEach(key => {
+		if (setup.foodstuff[key].shop.available_in?.includes("supermarket"))
+			V.foodstuff[key].supermarket = Math.trunc(3000 / setup.foodstuff[key].shop.sell_price);
 	});
 }
 DefineMacro("supermarketWeekly", supermarketWeekly);
