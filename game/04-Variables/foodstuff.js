@@ -3203,7 +3203,7 @@ function initFoodstuff() {
 				sell_price: 5000000,
 			},
 		},
-		hen_of_the_wood: {
+		hen_of_the_woods: {
 			index: 151,
 			name: "hen_of_the_wood",
 			singular: "hen of the woods",
@@ -3307,12 +3307,12 @@ function initFoodstuff() {
 				sell_price: 120000,
 			},
 		},
-		mash_saxifrage: {
+		marsh_saxifrage: {
 			index: 159,
-			name: "mash_saxifrage",
-			singular: "mash saxifrage",
-			plural: "mash saxifrages",
-			icon: "mash_saxifrage.png",
+			name: "marsh_saxifrage",
+			singular: "marsh saxifrage",
+			plural: "marsh saxifrages",
+			icon: "marsh_saxifrage.png",
 			category: "flower",
 			kitchen_item_type_icon: "recipe-flower.png",
 			prop_folder: "tending",
