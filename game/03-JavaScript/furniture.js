@@ -535,7 +535,7 @@ const Furniture = (() => {
 			type: [],
 			cost: 40,
 			description: "A small plush of the moon.",
-			iconFile: "tfplushes",
+			iconFile: "moonplush",
 		});
 		mapper.set("frostplush", {
 			name: "snowman plush",
@@ -544,7 +544,7 @@ const Furniture = (() => {
 			type: [],
 			cost: 40,
 			description: "A small plush of a snowman.",
-			iconFile: "tfplushes",
+			iconFile: "snowmanplush",
 		});
 		mapper.set("tfplushes", {
 			name: "collection of animal plushes",
@@ -562,7 +562,7 @@ const Furniture = (() => {
 			type: [],
 			cost: 1,
 			description: "A small lemon coloured axolotl plush. You don't see a price tag on it, only the name 'Monsieur Citron' is written.",
-			iconFile: "tfplushes",
+			iconFile: "axolotlplush",
 		});
 	}
 
