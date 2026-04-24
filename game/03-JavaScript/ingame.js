@@ -3155,18 +3155,7 @@ function kitchenFilter() {
 	T.recipeKeys = [];
 	T.recipesGroups = ["ingredients", "sweets", "savouries", "drinks"];
 
-	// // Make search case-insensitive + avoid empty terms
-	// const terms = (T.foodSearch ?? "")
-	// 	.trim()
-	// 	.toLowerCase()
-	// 	.split(/[_\s]+/g)
-	// 	.filter(Boolean);
-
-	// const norm = (v) => {
-	// 	if (v == null) return "";
-	// 	if (Array.isArray(v)) return v.join(" ").toLowerCase();
-	// 	return String(v).toLowerCase();
-	// };
+	const kitchenFilter = T.foodSearch ? T.foodSearch.split(/[_ ]/g) : false;
 
 	let missingIngredients = false;
 	let providedIngredients = false;
