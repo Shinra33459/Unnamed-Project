@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */ // <- temporary until jewelry is fixed!!!!! -BEC
 /* globals normaliseFileName */
 /* eslint-disable jsdoc/check-tag-names */
 /* eslint-disable jsdoc/no-undefined-types */
@@ -1136,7 +1137,7 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const mannequin = (options.mannequin) ? "mannequin/" : "";
 				const prefix = `img/body/${mannequin}`;
-				const breasts = options.breasts === "cleavage" && options.breast_size >= 3 ? "clothed" : "breasts";
+				const breasts = options.breasts === "cleavage" && options.breast_size >= 3 ? "clothed" : V.releaseBoobs === "release" && options.breast_size >= 3 && !options.mannequin ? "released" : "breasts";
 				return `${prefix}breasts/${breasts}-${options.breast_size}.png`;
 			},
 		},
@@ -1493,7 +1494,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.blush,
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/blush-${options.blush}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/blush-${options.blush}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.blush > 0;
@@ -1504,7 +1505,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/tears-${options.tears}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/tears-${options.tears}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.tears > 0;
@@ -2546,9 +2547,6 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.kitsune_cheeks_type) && !options.hideAll;
 			},
-			filters: ["hair"],
-			z: ZIndices.lower,
-			animation: "idle"
 		},
 		"kitsune_misc": {
 			z: ZIndices.old_over_upper,
@@ -2599,6 +2597,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
+				if (V.tattoo_bodypart == "right_cheek" && V.passage == "Tattoo Choice") return getWritingImgPath('right_cheek', setup.bodywriting[V.tattoo_choice]);
 				return getWritingImgPath('right_cheek', setup.bodywriting[options.writing_right_cheek]);
 			},
 			showfn(options) {
@@ -2612,7 +2611,7 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const area_name = "breasts"
 				const writing = setup.bodywriting[options.writing_breasts];
-				if (V.tattoo_bodypart == "breasts" && V.passage == "Tattoo Choice") writing = setup.bodywriting[V.tattoo_choice];
+				if (V.tattoo_bodypart == "breasts" && V.passage == "Tattoo Choice") return getWritingImgPath('breasts', setup.bodywriting[V.tattoo_choice]);
 				if (writing.type === "text") {
 					if (writing.sprites && writing.sprites.length > 0 && writing.sprites.includes(area_name)) {
 						return `img/bodywriting/text/${writing.key.replace(/_/g,"-")}/${area_name.replace(/_/g,"-")}.png`;
@@ -3778,7 +3777,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const pattern = options.worn.hands.pattern && !["tertiary", "secondary"].includes(options.worn.hands.setup.pattern_layer) ? "-" + options.worn.hands.pattern?.replace(/ /g,"-") : '';
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}${pattern}${alt}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -3796,7 +3801,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const pattern = options.worn.hands.pattern && options.worn.hands.setup.pattern_layer === "secondary" ? "-" + options.worn.hands.pattern?.replace(/ /g,"-") : '';
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}${pattern}-acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}${pattern}${alt}-acc.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -3815,7 +3826,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const pattern = options.worn.hands.pattern && !["tertiary", "secondary"].includes(options.worn.hands.setup.pattern_layer) ? "-" + options.worn.hands.pattern?.replace(/ /g,"-") : '';
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}${pattern}${alt}.png`;
 			},
 			showfn(options) {
 				// return options.show_clothes
@@ -3842,7 +3859,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const pattern = options.worn.hands.pattern && options.worn.hands.setup.pattern_layer === "secondary" ? "-" + options.worn.hands.pattern?.replace(/ /g,"-") : '';
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}${pattern}-acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}${pattern}${alt}-acc.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -3867,7 +3890,13 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}-${options.worn.hands.pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/left-${options.arm_left}-${options.worn.hands.pattern}${alt}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -3888,7 +3917,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const pattern = options.worn.hands.pattern && !["tertiary", "secondary"].includes(options.worn.hands.setup.pattern_layer) ? "-" + options.worn.hands.pattern?.replace(/ /g,"-") : '';
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}${pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}${pattern}${alt}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -3906,7 +3941,13 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const pattern = options.worn.hands.pattern && options.worn.hands.setup.pattern_layer === "secondary" ? "-" + options.worn.hands.pattern?.replace(/ /g,"-") : '';
-				return`img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}${pattern}-acc.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return`img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}${pattern}${alt}-acc.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -3923,7 +3964,13 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}-${options.worn.hands.pattern}.png`;
+				
+				const isAltPosition = !options.alt_override
+					&& options.worn.hands.setup.altposition !== undefined
+					&& options.worn.hands.alt === "alt";
+				const alt = isAltPosition ? '_alt' : '';
+				
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}-${options.worn.hands.pattern}${alt}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -6072,7 +6119,11 @@ function genlayer_ears(tf, hair, overrideOptions) {
 			if (options.hideHeadAcc) {
 				return ZIndices.over_head;
 			}
-			return ZIndices.basehead;
+			if (V.tfearsposition === "back") {
+				return ZIndices.basehead;
+			} else {
+				return ZIndices.brow;
+			}
 		}
 	}, overrideOptions))
 }

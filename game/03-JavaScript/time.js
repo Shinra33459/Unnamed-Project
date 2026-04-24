@@ -146,24 +146,24 @@ const Time = (() => {
 		const hours = Math.floor((prevDate.minute + minutes) / 60);
 		const days = Math.floor((prevDate.hour + hours) / 24);
 
-        if (V.godClothes === 1) {
-			if (V.worn.upper.name !== "naked") { 
-			V.worn.upper.integrity = 2000;
+		if (V.godClothes === 1) {
+			if (V.worn.upper.name !== "naked") {
+				V.worn.upper.integrity = 2000;
 			}
-			if (V.worn.over_upper.name !== "naked") { 
-			V.worn.over_upper.integrity = 2000;
+			if (V.worn.over_upper.name !== "naked") {
+				V.worn.over_upper.integrity = 2000;
 			}
-			if (V.worn.over_lower.name !== "naked") { 
-			V.worn.over_lower.integrity = 2000;
+			if (V.worn.over_lower.name !== "naked") {
+				V.worn.over_lower.integrity = 2000;
 			}
-			if (V.worn.lower.name !== "naked") { 
-			V.worn.lower.integrity = 2000;
+			if (V.worn.lower.name !== "naked") {
+				V.worn.lower.integrity = 2000;
 			}
-			if (V.worn.under_lower.name !== "naked") { 
-			V.worn.under_lower.integrity = 2000;
+			if (V.worn.under_lower.name !== "naked") {
+				V.worn.under_lower.integrity = 2000;
 			}
-			if (V.worn.under_upper.name !== "naked") { 
-			V.worn.under_upper.integrity = 2000;
+			if (V.worn.under_upper.name !== "naked") {
+				V.worn.under_upper.integrity = 2000;
 			}
 		}
 
@@ -201,6 +201,8 @@ const Time = (() => {
 				}
 				// pass the remaining minutes
 				minutePassed((minutes - minsToNextHour) % 60);
+				// reset BodyTemperature effects
+				delete T.bodyActivity;
 			}
 		} catch (ex) {
 			// we only need to catch it so "finally" can run, so, right back at you
@@ -463,22 +465,21 @@ function yearPassed() {
 	V.yearly.clearProperties();
 }
 
+// eslint-disable-next-line no-unused-vars
 function monthPassed() {
 	if (V.hbsc.account.level >= 5 && V.hbsc.account.deposit >= 250000000) {
-		V.hbsc.account.deposit *= 1 + (0.0025 / 12);
+		V.hbsc.account.deposit *= 1 + 0.0025 / 12;
 	} else if (V.hbsc.account.level >= 4 && V.hbsc.account.deposit >= 50000000) {
-		V.hbsc.account.deposit *= 1 + (0.0075 / 12);
+		V.hbsc.account.deposit *= 1 + 0.0075 / 12;
 	} else if (V.hbsc.account.level >= 3 && V.hbsc.account.deposit >= 10000000) {
-		V.hbsc.account.deposit *= 1 + (0.0125 / 12);
+		V.hbsc.account.deposit *= 1 + 0.0125 / 12;
 	} else if (V.hbsc.account.level >= 2 && V.hbsc.account.deposit >= 50000000) {
-		V.hbsc.account.deposit *= 1 + (0.02 / 12);
+		V.hbsc.account.deposit *= 1 + 0.02 / 12;
 	} else if (V.hbsc.account.level >= 1) {
-		V.hbsc.account.deposit *= 1 + (0.025 / 12);
+		V.hbsc.account.deposit *= 1 + 0.025 / 12;
 	}
 
 	if (V.monthly !== undefined) V.monthly.clearProperties();
-
-	return;
 }
 
 function weekPassed() {
@@ -617,6 +618,9 @@ function weekPassed() {
 
 function dayPassed(days) {
 	Weather.sidebar.initSun();
+	Weather.WeatherGeneration.updateWeather();
+	Weather.Temperature.updateTemperature();
+	Weather.FogGeneration.generateFogKeypoints(V.weatherObj.keypointsArr);
 
 	if (V.statFreeze) return;
 
@@ -758,16 +762,46 @@ function dayPassed(days) {
 		} else if (V.awarelevel >= 2 && V.loveInterest.primary !== "None" && V.loveInterest.secondary === "None" && !V.loveInterestAwareMessage) {
 			V.loveInterest_message = 2;
 			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 3 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary === "None" && V.loveInterestAwareMessage == 1) {
+		} else if (
+			V.awarelevel >= 3 &&
+			V.loveInterest.primary !== "None" &&
+			V.loveInterest.secondary !== "None" &&
+			V.loveInterest.tertiary === "None" &&
+			V.loveInterestAwareMessage === 1
+		) {
 			V.loveInterest_message = 3;
 			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 4 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary === "None" && V.loveInterestAwareMessage == 2) {
+		} else if (
+			V.awarelevel >= 4 &&
+			V.loveInterest.primary !== "None" &&
+			V.loveInterest.secondary !== "None" &&
+			V.loveInterest.tertiary !== "None" &&
+			V.loveInterest.quarternary === "None" &&
+			V.loveInterestAwareMessage === 2
+		) {
 			V.loveInterest_message = 4;
 			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 5 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary === "None" && V.loveInterest.quarternary !== "None" && V.loveInterest.quinary === "None" && V.loveInterestAwareMessage == 3) {
+		} else if (
+			V.awarelevel >= 5 &&
+			V.loveInterest.primary !== "None" &&
+			V.loveInterest.secondary !== "None" &&
+			V.loveInterest.tertiary === "None" &&
+			V.loveInterest.quarternary !== "None" &&
+			V.loveInterest.quinary === "None" &&
+			V.loveInterestAwareMessage === 3
+		) {
 			V.loveInterest_message = 5;
 			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 6 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary !== "None" && V.loveInterest.quinary !== "None" && V.loveInterest.senary === "None" && V.loveInterestAwareMessage == 4) {
+		} else if (
+			V.awarelevel >= 6 &&
+			V.loveInterest.primary !== "None" &&
+			V.loveInterest.secondary !== "None" &&
+			V.loveInterest.tertiary !== "None" &&
+			V.loveInterest.quarternary !== "None" &&
+			V.loveInterest.quinary !== "None" &&
+			V.loveInterest.senary === "None" &&
+			V.loveInterestAwareMessage === 4
+		) {
 			V.loveInterest_message = 6;
 			V.effectsmessage = 1;
 		}
@@ -776,14 +810,12 @@ function dayPassed(days) {
 			V.pound.tasks = [];
 		}
 
-		V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][
-			Math.min(Math.max(V.rentstage - 1, 0), 6)
-		];
+		V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][Math.min(Math.max(V.rentstage - 1, 0), 6)];
 		wikifier("rentmod");
 
 		if (V.valentines && Time.monthDay === 13) V.timeMessages.pushUnique("valentinesTomorrow");
 		if (V.valentines && Time.monthDay === 14) V.timeMessages.pushUnique("valentinesToday");
-		
+
 		if (V.avery_mansion && V.avery_fate !== "fallen" && V.avery_fate !== "kicked") {
 			// Avery takes on the PC's debt, but stops if unsatisfied
 			if (Time.weekDay !== 1) {
@@ -850,7 +882,6 @@ function dayPassed(days) {
 			V.tailorMonthlyService--;
 			if (V.tailorMonthlyService === 0) delete V.tailorMonthlyService;
 		}
-
 
 		if (V.wardrobeRepair && V.wardrobeRepair.timeLeft === 1) V.wardrobeRepair.timeLeft = 0;
 		if (V.clothingShop.ban > 0) V.clothingShop.ban--;
@@ -1049,35 +1080,35 @@ function dayPassed(days) {
 		V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
 
 		if (V.bike >= 1) {
-			if (V.bikeSecurityGear == 5) {
+			if (V.bikeSecurityGear === 5) {
 				T.bikeTheftProtection = 999;
-			} else if (V.bikeSecurityGear == 4) {
+			} else if (V.bikeSecurityGear === 4) {
 				T.bikeTheftProtection = 750;
-			} else if (V.bikeSecurityGear == 3) {
+			} else if (V.bikeSecurityGear === 3) {
 				T.bikeTheftProtection = 500;
-			} else if (V.bikeSecurityGear == 2) {
+			} else if (V.bikeSecurityGear === 2) {
 				T.bikeTheftProtection = 300;
-			} else if (V.bikeSecurityGear == 1) {
+			} else if (V.bikeSecurityGear === 1) {
 				T.bikeTheftProtection = 100;
 			} else {
 				T.bikeTheftProtection = 0;
 			}
-			if (V.bikeLocationCategory == "lake") {
+			if (V.bikeLocationCategory === "lake") {
 				T.bikeTheftChance = 500 - T.bikeTheftProtection;
-			} else if (V.bikeLocationCategory == "left" || V.bikeLocationCategory == "mid" || V.bikeLocationCategory == "right") {
+			} else if (V.bikeLocationCategory === "left" || V.bikeLocationCategory === "mid" || V.bikeLocationCategory === "right") {
 				if (V.baileydefeatedchain >= 1) {
 					T.bikeTheftChanceBonus = 250;
 				} else {
 					T.bikeTheftChanceBonus = 0;
 				}
 				T.bikeTheftChance = 750 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
-			} else if (V.bikeLocationCategory == "farm") {
+			} else if (V.bikeLocationCategory === "farm") {
 				if (V.farm?.aggro) T.bikeTheftChanceBonus = 900 * (V.farm.aggro / 100);
 				T.bikeTheftChance = 100 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
 			} else {
 				T.bikeTheftChance = 0;
 			}
-			if ((random(1, 1000) <= T.bikeTheftChance) && V.bikeSecurity == 1) {
+			if (random(1, 1000) <= T.bikeTheftChance && V.bikeSecurity === 1) {
 				V.bikeStolen = 1;
 				V.bike = 0;
 				if (V.bikeSecurityGear >= 1) V.bikeSecurityGearStolen = 1;
@@ -1170,7 +1201,9 @@ function hourPassed(hours) {
 			["orphanage", "garden", "bath"].includes(getRobinLocation()) &&
 			Weather.precipitation !== "rain" &&
 			(Weather.precipitation !== "snow" || V.alex_greenhouse >= 3) &&
+			// eslint-disable-next-line no-undef
 			orphanagePlotsPlanted() &&
+			// eslint-disable-next-line no-undef
 			!orphanagePlotsWatered()
 		) {
 			V.plots.garden?.forEach(plot => (plot.water = 1));
@@ -1223,7 +1256,7 @@ function minutePassed(minutes) {
 	const isCrossdresser = V.backgroundTraits.includes("crossdresser");
 	// Not using isCrossdressing() since the stress gains/penalties should not be based on NudeGenderDC
 	const isCrossdressing = V.player.sex !== V.player.gender_appearance && V.player.sex !== "h";
-	if (V.controlled === 0 && V.anxiety >= 2 && V.timeSkip == undefined) V.stress += minutes * ((isCrossdresser && !isCrossdressing) + 1);
+	if (V.controlled === 0 && V.anxiety >= 2 && V.timeSkip === undefined) V.stress += minutes * ((isCrossdresser && !isCrossdressing) + 1);
 	else if (V.stress < V.stressmax && (V.controlled === 1 || V.anxiety === 0)) V.stress -= minutes * ((isCrossdresser && isCrossdressing) + 1);
 
 	parasiteProgressTime(minutes);
@@ -1241,7 +1274,7 @@ function minutePassed(minutes) {
 	// Body temperature
 	const temperature = V.outside ? Weather.apparentTemperature : Weather.insideTemperature;
 	if (!V.possessed) Weather.BodyTemperature.update(temperature, minutes);
-	if (V.timeSkip == undefined) V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
+	if (V.timeSkip === undefined) V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
 
 	// Snow & ice
 	Weather.setAccumulatedSnow(minutes);
@@ -1249,7 +1282,7 @@ function minutePassed(minutes) {
 
 	// Effects
 	V.stress = Math.min(V.stress, V.stressmax);
-	if (V.substanceRebalance == 1) {
+	if (V.substanceRebalance === 1) {
 		if (V.drunk > 0) {
 			// use fancy math to ensure that `pass(60);` and `pass(30);pass(30);` apply the same amount of tiredness regardless of changed V.drunk value
 			const sum = (from, to) => ((from - to) * (from + to + 1)) / 2;
@@ -1277,7 +1310,7 @@ function minutePassed(minutes) {
 		if (V.drugged > 0) statChange.drugs(-minutes);
 	}
 	// prevent fatigue from being an issue when passing days (actually 20+ hours) at a time
-	if (minutes < 1200 && V.timeSkip == undefined) statChange.tiredness(minutes / 15);
+	if (minutes < 1200 && V.timeSkip === undefined) statChange.tiredness(minutes / 15);
 	statChange.pain(minutes, -0.5);
 
 	// Arousal
@@ -1554,7 +1587,10 @@ function dailyNPCEffects() {
 					V.avery_mansion.injury_stage = "healing";
 				} else if (V.avery_mansion.injury_timer <= 15 && !["cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)) {
 					V.avery_mansion.injury_stage = "cast";
-				} else if (V.avery_mansion.injury_timer <= 30 && !["sling", "sling_done", "cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)) {
+				} else if (
+					V.avery_mansion.injury_timer <= 30 &&
+					!["sling", "sling_done", "cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)
+				) {
 					V.avery_mansion.injury_stage = "sling";
 				}
 			}
@@ -1695,9 +1731,7 @@ function dailyNPCEffects() {
 		if (C.npc.Gwylan.state === "active" && !isGwylanAbsent() && !V.daily.gwylan.noTalk && !V.daily.gwylan.locked) {
 			if (V.gwylan.request.event && V.gwylan.request.timer) {
 				if (V.hypnosis_traits.devotion >= 1 && V.gwylan.request.timer < Time.date.timeStamp) {
-					V.gwylan.request.timer = V.gwylan.request.missed
-						? new DateTime(Time.date).addDays(4).timeStamp
-						: new DateTime(Time.date).addDays(2).timeStamp;
+					V.gwylan.request.timer = V.gwylan.request.missed ? new DateTime(Time.date).addDays(4).timeStamp : new DateTime(Time.date).addDays(2).timeStamp;
 					const traumaDevotion = 15 * V.hypnosis_traits.devotion;
 					const hallucinogenDevotion = 40 * V.hypnosis_traits.devotion;
 					statChange.trauma(traumaDevotion);
@@ -1753,7 +1787,7 @@ function dailyNPCEffects() {
 }
 
 function dailyPlayerEffects() {
-	if (V.willpowerDecay == 1) {
+	if (V.willpowerDecay === 1) {
 		V.willpower *= 0.99;
 	}
 
@@ -1777,7 +1811,7 @@ function dailyPlayerEffects() {
 	V.fringelength += 3;
 	calchairlengthstage();
 	statChange.skill("beauty", (70 - (V.trauma / V.traumamax) * 100) * V.beautyMult);
-	if (V.stressBeauty == 1) statChange.skill("beauty", (100 - (V.stress / V.stressmax) * 100) * V.beautyMult);
+	if (V.stressBeauty === 1) statChange.skill("beauty", (100 - (V.stress / V.stressmax) * 100) * V.beautyMult);
 	lustfulUpdate();
 
 	if (V.orgasmstat >= 1000 && V.orgasmtrait === 0) {
@@ -2272,14 +2306,31 @@ function dailySchoolEffects() {
 	}
 
 	V.school = V.science + V.english + V.maths + V.history;
-	V.schooltrait = V.school >= 8000 ? 8 : V.school >= 6500 ? 7 : V.school >= 5000 ? 6 : V.school >= 4000 ? 5 : V.school >= 2800 ? 4 : V.school >= 2000 ? 3 : V.school >= 1600 ? 2 : V.school >= 1200 ? 1 : 0;
+	V.schooltrait =
+		V.school >= 8000
+			? 8
+			: V.school >= 6500
+			? 7
+			: V.school >= 5000
+			? 6
+			: V.school >= 4000
+			? 5
+			: V.school >= 2800
+			? 4
+			: V.school >= 2000
+			? 3
+			: V.school >= 1600
+			? 2
+			: V.school >= 1200
+			? 1
+			: 0;
 
 	if (V.studyBooks) {
 		wikifier("passiveStudy");
 		if (V.studyBooks.rented.count >= 1 && Time.schoolTerm) {
 			T.totalRentPrice = 0;
 			for (T.i = 1; T.i <= V.studyBooks.rented.count; T.i++) {
-				T.totalRentPrice += Math.round(2000 * (1 + (T.i * T.i)));
+				T.totalRentPrice += Math.round(2000 * (1 + T.i * T.i));
 			}
 			if (V.book_rent_deposit >= Math.round(T.totalRentPrice / 14)) {
 				V.book_rent_deposit -= Math.round(T.totalRentPrice / 14);
@@ -2387,8 +2438,6 @@ function dailyMasochismSadismEffects() {
 		V.effectsmessage = 1;
 	}
 }
-
-
 
 function dailyFarmEvents() {
 	if (V.alex_greenhouse === 1) {
@@ -2501,10 +2550,10 @@ function dailyFarmEvents() {
 		if (V.farm.compostbin >= 1) {
 			wikifier("composting");
 		}
-		if (V.farm.watchtowerDailyAttempt == 1) {
+		if (V.farm.watchtowerDailyAttempt === 1) {
 			V.farm.watchtowerDailyAttempt = 0;
 		}
-		if (V.farm.dailyHelp == 1) {
+		if (V.farm.dailyHelp === 1) {
 			V.farm.dailyHelp = 0;
 		}
 	}
@@ -2519,17 +2568,17 @@ function dailyFarmEvents() {
 			if (V.farm.player_still_timer >= 0) {
 				V.farm.player_still_timer--;
 			}
-			if (V.farm.player_still_timer == 0) {
-				if (V.lurkers_stored >= 3 && V.farm.extractOverdrive == 1) {
+			if (V.farm.player_still_timer === 0) {
+				if (V.lurkers_stored >= 3 && V.farm.extractOverdrive === 1) {
 					V.lurkers_stored -= 3;
 					V.phials_stored += 2;
-					if (V.farm.extract == 2 && V.lurkers_stored > 0) {
+					if (V.farm.extract === 2 && V.lurkers_stored > 0) {
 						V.farm.player_still_timer = 9 - V.sciencetrait;
 					}
 				} else {
 					V.lurkers_stored--;
 					V.phials_stored++;
-					if (V.farm.extract == 2 && V.lurkers_stored > 0) {
+					if (V.farm.extract === 2 && V.lurkers_stored > 0) {
 						V.farm.player_still_timer = 9 - V.sciencetrait;
 					}
 				}
@@ -2715,7 +2764,6 @@ function earSlimeDaily(passageEffects = false) {
 			// Reduce the growth variable only if below or equal to 50
 			V.earSlime.growth--;
 		}
-
 	}
 	V.earSlime.growth = Math.clamp(V.earSlime.growth, 0, V.earSlime.focus === "none" ? 50 : 200);
 
@@ -2802,7 +2850,7 @@ DefineMacro("earSlimeDaily", earSlimeDaily);
  * @param {...any} args
  */
 function getTimeString(...args) {
-	if (args[0] == null) return;
+	if (args[0] === null) return;
 	const hours = args[1] != null ? args[0] : 0;
 	const minutes = Math.max(args[1] != null ? args[1] : args[0], 0) + hours * 60;
 	return Math.trunc(minutes / 60) + ":" + ("0" + Math.trunc(minutes % 60)).slice(-2);
@@ -2844,8 +2892,7 @@ window.getShortFormattedDate = function (date) {
 /* Determines and replenishes stock at supermarket */
 function supermarketWeekly() {
 	Object.keys(setup.foodstuff).forEach(key => {
-		if (setup.foodstuff[key].shop.available_in?.includes("supermarket"))
-			V.foodstuff[key].supermarket = Math.trunc(3000 / setup.foodstuff[key].shop.sell_price);
+		if (setup.foodstuff[key].shop.available_in?.includes("supermarket")) V.foodstuff[key].supermarket = Math.trunc(3000 / setup.foodstuff[key].shop.sell_price);
 	});
 }
 DefineMacro("supermarketWeekly", supermarketWeekly);

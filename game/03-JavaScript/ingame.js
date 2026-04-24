@@ -11,7 +11,7 @@ function mapMove(moveTo) {
 	}
 	const available = V.map.available;
 
-	// if(V.debug == 1 || available[currentPassage].includes(moveTo))
+	// if(V.debug === 1 || available[currentPassage].includes(moveTo))
 	if (V.debug === 1 || (available[currentPassage].includes(moveTo) && destinationTable.includes(moveTo))) {
 		window.ironmanFlag = true;
 		Wikifier.wikifyEval("<<pass 5>>");
@@ -532,9 +532,10 @@ function calculateMarkedChance(deckCount, markedCount, depth, atLeast, doLog = f
 		// log(`One marked card can be picked from MARKED=1 cards in 1c1 = 1 ways, and the remaining three (which are not marked) can be picked from DECK=5-MARKED=1 = 4 cards in 4c3 = 4 ways.
 		log(
 			`${nMarkedPicked} marked cards can be picked from MARKED=${markedCount} cards in ${markedCount}c${nMarkedPicked} = ${markedPoolWays} ways,` +
-			`and the remaining ${deckCount - markedCount} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${deckCount - markedCount
-			} cards in ${deckCount - markedCount}c${possibleMarkedCardsVisibleLimit - nMarkedPicked} = ${unmarkedPoolWays} ways.\n` +
-			`${markedPoolWays}*${unmarkedPoolWays} = ${totalWays} ways.`
+				`and the remaining ${deckCount - markedCount} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${
+					deckCount - markedCount
+				} cards in ${deckCount - markedCount}c${possibleMarkedCardsVisibleLimit - nMarkedPicked} = ${unmarkedPoolWays} ways.\n` +
+				`${markedPoolWays}*${unmarkedPoolWays} = ${totalWays} ways.`
 		);
 	}
 
@@ -563,11 +564,11 @@ function updateAskColour() {
 DefineMacroS("updateAskColour", updateAskColour);
 
 function bulkProduceValue(foodstuff, quantity = 250) {
-	if (plant != null) {
-		const baseCost = (foodstuff.shop.sellprice * quantity) / 2;
+	if (foodstuff != null) {
+		const baseCost = (foodstuff.shop.sell_price * quantity) / 2;
 
 		const seasonBoost = foodstuff.tending?.seasons && !foodstuff.tending.seasons.includes(Time.season) ? 1.1 : 1;
-		
+
 		const qualityControlBoost = V.factoryUpgrades.qualityControl ? V.factoryUpgrades.qualityControl * 0.05 : 0; // +5% per level
 		const packagingBoost = V.factoryUpgrades.packaging ? V.factoryUpgrades.packaging * 0.05 : 0; // +5% per level
 
@@ -1238,8 +1239,8 @@ window.clothesIndex = clothesIndex;
 
 function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 	let result = V[skill];
-	if (disableStatNerf == 0) {
-		result *= (V.options.statNerf / 100);
+	if (disableStatNerf === 0) {
+		result *= V.options.statNerf / 100;
 	}
 	if (!result && result !== 0) {
 		/* console.log(`currentSkillValue - skill '${skill}' unknown`); */
@@ -1291,20 +1292,20 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.hands.type.includes("sticky_fingers")) result = Math.floor(result * 1.05);
 			if (V.transformationParts.traits.sharpEyes !== "disabled") result = Math.floor(result * 1.05);
 			if (V.fox >= 6) result = Math.floor(result * 1.1);
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.DoLPTFBuffs == 1) {
-				if (V.TFCatBuffs == 1) {
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFCatBuffs === 1) {
 					result = Math.round(result * 1.2);
 				}
-				if (V.TFBearBuffs == 1) {
+				if (V.TFBearBuffs === 1) {
 					result = Math.round(result * 0.9);
 				}
-				if (V.TFBirdBuffs == 1) {
+				if (V.TFBirdBuffs === 1) {
 					result = Math.round(result * 1.1);
 				}
-				if (V.TFFoxBuffs == 1) {
+				if (V.TFFoxBuffs === 1) {
 					result = Math.round(result * 1.3);
 				}
 			}
@@ -1321,29 +1322,29 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.auriga_artefact === "pc") {
 				result = Math.floor(result * 1.1);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.DoLPTFBuffs == 1) {
-				if (V.TFWolfBuffs == 1) {
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
 					result = Math.round(result * 1.2);
 				}
-				if (V.TFCatBuffs == 1) {
+				if (V.TFCatBuffs === 1) {
 					result = Math.round(result * 0.8);
 				}
-				if (V.TFCowBuffs == 1) {
+				if (V.TFCowBuffs === 1) {
 					result = Math.round(result * 1.4);
 				}
-				if (V.TFBearBuffs == 1) {
+				if (V.TFBearBuffs === 1) {
 					result = Math.round(result * 1.5);
 				}
-				if (V.TFBirdBuffs == 1) {
+				if (V.TFBirdBuffs === 1) {
 					result = Math.round(result * 0.7);
 				}
-				if (V.TFFoxBuffs == 1) {
+				if (V.TFFoxBuffs === 1) {
 					result = Math.round(result * 0.9);
 				}
-				if (V.TFBunnyBuffs == 1) {
+				if (V.TFBunnyBuffs === 1) {
 					result = Math.round(result * 0.7);
 				}
 			}
@@ -1360,29 +1361,29 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.DoLPTFBuffs == 1) {
-				if (V.TFWolfBuffs == 1) {
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
 					result = Math.round(result * 1.1);
 				}
-				if (V.TFCatBuffs == 1) {
+				if (V.TFCatBuffs === 1) {
 					result = Math.round(result * 1.4);
 				}
-				if (V.TFCowBuffs == 1) {
+				if (V.TFCowBuffs === 1) {
 					result = Math.round(result * 0.9);
 				}
-				if (V.TFBearBuffs == 1) {
+				if (V.TFBearBuffs === 1) {
 					result = Math.round(result * 0.7);
 				}
-				if (V.TFBirdBuffs == 1) {
+				if (V.TFBirdBuffs === 1) {
 					result = Math.round(result * 1.3);
 				}
-				if (V.TFFoxBuffs == 1) {
+				if (V.TFFoxBuffs === 1) {
 					result = Math.round(result * 1.1);
 				}
-				if (V.TFBunnyBuffs == 1) {
+				if (V.TFBunnyBuffs === 1) {
 					result = Math.round(result * 1.4);
 				}
 			}
@@ -1409,19 +1410,19 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFCatBuffs == 1) {
+			if (V.TFCatBuffs === 1) {
 				result = Math.round(result * 0.8);
 			}
-			if (V.TFBearBuffs == 1) {
+			if (V.TFBearBuffs === 1) {
 				result = Math.round(result * 1.3);
 			}
-			if (V.TFBirdBuffs == 1) {
+			if (V.TFBirdBuffs === 1) {
 				result = Math.round(result * 0.8);
 			}
-			if (V.TFFoxBuffs == 1) {
+			if (V.TFFoxBuffs === 1) {
 				result = Math.round(result * 0.9);
 			}
 			if (V.worn.upper.type.includes("heavy") || V.worn.lower.type.includes("heavy")) {
@@ -1439,28 +1440,28 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			}
 			if (V.transformationParts.traits.chase !== "disabled") result = Math.floor(result * 1.1);
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFWolfBuffs == 1) {
+			if (V.TFWolfBuffs === 1) {
 				result = Math.round(result * 1.2);
 			}
-			if (V.TFCatBuffs == 1) {
+			if (V.TFCatBuffs === 1) {
 				result = Math.round(result * 1.1);
 			}
-			if (V.TFCowBuffs == 1) {
+			if (V.TFCowBuffs === 1) {
 				result = Math.round(result * 0.9);
 			}
-			if (V.TFBearBuffs == 1) {
+			if (V.TFBearBuffs === 1) {
 				result = Math.round(result * 1.2);
 			}
-			if (V.TFBirdBuffs == 1) {
+			if (V.TFBirdBuffs === 1) {
 				result = Math.round(result * 1.2);
 			}
-			if (V.TFFoxBuffs == 1) {
+			if (V.TFFoxBuffs === 1) {
 				result = Math.round(result * 1.1);
 			}
-			if (V.TFBunnyBuffs == 1) {
+			if (V.TFBunnyBuffs === 1) {
 				result = Math.round(result * 1.5);
 			}
 			if (V.worn.upper.type.includes("heavy") || V.worn.lower.type.includes("heavy")) {
@@ -1473,22 +1474,22 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			} else if (numberOfEarSlime() >= 2) {
 				result = Math.floor(result * 0.9);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFWolfBuffs == 1) {
+			if (V.TFWolfBuffs === 1) {
 				result = Math.round(result * 1.1);
 			}
-			if (V.TFCatBuffs == 1) {
+			if (V.TFCatBuffs === 1) {
 				result = Math.round(result * 1.1);
 			}
-			if (V.TFCowBuffs == 1) {
+			if (V.TFCowBuffs === 1) {
 				result = Math.round(result * 0.8);
 			}
-			if (V.TFBearBuffs == 1) {
+			if (V.TFBearBuffs === 1) {
 				result = Math.round(result * 1.2);
 			}
-			if (V.TFBunnyBuffs == 1) {
+			if (V.TFBunnyBuffs === 1) {
 				result = Math.round(result * 0.8);
 			}
 			break;
@@ -1496,10 +1497,10 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.backgroundTraits.includes("plantlover")) {
 				result = Math.floor(result * (1 + V.trauma / (V.traumamax * 2)));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFCowBuffs == 1) {
+			if (V.TFCowBuffs === 1) {
 				result = Math.round(result * 1.4);
 			}
 			break;
@@ -1516,19 +1517,19 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.handheld.type.includes("maid")) {
 				result = Math.floor(result * 1.05);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFWolfBuffs == 1) {
+			if (V.TFWolfBuffs === 1) {
 				result = Math.round(result * 0.9);
 			}
-			if (V.TFCatBuffs == 1) {
+			if (V.TFCatBuffs === 1) {
 				result = Math.round(result * 0.9);
 			}
-			if (V.TFBearBuffs == 1) {
+			if (V.TFBearBuffs === 1) {
 				result = Math.round(result * 0.8);
 			}
-			if (V.TFBirdBuffs == 1) {
+			if (V.TFBirdBuffs === 1) {
 				result = Math.round(result * 1.3);
 			}
 			break;
@@ -1543,8 +1544,8 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (playerHeatMinArousal()) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			break;
 		case "penileskill":
@@ -1558,8 +1559,8 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (playerRutMinArousal()) {
 				result = Math.floor(result * (1 + Math.clamp(playerRutMinArousal(), 0, 4000) / 20000));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			break;
 		case "analskill":
@@ -1569,37 +1570,37 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (playerHeatMinArousal() && canBeMPregnant()) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			break;
 		case "seductionskill":
 			if (V.earSlime.growth > 50 && !V.earSlime.defyCooldown) {
 				result = Math.floor(result * (1 + (V.earSlime.growth - 50) / 600));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFCatBuffs == 1) {
+			if (V.TFCatBuffs === 1) {
 				result = Math.round(result * 1.2);
 			}
-			if (V.TFCowBuffs == 1) {
+			if (V.TFCowBuffs === 1) {
 				result = Math.round(result * 1.1);
 			}
-			if (V.TFBearBuffs == 1) {
+			if (V.TFBearBuffs === 1) {
 				result = Math.round(result * 0.9);
 			}
-			if (V.TFBirdBuffs == 1) {
+			if (V.TFBirdBuffs === 1) {
 				result = Math.round(result * 1.1);
 			}
-			if (V.TFFoxBuffs == 1) {
+			if (V.TFFoxBuffs === 1) {
 				result = Math.round(result * 1.2);
 			}
 			break;
 	}
-	if (V.drunk >= 120 && V.substanceRebalance == 1) {
-		result = Math.round(result * (1 - (0.1 * Math.round(V.drunk / 120))));
-	} else if (V.drunk >= 1 && V.substanceRebalance == 1) {
+	if (V.drunk >= 120 && V.substanceRebalance === 1) {
+		result = Math.round(result * (1 - 0.1 * Math.round(V.drunk / 120)));
+	} else if (V.drunk >= 1 && V.substanceRebalance === 1) {
 		result = Math.round(result * 0.95);
 	}
 	return result;
@@ -1883,7 +1884,7 @@ function waterproofCheck(clothing) {
 window.waterproofCheck = waterproofCheck;
 
 function antitransparentCheck(clothing) {
-	return (clothing.type.includesAny("antitransparent") && V.realisticTransparency == 1);
+	return clothing.type.includesAny("antitransparent") && V.realisticTransparency === 1;
 }
 window.antitransparentCheck = antitransparentCheck;
 
@@ -2363,10 +2364,7 @@ function getHalloweenCostume() {
 		return "butterfly";
 	} else if (upper.name === "succubus top" && lower.name === "succubus lower back wings") {
 		return "succubus";
-	} else if (
-		(upper.name === "vintage pantsuit" && lower.name === "vintage pants") ||
-		(upper.name === "vintage skirtsuit" && lower.name === "vintage skirt")
-	) {
+	} else if ((upper.name === "vintage pantsuit" && lower.name === "vintage pants") || (upper.name === "vintage skirtsuit" && lower.name === "vintage skirt")) {
 		return "vintage";
 	} else if (upper.name === "chain tunic" && lower.name === "chain tunic skirt") {
 		return "chain tunic";
@@ -3019,9 +3017,7 @@ function unableTakeVirginity(virginity) {
 		case "vaginal":
 			return (
 				V.settings.straponChance === 0 &&
-				((V.cbchance === 100 && V.dgchance === 0) ||
-					(maleChance() === 100 && V.cbchance === 100) ||
-					(maleChance() === 0 && V.dgchance === 0))
+				((V.cbchance === 100 && V.dgchance === 0) || (maleChance() === 100 && V.cbchance === 100) || (maleChance() === 0 && V.dgchance === 0))
 			);
 		default:
 			return false;
@@ -3159,18 +3155,18 @@ function kitchenFilter() {
 	T.recipeKeys = [];
 	T.recipesGroups = ["ingredients", "sweets", "savouries", "drinks"];
 
-	// Make search case-insensitive + avoid empty terms
-	const terms = (T.foodSearch ?? "")
-		.trim()
-		.toLowerCase()
-		.split(/[_\s]+/g)
-		.filter(Boolean);
+	// // Make search case-insensitive + avoid empty terms
+	// const terms = (T.foodSearch ?? "")
+	// 	.trim()
+	// 	.toLowerCase()
+	// 	.split(/[_\s]+/g)
+	// 	.filter(Boolean);
 
-	const norm = (v) => {
-		if (v == null) return "";
-		if (Array.isArray(v)) return v.join(" ").toLowerCase();
-		return String(v).toLowerCase();
-	};
+	// const norm = (v) => {
+	// 	if (v == null) return "";
+	// 	if (Array.isArray(v)) return v.join(" ").toLowerCase();
+	// 	return String(v).toLowerCase();
+	// };
 
 	let missingIngredients = false;
 	let providedIngredients = false;
@@ -3197,7 +3193,7 @@ function kitchenFilter() {
 			providedIngredients = true;
 
 			// FIX: don't shadow "recipe" (was comparing string to object)
-			if (!T.recipeKeys.some((r) => r.key === recipe)) {
+			if (!T.recipeKeys.some(r => r.key === recipe)) {
 				T.recipeKeys.push({ key: recipe, group: "Provided Ingredients" });
 			}
 			return;
@@ -3216,10 +3212,8 @@ function kitchenFilter() {
 		}
 
 		let missingIngredientsFound = false;
-		item.ingredients.forEach((ingredient) => {
-			if (ingredientsTotal(ingredient, recipe, true) <= 0 && !ingredientsProvided(ingredient, recipe)) {
-				missingIngredientsFound = true;
-			}
+		item.recipe.ingredients.forEach(ingredient => {
+			if (ingredientsTotal(ingredient, recipe, true) <= 0 && !ingredientsProvided(ingredient, recipe)) missingIngredientsFound = true;
 		});
 
 		if (!ingredientIsAllowed(recipe)) {
@@ -3230,7 +3224,7 @@ function kitchenFilter() {
 			missingIngredients = true;
 		}
 
-		if (!T.recipeKeys.some((recipeObj) => recipeObj.key === recipe)) {
+		if (!T.recipeKeys.some(recipeObj => recipeObj.key === recipe)) {
 			T.recipeKeys.push({ key: recipe, group });
 		}
 	});
@@ -3342,9 +3336,9 @@ function hasSharpSenses(sense = "any") {
 		if (currentSkillValue("skulduggery") >= 600) return "experienced ears";
 	}
 	if (["instincts"].includes(sense)) {
-		if (V.wolfgirl >= 6 || V.transformationParts.wolf.tail !== "disabled" && V.transformationParts.wolf.tail !== "hidden") return "wolf instincts";
-		if (V.cat >= 6 || V.transformationParts.cat.tail !== "disabled" && V.transformationParts.cat.tail !== "hidden") return "cat instincts";
-		if (V.fox >= 6 || V.transformationParts.fox.tail !== "disabled" && V.transformationParts.fox.tail !== "hidden") return "fox instincts";
+		if (V.wolfgirl >= 6 || (V.transformationParts.wolf.tail !== "disabled" && V.transformationParts.wolf.tail !== "hidden")) return "wolf instincts";
+		if (V.cat >= 6 || (V.transformationParts.cat.tail !== "disabled" && V.transformationParts.cat.tail !== "hidden")) return "cat instincts";
+		if (V.fox >= 6 || (V.transformationParts.fox.tail !== "disabled" && V.transformationParts.fox.tail !== "hidden")) return "fox instincts";
 		if (V.dryad >= 6 || currentSkillValue("tending") >= 900) return "nature-trained instincts";
 	}
 	return false;
@@ -3368,7 +3362,7 @@ function breakableSoftBinding() {
 	if (
 		pcAreArmsBound("any") ||
 		((["ropes", "vines"].includes(V.worn.feet.name) || [V.feetuse, V.leftleg, V.rightleg].includes("bound")) &&
-		!["ankle cuffs", "ball and chain"].includes(V.worn.feet.name))
+			!["ankle cuffs", "ball and chain"].includes(V.worn.feet.name))
 	) {
 		return true;
 	}
