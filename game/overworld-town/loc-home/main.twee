@@ -81,16 +81,20 @@ You are in your bedroom.
 <<set _poster to Furniture.get('poster', $location)>>
 <<set _bed to Furniture.get('bed', $location)>>
 <<set _wardrobe to Furniture.get('wardrobe', $location)>>
-<<set _radio to Furniture.get('radio', $location)>>
+/*<<set _radio to Furniture.get('radio', $location)>>*/
 <<if $machineVaginalBought isnot undefined or $machineAnalBought isnot undefined>>
 	<<set _sexMachine to 1>>
 <</if>>
 
-<<if _radio and $bedroomUI.orphanage.radio is true>>
+/*<<if _radio and $bedroomUI.orphanage.radio is true>>
 	<br><br>
 	<<run while (V.weatherObj.keypointsArr.length > 1 && V.weatherObj.keypointsArr[1].timestamp <= (new DateTime(Time.date)).timeStamp) {V.weatherObj.keypointsArr.shift();}>>
 	<<furnitureicon _radio.iconFile>>The radio buzzes. "There will be 
-	<<set _forecastDate to new DateTime(V.weatherObj.keypointsArr[1].timestamp)>>
+	<<if V.weatherObj and V.weatherObj.keypointsArr and V.weatherObj.keypointsArr.length gt 1>>
+		<<set _forecastDate to new DateTime(V.weatherObj.keypointsArr[1].timestamp)>>
+	<<else>>
+		<<set _forecastDate to new DateTime(Time.date)>>
+	<</if>>
 	<<switch Weather.WeatherGeneration.getWeather(_forecastDate).name>>
 		<<case "clear">>
 			<span class="green">clear skies</span> 
@@ -116,7 +120,7 @@ You are in your bedroom.
 		<<print Time.date.compareWith(_forecastDate).minutes>> minutes."
 	<</if>>
 	<br>
-<</if>>
+<</if>>*//
 
 /* Misc Furniture */
 <<deskText "icon">> /* If no desk options (read a book, work on project, etc.) are available, desk and icon appear here */

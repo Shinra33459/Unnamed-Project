@@ -1467,13 +1467,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.mouth,
 
 			srcfn(options) {
-				//// commented out until the art mods figure out how they want to handle the new file system
-				// if (options.facevariant === "default") {
-					return `img/face/${options.facestyle}/mouth-${options.mouth}.png`;
-				//}
-				//else {
-				//return `img/face/${options.facestyle}/${options.facevariant}/mouth-${options.mouth}.png`;
-				//}
+				return `img/face/${options.facestyle}/${options.facevariant}/mouth-${options.mouth}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.mouth !== "none";
@@ -1489,7 +1483,7 @@ Renderer.CanvasModels.main = {
 			},
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/lipstick-${options.mouth}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/lipstick-${options.mouth}.png`;return `img/face/${options.facestyle}/lipstick-${options.mouth}.png`;
 			},
 			showfn(options) {
 				return options.show_face && !!options.lipstick_colour;
@@ -1500,12 +1494,7 @@ Renderer.CanvasModels.main = {
 			z: ZIndices.blush,
 
 			srcfn(options) {
-				//if (options.facevariant === "default") {
-					return `img/face/${options.facestyle}/blush-${options.blush}.png`;
-				//}
-				//else {
-				//return `img/face/${options.facestyle}/${options.facevariant}/blush-${options.blush}.png`;
-				//}
+				return `img/face/${options.facestyle}/${options.facevariant}/blush-${options.blush}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.blush > 0;
@@ -1516,7 +1505,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/tears-${options.tears}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/tears-${options.tears}.png`;
 			},
 			showfn(options) {
 				return options.show_face && options.tears > 0;

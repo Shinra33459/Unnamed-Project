@@ -22,7 +22,7 @@ const Furniture = (() => {
 		wallpaper: "wallpaper",
 		shelf: "shelf",
 		plush: "plush",
-		radio:"radio",
+		/*radio:"radio",*/
 		/* Special category for Kylar event */
 		owlplushie: "owlplushie",
 	});
@@ -509,7 +509,7 @@ const Furniture = (() => {
 			iconFile: "wallpaper",
 		});
 		/* ---------------- DoLP ---------------- */
-		mapper.set("Radio", {
+		/*mapper.set("Radio", {
 			name: "radio",
 			nameCap: "Radio",
 			category: ["radio"],
@@ -517,7 +517,7 @@ const Furniture = (() => {
 			cost: 200,
 			description: "A space-friendly radio, includes weather forecasts!",
 			iconFile: "radio",
-		});
+		});*/
 		/* ------------- BUNNY MOD -------------- */
 		mapper.set("shelf", {
 			name: "small shelf",
