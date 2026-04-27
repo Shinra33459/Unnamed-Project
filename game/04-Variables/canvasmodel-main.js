@@ -3996,25 +3996,63 @@ Renderer.CanvasModels.main = {
 		 */
 		"rings": genlayer_clothing_main('rings'),
 		"rings_left": {
-			filters: ["worn_rings"],
 			animation: "idle",
+			filtersfn() {
+				return ["worn_rings"];
+			},
 
 			srcfn(options) {
-				const suffix = options.arm_left === "cover" ? "left_cover" : "left";
+				const suffix = options.arm_left === "cover" ? "left_cover" : "left";;
+
+				const setupItem = worn.setup?.variable ? worn.setup : setup.clothes.rings?.[worn.index];
+				if (!setupItem?.variable) {
+					console.error("[Canvas earrings] Missing setup data while resolving main image.", {
+						index: worn.index,
+						worn,
+					});
+					return "";
+				}
 				
 				const isAltPosition = !options.alt_override
 					&& options.worn.rings.setup.altposition !== undefined
 					&& options.worn.rings.alt === "alt";
-				const alt = isAltPosition ? '_alt' : '';
+				const alt = isAltPosition ? '_alt' : ''
 				
 				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${alt}.png`;
-				return gray_suffix(path, options.filters['worn_rings']);
+
+				if (!setupItem.colour_sidebar) return path;
+
+				try {
+					return gray_suffix(path, options.filters?.worn_rings);
+				} catch (e) {
+					console.warn("[Canvas rings] gray_suffix failed for main image; using gray filename fallback.", {
+						path,
+						filter: options.filters?.worn_rings,
+						error: r,
+					});
+
+				return path.replace(/\.png$/, "_gray.png");
+				}
 			},
 			showfn(options) {
+				const worn = options.worn.rings;
+				const setupItem = worn.setup?.variable ? worn.setup : setup.clothes.rings?.[worn.index];
+
+				if (!setupItem) {
+					if (worn.index > 0) {
+						console.error("[Canvas earrings] Missing setup data while checking main image.", {
+							index: worn.index,
+							worn,
+						});
+					}
+					return false;
+				}
+				worn.setup = setupItem;
+				
 				return options.show_clothes
 					&& options.worn.rings.index > 0
-					&& options.worn.rings.setup.leftImage === 1
-					&& options.arm_left !== "none";
+					&& setupItem.mainImage !== 0
+					&& !options.hide_all;
 			},
 			zfn(options) {
 				return options.arm_left === "cover" ? ZIndices.hands : options.zarms + 0.2;
@@ -4142,30 +4180,66 @@ Renderer.CanvasModels.main = {
 			},
 		},
 		"rings_right": {
-			filters: ["worn_rings"],
 			animation: "idle",
+			filtersfn() {
+				return ["worn_rings"];
+			},
 
 			srcfn(options) {
-				const hold = options.handheld_position || "right";
-				const suffix = options.arm_right === "cover" ? "right_cover" : hold;
+				const suffix = options.arm_right === "cover" ? "right_cover" : "right";;
+
+				const setupItem = worn.setup?.variable ? worn.setup : setup.clothes.rings?.[worn.index];
+				if (!setupItem?.variable) {
+					console.error("[Canvas earrings] Missing setup data while resolving main image.", {
+						index: worn.index,
+						worn,
+					});
+					return "";
+				}
 				
 				const isAltPosition = !options.alt_override
 					&& options.worn.rings.setup.altposition !== undefined
 					&& options.worn.rings.alt === "alt";
-				const alt = isAltPosition ? '_alt' : '';
+				const alt = isAltPosition ? '_alt' : ''
 				
 				const path = `img/clothes/rings/${options.worn.rings.setup.variable}/${suffix}${alt}.png`;
-				return gray_suffix(path, options.filters['worn_rings']);
+
+				if (!setupItem.colour_sidebar) return path;
+
+				try {
+					return gray_suffix(path, options.filters?.worn_rings);
+				} catch (e) {
+					console.warn("[Canvas rings] gray_suffix failed for main image; using gray filename fallback.", {
+						path,
+						filter: options.filters?.worn_rings,
+						error: r,
+					});
+
+				return path.replace(/\.png$/, "_gray.png");
+				}
 			},
 			showfn(options) {
+				const worn = options.worn.rings;
+				const setupItem = worn.setup?.variable ? worn.setup : setup.clothes.rings?.[worn.index];
+
+				if (!setupItem) {
+					if (worn.index > 0) {
+						console.error("[Canvas earrings] Missing setup data while checking main image.", {
+							index: worn.index,
+							worn,
+						});
+					}
+					return false;
+				}
+				worn.setup = setupItem;
+				
 				return options.show_clothes
 					&& options.worn.rings.index > 0
-					&& options.worn.rings.setup.rightImage === 1
-					&& options.arm_right !== "none";
+					&& setupItem.mainImage !== 0
+					&& !options.hide_all;
 			},
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
-				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
+				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.hands : options.zarms + 0.2;
 			},
 		},
 		"rings_right_acc": {
@@ -4591,53 +4665,136 @@ Renderer.CanvasModels.main = {
  		 */
 		 
 		"earrings": genlayer_clothing_main('earrings', {
+			filtersfn() {
+				return ["worn_earrings"];
+			},
 			srcfn(options) {
-				const isAltPosition = !options.alt_override
-					&& options.worn.earrings.setup.altposition !== undefined
-					&& options.worn.earrings.alt === "alt";
-				const alt = isAltPosition ? '_alt' : '';
-				const pattern = options.worn.earrings.pattern && !["tertiary", "secondary"].includes(options.worn.earrings.pattern_layer) ? "_" + options.worn.earrings.pattern?.replace(/ /g,"_") : '';
+				const worn = options.worn.earrings;
+				const setupItem = worn.setup?.variable ? worn.setup : setup.clothes.earrings?.[worn.index];
 
-				const setupVar = options.worn.earrings.setup.variable;
-				const integrity = options.worn.earrings.integrity;
-				const path = `img/clothes/earrings/${setupVar}/${integrity}${pattern}${alt}.png`;
-				return gray_suffix(path, options.filters['worn_earrings']);
+				if (!setupItem?.variable) {
+					console.error("[Canvas earrings] Missing setup data while resolving main image.", {
+						index: worn.index,
+						worn,
+					});
+					return "";
+				}
+
+				worn.setup = setupItem;
+
+				const isAltPosition = !options.alt_override
+					&& setupItem.altposition !== undefined
+					&& worn.alt === "alt";
+				const alt = isAltPosition ? "_alt" : "";
+				const pattern = worn.pattern && !["tertiary", "secondary"].includes(setupItem.pattern_layer)
+					? "_" + worn.pattern?.replace(/ /g, "_")
+					: "";
+				const path = `img/clothes/earrings/${setupItem.variable}/${worn.integrity}${pattern}${alt}.png`;
+
+				if (!setupItem.colour_sidebar) return path;
+
+				try {
+					return gray_suffix(path, options.filters?.worn_earrings);
+				} catch (e) {
+					console.warn("[Canvas earrings] gray_suffix failed for main image; using gray filename fallback.", {
+						path,
+						filter: options.filters?.worn_earrings,
+						error: e,
+					});
+					return path.replace(/\.png$/, "_gray.png");
+				}
 			},
 			showfn(options) {
+				const worn = options.worn.earrings;
+				const setupItem = worn.setup?.variable ? worn.setup : setup.clothes.earrings?.[worn.index];
+
+				if (!setupItem) {
+					if (worn.index > 0) {
+						console.error("[Canvas earrings] Missing setup data while checking main image.", {
+							index: worn.index,
+							worn,
+						});
+					}
+					return false;
+				}
+
+				worn.setup = setupItem;
+
 				return options.show_clothes
-					&& options.worn.earrings.index > 0
-					&& options.worn.earrings.setup.mainImage !== 0
-					&& !options.hideAll;
+					&& worn.index > 0
+					&& setupItem.mainImage !== 0
+					&& !options.hide_all;
 			},
-			zfn(options) {
-				return ZIndices.ears + 1;
+			zfn() {
+				const earZ = typeof ZIndices.ears === "number" ? ZIndices.ears + 1 : 0;
+				const headZ = typeof ZIndices.basehead === "number" ? ZIndices.basehead + 0.1 : earZ;
+				return Math.max(earZ, headZ);
 			},
 		}),
 		"earrings_acc": genlayer_clothing_accessory('earrings', {
+			filtersfn() {
+				return ["worn_earrings_acc"];
+			},
 			srcfn(options) {
-				const isAltPosition = !options.alt_override
-					&& options.worn.earrings.setup.altposition !== undefined
-					&& options.worn.earrings.alt === "alt";
-				const integrity = setup.accessory_integrity_img ? `_${options.worn.earrings.integrity}` : '';
-				const alt = isAltPosition ? '_alt' : '';
-				const pattern = options.worn.earrings?.pattern && options.worn.earrings?.pattern_layer === "secondary" ? "_" + options.worn.earrings.pattern?.replace(/ /g,"_") : '';
+				const worn = options.worn.earrings;
+				const setupItem = worn.setup?.variable ? worn.setup : setup.clothes.earrings?.[worn.index];
 
-				const setupVar = options.worn.earrings.setup.variable;
-				const path = `img/clothes/earrings/${setupVar}/acc${integrity}${pattern}${alt}.png`;
-				return gray_suffix(path, options.filters['worn_earrings_acc']);
+				if (!setupItem?.variable) {
+					console.error("[Canvas earrings] Missing setup data while resolving accessory image.", {
+						index: worn.index,
+						worn,
+					});
+					return "";
+				}
+
+				worn.setup = setupItem;
+
+				const isAltPosition = !options.alt_override
+					&& setupItem.altposition !== undefined
+					&& worn.alt === "alt";
+				const integrity = setupItem.accessory_integrity_img ? `_${worn.integrity}` : "";
+				const alt = isAltPosition ? "_alt" : "";
+				const pattern = worn.pattern && setupItem.pattern_layer === "secondary"
+					? "_" + worn.pattern?.replace(/ /g, "_")
+					: "";
+				const path = `img/clothes/earrings/${setupItem.variable}/acc${integrity}${pattern}${alt}.png`;
+
+				if (!setupItem.accessory_colour_sidebar) return path;
+
+				try {
+					return gray_suffix(path, options.filters?.worn_earrings_acc);
+				} catch (e) {
+					console.warn("[Canvas earrings] gray_suffix failed for accessory image; using gray filename fallback.", {
+						path,
+						filter: options.filters?.worn_earrings_acc,
+						error: e,
+					});
+					return path.replace(/\.png$/, "_gray.png");
+				}
 			},
 			showfn(options) {
+				const worn = options.worn.earrings;
+				const setupItem = worn.setup?.variable ? worn.setup : setup.clothes.earrings?.[worn.index];
+
+				if (!setupItem) {
+					if (worn.index > 0) {
+						console.error("[Canvas earrings] Missing setup data while checking accessory image.", {
+							index: worn.index,
+							worn,
+						});
+					}
+					return false;
+				}
+				worn.setup = setupItem;
 				return options.show_clothes
-					&& options.worn.earrings.index > 0
-					&& options.worn.earrings.setup.accImage !== 0
-					&& options.worn.earrings.setup.accessory === 1;
+					&& worn.index > 0
+					&& setupItem.accImage !== 0
+					&& setupItem.accessory === 1;
 			},
-			zfn(options) {
-				const check = options.worn.head.setup.mask_img === 1
-					&& !(options.hood_down
-						&& options.worn.head.setup.hood
-						&& options.worn.head.setup.outfitSecondary !== undefined);
-				return check ? ZIndices.collar : ZIndices.neck + 1;
+			zfn() {
+				const earZ = typeof ZIndices.ears === "number" ? ZIndices.ears + 1 : 0;
+				const headZ = typeof ZIndices.basehead === "number" ? ZIndices.basehead + 0.1 : earZ;
+				return Math.max(earZ, headZ);
 			},
 		}),
 		/***
