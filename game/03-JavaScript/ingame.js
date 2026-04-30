@@ -406,9 +406,6 @@ function loveInterestFunction() {
 		delete T.awareChecked;
 		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
 	});
-	jQuery(document).on("change", "#listbox-loveinteresttertiary", function (e) {
-		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
-	});
 }
 DefineMacro("loveInterestFunction", loveInterestFunction);
 
@@ -2170,15 +2167,15 @@ DefineMacro("validateTransformations", validateTransformations);
 // prettier-ignore
 function getSexesFromRandomGroup() {
 	if (maleChance() <= 0) { /* Only females. */
-		if (V.dgchance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
-		if (V.dgchance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
+		if (V.settings.femaleNPCPenisChance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
+		if (V.settings.femaleNPCPenisChance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
 	}
 	if (maleChance() >= 100) { /* Only males. */
-		if (V.cbchance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
-		if (V.cbchance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
+		if (V.settings.maleNPCVaginaChance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
+		if (V.settings.maleNPCVaginaChance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
 	}
-	if (V.cbchance >= 100 && V.dgchance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
-	if (V.dgchance >= 100 && V.cbchance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
+	if (V.settings.maleNPCVaginaChance >= 100 && V.settings.femaleNPCPenisChance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
+	if (V.settings.femaleNPCPenisChance >= 100 && V.settings.maleNPCVaginaChance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
 	return SexTypes.BOTH;
 }
 window.getSexesFromRandomGroup = getSexesFromRandomGroup;
@@ -3010,18 +3007,18 @@ function unableTakeVirginity(virginity) {
 		case "penile":
 			return (
 				V.settings.analEnabled === false &&
-				((V.cbchance === 0 && V.dgchance === 100) ||
-					(maleChance() === 100 && V.cbchance === 0) ||
-					(maleChance() === 0 && V.dgchance === 100) ||
-					(maleChance() === 100 && V.cbchance === 100 && V.settings.straponChance === 100) ||
-					(maleChance() === 0 && V.dgchance === 0 && V.settings.straponChance === 100))
+				((V.settings.maleNPCVaginaChance === 0 && V.settings.femaleNPCPenisChance === 100) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 0) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 100) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 100 && V.settings.straponChance === 100) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 0 && V.settings.straponChance === 100))
 			);
 		case "vaginal":
 			return (
 				V.settings.straponChance === 0 &&
-				((V.cbchance === 100 && V.dgchance === 0) ||
-					(maleChance() === 100 && V.cbchance === 100) ||
-					(maleChance() === 0 && V.dgchance === 0))
+				((V.settings.maleNPCVaginaChance === 100 && V.settings.femaleNPCPenisChance === 0) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 100) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 0))
 			);
 		default:
 			return false;
@@ -3366,3 +3363,32 @@ function displayDefiantOption(amount) {
 	}
 }
 window.displayDefiantOption = displayDefiantOption;
+
+// Returns true if one or more orphanage plots have been planted
+// Used to determine whether Robin should automatically water them
+function orphanagePlotsPlanted() {
+	if (V.plots?.garden) {
+		for (let i = 0; i < V.plots.garden.length; i++) {
+			if (V.plots.garden[i].stage >= 1) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+window.orphanagePlotsPlanted = orphanagePlotsPlanted;
+
+// Returns true if all orphanage plots have been watered
+// Used to determine whether Robin should automatically water them
+function orphanagePlotsWatered() {
+	if (V.plots?.garden) {
+		for (let i = 0; i < V.plots.garden.length; i++) {
+			if (V.plots.garden[i].water === 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+window.orphanagePlotsWatered = orphanagePlotsWatered;

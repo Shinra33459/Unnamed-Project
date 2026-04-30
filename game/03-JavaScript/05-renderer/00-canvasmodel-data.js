@@ -111,8 +111,6 @@ const ZIndices = {
 	tailPenisCover: 165,
 	tailPenisCoverOverlay: 166,
 
-	old_over_upper: 171,
-
 	deco_fg2: 295,
 	deco_fg1: 300,
 

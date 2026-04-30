@@ -66,7 +66,7 @@ You are on the docks.
 <<if $exposed lte 0 and Time.dayState isnot "night" and $docks.status gte 80 and $docks.wage lt 2500>>
 	/* <<dockstatus>> multiplies inputs by 2 and clamps, so asking for a raise is -40 status */
 	/* At the earliest fame to ask for a raise, this sets you to 40, and at the highest, 60 */
-	<<socialiseicon "ask">><<link [[Ask for raise (0:05)|Docks Raise]]>><<pass 5>><<set $dockwage += Math.clamp($dockwage + 150, 0, 3000)>><<dockstatus -20>><</link>><<lllcool>>
+	<<socialiseicon "ask">><<link [[Ask for raise (0:05)|Docks Raise]]>><<pass 5>><<set $docks.wage += 150>><<dockstatus -20>><</link>><<lllcool>>
 	<br>
 <</if>>
 <<if Time.dayState is "night">>
@@ -187,7 +187,6 @@ The door is open. A <<generate2>><<person2>><<person>> looks up from <<his>> des
 <<link [[Yes (0:30)|Docks Take Job]]>><<pass 30>><<set $docks.hired to true>><<endevent>><</link>>
 <br>
 <<link [[No|Docks Refuse Job]]>><</link>>
-<br>
 
 :: Docks Refuse Job
 "That's a shame," the <<person>> sighs. "Come back if you change your mind."
@@ -316,154 +315,13 @@ The door is open. A <<generate2>><<person2>><<person>> looks up from <<his>> des
 <<effects>>
 <<docklunchoptions>>
 
-/* In the Docks Work passage, $phase determines action: 0 is working, 1 is slacking  */
-:: Docks Work
-<<set $outside to 1>><<effects>>
-
-<<if $arousal gte $arousalmax>>
-	<<orgasmLocation "docks">>
-<</if>>
-
-<<if $phase is 0>>
-	You work hard. It's
-	<<if $docks.dayType is "busy">>
-		exhausting.
-		<<physique 9>>
-	<<elseif $docks.dayType is "slow">>
-		a slow day, leaving plenty of time to take breaks when you're not needed.
-		<<physique 3>>
-	<<elseif $docks.dayType is "lewd">>
-		tiring, and you feel strangely heated.
-		<<physique 6>>
-	<<else>>
-		tiring.
-		<<physique 6>>
-	<</if>>
-
-	<<if $upperwetstage gte 3 or $lowerwetstage gte 3>>
-		<br><br>
-		You feel the other dockers ogling your body through your wet clothing.
-		<<gstress>><<garousal>><<stress 6>><<arousal 600>>
-	<</if>>
-<<elseif $phase is 1>>
-	<<if $docks.dayType is "lewd">>
-		You try to avoid handling the unusual cargo.
-	<<else>>
-		You do as little work as you can get away with.
-	<</if>>
-	<<set _daily_slacked to ($docks.dailyHours.shift.slacked + $docks.dailyHours.overtime.slacked)>>
-	<<if $docks.dayType is "slow">>
-		Your colleagues <span class="teal">don't mind you slacking today.</span>
-	<<else>>
-		<<if $docks.status gte 80>>
-			<<if _daily_slacked is 1>>
-				Your colleagues <span class="green">don't mind.</span>
-			<<elseif _daily_slacked is 2>>
-				Your colleagues <span class="lblue">cover for you.</span>
-			<<elseif _daily_slacked is 3>>
-				Your colleagues <span class="blue">let it slide.</span>
-			<<elseif _daily_slacked is 4>>
-				Your colleagues <span class="purple">are getting impatient.</span>
-			<<elseif $docks.dayType is "busy">>
-				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
-			<<else>>
-				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
-			<</if>>
-		<<elseif $docks.status gte 60>>
-			<<if _daily_slacked is 1>>
-				Your colleagues <span class="lblue">cover for you.</span>
-			<<elseif _daily_slacked is 2>>
-				Your colleagues <span class="blue">let it slide.</span>
-			<<elseif _daily_slacked is 3>>
-				Your colleagues <span class="purple">are getting impatient.</span>
-			<<elseif $docks.dayType is "busy">>
-				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
-			<<else>>
-				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
-			<</if>>
-		<<elseif $docks.status gte 40>>
-			<<if _daily_slacked is 1>>
-				Your colleagues <span class="blue">let it slide.</span>
-			<<elseif _daily_slacked is 2>>
-				Your colleagues <span class="purple">are getting impatient.</span>
-			<<elseif $docks.dayType is "busy">>
-				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
-			<<else>>
-				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
-			<</if>>
-		<<elseif $docks.status gte 20>>
-			<<if _daily_slacked is 1>>
-				Your colleagues <span class="purple">are getting impatient.</span>
-			<<elseif $docks.dayType is "busy">>
-				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
-			<<else>>
-				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
-			<</if>>
-		<<else>>
-			<<if $docks.dayType is "busy">>
-				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
-			<<else>>
-				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
-			<</if>>
-		<</if>>
-	<</if>>
-	<<if $docks.suspicion gte 4>>
-		<br><br>
-		A supervisor follows you and <<if $docks.status gte 20>>says<<else>>sneers<</if>>,
-		<<if $rng gte 81>>
-			"Stop slacking, <<girl>>. No work, no pay<<if $docks.dayType is "busy">>, and there's no shortage of work for you today<<elseif $docks.dayType is "slow">>, even on slow days<</if>>."
-		<<elseif $rng gte 61>>
-			"We don't pay you to sit idle<<if $docks.dayType is "busy">>, especially not on days like these<</if>>. Get back to work."
-		<<elseif $rng gte 41>>
-			"You think you're special? No pay for slackers.<<if $docks.dayType is "busy">> We need all hands on-board today.<</if>>"
-		<<elseif $rng gte 21>>
-			"Back in my day, we fired slackers. Now we just don't pay them."
-		<<else>>
-			"A little birdie told me you've not been pulling your weight around here. We only pay for hours worked."
-		<</if>>
-		<<stress 6>><<gstress>>
-		<<if Time.hour gte 17>>
-			<<set $docks.dailyHours.overtime.unpaid += 1>>
-		<<else>>
-			<<set $docks.dailyHours.shift.unpaid += 1>>
-		<</if>>
-	<</if>>
-
-	<<if $upperwetstage gte 3 or $lowerwetstage gte 3>>
-		<br><br>
-		You feel the other dockers ogling your body through your wet clothing.
-		<<gstress>><<garousal>><<stress 6>><<arousal 600>>
-	<</if>>
-<<elseif $phase is 2>>
-	You strip naked behind some cargo containers. <<flaunting>> you take a deep breath and step out onto the dock.
-	<<set $daily.docksExhibitionism to true>>
-	<<exhibitionism5>>
-
-	<<covered>> Few notice at first, until someone whistles at you and attracts attention. More and more dockers stop what they're doing to cheer and whistle at you. Each new onlooker renews your thrill.
-	<br><br>
-
-	A supervisor tells everyone to get back to work. They do so, though reluctant to take their eyes off you. <<generate1>><<person1>>The supervisor doesn't tell you to get dressed. The longing look <<he>> gives your body suggests why.<<endevent>>
-<</if>>
-<br><br>
-
-/* Suspicion level based on slacking */
-/* Set after the supervisor display so that the red text warning the dockoptions widget appears first */
-/* Bounds are 0 to 4. Pay is withheld at 4 suspicion when slacking again. Working or stripping and working reduces it */
-<<if ($phase is 0 or $phase is 2) and $docks.suspicion gte 1>>
-	<<set $docks.suspicion -= 1>>
-<<elseif $phase is 1 and $docks.suspicion lte 3>>
-	<<set $docks.suspicion += 1>>
-<</if>>
-
-<<dockwork>>
-
 :: Docks Lunch Socialise
 <<effects>>
 
 You sit down with the other workers and talk over lunch.
 
 <<if $docks.status gte 100>>
-	You quickly become the centre of attention. A <<generate1>><<person1>><<person>> offers a toast to you and thanks you for all the help you've been<<if $dockwage lt 2500>>, while a <<generate2>><<person2>><<person>> jokes that you should ask for a raise already<</if>>.<<stress -6>><<trauma -6>><<lstress>><<ltrauma>><<endevent>>
+	You quickly become the centre of attention. A <<generate1>><<person1>><<person>> offers a toast to you and thanks you for all the help you've been<<if $docks.wage lt 2500>>, while a <<generate2>><<person2>><<person>> jokes that you should ask for a raise already<</if>>.<<stress -6>><<trauma -6>><<lstress>><<ltrauma>><<endevent>>
 <<elseif $docks.status gte 80>>
 	They enjoy your company and listen when you talk. A <<generate1>><<person1>><<person>> offers to share <<his>> food with you.<<stress -6>><<trauma -3>><<dockstatus 1>><<lstress>><<ltrauma>><<gcool>><<endevent>>
 <<elseif $docks.status gte 60>>
@@ -849,6 +707,147 @@ You take a stroll near the ocean.
 	<br><br>
 <</if>>
 <<docklunchprompt>>
+
+/* In the Docks Work passage, $phase determines action: 0 is working, 1 is slacking  */
+:: Docks Work
+<<set $outside to 1>><<effects>>
+
+<<if $arousal gte $arousalmax>>
+	<<orgasmLocation "docks">>
+<</if>>
+
+<<if $phase is 0>>
+	You work hard. It's
+	<<if $docks.dayType is "busy">>
+		exhausting.
+		<<physique 9>>
+	<<elseif $docks.dayType is "slow">>
+		a slow day, leaving plenty of time to take breaks when you're not needed.
+		<<physique 3>>
+	<<elseif $docks.dayType is "lewd">>
+		tiring, and you feel strangely heated.
+		<<physique 6>>
+	<<else>>
+		tiring.
+		<<physique 6>>
+	<</if>>
+
+	<<if $upperwetstage gte 3 or $lowerwetstage gte 3>>
+		<br><br>
+		You feel the other dockers ogling your body through your wet clothing.
+		<<gstress>><<garousal>><<stress 6>><<arousal 600>>
+	<</if>>
+<<elseif $phase is 1>>
+	<<if $docks.dayType is "lewd">>
+		You try to avoid handling the unusual cargo.
+	<<else>>
+		You do as little work as you can get away with.
+	<</if>>
+	<<set _daily_slacked to ($docks.dailyHours.shift.slacked + $docks.dailyHours.overtime.slacked)>>
+	<<if $docks.dayType is "slow">>
+		Your colleagues <span class="teal">don't mind you slacking today.</span>
+	<<else>>
+		<<if $docks.status gte 80>>
+			<<if _daily_slacked is 1>>
+				Your colleagues <span class="green">don't mind.</span>
+			<<elseif _daily_slacked is 2>>
+				Your colleagues <span class="lblue">cover for you.</span>
+			<<elseif _daily_slacked is 3>>
+				Your colleagues <span class="blue">let it slide.</span>
+			<<elseif _daily_slacked is 4>>
+				Your colleagues <span class="purple">are getting impatient.</span>
+			<<elseif $docks.dayType is "busy">>
+				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
+			<<else>>
+				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
+			<</if>>
+		<<elseif $docks.status gte 60>>
+			<<if _daily_slacked is 1>>
+				Your colleagues <span class="lblue">cover for you.</span>
+			<<elseif _daily_slacked is 2>>
+				Your colleagues <span class="blue">let it slide.</span>
+			<<elseif _daily_slacked is 3>>
+				Your colleagues <span class="purple">are getting impatient.</span>
+			<<elseif $docks.dayType is "busy">>
+				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
+			<<else>>
+				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
+			<</if>>
+		<<elseif $docks.status gte 40>>
+			<<if _daily_slacked is 1>>
+				Your colleagues <span class="blue">let it slide.</span>
+			<<elseif _daily_slacked is 2>>
+				Your colleagues <span class="purple">are getting impatient.</span>
+			<<elseif $docks.dayType is "busy">>
+				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
+			<<else>>
+				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
+			<</if>>
+		<<elseif $docks.status gte 20>>
+			<<if _daily_slacked is 1>>
+				Your colleagues <span class="purple">are getting impatient.</span>
+			<<elseif $docks.dayType is "busy">>
+				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
+			<<else>>
+				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
+			<</if>>
+		<<else>>
+			<<if $docks.dayType is "busy">>
+				Your colleagues <span class="red">are angry that you're not helping on a busy day.</span><<dockstatus -2>><<llcool>>
+			<<else>>
+				Your colleagues <span class="red">grumble about you.</span><<dockstatus -1>><<lcool>>
+			<</if>>
+		<</if>>
+	<</if>>
+	<<if $docks.suspicion gte 4>>
+		<br><br>
+		A supervisor follows you and <<if $docks.status gte 20>>says<<else>>sneers<</if>>,
+		<<if $rng gte 81>>
+			"Stop slacking, <<girl>>. No work, no pay<<if $docks.dayType is "busy">>, and there's no shortage of work for you today<<elseif $docks.dayType is "slow">>, even on slow days<</if>>."
+		<<elseif $rng gte 61>>
+			"We don't pay you to sit idle<<if $docks.dayType is "busy">>, especially not on days like these<</if>>. Get back to work."
+		<<elseif $rng gte 41>>
+			"You think you're special? No pay for slackers.<<if $docks.dayType is "busy">> We need all hands on-board today.<</if>>"
+		<<elseif $rng gte 21>>
+			"Back in my day, we fired slackers. Now we just don't pay them."
+		<<else>>
+			"A little birdie told me you've not been pulling your weight around here. We only pay for hours worked."
+		<</if>>
+		<<stress 6>><<gstress>>
+		<<if Time.hour gte 17>>
+			<<set $docks.dailyHours.overtime.unpaid += 1>>
+		<<else>>
+			<<set $docks.dailyHours.shift.unpaid += 1>>
+		<</if>>
+	<</if>>
+
+	<<if $upperwetstage gte 3 or $lowerwetstage gte 3>>
+		<br><br>
+		You feel the other dockers ogling your body through your wet clothing.
+		<<gstress>><<garousal>><<stress 6>><<arousal 600>>
+	<</if>>
+<<elseif $phase is 2>>
+	You strip naked behind some cargo containers. <<flaunting>> you take a deep breath and step out onto the dock.
+	<<set $daily.docksExhibitionism to true>>
+	<<exhibitionism5>>
+
+	<<covered>> Few notice at first, until someone whistles at you and attracts attention. More and more dockers stop what they're doing to cheer and whistle at you. Each new onlooker renews your thrill.
+	<br><br>
+
+	A supervisor tells everyone to get back to work. They do so, though reluctant to take their eyes off you. <<generate1>><<person1>>The supervisor doesn't tell you to get dressed. The longing look <<he>> gives your body suggests why.<<endevent>>
+<</if>>
+<br><br>
+
+/* Suspicion level based on slacking */
+/* Set after the supervisor display so that the red text warning the dockoptions widget appears first */
+/* Bounds are 0 to 4. Pay is withheld at 4 suspicion when slacking again. Working or stripping and working reduces it */
+<<if ($phase is 0 or $phase is 2) and $docks.suspicion gte 1>>
+	<<set $docks.suspicion -= 1>>
+<<elseif $phase is 1 and $docks.suspicion lte 3>>
+	<<set $docks.suspicion += 1>>
+<</if>>
+
+<<dockwork>>
 
 :: Docks Rape Capsize
 <<effects>>

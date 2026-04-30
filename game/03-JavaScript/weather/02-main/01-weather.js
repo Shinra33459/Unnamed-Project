@@ -20,7 +20,7 @@ const Weather = (() => {
 
 	function getSunIntensity(time) {
 		time ??= Time.date;
-		const sunIntensity = Weather.genSettings.months[time.month - 1].sunIntensity * Weather.activeRenderer?.orbitals.sun.getFactor(time);
+		const sunIntensity = Weather.genSettings.months[time.month - 1].sunIntensity * (Weather.activeRenderer?.orbitals.sun.getFactor(time) ?? 0);
 		const weatherModifier = V.outside ? Weather.current.tanningModifier : 0;
 		const locationModifier = V.location === "forest" ? 0.2 : 1;
 		return V.outside ? Math.max(sunIntensity * weatherModifier * locationModifier, 0) : 0;
