@@ -74,6 +74,16 @@ See [README in devTools/apkbuilder](devTools/apkbuilder/README-windows.txt)
 
         ```
 
+### Testing
+
+To run Playwright tests, after building the game, run:
+
+```bash
+npm test
+```
+
+Tests require the compiled HTML to exist — run `./compile.sh` first if needed.
+
 ### Linting
 
 #### JavaScript

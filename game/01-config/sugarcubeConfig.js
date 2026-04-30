@@ -13,7 +13,7 @@ const StartConfig = {
 	enableImages: true,
 	enableLinkNumberify: true,
 	version: "0.5.8.10 DoLP version",
-	versionName: `"Assorted Chocolate" edition`,
+	versionName: `"Assorted Chocolates" edition`,
 	sneaky: false,
 	socialMediaEnabled: true,
 	sourceLinkEnabled: false,

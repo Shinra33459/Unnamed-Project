@@ -21,7 +21,7 @@ function propLevels(prop) {
 	switch (prop) {
 		case "cards":
 			// @ts-ignore
-			return V.blackjack ? Math.clamp(V.blackjack.playersCards.length, 1, 5) : 0;
+			return V.blackjack ? Math.clamp(V.blackjack.playersCards.length, 1, 5) : 1;
 		case "torch":
 			// @ts-ignore
 			return [100, 80, 60, 40, 20, 1, 0].findIndex(x => V.catacombs_torch >= x) + 1 || 1;
@@ -381,6 +381,9 @@ function initProps() {
 			folder: "food",
 		},
 		pasta_fork: {
+			folder: "food",
+		},
+		pasty: {
 			folder: "food",
 		},
 		popcorn: {

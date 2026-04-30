@@ -2585,9 +2585,6 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.kitsune_cheeks_type) && !options.hideAll;
 			},
-			filters: ["hair"],
-			z: ZIndices.lower,
-			animation: "idle"
 		},
 		"kitsune_misc": {
 			z: ZIndices.old_over_upper,
@@ -2639,7 +2636,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const area_name = "right_cheek"
-				const writing = setup.bodywriting[options.writing_right_cheek];
+				let writing = setup.bodywriting[options.writing_right_cheek];
 				if (V.tattoo_bodypart == "right_cheek" && V.passage == "Tattoo Choice") writing = setup.bodywriting[V.tattoo_choice];
 				if (writing.type === "text") {
 					if (writing.sprites && writing.sprites.length > 0 && writing.sprites.includes(area_name)) {
@@ -2662,7 +2659,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const area_name = "breasts"
-				const writing = setup.bodywriting[options.writing_breasts];
+				let writing = setup.bodywriting[options.writing_breasts];
 				if (V.tattoo_bodypart == "breasts" && V.passage == "Tattoo Choice") writing = setup.bodywriting[V.tattoo_choice];
 				if (writing.type === "text") {
 					if (writing.sprites && writing.sprites.length > 0 && writing.sprites.includes(area_name)) {

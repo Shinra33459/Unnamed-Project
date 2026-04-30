@@ -242,6 +242,9 @@
 <<widget "dockstatus">>
 	<<if _args[0]>>
 		<<set $docks.status += (_args[0] * 2)>>
+		<<if _args[0] gt 0>>
+			<<set $docks.bonus += (_args[0] * 500)>>
+		<</if>>
 		<<set $docks.status to Math.clamp($docks.status, 0, 100)>>
 	<</if>>
 <</widget>>
@@ -282,6 +285,10 @@
 			<</if>>
 		<</if>>
 		<<set _total_wage to (_shift_wage + _overtime_wage + _bonus)>>
+		<<if $docks.bonus gt 0>>
+			<<set _total_wage += $docks.bonus>>
+			<<set _dockbonus_display to ($docks.bonus / 100)>>
+		<</if>>
 		<<set _shift_wage_display to (_shift_wage / 100)>>
 		<<set _overtime_wage_display to (_overtime_wage / 100)>>
 		<<set _bonus_display to (_bonus / 100)>>
@@ -295,13 +302,14 @@
 				<<wearProp "manila envelope">>
 			<</if>>
 		<<elseif $docks.dailyHours.overtime.total gte 1 and $docks.dailyHours.overtime.total gt $docks.dailyHours.overtime.unpaid>> /* worked during shift and overtime */
-			You make <span class="gold">£<<print _shift_wage_display>></span> for your shift, plus <span class="gold">£<<print _overtime_wage_display>></span> overtime pay<<if $christmas is 1>> and your <span class="gold">£<<print _bonus_display>></span> Christmas bonus<</if>>, totalling <span class="gold">£<<print _total_wage_display>></span>.
+			You make <span class="gold">£<<print _shift_wage_display>></span> for your shift, plus <span class="gold">£<<print _overtime_wage_display>></span> overtime pay<<if $docks.bonus gt 0>>, a <span class="gold">£<<print _dockbonus_display>></span> performance bonus<</if>><<if $christmas is 1>> and your <span class="gold">£<<print _bonus_display>></span> Christmas bonus<</if>>, totalling <span class="gold">£<<print _total_wage_display>></span>.
 			<<wearProp "manila envelope">>
 		<<else>> /* no overtime */
-			You make <span class="gold">£<<print _shift_wage_display>></span><<if $christmas is 1>>, plus your <span class="gold">£<<print _bonus_display>></span> Christmas bonus, totalling <span class="gold">£<<print _total_wage_display>></span><</if>>.
+			You make <span class="gold">£<<print _shift_wage_display>></span><<if $docks.bonus gt 0>>, plus a <span class="gold">£<<print _dockbonus_display>></span> performance bonus<</if>><<if $christmas is 1>>, plus your <span class="gold">£<<print _bonus_display>></span> Christmas bonus<</if>><<if $docks.bonus gt 0 or $christmas is 1>>, totalling <span class="gold">£<<print _total_wage_display>></span><</if>>.
 			<<wearProp "manila envelope">>
 		<</if>>
 		<<money `_total_wage` "docksWage">>
+		<<set $docks.bonus to 0>>
 		<br><br>
 
 		<<if $docks.status gte 60 and $docks.pub.cooldown is 0>>
@@ -402,14 +410,14 @@
 					<<wearProp "lockpick">>
 					<span class="green">The lock looks easy to pick.</span>
 					<br><br>
-					<<link [[Break in anyway (£100 1:00)|Docks Slave Open]]>><<set $docks.slave.seen to true>><<crimeUp 1 "trespassing">><</link>><<crime "trespassing">>
+					<<link [[Break in anyway (£100 1:00)|Docks Slave Open]]>><<handheldon>><<set $docks.slave.seen to true>><<crimeUp 1 "trespassing">><</link>><<crime "trespassing">>
 					<br>
 				<</if>>
 			<<else>>
 				<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
 				<br><br>
 			<</if>>
-			<<link [[Ignore the voice|Docks Slave Ignore]]>><</link>>
+			<<link [[Ignore the voice|Docks Slave Ignore]]>><<handheldon>><</link>>
 			<br>
 		<<else>>
 			<<rng>>
@@ -1438,48 +1446,48 @@
 
 <<widget "skul_dock_nav">>
 	<<if $bus is "W">>
-		<<icon "anchor.png">><<link [[Sneak to the anchored ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>>
+		<<icon "anchor.png">><<link [[Sneak to the anchored ship (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>>
 		<br>
 	<</if>>
 	<<if $bus is "N">>
-		<<getouticon>><<link [[Sneak off the ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>>
+		<<getouticon>><<link [[Sneak off the ship (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>>
 		<br>
 	<</if>>
 	<<if $bus is "NW">>
-		<<icon "anchor.png">><<link [[Sneak aboard the anchored ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "N">><</link>><<skul_dock_state N>>
+		<<icon "anchor.png">><<link [[Sneak aboard the anchored ship (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "N">><</link>><<skul_dock_state N>>
 		<br>
 	<</if>>
 	<<if $bus is "E">>
-		<<icon "storageunit.png">><<link [[Sneak to the warehouse (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NE">><</link>><<skul_dock_state NE>>
+		<<icon "storageunit.png">><<link [[Sneak to the warehouse (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "NE">><</link>><<skul_dock_state NE>>
 		<br>
 	<</if>>
 	<<if $bus is "SW" or $bus is "NW">>
-		<<skyscrapericon "construction">><<link [[Sneak to the cranes (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "W">><</link>><<skul_dock_state W>>
+		<<skyscrapericon "construction">><<link [[Sneak to the cranes (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "W">><</link>><<skul_dock_state W>>
 		<br>
 	<</if>>
 	<<if $bus is "E">>
-		<<icon "cargostack.png">><<link [[Sneak to the tallest stacks of cargo containers (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "M">><</link>><<skul_dock_state M>>
+		<<icon "cargostack.png">><<link [[Sneak to the tallest stacks of cargo containers (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "M">><</link>><<skul_dock_state M>>
 		<br>
 	<</if>>
 	<<if $bus is "SE" or $bus is "M" or $bus is "NE">>
-		<<officeicon>><<link [[Sneak to the office (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "E">><</link>><<skul_dock_state E>>
+		<<officeicon>><<link [[Sneak to the office (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "E">><</link>><<skul_dock_state E>>
 		<br>
 	<</if>>
 	<<if $bus is "W" or $bus is "S">>
-		<<icon "lorry.png">><<link [[Sneak to the lorry unloading area (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "SW">><</link>><<skul_dock_state SW>>
+		<<icon "lorry.png">><<link [[Sneak to the lorry unloading area (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "SW">><</link>><<skul_dock_state SW>>
 		<br>
 	<</if>>
 	<<if $bus is "SE" or $bus is "SW">>
-		<<lockicon "gate">><<link [[Sneak to the gate (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "S">><</link>><<skul_dock_state S>>
+		<<lockicon "gate">><<link [[Sneak to the gate (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "S">><</link>><<skul_dock_state S>>
 		<br>
 		<br>
 	<</if>>
 	<<if $bus is "S" or $bus is "E">>
-		<<icon "carpark.png">><<link [[Sneak to the car park (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "SE">><</link>><<skul_dock_state SE>>
+		<<icon "carpark.png">><<link [[Sneak to the car park (0:05)|Docks Sneak]]>><<handheldon true>><<pass 5>><<set $bus to "SE">><</link>><<skul_dock_state SE>>
 		<br>
 	<</if>>
 	<<if $bus is "S">>
-		<<docksicon>><<link [[Leave|Docks]]>><<set $bus to "mer">><</link>>
+		<<docksicon>><<link [[Leave|Docks]]>><<handheldon true>><<set $bus to "mer">><</link>>
 		<br>
 	<</if>>
 <</widget>>

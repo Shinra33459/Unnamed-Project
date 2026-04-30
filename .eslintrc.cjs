@@ -249,6 +249,7 @@ module.exports = {
 		updateSavesCount: "readonly",
 		validateValue: "readonly",
 		waterproofCheck: "readonly",
+		antitransparentCheck: "readonly",
 		initializeTooltips: "readonly",
 		// DoL math functions
 		round: "readonly",
@@ -317,6 +318,7 @@ module.exports = {
 	ignorePatterns: [
 		"**/*.*",
 		"!**/*.js",
+		"!**/*.ts",
 		"!**/*.cjs",
 		// Format config file
 		"!.eslintrc.cjs",
@@ -347,6 +349,16 @@ module.exports = {
 			mode: "jsdoc",
 		},
 	},
+
+	overrides: [
+		{
+			files: ["**/*.ts"],
+			parser: "@typescript-eslint/parser",
+			rules: {
+				"jsdoc/require-param": "off",
+			},
+		},
+	],
 
 	// Keep rules grouped by plugin and sorted alphabetically
 	rules: {

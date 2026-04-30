@@ -261,8 +261,8 @@ Macro.add("numberStepper", {
 		const increment = reverseButtons ? step : -step;
 		const increment10 = reverseButtons ? step * 10 : -step * 10;
 		const increment100 = reverseButtons ? step * 100 : -step * 100;
-		const increment1000 = reverseButtons ? step * 100 : -step * 1000;
-		const increment10000 = reverseButtons ? step * 100 : -step * 10000;
+		const increment1000 = reverseButtons ? step * 1000 : -step * 1000;
+		const increment10000 = reverseButtons ? step * 10000 : -step * 10000;
 
 		const activeCount = activeButtons.length;
 		const groupClass = activeCount === 5 ? "five-buttons" : activeCount === 4 ? "quad-buttons" : activeCount === 3 ? "three-buttons" : activeCount === 2 ? "two-buttons" : "one-button";
