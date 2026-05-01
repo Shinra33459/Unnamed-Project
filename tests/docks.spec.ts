@@ -222,7 +222,7 @@ test.describe("Docks", () => {
 		await expect(page.locator("#passages").getByText("Work as a docker")).not.toBeVisible();
 	});
 
-	test('shows "Ask for raise" at status >= 80 and wage < 2500 cap', async ({ page }) => {
+	test('shows "Ask for raise" at status >= 80 and wage < 3000 cap (DoLP)', async ({ page }) => {
 		await setupDocks(page, { hired: true, status: 80, wage: 1500 });
 		await setTime(page, 10, 0);
 		await navigateTo(page, "Docks");
@@ -230,7 +230,7 @@ test.describe("Docks", () => {
 		await expect(page.locator("#passages").getByText("Ask for raise")).toBeVisible();
 
 		// Hidden when wage is at cap
-		await setupDocks(page, { wage: 2500 });
+		await setupDocks(page, { wage: 3000 });
 		await navigateTo(page, "Docks");
 
 		await expect(page.locator("#passages").getByText("Ask for raise")).not.toBeVisible();
@@ -259,6 +259,24 @@ test.describe("Docks", () => {
 		const docks = (await getVar(page, "docks")) as any;
 		expect(docks.wage).toBe(1650);
 		expect(docks.status).toBe(40);
+	});
+
+	test("raise clamps wage to 3000 cap (DoLP)", async ({ page }) => {
+		await setupDocks(page, { hired: true, status: 80, wage: 2900 });
+		await setTime(page, 10, 0);
+		await navigateTo(page, "Docks");
+
+		const link = page.locator("#passages a").filter({ hasText: "Ask for raise" });
+		await expect(link).toBeVisible();
+		await link.click();
+
+		await page.waitForFunction(() => {
+			return (window as any).SugarCube.State.passage === "Docks Raise";
+		});
+
+		// wage: 2900 + 150 = 3050, clamped to 3000
+		const docks = (await getVar(page, "docks")) as any;
+		expect(docks.wage).toBe(3000);
 	});
 
 	test.describe("work schedule", () => {
