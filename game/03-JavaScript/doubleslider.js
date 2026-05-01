@@ -3,7 +3,11 @@
  *
  * <<doubleslider VAR1 VAR2 VAR3 LEFTCOLOR MIDDLECOLOR RIGHTCOLOR>>
  *
- * The vars should be the variable name WITHOUT the "$", while the colors can be any css-compatible colour string, like "#00FF00" or "rgb(0,255,0)".
+ *  * Variable names may be passed with or without the "$" sigil (e.g. "mhermchance" or
+ * "$settings.maleNPCVaginaChance"). Dotted property paths like "$settings.foo" are supported
+ * via Wikifier.getValue/setValue.
+ *
+ * The colors can be any css-compatible colour string, like "#00FF00" or "rgb(0,255,0)".
  *
  * Additional macros, or additional arguments, can be implemented to allow for different skins or different presentation styles.
  *
@@ -20,6 +24,12 @@ Macro.add("doubleslider", {
 			middlecolor = "#ab00fa";
 			rightcolor = "#006cfa";
 		}
+		// Normalize variable name: prepend "$" sigil if not already present, for Wikifier path resolution.
+		// This allows callers to pass either bare names ("mhermchance") or full paths ("$settings.maleNPCVaginaChance").
+		const sigil = v => (v.startsWith("$") || v.startsWith("_") ? v : "$" + v);
+		// Derive element ID from variable name (strip leading sigil if present)
+		const elemId = v => (v.startsWith("$") || v.startsWith("_") ? v.slice(1) : v);
+
 		function updateValues(data, where) {
 			// console.log("updateValues from " + where);
 
@@ -42,8 +52,8 @@ Macro.add("doubleslider", {
 			if (100 - data.to <= 0) rightLabel.css("visibility", "hidden");
 
 			// set the label content
-			middleLabel.html(V[var2] + "%");
-			rightLabel.html(V[var3] + "%");
+			middleLabel.html(Wikifier.getValue(sigil(var2)) + "%");
+			rightLabel.html(Wikifier.getValue(sigil(var3)) + "%");
 
 			// set the label positions to be centred on the bars
 			const a = data.max - data.min;
@@ -64,8 +74,8 @@ Macro.add("doubleslider", {
 				postfix: "%",
 				min: 0,
 				max: 100,
-				from: V[var1],
-				to: 100 - V[var3],
+				from: Wikifier.getValue(sigil(var1)),
+				to: 100 - Wikifier.getValue(sigil(var3)),
 				onStart(data) {
 					// let uniqueId = data.slider[0].classList[2];	//ensures that multiple sliders don't interfere with each other.
 
@@ -85,13 +95,13 @@ Macro.add("doubleslider", {
 				},
 				onChange(data) {
 					// set the variables
-					V[var1] = data.from;
-					V[var2] = data.to - data.from;
-					V[var3] = 100 - data.to;
+					Wikifier.setValue(sigil(var1), data.from);
+					Wikifier.setValue(sigil(var2), data.to - data.from);
+					Wikifier.setValue(sigil(var3), 100 - data.to);
 					// update the page to tell the user what the variables are
-					jQuery("#numberslider-value-" + var1).text(V[var1]);
-					jQuery("#numberslider-value-" + var2).text(V[var2]);
-					jQuery("#numberslider-value-" + var3).text(V[var3]);
+					jQuery("#numberslider-value-" + elemId(var1)).text(data.from);
+					jQuery("#numberslider-value-" + elemId(var2)).text(data.to - data.from);
+					jQuery("#numberslider-value-" + elemId(var3)).text(100 - data.to);
 
 					// updateValues(data, "onChange");
 				},

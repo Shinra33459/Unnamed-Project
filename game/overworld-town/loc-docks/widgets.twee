@@ -244,6 +244,9 @@
 <<widget "dockstatus">>
 	<<if _args[0]>>
 		<<set $docks.status += (_args[0] * 2)>>
+		<<if _args[0] gt 0>>
+			<<set $docks.bonus += (_args[0] * 500)>>
+		<</if>>
 		<<set $docks.status to Math.clamp($docks.status, 0, 100)>>
 	<</if>>
 <</widget>>
@@ -284,6 +287,10 @@
 			<</if>>
 		<</if>>
 		<<set _total_wage to (_shift_wage + _overtime_wage + _bonus)>>
+		<<if $docks.bonus gt 0>>
+			<<set _total_wage += $docks.bonus>>
+			<<set _dockbonus_display to ($docks.bonus / 100)>>
+		<</if>>
 		<<set _shift_wage_display to (_shift_wage / 100)>>
 		<<set _overtime_wage_display to (_overtime_wage / 100)>>
 		<<set _bonus_display to (_bonus / 100)>>
@@ -297,13 +304,14 @@
 				<<wearProp "manila envelope">>
 			<</if>>
 		<<elseif $docks.dailyHours.overtime.total gte 1 and $docks.dailyHours.overtime.total gt $docks.dailyHours.overtime.unpaid>> /* worked during shift and overtime */
-			You make <span class="gold">£<<print _shift_wage_display>></span> for your shift, plus <span class="gold">£<<print _overtime_wage_display>></span> overtime pay<<if $christmas is 1>> and your <span class="gold">£<<print _bonus_display>></span> Christmas bonus<</if>>, totalling <span class="gold">£<<print _total_wage_display>></span>.
+			You make <span class="gold">£<<print _shift_wage_display>></span> for your shift, plus <span class="gold">£<<print _overtime_wage_display>></span> overtime pay<<if $docks.bonus gt 0>>, a <span class="gold">£<<print _dockbonus_display>></span> performance bonus<</if>><<if $christmas is 1>> and your <span class="gold">£<<print _bonus_display>></span> Christmas bonus<</if>>, totalling <span class="gold">£<<print _total_wage_display>></span>.
 			<<wearProp "manila envelope">>
 		<<else>> /* no overtime */
-			You make <span class="gold">£<<print _shift_wage_display>></span><<if $christmas is 1>>, plus your <span class="gold">£<<print _bonus_display>></span> Christmas bonus, totalling <span class="gold">£<<print _total_wage_display>></span><</if>>.
+			You make <span class="gold">£<<print _shift_wage_display>></span><<if $docks.bonus gt 0>>, plus a <span class="gold">£<<print _dockbonus_display>></span> performance bonus<</if>><<if $christmas is 1>>, plus your <span class="gold">£<<print _bonus_display>></span> Christmas bonus<</if>><<if $docks.bonus gt 0 or $christmas is 1>>, totalling <span class="gold">£<<print _total_wage_display>></span><</if>>.
 			<<wearProp "manila envelope">>
 		<</if>>
 		<<money `_total_wage` "docksWage">>
+		<<set $docks.bonus to 0>>
 		<br><br>
 
 		<<if $docks.status gte 60 and $docks.pub.cooldown is 0>>

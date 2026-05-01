@@ -116,8 +116,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "bunny_collar.png",
-			accIcon: "bunny_collar_acc.png",
+			iconFile: "bunny-collar.png",
+			accIcon: "bunny-collar-acc.png",
 		},
 
 		{
@@ -188,7 +188,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "dark_pendant.png",
+			iconFile: "dark-pendant.png",
 			accIcon: 0,
 		},
 
@@ -261,7 +261,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "gold_choker.png",
+			iconFile: "gold-choker.png",
 			accIcon: 0,
 		},
 
@@ -299,8 +299,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "cat_bell_collar.png",
-			accIcon: "cat_bell_collar_acc.png",
+			iconFile: "cat-bell-collar.png",
+			accIcon: "cat-bell-collar-acc.png",
 		},
 
 		{
@@ -334,8 +334,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "cow_bell.png",
-			accIcon: "cow_bell_acc.png",
+			iconFile: "cow-bell.png",
+			accIcon: "cow-bell-acc.png",
 		},
 
 		{
@@ -373,7 +373,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "lace_choker.png",
+			iconFile: "lace-choker.png",
 			accIcon: 0,
 		},
 
@@ -411,7 +411,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "spiked_collar.png",
+			iconFile: "spiked-collar.png",
 			accIcon: 0,
 		},
 
@@ -452,8 +452,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "heart-choker-acc.png",
 		},
 
 		{
@@ -490,7 +490,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "ringed_collar.png",
+			iconFile: "ringed-collar.png",
 			accIcon: 0,
 		},
 
@@ -532,7 +532,7 @@ function initNeck() {
 			altposition: "none",
 			altdisabled: [],
 			iconFile: "necktie.png",
-			accIcon: "necktie_acc.png",
+			accIcon: "necktie-acc.png",
 		},
 
 		{
@@ -607,7 +607,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "cloth_choker.png",
+			iconFile: "cloth-choker.png",
 			accIcon: 0,
 		},
 
@@ -697,7 +697,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "gold_chain.png",
+			iconFile: "gold-chain.png",
 			accIcon: 0,
 		},
 
@@ -734,7 +734,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "iron_chain.png",
+			iconFile: "iron-chain.png",
 			accIcon: 0,
 		},
 
@@ -772,8 +772,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "holy_stole.png",
-			accIcon: "holy_stole_acc.png",
+			iconFile: "holy-stole.png",
+			accIcon: "holy-stole-acc.png",
 		},
 
 		{
@@ -921,7 +921,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "ivory_necklace.png",
+			iconFile: "ivory-necklace.png",
 			accIcon: 0,
 		},
 
@@ -996,7 +996,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "collar_no_leash.png",
+			iconFile: "collar-no-leash.png",
 			accIcon: 0,
 		},
 
@@ -1035,7 +1035,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "spiked_collar.png",
+			iconFile: "spiked-collar.png",
 			accIcon: 0,
 		},
 
@@ -1075,7 +1075,7 @@ function initNeck() {
 			cursed: 0,
 			location: 0,
 			iconFile: "necktie.png",
-			accIcon: "necktie_acc.png",
+			accIcon: "necktie-acc.png",
 		},
 
 		{
@@ -1164,7 +1164,7 @@ function initNeck() {
 			accessory_colour_sidebar: 0,
 			cursed: 0,
 			location: 0,
-			iconFile: "serafuku_ribbon.png",
+			iconFile: "serafuku-ribbon.png",
 			accIcon: 0,
 		},
 
@@ -1202,7 +1202,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "love_locket.png",
+			iconFile: "love-locket.png",
 			accIcon: 0,
 		},
 		{
@@ -1240,7 +1240,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "lace_choker.png",
+			iconFile: "lace-choker.png",
 			accIcon: 0,
 		},
 		{
@@ -1331,7 +1331,7 @@ function initNeck() {
 			accessory_colour_sidebar: 0,
 			cursed: 0,
 			location: 0,
-			iconFile: "ribbon_tie.png",
+			iconFile: "ribbon-tie.png",
 			accIcon: 0,
 		},
 		{
@@ -1420,7 +1420,7 @@ function initNeck() {
 			accessory_colour_sidebar: 0,
 			cursed: 0,
 			location: 0,
-			iconFile: "large_ribbon_tie.png",
+			iconFile: "large-ribbon-tie.png",
 			accIcon: 0,
 		},
 		{
@@ -1458,8 +1458,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "bolo_tie.png",
-			accIcon: "bolo_tie_acc.png",
+			iconFile: "bolo-tie.png",
+			accIcon: "bolo-tie-acc.png",
 		},
 
 		{
@@ -1496,8 +1496,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "holy_stole.png",
-			accIcon: "holy_stole_acc.png",
+			iconFile: "holy-stole.png",
+			accIcon: "holy-stole-acc.png",
 		},
 		{
 			index: 38,
@@ -1530,8 +1530,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "feather_necklace.png",
-			accIcon: "feather_necklace_acc.png",
+			iconFile: "feather-necklace.png",
+			accIcon: "feather-necklace-acc.png",
 		},
 		{
 			index: 39,
@@ -1565,7 +1565,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "jasper_pendant.png",
+			iconFile: "jasper-pendant.png",
 			accIcon: 0,
 		},
 
@@ -1604,7 +1604,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "familiar_collar.png",
+			iconFile: "familiar-collar.png",
 			accIcon: 0,
 		},
 	];
@@ -1647,7 +1647,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 1,
 			location: 0,
-			iconFile: "Whitneys_collar.png",
+			iconFile: "Whitneys-collar.png",
 			accIcon: 0,
 		},
 		{
@@ -1684,7 +1684,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 1,
 			location: 0,
-			iconFile: "Whitneys_collar.png",
+			iconFile: "Whitneys-collar.png",
 			accIcon: 0,
 		},
 		{
@@ -1828,7 +1828,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "metal_chain.png",
+			iconFile: "metal-chain.png",
 			accIcon: 0,
 		},
 		{
@@ -1865,7 +1865,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "metal_choker.png",
+			iconFile: "metal-choker.png",
 			accIcon: 0,
 		},
 
@@ -1906,8 +1906,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/heart-choker-acc.png",
 		},
 		
 
@@ -1946,8 +1946,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/small_solitare_pendant.png",
-			accIcon: "jewellery/acc_small_solitare_pendant.png",
+			iconFile: "jewellery/small-solitare-pendant.png",
+			accIcon: "jewellery/acc-small-solitare-pendant.png",
 		},
 
 		{
@@ -1985,8 +1985,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -2024,8 +2024,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -2063,8 +2063,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -2102,8 +2102,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -2141,8 +2141,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -2180,8 +2180,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -2219,8 +2219,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/diamond_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/diamond-heart-choker-acc.png",
 		},
 
 		{
@@ -2259,8 +2259,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/diamond_small_solitare_pendant.png",
-			accIcon: "jewellery/acc_small_solitare_pendant.png",
+			iconFile: "jewellery/diamond-small-solitare-pendant.png",
+			accIcon: "jewellery/acc-small-solitare-pendant.png",
 		},
 
 		{
@@ -2299,8 +2299,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/diamond_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/diamond-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -2339,8 +2339,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/diamond_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/diamond-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -2379,8 +2379,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/diamond_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/diamond-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -2419,8 +2419,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/diamond_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/diamond-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -2459,8 +2459,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_diamond_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-diamond-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -2499,8 +2499,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_diamond_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-diamond-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -2538,8 +2538,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/ruby_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/ruby-heart-choker-acc.png",
 		},
 
 		{
@@ -2578,8 +2578,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/ruby_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/ruby-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -2618,8 +2618,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/ruby_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/ruby-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -2658,8 +2658,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/ruby_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/ruby-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -2698,8 +2698,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/ruby_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/ruby-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -2738,8 +2738,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_ruby_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-ruby-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -2778,8 +2778,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_ruby_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-ruby-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -2817,8 +2817,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/emerald_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/emerald-heart-choker-acc.png",
 		},
 		{
 			index: 11,
@@ -2856,8 +2856,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/emerald_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/emerald-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -2896,8 +2896,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/emerald_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/emerald-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -2936,8 +2936,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/emerald_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/emerald-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -2976,8 +2976,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/emerald_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/emerald-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -3016,8 +3016,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_emerald_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-emerald-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -3056,8 +3056,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_emerald_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-emerald-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -3095,8 +3095,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/sapphire_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/sapphire-heart-choker-acc.png",
 		},
 
 		{
@@ -3135,8 +3135,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/sapphire_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/sapphire-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -3175,8 +3175,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/sapphire_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/sapphire-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -3215,8 +3215,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/sapphire_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/sapphire-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -3255,8 +3255,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/sapphire_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/sapphire-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -3295,8 +3295,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_sapphire_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-sapphire-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -3335,8 +3335,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_sapphire_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-sapphire-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -3374,8 +3374,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/aquamarine_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/aquamarine-heart-choker-acc.png",
 		},
 		{
 			index: 11,
@@ -3413,8 +3413,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/aquamarine_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/aquamarine-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -3453,8 +3453,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/aquamarine_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/aquamarine-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -3493,8 +3493,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/aquamarine_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/aquamarine-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -3533,8 +3533,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/aquamarine_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/aquamarine-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -3573,8 +3573,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_aquamarine_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-aquamarine-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -3613,8 +3613,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_aquamarine_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-aquamarine-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -3652,8 +3652,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/tanzanite_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/tanzanite-heart-choker-acc.png",
 		},
 		{
 			index: 11,
@@ -3691,8 +3691,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/tanzanite_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/tanzanite-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -3731,8 +3731,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/tanzanite_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/tanzanite-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -3771,8 +3771,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/tanzanite_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/tanzanite-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -3811,8 +3811,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/tanzanite_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/tanzanite-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -3851,8 +3851,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_tanzanite_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-tanzanite-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -3891,8 +3891,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_tanzanite_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-tanzanite-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -3930,8 +3930,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/topaz_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/topaz-heart-choker-acc.png",
 		},
 
 		{
@@ -3970,8 +3970,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/topaz_small_solitare_pendant.png",
-			accIcon: "jewellery/acc_small_solitare_pendant.png",
+			iconFile: "jewellery/topaz-small-solitare-pendant.png",
+			accIcon: "jewellery/acc-small-solitare-pendant.png",
 		},
 
 		{
@@ -4010,8 +4010,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/topaz_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/topaz-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -4050,8 +4050,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/topaz_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/topaz-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -4090,8 +4090,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/topaz_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/topaz-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -4130,8 +4130,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/topaz_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/topaz-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -4170,8 +4170,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_topaz_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-topaz-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -4210,8 +4210,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_topaz_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-topaz-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -4249,8 +4249,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/amethyst_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/amethyst-heart-choker-acc.png",
 		},
 
 		{
@@ -4289,8 +4289,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/amethyst_small_solitare_pendant.png",
-			accIcon: "jewellery/acc_small_solitare_pendant.png",
+			iconFile: "jewellery/amethyst-small-solitare-pendant.png",
+			accIcon: "jewellery/acc-small-solitare-pendant.png",
 		},
 
 		{
@@ -4329,8 +4329,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/amethyst_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/amethyst-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -4369,8 +4369,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/amethyst_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/amethyst-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -4409,8 +4409,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/amethyst_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/amethyst-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -4449,8 +4449,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/amethyst_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/amethyst-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -4489,8 +4489,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_amethyst_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-amethyst-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -4529,8 +4529,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_amethyst_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-amethyst-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 11,
@@ -4568,8 +4568,8 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "heart_choker.png",
-			accIcon: "jewellery/spinel_heart_choker_acc.png",
+			iconFile: "heart-choker.png",
+			accIcon: "jewellery/spinel-heart-choker-acc.png",
 		},
 
 		{
@@ -4608,8 +4608,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/spinel_small_solitare_pendant.png",
-			accIcon: "jewellery/acc_small_solitare_pendant.png",
+			iconFile: "jewellery/spinel-small-solitare-pendant.png",
+			accIcon: "jewellery/acc-small-solitare-pendant.png",
 		},
 
 		{
@@ -4648,8 +4648,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/spinel_solitare_pendant.png",
-			accIcon: "jewellery/acc_solitare_pendant.png",
+			iconFile: "jewellery/spinel-solitare-pendant.png",
+			accIcon: "jewellery/acc-solitare-pendant.png",
 		},
 
 		{
@@ -4688,8 +4688,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/spinel_multigem_pendant.png",
-			accIcon: "jewellery/acc_multigem_pendant.png",
+			iconFile: "jewellery/spinel-multigem-pendant.png",
+			accIcon: "jewellery/acc-multigem-pendant.png",
 		},
 
 		{
@@ -4728,8 +4728,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/spinel_fringe_necklace.png",
-			accIcon: "jewellery/acc_fringe_necklace.png",
+			iconFile: "jewellery/spinel-fringe-necklace.png",
+			accIcon: "jewellery/acc-fringe-necklace.png",
 		},
 
 		{
@@ -4768,8 +4768,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/spinel_rivière_necklace.png",
-			accIcon: "jewellery/acc_rivière_necklace.png",
+			iconFile: "jewellery/spinel-rivière-necklace.png",
+			accIcon: "jewellery/acc-rivière-necklace.png",
 		},
 
 		{
@@ -4808,8 +4808,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/15ct_spinel_necklace.png",
-			accIcon: "jewellery/15ct_necklace_acc.png",
+			iconFile: "jewellery/15ct-spinel-necklace.png",
+			accIcon: "jewellery/15ct-necklace-acc.png",
 		},
 
 		{
@@ -4848,8 +4848,8 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/20ct_spinel_necklace.png",
-			accIcon: "jewellery/20ct_necklace_acc.png",
+			iconFile: "jewellery/20ct-spinel-necklace.png",
+			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
 			index: 45,
@@ -4884,7 +4884,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/antique_gold_amulet.png",
+			iconFile: "jewellery/antique-gold-amulet.png",
 			accIcon: 0,
 		},	
 		{
@@ -4920,7 +4920,7 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "jewellery/antique_gold_necklace.png",
+			iconFile: "jewellery/antique-gold-necklace.png",
 			accIcon: 0,
 		},	
 	];

@@ -63,10 +63,10 @@ You are on the docks.
 	<<socialiseicon "ask">><<link [[Ask for work (0:05)|Docks Ask]]>><<pass 5>><<set $docks.askedForWork to true>><</link>>
 	<br>
 <</if>>
-<<if $exposed lte 0 and Time.dayState isnot "night" and $docks.status gte 80 and $docks.wage lt 2500>>
+<<if $exposed lte 0 and Time.dayState isnot "night" and $docks.status gte 80 and $docks.wage lt 3000>>
 	/* <<dockstatus>> multiplies inputs by 2 and clamps, so asking for a raise is -40 status */
 	/* At the earliest fame to ask for a raise, this sets you to 40, and at the highest, 60 */
-	<<socialiseicon "ask">><<link [[Ask for raise (0:05)|Docks Raise]]>><<pass 5>><<set $dockwage += Math.clamp($dockwage + 150, 0, 3000)>><<dockstatus -20>><</link>><<lllcool>>
+	<<socialiseicon "ask">><<link [[Ask for raise (0:05)|Docks Raise]]>><<pass 5>><<set $docks.wage += 150>><<dockstatus -20>><</link>><<lllcool>>
 	<br>
 <</if>>
 <<if Time.dayState is "night">>
@@ -102,7 +102,7 @@ You ask a manager for a raise. "Well..." <<He>> adjusts <<his>> glasses and taps
 <<trauma -18>><<stress -18>><<lltrauma>><<llstress>>
 <br><br>
 
-<<if $docks.wage gte 2500>>
+<<if $docks.wage gte 3000>>
 	"That's more than any other worker," <<he>> adds.
 	<br><br>
 <</if>>
@@ -316,6 +316,48 @@ The door is open. A <<generate2>><<person2>><<person>> looks up from <<his>> des
 <<effects>>
 <<docklunchoptions>>
 
+:: Docks Lunch Socialise
+<<effects>>
+
+You sit down with the other workers and talk over lunch.
+
+<<if $docks.status gte 100>>
+	You quickly become the centre of attention. A <<generate1>><<person1>><<person>> offers a toast to you and thanks you for all the help you've been<<if $docks.wage lt 3000>>, while a <<generate2>><<person2>><<person>> jokes that you should ask for a raise already<</if>>.<<stress -6>><<trauma -6>><<lstress>><<ltrauma>><<endevent>>
+<<elseif $docks.status gte 80>>
+	They enjoy your company and listen when you talk. A <<generate1>><<person1>><<person>> offers to share <<his>> food with you.<<stress -6>><<trauma -3>><<dockstatus 1>><<lstress>><<ltrauma>><<gcool>><<endevent>>
+<<elseif $docks.status gte 60>>
+	They enjoy your company and listen when you talk.<<stress -6>><<dockstatus 1>><<lstress>><<gcool>>
+<<elseif $docks.status gte 40>>
+	Some workers eye you with suspicion. Others make small talk with you. You don't feel like they trust you yet.<<dockstatus 1>><<gcool>>
+<<elseif $docks.status gte 20>>
+	You do your best to ingratiate yourself with the other workers. Many of them give you suspicious looks or ignore you, but you think you're gaining their trust.<<dockstatus 1>><<gcool>>
+<<else>>
+	<<if $rng gte 51>>
+		<<generate1>><<person1>>
+
+		You have trouble finding dockers willing to talk to you. Most of them ignore you or move away when you approach. Eventually, you manage to strike up a conversation with
+		<<rng>>
+		<<if $rng gte 76>>
+			<<if Time.isWeekEnd()>>
+				another student working weekends
+			<<else>>
+				a delinquent who is skipping school
+			<</if>>
+		<<elseif $rng gte 51>>
+			a drunk <<personsimple>>
+		<<else>>
+			a <<person>> who is sitting alone
+		<</if>>
+		and build a rapport with <<him>>.<<dockstatus 1>><<gcool>>
+		<<endevent>>
+	<<else>>
+		The workers move away when you try to talk with them. Some of them spread rumours about you. Others joke about tossing you into the ocean.<<stress 6>><<trauma 6>><<gstress>><<gtrauma>>
+	<</if>>
+<</if>>
+<br><br>
+
+<<docklunchprompt>>
+
 /* In the Docks Work passage, $phase determines action: 0 is working, 1 is slacking  */
 :: Docks Work
 <<set $outside to 1>><<effects>>
@@ -456,48 +498,6 @@ The door is open. A <<generate2>><<person2>><<person>> looks up from <<his>> des
 <</if>>
 
 <<dockwork>>
-
-:: Docks Lunch Socialise
-<<effects>>
-
-You sit down with the other workers and talk over lunch.
-
-<<if $docks.status gte 100>>
-	You quickly become the centre of attention. A <<generate1>><<person1>><<person>> offers a toast to you and thanks you for all the help you've been<<if $dockwage lt 2500>>, while a <<generate2>><<person2>><<person>> jokes that you should ask for a raise already<</if>>.<<stress -6>><<trauma -6>><<lstress>><<ltrauma>><<endevent>>
-<<elseif $docks.status gte 80>>
-	They enjoy your company and listen when you talk. A <<generate1>><<person1>><<person>> offers to share <<his>> food with you.<<stress -6>><<trauma -3>><<dockstatus 1>><<lstress>><<ltrauma>><<gcool>><<endevent>>
-<<elseif $docks.status gte 60>>
-	They enjoy your company and listen when you talk.<<stress -6>><<dockstatus 1>><<lstress>><<gcool>>
-<<elseif $docks.status gte 40>>
-	Some workers eye you with suspicion. Others make small talk with you. You don't feel like they trust you yet.<<dockstatus 1>><<gcool>>
-<<elseif $docks.status gte 20>>
-	You do your best to ingratiate yourself with the other workers. Many of them give you suspicious looks or ignore you, but you think you're gaining their trust.<<dockstatus 1>><<gcool>>
-<<else>>
-	<<if $rng gte 51>>
-		<<generate1>><<person1>>
-
-		You have trouble finding dockers willing to talk to you. Most of them ignore you or move away when you approach. Eventually, you manage to strike up a conversation with
-		<<rng>>
-		<<if $rng gte 76>>
-			<<if Time.isWeekEnd()>>
-				another student working weekends
-			<<else>>
-				a delinquent who is skipping school
-			<</if>>
-		<<elseif $rng gte 51>>
-			a drunk <<personsimple>>
-		<<else>>
-			a <<person>> who is sitting alone
-		<</if>>
-		and build a rapport with <<him>>.<<dockstatus 1>><<gcool>>
-		<<endevent>>
-	<<else>>
-		The workers move away when you try to talk with them. Some of them spread rumours about you. Others joke about tossing you into the ocean.<<stress 6>><<trauma 6>><<gstress>><<gtrauma>>
-	<</if>>
-<</if>>
-<br><br>
-
-<<docklunchprompt>>
 
 :: Docks Lunch Flirt
 <<effects>>

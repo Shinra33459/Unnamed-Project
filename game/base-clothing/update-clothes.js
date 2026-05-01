@@ -524,6 +524,7 @@ function updateClothesItem(slot, item, debug) {
 			break;
 		case "slacks":
 			item.type = ["formal", "school"];
+			break;
 	}
 
 	if (debug) console.log("updateClothesItem:", slot, itemOld, clone(item));

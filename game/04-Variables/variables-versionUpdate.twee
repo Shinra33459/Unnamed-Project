@@ -870,13 +870,13 @@
 	<</if>>
 	<<if $gwylangenitals is undefined>>
 		<<if $gwylangender is "m">>
-			<<if random(0, 99) gte $cbchance>>
+			<<if random(0, 99) gte $settings.maleNPCVaginaChance>>
 				<<set $gwylangenitals to "penis">>
 			<<else>>
 				<<set $gwylangenitals to "vagina">>
 			<</if>>
 		<<elseif $gwylangender is "f">>
-			<<if random(0, 99) gte $dgchance>>
+			<<if random(0, 99) gte $settings.femaleNPCPenisChance>>
 				<<set $gwylangenitals to "vagina">>
 			<<else>>
 				<<set $gwylangenitals to "penis">>
@@ -4023,6 +4023,19 @@
 		}
 	<</script>>
 	<!-- version 0.5.6.0 END Gameplay Options Variable Refactor END -->
+	<!-- DoLP: migrate top-level cbchance/dgchance from DoLP 0.5.7.9 saves into $settings -->
+	<<script>>
+		if (V.settings !== undefined) {
+			if (V.cbchance !== undefined) {
+				V.settings.maleNPCVaginaChance = V.cbchance;
+				delete V.cbchance;
+			}
+			if (V.dgchance !== undefined) {
+				V.settings.femaleNPCPenisChance = V.dgchance;
+				delete V.dgchance;
+			}
+		}
+	<</script>>
 
 	 <!-- DO NOT MOVE ABOVE "Gameplay Options Variable Refactor" -->
 	<<updateNewNamedNpcs>>
@@ -4771,14 +4784,14 @@
 		<!-- 0.5.6.1 Tracking TF history -->
 		<<if !$transformationHistory or ($transformationHistory.includes("dryad") and ($tfFIX is undefined or $tfFIX lte 7))>>
 			<<set $transformationHistory to []>>
-			<<if $angel gte 6>><<set $transformationHistory.pushUnique("angel")>><</if>>
+			<<if ($angel gte 6 or ($transformationParts.angel.wings isnot "hidden" and $transformationParts.angel.wings isnot "disabled"))>><<set $transformationHistory.pushUnique("angel")>><</if>>
 			<<if $fallenangel gte 2>><<set $transformationHistory.pushUnique("fallenangel")>><</if>>
-			<<if $demon gte 6>><<set $transformationHistory.pushUnique("demon")>><</if>>
-			<<if $wolfgirl gte 6>><<set $transformationHistory.pushUnique("wolfgirl")>><</if>>
-			<<if $cat gte 6>><<set $transformationHistory.pushUnique("cat")>><</if>>
-			<<if $cow gte 6>><<set $transformationHistory.pushUnique("cow")>><</if>>
-			<<if $harpy gte 6>><<set $transformationHistory.pushUnique("harpy")>><</if>>
-			<<if $fox gte 6>><<set $transformationHistory.pushUnique("fox")>><</if>>
+			<<if ($demon gte 6 or ($transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled"))>><<set $transformationHistory.pushUnique("demon")>><</if>>
+			<<if ($wolfgirl gte 6 or ($transformationParts.wolf.tail isnot "hidden" and $transformationParts.wolf.tail isnot "disabled"))>><<set $transformationHistory.pushUnique("wolfgirl")>><</if>>
+			<<if ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))>><<set $transformationHistory.pushUnique("cat")>><</if>>
+			<<if ($cow gte 6 or ($transformationParts.cow.tail isnot "hidden" and $transformationParts.cow.tail isnot "disabled"))>><<set $transformationHistory.pushUnique("cow")>><</if>>
+			<<if ($harpy gte 6 or ($transformationParts.bird.wings isnot "hidden" and $transformationParts.bird.wings isnot "disabled"))>><<set $transformationHistory.pushUnique("harpy")>><</if>>
+			<<if ($fox gte 6 or ($transformationParts.fox.tail isnot "hidden" and $transformationParts.fox.tail isnot "disabled"))>><<set $transformationHistory.pushUnique("fox")>><</if>>
 		<</if>>
 
 		<!-- 0.6.0.0 TF name updates -->
@@ -6854,7 +6867,8 @@
 				bet: $dockquiz and $dockquiz isnot "none" ? $dockquiz : "nothing",
 				home: $dockquizhome || 0,
 				away: $dockquizaway || 0,
-			}
+			},
+			bonus: $dockbonus || 0,
 		}>>
 
 		/* Increase docks status to new baseline for players who started docks content, but didn't progress in it */
@@ -6862,7 +6876,7 @@
 			<<set $docks.status to 30>>
 		<</if>>
 
-		<<run ["dockwork", "dockwage", "dockstatus", "idDocksReveal", "dockslave", "dockslavemoney", "dockpubcount", "dockquiz", "dockquizhome", "dockquizaway"].forEach(v => delete V[v]);>>
+		<<run ["dockwork", "dockwage", "dockstatus", "idDocksReveal", "dockslave", "dockslavemoney", "dockpubcount", "dockquiz", "dockquizhome", "dockquizaway", "dockbonus"].forEach(v => delete V[v]);>>
 
 		<<if $daily>>
 			<<set $daily.docksLeftEarly to false>>
@@ -7286,9 +7300,5 @@
 		<</if>>
 	<</if>>
 <</widget>>
-
-	<<if $tfearshatposition is undefined>>
-		<<set $tfearshatposition to "under">>
-	<</if>>
 
 
