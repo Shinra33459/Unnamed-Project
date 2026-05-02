@@ -923,11 +923,11 @@ function settingsObjects(type) {
 		case "starting":
 			result = {
 				bodysize: {
-					min: 0,
+					min: -1,
 					max: 3,
 					decimals: 0,
 					displayName: "Body size:",
-					textMap: { 0: "Tiny", 1: "Small", 2: "Normal", 3: "Large" },
+					textMap: {"-1": "Miniscule", 0: "Tiny", 1: "Small", 2: "Normal", 2.5: "Tall", 3: "Large", 4: "Giant" },
 					randomize: "characterAppearance",
 				},
 				facevariant: {

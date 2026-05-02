@@ -208,7 +208,7 @@
 		<<set $tirednessmax to 2000>>
 	<</if>>
 	<<if $physiquemax is undefined>>
-		<<set $physiquemax to 20000>>
+		<<set $physiquemax to 16000>>
 	<</if>>
 	<<if $beautymax is undefined>>
 		<<set $beautymax to 10000>>
@@ -6997,17 +6997,30 @@
 	<<unset $weatherObj.overcast>>
 	<<unset $weatherObj.targetOvercast>>
 
-	/* Physique changes */
+	/* Physiquesize nerf */
 	<<if !$physiqueSizeUpdate>>
 		<<set $physiqueSizeUpdate to true>>
-		<<if $physiquesize is 16000>>
-			<<set $physiquesize to 15000>>
-		<<elseif $physiquesize is 10000>>
-			<<set $physiquesize to 9000>>
+		<<set _oldPhys to $physiquesize>>
+		<<if $bodysize is -1>>
+			<<set $physiquesize to 3000>>
+		<<elseif $bodysize is 0>>
+			<<set $physiquesize to 6000>>
+		<<elseif $bodysize is 1>>
+			<<set $physiquesize to 10000>>
+		<<elseif $bodysize is 2>>
+			<<set $physiquesize to 12000>>
+		<<elseif $bodysize is 2.5>>
+			<<set $physiquesize to 13000>>
+		<<elseif $bodysize is 3>>
+			<<set $physiquesize to 14000>>
+		<<elseif $bodysize is 4>>
+			<<set $physiquesize to 16000>>
+		<<else>>
+			<<set $physiquesize to 16000>>
 		<</if>>
 
-		<<if $physique gt $physiquesize>>
-			<<set $physique to $physiquesize>>
+		<<if _oldPhys isnot undefined and _oldPhys gt 0>>
+			<<set $physique *= ($physiquesize / _oldPhys)>>
 		<</if>>
 	<</if>>
 
