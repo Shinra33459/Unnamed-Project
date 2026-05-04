@@ -2185,6 +2185,9 @@ Renderer.CanvasModels.main = {
 					if (active === "sydney") {
 						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
 					}
+					if (active === "gwylan") {
+						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
+					}
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
 					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
@@ -2213,6 +2216,9 @@ Renderer.CanvasModels.main = {
 
 					if (active === "sydney") {
 						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+					}
+					if (active === "gwylan") {
+						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
 					}
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
@@ -2281,6 +2287,9 @@ Renderer.CanvasModels.main = {
 				// Special cases
 				if (active === "sydney") {
 					skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+				}
+				if (active === "gwylan") {
+						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
 				}
 				if (active === "ivory_wraith" || active === "others") skin = "";
 
