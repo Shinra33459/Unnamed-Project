@@ -2874,7 +2874,7 @@ DefineMacro("earSlimeDaily", earSlimeDaily);
  * @param {...any} args
  */
 function getTimeString(...args) {
-	if (args[0] === null) return;
+	if (args[0] == null) return;
 	const hours = args[1] != null ? args[0] : 0;
 	const minutes = Math.max(args[1] != null ? args[1] : args[0], 0) + hours * 60;
 	return Math.trunc(minutes / 60) + ":" + ("0" + Math.trunc(minutes % 60)).slice(-2);
