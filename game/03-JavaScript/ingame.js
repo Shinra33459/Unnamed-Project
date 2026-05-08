@@ -3363,32 +3363,3 @@ function displayDefiantOption(amount) {
 	}
 }
 window.displayDefiantOption = displayDefiantOption;
-
-// Returns true if one or more orphanage plots have been planted
-// Used to determine whether Robin should automatically water them
-function orphanagePlotsPlanted() {
-	if (V.plots?.garden) {
-		for (let i = 0; i < V.plots.garden.length; i++) {
-			if (V.plots.garden[i].stage >= 1) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-window.orphanagePlotsPlanted = orphanagePlotsPlanted;
-
-// Returns true if all orphanage plots have been watered
-// Used to determine whether Robin should automatically water them
-function orphanagePlotsWatered() {
-	if (V.plots?.garden) {
-		for (let i = 0; i < V.plots.garden.length; i++) {
-			if (V.plots.garden[i].water === 0) {
-				return false;
-			}
-		}
-		return true;
-	}
-	return false;
-}
-window.orphanagePlotsWatered = orphanagePlotsWatered;
