@@ -4412,35 +4412,169 @@
 <</widget>>
 
 <<widget "IngredientCheck">>
-    <<set _knownRecipes = []>>
-    <<set _validRecipes = []>>
-    <<set _unvalidRecipes = []>>
-	<<run Object.keys(setup.plants).forEach(item => {
-		if (setup.plants[item]?.ingredients.includes($phase)) {
-			_possibleRecipes++;
-			if ($foodstuff[item].recipe) _knownRecipes.pushUnique(item);
-		}
-	})>>
-		
-    <<run Object.keys(setup.plants).forEach(item => {
-        const plant = setup.plants[item];
-        if (plant && Array.isArray(plant.ingredients) && plant.ingredients.length > 0) {
-			if (plant?.ingredients?.includes($phase)) {
-				if (!_validRecipes.includes(item)) _validRecipes.push(item);
-				if (plant.recipe && !_knownRecipes.includes(item)) _knownRecipes.push(item);
-			} else {
-				if (!_unvalidRecipes.includes(item)) _unvalidRecipes.push(item);
-			}
-		}
+    <<set _knownRecipes to Array()>>
+    <<set _validRecipes to Array()>>
+    <<set _unvalidRecipes to Array()>>
+    <<set _allRecipeDishes to Array()>>
+    <<set _possibleRecipes to 0>>
+
+    <<run Object.keys(setup.foodstuff || {}).forEach(item => {
+        const foodstuff = setup.foodstuff[item];
+        if (!foodstuff || foodstuff.category !== "dish") return;
+        if (item === "wolfbrew" || item === "ghostbrew") return;
+
+        const recipe = foodstuff.recipe;
+        const ingredients = recipe && Array.isArray(recipe.ingredients) ? recipe.ingredients : Array();
+        if (!ingredients.length) return;
+
+        const phase = $phase;
+
+        const usesPhase = ingredients.some(ingredient => {
+            if (ingredient === phase) return true;
+
+            const catalogAlternatives = setup.foodstuff[ingredient] && setup.foodstuff[ingredient].ingredient_alternatives
+                ? setup.foodstuff[ingredient].ingredient_alternatives.normal
+                : null;
+
+            if (Array.isArray(catalogAlternatives) && catalogAlternatives.includes(phase)) return true;
+
+            const recipeAlternatives = recipe.ingredient_alternatives && recipe.ingredient_alternatives.normal
+                ? recipe.ingredient_alternatives.normal[ingredient]
+                : null;
+
+            if (Array.isArray(recipeAlternatives) && recipeAlternatives.includes(phase)) return true;
+            return false;
+        });
+
+        _allRecipeDishes.pushUnique(item);
+
+        if (usesPhase) {
+            _possibleRecipes++;
+            _validRecipes.pushUnique(item);
+
+            if ($foodstuff && $foodstuff[item] && $foodstuff[item].recipe) {
+                _knownRecipes.pushUnique(item);
+            }
+        } else {
+            _unvalidRecipes.pushUnique(item);
+        }
     })>>
-    
-    <<set _unvalid = _unvalidRecipes[Math.floor(Math.random() * _unvalidRecipes.length)]>>
-    
+
     <<if _knownRecipes.length>>
-        <<set _valid = _knownRecipes[Math.floor(Math.random() * _knownRecipes.length)]>>
+        <<set _valid to _knownRecipes[Math.floor(Math.random() * _knownRecipes.length)]>>
+    <<elseif _validRecipes.length>>
+        <<set _valid to _validRecipes[Math.floor(Math.random() * _validRecipes.length)]>>
+    <<elseif _allRecipeDishes.length>>
+        <<set _valid to _allRecipeDishes[Math.floor(Math.random() * _allRecipeDishes.length)]>>
     <<else>>
-        <<set _valid = _validRecipes[Math.floor(Math.random() * _validRecipes.length)]>>
+        <<set _valid to "bread">>
     <</if>>
+
+    <<if _unvalidRecipes.length>>
+        <<set _unvalid to _unvalidRecipes[Math.floor(Math.random() * _unvalidRecipes.length)]>>
+    <<elseif _allRecipeDishes.length>>
+        <<set _unvalid to _allRecipeDishes.find(item => item !== _valid) || _valid>>
+    <<else>>
+        <<set _unvalid to _valid>>
+    <</if>>
+<</widget>>
+
+<<widget "averyStealResponse">>
+	<<if $averyragerevealed is 1 and C.npc.Avery.rage gte random(20, 100)>>
+		<<if !_args[1]>>
+			<<if random(1, 2) is 2>>
+				<<link [[Say you were planning to make <<recipe_name _valid "article">>|Mansion Steal Cooking Valid Rage]]>><<set $phase2 to _valid>><</link>><br>
+				<<link [[Say you were planning to make <<recipe_name _unvalid "article">>|Mansion Steal Cooking Rage]]>><<set $phase2 to _unvalid>><</link>><br>
+			<<else>>
+				<<link [[Say you were planning to make <<recipe_name _unvalid "article">>|Mansion Steal Cooking Rage]]>><<set $phase2 to _unvalid>><</link>><br>
+				<<link [[Say you were planning to make <<recipe_name _valid "article">>|Mansion Steal Cooking Valid Rage]]>><<set $phase2 to _valid>><</link>><br>
+			<</if>>
+			<<link [[Say you wanted to get a snack|Mansion Steal Snack Rage]]>><</link>><br>
+		<</if>>
+		<<link [[Say you wanted to get a hidden food stash|Mansion Steal Stash Rage]]>><</link>><br>
+		<<if $fox gte 6 and $phase is "chicken_egg">>
+			<<link [[Say you wanted to bury the egg|Mansion Steal Bury Egg Rage]]>><</link>><br>
+		<</if>>
+		<<if $avery_mansion.kitchen_stock.requested.includes($phase) && $avery_mansion.kitchen_stock.requested.length gte 3>>
+			<<link [[Say you wanted to save it for another time|Mansion Steal Save Rage]]>><</link>><br>
+		<<else>>
+			<<link [[Say you wanted to save it for another time|Mansion Steal Save Rage Fail]]>><</link>><br>
+		<</if>>
+		<<if $phase is "pork" or $phase is "beef">>
+			<<if ($wolfgirl gte 6 or $harpy gte 6 or $cat gte 6 or $bear gte 6 or $fox gte 6)>>
+				<<link [[Say you wanted to eat <<recipe_name $phase "article">>|Mansion Steal Raw]]>><</link>><br>
+			<</if>>
+			<<if Object.values($children).find(child => child.mother === "pc" && child.location === "wolf_cave")>>
+				<<link [[Say you wanted to feed it to a child|Mansion Steal Child Rage]]>><</link>><br>
+			<</if>>
+			<<if $syndromewolves gte 1>>
+				<<link [[Say you wanted to give it to Black Wolf|Mansion Steal Friend Rage]]>><<set $phase2 to "wolf">><</link>><br>
+			<</if>>
+			<<if $syndromebird gte 1>>
+				<<link [[Say you wanted to give it to the Great Hawk|Mansion Steal Friend Rage]]>><<set $phase2 to "bird">><</link>><br>
+			<</if>>
+		<</if>>
+		<<if $bear gte 6 and $phase is "honeycomb">>
+			<<link [[Say you like honey|Mansion Steal Honey Rage]]>><</link>><br>
+		<</if>>
+		<<link [[Say you're making a surprise|Mansion Steal Surprise Rage]]>><</link>><br>
+		
+		<<link [[Make something up|Mansion Steal Dumb Rage]]>><<set $phase2 to _valid>><</link>><br>
+		
+		<<link [[Say you wanted to give it to the orphans|Mansion Steal Orphans Rage]]>><</link>><br>
+		<<if $fox gte 2 and $phase is "chicken_egg">>
+			<<link [[Defend stealing as your natural need|Mansion Steal Fox Rage]]>><</link>><br>
+		<<else>>
+			<<link [[Admit to stealing|Mansion Steal Admit Rage]]>><</link>><br>
+		<</if>>
+	<<else>>
+		<<if !_args[1]>>
+			<<if random(1, 2) is 2>>
+				<<link [[Say you were planning to make <<recipe_name _valid "article">>|Mansion Steal Cooking Valid Calm]]>><<set $phase2 to _valid>><</link>><br>
+				<<link [[Say you were planning to make <<recipe_name _unvalid "article">>|Mansion Steal Cooking Calm]]>><<set $phase2 to _unvalid>><</link>><br>
+			<<else>>
+				<<link [[Say you were planning to make <<recipe_name _unvalid "article">>|Mansion Steal Cooking Calm]]>><<set $phase2 to _unvalid>><</link>><br>
+				<<link [[Say you were planning to make <<recipe_name _valid "article">>|Mansion Steal Cooking Valid Calm]]>><<set $phase2 to _valid>><</link>><br>
+			<</if>>
+			<<link [[Say you wanted to get a snack|Mansion Steal Snack Calm]]>><</link>><br>
+		<</if>>
+		<<link [[Say you wanted to get a hidden food stash|Mansion Steal Stash Calm]]>><</link>><br>
+		<<if $fox gte 6 and $phase is "chicken_egg">>
+			<<link [[Say you wanted to bury the egg|Mansion Steal Bury Egg]]>><</link>><br>
+		<</if>>
+		<<if $avery_mansion.kitchen_stock.requested.includes($phase) && $avery_mansion.kitchen_stock.requested.length gte 3>>
+			<<link [[Say you wanted to save it for another time|Mansion Steal Save]]>><</link>><br>
+		<<else>>
+			<<link [[Say you wanted to save it for another time|Mansion Steal Save Fail]]>><</link>><br>
+		<</if>>
+		<<if $phase is "pork" or $phase is "beef">>
+			<<if ($wolfgirl gte 6 or $harpy gte 6 or $cat gte 6 or $bear gte 6 or $fox gte 6)>>
+				<<link [[Say you wanted to eat <<recipe_name $phase "article">>|Mansion Steal Raw]]>><</link>><br>
+			<</if>>
+			<<if Object.values($children).find(child => child.mother === "pc" && child.location === "wolf_cave")>>
+				<<link [[Say you wanted to feed it to a child|Mansion Steal Child]]>><</link>><br>
+			<</if>>
+			<<if $syndromewolves gte 1>>
+				<<link [[Say you wanted to give it to Black Wolf|Mansion Steal Friend]]>><<set $phase2 to "wolf">><</link>><br>
+			<</if>>
+			<<if $syndromebird gte 1>>
+				<<link [[Say you wanted to give it to the Great Hawk|Mansion Steal Friend]]>><<set $phase2 to "bird">><</link>><br>
+			<</if>>
+		<</if>>
+		<<if $bear gte 6 and $phase is "honeycomb">>
+			<<link [[Say you like honey|Mansion Steal Honey]]>><</link>><br>
+		<</if>>
+		<<link [[Say you're making a surprise|Mansion Steal Surprise]]>><</link>><br>
+		
+		<<link [[Make something up|Mansion Steal Dumb]]>><<set $phase2 to _valid>><</link>><br>
+		
+		<<link [[Say you wanted to give it to the orphans|Mansion Steal Orphans]]>><</link>><br>
+		<<if $fox gte 2 and $phase is "chicken_egg">>
+			<<link [[Defend stealing as your natural need|Mansion Steal Fox]]>><</link>><br>
+		<<else>>
+			<<link [[Admit to stealing|Mansion Steal Admit]]>><</link>><br>
+		<</if>>
+	<</if>>
 <</widget>>
 
 <<widget "avery_mansion_skyscraper_calc">>
