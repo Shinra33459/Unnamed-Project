@@ -3176,12 +3176,12 @@ function initFoodstuff() {
 			plural: "green manure",
 			icon: "green-manure.png",
 			category: "vegetable",
-			kitchen_item_type_icon: "recipe-flower.png",
+			kitchen_item_type_icon: "recipe-vegetable.png",
 			prop_folder: "tending",
 			tending: {
 				planting_bed: "earth",
 				growth_days: 7,
-				yield_multiplier: 1,
+				yield_multiplier: 4,
 				has_seeds: true,
 				seasons: ["spring", "summer", "autumn", "winter"],
 				tags: [],
@@ -3213,7 +3213,7 @@ function initFoodstuff() {
 			kitchen_item_type_icon: "recipe-shroom.png",
 			prop_folder: "tending",
 			shop: {
-				sell_price: 125000,
+				sell_price: 12500,
 			},
 		},
 		red_helleborine: {
@@ -3279,6 +3279,7 @@ function initFoodstuff() {
 			prop_folder: "tending",
 			shop: {
 				sell_price: 2000,
+				stall_size: "small",
 			},
 		},
 		scottish_bog_myrtle: {

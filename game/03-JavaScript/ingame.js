@@ -3152,7 +3152,18 @@ function kitchenFilter() {
 	T.recipeKeys = [];
 	T.recipesGroups = ["ingredients", "sweets", "savouries", "drinks"];
 
-	const kitchenFilter = T.foodSearch ? T.foodSearch.split(/[_ ]/g) : false;
+	// Make search case-insensitive + avoid empty terms
+	const terms = (T.foodSearch ?? "")
+		.trim()
+		.toLowerCase()
+		.split(/[_\s]+/g)
+		.filter(Boolean);
+
+	const norm = v => {
+		if (v == null) return "";
+		if (Array.isArray(v)) return v.join(" ").toLowerCase();
+		return String(v).toLowerCase();
+	};
 
 	let missingIngredients = false;
 	let providedIngredients = false;
@@ -3161,17 +3172,26 @@ function kitchenFilter() {
 	Object.keys(setup.foodstuff).forEach(recipe => {
 		const item = setup.foodstuff[recipe];
 
-		if (
-			kitchenFilter &&
-			!kitchenFilter.find(
-				term =>
-					(V.options.ingredientsSearch !== "ingredients" &&
-						(item.name.includes(term) || item.category.includes(term) || item.plural?.includes(term) || item.singular?.includes(term))) ||
-					(V.options.ingredientsSearch !== "recipes" &&
-						item.recipe?.ingredients.find(ingredient => ingredient.includes(term) || ingredientUsed(ingredient)?.includes(term)))
-			)
-		) {
-			return;
+		// FILTER: only keep items that match at least one term (case-insensitive)
+		if (terms.length) {
+			const matchesAnyTerm = terms.some(term => {
+				const matchesInfo =
+					V.options.ingredientsSearch !== "ingredients" &&
+					(norm(item.name).includes(term) ||
+						norm(item.category).includes(term) ||
+						norm(item.plural).includes(term) ||
+						norm(item.singular).includes(term));
+
+				const matchesRecipe =
+					V.options.ingredientsSearch !== "recipes" &&
+					(item.recipe?.ingredients ?? []).some(
+						ingredient => norm(ingredient).includes(term) || norm(ingredientUsed(ingredient)).includes(term)
+					);
+
+				return matchesInfo || matchesRecipe;
+			});
+
+			if (!matchesAnyTerm) return;
 		}
 
 		// Provided ingredients group
