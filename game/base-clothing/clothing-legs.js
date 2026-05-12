@@ -1119,7 +1119,7 @@ function initLegs() {
 			slot: "legs",
 			name: "leather leggings",
 			name_cap: "Leather leggings",
-			variable: "leatherleggings",
+			variable: "leather",
 			combat: {
 				reference: "tights",
 			},
