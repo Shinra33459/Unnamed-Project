@@ -420,8 +420,23 @@ function getClothingOptionsItem(slot, item, stage) {
 }
 window.getClothingOptionsItem = getClothingOptionsItem;
 
+function repairMissingJewelleryWornSlots() {
+    if (!V?.worn || !setup?.clothes) return;
+
+    for (const slot of ["earrings", "rings"]) {
+        if (V.worn[slot] && typeof V.worn[slot] === "object") continue;
+
+        const fallback = setup.clothes[slot]?.[0];
+        if (!fallback) continue;
+
+        V.worn[slot] = clone(fallback);
+    }
+}
+window.repairMissingJewelleryWornSlots = repairMissingJewelleryWornSlots;
+
 /* Moved out of canvasmodel-img.twee */
 function getClothingOptions() {
+	window.repairMissingJewelleryWornSlots?.();
 	const modelOptions = { worn: {}, filters: {} };
 	const slots = [
 		["upper", V.upperwetstage],
