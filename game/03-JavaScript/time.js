@@ -420,6 +420,10 @@ const Time = (() => {
 		get secondsSinceMidnight() {
 			return getSecondsSinceMidnight(currentDate);
 		},
+		// Whole minutes since 00:00 of the current in-game day. Referenced by poppySchedule()
+		get minutesSinceMidnight() {
+			return currentDate.hour * 60 + currentDate.minute;
+		},
 		get currentMoonPhase() {
 			return currentMoonPhase(currentDate);
 		},
@@ -645,7 +649,7 @@ function dayPassed() {
 	Weather.FogGeneration.generateFogKeypoints(V.weatherObj.keypointsArr);
 
 	if (V.statFreeze) return;
-
+	if (window.poppyDailyPatienceDecay) {window.poppyDailyPatienceDecay(1);}
 	// Lose one day of tanning
 	Skin.applyTanningLoss(1440);
 
@@ -2083,6 +2087,9 @@ function dailyLiquidEffects() {
 			V.nectar_timer = 21;
 		}
 	}
+	if (window.poppyDailyTraits) {
+		poppyDailyTraits();
+	}
 }
 
 function yearlyEventChecks() {
@@ -2175,6 +2182,11 @@ function yearlyEventChecks() {
 		delete V.christmas_whitney;
 		delete V.edenmeal;
 		delete V.eden_christmas_dinner;
+		// Poppy Christmas flags clearing
+		delete V.christmas_poppy_orphanage;
+		delete V.christmas_poppy_flat_pending;
+		delete V.christmas_poppy_flat_done;
+		delete V.christmas_poppy_route;
 		delete V.christmas_wraith;
 	}
 }

@@ -3268,6 +3268,8 @@
 		<<wraithEventStreet>>
 	<<elseif $kylarwatched is 1>>
 		<<kylarwatched>>
+	<<elseif modLISelected("Poppy") and $poppyDismissalWatched is 1>>
+		<<poppyDismissalWatched>>
 	<<elseif $kylar_manor_secret is 2>>
 		<<monstrance_accost>>
 	<<elseif $averyseen isnot 1 and !$avery_injury and $exposed lte 0 and Time.dayState is "day" and C.npc.Avery.state isnot "dismissed" and Time.weekDay is 7 and ($scienceproject is "won" or $scienceproject is "done" or C.npc.Avery.init is 1) and !$averydate>>
@@ -3436,6 +3438,19 @@
 					<<addevent "streettfpicture" 1>>
 				<</if>>
 			<</if>>
+			<<if modLISelected("Poppy") and C.npc.Poppy and C.npc.Poppy.init is 1>>
+				<<run poppySchedule()>>
+				<<if Time.dayState is "day" and !Weather.isFrozen("lake") and Weather.precipitation isnot "rain" and Weather.precipitation isnot "snow" and !$weekly.poppyStreetBadDate and (T.poppyStatus.includes("LowPatience") or T.poppyAnger gt 0)>>
+					<<include "poppyStreetBadDate" 0.9>>
+				<</if>>
+				<<if C.npc.Poppy and C.npc.Poppy.init is 1 and Time.hour gte 21 and ["domus", "danube", "high", "wolf", "nightingale", "cliff", "starfish"].includes($bus) and !T.poppyStatus.includes("LowPatience")>>
+					<<addevent "poppyStreetNecklace" 0.2>>
+				<</if>>
+				<<if $poppyDismissalFired and !$poppySeen.includes("dismissal_glare")>>
+					<<addevent "poppyDismissalGlare" 0.6>>
+				<</if>>
+			<</if>>	
+			
 			/* end time differences */
 
 			<<if $worn.feet.type.includes("heels") and currentSkillValue("feetskill") lt $worn.feet.reveal>>
@@ -3823,6 +3838,7 @@
 				<span class="blue">Something is watching you.</span>
 			<</if>>
 		<</if>>
+		<<if modLISelected("Poppy") and C.npc.Poppy and C.npc.Poppy.init is 1>><<poppyDismissalStreetCheck>><</if>>
 		<<wTimerProgress>>
 	<</if>>
 <</widget>>
