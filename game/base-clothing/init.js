@@ -716,6 +716,10 @@ function initNpcClothes() {
 		{ name: "poppyTownM", 			type: "poppy", gender: "m", outfit: 0, clothes: npcAssignClothesToSet("sweater", "breeches"), desc: "sweater and breeches" },
 		{ name: "poppyNeutral",			type: "poppy", gender: "n", outfit: 0, clothes: npcAssignClothesToSet("shirt", "trousers"), desc: "shirt and trousers" },
 		/* -------------------------------------------------------------------------------------------------------------------------------------------------- */
+		/* Koralia Clothing init */
+		{ name: "koraliaTunic",			type: "koralia", gender: "n", outfit: 1, clothes: npcAssignClothesToSet("belted tunic", "belted tunic skirt"), desc: "tunic"},
+		{ name: "mermaidSwim",			type: "koralia", gender: "n", outfit: 1, clothes: npcAssignClothesToSet("plant top", "plant skirt"), desc: "mass of seaweed covering"},
+		/* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 		{ name: "maleDefault",			type: "default", gender: "m", outfit: 0, clothes: npcAssignClothesToSet("shirt", "trousers"), desc: "shirt and trousers" },
 		{ name: "femaleDefault",		type: "default", gender: "f", outfit: 0, clothes: npcAssignClothesToSet("shirt", "skirt"), desc: "shirt and skirt" },
 	];

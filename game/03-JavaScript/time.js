@@ -1811,6 +1811,28 @@ function dailyNPCEffects() {
 		if (V.gwylan.timer.petBed && Time.date.dayDifference(new DateTime(V.gwylan.timer.petBed)) <= 0) delete V.gwylan.timer.petBed;
 	}
 
+	// Koralia
+		// daily mermaid switching
+		if (C.npc.Koralia.init === 1 && typeof modLISelected === "function" && !modLISelected("Koralia"))
+			statusCheck("Koralia");
+			if (V.dailyMermaidKnow > 0) delete V.dailyMermaidKnow;
+			const rng = random(1,30)
+			if (T.koraliaStatus.includes("mRoaming") && (rng >= Math.abs(80 - C.npc.Koralia.corruption))){
+				V.dailyMermaid === 1;
+			} else {
+				V.dailyMermaid === 0;
+			};
+		// daily rage increase and decrease
+		// after the above
+		if (V.koraliaStatus.includes("sealed")) {
+			// +1 for every day spent sealed
+			// I should probably add more
+			if (C.npc.Koralia.rage < 60) {C.npc.Koralia.rage += 1;}
+		} else {
+			if (C.npc.Koralia.rage > 0) {C.npc.Koralia.rage -= 1;}
+		}
+
+
 	wikifier("relationshipclamp");
 }
 
@@ -2089,6 +2111,30 @@ function dailyLiquidEffects() {
 	}
 	if (window.poppyDailyTraits) {
 		poppyDailyTraits();
+	}
+	// Venom adjustment for jellyfish events
+	// I'll set it to just getting shocked 60 times with -1 decay for each unshocked day for now
+	// so around the amount needed for special traits, and with a mechanic similar to...transformation?
+	// so this is technically the wrong place to put this but I'm lazy so-
+	V.venom_addiction = Math.clamp(V.venom_addiction - 1, 0, 120)
+	if (V.backgroundTraits.includes("venomaddict")) {
+		V.venom_timer--;
+		if (V.venom_timer <= 0) {
+			V.backgroundTraits.delete("venomaddict")
+			V.effectsmessage = 1;
+			V.venommessage = "traitLost";
+			V.venom_addiction = 0;
+		} else if (V.venom_timer <= 10) {
+			V.effectsmessage = 1;
+			V.venommessage = "withdrawal";
+		}
+	} else {
+		if (V.venom_addiction >= 60){
+			V.backgroundTraits.pushUnique("venomaddict");
+			V.effectsmessage = 1;
+			V.venommessage = "traitGain";
+			V.venom_timer = 35;
+		}
 	}
 }
 

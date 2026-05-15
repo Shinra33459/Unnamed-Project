@@ -36,6 +36,8 @@ function statusCheck(name) {
 			// Mod LI
 			case "Poppy":
 				poppyStatusCheck(nnpc);
+			case "Koralia":
+				koraliaStatusCheck();
 				break;
 		}
 	}

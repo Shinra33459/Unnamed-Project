@@ -57,3 +57,4 @@ window.getActivatedModLIs = function getActivatedModLIs() {
 
 /* Register built-in mod-exclusive LIs here */
 registerModLI("Poppy");
+registerModLI("Koralia");

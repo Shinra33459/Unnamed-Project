@@ -597,6 +597,64 @@ Zohar
 				<<if $poppyromance is undefined>>
 					<<set $poppyromance to -1>>
 				<</if>>
+			<<case Koralia>>
+				<<if $koraliaSeen is undefined>>
+					<<set $koraliaSeen to []>>
+				<<elseif !Array.isArray($koraliaSeen)>>
+					<<set $koraliaSeen_legacy to $koraliaSeen>>
+					<<run console.warn("[Koralia migration] $koraliaSeen was not an array; moved to $koraliaSeen_legacy:", V.koraliaSeen)>>
+					<<set $koraliaSeen to []>>
+					<<set $koraliaMigrationNeedsReview to true>>
+				<</if>>
+				<!-- trauma, will be renamed as trust -->
+				<!-- total points is 100 -->
+				<!-- work in reverse, so max (bad) is 30, when koralia will actively go against whatever you do -->
+				<!-- min is -70, when if you tell them to throw themself down a volcano, they might actually consider it  -->
+				<!-- you'll need at most -50 if you want to dismiss them -->
+				<!-- of course, these are only in code stuff; I wanna be a menace to the save editors -->
+				<!-- it should still look normal in the save menu; so game start at 20 trust, bad is 0 trust, good is 100 trust -->
+				<<if $NPCName[_i].trauma is undefined>>
+					<<set $NPCName[_i].trauma to 10>>
+				<</if>>
+				<!-- corruption, renamed as control -->
+				<!-- total points is 100, as usual -->
+				<!-- determines how likely it is that the mermaid is fronting that day -->
+				<!-- at 100 corruption, your chance of meeting the mermaid is 100% -->
+				<!-- corruption will not increase if you have not removed the mermaid seal -->
+				<!-- after that, it increase daily until it reached 70, aka the minimal bar for the mRoaming status -->
+				<!-- there are daily events that can result increase. The <<gkcorrupt>> will show sth depending on who's fronting -->
+				<!-- it's just a bunch of ifs so if it doesn't work I'll cry -->
+				<<if $NPCName[_i].corruption is undefined>>
+					<<set $NPCName[_i].corruption to 0>>
+					<!-- Could I have skipped this? technically yes but eh, just to be sure -->
+					<!-- and notes, mostly so I can review what I wrote in the gg doc-->
+				<</if>>
+				<!-- I thought of adding dockSing and rescueCount here but those might be redundant-->
+				<<if $koralia is undefined>>
+					<<set $koralia to {
+						job: ""
+					}>>
+				<</if>>
+				<!-- here for future content -->
+				<<if $karlSeen is undefined>>
+					<<set $karlSeen to []>>
+				<<elseif !Array.isArray($karlSeen)>>
+					<<set $karlSeen_legacy to $karlSeen>>
+					<<run console.warn("[karl migration] $karlSeen was not an array; moved to $karlSeen_legacy:", V.karlSeen)>>
+					<<set $karlSeen to []>>
+					<<set $karlMigrationNeedsReview to true>>
+				<</if>>
+				<!-- ducks stuff will have its own setup thing -->
+				<<if $NDASeen is undefined>>
+					<<set $NDASeen to []>>
+				<<elseif !Array.isArray($NDASeen)>>
+					<<set $NDASeen_legacy to $NDASeen>>
+					<<run console.warn("[NDA migration] $NDASeen was not an array; moved to $NDASeen_legacy:", V.NDASeen)>>
+					<<set $NDASeen to []>>
+					<<set $NDAMigrationNeedsReview to true>>
+				<</if>>
+				<!-- no $koraliaromance needed bc it's event locked...probably. I might set it up again just in case -->
+				<</if>>
 			<<default>>
 		<</switch>>
 	<</if>>
@@ -615,6 +673,13 @@ Zohar
 				<<set $NPCName[_i].outfits.pushUnique(
 					"poppyLatexF",
 					"poppyTownM"
+				)>>
+			<<case Koralia>>
+				<<set $NPCName[_i].outfits.pushUnique(
+					"maleSwim1", "femaleSwim2",
+					"divingSuit",
+					"koraliaTunic",
+					"mermaidSwim","naked"
 				)>>
 			<<case Kylar>>
 				<<set $NPCName[_i].outfits.pushUnique(
@@ -708,6 +773,26 @@ Zohar
 					<</if>>
 				<<else>>
 					<<npcClothesType $NPCName[_i] "poppy">>
+				<</if>>
+			<<case Koralia>>
+				<<if _koralia_location is "beach">>
+					<<if V.koralia_rescueAvailable is true and koraliaStatus.includes("mRoaming")>>
+						<<if Time.season isnot "winter">>
+							<<npcClothesName $NPCName[_i] "naked">>
+						<<else>>
+							<<npcClothesName $NPCName[_i] "mermaidSwim">>
+						<</if>>
+					<<elseif Time.season isnot "winter">>
+						<<if $NPCName[_i].pronoun is "m">>
+							<<npcClothesName $NPCName[_i] "maleSwim1">>
+						<<else>>
+							<<npcClothesName $NPCName[_i] "femaleSwim1">>
+						<</if>>
+					<<else>>
+						<<npcClothesName $NPCName[_i] "divingSuit">>
+					<</if>>
+				<<else>>
+					<<npcClothesName $NPCName[_i] "koraliaTunic">>
 				<</if>>
 			<<case Robin>>
 				<<run getRobinCrossdressingStatus($NPCName[_i].crossdress)>>
@@ -1132,6 +1217,40 @@ Zohar
 		<</if>>
 		<<if !$NPCList[_npcno].traits.includes("unforgiving")>>
 			<<set $NPCList[_npcno].traits.push("unforgiving")>>
+		<</if>>
+	<<case "Koralia">>
+		<<set $NPCList[_npcno].traits.push("beautiful", "trusting")>>
+		<<if $dailyMermaid is 2 and $mermaidSeal isnot "intact">>
+			<<set $NPCList[_npcno].health to 750>>
+			<<set $NPCList[_npcno].healthmax to 800>>
+			<<set $NPCList[_npcno].dodgeChance to 0>>
+			<<if $combatExtended.enemyBaseDodgeChance is 1>>
+				<<set $NPCList[_npcno].dodgeChance to 40>>
+			<</if>>
+			<<if $combatExtended.enemyMartialArts is 1>>
+				<<set $NPCList[_npcno].dodgeChance += 40>>
+			<</if>>
+			<<if !$NPCList[_npcno].traits.includes("unforgiving") and $NPCList[_npcno].rage gt 0>>
+				<<if $NPCList[_npcno].traits.includes("trusting")>>
+					<<set $NPCList[_npcno].trait.pop("trusting")>>
+				<</if>>
+				<<set $NPCList[_npcno].traits.push("unforgiving")>>
+			<</if>>
+		<<else>>
+			<<set $NPCList[_npcno].health to 200>>
+			<<set $NPCList[_npcno].healthmax to 200>>
+			<<set $NPCList[_npcno].dodgeChance to 0>>
+			<<if $combatExtended.enemyBaseDodgeChance is 1>>
+				<<set $NPCList[_npcno].dodgeChance to 40>>
+			<</if>>
+			<<if $combatExtended.enemyMartialArts is 1>>
+				<<set $NPCList[_npcno].dodgeChance += 40>>
+			<</if>>
+			<<if $NPCList[_npcno].traits.includes("unforgiving") and !$NPCName[_npcno].state.includes("sealed")>>
+				<<set $NPCList[_npcno].traits.push("unforgiving")>>
+			<<else>>
+				<<set $NPCList[_npcno].traits.pop("unforgiving")>>
+			<</if>>
 		<</if>>
 	<<default>>
 		<<set $NPCList[_npcno].health to 200>>
@@ -2070,6 +2189,255 @@ Zohar
 						wants to <span class="teal">spend more time with you</span>.
 					<<else>>
 						has no strong opinion of you.
+					<</if>>
+				<</if>>
+			<</if>>
+		<<case Koralia>>
+			<<set _i to $NPCNameList.indexOf("Koralia")>>
+			<<run statusCheck("Koralia")>>
+			<<rng>>
+			<<if $dailyMermaid is 1 and ($dailyMermaidKnow is 1 or $NPCName[_i].state is "sealed")>>
+				<<if $mermaidName is true>>
+					<span class ="mermaidBlind">The Leviathan</span>
+				<<else>>
+					<span class="notThem">Koralia</span>
+				<</if>>
+
+				<<if $NPCName[_i].state is "sealed">>
+					<<if $hallucination gte 1>>
+						<<if $rng gte 98>>
+							<span class="notThem">has been put on house-arrest. Whomp Whomp</span>
+						<<else>>
+							<span class="black">
+								<<print either(
+								'ask if you are ignoring <<nnpc_him "Koralia">>.'
+								'ask if you regret your action.',
+								'wishes to see you again.",
+								'misses your touch.',
+								'fantasizes about you, under <<nnpc_him "Koralia">>, crying, begging, screaming-',
+								'wish to tear into your flesh, feast on your carcass.'
+								'wants you to forget everything you’ve read here.',
+								'is sulking.',
+								'is very sorry, so won’t you let <<nnpc_him "Koralia">> out?',
+								'rattles the chains.',
+								'is screaming.',
+								'thrashed in <<nnpc_his "Koralia">> containment.',
+								'swears you shall pay for daring to trap <<nnpc_him "Koralia">> in this hell.',
+								'calls you a pest undeserving of salvation.',
+								'berates its vessel for being so naive.'
+								)>>
+							</span>
+						<</if>>
+					<<else>>
+						<span class ="black">has been sealed.</span>
+					<</if>>
+				<<elseif $NPCName[_i].corruption is lte 50>>
+					<span class="red">should not be here. Unless you used cheat, please contact D.N.A. because I’m not knowledgeable enough to deal with this shit.</span>
+				<<elseif $NPCName[_i].corruption lt 70>>
+					<span class="teal">is losing control.</span>
+				<<elseif koraliaSeen.includes("trueLoveKiss")>>
+					<<if $NPCName[_i].corruption lte 60>>
+						<<if $NPCName[_i].dom gte 80>>
+							<<if $NPCName[_i].lust gte 80>>
+								wants to know<span class="lblue"> more</span> about you.
+							<<elseif $NPCName[_i].lust gte 60>>
+								is<span class ="blue"> curious</span> about you.
+							<<else>>
+								considers you<span class="lewd"> Koralia's toy</span>.
+							<</if>>
+						<<elseif $NPCName[_i].dom gte 60>>
+							<<if $NPCName[_i].lust gte 80>>
+							<<elseif $NPCName[_i].lust gte 60>>
+							<<else>>
+								thinks you are <span class="lblue">adorable</span>.
+							<</if>>
+						<<else>>
+							<<if $NPCName[_i].lust gte 80>>
+							<<elseif $NPCName[_i].lust gte 60>>
+							<<else>>
+							<</if>>
+						<</if>>
+					<<else>>
+						<<if $NPCName[_i].dom gte 80>>
+							<<if $NPCName[_i].lust gte 80>>
+								will <span class="lewd">take good care</span> of you.
+							<<else if $NPCName[_i].lust gte 60>>
+								will <span class="green">lavish you with love and attention</span>.
+							<<else>>
+								consider you <span class="gold"><nnpc_him Koralia> treasure</span>.
+							<</if>>
+						<<elseif $NPCName[_i].dom gte 60>>
+							<<if $NPCName[_i].lust gte 80>>
+							<<elseif $NPCName[_i].lust gte 60>>
+							<<else>>
+							<</if>>
+						<<else>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<</if>>
+					<</if>>
+				<<else>>
+					<<if $NPCName[_i].corruption lte 90>>
+						<<if $NPCName[_i].dom gte 80>>
+							<<if $NPCName[_i].lust gte 80>>
+								wants you to <span class="red">surrender your heart</span>.
+							<<else if $NPCName[_i].lust gte 60>>
+								wants <span class="red">your body</span>.
+							<<else>>
+								is <span class="purple">pleased</span>.
+							<</if>>
+						<<elseif $NPCName[_i].dom gte 80>>
+							<<if $NPCName[_i].lust gte 80>>
+							<<elseif $NPCName[_i].lust gte 60>>
+							<<else>>
+							<</if>>
+						<<else>>
+							<<if $NPCName[_i].lust gte 80>>
+							<<elseif $NPCName[_i].lust gte 60>>
+							<<else>>
+							<</if>>
+						<</if>>
+					<<else>>
+						<<if $NPCName[_i].dom gte 60>>
+							<<if $NPCName[_i].lust gte 80>>
+							<<elseif $NPCName[_i].lust gte 60>>
+							<<else>>
+							<</if>>
+						<<elseif $NPCName[_i].dom gte 80>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<<else>>
+							<<if $NPCName[_i].lust gte 60>>
+								sees you as a <span class="red">
+							<<else if $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<</if>>
+					<</if>>
+				<</if>>
+			<<else>>
+				Koralia
+				<<if $NPCName[_i].state is "sealed">>
+					<<if $hallucination gte 2>>
+						<<if $rng gte 98>>
+							has gained <span class="blue">Stockholm Syndrome: Underwater Jail.</span> <<nnpc_He "Koralia">> should ask the Ivory Wraith for some tips on home decoration.
+						<<else>>
+							<span class="black">
+								<<print either(
+								'is unable to move <<nnpc_his "Koralia">> hands.',
+								'has stopped feeling anything in <<nnpc_his "Koralia">> legs.',
+								'is crying.',
+								'is singing a beautiful song.',
+								'is having a breakdown.',
+								'thinks this place is too dark.',
+								'have only <<nnpc_his "Koralia">> voice to comfort <<nnpc_him "Koralia">> in this hell.',
+								'wishes to return home.',
+								'regrets meeting you.',
+								'thinks you have ruined <<nnpc_him "Koralia">>.',
+								'wonders how many days have passed since <<nnpc_he "Koralia">> got trapped here.',
+								'wonders if <<nnpc_he "Koralia">> is even breathing.'
+								)>>
+							</span>
+						<</if>>
+					<<else>>
+						<span class="black">has been sealed.</span>
+					<</if>>
+				<<elseif koraliaSeen.includes("trueLoveKiss")>>
+					<<if $NPCName[_i].trauma gte 0>>
+						<<if $NPCName[_i].love gte 60>>
+							feels <span class="red">betrayed</span>.
+						<<elseif $NPCName[_i].love gte 80>>
+							feels <span class ="red">hurt</span>.
+						<<else>>
+							holds <span class ="red">disdain towards you</span>.
+						<</if>>
+					<<elseif $NPCName[_i].trauma gte -40>>
+						<<if $NPCName[_i].love gte 60>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<<elseif $NPCName[_i].love gte 80>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+								has <span class ="lewd"> given you their heart.</span>
+							<<else>>
+							<</if>>
+						<<else>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<</if>>
+					<<else>>
+						<<if $NPCName[_i].love gte 60>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<<elseif $NPCName[_i].love gte 80>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<<else>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<</if>>
+					<</if>>
+				<<elseif $mermaidSeal isnot "intact">>
+					<<if $NPCName[_i].trauma lte 0>>
+						<<if $NPCName[_i].love gte 60>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<<else>>
+							<<if $NPCName[_i].love gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<</if>>
+					<<if $NPCName[_i].trauma lte 40>>
+						<<if $NPCName[_i].love gte 60>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+							<</if>>
+						<<elseif $NPCName[_i].love gte 80>>
+							<<if $NPCName[_i].lust gte 60>>
+							<<elseif $NPCName[_i].lust gte 80>>
+							<<else>>
+						<</if>>
+					<<else>>
+						<<if $NPCName[_i].love gte 60>>
+						<<elseif $NPCName[_i].lust gte 80>>
+						<<else>>
+						<</if>>
+					<</if>>
+				<<else>>
+					<<if $NPCName[_i].love gte 60>>
+						<<if $NPCName[_i].lust gte 60>>
+						<<else if $NPCName[_i].lust gte 80>>
+						<<else>>
+							<span class="teal"> appreciates you. </span>
+						<</if>>
+					<<elseif $NPCName[_i].love gte 80>>
+						<<if $NPCName[_i].lust gte 60>>
+						<<elseif $NPCName[_i].lust gte 80>>
+						<<else>>
+						<</if>>
+					<<else>>
+						<<if $NPCName[_i].lust gte 60>>
+						<<elseif $NPCName[_i].lust gte 80>>
+						<<else>>
+						<</if>>
 					<</if>>
 				<</if>>
 			<</if>>

@@ -1,0 +1,175 @@
+:: Seaside Shop Clothes
+<div id="clothingShop-div" class="main-shop-div">
+	<<seaside-shop-content>>
+</div>
+:: Seaside Shop Trinkets
+
+:: Seaside Shop Widgets
+
+<<widget "seaside-shop-leave">>
+    <<shopClothingFilterReset>><<unset $clothes_choice>><<ShowUnderEquip "normal">><<ShowUnderEquip "over">>
+    <<set $tryOn.autoReset to true>><<set $eventskip to 1>><<unset $tempDisable>><<shopCommandoCheck>>
+    <<unset $enteringSeasideShop>>
+<</widget>>
+
+<<widget "seaside-shop-options">>
+    <<if $seabounties gt 0>>
+        <<if _koralia_location_message is "sealed">>
+            <<link [[Sell your forages|Seaside Shop Karl Sell]]>>
+        <<elseif _koralia_location_message is "sealed">>
+            <<link [[Sell your forages|Seaside Shop Koralia Sell]]>><</link>>
+        <<elseif _koralia_location_message isnot undefined and $mermaidSeal isnot undefined>>
+            <<link [[Place the items on the counter|Seaside Shop Sell]]>><</link>>
+        <</if>>
+    <</if>>
+    <<link [[Check the clothes section|Seaside Shop Clothes]]>><</link>>
+    <<link [[Look at the souvenir|Seaside Shop Trinkets]]>><</link>>
+    <<link [[Leave|Beach Coastal]]>><<seaside-shop-leave>><</link>>
+<</widget>>
+
+<<widget "seaside-shop-content">>
+    <<set $shopname= "seaside">>
+    <<if $tryOn.autoReset isnot false>><<tryOnReset>> <</if>>
+    <br><br>
+
+    <div id="tryonstats-div">
+    <<tryOnStats>>
+    </div>
+    <<unset $shopListStartCount>><<unset $clothes_choice>>
+    <set $shopPage = 0>>
+
+    <span>Warmth:</span>
+    <<warmthscale>>
+    <div id="warmth-description">
+        <<warmth_description>>
+    </div>
+    <br><br>
+
+    /* all */
+    <<clothingcategoryicon "all">>
+    <<link "View All">>
+    <<replace "#clothingShop-div">><<AllShop>><</replace>>
+    <</link>>
+    <br><br>
+    <<if $debug is 1>>
+    <<clothingcategoryicon "overoutfit">>
+    <<link "View Over Outfits">>
+    <<replace "#clothingShop-div">><<OverOutfitShop>><</replace>>
+    <</link>>
+    <br><br>
+    <</if>>
+
+    /* over */
+    <<clothingcategoryicon "upper">>
+    <<link "View Tops">>
+    <<replace "#clothingShop-div">><<TopShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "lower">><<link "View Bottoms">>
+    <<replace "#clothingShop-div">><<BottomShop>><</replace>>
+    <</link>>
+    <br><br>
+
+    /* under */
+    <<clothingcategoryicon "underoutfit">><<link "View Under Outfits">>
+    <<replace "#clothingShop-div">><<UnderOutfitShop>><</replace>><</link>>
+    <br>
+    <<clothingcategoryicon "underupper">>
+    <<link "View Under Tops">>
+    <<replace "#clothingShop-div">><<UnderTopShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "underlower">>
+    <<link "View Under Bottoms">>
+    <<replace "#clothingShop-div">><<UnderBottomShop>><</replace>>
+    <</link>>
+    <br><br>
+    
+    /* accessory */
+    <<clothingcategoryicon "head">><<link "View Head Accessories">>
+    <<replace "#clothingShop-div">><<HeadShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "face">>
+    <<link "View Face Accessories">>
+    <<replace "#clothingShop-div">><<FaceShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "earrings">>
+    <<link "View Earrings">>
+    <<replace "#clothingShop-div">><<EarringsShop>><</replace>>
+    <</link>>
+    <<clothingcategoryicon "neck">>
+    <<link "View Neck Accessories">>
+    <<replace "#clothingShop-div">><<NeckShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "handheld">>
+    <<link "View Handheld Items">>
+    <<replace "#clothingShop-div">><<HandheldShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "hand">>
+    <<link "View Hand Accessories">>
+    <<replace "#clothingShop-div">><<HandsShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "rings">>
+    <<link "View rings">>
+    <<replace "#clothingShop-div">><<RingsShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "legs">>
+    <<link "View Legwear">>
+    <<replace "#clothingShop-div">><<LegsShop>><</replace>>
+    <</link>>
+    <br>
+    <<clothingcategoryicon "feet">>
+    <<link "View Shoes">>
+    <<replace "#clothingShop-div">><<FeetShop>><</replace>>
+    <</link>>
+    <br>
+    <br>
+    <<run linkifyDivs('.button-back-to-shop')>>
+
+    <<if $tryOn.value isnot 0>>
+        <<icon "hanger.png">>
+        <<link "Return clothes">>
+            <<clothingReset>>
+            <<updatesidebarimg>>
+            <<updatesidebardescription>>
+            <<updateallure>>
+            <<updatewarmthscale>>
+            <<updatewarmthdescription>>
+            <<updateclothingshop>>
+            <<run updateMoment()>>
+        <</link>>
+        <br>
+        <<if $tryOn.value gt 0 and $tryOn.value lte $money>>
+        <<sendItemsToDropdown>>
+        <<highicon>><<link "Buy clothes">>
+            <<buyTryOnClothes "wear">>
+            <<updatesidebarmoney>>
+            <<updateclothingshop>>
+        <</link>>
+        <br>
+        <<wardrobeicon>><<link "Buy clothes and send to wardrobe">>
+            <<buyTryOnClothes "wardrobe">>
+            <<updatesidebarmoney>>
+            <<updatesidebarimg>>
+            <<updatesidebardescription>>
+            <<updateallure>>
+            <<updatewarmthscale>>
+            <<updatewarmthdescription>>
+            <<updateclothingshop>>
+        <</link>>
+        <br>
+        <</if>>
+    <<elseif $tryOn.value is 0>>
+        <<getouticon>><<link [[Stop browsing clothes|Seaside Shop Entrance]]>><</link>>
+        <br><br>
+    <</if>>
+<</widget>>
+–
+<<widget "seaside-shop-trinkets">>
+

@@ -1915,6 +1915,8 @@ function isPossibleLoveInterest(name) {
 			return V.gwylanSeen?.includes("partners") || V.gwylanSeen?.includes("romance");
 		case "Poppy":
 			return V.poppyromance >= 0 && C.npc.Poppy && C.npc.Poppy.init === 1;
+		case "Koralia":
+			return V.koraliaSeen?.includes("trueLoveKiss") && C.npc.Koralia && C.npc.Koralia.init === 1 && C.npc.Koralia.state !== "sealed";
 		default:
 			return false;
 	}
