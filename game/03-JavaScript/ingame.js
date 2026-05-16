@@ -1407,20 +1407,25 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
-				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
+			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
-			if (V.TFCatBuffs === 1) {
-				result = Math.round(result * 0.8);
-			}
-			if (V.TFBearBuffs === 1) {
-				result = Math.round(result * 1.3);
-			}
-			if (V.TFBirdBuffs === 1) {
-				result = Math.round(result * 0.8);
-			}
-			if (V.TFFoxBuffs === 1) {
-				result = Math.round(result * 0.9);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 1.3);
+				}
+				if (V.TFBirdBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFFoxBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFWaterDragonBuffs === 1) {
+					result = Math.round(result * 1.5);
+				}
 			}
 			if (V.worn.upper.type.includes("heavy") || V.worn.lower.type.includes("heavy")) {
 				result *= V.physique / V.physiquesize / 3;
@@ -1438,28 +1443,33 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.transformationParts.traits.chase !== "disabled") result = Math.floor(result * 1.1);
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
 			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
-				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
+				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
-			if (V.TFWolfBuffs === 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFCatBuffs === 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFCowBuffs === 1) {
-				result = Math.round(result * 0.9);
-			}
-			if (V.TFBearBuffs === 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFBirdBuffs === 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFFoxBuffs === 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFBunnyBuffs === 1) {
-				result = Math.round(result * 1.5);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCowBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFBirdBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFFoxBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFBunnyBuffs === 1) {
+					result = Math.round(result * 1.5);
+				}
+				if (V.TFWaterDragonBuffs == 1) {
+					result = Math.round(result * 1.2);
+				}
 			}
 			if (V.worn.upper.type.includes("heavy") || V.worn.lower.type.includes("heavy")) {
 				result *= V.physique / V.physiquesize / 1.5;
@@ -1474,20 +1484,22 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
 				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFWolfBuffs === 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFCatBuffs === 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFCowBuffs === 1) {
-				result = Math.round(result * 0.8);
-			}
-			if (V.TFBearBuffs === 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFBunnyBuffs === 1) {
-				result = Math.round(result * 0.8);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCowBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFBunnyBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
 			}
 			break;
 		case "tending":
@@ -1497,8 +1509,10 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
 				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFCowBuffs === 1) {
-				result = Math.round(result * 1.4);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFCowBuffs === 1) {
+					result = Math.round(result * 1.4);
+				}
 			}
 			break;
 		case "housekeeping":
@@ -1517,17 +1531,19 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
 				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFWolfBuffs === 1) {
-				result = Math.round(result * 0.9);
-			}
-			if (V.TFCatBuffs === 1) {
-				result = Math.round(result * 0.9);
-			}
-			if (V.TFBearBuffs === 1) {
-				result = Math.round(result * 0.8);
-			}
-			if (V.TFBirdBuffs === 1) {
-				result = Math.round(result * 1.3);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFBirdBuffs === 1) {
+					result = Math.round(result * 1.3);
+				}
 			}
 			break;
 		case "vaginalskill":
@@ -1578,20 +1594,22 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
 				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFCatBuffs === 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFCowBuffs === 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFBearBuffs === 1) {
-				result = Math.round(result * 0.9);
-			}
-			if (V.TFBirdBuffs === 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFFoxBuffs === 1) {
-				result = Math.round(result * 1.2);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFCowBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBirdBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFFoxBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
 			}
 			break;
 	}
@@ -2169,15 +2187,15 @@ DefineMacro("validateTransformations", validateTransformations);
 // prettier-ignore
 function getSexesFromRandomGroup() {
 	if (maleChance() <= 0) { /* Only females. */
-		if (V.dgchance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
-		if (V.dgchance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
+		if (V.settings.femaleNPCPenisChance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
+		if (V.settings.femaleNPCPenisChance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
 	}
 	if (maleChance() >= 100) { /* Only males. */
-		if (V.cbchance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
-		if (V.cbchance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
+		if (V.settings.maleNPCVaginaChance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
+		if (V.settings.maleNPCVaginaChance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
 	}
-	if (V.cbchance >= 100 && V.dgchance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
-	if (V.dgchance >= 100 && V.cbchance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
+	if (V.settings.maleNPCVaginaChance >= 100 && V.settings.femaleNPCPenisChance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
+	if (V.settings.femaleNPCPenisChance >= 100 && V.settings.maleNPCVaginaChance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
 	return SexTypes.BOTH;
 }
 window.getSexesFromRandomGroup = getSexesFromRandomGroup;
@@ -3007,16 +3025,18 @@ function unableTakeVirginity(virginity) {
 		case "penile":
 			return (
 				V.settings.analEnabled === false &&
-				((V.cbchance === 0 && V.dgchance === 100) ||
-					(maleChance() === 100 && V.cbchance === 0) ||
-					(maleChance() === 0 && V.dgchance === 100) ||
-					(maleChance() === 100 && V.cbchance === 100 && V.settings.straponChance === 100) ||
-					(maleChance() === 0 && V.dgchance === 0 && V.settings.straponChance === 100))
+				((V.settings.maleNPCVaginaChance === 0 && V.settings.femaleNPCPenisChance === 100) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 0) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 100) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 100 && V.settings.straponChance === 100) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 0 && V.settings.straponChance === 100))
 			);
 		case "vaginal":
 			return (
 				V.settings.straponChance === 0 &&
-				((V.cbchance === 100 && V.dgchance === 0) || (maleChance() === 100 && V.cbchance === 100) || (maleChance() === 0 && V.dgchance === 0))
+				((V.settings.maleNPCVaginaChance === 100 && V.settings.femaleNPCPenisChance === 0) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 100) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 0))
 			);
 		default:
 			return false;
@@ -3354,6 +3374,7 @@ function hasSharpSenses(sense = "any") {
 window.hasSharpSenses = hasSharpSenses;
 
 function displayDefiantOption(amount) {
+	// eslint-disable-next-line no-undef
 	if (isNaN(amount)) paramError("displayDefiantOption", "amount", amount, "Expected a number.");
 	amount = Number(amount);
 	if (amount) {
