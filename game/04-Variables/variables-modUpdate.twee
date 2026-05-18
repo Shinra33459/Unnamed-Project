@@ -1669,6 +1669,37 @@
 		"veteran_guard": () => "Respect"
 	}>>
 
+	<<modLI-init>>
+
+	/* Poppy LI data migration */
+	<<if $objectVersion.poppyLIData is undefined or $objectVersion.poppyLIData lt 1>>
+		<<if $daily is undefined>><<set $daily to {}>><</if>>
+		<<if $daily.poppy is undefined>><<set $daily.poppy to {}>><</if>>
+
+		<<if !Array.isArray($poppySeen)>>
+			<<if $poppySeen isnot undefined>>
+				<<run console.warn("[Poppy migration] $poppySeen was not an array, resetting:", V.poppySeen)>>
+			<</if>>
+			<<set $poppySeen to []>>
+		<</if>>
+
+		<<if C.npc.Poppy>>
+			<<if C.npc.Poppy.timer is undefined>><<set C.npc.Poppy.timer to {}>><</if>>
+
+			<<if C.npc.Poppy.timer.lastInteraction is undefined>>
+				<<set C.npc.Poppy.timer.lastInteraction to Time.date.timeStamp>>
+			<</if>>
+			<<if C.npc.Poppy.timer.lastPatienceDecay is undefined>>
+				<<set C.npc.Poppy.timer.lastPatienceDecay to Time.date.timeStamp>>
+			<</if>>
+			<<if typeof C.npc.Poppy.patience !== "number">>
+				<<set C.npc.Poppy.patience to 100>>
+			<</if>>
+
+			<<set $objectVersion.poppyLIData to 1>>
+		<</if>>
+	<</if>>
+
 	<<set $robinmoney to Math.round($robinmoney)>>
 
 	<<set _remove to ["Salem", "Casey", "Tracey", "Taylor"]>>
@@ -2047,7 +2078,8 @@
 <<widget "modNewNamedNPCs">>
 	<<if $dolpNpcListVersion is undefined>>
 		<<set _newNNPCs to {
-			"riley": {nam : "Riley", title: "MMA coach", insecurity: "skill", adult: 1}
+			"riley": {nam : "Riley", title: "MMA coach", insecurity: "skill", adult: 1},
+			"poppy": {nam : "Poppy", title: "tolerant", insecurity: "skill", adult: 1}
 		}>>
 		<<for _npc range Object.keys(_newNNPCs)>>
 			<<if !$NPCNameList.includes(_newNNPCs[_npc].nam)>>
@@ -2061,53 +2093,66 @@
 		<<set $dolpNpcListVersion to 1>>
 	<</if>>
 
-	<<if $NPCName[31].description is "Riley" and $NPCName[31].title is undefined>>
-		<<set $NPCName[31].title to "MMA coach">>
-		<<set $NPCName[31].insecurity to "skill">>
+	<<if $NPCName[32].description is "Riley" and $NPCName[31].title is undefined>>
+		<<set $NPCName[32].title to "MMA coach">>
+		<<set $NPCName[32].insecurity to "skill">>
+	<</if>>
+	<<if $NPCName[33].description is "Poppy" and $NPCName[31].title is undefined>>
+		<<set $NPCName[33].title to "tolerant">>
+		<<set $NPCName[33].insecurity to "skill">>
 	<</if>>
 <</widget>>
 
 <<mirrorMood>>
 
 <<widget "modRingsEarrings">>
-	/* Fixing what I broke in the 14 version and changing to 7.5 in case of future compatibility. */
-	<<if $objectVersion.wardrobes lt 7 or $objectVersion.wardrobes is 14 or $objectVersion.wardrobes is 15 or $objectVersion.wardrobes is undefined>>
-		<<set $objectVersion.wardrobes to 7>>
-		<<wardrobesUpdate>>
-		<<set $objectVersion.wardrobes to 7.5>>
-	<</if>>
-	<<if $wear_rings is undefined>>		
-		<<set $worn.earrings to clone(setup.clothes.earrings[0])>>
-		<<set $wardrobe.earrings to []>>
-		
-		<<set $worn.rings to clone(setup.clothes.rings[0])>>
-		<<set $wardrobe.rings to []>>
-		
-		<<for $_i to 0; $_i lt $outfit.length; $_i++>>
-			<<if $outfit[$_i].earrings is undefined>>
-				<<set $outfit[$_i].earrings to "naked">>
-			<</if>>
-			<<if $outfit[$_i].rings is undefined>>
-				<<set $outfit[$_i].rings to "naked">>
-			<</if>>
-			<<if $outfit[$_i].colors and !$outfit[$_i].colors.earrings>>
-				<<set $outfit[$_i].colors.earrings to [0, 0]>>
-			<</if>>
-			<<if $outfit[$_i].colors and !$outfit[$_i].colors.rings>>
-				<<set $outfit[$_i].colors.rings to [0, 0]>>
-			<</if>>
-		<</for>>
-		<<set $ears_pierced to 0>>
-	<</if>>
-	<<script>>
-		for (const i of Object.keys(V.wardrobes)) {
-			if (i == "shopReturn" || i == "wardrobe") continue;
-			if (V.wardrobes[i].earrings == undefined) {
-				V.wardrobes[i].earrings = [];
-			}
-			if (V.wardrobes[i].rings == undefined) {
-				V.wardrobes[i].rings = [];
-			}
-		}
-	<</script>>
+    /* Fixing what I broke in the 14 version and changing to 7.5 in case of future compatibility. */
+    <<if $objectVersion.wardrobes lt 7 or $objectVersion.wardrobes is 14 or $objectVersion.wardrobes is 15 or $objectVersion.wardrobes is undefined>>
+        <<set $objectVersion.wardrobes to 7>>
+        <<wardrobesUpdate>>
+        <<set $objectVersion.wardrobes to 7.5>>
+    <</if>>
+
+    <<if $wear_earrings is undefined>>
+        <<set $worn.earrings to clone(setup.clothes.earrings[0])>>
+        <<set $carried.earrings to clone(setup.clothes.earrings[0])>>
+        <<set $wardrobe.earrings to []>>
+        <<set $store.earrings to []>>
+        <<set $wear_earrings to "none">>
+        <<set $ears_pierced to 0>>
+    <</if>>
+
+    <<if $wear_rings is undefined>>
+        <<set $worn.rings to clone(setup.clothes.rings[0])>>
+        <<set $carried.rings to clone(setup.clothes.rings[0])>>
+        <<set $wardrobe.rings to []>>
+        <<set $store.rings to []>>
+        <<set $wear_rings to "none">>
+    <</if>>
+
+    <<for $_i to 0; $_i lt $outfit.length; $_i++>>
+        <<if $outfit[$_i].earrings is undefined>>
+            <<set $outfit[$_i].earrings to "naked">>
+        <</if>>
+        <<if $outfit[$_i].rings is undefined>>
+            <<set $outfit[$_i].rings to "naked">>
+        <</if>>
+        <<if $outfit[$_i].colors and !$outfit[$_i].colors.earrings>>
+            <<set $outfit[$_i].colors.earrings to [0, 0]>>
+        <</if>>
+        <<if $outfit[$_i].colors and !$outfit[$_i].colors.rings>>
+            <<set $outfit[$_i].colors.rings to [0, 0]>>
+        <</if>>
+    <</for>>
+
+    <<script>>
+        if (V.wardrobes && typeof V.wardrobes === "object") {
+            for (const i of Object.keys(V.wardrobes)) {
+                if (i === "shopReturn" || i === "wardrobe") continue;
+                if (!V.wardrobes[i] || typeof V.wardrobes[i] !== "object") continue;
+                if (V.wardrobes[i].earrings === undefined)     {V.wardrobes[i].earrings = [];}
+                if (V.wardrobes[i].rings     === undefined)    {V.wardrobes[i].rings = [];}
+            }
+        }
+    <</script>>
 <</widget>>

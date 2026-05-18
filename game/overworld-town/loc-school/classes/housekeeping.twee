@@ -14,9 +14,11 @@
 		<<else>>
 			<<set _naked to "not wearing anything">>
 		<</if>>
+
 		<<if $worn.over_upper.name isnot "naked" and $worn.over_lower.name isnot "naked">>
 			As you go to hang your <<print _middleOutfit ? "$worn.over_upper.name" : "$worn.over_upper.name and $worn.over_lower.name">>, you remember that you're _naked underneath.
 		<</if>>
+
 		<br><br>
 		<<npc River>><<person1>>
 		River's eyes narrow as you glance at <<him>>. "You can't be trying to attend my lesson without a uniform. Go see the head."
@@ -35,12 +37,6 @@
 			<</if>>
 			and take your seat.
 		<<elseif Time.minute lt 5>>
-			You enter the housekeeping classroom.
-			<<npc River>><<person1>>
-			River is preparing at the front of the room while the seats fill.
-			<<if $worn.over_upper.name isnot "naked" or $worn.over_lower.name isnot "naked" or $worn.over_head.name isnot "naked">>
-				<<undressOverClothes "mathsClassroom">>
-				You hang your coat at the back of the class and take your seat.
 			<<if modLISelected("Poppy") and Time.days gte 21 and C.npc.Poppy and C.npc.Poppy.init isnot 1 and ($poppySeen is undefined or !Array.isArray($poppySeen) or !$poppySeen.includes("talk_intro"))>>
 				<<poppyFirstMeetingInit>><<npc Poppy>><<person1>>
 				You enter the housekeeping classroom. River and a stranger are preparing at the front of the room while the seats fill.
@@ -135,11 +131,13 @@
 		<</if>>
 	<</if>>
 <<else>>
-	<<if modLISelected("Poppy")>><<run poppySchedule()>><</if>>
+	<<if modLISelected("Poppy")>>
+		<<run poppySchedule()>>
+	<</if>>
 	<<if modLISelected("Poppy") and C.npc.Poppy and C.npc.Poppy.init is 1 and T.poppy_location is "housekeepingClassroom" and T.poppy_location_message is "prep">>
 		<<set $daily.poppy.hkClassroomVisits to typeof $daily.poppy.hkClassroomVisits is "number" ? $daily.poppy.hkClassroomVisits : 0>>
 		<<set $daily.poppy.hkClassroomLocked to $daily.poppy.hkClassroomLocked ? 1 : 0>>
-	<<if $daily.poppy.hkClassroomLocked is 1>>
+		<<if $daily.poppy.hkClassroomLocked is 1>>
 			You try to enter the housekeeping classroom. The door is locked.
 			<br><br>
 			<<getouticon>><<link [[Leave|Hallways]]>><<endevent>><</link>>
@@ -207,28 +205,29 @@
 		River allows students to use the kitchen while lessons aren't in session, though woe betide those who don't clean up after themselves.
 		<br><br>
 
-	<<ingredientsSupplied "salt" "vegetable_oil" "bottle_of_milk" "white_wine" "flour" "oats" "sugar">>
-	<br><br>
-
-	<<kitchenDisplay>>
-	<<if $cookbook is true>>
-		<<set _baseTime to Math.max(180 - (6 * Math.round($housekeeping / 50)), 10)>>
-		<<set _timeString to getTimeString(_baseTime)>>
+		<<ingredientsSupplied "salt" "vegetable_oil" "bottle_of_milk" "white_wine" "flour" "oats" "sugar">>
 		<br><br>
-		<<housekeeping_exam_select>>
-		<<if $chosen_recipe isnot "none">>
-			<span class="gold">You can teach yourself a recipe from your cookbook here.</span> You flip open the book and land on a recipe for <<print $chosen_recipe.replace(/_/g," ")>>.<br><br>
-			<<link [["Learn something new (" + _timeString + ")"|Kitchen Self Teach]]>><<pass _baseTime>><<housekeeping 1 1000>><</link>><<ghousekeeping 1000>>
-		<<else>>
-			There's no more recipes you can learn.
+
+		<<kitchenDisplay>>
+		<<if $cookbook is true>>
+			<<set _baseTime to Math.max(180 - (6 * Math.round($housekeeping / 50)), 10)>>
+			<<set _timeString to getTimeString(_baseTime)>>
+			<br><br>
+			<<housekeeping_exam_select>>
+			<<if $chosen_recipe isnot "none">>
+				<span class="gold">You can teach yourself a recipe from your cookbook here.</span> You flip open the book and land on a recipe for <<print $chosen_recipe.replace(/_/g," ")>>.<br><br>
+				<<link [["Learn something new (" + _timeString + ")"|Kitchen Self Teach]]>><<pass _baseTime>><<housekeeping 1 1000>><</link>><<ghousekeeping 1000>>
+			<<else>>
+				There's no more recipes you can learn.
+			<</if>>
+			<br>
 		<</if>>
-		<br>
-	<</if>>
 
 	<<crimeicon "mark">><<link [[Steal|Housekeeping Kitchen Steal]]>><</link>>
 	<br><br>
 	<<getouticon>><<link [[Leave the room (0:01)|Hallways]]>><<kitchenExit>><<pass 1>><</link>>
 	<br>
+	<</if>>
 <</if>>
 
 :: Housekeeping Lesson
@@ -343,13 +342,14 @@ River is not so amused. "You've made a mistake. Get out."
 :: Housekeeping Lesson Focus
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
 <<towelup>>
-
-You focus on listening to the teacher and studying the material. It's hard going, but you think you're making progress.
-<br><br>
 <<if modLISelected("Poppy")>><<run poppySchedule()>><</if>>
 <<if random(1,100) lte 20 and modLISelected("Poppy") and C.npc.Poppy and C.npc.Poppy.init is 1>>
 	<<npc Poppy>><<person1>>
-	You focus on listening to the teacher and studying the material. It's hard going, but you think you're making progress. As you work, a pair of hands rest against your shoulders. 
+	You focus on listening to the teacher and studying the material. It's hard going, but you think you're making progress.
+	<br><br>
+	<<housekeeping _lesson_progress>>
+	<<if _dolp_desk_stress>><<stress _dolp_desk_stress>><<else>><<stress _lesson_progress>><</if>>
+	As you work, a pair of hands rest against your shoulders. 
 	<br><br>
 	You turn around to see Poppy smiling at you. "Do you need any guidance?"
 	<br><br>
@@ -359,7 +359,8 @@ You focus on listening to the teacher and studying the material. It's hard going
 <<else>>
 	You focus on listening to the teacher and studying the material. It's hard going, but you think you're making progress.
 	<br><br>
-	<<advancelesson>><<housekeeping _lesson_gain>><<stress _lesson_progress>>
+	<<advancelesson>><<housekeeping _lesson_progress>>
+	<<if _dolp_desk_stress>><<stress _dolp_desk_stress>><<else>><<stress _lesson_progress>><</if>>
 	<<if $phase is 1>>
 		<<lessonEnd "housekeepingClassroom">>
 	<<else>>
