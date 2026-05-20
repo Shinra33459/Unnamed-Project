@@ -1062,13 +1062,6 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Transformation"],
 	},
-	"Lost Legacy": {
-		title: "Lost Legacy",
-		desc: "Came back from extinction.",
-		difficulty: 1,
-		series: "",
-		filter: ["All", "Transformation"],
-	},
 	Harpy: {
 		title: "Fly Like an Eagle",
 		desc: "Casting a great shadow.",
