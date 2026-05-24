@@ -3,7 +3,7 @@
  *
  * <<doubleslider VAR1 VAR2 VAR3 LEFTCOLOR MIDDLECOLOR RIGHTCOLOR>>
  *
- *  * Variable names may be passed with or without the "$" sigil (e.g. "mhermchance" or
+ * Variable names may be passed with or without the "$" sigil (e.g. "mhermchance" or
  * "$settings.maleNPCVaginaChance"). Dotted property paths like "$settings.foo" are supported
  * via Wikifier.getValue/setValue.
  *

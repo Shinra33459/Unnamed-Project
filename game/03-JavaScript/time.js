@@ -607,19 +607,19 @@ function weekPassed() {
 		V.avery_mansion.date_seen = false;
 		V.avery_tower.progress += 5;
 		if (V.avery_tower.effects.includes("theft")) {
-			V.avery_tower.progress -= 4;
+			V.avery_tower.progress -= 5;
 		}
 		if (V.avery_tower.effects.includes("temple")) {
-			V.avery_tower.progress -= 4;
+			V.avery_tower.progress -= 5;
 		}
 		if (V.avery_tower.effects.includes("mayor")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		if (V.avery_tower.effects.includes("Remy")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		if (V.avery_tower.effects.includes("Harper")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		V.avery_tower.progress = Math.clamp(V.avery_tower.progress, 0, 100);
 
@@ -990,8 +990,10 @@ function dayPassed() {
 	}
 
 	if (V.adultshopprogress < 22 && Time.weekDay === 6) V.adultshopprogress++;
-	else if (V.adultshopgrandopening) wikifier("unlockAdultShop");
-	else if (V.adultshopprogress >= 22 && !V.adultshopunlocked) V.adultshopgrandopening = true;
+	else if (V.adultshopgrandopening) {
+		T.disableUnlockAdultShopFeat = true;
+		wikifier("unlockAdultShop");
+	} else if (V.adultshopprogress >= 22 && !V.adultshopunlocked) V.adultshopgrandopening = true;
 	else if (V.adultshopdegree < 15) V.adultshopdegree += 0.1;
 	delete V.adultshophelped;
 

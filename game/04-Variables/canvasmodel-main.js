@@ -346,6 +346,11 @@ Renderer.CanvasModels.main = {
 			"cow_tail_type": "disabled",
 			"cow_tail_layer": "front",
 			"cow_ears_type": "disabled",
+			"waterdragon_horns_type": "disabled",
+			"waterdragon_horns_layer": "back",
+			"waterdragon_tail_type": "disabled",
+			"waterdragon_tail_layer": "front",
+			"waterdragon_ears_type": "disabled",
 			"bird_wings_type": "disabled",
 			"bird_wing_right": "idle",
 			"bird_wing_left": "idle",
@@ -1890,6 +1895,30 @@ Renderer.CanvasModels.main = {
 			src: `img/transformations/cow/ears/tag.png`,
 		}),
 		"cow_tail": genlayer_tail("cow", false),
+		
+		/***
+		 *    ██     ██  █████  ████████ ███████ ██████
+		 *    ██     ██ ██   ██    ██    ██      ██   ██
+		 *    ██  █  ██ ███████    ██    █████   ██████
+		 *    ██ ███ ██ ██   ██    ██    ██      ██   ██
+		 *     ███ ███  ██   ██    ██    ███████ ██   ██
+		 *
+		 *    ██████  ██████   █████   ██████   ██████  ███    ██
+		 *    ██   ██ ██   ██ ██   ██ ██       ██    ██ ████   ██
+		 *    ██   ██ ██████  ███████ ██   ███ ██    ██ ██ ██  ██
+		 *    ██   ██ ██   ██ ██   ██ ██    ██ ██    ██ ██  ██ ██
+		 *    ██████  ██   ██ ██   ██  ██████   ██████  ██   ████
+		 */
+		"waterdragon_horns": genlayer_horns("waterdragon", {
+			filters: ["body"],
+			zfn(options) {
+				return options.waterdragon_horns_layer === "front" ? ZIndices.over_head + 1 : ZIndices.horns + 1;
+			},
+		}),
+		"waterdragon_ears": genlayer_ears("waterdragon", false, {
+			z: ZIndices.horns,
+		}),
+		"waterdragon_tail": genlayer_tail("waterdragon", false),
 
 		/***
 		 *    ██████  ██ ██████  ██████
@@ -2662,8 +2691,8 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const area_name = "breasts"
-				const writing = setup.bodywriting[options.writing_breasts];
-				if (V.tattoo_bodypart == "breasts" && V.passage == "Tattoo Choice") return getWritingImgPath('breasts', setup.bodywriting[V.tattoo_choice]);
+				let writing = setup.bodywriting[options.writing_breasts];
+				if (V.tattoo_bodypart == "breasts" && V.passage == "Tattoo Choice") writing = setup.bodywriting[V.tattoo_choice];
 				if (writing.type === "text") {
 					if (writing.sprites && writing.sprites.length > 0 && writing.sprites.includes(area_name)) {
 						return `img/bodywriting/text/${writing.key.replace(/_/g,"-")}/${area_name.replace(/_/g,"-")}.png`;
