@@ -375,7 +375,7 @@
 
 /* Menu */
 <<widget "poppyLakeMenu">>
-<<effects>><<lakeeffects>><<run poppySchedule()>><<bodywritingExposureCheck>>
+<<effects>><<lakeeffects>><<run poppySchedule()>><<run statusCheck("Poppy")>><<bodywritingExposureCheck>>
 	<<set _poppyPostAction to ($eventskip is 1)>><<set _poppyFreshEntry to ($eventskip isnot 1)>>
 	<<set _poppyLeaveNow to (!C.npc.Poppy or C.npc.Poppy.init isnot 1 or T.poppy_location isnot "lake" or Time.minutesSinceMidnight lt 540 or Time.minutesSinceMidnight gte 720 or Weather.precipitation is "rain" or Weather.precipitation is "snow")>>
 
@@ -455,9 +455,9 @@
 			<<if T.poppyLoveGainAllowed>><<glove>><</if>><<ltrauma>><<lstress>><<if (Number(C.npc.Poppy.patience) || 0) lt 0>><<langer>><<else>><<gpatience>><</if>>
 			<br>
 		<</if>>
-		<<if T.poppyStatus.includes("LowPatience")>>
+		<<if T.poppyStatus.includes("LowPatience") and canGiftFood("Poppy")>>
 			<<skinicon "give">><span class="black">Gift food</span> | <span class="red">Poppy is too irritated to accept anything right now.</span>
-		<<else>>
+		<<elseif canGiftFood("Poppy")>>
 			<<skinicon "give">><<link [[Gift food|Poppy Lake Gifts List]]>><<set $daily.poppy.lastAction to "gift">><</link>>
 		<</if>>
 		<br>
@@ -465,7 +465,7 @@
 	<</if>>
 <</widget>>
 <<widget "poppyLakeReturn">>
-	<<run poppySchedule()>>
+	<<run poppySchedule()>><<run statusCheck("Poppy")>>
 	<<if !C.npc.Poppy or C.npc.Poppy.init isnot 1 or T.poppy_location isnot "lake" or Time.minutesSinceMidnight lt 540 or Time.minutesSinceMidnight gte 720 or Weather.precipitation is "rain" or Weather.precipitation is "snow">>
 		Poppy glances at <<his>> watch. "Oh, look at the time."
 		<br><br>
@@ -558,9 +558,9 @@
 			<<if T.poppyLoveGainAllowed>><<glove>><</if>><<ltrauma>><<lstress>><<if (Number(C.npc.Poppy.patience) || 0) lt 0>><<langer>><<else>><<gpatience>><</if>>
 			<br>
 		<</if>>
-		<<if T.poppyStatus.includes("LowPatience")>>
+		<<if T.poppyStatus.includes("LowPatience") and canGiftFood("Poppy")>>
 			<<skinicon "give">><span class="black">Gift food</span> | <span class="red">Poppy is too irritated to accept anything right now.</span>
-		<<else>>
+		<<elseif canGiftFood("Poppy")>>
 			<<skinicon "give">><<link [[Gift food|Flats Poppy Gift Food]]>><<set $daily.poppy.lastAction to "gift">><</link>>
 		<</if>>
 		<br>
