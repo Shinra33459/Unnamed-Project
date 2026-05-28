@@ -300,15 +300,22 @@ function updateNumberInString(element, indexMin, category) {
 	// No need to update, this element is unrelated.
 	if (!element.id.includes(category.replace(/\s/g, "_"))) return;
 
+	const match = element.id.match(/\d+$/);
+	if (!match) throw new Error(`Misconfigured sex toy ID: ${element.id}`);
+
 	// extract the index from the element's ID and force it into a number.
-	const index = parseInt(element.id.match(/\d+$/)[0]);
+	const index = parseInt(match[0], 10);
 
 	if (isNaN(index)) throw new Error(`Misconfigured sex toy ID: ${element.id}`);
 	// No need to update, this element comes BEFORE the removed item, so its index is unaffected.
 	if (index < indexMin || index <= 0) return;
 
-	element.id = element.id.replace(/\d+/, index - 1);
-	if (element.onclick) element.onclick = () => window.sexToysInventoryOnItemClick(index - 1, category);
+	const newIndex = index - 1;
+	element.id = element.id.replace(/\d+$/, String(newIndex));
+	if (element.dataset && element.dataset.category === category && element.dataset.index !== undefined) {
+		element.dataset.index = String(newIndex);
+	}
+	if (element.onclick) element.onclick = () => window.sexToysInventoryOnItemClick(newIndex, category);
 }
 
 function checkSextoysGift(npcName) {
