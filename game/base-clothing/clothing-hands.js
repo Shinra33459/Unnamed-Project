@@ -763,6 +763,7 @@ function initHands() {
 			integrity_max: 200,
 			fabric_strength: 20,
 			reveal: 200,
+			word: "a",
 			plural: 0,
 			colour: 0,
 			colour_options: ["bronze", "gold", "rose gold", "silver"],
