@@ -275,7 +275,7 @@ function skinColourCalc(colour) {
 	].random();
 }
 
-// Only applies to the pc
+// PC's TF takes priority; otherwise certain named NPC parents pass their own.
 function beastTransform(mother, father) {
 	if (mother === "pc" || father === "pc") {
 		if (V.cat >= 10) return "cat";
@@ -287,6 +287,8 @@ function beastTransform(mother, father) {
 		if (V.waterdragon >= 7) return "waterdragon";
 		if (V.bunny >= 6) return "bunny";
 	}
+	// Poppy is a fallen-fox TF; always passes fox down.
+	if (mother === "Poppy" || father === "Poppy") return "fox";
 	return null;
 }
 
@@ -296,6 +298,8 @@ function divineTransform(mother, father) {
 		if (V.fallenangel >= 4) return "fallen";
 		if (V.demon >= 6) return "demon";
 	}
+	// Poppy is fallen; divine side passes too.
+	if (mother === "Poppy" || father === "Poppy") return "fallen"; 
 	return null;
 }
 

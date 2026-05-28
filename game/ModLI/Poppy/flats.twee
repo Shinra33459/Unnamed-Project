@@ -51,15 +51,26 @@ Soft furnishings and warm lighting give the space a gentle, warm feel. You take 
 :: Flats Poppy Living Room
 <<set $bus to "poppy_living_room">><<set $outside to 0>><<effects>>
 <<run poppySchedule()>>
+<<if $weekly.flatBumpNoticedDay isnot Time.days>>
+	<<set $weekly.flatBumpNoticedDay to Time.days>><<set $weekly.flatBumpNoticed to false>>
+<</if>>
 <<if Time.isBloodMoon() and !$possessed>>
 	The flat feels wrong under the red moon. Poppy is nowhere to be seen, and staying here suddenly feels like a terrible idea.
 	<br><br>
 	<<getouticon>><<link [[Leave the flat|Flats]]>><<pass 1>><<endevent>><<set $eventskip to 0>><</link>>
+<<elseif isPregnancyEnding() and $poppyFlat.home and $poppyFlat.room is "living_room">>
+	<<include "Poppy PC Birth">>
 <<elseif $tiredness gte C.tiredness.max>>
 	<<include "Flats Poppy Exhaustion Collapse">>
 <<elseif T.poppyFlatBaileyDue>>
 	<<set $daily.poppy.flatBaileySeenDay to Time.days>>
 	<<include "Flats Poppy Bailey">>
+<<elseif npcIsPregnant("Poppy") and npcPregnancyProgress("Poppy") gte 0.23 and !knowsAboutPregnancy("Poppy", "pc") and $poppyFlat.home and $poppyFlat.room is "living_room">>
+	<<include "Poppy Self Pregnancy Reveal">>
+<<elseif npcIsPregnant("Poppy") and npcPregnancyProgress("Poppy") lt 0.48 and knowsAboutPregnancy("Poppy", "pc") and !C.npc.Poppy.pregnancy.ultrasoundShown and $poppyFlat.home and $poppyFlat.room is "living_room">>
+	<<include "Poppy Show Ultrasound">>
+<<elseif playerAwareTheyArePregnant() and !knowsAboutPregnancy("pc", "Poppy") and playerBellySize() gte 7 and $poppyFlat.home and $poppyFlat.room is "living_room" and $weekly.flatBumpNoticedDay isnot Time.days>>
+	<<include "Poppy Notice Bump">>
 <<else>>
 You are in Poppy's living room.
 <br><br>
@@ -79,18 +90,22 @@ There is a glass coffee table between the couch and TV stand. The TV stand is de
 		<</if>>
 	<<elseif $poppyFlat.room is "living_room">>
 		/* Poppy is in the living room with the player */
-		<<if Time.hour gte 15 and Time.hour lt 18>>
-			Poppy's sitting on the couch with <<his>> legs crossed and a book in hand.
-			<br>
-		<</if>>
-		<<rng>>
-		<<if $rng lte 35 and !$poppySeen.includes("flat_lipstick_event") and !$daily.poppy.flatLipstickChecked and random(1,4) is 1>>
-			<<set $daily.poppy.flatLipstickChecked to true>>
-			<<socialiseicon>><<link [[Approach Poppy|Flats Poppy Lipstick Event]]>><</link>>
-			<br>
+		<<if npcIsPregnant("Poppy") and npcPregnancyProgress("Poppy") gte 0.49 and knowsAboutPregnancy("Poppy", "pc")>>
+			<<include "Poppy Idle Pregnant Flat">>
 		<<else>>
-			<<socialiseicon>><<link [[Approach Poppy|Flats Poppy Social]]>><<set $eventskip to 0>><</link>>
-			<br>
+			<<if Time.hour gte 15 and Time.hour lt 18>>
+				Poppy's sitting on the couch with <<his>> legs crossed and a book in hand.
+				<br>
+			<</if>>
+			<<rng>>
+			<<if $rng lte 35 and !$poppySeen.includes("flat_lipstick_event") and !$daily.poppy.flatLipstickChecked and random(1,4) is 1>>
+				<<set $daily.poppy.flatLipstickChecked to true>>
+				<<socialiseicon>><<link [[Approach Poppy|Flats Poppy Lipstick Event]]>><</link>>
+				<br>
+			<<else>>
+				<<socialiseicon>><<link [[Approach Poppy|Flats Poppy Social]]>><<set $eventskip to 0>><</link>>
+				<br>
+			<</if>>
 		<</if>>
 	<<else>>
 		/* Poppy is home but in the bedroom/bathroom player can chill on couch */
@@ -202,6 +217,35 @@ You rest on the couch, enjoying the tranquility of the place that the orphanage 
 		<<include "Flats Poppy Departure">>
 	<</if>>
 <<else>>
+	<<if playerAwareTheyArePregnant()>>
+		<<if C.npc.Poppy.pregnancy.test is true>>
+			/* PC came back with paternity proof */
+			<<procedureicon "paternity">><<link [[Show Poppy the paternity result (0:05)|Poppy Pregnancy Reveal]]>><<pass 5>><</link>>
+			<br>
+		<<elseif !knowsAboutPregnancy("pc", "Poppy")>>
+			/* PC has never told Poppy; show whatever PC has */
+			<<if getPregnancyObject().ultrasoundDone and C.npc.Poppy.pregnancy.ultraSound is "requested">>
+				/* Poppy already saw the test once and asked for proof */
+				<<pregnancyicon "player">><<link [[Show Poppy the ultrasound (0:05)|Poppy Pregnancy Reveal]]>>
+					<<set C.npc.Poppy.pregnancy.ultraSound to "collected">><<pass 5>>
+				<</link>>
+				<br>
+			<<elseif getPregnancyObject().ultrasoundDone>>
+				/* PC has both test and ultrasound in hand, combined reveal */
+				<<pregnancyicon "player">><<link [[Show Poppy the pregnancy test and ultrasound (0:05)|Poppy Pregnancy Reveal]]>>
+					<<set C.npc.Poppy.pregnancy.ultraSound to "collected">><<pass 5>>
+				<</link>>
+				<br>
+			<<else>>
+				/* PC only has the test */
+				<<pregnancytesticon>><<link [[Show Poppy the pregnancy test (0:05)|<<if !V.player.vaginaExist>>Poppy Pregnancy Reveal Mpreg Alt<<else>>Poppy Pregnancy Reveal<</if>>]]>>
+					<<pass 5>>
+				<</link>>
+				<br>
+			<</if>>
+		<</if>>
+		<br>
+	<</if>>
 	<<poppyFlatsMenu>>
 <</if>>
 

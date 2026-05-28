@@ -4682,6 +4682,12 @@ Renderer.CanvasModels.main = {
                     && !options.hide_all;
             },
             zfn() {
+				if (V.earringsposition === "back") {
+					return Math.min(ZIndices.front_hair, ZIndices.hair_forward) - 0.1;
+				}
+				if (V.earringsposition === "fringe") {
+					return ZIndices.front_hair - 0.1;
+				}
                 return Math.max(ZIndices.ears + 1, ZIndices.basehead + 0.1);
             },
         }),
@@ -4707,6 +4713,12 @@ Renderer.CanvasModels.main = {
                     && setupItem.accessory === 1;
             },
             zfn() {
+				if (V.earringsposition === "back") {
+					return Math.min(ZIndices.front_hair, ZIndices.hair_forward) - 0.1;
+				}
+				if (V.earringsposition === "fringe") {
+					return ZIndices.front_hair - 0.1;
+				}
                 return Math.max(ZIndices.ears + 1, ZIndices.basehead + 0.1);
             },
         }),
