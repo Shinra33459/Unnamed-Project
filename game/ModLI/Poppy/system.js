@@ -305,7 +305,14 @@ function poppySchedule() {
 	if (!V.poppyFlat) V.poppyFlat = {};
 	const atFlat = loc === "flatApartment" || loc === "flatKitchen";
 	V.poppyFlat.home = atFlat;
-	V.poppyFlat.room  = atFlat ? (msg === "sleep" ? "bedroom" : (msg === "breakfast" || msg === "dinner") ? "kitchen" : "living_room") : "";
+	V.poppyFlat.room  = (atFlat ? 
+		(loc === "flatApartment" ?
+			(msg === "sleep" ? 
+				"bedroom" : 
+				"living_room") :
+			"kitchen") :
+		"");
+		
 	// Only set meal during actual cooking windows; empty string = no meal happening.
 	V.poppyFlat.meal  = msg === "breakfast" ? "breakfast" : msg === "dinner" ? "dinner" : "";
 
