@@ -1,6 +1,13 @@
 :: Flats Knock
 <<effects>>
 
+<<if modLISelected("Poppy")>>
+	<<run poppySchedule()>><<poppyFlatInit>>
+	<<set _poppyRomanceVal to (typeof $poppyromance is "number" ? $poppyromance : -1)>>
+	<<set _poppySafeHouseVal to (typeof $poppySafeHouse is "number" ? $poppySafeHouse : 0)>>
+	<<set _poppyPatienceOkay to (T.poppyStatus.includes("MidPatience") or T.poppyStatus.includes("HighPatience"))>>
+<</if>>
+
 <<if $flats_progress is 1 and random(1, 10) is 10>>
 	You approach one of the flats, and raise your fist to knock. Then you notice the doorknob, <span class="purple">shaped like a lotus flower,</span> and remember the warning. Bad people reside here, apparently.
 	<br><br>
@@ -11,6 +18,22 @@
 <<else>>
 	<<cleareventpool>>
 
+	<<if modLISelected("Poppy") and C.npc.Poppy and C.npc.Poppy.init is 1 and _poppyRomanceVal lt 0 and _poppySafeHouseVal lt 1 and !Time.isBloodMoon() and $poppyFlat.home and Number(C.npc.Poppy.love) gte 50 and _poppyPatienceOkay>>
+		<<addinlineevent "flats_poppy_knock_work_intro" 2>>
+			<<npc Poppy>><<person1>>
+			You notice a flat with a poppy-shaped knob.<br>
+			You approach it, and knock on the door. It swings open to reveal <span class="purple">Poppy</span>, whose eyes widen in surprise.
+			<br><br>
+			"Oh hello! I wasn't expecting you," <<he>> says. "It seems you've found where I live. What can I do for you?"
+			<br><br>
+			<<socialiseicon "ask">><<link [[Ask for work|Flats Poppy Knock Ask]]>><</link>>
+			<br>
+			<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<handheldon>><<pass 1>><</link>>
+			<br>
+			<<getouticon>><<link [[Say you've got the wrong address and leave|Flats]]>><<endevent>><</link>>
+		<</addinlineevent>>
+	<</if>>
+
 	<<addinlineevent "flats_vacant" 2>>
 		You approach one of the flats, and knock on the door. There's no answer.
 		<br><br>
@@ -18,12 +41,12 @@
 			You think you'd be able to pick the lock, <span class="blue">if your arms weren't bound.</span>
 			<br>
 		<<else>>
-			<<lockicon "pick">><<link [[Break in|Flats Lock]]>><<handheldon>><</link>>
+			<<lockicon "pick">><<link [[Break in|Flats Lock]]>><</link>>
 			<br>
 		<</if>>
-		<<dooricon>><<link [[Go to the next flat (0:01)|Flats Knock]]>><<handheldon>><<pass 1>><</link>>
+		<<dooricon>><<link [[Go to the next flat (0:01)|Flats Knock]]>><<pass 1>><</link>>
 		<br>
-		<<getouticon>><<link [[Stop|Flats]]>><<handheldon>><</link>>
+		<<getouticon>><<link [[Stop|Flats]]>><</link>>
 		<br>
 	<</addinlineevent>>
 
@@ -33,7 +56,7 @@
 		<br><br>
 		<<socialiseicon "ask">><<link [[Ask for work|Flats Lecherous Ask]]>><</link>>
 		<br>
-		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<handheldon>><<pass 1>><</link>>
+		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<pass 1>><</link>>
 		<br>
 		<<getouticon>><<link [[Say you've got the wrong address and leave|Flats]]>><<endevent>><</link>>
 		<br>
@@ -47,7 +70,7 @@
 		<br><br>
 		<<socialiseicon "ask">><<link [[Ask for work|Flats Dog Ask]]>><</link>>
 		<br>
-		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<handheldon>><<pass 1>><</link>>
+		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<pass 1>><</link>>
 		<br>
 		<<getouticon>><<link [[Say you've got the wrong address and leave|Flats]]>><<endevent>><</link>>
 		<br>
@@ -59,7 +82,7 @@
 		<br><br>
 		<<socialiseicon "ask">><<link [[Ask for work|Flats Kitchen Ask]]>><</link>>
 		<br>
-		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<handheldon>><<pass 1>><</link>>
+		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<pass 1>><</link>>
 		<br>
 		<<getouticon>><<link [[Say you've got the wrong address and leave|Flats]]>><<endevent>><</link>>
 		<br>
@@ -71,7 +94,7 @@
 		<br><br>
 		<<socialiseicon "ask">><<link [[Ask for work|Flats Laundry Ask]]>><</link>>
 		<br>
-		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<handheldon>><<pass 1>><</link>>
+		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<pass 1>><</link>>
 		<br>
 		<<getouticon>><<link [[Say you've got the wrong address and leave|Flats]]>><<endevent>><</link>>
 		<br>
@@ -88,7 +111,7 @@
 
 		<<socialiseicon "ask">><<link [[Ask for work|Flats Pair Ask]]>><</link>>
 		<br>
-		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<handheldon>><<pass 1>><</link>>
+		<<dooricon>><<link [[Excuse yourself and knock on another door (0:01)|Flats Knock]]>><<pass 1>><</link>>
 		<br>
 		<<getouticon>><<link [[Say you've got the wrong address and leave|Flats]]>><<endevent>><</link>>
 		<br>
@@ -142,12 +165,12 @@ You sweep up the remains of broken glass, take the bottles to recycling, and thr
 	It is a nice view, you can see much of the town from here, from the docks to the forest. It's hard to appreciate right now however.
 	<br><br>
 
-	<<link [[Get angry|Flats Lecherous Angry]]>><<handheldon>><<def 1>><<trauma -6>><<stress 6>><</link>><<gstress>><<ltrauma>>
+	<<link [[Get angry|Flats Lecherous Angry]]>><<def 1>><<trauma -6>><<stress 6>><</link>><<gstress>><<ltrauma>>
 	<br>
-	<<link [[Endure|Flats Lecherous Endure]]>><<handheldon>><<sub 1>><<trauma 6>><<arousal 600>><</link>><<gtrauma>><<garousal>>
+	<<link [[Endure|Flats Lecherous Endure]]>><<sub 1>><<trauma 6>><<arousal 600>><</link>><<gtrauma>><<garousal>>
 	<br>
 	<<if hasSexStat("promiscuity", 2)>>
-		<<link [[Charge extra|Flats Lecherous Rub]]>><<handheldon>><</link>><<promiscuous2>>
+		<<link [[Charge extra|Flats Lecherous Rub]]>><</link>><<promiscuous2>>
 		<br>
 	<</if>>
 <<else>>
@@ -353,7 +376,7 @@ You right a fallen table, restore a lamp to its position, test it, then begin to
 		<br><br>
 		"How you doing in there?" calls a voice from the kitchen. The <<beasttype>>'s ears prick at the sound of <<bhis>> master's voice. <<bHe>> scrambles towards the kitchen, dragging you with <<bhim>>, <span class="pink">still attached to <<bhis>> $NPCList[0].penisdesc.</span>
 		<br><br>
-		<<link [[Grab hold of something|Flats Dog Rape Physique]]>><</link>><<physiquedifficulty 1 16000>>
+		<<link [[Grab hold of something|Flats Dog Rape Physique]]>><</link>><<physiquedifficulty 1 15000>>
 		<br>
 		<<link [[Tell it to stop|Flats Dog Rape Tending]]>><</link>><<tendingdifficulty 1 300>>
 		<br>
@@ -579,7 +602,7 @@ The <<beasttype>> pulls you in front of <<bhis>> shocked master.
 	<br><br>
 
 	<<skulduggeryuse>>
-	<<wearProp "phone" 0 "mobile">>
+	<<wearProp "mobile phone">>
 	<<link [[Leave it somewhere <<he>>'ll find|Flats]]>><<pass 60>><<famegood 1>><<endevent>><</link>>
 	<br>
 	<<link [[Keep it|Flats]]>><<pass 60>><<set $blackmoney += 50>><<endevent>><</link>>
@@ -647,10 +670,10 @@ The <<beasttype>> pulls you in front of <<bhis>> shocked master.
 
 	<<clotheson>>
 	<<endcombat>>
-	<<wearProp "phone" 0 "mobile">>
-	<<link [[Leave it somewhere they'll find|Flats]]>><<handheldon>><<pass 60>><<famegood 1>><</link>>
+	<<wearProp "mobile phone">>
+	<<link [[Leave it somewhere they'll find|Flats]]>><<pass 60>><<famegood 1>><</link>>
 	<br>
-	<<link [[Keep it|Flats]]>><<handheldon>><<pass 60>><<set $blackmoney += 50>><</link>>
+	<<link [[Keep it|Flats]]>><<pass 60>><<set $blackmoney += 50>><</link>>
 
 <</if>>
 
@@ -679,7 +702,7 @@ The porcelain floor is sticky. You start there, cleaning it with a mop. Then you
 The dishes take a while. Some are badly chipped, worse than the ones at the orphanage, but you clean them all the same.
 <br><br>
 
-<<link [[Next|Flats Kitchen 2]]>><<handheldon>><</link>>
+<<link [[Next|Flats Kitchen 2]]>><</link>>
 <br>
 
 :: Flats Kitchen 2
@@ -834,7 +857,7 @@ You make <<printmoney 1500>><<money 1500 "flatsCleaning">>.
 :: Flats Laundry
 <<effects>>
 
-You enter the <<person>>'s flat. The living room is small but lavishly decorated. An open book rests on a table beside a tall chair, beneath a grandfather clock.
+You enter the <<persons>> flat. The living room is small but lavishly decorated. An open book rests on a table beside a tall chair, beneath a grandfather clock.
 <br><br>
 
 <<He>> leads you through a well-maintained kitchen, down a thin corridor, and into a small room. An ironing board sits in the centre, and railing full of freshly-laundered clothes stands beside it.
@@ -873,16 +896,16 @@ You get to work, ironing the clothes and folding them neatly in a pile. The <<pe
 You get to work, ironing the clothes and folding them neatly in a pile. The <<person>> returns with a mug of coffee. "Instant, I'm afraid. I only keep it for guests." It doesn't taste bad.
 <br><br>
 
-<<link [[Next|Flats Laundry Drink]]>><<handheldon>><</link>>
+<<link [[Next|Flats Laundry Drink]]>><</link>>
 <br>
 
 :: Flats Laundry Booze
-<<effects>><<wearProp "alcohol" 0 "white wine">>
+<<effects>><<wearProp "champagne">>
 
 You get to work, ironing the clothes and folding them neatly in a pile. The <<person>> returns with a glass of champagne. "Odd accompaniment to ironing," <<he>> says. "But a guest brought some, and I've half a bottle left." It tastes expensive.
 <br><br>
 
-<<link [[Next|Flats Laundry Drink]]>><<handheldon>><</link>>
+<<link [[Next|Flats Laundry Drink]]>><</link>>
 <br>
 
 
@@ -932,7 +955,7 @@ You refuse the drink, and get to work ironing the clothes and folding them neatl
 	<br><br>
 	<<link [[Endure|Flats Laundry Rape]]>><<set $molestationstart to 1>><</link>>
 	<br>
-	<<link [[Slap|Flats Laundry Slap]]>><<trauma -6>><</link>><<ltrauma>><<physiquedifficulty 1 16000>>
+	<<link [[Slap|Flats Laundry Slap]]>><<trauma -6>><</link>><<ltrauma>><<physiquedifficulty 1 15000>>
 	<br>
 <<else>>
 	You finish up, and return to the living room. You find the <<person>> sat in a chair, a pair of spectacles on <<his>> nose. "Aha," <<he>> says. "Done, I take it? I left your money by the shoe rack. Thanks for the help."
@@ -1109,9 +1132,10 @@ The <<person2>><<person>> sighs. "I'll throw an extra <<printmoney 5000>> in if 
 <<elseif $uncomfortable.prostituting is false>>
 	<<His>> offer repulses you, but you need the money.
 	<br><br>
-	<<link [[Agree|Flats Pair Agree]]>><<set $desperateaction to 1>><</link>><<promiscuous3>>
+	<<set _desperateaction to 1>>
+	<<link [[Agree|Flats Pair Agree]]>><<set $desperateaction to _desperateaction>><</link>><<promiscuous3>>
 	<br>
-	<<link [[Ask for £100|Flats Pair Seduce]]>><<set $desperateaction to 1>><</link>><<promiscuous3>>
+	<<link [[Ask for £100|Flats Pair Seduce]]>><<set $desperateaction to _desperateaction>><</link>><<promiscuous3>>
 	<br>
 <</if>>
 <<link [[Refuse|Flats Pair 3 Refuse]]>><</link>>
@@ -1132,6 +1156,7 @@ The <<person2>><<person>> sighs. "I'll throw an extra <<printmoney 5000>> in if 
 <<effects>>
 
 "I'll be leaving you to it, then," the <<person2>><<person>> says. "I'll leave the money by the door."
+<<promiscuity3>>
 <br><br>
 <<saveNPC 0 "flats_5">>
 <<endevent phaseless>>
@@ -1211,7 +1236,7 @@ The <<person>> delivers a hard smack to your <<bottom>>.
 	<<ejaculation>>
 	"I think I'm ready to forgive you," the <<person>> says. "Take your money and get out."
 	<br><br>
-	<<tearful>> you leave the flat. You find the money the <<person>>'s friend left on a table by the front door.
+	<<tearful>> you leave the flat. You find the money the <<persons>> friend left on a table by the front door.
 	You make
 	<<if $phase is 1>>
 		<<printmoney 12000>><<money 12000 "prostitution">>.

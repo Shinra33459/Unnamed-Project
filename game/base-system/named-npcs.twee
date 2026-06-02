@@ -161,6 +161,7 @@ Maddox
 Madison
 Mel
 Michael
+Monroe
 Nakia
 Nasim
 Noah
@@ -189,14 +190,12 @@ Shaw
 Shay
 Shiloh
 Spencer
-Sydney
 Taylor
 Teagan
 Toby
 Tracy
 Tyne
 Willow
-Wren
 Wynne
 Yael
 Yannick
@@ -253,7 +252,7 @@ Zohar
 			<<elseif $player.sex is "h">>
 				<<if $player.gender_body is "m" or ($player.gender_body is "a" and $player.breastsize lte 3)>>
 					<<set _override to "m">>
-				<<else>> <!-- if $player.gender_body is "f" or ($player.gender_body is "a" and $player.breastsize gt 3)) -->
+				<<else>> <!-- if $player.gender_body is "f" or ($player.gender_body is "a" and $player.breastsize gt 3) -->
 					<<set _override to "f">>
 				<</if>>
 			<<else>> <!-- if $player.sex is "f" -->
@@ -275,20 +274,20 @@ Zohar
 	<<elseif !$NPCName[_i].gender or $NPCName[_i].gender is "none" or _args[1] is "genders">>
 		<<rng>>
 		<<if $NPCName[_i].pronoun is "m">>
-			<<if random(0, 99) gte $cbchance>>
-				<<set $NPCName[_i].gender to "m">>
-			<<elseif $rng lte $cbchance>>
+			<<if $rng lte $mhermchance>>
+				<<set $NPCName[_i].gender to "h">>
+			<<elseif $rng lte $settings.maleNPCVaginaChance>>
 				<<set $NPCName[_i].gender to "f">>
 			<<else>>
-				<<set $NPCName[_i].gender to "h">>
+				<<set $NPCName[_i].gender to "m">>
 			<</if>>
 		<<elseif $NPCName[_i].pronoun is "f">>
-			<<if random(0, 99) gte $dgchance>>
-				<<set $NPCName[_i].gender to "f">>
-			<<elseif $rng lte $dgchance>>
+			<<if $rng lte $fhermchance>>
+				<<set $NPCName[_i].gender to "h">>
+			<<elseif $rng lte $settings.femaleNPCPenisChance>>
 				<<set $NPCName[_i].gender to "m">>
 			<<else>>
-				<<set $NPCName[_i].gender to "h">>
+				<<set $NPCName[_i].gender to "f">>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -547,6 +546,10 @@ Zohar
 				<<if $remySeen is undefined>>
 					<<set $remySeen to []>>
 				<</if>>
+			<<case Harper>>
+				<<if $harperSeen is undefined>>
+					<<set $harperSeen to []>>
+				<</if>>
 			<<case Wren>>
 				<<if $wrenSeen is undefined>>
 					<<set $wrenSeen to []>>
@@ -571,6 +574,29 @@ Zohar
 					requestDone: false,
 				}>>
 				<<set $gwylan.timer.lastSeen to Time.date.timeStamp>>
+			<<case Poppy>>
+				<<if $poppySeen is undefined>>
+					<<set $poppySeen to []>>
+				<<elseif !Array.isArray($poppySeen)>>
+					<<set $poppySeen_legacy to $poppySeen>> 
+					<<run console.warn("[Poppy migration] $poppySeen was not an array; moved to $poppySeen_legacy:", V.poppySeen)>>
+					<<set $poppySeen to []>>
+					<<set $poppyMigrationNeedsReview to true>>
+				<</if>>
+				<<if $NPCName[_i].patience is undefined>>
+					<<set $NPCName[_i].patience to 100>>
+				<</if>>
+				<<if $daily is undefined>>
+					<<set $daily to {}>>
+				<</if>>
+				<<if $daily.poppy is undefined>>
+					<<set $daily.poppy to {}>>
+				<</if>>
+
+				<!-- keeps intent explicit; JS also handles undefined safely -->
+				<<if $poppyromance is undefined>>
+					<<set $poppyromance to -1>>
+				<</if>>
 			<<default>>
 		<</switch>>
 	<</if>>
@@ -585,6 +611,11 @@ Zohar
 			<<set $NPCName[_i].outfits to ["naked", "maleDefault", "femaleDefault"]>>
 		<</if>>
 		<<switch _nam>>
+			<<case Poppy>>
+				<<set $NPCName[_i].outfits.pushUnique(
+					"poppyLatexF",
+					"poppyTownM"
+				)>>
 			<<case Kylar>>
 				<<set $NPCName[_i].outfits.pushUnique(
 					"maleSchool", "femaleSchool",
@@ -630,7 +661,7 @@ Zohar
 			<<case Winter>><<set $NPCName[_i].outfits.pushUnique("teacher")>>
 			<<case Mason>><<set $NPCName[_i].outfits.pushUnique("teacher", "maleSchoolSwim", "neutralSwim", "townTrack")>>
 			<<case Leighton>><<set $NPCName[_i].outfits.pushUnique("teacher", "maleFormal1", "femaleFormal1")>>
-			<<case "Black Wolf" "Great Hawk">><<set $NPCName[_i].outfits to ["naked"]>>
+			<<case "Black Wolf" "Great Hawk" "Night Monster">><<set $NPCName[_i].outfits to ["naked"]>>
 			<<case "Ivory Wraith">><<set $NPCName[_i].outfits to ["naked", "moonRobe"]>>
 			<<case Riley>><<set $NPCName[_i].outfits.pushUnique("riley")>>
 			<<default>>
@@ -666,6 +697,17 @@ Zohar
 					<<npcClothesType $NPCName[_i] "formal">>
 				<<else>>
 					<<npcClothesType $NPCName[_i] "business">>
+				<</if>>
+			<<case Poppy>>
+				<!-- Example rule: late night = latex for female; otherwise use "poppy" type -->
+				<<if Time.betweenHours(23, 6)>>
+					<<if $NPCName[_i].pronoun is "f">>
+						<<npcClothesName $NPCName[_i] "poppyLatexF">>
+					<<else>>
+						<<npcClothesName $NPCName[_i] "poppyTownM">>
+					<</if>>
+				<<else>>
+					<<npcClothesType $NPCName[_i] "poppy">>
 				<</if>>
 			<<case Robin>>
 				<<run getRobinCrossdressingStatus($NPCName[_i].crossdress)>>
@@ -733,7 +775,7 @@ Zohar
 				<<npcClothesType $NPCName[_i] "temple">>
 			<<case Mason>>
 				<<npcClothesType $NPCName[_i] "beach">>
-			<<case "Black Wolf" "Great Hawk">>
+			<<case "Black Wolf" "Great Hawk" "Night Monster">>
 				<<npcClothesType $NPCName[_i] "naked">>
 			<<case "Ivory Wraith">>
 				<<npcClothesType $NPCName[_i] "Wraith">>
@@ -1043,7 +1085,6 @@ Zohar
 		<<if $combatExtended.enemyMartialArts is 1>>
 			<<set $NPCList[_npcno].dodgeChance += 10>>
 		<</if>>
-		<<set $NPCName[_npcno].pregnancyAvoidance to random(0,100)>>
 	<<case "Gwylan">>
 		<<set $NPCList[_npcno].health to 200>>
 		<<set $NPCList[_npcno].healthmax to 200>>
@@ -1062,13 +1103,35 @@ Zohar
 		<<if $headblackmailed is 1>>
 			<<set $NPCList[_npcno].traits.push("unforgiving")>>
 		<</if>>
-		<<set $NPCList[_npcno].health to 200>>
-		<<set $NPCList[_npcno].healthmax to 200>>
 		<<if $combatExtended.enemyBaseDodgeChance is 1>>
 			<<set $NPCList[_npcno].dodgeChance to 20>>
 		<</if>>
 		<<if $combatExtended.enemyMartialArts is 1>>
 			<<set $NPCList[_npcno].dodgeChance += 10>>
+		<</if>>
+	<<case "Night Monster">>
+		<<set $NPCList[_npcno].health to 600>>
+		<<set $NPCList[_npcno].healthmax to 600>>
+		<<set $NPCList[_npcno].traits.push("drug resistant")>>
+		<<set _condomIgnore to true>><<set _strapIgnore to true>>
+		<<if $combatExtended.enemyBaseDodgeChance is 1>>
+			<<set $NPCList[_npcno].dodgeChance to 20>>
+		<</if>>
+		<<if $combatExtended.enemyMartialArts is 1>>
+			<<set $NPCList[_npcno].dodgeChance += 10>>
+		<</if>>
+	<<case "Poppy">>
+		<<set $NPCList[_npcno].health to 600>>
+		<<set $NPCList[_npcno].healthmax to 600>>
+		<<set $NPCList[_npcno].dodgeChance to 0>>
+		<<if $combatExtended.enemyBaseDodgeChance is 1>>
+			<<set $NPCList[_npcno].dodgeChance to 40>>
+		<</if>>
+		<<if $combatExtended.enemyMartialArts is 1>>
+			<<set $NPCList[_npcno].dodgeChance += 40>>
+		<</if>>
+		<<if !$NPCList[_npcno].traits.includes("unforgiving")>>
+			<<set $NPCList[_npcno].traits.push("unforgiving")>>
 		<</if>>
 	<<default>>
 		<<set $NPCList[_npcno].health to 200>>
@@ -1201,8 +1264,8 @@ Zohar
 				<<set $NPCList[_npcno].pronoun to "i">>
 				<<set $NPCList[_npcno].claws to "claws">>
 			<</if>>
-		<<elseif $blackwolfmonster gte 1>>
-			<<if ($settings.monsterChance gte $rng and ($hallucinations gte 1 or !$settings.monsterHallucinationsOnly)) or ($blackwolfmonster is 2)>>
+		<<elseif $blackwolfmonster gte 1 or !$settings.bestialityEnabled>>
+			<<if ($settings.monsterChance gte $rng and ($hallucinations gte 1 or !$settings.monsterHallucinationsOnly)) or ($blackwolfmonster is 2) or (!$settings.bestialityEnabled)>>
 				<<set $daily.bwMonsterRoll to true>>
 				<<set $NPCList[_npcno].monster to "monster">>
 				<<set $monster to 1>><<set _monsterOverride to true>>
@@ -1266,6 +1329,48 @@ Zohar
 		<</if>>
 	<</if>>
 
+	<!-- Adjust for Night Monster -->
+	<<if $NPCList[_npcno].fullDescription is "Night Monster">>
+		<<set $beastname to "nightmonster">>
+		<<set $NPCList[_npcno].lefthand to "none">>
+		<<set $NPCList[_npcno].righthand to "none">>
+		<<set $NPCList[_npcno].stance to "approach">>
+		<<if $daily.nmMonsterRoll isnot undefined and $nightmonstermonster is 1>>
+			<<if $daily.nmMonsterRoll is true>>
+				<<set $NPCList[_npcno].monster to "monster">>
+				<<set $monster to 1>><<set _monsterOverride to true>>
+				<<set $NPCList[_npcno].type to ($NPCList[_npcno].pronoun is "f" ? "horned woman" : "horned man")>>
+				<<set $NPCList[_npcno].lefthand to 0>>
+				<<set $NPCList[_npcno].righthand to 0>>
+				<<run delete $NPCList[_npcno].claws>>
+			<<else>>
+				<<set $NPCList[_npcno].monster to 0>>
+				<<set $NPCList[_npcno].pronoun to "i">>
+				<<set $NPCList[_npcno].claws to "claws">>
+			<</if>>
+		<<elseif $nightmonstermonster gte 1 or !$settings.bestialityEnabled>>
+			<<if ($settings.monsterChance gte $rng and ($hallucinations gte 1 or !$settings.monsterHallucinationsOnly)) or ($nightmonstermonster is 2) or (!$settings.bestialityEnabled)>>
+				<<set $daily.nmMonsterRoll to true>>
+				<<set $NPCList[_npcno].monster to "monster">>
+				<<set $monster to 1>><<set _monsterOverride to true>>
+				<<set $NPCList[_npcno].type to ($NPCList[_npcno].pronoun is "f" ? "horned woman" : "horned man")>>
+				<<set $NPCList[_npcno].lefthand to 0>>
+				<<set $NPCList[_npcno].righthand to 0>>
+				<<run delete $NPCList[_npcno].claws>>
+			<<else>>
+				<<set $daily.nmMonsterRoll to false>>
+				<<set $NPCList[_npcno].monster to 0>>
+				<<set $NPCList[_npcno].pronoun to "i">>
+				<<set $NPCList[_npcno].claws to "claws">>
+			<</if>>
+		<<else>>
+			<<set $daily.nmMonsterRoll to false>>
+			<<set $NPCList[_npcno].monster to 0>>
+			<<set $NPCList[_npcno].pronoun to "i">>
+			<<set $NPCList[_npcno].claws to "claws">>
+		<</if>>
+	<</if>>
+
 	<<if $enemyno lt 6>><<set $enemyno += 1>><</if>>
 
 	<<if $NPCList[0].monster is "monster" or _monsterOverride>>
@@ -1307,15 +1412,29 @@ Zohar
 	<<set _nam to _args[0]>>
 	<<set _var to _args[1]>>
 	<<set _val to _args[2]>>
-	<<if _args[3]>>
-		<<set _cheat to _args[3]>>
-	<</if>>
+	<<if _args[3]>><<set _cheat to _args[3]>><</if>>
 
 	<<set _i to $NPCNameList.indexOf(_nam)>>
 
+	<<set _isPoppy to _nam is "Poppy">>
+	<<if _isPoppy>>
+		<<if $NPCName[_i].timer is undefined>><<set $NPCName[_i].timer to {}>><</if>>
+		<<if $NPCName[_i].timer.lastPatienceDecay is undefined>><<set $NPCName[_i].timer.lastPatienceDecay to Time.date.timeStamp>><</if>>
+	<</if>>
+
 	<<switch _var>>
 	<<case love>>
-		<<set $NPCName[_i].love += _val>>
+		<<if modLISelected("Poppy") and _isPoppy>><<run statusCheck("Poppy")>><</if>>
+		<<if $valentines and Time.monthDay is 14 and (setup.loveInterestNpc.includes(_nam) or (modLISelected("Poppy") and _isPoppy))>>
+			<<set _val += _val>>
+		<</if>>
+		<<if modLISelected("Poppy") and _isPoppy and _val gt 0 and !_cheat>>
+			<<if T.poppyLoveGainAllowed>>
+				<<set $NPCName[_i].love += _val>>
+			<</if>>
+		<<else>>
+			<<set $NPCName[_i].love += _val>>
+		<</if>>
 	<<case dom>>
 		<<if _nam is "Gwylan" and _val gt 0>>
 			<<set $_stage to Math.floor($NPCName[_i].dom / 25)>>
@@ -1330,12 +1449,47 @@ Zohar
 	<<case trust>>
 		<<set $NPCName[_i].trust += _val>>
 	<<case lust>>
-		<<if _nam is "Sydney" and !_sydneyChastity and _val gt 0 and !_cheat>>
+		<<if modLISelected("Poppy") and _isPoppy>><<run statusCheck("Poppy")>><</if>>
+		<<if $valentines and Time.monthDay is 14 and (setup.loveInterestNpc.includes(_nam) or (modLISelected("Poppy") and _isPoppy))>>
+			<<set _val += _val>>
+		<</if>>
+		<<if modLISelected("Poppy") and _isPoppy and _val gt 0 and !_cheat>>
+			<<if T.poppyLustUnlocked>>
+				<<set $NPCName[_i].lust += _val>>
+				<<set _lustincr to 1>>
+			<</if>>
+		<<elseif _nam is "Sydney" and !_sydneyChastity and _val gt 0 and !_cheat>>
 			<<set $NPCName[_i].lust += (_val + 1)>>
+			<<set _lustincr to 1>>
 		<<else>>
 			<<set $NPCName[_i].lust += _val>>
+			<<set _lustincr to 1>>
 		<</if>>
-		<<set _lustincr to 1>>
+	<<case patience>>
+		<<if _isPoppy>>
+			<<if $NPCName[_i].patience is undefined>>
+				<<set $NPCName[_i].patience to 100>>
+			<</if>>
+
+			/* Signed temper stat: +100 (max patience) to -100 (max anger) */
+			<<set $NPCName[_i].patience += _val>>
+
+			<<if $NPCName[_i].patience gt 100>>
+				<<set $NPCName[_i].patience to 100>>
+			<<elseif $NPCName[_i].patience lt -100>>
+				<<set $NPCName[_i].patience to -100>>
+			<</if>>
+		<<else>>
+			<span class="red">NPCINCR error - patience is Poppy-only</span><br><br>
+		<</if>>
+
+	<<case anger>>
+		<<if _isPoppy>>
+			/* Anger is the negative side of patience */
+			<<npcincr Poppy patience (-_val)>>
+		<<else>>
+			<span class="red">NPCINCR error - anger is Poppy-only</span><br><br>
+		<</if>>
 	<<case rage>>
 		<<set $NPCName[_i].rage += _val>>
 	<<case state>>
@@ -1388,6 +1542,20 @@ Zohar
 		<</if>>
 		<<unset $purityEvent>>
 		<<unset $corruptionEvent>>
+	<<case patience>>
+		<<set $NPCName[_i].patience to _val>>
+		<<if $NPCName[_i].patience gt 100>>
+			<<set $NPCName[_i].patience to 100>>
+		<<elseif $NPCName[_i].patience lt 0>>
+			<<set $NPCName[_i].patience to 0>>
+		<</if>>
+	<<case anger>>
+		<<set $NPCName[_i].patience to 100 - _val>>
+		<<if $NPCName[_i].patience gt 100>>
+			<<set $NPCName[_i].patience to 100>>
+		<<elseif $NPCName[_i].patience lt 0>>
+			<<set $NPCName[_i].patience to 0>>
+		<</if>>
 	<<default>>
 		<span class="red">NPCINCR error - Unknown variable _var</span>
 		<br><br>
@@ -1905,6 +2073,67 @@ Zohar
 					<</if>>
 				<</if>>
 			<</if>>
+		<<case Poppy>>
+			<<set _i to $NPCNameList.indexOf("Poppy")>>
+			<<run statusCheck("Poppy")>>
+
+			<<set _love to $NPCName[_i].love>><<set _lust to $NPCName[_i].lust>>
+			<<set _pat to (typeof T.poppyPatience === "number" ? T.poppyPatience : 100)>>
+			<<set _anger to 100 - _pat>>
+
+			Poppy
+			<<if $NPCName[_i].state is "dismissed">>
+				wants <span class="red">nothing to do with you</span>.
+			<<else>>
+				<!-- High love lust lines (only when patience isn't low) -->
+				<<if _love gte 67 and T.poppyLustUnlocked and _pat gte 34 and _lust gte 67>>
+					is <span class="pink">ready to pounce on you</span>.
+				<<elseif _love gte 67 and T.poppyLustUnlocked and _pat gte 34 and _lust gte 34>>
+					<span class="purple">yearns for you</span>.
+				<<elseif _love gte 67>>
+					<<if _pat gte 67>>
+						<span class="green">adores you</span>.
+					<<elseif _pat gte 34>>
+						<span class="teal">cares about you</span>.
+					<<elseif _pat gte 20>>
+						<span class="blue">fusses over you</span>.
+					<<elseif _pat gte 10>>
+						<span class="purple">can't understand you</span>.
+					<<elseif _pat gte 1>>
+						thinks you're <span class="pink">hopeless</span>.
+					<<else>>
+						wants to <span class="red">get rid of you</span>.
+					<</if>>
+				<<elseif _love gte 34>>
+					<<if _pat gte 67>>
+						thinks you're <span class="green">cute</span>.
+					<<elseif _pat gte 34>>
+						is <span class="teal">worried about you</span>.
+					<<elseif _pat gte 20>>
+						is <span class="blue">impatient with you</span>.
+					<<elseif _pat gte 10>>
+						thinks you're <span class="purple">irritating</span>.
+					<<elseif _pat gte 1>>
+						thinks you're <span class="pink">getting on her nerves</span>.
+					<<else>>
+						wants to <span class="red">get rid of you</span>.
+					<</if>>
+				<<else>>
+					<<if _pat gte 67>>
+						is <span class="teal">curious about you</span>.
+					<<elseif _pat gte 34>>
+						<span class="lblue">tolerates you</span>.
+					<<elseif _pat gte 20>>
+						is <span class="blue">impatient with you</span>.
+					<<elseif _pat gte 10>>
+						thinks you're <span class="purple">irritating</span>.
+					<<elseif _pat gte 1>>
+						thinks you're <span class="pink">getting on her nerves</span>.
+					<<else>>
+						wants to <span class="red">get rid of you</span>.
+					<</if>>
+				<</if>>
+			<</if>>
 		<<case Gwylan>>
 			<<run statusCheck("Gwylan")>>
 			<<if isGwylanAbsent() is "nobody">><span class="red">Nobody</span><<else>>Gwylan<</if>>
@@ -2387,7 +2616,7 @@ Zohar
 			<</if>>
 		<<case Remy>>
 			Remy
-			<<if $livestock_intro isnot undefined>>
+			<<if $livestock.intro isnot undefined>>
 				<<if $NPCName[_i].love gte 50>>
 					<<if $NPCName[_i].dom gte 25>>
 						thinks you're <span class="red">the pride of the herd</span>.
@@ -2406,7 +2635,7 @@ Zohar
 					<<elseif $NPCName[_i].dom lte $npcdomlow>>
 						is <span class="red">determined to break you</span>.
 					<<else>>
-						thinks you're <span class="red">a stubborn <<= $player.gender_appearance is "m" ? "bull" : "cow">></span>.
+						thinks you're <span class="red">a stubborn <<pcow>></span>.
 					<</if>>
 				<<else>>
 					<<if $NPCName[_i].dom gte 25>>

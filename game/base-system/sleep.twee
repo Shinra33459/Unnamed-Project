@@ -24,6 +24,7 @@
 
 	<<set $sleepHoursTotal to 0>>
 	<<set $_bonusFatigueLoss to 10>>
+	<<set _poppy_interrupt to false>>
 
 	<!-- sleeping with others -->
 	<<if $bedGuest or $wolfbed is 1>>
@@ -60,6 +61,8 @@
 	<!-- sleeping in a poor/regular/comfy bed at home provides a -8/0/+8 bonus regardless of clothing -->
 	<<set $_bed to Furniture.get('bed', $location)>>
 	<<if $location is "avery_mansion" or $location is "forest_shop">>
+		<<set $_bonusFatigueLoss += 100>>
+	<<elseif modLISelected("Poppy") and $location is "flats" and $bus is "poppy_bedroom">>
 		<<set $_bonusFatigueLoss += 100>>
 	<<elseif $_bed.type.includes('comfy')>>
 		<<set $_bonusFatigueLoss += 80>>
@@ -299,6 +302,16 @@
 				<<elseif wraithSleepEventCheck()>>
 					<<wraithEvent>>
 				<</if>>
+			<<case "flats">>
+				<<if modLISelected("Poppy")>>
+					<<run poppySchedule()>>
+					<<if T.poppyFlatBaileyDue>>
+						<<set _sleepinterrupt to 1>>
+					<<elseif $bus is "poppy_bedroom" and C.npc.Poppy and C.npc.Poppy.init is 1 and $poppyFlat.home and $poppyFlat.room is "bedroom" and (Number(C.npc.Poppy.lust) || 0) gte 60 and !$daily.poppy.flatBedSexDone and !(T.poppyStatus and T.poppyStatus.includes("LowPatience"))>>
+						<<set _sleepinterrupt to 1>>
+						<<set _poppy_interrupt to "sex">>
+					<</if>>
+				<</if>>
 			<<case "forest_shop">>
 				<<if ["walking_to_cafe", "cafe"].includes(gwylanSchedule()) and !$gwylanCafeWake and $exposed is 0>>
 					<!-- Gwylan wakes player to walk to cafe -->
@@ -423,6 +436,7 @@
 	<<if $arousal gte $arousalmax>>
 		They push you over the edge.
 		<<orgasm>>
+		<<set $orgasmcurrent to 0>>
 	<<else>>
 		<br><br>
 	<</if>>
@@ -448,6 +462,9 @@
 		<<case "Mansion Bed">>
 			<<set $_storeLocation to "Mansion Bed">>
 			<<set $wardrobe_location to "avery_mansion">>
+		<<case "Poppy Flats">>
+			<<set $_storeLocation to "Poppy Flats">>
+			<<set $wardrobe_location to "poppy_bedroom">>
 		<<default>>
 			Something went wrong with the "bedclotheson" widget, please report
 			<<run console.log('Something went wrong with the "bedclotheson" widget, please report')>>
@@ -455,13 +472,10 @@
 	<<wardrobeSelection true>>
 	<<updateWornClothingLocation $wardrobe_location>>
 	<<if $wear_outfit is "clotheson">>
-		/*Was causing some wierdness when getting out of bed*/
-		/*<<undress $wardrobe_location>>*/
 		<<loadTempHairStyle>>
 		<<storeon $_storeLocation>>
 	<<elseif $wear_outfit isnot "none">>
 		<<storeon $_storeLocation>>
-		<<undress $wardrobe_location>>
 		<<wearoutfit>>
 	<</if>>
 	<<updateWornClothingLocation $wardrobe_location>>
@@ -509,7 +523,7 @@
 		<<if $earSlime.deviancy gte 2 and $settings.breastFeedingEnabled and $lactating and $milk_amount gte 1000 and $earSlime.focus isnot "impregnation">>
 			<<set _eventsList.push("use the farm equipment to empty your breasts of milk")>>
 		<</if>>
-		<<if $earSlime.deviancy gte 2 and $player.penisExist and $player.penissize gte 0 and !playerChastity("penis") and $semen_amount gte 1000 and $earSlime.focus isnot "pregnancy" and $earSlime.defyCooldown is 0>>
+		<<if $earSlime.deviancy gte 2 and $player.penisExist and $player.penissize gte 2 and !playerChastity("penis") and $semen_amount gte 1000 and $earSlime.focus isnot "pregnancy" and $earSlime.defyCooldown is 0>>
 			<<set _eventsList.push("use the farm equipment to empty your penis of semen")>>
 		<</if>>
 	<</if>>
@@ -529,7 +543,7 @@
 			<</if>>
 		<</if>>
 		<<if ["pregnancy", "mixed"].includes($earSlime.focus) and ($player.vaginaExist or $settings.analEnabled) and !playerIsPregnant()>>
-			<<if maleChance() gt 0 or beastMaleChance() gt 0 or $dgchance gt 0>>
+			<<if maleChance() gt 0 or beastMaleChance() gt 0 or $settings.femaleNPCPenisChance gt 0>>
 				<<set _task to `get sperm into your ${$player.vaginaExist ? "vagina" : "anus"}`>>
 				<<run _eventsList.push(_task)>>
 				<<run _eventsList.push(_task)>>
@@ -539,7 +553,7 @@
 					<<run _eventsList.push(_task)>>
 				<</if>>
 			<</if>>
-			<<if $player.penisExist and $player.penissize gte 0 and $semen_volume gte 300 and !$earSlime.defyCooldown and $awareness gte 200>>
+			<<if $player.penisExist and $player.penissize gte 2 and $semen_volume gte 300 and !$earSlime.defyCooldown and $awareness gte 200>>
 				<<set _task to `get your own sperm into your ${$player.vaginaExist ? "vagina" : "anus"}`>>
 				<<run _eventsList.push(_task)>>
 				<<run _eventsList.push(_task)>>
@@ -551,7 +565,7 @@
 			<</if>>
 		<</if>>
 		<<if $player.penisExist and ["impregnation", "mixed"].includes($earSlime.focus)>>
-			<<if maleChance() lt 100 or beastMaleChance() lt 100 or $cbchance gt 0>>
+			<<if maleChance() lt 100 or beastMaleChance() lt 100 or $settings.maleNPCVaginaChance gt 0>>
 				<<run _eventsList.push("ejaculate into someone's vagina")>>
 				<<run _eventsList.push("ejaculate into someone's vagina")>>
 				<<if random(0,100) gte 50>>
@@ -573,7 +587,7 @@
 <</widget>>
 
 <<widget "slimeSleepEvents">>
-	<<if $earSlimeEvent is "masturbate to orgasm" and ["pregnancy", "mixed"].includes($earSlime.focus) and ($player.vaginaExist or $settings.analEnabled) and !playerIsPregnant() and $player.penisExist and $player.penissize gte 0 and $semen_volume gte 300 and !$earSlime.defyCooldown and $awareness gte 200>>
+	<<if $earSlimeEvent is "masturbate to orgasm" and ["pregnancy", "mixed"].includes($earSlime.focus) and ($player.vaginaExist or $settings.analEnabled) and !playerIsPregnant() and $player.penisExist and $player.penissize gte 2 and $semen_volume gte 300 and !$earSlime.defyCooldown and $awareness gte 200>>
 		<<set $earSlimeEvent to `get your own sperm into your ${$player.vaginaExist ? "vagina" : "anus"}`>>
 	<</if>>
 	<<set _tempEventHide to true>>

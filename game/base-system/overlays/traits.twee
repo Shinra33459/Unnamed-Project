@@ -310,13 +310,31 @@
 				{
 					name: "Fangs",
 					colour: "def",
-					has: $transformationParts.traits.fangs isnot "disabled",
-					text: "Biting is three times as effective.",
+					has: !["disabled", "hidden"].includes($transformationParts.traits.fangs),
+					text: "Biting is twice as effective.",
+				},
+				{
+					name: "Aquatic Lungs",
+					colour: "teal",
+					has: $transformationParts.traits.aquatic isnot "disabled",
+					text: "Oxygen drains 50% slower underwater.",
+				},
+				{
+					name: "Water Dragon",
+					colour: "navy",
+					has: ($waterdragon gte 6 or ($transformationParts.waterdragon.horns isnot "hidden" and $transformationParts.waterdragon.horns isnot "disabled") and $player.skin.color is "waterdragon"),
+					text: "The sea calls to you. Your skin and horns make you stand out.",
+				},
+				{
+					name: "Dragon's Grace",
+					colour: "navy",
+					has: ($TFWaterDragonBuffs is 1 or $transformationParts.traits.leviathan isnot "disabled"),
+					text: "Your draconic build grants you increased athletics and swimming ability.",
 				},
 				{
 					name: "Sharp Eyes",
 					colour: "def",
-					has: $transformationParts.traits.sharpEyes isnot "disabled",
+					has: !["disabled", "hidden"].includes($transformationParts.traits.sharpEyes),
 					text: "Little escapes your notice. +5% skulduggery.",
 				},
 				{
@@ -378,25 +396,25 @@
 					name: "Mate For Life",
 					colour: "",
 					style: `background: linear-gradient(to right,#e646c6 0%, #ffffff 100%);-webkit-background-clip: text;-webkit-text-fill-color: transparent;`,
-					has: $transformationParts.traits.mateForLife isnot "disabled",
+					has: !["disabled", "hidden"].includes($transformationParts.traits.mateForLife),
 					text: "Gain bonuses when sleeping or copulating with your Love Interest. Changing Love Interests causes stress and trauma.",
 				},
 				{
 					name: "Thrill of the Chase",
 					colour: "teal",
-					has: $transformationParts.traits.chase isnot "disabled",
+					has: !["disabled", "hidden"].includes($transformationParts.traits.chase),
 					text: 'Gain a bonus to athletics and unlocks the "ambush" action in stalking encounters. Escaping your pursuers reduces stress.',
 				},
 				{
 					name: "Fallen Angel",
 					colour: "black",
-					has: $fallenangel gte 3,
+					has: $fallenangel gte 4,
 					text: 'The world is so cruel. Though you feel less pure by the day, you will not relinquish yourself. Unlocks the "disparage" action.',
 				},
 				{
 					name: "Fallen Angel",
 					colour: "black",
-					has: $fallenangel is 2,
+					has: $fallenangel is 2 or $fallenangel is 3,
 					text: "The world is so cruel. You feel less pure by the day.",
 				},
 				{
@@ -596,7 +614,7 @@
 							hasEffect = true;
 							result += "makes it easier for you to get pregnant with more children";
 						}
-						if ($player.penisExist and $player.penissize gte -1) {
+						if ($player.penisExist and $player.penissize gte 1) {
 							hasEffect = true;
 							if (multiple) result += " and ";
 							result += "makes your sperm more virile";
@@ -622,7 +640,7 @@
 							hasEffect = true;
 							result += "makes it harder for you to get pregnant";
 						}
-						if ($player.penisExist and $player.penissize gte -1) {
+						if ($player.penisExist and $player.penissize gte 1) {
 							hasEffect = true;
 							if (multiple) result += " and ";
 							result += "makes your sperm less virile";
@@ -718,6 +736,12 @@
 		{
 			title: "Special Traits",
 			traits: [
+				{
+					name: "Opium Addict",
+					colour: "red",
+					has: $backgroundTraits.includes("opiumaddict"),
+					text: "You're more vulnerable to aphrodisiacs and alcohol. Inhaling opium helps you sleep better and suppresses your insomnia.",
+				},
 				{
 					name: () => V.submissive <= 850 ? "Hedonist" : "Orgasm Addict",
 					colour: "lewd",
@@ -1213,11 +1237,28 @@
 			title: "Trauma Traits",
 			traits: [
 				{
-					name: () => V.hypnosis_traits.slumber ? "Suppressed Insomnia" : V.controlled === 0 ? "Insomnia" : "Controlled Insomnia",
-					colour: () => V.hypnosis_traits.slumber ? "black" : V.controlled === 0 ? "red" : "blue",
+					name: () => {
+						const opiumSuppressed = Array.isArray(V.backgroundTraits)
+							&& V.backgroundTraits.includes("opiumaddict")
+							&& !!V.poppyDrug?.insomniaSuppress;
+						if (V.hypnosis_traits.slumber || opiumSuppressed) return "Suppressed Insomnia";
+						return V.controlled === 0 ? "Insomnia" : "Controlled Insomnia";
+					},
+					colour: () => {
+						const opiumSuppressed = Array.isArray(V.backgroundTraits)
+							&& V.backgroundTraits.includes("opiumaddict")
+							&& !!V.poppyDrug?.insomniaSuppress;
+						if (V.hypnosis_traits.slumber || opiumSuppressed) return "black";
+						return V.controlled === 0 ? "red" : "blue";
+					},
 					has: $sleeptrouble gte 1,
 					text: "Sleep less effective.",
-					textColour: () =>  V.controlled === 0 && !V.hypnosis_traits.slumber ? "red" : "black",
+					textColour: () => {
+						const opiumSuppressed = Array.isArray(V.backgroundTraits)
+							&& V.backgroundTraits.includes("opiumaddict")
+							&& !!V.poppyDrug?.insomniaSuppress;
+						return V.controlled === 0 && !V.hypnosis_traits.slumber && !opiumSuppressed ? "red" : "black";
+					},
 				},
 				{
 					name: () => V.controlled === 0 ? "Nightmares" : "Controlled Nightmares",
@@ -1299,6 +1340,12 @@
 					colour: "lblue",
 					has: $robinpaid gte 1,
 					text: "Robin is dependent on you. You need to be strong. Increases daily trauma decay.",
+				},
+				{
+					name: "Pavlov: Poppy",
+					colour: "lewd",
+					has: $backgroundTraits.includes("pavlovpoppy"),
+					text: "Poppy's presence fills a hole that you didn't realise existed. You find it difficult to resist Poppy's pull. Reduces daily opium decay and fatigue gain around Poppy.",
 				},
 				{
 					name: "Stockholm Syndrome: Eden",
@@ -1609,26 +1656,26 @@
 			traits: [
 				{
 					name: () => {
-						const penisSize = setup.penisSizes[$player.penissize + 2].toUpperFirst();
+						const penisSize = setup.penisSizes[$player.penissize].toUpperFirst();
 						return `Acceptance: ${penisSize} Penis`;
 					},
 					colour: "green",
-					has: $acceptance_penis_small gte 1000 and $player.penissize lte 1,
+					has: $acceptance_penis_small gte 1000 and $player.penissize lte 3,
 					text: "You're proud of your small penis.",
 				},
 				{
 					name: "Acceptance: Tomgirl",
 					colour: "green",
-					has: $acceptance_tomgirl gte 100 and $acceptance_penis_small gte 1000 and $player.penissize lte 0,
+					has: $acceptance_tomgirl gte 100 and $acceptance_penis_small gte 1000 and $player.penissize lte 2,
 					text: "You're proud of becoming a tomgirl.",
 				},
 				{
 					name: () => {
-						const penisSize = setup.penisSizes[$player.penissize + 2].toUpperFirst();
+						const penisSize = setup.penisSizes[$player.penissize].toUpperFirst();
 						return `Acceptance: ${penisSize} Penis`;
 					},
 					colour: "green",
-					has: $acceptance_penis_big gte 1000 and $player.penissize gte 4,
+					has: $acceptance_penis_big gte 1000 and $player.penissize gte 6,
 					text: "You're proud of your enormous penis.",
 				},
 				{
@@ -1671,7 +1718,7 @@
 					colour: "red",
 					has: $auriga_scar is 1,
 					text: "An invisible wound hangs over your heart. Trauma and awareness increase over time. Purity decreases over time.",
-					textColour:  "red",
+					textColour: "red",
 				},
 				{
 					name: "Elk-marked",

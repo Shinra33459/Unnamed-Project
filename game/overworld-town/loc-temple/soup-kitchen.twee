@@ -20,7 +20,7 @@
 	<<npc River>><<person1>>
 	You are in the soup kitchen on Wolf Street. Rows of crowded tables line the hall. The kitchen proper sits at the back, filling the room with the smell of warm soup.
 	<br><br>
-	<<kitchenicon "pot_clean">><<link [[Help River (1:00)|Soup Kitchen Work]]>><<endevent>><<pass 60>><<famegood 5>><<trauma -6>><<npcincr River love 1>><</link>><<glove>><<ltrauma>>
+	<<kitchenicon "pot_clean">><<link [[Help River (1:00)|Soup Kitchen Work]]>><<endevent>><<pass 60>><<famegood 5>><<trauma -6>><<npcincr River love 1>><<housekeeping 1 300>><</link>><<glove>><<ltrauma>><<ghousekeeping 300>>
 	<br>
 	<<if $mathsproject is "ongoing" and $river_help isnot 1>>
 		<<socialiseicon "ask">><<link [[Ask River for help with maths competition|Soup Kitchen Maths]]>><<endevent>><</link>>
@@ -55,7 +55,7 @@ You tell River about the loft at the orphanage. <<Hes>> quiet. You're not sure i
 <i>A kitchen will let the orphans prepare meals away from Bailey's gaze, which will make it easier to increase hope.</i>
 <br><br>
 <<if $money gte 2000000>>
-	<<link [[Have kitchen installed (£20000 3:00)|River Loft 2]]>><<set $loft_river to 1>><<set $loft_upgrade += 1>><<money -2000000 "orphanageUpgrades">><</link>>
+	<<link [[Have kitchen installed (£20000 3:00)|River Loft 2]]>><<set $loft_river to 1>><<set $loftIngredients to {}>><<set $loft_upgrade += 1>><<money -2000000 "orphanageUpgrades">><</link>>
 	<br>
 <</if>>
 <<link [[Leave|Soup Kitchen]]>><<endevent>><<endevent>><</link>>
@@ -235,7 +235,7 @@ You help River work the kitchen. You cut vegetables ready for cooking and clean 
 		<br><br>
 		You're on the way back, crate in hands, when you hear a voice around the corner of the building.
 		<br><br>
-		"You didn't think you'd get away, did you?" says a husky <<personsimple>>'s voice. "Cheating the boss like that, you'll be lucky if you don't end up in the pit."
+		"You didn't think you'd get away, did you?" says a husky <<personssimple>> voice. "Cheating the boss like that, you'll be lucky if you don't end up in the pit."
 		<br><br>
 		"I-It was an accident," a voice stammers in response. A third voice laughs.
 		<br><br>
@@ -289,6 +289,21 @@ You help River work the kitchen. You cut vegetables ready for cooking and clean 
 		<<link [[Next|Soup Kitchen]]>><</link>>
 		<br>
 	<</addinlineevent>>
+	/* Poppy soup kitchen encounter, fires when Poppy is on charity shift and not at low patience */
+	<<if modLISelected("Poppy")>><<run poppySchedule()>><</if>>
+	<<if modLISelected("Poppy") and T.poppy_location is "soupKitchen" and Array.isArray(T.poppyStatus) and !T.poppyStatus.includes("LowPatience")>>
+		<<addinlineevent "kitchen_poppy" 1>>
+			<<npc Poppy>><<person1>>
+			"Hey!" Someone calls out. You look around to see Poppy holding a pile of dirty dishes, some even hanging dangerously between <<his>> fingers.
+			<br><br>
+			"Glad to see you here helping out! Could you lend me a hand?" Poppy looks at you expectantly with a sheepish smile.
+			<<poppyOpiumPulse>>
+			<<link [[Help <<him>>|Soup Kitchen Poppy Help]]>><</link>>
+			<br>
+			<<link [[Say you're busy|Soup Kitchen Poppy Busy]]>><</link>>
+			<br>
+		<</addinlineevent>>
+	<</if>>
 <</if>>
 <<runeventpool>>
 
@@ -393,12 +408,22 @@ You walk around the corner. A <<person1>><<person>> pins a <<person3>><<person>>
 
 <<set $outside to 0>><<set $location to "temple">><<effects>>
 <<npc River>><<person1>>
-<<if $speech_attitude is "meek">>
-	"Those rods look scary," you say. "What are they for?"
-<<elseif $speech_attitude is "bratty">>
-	"You have some nasty looking weapons," you say.
+<<if $prof.baton is undefined or $prof.whip is undefined>>
+	<<if $speech_attitude is "meek">>
+		"Those rods look scary," you say. "What are they for?"
+	<<elseif $speech_attitude is "bratty">>
+		"You have some nasty looking weapons," you say.
+	<<else>>
+		"I didn't know the <<monks>> carried weapons," you say.
+	<</if>>
 <<else>>
-	"I didn't know the <<monks>> carried weapons," you say.
+	<<if $speech_attitude is "meek">>
+		"I didn't think we were allowed to use those weapons on humans," you say.
+	<<elseif $speech_attitude is "bratty">>
+		"You're not supposed to use those weapons on humans," you say.
+	<<else>>
+		"I don't think we're allowed to use our weapons on humans," you say.
+	<</if>>
 <</if>>
 <br><br>
 One of the <<monks>> smiles. "I don't know what you mean," <<he>> says. "River scared them with <<his>> rolling pin."
@@ -599,10 +624,9 @@ The rest of the hour passes without event.
 		<br>
 	<</if>>
 
-
-	<<link [[Steal|Soup Kitchen Steal]]>><<handheldon>><</link>>
+	<<link [[Steal|Soup Kitchen Steal]]>><</link>>
 	<br><br>
-	<<link [[Leave|Soup Kitchen]]>><<handheldon>><</link>>
+	<<link [[Leave|Soup Kitchen]]>><<kitchenExit>><</link>>
 	<br>
 <</if>>
 

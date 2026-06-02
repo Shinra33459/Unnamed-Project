@@ -82,7 +82,7 @@ function calculatePenisBulge() {
 		return Math.clamp(V.player.penissize, 0, Infinity);
 	}
 	// Mentioned in combat about npcs `trying to force an erection`, when below the specific arousal checks
-	if ((V.arousal > 9000 && V.player.penissize === -1) || (V.arousal > 9500 && V.player.penissize === -2)) return 1;
+	if ((V.arousal > 9000 && V.player.penissize === 1) || (V.arousal > 9500 && V.player.penissize === 0)) return 1;
 
 	let erectionState = 1;
 	if (V.arousal >= 8000) {
@@ -90,7 +90,7 @@ function calculatePenisBulge() {
 	} else if (V.arousal >= 6000) {
 		erectionState = 2;
 	}
-	return Math.clamp((V.player.penissize + 1) * erectionState, 0, Infinity);
+	return Math.clamp((V.player.penissize - 1) * erectionState, 0, Infinity);
 }
 window.calculatePenisBulge = calculatePenisBulge;
 
@@ -104,7 +104,7 @@ function nudeGenderAppearance() {
 	if (playerChastity("hidden")) {
 		T.apparent_femininity_nude += setup.clothes.genitals[clothesIndex("genitals", V.worn.genitals)].femininity;
 	} else if (V.settings.nudeGenderPerception === 1) {
-		if (V.player.penisExist) T.apparent_femininity_nude += (-V.player.penissize - 2.5) * 150;
+		if (V.player.penisExist) T.apparent_femininity_nude += (-V.player.penissize - 0.5) * 150;
 		if (V.player.vaginaExist) T.apparent_femininity_nude += 450;
 	}
 	if (!(V.sexStats === undefined || !playerBellyVisible() || V.settings.nudeGenderPerception === 0)) {
@@ -221,10 +221,10 @@ function genderappearancecheck() {
 	if (T.under_lower_protected && V.settings.nudeGenderPerception > 0) {
 		addfemininityfromfactor(T.bulge_size * -60, "Bulge visible through underwear", "noow");
 	} else if ((T.over_lower_protected || T.lower_protected) && V.settings.nudeGenderPerception > 0) {
-		addfemininityfromfactor(Math.clamp((T.bulge_size - 6) * -60, 0, Infinity), "Bulge visible through clothing", "noow");
+		addfemininityfromfactor(-Math.clamp((T.bulge_size - 6) * 60, 0, Infinity), "Bulge visible through clothing", "noow");
 	} else if (V.worn.genitals.exposed && V.settings.nudeGenderPerception === 1) {
 		if (V.player.penisExist) {
-			addfemininityfromfactor((V.player.penissize + 2.5) * -150, "Penis exposed", "noow");
+			addfemininityfromfactor((V.player.penissize + 0.5) * -150, "Penis exposed", "noow");
 		}
 		if (V.player.vaginaExist) {
 			addfemininityfromfactor(450, "Vagina exposed", "noow");
@@ -249,7 +249,7 @@ function genderappearancecheck() {
 				/* Bare genitals are visible */
 				if (V.settings.nudeGenderPerception === 1) {
 					if (V.player.penisExist) {
-						addfemininityfromfactor((-V.player.penissize - 2.5) * 150, "Penis visible");
+						addfemininityfromfactor((-V.player.penissize - 0.5) * 150, "Penis visible");
 					}
 					if (V.player.vaginaExist) {
 						addfemininityfromfactor(450, "Vagina visible");
@@ -793,3 +793,23 @@ function inappropriatePlayerState(check = ["all"]) {
 	return false;
 }
 window.inappropriatePlayerState = inappropriatePlayerState;
+
+/**
+ * Fetches some or all of the PC's visible transformation parts into an array, depending on input
+ *
+ * @param {Array <"ears" | "wings" | "tail" | "halo" | "horns" | "plumage" | "malar" | "cheeks" | "eyes" | "heterochromia" | "pubes" | "pits">} parts / Which types to check, defaults to all
+ * @returns {Array | false} / Parts that match the criteria
+ */
+function getTransformParts(parts = []) {
+	let tfs = ["wolf", "cat", "fox", "bird", "cow", "demon", "fallenAngel", "angel"];
+	let tfPartsToCheck = ["ears", "wings", "tail", "halo", "horns", "plumage", "malar", "cheeks", "eyes", "heterochromia", "pubes", "pits"];
+	let tfParts = [];
+	for (let i = 0 ; i < tfs.length ; i++) {
+		for (let i2 = 0 ; i2 < tfPartsToCheck.length ; i2++) {
+			if ((parts.includesAny(tfPartsToCheck[i2]) || !parts[0]) && ![undefined, "hidden", "disabled"].includes(V.transformationParts[tfs[i]][tfPartsToCheck[i2]])) tfParts.pushUnique(tfPartsToCheck[i2]);
+		}
+	}
+	if (tfParts.length) return tfParts;
+	else return false;
+}
+window.getTransformParts = getTransformParts;

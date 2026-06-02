@@ -169,7 +169,7 @@ function effectsWater(waterType = "liquid") {
 			}
 			sWikifier("<<covered>>");
 			br();
-			br();
+			if (V.makeupWashed) br();
 		} else if (wetIntro >= 1) {
 			if (V.exhibitionism >= 35) {
 				span(
@@ -185,7 +185,7 @@ function effectsWater(waterType = "liquid") {
 				);
 			}
 			br();
-			br();
+			if (V.makeupWashed) br();
 		}
 	}
 	return fragment;
@@ -273,7 +273,9 @@ function effects() {
 		element("span", `The school plays are being held on Cliff Street tonight from ${ampm(17, 0)} until ${ampm(21, 0)}.`, "gold");
 	}
 
-	if (V.studyBooks?.rented !== "none" && V.book_rent_timer === 0 && !V.studyBookDueWarning && Time.schoolTerm) {
+	const rentedCount = V.studyBooks?.rented?.count ?? 0;
+
+	if (rentedCount >= 1 && V.book_rent_timer === 0 && !V.studyBookDueWarning && Time.schoolTerm) {
 		V.studyBookDueWarning = 1;
 		element("span", `You have a library book due today.`, "gold");
 	}
@@ -515,22 +517,22 @@ function effects() {
 
 		if (V.penisgrowthmessage !== undefined) {
 			switch (V.penisgrowthmessage) {
-				case 4:
+				case 6:
 					element("span", "Your penis has grown to a prodigious size.", "purple");
 					break;
-				case 3:
+				case 5:
 					element("span", "Your penis has grown larger.", "purple");
 					break;
-				case 2:
+				case 4:
 					element("span", "Your penis has grown to an unremarkable size.", "purple");
 					break;
-				case 1:
+				case 3:
 					element("span", "Your penis has grown, though it's still small.", "purple");
 					break;
-				case 0:
+				case 2:
 					element("span", "Your penis looks like it's recovering.", "purple");
 					break;
-				case -1:
+				case 1:
 					element("span", "Your penis looks like it's been given another chance.", "purple");
 					break;
 			}
@@ -540,47 +542,43 @@ function effects() {
 		if (V.penisshrinkmessage !== undefined) {
 			if (V.worn.genitals.name === "chastity parasite") {
 				switch (V.penisshrinkmessage) {
+					case 5:
+						element("span", "Your chastity parasite has shrunk, though it still hints at an impressive penis size.", "purple");
+						break;
+					case 4:
+						element("span", "Your chastity parasite has shrunk to an unremarkable size.", "purple");
+						break;
 					case 3:
-						element("span", "Your chastity parasite has shrunk, though it still hints of an impressive penis size.", "purple");
-						break;
-					case 2:
-						element("span", "Your chastity parasite has shrunk, it hints of a much less unremarkable penis size.", "purple");
-						break;
-					case 1:
 						element("span", "Your chastity parasite has become smaller.", "purple");
 						break;
-					case 0:
+					case 2:
 						element("span", "Your chastity parasite has become tiny.", "purple");
 						break;
-					case -1:
-						element("span", "Your chastity parasite looks ridiculously tiny, you briefly wonder if your penis could still work.", "purple");
+					case 1:
+						element("span", "Your chastity parasite looks like it may shrivel up.", "purple");
 						break;
-					case -2:
-						element(
-							"span",
-							"Your chastity parasite looks like it could just have a clit inside, you briefly wonder if you still have a penis.",
-							"purple"
-						);
+					case 0:
+						element("span", "Your chastity parasite looks like it's barely concealing anything.", "purple");
 						break;
 				}
 			} else {
 				switch (V.penisshrinkmessage) {
-					case 3:
+					case 5:
 						element("span", "Your penis has shrunk, though it's still of an impressive size.", "purple");
 						break;
-					case 2:
+					case 4:
 						element("span", "Your penis has shrunk to an unremarkable size.", "purple");
 						break;
-					case 1:
+					case 3:
 						element("span", "Your penis has become smaller.", "purple");
 						break;
-					case 0:
+					case 2:
 						element("span", "Your penis has become tiny.", "purple");
 						break;
-					case -1:
+					case 1:
 						element("span", "Your penis looks like it may shrivel up.", "purple");
 						break;
-					case -2:
+					case 0:
 						element("span", "Your penis looks like it may never be used properly again.", "purple");
 						break;
 				}
@@ -961,6 +959,57 @@ function effects() {
 			}
 			delete V.nectarmessage;
 		}
+		if (window.poppyConsumePendingOpiumMessage) {
+			const poppyOpiumMessage = poppyConsumePendingOpiumMessage();
+			switch (poppyOpiumMessage) {
+				case "traitGainKnown":
+					element("span", "You find yourself craving the powdery scent of opium. You've gained the ", "purple");
+					element("span", '"Opium Addict"', "red");
+					element("span", " trait.", "purple");
+					br();
+					break;
+				case "traitGainUnknown":
+					element(
+						"span",
+						"You find yourself inexplicably craving Poppy's presence, and you can't really figure out why.",
+						"purple"
+					);
+					br();
+					break;
+				case "traitLostKnown":
+					element("span", "The craving for opium finally subsided. You lost the ", "lblue");
+					element("span", '"Opium Addict"', "red");
+					element("span", " trait.", "lblue");
+					br();
+					break;
+				case "traitLostUnknown":
+					element("span", "The craving for Poppy's presence finally subsided.", "lblue");
+					br();
+					break;
+				case "withdrawalsKnown":
+					sWikifier(
+						'<span class="red">Your body craves opium and has begun to suffer from withdrawals.</span> <<stress 12>><<ggstress>><<straighttrauma 12>><<ggtrauma>>'
+					);
+					br();
+					break;
+				case "withdrawalsUnknown":
+					sWikifier(
+						'<span class="red">Your body craves Poppy\'s presence and has begun to suffer from withdrawals.</span> <<stress 12>><<ggstress>><<straighttrauma 12>><<ggtrauma>>'
+					);
+					br();
+					break;
+			}
+		}
+		if (window.poppyConsumePendingPavlovMessage && poppyConsumePendingPavlovMessage()) {
+			element(
+				"span",
+				"Now that Poppy is your love interest, you can't help but feel drawn to them like a moth to a flame. You've gained the ",
+				"purple"
+			);
+			element("span", '"Pavlov: Poppy"', "red");
+			element("span", " trait.", "purple");
+			br();
+		}
 
 		if (V.hiddenTransformMessage) {
 			element(
@@ -1128,6 +1177,37 @@ function effects() {
 			delete V.pregnancyDailyEvent;
 		}
 
+		// Check if any parasites are present before running events. If not, clear events.
+		// TODO: Clear event messages in the case of "staggered" births where some parasites remain in that category. Otherwise, all events will continue to play until the daily reset, even if some parasites have already been birthed.
+		if (V.daily.parasiteEvent) {
+			if (V.sexStats.vagina.pregnancy.type === "parasite") {
+				for (let i = 0; i < maxParasites("vagina"); i++) {
+					if (V.sexStats.vagina.pregnancy.fetus[i] !== undefined) {
+						T.hasVaginaParasiteForEvent = true;
+						break;
+					}
+				}
+			}
+			if (V.sexStats.anus.pregnancy.type === "parasite") {
+				for (let i = 0; i < maxParasites("anus"); i++) {
+					if (V.sexStats.anus.pregnancy.fetus[i] !== undefined) {
+						T.hasAnusParasiteForEvent = true;
+						break;
+					}
+				}
+			}
+			if (!T.hasVaginaParasiteForEvent) {
+				V.daily.parasiteEvent = V.daily.parasiteEvent.filter(function (event) {
+					return !event.includes("vagina");
+				});
+			}
+			if (!T.hasAnusParasiteForEvent) {
+				V.daily.parasiteEvent = V.daily.parasiteEvent.filter(function (event) {
+					return !event.includes("anus");
+				});
+			}
+		}
+
 		if (V.daily.parasiteEvent) {
 			let minDaysLeft;
 			if (V.sexStats.vagina.pregnancy.type === "parasite") {
@@ -1236,6 +1316,21 @@ function effects() {
 			V.earSlime.event = "";
 			V.earSlime.noSleep = false;
 		}
+	}
+
+	if (V.cheatClothes) {
+		let _cl_slots_cheat = ["upper", "lower", "under_upper", "under_lower", "over_upper", "over_lower", "genitals"];
+		if (V.worn.face.type.includesAny("covered", "gag", "mask")) {
+			_cl_slots_cheat.push("face");
+		}
+		_cl_slots_cheat.forEach((slot) => {
+			if (V.worn[slot].name === "naked") return;
+			V.worn[slot].integrity = clothingData(slot, V.worn[slot], "integrity_max");
+			cheatsUpdateSlider(
+				`#numberslider-input-worn${slot.replace('_', '-')}integrity`,
+				V.worn[slot].integrity
+			);
+		})
 	}
 
 	if (Array.isArray(V.timeMessages) && V.timeMessages.length) {
@@ -1491,6 +1586,49 @@ function effects() {
 					break;
 				case "cowDown5":
 					element("span", "Your balance feels different. Your cow tail has disappeared.", "gold");
+					break;
+				case "waterdragonUp1":
+					element("span", "You feel an intense desire to go swimming underwater.", "gold");
+					break;
+				case "waterdragonUp2":
+					element("span", "Your mouth feels different. You explore your mouth and wince as your tongue presses against your new fangs.", "gold");
+					break;
+				case "waterdragonUp3":
+					element("span", "Your head feels heavier. You reach up, and find that a pair of horns have sprouted.", "gold");
+					break;
+				case "waterdragonUp4":
+					element("span", "Your ears itch. You reach up to them, and find them much bigger than you expected. You've grown a pair of dragon ears.", "gold");
+					break;
+				case "waterdragonUp5":
+					element("span", "Your lower back tingles.", "gold");
+					break;
+				case "waterdragonUp6":
+					element("span", "Your bottom feels heavier than usual. You reach behind you and feel your new scaly tail. It's strong.", "gold");
+					break;
+				case "waterdragonUp7":
+					element("span", "Your skin feels different. You look at your hands and see them take on an indigo hue. You feel the depths call.", "gold");
+					fragment.append(wikifier("earnFeat", "'Lost Legacy'"));
+					break;
+				case "waterdragonDown0":
+					element("span", "You no longer feel the need to swim.", "gold");
+					break;
+				case "waterdragonDown1":
+					element("span", "Your fangs have turned into regular teeth.", "gold");
+					break;
+				case "waterdragonDown2":
+					element("span", "Your horns have disappeared.", "gold");
+					break;
+				case "waterdragonDown3":
+					element("span", "Your dragon ears have disappeared.", "gold");
+					break;
+				case "waterdragonDown4":
+					element("span", "Your lower back has stopped tingling.", "gold");
+					break;
+				case "waterdragonDown5":
+					element("span", "Your balance feels different. Your dragon tail has disappeared.", "gold");
+					break;
+				case "waterdragonDown6":
+					element("span", "Your body feels different. You look at your hands and notice them return to normal.", "gold");
 					break;
 				case "bearUp1":
 					element("span", "You have a strange toothache and a strange craving for honey.", "gold");
@@ -1778,6 +1916,18 @@ function effects() {
 				case "adultShopContribution":
 					if (V.adultshopcontribution) fragment.append(wikifier("earnFeat", "'Opened Pandoras Box'"));
 					if (V.adultshopcontribution >= 12) fragment.append(wikifier("earnFeat", "'Opened Pandoras Cocks'"));
+					break;
+				case "valentinesTomorrow":
+					sWikifier(
+						`<span class="gold">Tomorrow is Valentine's Day. You find yourself looking forward to spending quality time with someone special.</span> <<stress -6>><<lstress>><<trauma -6>><<ltrauma>>`
+					);
+					br();
+					break;
+				case "valentinesToday":
+					sWikifier(
+						`<span class="gold">Today is Valentine's Day. You look forward to spending quality time with someone special today. You sense that doing so will be extra rewarding.</span> <<stress -6>><<lstress>><<trauma -6>><<ltrauma>>`
+					);
+					br();
 					break;
 				default:
 					// Report error

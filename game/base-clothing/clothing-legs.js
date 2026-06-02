@@ -586,7 +586,7 @@ function initLegs() {
 			colour_combat: 0,
 			type: ["costume"],
 			gender: "n",
-			femininity: -0,
+			femininity: 0,
 			warmth: 2,
 			cost: 1000,
 			description: "Cute cow print.",
@@ -1119,7 +1119,7 @@ function initLegs() {
 			slot: "legs",
 			name: "leather leggings",
 			name_cap: "Leather leggings",
-			variable: "leatherleggings",
+			variable: "leather",
 			combat: {
 				reference: "tights",
 			},
@@ -1615,8 +1615,8 @@ function initLegs() {
 	setup.clothes.legs = clothing;
 
 	/*
-		Clothes that modders add go into this array, this should be empty in the base game at all times.
-		These items should have a `modder` variable with a the modders name in a short string
+		Clothes that modders add go into this array. This should be empty in the base game at all times.
+		These items should have a `modder` variable with the modder's name in a short string.
 	*/
 	setup.moddedClothes.legs = [];
 

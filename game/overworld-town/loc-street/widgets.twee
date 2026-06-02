@@ -477,7 +477,7 @@
 	You move from shadow to shadow, dashing through patches of light as quickly as your legs will carry you. You freeze between two bushes as you hear a noise very close by: first a squeal, then a muffled scream and struggling, followed by a loud impact, something like a body slamming to the ground. Then low, angry voices.
 	<br><br>
 
-	Crawling closer, you see a <<person1>><<person>> behind some bushes, with <<his>> hands wrapped around a <<person3>><<persons>> throat as a <<person2>><<person>> roughly rips away the <<person3>><<personsimple>>'s clothes. The <<person>> looks about your age. <<He>> is frantically punching and clawing, but you can see <<hes>> fading fast: <<his>> eyes have started to glaze over as <<he>> struggles to breathe.
+	Crawling closer, you see a <<person1>><<person>> behind some bushes, with <<his>> hands wrapped around a <<person3>><<persons>> throat as a <<person2>><<person>> roughly rips away the <<person3>><<personssimple>> clothes. The <<person>> looks about your age. <<He>> is frantically punching and clawing, but you can see <<hes>> fading fast: <<his>> eyes have started to glaze over as <<he>> struggles to breathe.
 	<br><br>
 
 	This close to their goal, the attackers are distracted and vulnerable.
@@ -723,42 +723,44 @@
 	<<rng>>
 	<<generate1>><<person1>>A car pulls up alongside you. The driver, a <<person>>, waves a wad of cash at you. "Show me a good time and I'll make it worth your while. Get in."
 	<br><br>
+	/*Special events have up to 20% chance to happen. */
+	<<if $rng lte Math.min(crimeSumCurrent()/200,10) + 10*Number($fame.prostitution gte 400)>>
+		<<set $phase to 10>> /* Police */
+	<<elseif $fame.prostitution gte 400 and $rng gt 100-Math.min(Math.round($fame.prostitution/100),20)>>
+		<<set $phase to 9>> /* Chance to ask for a lot of money. */
+	<<else>>
+		<<set $phase to 1>>
+	<</if>>
 
 	<<if $earSlime.growth gt 50 and ($earSlime.growth gte 80 - ($earSlime.promiscuity * 10))>>
 		<span class="lewd">You feel the slime in your head command you to get in the car and give yourself to <<him>>.</span> It promises rewards if you comply and threatens consequences if you do not.
 		<br><br>
 
+		<<if !hasSexStat("promiscuity", 2)>>
+			<<set _desperateaction to "the ear slime commanded you to do it">>
+		<</if>>
 		<<link [[Obey|Street Car Slime Obey]]>>
 			<<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><<sub 2>>
-			<<if !hasSexStat("promiscuity", 2)>><<set $desperateaction to "the ear slime commanded you to do it">><</if>>
+			<<if !hasSexStat("promiscuity", 2)>>
+				<<set $desperateaction to _desperateaction>>
+			<</if>>
 		<</link>><<promiscuous2>><<gcorruption>><<lpain>><<lltrauma>><<lstress>>
 		<br>
 		<<link [[Defy|Street Car Slime Defy]]>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><<def 1>><</link>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>>
 		<br>
 	<<else>>
-		<<if !hasSexStat("promiscuity", 2)>>
-			<<if $uncomfortable.prostituting>>
-				<<insufficientStat "promiscuity" "to take up such an offer">>
-			<<else>>
-				<<His>> offer repulses you, but you need the money.
-			<</if>>
+		<<if hasSexStat("promiscuity", 2)>>
+			<<link [[Get in|Street Car]]>><</link>><<promiscuous2>>
 			<br>
 		<<else>>
-			<<if $rng lte 15 and (crimeSumCurrent() gte 1000 or $fame.prostitution gte 400)>>
-				<<link [[Get in|Street Car]]>><<set $phase to 10>><</link>><<promiscuous2>>
+			<<if $uncomfortable.prostituting>>
+				<<insufficientStat "promiscuity" "to take up such an offer">>
 				<br>
 			<<else>>
-				<<link [[Get in|Street Car]]>><<set $phase to 1>><</link>><<promiscuous2>>
+				<<His>> offer repulses you, but you need the money.
 				<br>
-			<</if>>
-		<</if>>
-
-		<<if !hasSexStat("promiscuity", 2) and $uncomfortable.prostituting is false>>
-			<<if $rng lte 15 and (crimeSumCurrent() gte 1000 or $fame.prostitution gte 400)>>
-				<<link [[Reluctantly get in|Street Car]]>><<set $desperateaction to 1>><<set $phase to 10>><</link>><<promiscuous2>>
-				<br>
-			<<else>>
-				<<link [[Reluctantly get in|Street Car]]>><<set $desperateaction to 1>><<set $phase to 1>><</link>><<promiscuous2>>
+				<<set _desperateaction to 1>>
+				<<link [[Reluctantly get in|Street Car]]>><<set $desperateaction to _desperateaction>><</link>><<promiscuous2>>
 				<br>
 			<</if>>
 		<</if>>
@@ -857,7 +859,12 @@
 <<widget "streetWaterBalloon">>
 	A <<generates1>><<person1>><<person>> leans out of a passing car and hurls a large water-balloon at you.
 	<br><br>
-	<<if $rng gte 76 and ((maleChance() gte 1 and $cbchance lte 99) or (maleChance() lte 99 and $dgchance gte 1))>><<set $cumballoon to 1>><</if>>
+
+	/* 0-50% odds of a cum-balloon based on soft world corruption */
+	<<if $world_corruption_soft gte random(1, 200) and ((maleChance() gte 1 and $settings.maleNPCVaginaChance lte 99) or (maleChance() lte 99 and $settings.femaleNPCPenisChance gte 1))>>
+		<<set $cumballoon to 1>>
+	<</if>>
+
 	<<athleticsdifficulty 0 500 true>>
 	<<if $athleticsSuccess>>
 		<span class="green">You reflexively soft catch the water-balloon</span> and <span class = "pink">hurl it back into the passing car.</span>
@@ -868,7 +875,7 @@
 			<br><br>
 		<<default>>
 			<<set $_carcash to random(50, 100)>>
-			<<wearProp "wallet" 0 "money">>
+			<<wearProp "wallet">>
 			The water balloon hits the windscreen, blinding the driver. The car careens into a pole then smashes into a parked car. No one is hurt, but as the car's occupants flee, you see the <<person>> drop something in <<his>> haste.
 			<br><br>
 			You pick it up. It's a wallet. You decide to keep the <<moneyGain $_carcash>> inside.
@@ -938,7 +945,7 @@
 <<widget "streetNightDogAttack">>
 
 	<<beastNEWinit 3 dog>>
-	<<if $stray_happiness lte random(1, 100) and ($monster is 1 or $settings.bestialityEnabled)>>
+	<<if $monster is 1 or $settings.bestialityEnabled>>
 		Your journey is interrupted by a savage growl emerging from the darkness. You turn to avoid it, only to face a pair of glowing eyes. You're surrounded.
 		<br><br>
 		<<link [[Next|Street Dogs]]>><<set $molestationstart to 1>><</link>>
@@ -954,32 +961,22 @@
 	<</if>>
 <</widget>>
 
-<<widget "streetNightTowerCreature">>
-	<<if $tower_creature_intro gte 1>>
-		<<loadNPC 0 tower_creature>>
-	<<else>>
-		<<set $tower_creature_intro to 1>>
-		<<set _tower_creature to true>>
-		<<beastNEWinit 1 creature>>
-		<<if $NPCList[0].monster is "monster">>
-			<<set $NPCList[0].fullDescription to "horned " + ($NPCList[0].gender is "m" ? "boy" : "girl")>>
-			<<set $NPCList[0].type to "horned " + ($NPCList[0].gender is "m" ? "boy" : "girl")>>
-		<</if>>
-		<<saveNPC 0 tower_creature>>
-	<</if>>
+<<widget "streetNightMonster">>
+	<<set $daily.streetNightMonster to true>>
+	<<npc "Night Monster">>
 	<<if $NPCList[0].monster is "monster" or $settings.bestialityEnabled>>
-		You hear something land behind you, followed by a low growl. You turn, and face a pair of glowing yellow eyes. <<bHe>> steps into the light of a streetlamp, revealing a pair of horns
+		You hear something land behind you, followed by a low growl. You turn to face a pair of glowing yellow eyes. <<bHe>> steps into the light of a streetlamp, revealing a pair of horns
 
 		<<if $NPCList[0].monster is "monster">>
 			that split <<bhis>> messy hair. <<bHe>> flashes a sharp-toothed, menacing grin before leaping toward you.
 		<<else>>
-			atop a hairless, scaled head. It opens its colossal maw, and leaps toward you.
+			atop a hairless, scaled head. It opens its colossal maw and leaps toward you.
 		<</if>>
 		<br><br>
 
-		<<link [[Stand your ground|Street Monster]]>><<set $molestationstart to 1>><</link>>
+		<<link [[Stand your ground|Street Monster]]>><<set $phase to 0>><<set $molestationstart to 1>><</link>>
 		<br>
-		<<link [[Run|Street Monster Run]]>><</link>><<athleticsdifficulty 400 1400>>
+		<<link [[Run|Street Monster Run]]>><<set $phase to 1>><</link>><<athleticsdifficulty 400 1400>>
 		<br>
 	<<else>>
 		You hear something land behind you, followed by a low growl. You run in a panic, until you trip and fall. Nothing follows.<<beastescape>>
@@ -1143,28 +1140,28 @@
 
 		Their car speeds up as they
 		<<if $rng4 lte 20>>
-		<<generateyv1>>
-		spot an unwary pickpocket <<personsimple>>.
-		<br>
-		You hear some shouts as
+			spot an unwary pickpocket.
+			<br>
+			You hear some shouts as
 		<<elseif $rng4 lte 40>>
-		spot a nearby donut stand.
-		<br>
-		You see one of them lumbering out of the car as
+			spot a nearby donut stand.
+			<br>
+			You see one of them lumbering out of the car as
 		<<elseif $rng4 lte 60>>
-		<<generateyv1>>
-		spot a passed out <<if $pronoun is "m">>escort<<else>>hooker<</if>>.
-		<br>
-		You can see them lifting the <<personsimple>> into the back of their car as
+			<<generateyv1>><<person1>>
+			spot a passed out <<if $pronoun is "m">>escort<<else>>hooker<</if>>.
+			<br>
+			You can see them lifting the <<personsimple>> into the back of their car as
 		<<elseif $rng4 lte 80>>
-		spot a gang of boisterous street urchins.
-		<br>
-		You hear some shouts as
+			spot a gang of boisterous street urchins.
+			<br>
+			You hear some shouts as
 		<<else>>
-		approach the end of the street.
-		<br>
-		You notice other criminals emerging from their hiding places as
-		<</if>>you swiftly leave the scene.
+			approach the end of the street.
+			<br>
+			You notice other criminals emerging from their hiding places as
+		<</if>>
+		you swiftly leave the scene.
 		<br><br>
 		<<destinationeventend>>
 	<<else>>
@@ -1434,16 +1431,16 @@
 
 	<<if !pcAreArmsBound("both")>>
 		<<if $angel gte 4 and $angelBanish gte 1>>
-			<<link [[Banish the tentacle|Street Tentacle Banish]]>><<angelBanishAction>><</link>><<angelBanishNote>>
+			<<link [[Banish the tentacle|Street Tentacle Banish]]>><<angelBanishUse>><</link>><<angelBanishNote>>
 			<br>
 		<</if>>
 
 		<<if $phase is 0>>
-			<<link [[Hold on to your clothes|Street Tentacle Hold]]>><</link>><<physiquedifficulty 5000 16000>>
+			<<link [[Hold on to your clothes|Street Tentacle Hold]]>><</link>><<physiquedifficulty 5000 15000>>
 			<br>
 		<</if>>
 
-		<<link [[Grab the tentacle|Street Tentacle Grab]]>><</link>><<physiquedifficulty 5000 16000>><<deviant1>>
+		<<link [[Grab the tentacle|Street Tentacle Grab]]>><</link>><<physiquedifficulty 5000 15000>><<deviant1>>
 		<br>
 
 		<<if ($phase isnot 1) and hasSexStat("deviancy", 3)>>
@@ -2010,7 +2007,7 @@
 <</widget>>
 
 <<widget "streetexoffer2">>
-	<<wearProp "paper" 0 "note">>
+	<<wearProp "paper note">>
 	<<set $exhibitionismrun to "danube">><<set $exhibitionismrunon to 1>>
 
 	You are walking down the street. A hooded figure walks by you going in the opposite direction.
@@ -2029,7 +2026,7 @@
 <</widget>>
 
 <<widget "streetexoffer3">>
-
+	<<wearProp "paper note">>
 	<<set $exhibitionismrun to "starfish">><<set $exhibitionismrunon to 2>>
 
 	You are walking down the street, approaching a corner. A hooded figure rounds the corner and approaches you.
@@ -2048,7 +2045,7 @@
 <</widget>>
 
 <<widget "streetexoffer4">>
-	<<wearProp "paper" 0 "note">>
+	<<wearProp "paper note">>
 	<<set $exhibitionismrun to "cliff">><<set $exhibitionismrunon to 3>>
 
 	You are walking down the street when a familiar hooded figure turns the corner and starts walking towards you.
@@ -2166,9 +2163,10 @@
 <</widget>>
 
 <<widget "streetorphancookie">>
-	<<generatey1>><<generate2>><<person1>><<rng>>
+	<<generateyv1>><<generate2>><<person1>><<rng>>
 	You smell freshly baked pastries, and hear a knock on a nearby door. You recognise a <<personsimple>> from the orphanage standing in front of one of the houses while carrying a box full of cookies.
 	<br><br>
+
 
 	<<if $loft_river>>
 		You expect that <<he>> made good use of the installations in the loft to bake them.
@@ -2873,78 +2871,78 @@
 
 	<<rng>>
 	<<if $rng gte 91>>
-	<<wearProp "wallet" 0 "empty">>
+	<<wearProp "wallet empty">>
 		You don't find much, just some loose change worth <<moneyGainDisplay 2 true true>>.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
 
 	<<elseif $rng gte 81>>
-		<<wearProp "wallet" 0 "empty">>
+		<<wearProp "wallet empty">>
 		You don't find much, just some loose change worth <<moneyGainDisplay 3 true true>>.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
 
 	<<elseif $rng gte 71>>
-		<<wearProp "wallet" 0 "money">>
+		<<wearProp "wallet">>
 		You find <<moneyGainDisplay 8 true true>> hidden in a secret compartment.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
 
 	<<elseif $rng gte 61>>
 	<<wearProp "keycard" "black">>
 		You find a black credit card.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<set $blackmoney += 8>><<crimeUp 8 "petty">><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 8>><<crimeUp 8 "petty">><</link>><<crime "petty">>
 
 	<<elseif $rng gte 51>>
-		<<wearProp "wallet" 0 "money">>
+		<<wearProp "wallet">>
 		You find <<moneyGainDisplay 15 true true>> tucked away.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
 
 	<<elseif $rng gte 41>>
 		<<wearProp "keycard" "silver">>
 		You find a silver credit card.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<set $blackmoney += 15>><<crimeUp 15 "petty">><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 15>><<crimeUp 15 "petty">><</link>><<crime "petty">>
 
 	<<elseif $rng gte 31>>
-		<<wearProp "wallet" 0 "money">>
+		<<wearProp "wallet">>
 		You find <<moneyGainDisplay 25 true true>> tucked away.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
 
 	<<elseif $rng gte 21>>
 		<<wearProp "keycard" "gold">>
 		You find a gold credit card.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<set $blackmoney += 25>><<crimeUp 25 "petty">><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 25>><<crimeUp 25 "petty">><</link>><<crime "petty">>
 
 	<<elseif $rng gte 11>>
 		<<wearProp "keycard" "silver">>
 		You find a platinum credit card.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<set $blackmoney += 50>><<crimeUp 50 "petty">><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<set $blackmoney += 50>><<crimeUp 50 "petty">><</link>><<crime "petty">>
 
 	<<else>>
-		<<wearProp "wallet" 0 "empty">>
+		<<wearProp "wallet empty">>
 		You find <<moneyGainDisplay 50 true true>> tucked away.
 		<br><br>
 
-		<<link [[Take it|Connudatus Street]]>><<handheldon>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
+		<<link [[Take it|Connudatus Street]]>><<crimeUp `_money_gain / 100` "petty">><<money _money_gain>><</link>><<crime "petty">>
 
 	<</if>>
 	<br>
-	<<link [[Leave it|Connudatus Street]]>><<handheldon>><</link>>
+	<<link [[Leave it|Connudatus Street]]>><</link>>
 	<br>
 <</widget>>
 
@@ -2978,15 +2976,18 @@
 			You pass by a stall where a beggar seems to be asking for alms. The seller, however, is not having it, finally screaming for the beggar to get lost.<<gstress>><<stress 6>>
 
 		<<case 5>>
+			<<wearProp "apple slice">>
 			You stop by a stall to get a look at the products. There is a plate nearby with some apple slices as free samples. You take one. It's sweet and savoury.<<lstress>><<stress -6>>
 
 		<<case 6>>
 			You stop by a stall to get a look at the products. Suddenly, you feel someone grabbing your ass. You turn to say something, but the person has already gone.<<gstress>><<stress 6>>
 
 		<<case 7>>
-			As you walk around the market, you notice a bank note on the ground. You bend over and pick it up. It's a <<printmoney 500>> bill.<<lstress>><<stress -6>>
+			<<wearProp "cash">>
+			As you walk around the market, you notice a bank note on the ground. You bend over and pick it up. It's a <<printmoney 500>> bill.<<lstress>><<stress -6>><<money 500>>
 
 		<<case 8>>
+			<<wearProp "cash">>
 			As you walk around the market, you notice a bank note on the ground. You bend over to pick it up, only to realise that it is fake. Someone slaps your ass, and you turn to spot the culprit running away.<<gstress>><<stress 6>>
 
 		<<case 9>>
@@ -3006,7 +3007,7 @@
 		<br><br>
 
 		<<if $money gte 15000>>
-			<<tendingicon "potato">><<link [[Buy some vegetables and send them to the loft (£150)|Connudatus Street]]>><<money -15000>><<hope 1>><<famegood 1>><<pass 15>><<endevent>><</link>><<ghope>>
+			<<foodstufficon "potato">><<link [[Buy some vegetables and send them to the loft (£150)|Connudatus Street]]>><<money -15000>><<hope 1>><<famegood 1>><<pass 15>><<endevent>><</link>><<ghope>>
 
 		<<else>>
 			<span class="blue">You can't afford to buy it.</span>
@@ -3021,23 +3022,19 @@
 
 				<<if $money gte 100000>>
 					<<gardenicon "fertiliser">><<link [[Buy it (£1000)|Connudatus Street]]>><<set $fertiliser.current += 1>><<money -100000>><<pass 15>><<endevent>><</link>>
-
 				<<else>>
-					<<ind>><span class="blue">You can't afford to buy it.</span>
-
+					<span class="blue">You can't afford to buy it.</span>
 				<</if>>
 
 			<<case 2>>
-				<<wearProp "milk bottle" 0 "milk">>
+				<<wearProp "bottle of milk">>
 				You stop by a stall selling various farm products. To the side, you notice a few bottles of milk. Seems you can buy 3 bottles for <<printmoney 10000>>.
 				<br><br>
 
 				<<if $money gte 10000>>
-					<<tendingicon "milk">><<link [[Buy it (£100)|Connudatus Street]]>><<tending_give bottle_of_milk 3>><<money -10000>><<pass 15>><<endevent>><</link>>
-
+					<<foodstufficon "bottle_of_milk">><<link [[Buy it (£100)|Connudatus Street]]>><<tending_give bottle_of_milk 3>><<money -10000>><<pass 15>><<endevent>><</link>>
 				<<else>>
-					<<ind>><span class="blue">You can't afford to buy it.</span>
-
+					<span class="blue">You can't afford to buy it.</span>
 				<</if>>
 
 			<<case 3>>
@@ -3049,20 +3046,20 @@
 				<<crimeicon "mark">><<link [[Steal the change|Connudatus Street]]>><<crimeUp 1 "petty">><<money _change>><<pass 15>><<endevent>><</link>><<crime "petty">>
 
 			<<case 4>>
-				You notice a stall with some eggs on display and a "be back soon" sign on the table. You could probably steal some eggs if you wanted.
+				You notice a stall with some eggs on display and a 'Be back soon' sign on the table. You could probably steal some eggs if you wanted.
 				<br><br>
 
-				<<tendingicon setup.plants["chicken_egg"].icon>><<link [[Steal the eggs|Connudatus Street]]>><<crimeUp 1 "petty">><<tending_give chicken_egg 3>><<transform fox 1>><<pass 15>><<endevent>><</link>><<crime "petty">>
+				<<foodstufficon "chicken_egg">><<link [[Steal the eggs|Connudatus Street]]>><<crimeUp 1 "petty">><<tending_give chicken_egg 3>><<transform fox 1>><<pass 15>><<endevent>><</link>><<crime "petty">>
 
 			<<case 5>>
 				You stop by a stall selling various hand made clothes. They are not quite to your taste, but some still catch your attention.
 				<br><br>
 
 				<<if $money gte 500>>
-					<<icon "clothes/straw_hat_acc.png" "infront">><<icon "clothes/straw_hat.png">><<link [[Buy the straw hat (£5)|Connudatus Street]]>><<headwear 17>><<money -500>><<pass 15>><<endevent>><</link>>
+					<<icon "clothes/straw-hat-acc.png" "infront">><<icon "clothes/straw-hat.png">><<link [[Buy the straw hat (£5)|Connudatus Street]]>><<headwear "straw hat">><<money -500>><<pass 15>><<endevent>><</link>>
 					<br>
 
-					<<icon "clothes/patterned_dress_gingham.png" "infront">><<icon "clothes/patterned_dress.png">>
+					<<icon "clothes/patterned-dress-gingham.png" "infront">><<icon "clothes/patterned-dress.png">>
 					<<if setup.clothes.upper[38].reveal lt earSlimeCorruptionClothes()>>
 						<span class="red">The slime in your ear won't allow you to buy the gingham dress.</span>
 						<br>
@@ -3070,22 +3067,25 @@
 						<span class="red">The slime in your ear refuses to allow you to try on or buy the gingham dress as it is only permitting more <<print $earSlime.forcedDressing.type is "f" ? "feminine" : "masculine">> clothing.</span>
 						<br>
 					<<elseif $money gte 1500>>
-						<<link [[Buy the gingham dress (£15)|Connudatus Street]]>><<upperwear 38 "white" 0 "gingham">><<money -1500>><<pass 15>><<endevent>><</link>>
+						<<link [[Buy the gingham dress (£15)|Connudatus Street]]>><<upperwear "patterned dress" "white" 0 "gingham">><<money -1500>><<pass 15>><<endevent>><</link>>
 						<br>
 					<<else>>
 						<span class="blue">You can't afford to buy the gingham dress.</span>
 						<br>
 					<</if>>
 
-					<<icon "clothes/checkered_shirt.png">>
-					<<if setup.clothes.upper[33].reveal lt earSlimeCorruptionClothes()>>
+					<<icon "clothes/checkered-shirt.png">>
+					<<if $worn.lower.outfitSecondary and !$worn.lower.outfitSecondary.includes("split") and !$worn.under_lower.type.includes("covered")>>
+						<span class="red">You can't buy the checkered shirt as removing your outfit would leave you exposed.</span>
+						<br>
+					<<elseif setup.clothes.upper[33].reveal lt earSlimeCorruptionClothes()>>
 						<span class="red">The slime in your ear won't allow you to buy the checkered shirt.</span>
 						<br>
 					<<elseif $earSlime.forcedDressing and $earSlime.forcedDressing.days gt 0 and setup.clothes.upper[33].gender isnot $earSlime.forcedDressing.type and setup.clothes.upper[38].gender isnot 'n'>>
 						<span class="red">The slime in your ear refuses to allow you to try on or buy the checkered shirt as it is only permitting more <<print $earSlime.forcedDressing.type is "f" ? "feminine" : "masculine">> clothing.</span>
 						<br>
 					<<elseif $money gte 3000>>
-						<<link [[Buy the checkered shirt (£30)|Connudatus Street]]>><<upperwear 33>><<money -3000>><<pass 15>><<endevent>><</link>>
+						<<link [[Buy the checkered shirt (£30)|Connudatus Street]]>><<upperwear "checkered shirt">><<money -3000>><<pass 15>><<endevent>><</link>>
 						<br>
 					<<else>>
 						<span class="blue">You can't afford to buy the checkered shirt.</span>
@@ -3094,63 +3094,74 @@
 
 				<<else>>
 					<span class="blue">You can't afford to buy any of it.</span>
-
 				<</if>>
 			<<case 6>>
-				You stop by a stall selling seeds. Several varieties catch your eye.
-				<br><br>
+				<<if ["tomato", "cauliflower", "wheat", "chilli_pepper", "pepper", "spinach"].every(plant => $plants_known.includes(plant))>>
+					You stop by a stall selling various gardening equipment. Nothing catches your eyes at first, but you then notice a single bag of fertiliser hidden under some other products. It's priced at <<printmoney 100000>>.
+					<br><br>
 
-				<<if $money gte 2000>>
-					<<if !$plants_known.includes("tomato")>>
-						<<tendingicon setup.plants["tomato"].icon>><<link [[Buy tomato seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("tomato")>><</link>>
-						<br>
-					<<else>>
-						<span class="blue">You already have tomato seeds.</span>
-						<br>
-					<</if>>
+					<<if $money gte 100000>>
+						<<gardenicon "fertiliser">><<link [[Buy it (£1000)|Connudatus Street]]>><<set $fertiliser.current += 1>><<money -100000>><<pass 15>><<endevent>><</link>>
 
-					<<if !$plants_known.includes("cauliflower")>>
-						<<tendingicon setup.plants["cauliflower"].icon>><<link [[Buy cauliflower seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("cauliflower")>><</link>>
-						<br>
 					<<else>>
-						<span class="blue">You already have cauliflower seeds.</span>
-						<br>
-					<</if>>
-
-					<<if !$plants_known.includes("wheat")>>
-						<<tendingicon setup.plants["wheat"].icon>><<link [[Buy wheat seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("wheat")>><</link>>
-						<br>
-					<<else>>
-						<span class="blue">You already have wheat seeds.</span>
-						<br>
-					<</if>>
-
-					<<if !$plants_known.includes("chilli_pepper")>>
-						<<tendingicon setup.plants["chilli_pepper"].icon>><<link [[Buy chilli pepper seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("chilli_pepper")>><</link>>
-						<br>
-					<<else>>
-						<span class="blue">You already have chilli pepper seeds.</span>
-						<br>
-					<</if>>
-
-					<<if !$plants_known.includes("pepper")>>
-						<<tendingicon setup.plants["pepper"].icon>><<link [[Buy pepper seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("pepper")>><</link>>
-						<br>
-					<<else>>
-						<span class="blue">You already have pepper seeds.</span>
-						<br>
-					<</if>>
-
-					<<if !$plants_known.includes("spinach")>>
-						<<tendingicon setup.plants["spinach"].icon>><<link [[Buy spinach seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("spinach")>><</link>>
-						<br>
-					<<else>>
-						<span class="blue">You already have spinach seeds.</span>
-						<br>
+						<span class="blue">You can't afford to buy it.</span>
 					<</if>>
 				<<else>>
-					<<ind>><span class="blue">You can't afford to buy any.</span>
+					You stop by a stall selling seeds at a big discount. People are gathered around it, buying the last remaining packets before they're gone. Several varieties catch your eye, but <span class="blue">there's only enough time to grab one</span>.
 					<br><br>
+
+					<<if $money gte 2000>>
+						<<if !$plants_known.includes("tomato")>>
+							<<foodstufficon "tomato">><<link [[Buy tomato seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("tomato")>><</link>>
+							<br>
+						<<else>>
+							<span class="blue">You already have tomato seeds.</span>
+							<br>
+						<</if>>
+
+						<<if !$plants_known.includes("cauliflower")>>
+							<<foodstufficon "cauliflower">><<link [[Buy cauliflower seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("cauliflower")>><</link>>
+							<br>
+						<<else>>
+							<span class="blue">You already have cauliflower seeds.</span>
+							<br>
+						<</if>>
+
+						<<if !$plants_known.includes("wheat")>>
+							<<foodstufficon "wheat">><<link [[Buy wheat seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("wheat")>><</link>>
+							<br>
+						<<else>>
+							<span class="blue">You already have wheat seeds.</span>
+							<br>
+						<</if>>
+
+						<<if !$plants_known.includes("chilli_pepper")>>
+							<<foodstufficon "chilli_pepper">><<link [[Buy chilli pepper seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("chilli_pepper")>><</link>>
+							<br>
+						<<else>>
+							<span class="blue">You already have chilli pepper seeds.</span>
+							<br>
+						<</if>>
+
+						<<if !$plants_known.includes("pepper")>>
+							<<foodstufficon "pepper">><<link [[Buy pepper seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("pepper")>><</link>>
+							<br>
+						<<else>>
+							<span class="blue">You already have pepper seeds.</span>
+							<br>
+						<</if>>
+
+						<<if !$plants_known.includes("spinach")>>
+							<<foodstufficon "spinach">><<link [[Buy spinach seeds (£20)|Connudatus Street]]>><<money -2000>><<set $plants_known.push("spinach")>><</link>>
+							<br>
+						<<else>>
+							<span class="blue">You already have spinach seeds.</span>
+							<br>
+						<</if>>
+					<<else>>
+						<span class="blue">You can't afford to buy any.</span>
+						<br>
+					<</if>>
 				<</if>>
 			<<case 7>>
 				You encounter a bookseller hawking thick tomes. One in particular catches your eye, an oversized cookbook with a glossy cover. <span class="gold">You could teach yourself recipes from it in the orphanage kitchen.</span><br><br>
@@ -3173,8 +3184,8 @@
 					<<link [[Buy 6 bananas (£5)|Connudatus Street]]>><<money -500>><<tending_give banana 6>><</link>>
 					<br>
 				<<else>>
-					You can't afford to buy any.
-					<br><br>
+					<span class="blue">You can't afford to buy any.</span>
+					<br>
 				<</if>>
 				<<if $money gte 1000>>
 					<<link [[Buy 12 bananas (£10)|Connudatus Street]]>><<money -1000>><<tending_give banana 12>><</link>>
@@ -3188,7 +3199,6 @@
 					<<link [[Buy 24 bananas (£20)|Connudatus Street]]>><<money -2000>><<tending_give banana 24>><</link>>
 					<br>
 				<</if>>
-				<br>
 
 		<</switch>>
 
@@ -3258,6 +3268,8 @@
 		<<wraithEventStreet>>
 	<<elseif $kylarwatched is 1>>
 		<<kylarwatched>>
+	<<elseif modLISelected("Poppy") and $poppyDismissalWatched is 1>>
+		<<poppyDismissalWatched>>
 	<<elseif $kylar_manor_secret is 2>>
 		<<monstrance_accost>>
 	<<elseif $averyseen isnot 1 and !$avery_injury and $exposed lte 0 and Time.dayState is "day" and C.npc.Avery.state isnot "dismissed" and Time.weekDay is 7 and ($scienceproject is "won" or $scienceproject is "done" or C.npc.Avery.init is 1) and !$averydate>>
@@ -3335,7 +3347,6 @@
 			<<addevent "streetMoneyProposition" 1>>
 			<<addevent "streetClothingTorn" 0.5>>
 			<<addevent "streetFlirt" 1>>
-			<<addevent "streetFollowDogAlley" 1>>
 			<<addevent "streetBreastGlance" 1>>
 			<<addevent "streetWaterBalloon" 0.5>>
 
@@ -3357,10 +3368,20 @@
 				<<addevent "streetGroupStalk" 1>> /* Group stalking encounter, much more likely at night */
 				<<addevent "streetProstitutionProposition" 0.5>>
 				<<addevent "streetbox" 1>>
-				<<addevent "streetNightDogAttack" 0.2>>
-				<<addevent "streetNightTowerCreature" 0.2>>
 				<<addevent "streetlurker" 0.2>>
 				<<addevent "streetkidnap" 0.5>>
+				<<if $stray_happiness gte random(1, 100)>>
+					<<addevent "streetFollowDogAlley" 1>>
+				<<else>>
+					<<addevent "streetNightDogAttack" 0.5>>
+				<</if>>
+				<<if !$daily.streetNightMonster>>
+					<<if $beauty gte ($beautymax / 7) * 4>>
+						<<addevent "streetNightMonster" 0.4>>
+					<<elseif $beauty gte ($beautymax / 7) * 2>>
+						<<addevent "streetNightMonster" 0.2>>
+					<</if>>
+				<</if>>
 			<<else>>
 				/* Events previously in eventsstreetday */
 				<<addevent "streetGroupStalk" 0.1>>
@@ -3368,11 +3389,10 @@
 				<<addevent "streetbox" 0.5>>
 				<<addevent "streetbullies" 1>>
 				<<addevent "streetdog" 1>>
+				<<addevent "streetFollowDogAlley" 1>>
 				<<addevent "streetfriendly1" 1>>
-				<<addevent "streetfootbridge" 1>>
 				<<addevent "streetstray" 1>>
 				<<addevent "shadyFan" 0.6>>
-				<<addevent "streetcrossing" 1>>
 
 				<<bodywritingExposureCheck true>>
 				<<if _bodywriting_exposed is 1>>
@@ -3394,6 +3414,8 @@
 				<</if>>
 
 				<<if $location isnot "alley" and $bus isnot "park">>
+					<<addevent "streetfootbridge" 1>>
+					<<addevent "streetcrossing" 1>>
 					<<addevent "street_alley_detour" 0.5>>
 				<</if>>
 
@@ -3412,11 +3434,23 @@
 					<</addinlineevent>>
 				<</if>>
 
-				<<getTransformParts true true true>>
-				<<if _tfParts.includesAny("wings", "ears", "tail")>>
+				<<if getTransformParts(["ears", "wings", "tail"])>>
 					<<addevent "streettfpicture" 1>>
 				<</if>>
 			<</if>>
+			<<if modLISelected("Poppy") and C.npc.Poppy and C.npc.Poppy.init is 1>>
+				<<run poppySchedule()>>
+				<<if Time.dayState is "day" and !Weather.isFrozen("lake") and Weather.precipitation isnot "rain" and Weather.precipitation isnot "snow" and !$weekly.poppyStreetBadDate and (T.poppyStatus.includes("LowPatience") or T.poppyAnger gt 0)>>
+					<<addevent "poppyStreetBadDate" 0.9>>
+				<</if>>
+				<<if C.npc.Poppy and C.npc.Poppy.init is 1 and Time.hour gte 21 and ["domus", "danube", "high", "wolf", "nightingale", "cliff", "starfish"].includes($bus) and !T.poppyStatus.includes("LowPatience")>>
+					<<addevent "poppyStreetNecklace" 0.2>>
+				<</if>>
+				<<if $poppyDismissalFired and !$poppySeen.includes("dismissal_glare")>>
+					<<addevent "poppyDismissalGlare" 0.6>>
+				<</if>>
+			<</if>>	
+			
 			/* end time differences */
 
 			<<if $worn.feet.type.includes("heels") and currentSkillValue("feetskill") lt $worn.feet.reveal>>
@@ -3536,15 +3570,15 @@
 		<<He>> reaches towards the <<= _skirtExposed ? "hem" : "waistband">> of your <<bottoms>>.
 		<br><br>
 	<</if>>
-<<link [[Remain still|High Public Pants Down Still]]>><<trauma 6>><<stress 6>><<sub 1>><<npcincr Whitney dom 1>><</link>><<gstress>><<gtrauma>><<gdom>>
-<br>
-<<if pcAreArmsBound("both")>>
-	<span class="blue">With your arms bound, you can't do anything to stop <<him>>!</span>
+	<<link [[Remain still|High Public Pants Down Still]]>><<trauma 6>><<stress 6>><<sub 1>><<npcincr Whitney dom 1>><</link>><<gstress>><<gtrauma>><<gdom>>
 	<br>
-<<else>>
-	<<link [[Push Whitney's hands away|High Public Pants Down Push]]>><<set $fightstart to 1>><<def 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
-	<br>
-<</if>>
+	<<if pcAreArmsBound("both")>>
+		<span class="blue">With your arms bound, you can't do anything to stop <<him>>!</span>
+		<br>
+	<<else>>
+		<<link [[Push Whitney's hands away|High Public Pants Down Push]]>><<set $fightstart to 1>><<def 1>><<npcincr Whitney dom -1>><</link>><<ldom>>
+		<br>
+	<</if>>
 <</widget>>
 
 <<widget "whitneyShoppingCentre">>
@@ -3804,6 +3838,7 @@
 				<span class="blue">Something is watching you.</span>
 			<</if>>
 		<</if>>
+		<<if modLISelected("Poppy") and C.npc.Poppy and C.npc.Poppy.init is 1>><<poppyDismissalStreetCheck>><</if>>
 		<<wTimerProgress>>
 	<</if>>
 <</widget>>
@@ -4042,7 +4077,7 @@
 <</widget>>
 
 <<widget "streettfpicture">>
-	<<generate1>><<person1>>
+	<<generate1>><<person1>><<set _tfParts to getTransformParts(["ears", "wings", "tail"])>>
 	A <<person>> approaches you, holding a camera. "Sorry to bother you, but that has to be the best costume I've ever seen. Do you mind if I take a few pictures?"
 	<br><br>
 
@@ -4050,10 +4085,10 @@
 	<<if $harpy gte 6 and _tfParts.includes("wings") and _tfParts.includes("tail")>>
 		<<set $phase2 to 0>>
 		wings and tail.
-	<<elseif _tfParts.includes("wings") and (random(1, 2) is 1 or _tfParts.length is 1)>>
+	<<elseif _tfParts.includes("wings") and (random(1, 2) is 1 or _tfParts.filter(part => part !== "wings").length is 0)>>
 		<<set $phase2 to 1>>
 		wings.
-	<<else>>
+	<<elseif _tfParts.includes("ears") or _tfParts.includes("tail")>>
 		<<set $phase2 to 2>>
 		<<set _earsandtail to []>>
 		<<if _tfParts.includes("ears")>>
@@ -4063,6 +4098,8 @@
 			<<run _earsandtail.push("tail")>>
 		<</if>>
 		<<print formatList(_earsandtail)>>.
+	<<else>> /* Fallback, just in case */
+		inhuman features.
 	<</if>>
 	<br><br>
 

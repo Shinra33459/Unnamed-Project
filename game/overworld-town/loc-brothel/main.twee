@@ -108,10 +108,10 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 		<br>
 	<</if>>
 	<<if $weekly.leightonDanceRefused and $headblackmailed is 1 and $pillory.tenant.special.name isnot "Leighton">>
-		<<icon "adultclothing.png">><<link [[Dressing room (0:01)|Leighton Club Ignore]]>><<pass 1>><<set $weekly.leightonDanceRefused to false>><</link>>
+		<<icon "adult-clothing.png">><<link [[Dressing room (0:01)|Leighton Club Ignore]]>><<pass 1>><<set $weekly.leightonDanceRefused to false>><</link>>
 		<br>
 	<<else>>
-		<<icon "adultclothing.png">><<link [[Dressing room (0:01)|Brothel Dressing Room]]>><<pass 1>><</link>>
+		<<icon "adult-clothing.png">><<link [[Dressing room (0:01)|Brothel Dressing Room]]>><<pass 1>><</link>>
 		<br>
 	<</if>>
 	<<stairsicon "down">><<link [[Basement (0:01)|Brothel Basement]]>><<pass 1>><</link>>
@@ -120,7 +120,7 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 	<br>
 <</if>>
 
-<<officeicon>><<link [[Briar's office (0:03)|Briar's Office]]>><<pass 3>><</link>>
+<<officeicon>><<link [[Briar's office (0:03)|Briar's Office]]>><<set $phase to 0>><<pass 3>><</link>>
 <br><br>
 	<<if $exposed lte 0>>
 		<<harvesticon>><<link [[Leave (0:01)|Harvest Street]]>><<pass 1>><</link>>
@@ -167,7 +167,7 @@ You are in the brothel's dressing room. There are a few mirrors, currently occup
 	<<unbind>>
 <</if>>
 
-<<if pcAreArmsBound("any") or $feetuse is "bound">>
+<<if breakableSoftBinding()>>
 	<<undobindingsicon>><<link [[Undo your bindings (0:10)|Brothel Dressing Room]]>><<set $unbind to 1>><<pass 10>><</link>>
 	<br><br>
 <</if>>
@@ -279,7 +279,7 @@ You are in the brothel's dressing room. There are a few mirrors, currently occup
 :: Brothel Mirror
 <<effects>>
 
-<<icon "adultclothing.png">><<link [[Step away|Brothel Dressing Room]]>><<handheldon>><<unset $mirrorMenu>><<unset $bodywritingSet>><<postMirror>><</link>>
+<<icon "adult-clothing.png">><<link [[Step away|Brothel Dressing Room]]>><<unset $mirrorMenu>><<unset $bodywritingSet>><<postMirror>><</link>>
 <br>
 
 <<mirror>>
@@ -311,7 +311,7 @@ Briar's goon keeps a close eye on you as you peek out the front exit. The street
 	<<set $daily.ex.brothel to 1>>
 	<<exhibitionism3>>
 <<else>>
-<br><br>
+	<br><br>
 <</if>>
 
 <<link [[Next|Harvest Street]]>><<set $eventskip to 1>><</link>>
@@ -326,7 +326,7 @@ Briar's goon keeps a close eye on you as you peek out the front exit. The street
 	<<set $daily.ex.brothel to 1>>
 	<<exhibitionism4>>
 <<else>>
-<br><br>
+	<br><br>
 <</if>>
 
 <<link [[Next|Harvest Street]]>><<set $eventskip to 1>><</link>>
@@ -470,7 +470,8 @@ Briar's goon keeps a close eye on you as you peek out the front exit. The street
 	<<elseif hasSexStat("promiscuity", 3)>>
 		<<link [[Private room|Brothel Private]]>><<dance_private_init>><</link>><<promiscuous3>>
 	<<elseif $uncomfortable.prostituting is false>>
-		<<link [[Private room|Brothel Private]]>><<dance_private_init>><<set $desperateaction to 1>><</link>><<promiscuous3>>
+		<<set _desperateaction to 1>>
+		<<link [[Private room|Brothel Private]]>><<dance_private_init>><<set $desperateaction to _desperateaction>><</link>><<promiscuous3>>
 		<br>
 	<</if>>
 <<elseif $danceevent is "rape">>
@@ -802,62 +803,63 @@ You've made <<moneyGain 2000>>.
 
 <<set $tipmod to Math.round((3 + (fameTotal() / 2000)) * (1 + (0.4 * (C.npc.Briar.love / 100))))>><<tipset>>
 
-<<promiscuity3>>You lead the <<person>> into one of the back rooms. It's well-lit compared to the main room, it takes a moment for your eyes to adjust. There's a small stage with a pole in one corner. There's also a sofa, contoured to allow an extensive range of positions.
-<br><br>
+	<<promiscuity3>>
+	You lead the <<person>> into one of the back rooms. It's well-lit compared to the main room, it takes a moment for your eyes to adjust. There's a small stage with a pole in one corner. There's also a sofa, contoured to allow an extensive range of positions.
+	<br><br>
 
 	<<if $rng gte 71>>
-Before you can turn around, the <<person>> has <<his>> hands wrapped around your waist and <<his>> mouth nuzzled against your neck.
-<br><br>
+		Before you can turn around, the <<person>> has <<his>> hands wrapped around your waist and <<his>> mouth nuzzled against your neck.
+		<br><br>
 
-	<<link [[Pull away|Brothel Private]]>><<set $phase to 1>><</link>>
-	<br>
-	<<link [[Try to negotiate while being fondled|Brothel Private]]>><<arousal 300 "genitals">><<arousal 300 "breasts">><<set $phase to 2>><<submission 5>><</link>><<garousal>>
-	<br>
+		<<link [[Pull away|Brothel Private]]>><<set $phase to 1>><</link>>
+		<br>
+		<<link [[Try to negotiate while being fondled|Brothel Private]]>><<arousal 300 "genitals">><<arousal 300 "breasts">><<set $phase to 2>><<submission 5>><</link>><<garousal>>
+		<br>
 
 	<<else>>
-The <<person>> stands sheepishly by the door, clearly waiting for you to initiate things.
-<br><br>
-<<rng>>
+		The <<person>> stands sheepishly by the door, clearly waiting for you to initiate things.
+		<br><br>
+		<<rng>>
 
 		<<if $tipreaction is "low">>
-You take <<him>> by the hands and sit on the sofa. You negotiate a price of <<printmoney $tip>>, less than you'd hoped.
-<br><br>
-
-"I know it's not much," <<he>> exclaims, "but it's all I can afford and still eat tomorrow." <<He>> looks down at <<his>> feet.
-<br><br>
-
-			<<if $rng gte 51>>
-			"Also, if it's okay, I don't want any touching. Well, maybe some, but mainly I'd just like to talk."
+			You take <<him>> by the hands and sit on the sofa. You negotiate a price of <<printmoney $tip>>, less than you'd hoped.
 			<br><br>
 
-			<<link [[Accept (0:30)|Brothel Private]]>><<set $phase to 3>><<pass 30>><</link>>
-			<br>
-			<<link [[Refuse|Brothel Private]]>><<set $phase to 4>><</link>>
-			<br>
+			"I know it's not much," <<he>> exclaims, "but it's all I can afford and still eat tomorrow." <<He>> looks down at <<his>> feet.
+			<br><br>
+
+			<<if $rng gte 51>>
+				"Also, if it's okay, I don't want any touching. Well, maybe some, but mainly I'd just like to talk."
+				<br><br>
+
+				<<link [[Accept (0:30)|Brothel Private]]>><<set $phase to 3>><<pass 30>><</link>>
+				<br>
+				<<link [[Refuse|Brothel Private]]>><<set $phase to 4>><</link>>
+				<br>
 			<<else>>
-			<<link [[Accept (0:30)|Brothel Private Sex]]>><<set $consensual to 1>><<pass 30>><<set $sexstart to 1>><</link>>
-			<br>
-			<<link [[Refuse|Brothel Private]]>><<set $phase to 4>><</link>>
-			<br>
+				<<link [[Accept (0:30)|Brothel Private Sex]]>><<set $consensual to 1>><<pass 30>><<set $sexstart to 1>><</link>>
+				<br>
+				<<link [[Refuse|Brothel Private]]>><<set $phase to 4>><</link>>
+				<br>
 			<</if>>
 
 		<<elseif $tipreaction is "mid">>
-You take <<him>> by the hands and sit on the sofa. You negotiate a price of <<printmoney $tip>>, which seems reasonable.
-<br><br>
-
-			<<if $rng gte 51>>
-			<<He>> speaks softly, "If it's okay, I don't want any touching. Well, maybe some, but mainly I'd just like to talk."
+			You take <<him>> by the hands and sit on the sofa. You negotiate a price of <<printmoney $tip>>, which seems reasonable.
 			<br><br>
 
-			<<link [[Accept (0:30)|Brothel Private]]>><<set $phase to 3>><<pass 30>><</link>>
-			<br>
-			<<link [[Refuse|Brothel Private]]>><<set $phase to 4>><</link>>
-			<br>
+			<<if $rng gte 51>>
+				<<He>> speaks softly, "If it's okay, I don't want any touching. Well, maybe some, but mainly I'd just like to talk."
+				<br><br>
+
+				<<link [[Accept (0:30)|Brothel Private]]>><<set $phase to 3>><<pass 30>><</link>>
+				<br>
+				<<link [[Refuse|Brothel Private]]>><<set $phase to 4>><</link>>
+				<br>
 			<<else>>
-			<<link [[Accept (0:30)|Brothel Private Sex]]>><<pass 30>><<set $consensual to 1>><<set $sexstart to 1>><</link>>
-			<br>
-			<<link [[Refuse|Brothel Private]]>><<set $phase to 4>><</link>>
-			<br>
+				<<link [[Accept (0:30)|Brothel Private Sex]]>><<pass 30>><<set $consensual to 1>><<set $sexstart to 1>><</link>>
+				<br>
+				<<link [[Refuse|Brothel Private]]>><<set $phase to 4>><</link>>
+				<br>
 			<</if>>
 		<</if>>
 
@@ -865,15 +867,15 @@ You take <<him>> by the hands and sit on the sofa. You negotiate a price of <<pr
 
 <<elseif $phase is 1>>
 	<<if $rng gte 21>>
-	You pull away from the <<person>>. <<He>> seems frustrated, but it can't be helped.
-	<<set $enemyanger += 20>>
+		You pull away from the <<person>>. <<He>> seems frustrated, but it can't be helped.
+		<<set $enemyanger += 20>>
 
 		<<if $tipreaction is "low">>
-	You negotiate a price of <<printmoney $tip>>, less than you'd hoped.
-	<br><br>
+			You negotiate a price of <<printmoney $tip>>, less than you'd hoped.
+			<br><br>
 
-	"You think you're worth more?" <<He>> laughs, "I can pick up sluts like you for free you know. This is charity, this is."
-	<br><br>
+			"You think you're worth more?" <<He>> laughs, "I can pick up sluts like you for free you know. This is charity, this is."
+			<br><br>
 
 			<<link [[Accept (0:30)|Brothel Private Sex]]>><<pass 30>><<set $consensual to 1>><<set $sexstart to 1>><</link>>
 			<br>
@@ -881,8 +883,8 @@ You take <<him>> by the hands and sit on the sofa. You negotiate a price of <<pr
 			<br>
 
 		<<elseif $tipreaction is "mid">>
-	You negotiate a price of <<printmoney $tip>>, which seems reasonable.
-	<br><br>
+			You negotiate a price of <<printmoney $tip>>, which seems reasonable.
+			<br><br>
 
 			<<link [[Accept (0:30)|Brothel Private Sex]]>><<pass 30>><<set $consensual to 1>><<set $sexstart to 1>><</link>>
 			<br>
@@ -892,22 +894,22 @@ You take <<him>> by the hands and sit on the sofa. You negotiate a price of <<pr
 		<</if>>
 
 	<<else>>
-	You try to pull away from the <<his>> intruding hands, but <<he>> grapples your arms with one hand and clamps down on your mouth with the other.
-	<br><br>
-	<<set $enemyanger += 20>>
+		You try to pull away from <<his>> intruding hands, but <<he>> grapples your arms with one hand and clamps down on your mouth with the other.
+		<br><br>
+		<<set $enemyanger += 20>>
 
-	<<link [[Next|Brothel Private Sex]]>><<pass 30>><<set $molestationstart to 1>><</link>>
-	<br>
+		<<link [[Next|Brothel Private Sex]]>><<pass 30>><<set $molestationstart to 1>><</link>>
+		<br>
 
 	<</if>>
 
 <<elseif $phase is 2>>
 	<<if $tipreaction is "low">>
-Despite <<his>> unrelenting pawing, you manage to negotiate a price of <<printmoney $tip>>, less than you'd hoped.
-<br><br>
+		Despite <<his>> unrelenting pawing, you manage to negotiate a price of <<printmoney $tip>>, less than you'd hoped.
+		<br><br>
 	<<elseif $tipreaction is "mid">>
-Despite <<his>> unrelenting pawing, you manage to negotiate a price of <<printmoney $tip>>, which seems reasonable.
-<br><br>
+		Despite <<his>> unrelenting pawing, you manage to negotiate a price of <<printmoney $tip>>, which seems reasonable.
+		<br><br>
 	<</if>>
 
 	<<link [[Accept (0:30)|Brothel Private Sex]]>><<set $consensual to 1>><<pass 30>><<set $sexstart to 1>><</link>>
@@ -916,79 +918,79 @@ Despite <<his>> unrelenting pawing, you manage to negotiate a price of <<printmo
 	<br>
 
 <<elseif $phase is 3>>
-<<He>> rests <<his>> head on your lap and you gently stroke <<his>> hair. <<He>> talks about mundane topics while you lend a sympathetic ear. Despite the banality of the conversation <<he>> becomes tearful at one point, while mentioning how <<he>> doesn't feel able to open up to <<his>> spouse.
-<br><br>
-
-After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks you for you time. <<He>> seems genuinely grateful.
-<br><br>
-<<fameprostitution 1>>
-
-<<clotheson>>
-
-<<link [[Next|Brothel]]>><<money $tip>><<endevent>><</link>>
-
-<<elseif $phase is 4>>
-<<He>> nods, eyes downcast. <<He>> doesn't waste any time leaving the room.
-<br><br>
-
-<<clotheson>>
-
-<<link [[Next|Brothel]]>><<endevent>><</link>>
-
-<<elseif $phase is 5>>
-<<rng>>
-	<<if $rng gte 21>>
-	<<He>> looks at you, as if unsure what to do. Finally, <<he>> says, "You've probably got something contagious anyway," before leaving the room.
+	<<He>> rests <<his>> head on your lap and you gently stroke <<his>> hair. <<He>> talks about mundane topics while you lend a sympathetic ear. Despite the banality of the conversation <<he>> becomes tearful at one point, while mentioning how <<he>> doesn't feel able to open up to <<his>> spouse.
 	<br><br>
 
-<<clotheson>>
+	After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks you for you time. <<He>> seems genuinely grateful.
+	<br><br>
+	<<fameprostitution 1>>
 
-<<link [[Next|Brothel]]>><<endevent>><</link>>
+	<<clotheson>>
+
+	<<link [[Next|Brothel]]>><<money $tip>><<endevent>><</link>>
+
+<<elseif $phase is 4>>
+	<<He>> nods, eyes downcast. <<He>> doesn't waste any time leaving the room.
+	<br><br>
+
+	<<clotheson>>
+
+	<<link [[Next|Brothel]]>><<endevent>><</link>>
+
+<<elseif $phase is 5>>
+	<<rng>>
+	<<if $rng gte 21>>
+		<<He>> looks at you, as if unsure what to do. Finally, <<he>> says, "You've probably got something contagious anyway," before leaving the room.
+		<br><br>
+
+		<<clotheson>>
+
+		<<link [[Next|Brothel]]>><<endevent>><</link>>
 
 	<<else>>
-<<He>> looks at you blankly for a moment, then laughs. "Good one, now get on your knees before I smack you down!" <<He>> assaults you!
-<br><br>
+		<<He>> looks at you blankly for a moment, then laughs. "Good one, now get on your knees before I smack you down!" <<He>> assaults you!
+		<br><br>
 
-<<link [[Next|Brothel Private Sex]]>><<pass 30>><<set $molestationstart to 1>><</link>>
-<br>
+		<<link [[Next|Brothel Private Sex]]>><<pass 30>><<set $molestationstart to 1>><</link>>
+		<br>
 
 	<</if>>
 <</if>>
 
 :: Brothel Private Sex
 <<if $molestationstart is 1>>
-<<set $molestationstart to 0>>
-<<controlloss>>
-<<violence 1>>
-<<neutral 1>>
-<<molested>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
 
-<<maninit>>
+	<<maninit>>
 	<<if $phase is 1>>
-<<set $NPCList[0].lefthand to "arms">>
-<<set $leftarm to "grappled">>
-<<set $rightarm to "grappled">>
-<<hand_gag 0 right>>
+		<<set $NPCList[0].lefthand to "arms">>
+		<<set $leftarm to "grappled">>
+		<<set $rightarm to "grappled">>
+		<<hand_gag 0 right>>
 	<<elseif $phase is 5>>
-<<set $enemyanger += 40>>
+		<<set $enemyanger += 40>>
 	<</if>>
 
 <<elseif $sexstart is 1>>
-<<set $sexstart to 0>>
-<<set $consensual to 1>>
-<<neutral 1>>
+	<<set $sexstart to 0>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
 
-<<maninit>>
-<<set $enemytrust += 40>>
+	<<maninit>>
+	<<set $enemytrust += 40>>
 	<<if $phase is 2>>
-"This better be worth it," <<he>> says.
+		"This better be worth it," <<he>> says.
 	<<else>>
-<<set $enemytrust += 40>>
+		<<set $enemytrust += 40>>
 	<</if>>
 	<<if $phase is 1>>
-"This better be worth it," <<he>> says.
+		"This better be worth it," <<he>> says.
 	<<else>>
-<<set $enemytrust += 40>>
+		<<set $enemytrust += 40>>
 	<</if>>
 
 <</if>>
@@ -1004,7 +1006,7 @@ After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks y
 /* 0.5% (1/200) chance per turn, only when crime is non-zero, when over 6 weeks into game, and gte 3 weeks from last raid*/
 <<if _chance is 13 and crimeSumCurrent() gte 500 and Time.days gte 42 and ((Time.days - $brothel_raid_day) gte 21)>>
 	<span id="next"><<link [[Next|Brothel Raid]]>><</link>></span><<nexttext>>
-<<elseif $enemyarousal lte $enemyarousalmax and $enemyhealth gte 0 and $finish is 0>>
+<<elseif $enemyarousal lt $enemyarousalmax and $enemyhealth gt 0 and $finish is 0>>
 	<span id="next"><<link [[Next|Brothel Private Sex]]>><</link>></span><<nexttext>>
 <<else>>
 	<span id="next"><<link [[Next|Brothel Private Sex Finish]]>><</link>></span><<nexttext>>
@@ -1604,7 +1606,7 @@ You are behind the largest stage in the brothel. This is where the more involved
 			<<if $settings.bestialityEnabled or $per_npc.saddled_steed.monster is "monster">>
 				Your $farm.steed steed awaits you.
 				<br><br>
-				<img class="icon" src="img/ui/gold_star.png"><<link [[Star in show|Brothel Show]]>><</link>>
+				<img class="icon" src="img/ui/star-gold.png"><<link [[Star in show|Brothel Show]]>><</link>>
 				<br>
 			<<else>>
 				The weight of what you've signed yourself up for sinks in, and you start to feel nauseous. <span class="red">You've lost the nerve to perform.</span>
@@ -1618,7 +1620,7 @@ You are behind the largest stage in the brothel. This is where the more involved
 		<span class="red">Current gameplay settings incompatible for the show. NPC setting must allow the option for virginity to be taken to continue.</span>
 		<br>
 	<<else>>
-		<img class="icon" src="img/ui/gold_star.png"><<link [[Star in show|Brothel Show]]>><</link>>
+		<img class="icon" src="img/ui/star-gold.png"><<link [[Star in show|Brothel Show]]>><</link>>
 		<br>
 	<</if>>
 <</if>>
@@ -1917,7 +1919,7 @@ You are in the bathroom at the brothel. There are communal showers for the dance
 You wash until you're squeaky clean.<<wash>><<wearProp "soap">>
 <br><br>
 
-<<skinicon "masturbate">><<link [[Masturbate|Brothel Shower Masturbation]]>><<handheldruined true true>><<set $masturbationstart to 2>><</link>>
+<<skinicon "masturbate">><<link [[Masturbate|Brothel Shower Masturbation]]>><<set $masturbationstart to 2>><</link>>
 <br>
 
 <<getouticon>><<link [[Get out|Brothel Bathroom]]>><<clotheson>><</link>>
@@ -2063,7 +2065,7 @@ Two police officers lead you towards the main part of the brothel. They stop nea
 	<br><br>
 	"If we take you in it's gonna go badly for you," one says. "£_bribe cash would be enough to distract us while we leave you unattended by this door."
 <<else>>
-<br><br>
+	<br><br>
 	"Ha! We've been after you for a while. You're not giving us the slip again."
 	<<set _bribe to 500000>>
 <</if>>
@@ -2084,7 +2086,8 @@ Two police officers lead you towards the main part of the brothel. They stop nea
 		<<link [[Offer your body|Brothel Raid Arrest Sex]]>><<set $sexstart to 1>><<generatePolice 1>><<generatePolice 2>><</link>><<promiscuous3>>
 		<br>
 	<<elseif $uncomfortable.prostituting is false>>
-		<<link [[Reluctantly offer your body|Brothel Raid Arrest Sex]]>><<set $sexstart to 1>><<generatePolice 1>><<generatePolice 2>><<set $desperateaction to 2>><</link>><<promiscuous3>>
+		<<set _desperateaction to 2>>
+		<<link [[Reluctantly offer your body|Brothel Raid Arrest Sex]]>><<set $sexstart to 1>><<generatePolice 1>><<generatePolice 2>><<set $desperateaction to _desperateaction>><</link>><<promiscuous3>>
 		<br>
 	<</if>>
 	<<link [[Get arrested|Brothel Raid Arrest 2]]>><</link>>
@@ -2110,7 +2113,8 @@ Due to the high police presence, you have to wait for things to calm down before
 	<<neutral 1>>
 
 	<<maninit>>
-	<<set $enemytrust += 100>><<promiscuity5>>
+	<<set $enemytrust += 100>>
+	<<promiscuity3>>
 	You smile at them seductively.
 	<br><br>
 	"If you're nice to me and let me go," you say, "I can be very nice to you."
@@ -2774,7 +2778,7 @@ You notice ropes and chains lying on the floor, giving you an anxious feeling.
 	<<if hasSexStat("exhibitionism", 5)>>
 		<<link [[Undress|Brothel Escort Job Undress]]>><<set $phase to 1>><</link>><<exhibitionist5>>
 	<<else>>
-		<<link [[Undress reluctantly|Brothel Escort Job Undress]]>><<set $phase to 0>><</link>><<ggstress>><<ggtrauma>><<stress 12>><<trauma 4>>
+		<<link [[Undress reluctantly|Brothel Escort Job Undress]]>><<stress 12>><<trauma 4>><<set $phase to 0>><</link>><<ggstress>><<gtrauma>>
 	<</if>>
 <<else>>
 	"I see you're already prepared," the <<person2>><<person>> interjects.
@@ -2836,6 +2840,7 @@ You are bound and suspended, unable to move or see. Laughter and lively chatter 
 
 /* <<if $submissive gte 1150>> */
 	<<link [[Be obedient|Brothel Escort Job 2]]>><<set $phase to 2>><<set $brothel_escortjob.sub += 1>><<endevent "phaseless">><</link>><<submissivetext>>
+<br>
 /* <</if>>
 <<if displayDefiantOption(850)>> */
 	<<link [[Be defiant|Brothel Escort Job 2]]>><<set $phase to 3>><<endevent "phaseless">><<wolfDefiant 850>><</link>><<defianttext 850>>

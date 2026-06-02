@@ -535,10 +535,10 @@ function genFourOffsetKeyFrames(duration, minX, maxX, minY, maxY) {
 	const diffY = maxY - minY;
 	const dY = diffY / 2;
 
-	spec.keyframes.push(genKeyFrame(duration, 0 * dX, 0 * dY));
-	spec.keyframes.push(genKeyFrame(duration, 1 * dX, 1 * dY));
-	spec.keyframes.push(genKeyFrame(duration, 2 * dX, 2 * dY));
-	spec.keyframes.push(genKeyFrame(duration, 1 * dX, 1 * dY));
+	spec.keyframes.push(genKeyFrame(duration, 0 * dX, 0 * dY, 0));
+	spec.keyframes.push(genKeyFrame(duration, 1 * dX, 1 * dY, 1));
+	spec.keyframes.push(genKeyFrame(duration, 2 * dX, 2 * dY, 2));
+	spec.keyframes.push(genKeyFrame(duration, 1 * dX, 1 * dY, 3));
 
 	return spec;
 }
@@ -565,10 +565,10 @@ function genFourSkewedKeyFrames(duration, minX, maxX, minY, maxY) {
 	const diffY = maxY - minY;
 	const dY = diffY / 3;
 
-	spec.keyframes.push(genKeyFrame(duration, 0 * dX, 0 * dY));
-	spec.keyframes.push(genKeyFrame(duration, 1 * dX, 1 * dY));
-	spec.keyframes.push(genKeyFrame(duration, 3 * dX, 3 * dY));
-	spec.keyframes.push(genKeyFrame(duration, 2 * dX, 2 * dY));
+	spec.keyframes.push(genKeyFrame(duration, 0 * dX, 0 * dY, 0));
+	spec.keyframes.push(genKeyFrame(duration, 1 * dX, 1 * dY, 1));
+	spec.keyframes.push(genKeyFrame(duration, 3 * dX, 3 * dY, 2));
+	spec.keyframes.push(genKeyFrame(duration, 2 * dX, 2 * dY, 3));
 
 	return spec;
 }
@@ -578,11 +578,12 @@ window.genFourSkewedKeyFrames = genFourSkewedKeyFrames;
  * @param {number} duration
  * @param {number} dx
  * @param {number} dy
+ * @param {number} [frame] sprite-sheet column index; defaults to 0
  * @returns {KeyframeSpec}
  */
-function genKeyFrame(duration, dx, dy) {
+function genKeyFrame(duration, dx, dy, frame = 0) {
 	return {
-		frame: 0,
+		frame,
 		duration,
 		dx,
 		dy,

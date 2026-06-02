@@ -404,6 +404,17 @@ function endPlayerPregnancy(birthLocation, location) {
 		}
 	}
 
+	// Poppy post-birth cleanup: clear reveal/test flags after the PC gives birth to Poppy's baby.
+	if (f0.father === "Poppy") {
+		delete C.npc.Poppy.pregnancy.pcKnowledge;
+		delete C.npc.Poppy.pregnancy.test;
+		delete C.npc.Poppy.pregnancy.ultraSound;
+		delete C.npc.Poppy.pregnancy.ultraSoundPics;
+		delete C.npc.Poppy.pregnancy.ultrasoundShown;
+		delete C.npc.Poppy.pregnancy.paternityRequested;
+		delete C.npc.Poppy.pregnancy.sample;
+	}
+
 	let validBirth;
 	if (pregnancy.fetus[0].childId) {
 		giveBirthToChildren("pc", birthLocation, location);
@@ -707,6 +718,23 @@ function endNpcPregnancy(npcName, birthLocation, location) {
 			// Do Nothing
 		} else {
 			delete C.npc.Alex.pregnancy.fee;
+		}
+	}
+
+	// Poppy post-birth cleanup: clear stale reveal/test flags and queue the orphanage handoff when appropriate.
+	if (npcName === "Poppy") {
+		delete C.npc.Poppy.pregnancy.selfKnowledge;
+		delete C.npc.Poppy.pregnancy.pcKnowledge;
+		delete C.npc.Poppy.pregnancy.test;
+		delete C.npc.Poppy.pregnancy.ultraSound;
+		delete C.npc.Poppy.pregnancy.ultraSoundPics;
+		delete C.npc.Poppy.pregnancy.ultrasoundShown;
+		delete C.npc.Poppy.pregnancy.paternityRequested;
+		delete C.npc.Poppy.pregnancy.sample;
+		delete C.npc.Poppy.pregnancy.handoffMet;
+		delete C.npc.Poppy.pregnancy.handoffDay;
+		if (validBirth && location === "home" && (f0.mother === "pc" || f0.father === "pc")) {
+			C.npc.Poppy.pregnancy.handoffDay = Time.days;
 		}
 	}
 

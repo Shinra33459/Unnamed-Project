@@ -128,26 +128,27 @@
 		A <<= $pain gte 100 ? "crying" : $pain gte 40 ? "tearful" : $pain gte 1 ? "frowning" : "cheerful">> <<girl>>
 	<</if>>
 	stares back.
-	<<if ["haunt", "despair"].includes($wraith.state) and $hallucinations gte 1 and ((random(1, 100) is 1) or ($controlled is 0 and random(1, 100) lte 5))>>
+	<<set _wraithMirror to !_wraithMirror && ["haunt", "despair"].includes($wraith.state) and $hallucinations gte 1 and ((random(1, 100) is 1) or ($controlled is 0 and random(1, 100) lte 5))>>
+	<<if _wraithMirror>>
 		<span class="fading">A pale figure stands behind.</span>
-	<</if>>
-	<br><br>
-	<<crimeicon "mark">><<link "Examine how you are seen by others">><<set $mirrorMenu to "appearance">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
-	<br><br>
-	<<if !$simpleMirror>>
-		__Appearance__
-		<br>
-		<<investigateicon>><<link "Examine your body">><<set $mirrorMenu to "skin">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
+		<</if>>
 		<br><br>
-	<</if>>
-	__Hair__
-	<br>
-	<<hairdressericon "hairspray">><<link "Change your hair style">><<set $mirrorMenu to "hair">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
-	<br><br>
-	__Makeup__
-	<br>
-	<<cosmeticsicon>><<link "Apply makeup">><<set $mirrorMenu to "makeup">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
-	<br><br>
+		<<crimeicon "mark">><<link "Examine how you are seen by others">><<set $mirrorMenu to "appearance">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
+		<br><br>
+		<<if !$simpleMirror>>
+			__Appearance__
+			<br>
+			<<investigateicon>><<link "Examine your body">><<set $mirrorMenu to "skin">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
+			<br><br>
+		<</if>>
+		__Hair__
+		<br>
+		<<hairdressericon "hairspray">><<link "Change your hair style">><<set $mirrorMenu to "hair">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
+		<br><br>
+		__Makeup__
+		<br>
+		<<cosmeticsicon>><<link "Apply makeup">><<set $mirrorMenu to "makeup">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
+		<br><br>
 
 	<<if $worn.neck.name is "love locket">>
 		__Locket__
@@ -169,14 +170,14 @@
 	<<if !$simpleMirror>>
 		/* only display the tf menu if there's actually some options that can be changed */
 		<<set $_tfs to setup.transformations.filter(tf => tf.parts?.some(part => tf.level >= part.tfRequired))>>
-		<<set _permtfs to ["angeltf","fallenangeltf","fallenangelplustf","demontf","wolftf","cattf","cowtf","beartf","harpytf","foxtf","bunnytf"]>>
-		<<if $_tfs.length >= 1 or _permtfs.some(tf => V[tf] === 1)>>
+		<<set _permtfs to ["angeltf","fallenangeltf","fallenangelplustf","demontf","wolftf","cattf","cowtf","beartf","waterdragontf","harpytf","foxtf","bunnytf"]>>
+		<<if $_tfs.length >= 1 or _permtfs.some(tf => V[tf] === 1) or $waterdragonCosmeticUnlocked is 1>>
 			__Transformation__
 			<br>
-			/* show the icon of the highest leveled transform with parts unlocked */
+			/* show the icon of the highest levelled transform with parts unlocked */
 			/* assumes maximum of 2 simultaneous transformations */
 			<<if $_tfs.length gt 1>><<set $_icon to ($_tfs[1]?.level gt $_tfs[0].level) ? $_tfs[1].name : $_tfs[0].name>><</if>>
-			<<if !$_icon>><<set $_icon to "angel">><</if>>
+			<<if !$_icon and $waterdragonCosmeticUnlocked is 1>><<set $_icon to "waterdragon">><<elseif !$_icon>><<set $_icon to "angel">><</if>>
 			<<tficon $_icon>>
 			<<link "Examine your inner self">><<set $mirrorMenu to "transformation">><<replace #mirror>><<mirrorDisplay>><</replace>><<numberify "#passages > .passage">><</link>>
 		<<else>>
@@ -493,6 +494,9 @@
 		<</if>>
 		<<if ["ears", "tail"].filter(p => $transformationParts.bear[p] is "disabled").length < 2>>
 			<<run _increaseBoth(`Bear ${"+".repeat(2 - Math.ceil(["ears","tail"].filter(p => $transformationParts.bear[p] is "disabled").length))}`)>>
+		<</if>>
+		<<if ["ears", "tail", "horns"].filter(p => $transformationParts.waterdragon[p] is "disabled").length < 3>>
+			<<run _increaseBoth(`Draconic ${"+".repeat(2 - Math.ceil(["ears", "tail", "horns"].filter(p => $transformationParts.waterdragon[p] is "disabled").length / 2))}`)>>
 		<</if>>
 		<<if ["ears", "tail"].filter(p => $transformationParts.bunny[p] is "disabled").length < 2>>
 			<<run _increaseBoth(`Bunny ${"+".repeat(2 - Math.ceil(["ears","tail"].filter(p => $transformationParts.bunny[p] is "disabled").length))}`)>>
@@ -817,7 +821,7 @@
 <</widget>>
 
 <<widget "mirrorSkin">>
-	<<mirroricon>><<link "Back">><<handheldon>><<updatesidebarimg>><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
+	<<mirroricon>><<link "Back">><<updatesidebarimg>><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 	<br><br>
 
 	<div class="settingsGrid">
@@ -1007,7 +1011,7 @@
 	<<if Skin.Sunscreen.isApplied()>>
 		<br>
 		<<cosmeticsicon "sunscreen">><<link "Remove sunscreen">>
-			<<handheldon>>
+
 			<<set Skin.Sunscreen.autoApply to false>>
 			<<replace #sunscreenDescription>><<sunscreenApply "remove">><</replace>>
 			<<replace #sunscreenLinks>><<sunscreenLinks>><</replace>>
@@ -1016,7 +1020,7 @@
 		<<if Skin.Sunscreen.usesLeft gt 0>>
 			<br>
 			<<cosmeticsicon "sunscreen">><<link "Apply sunscreen">>
-				<<handheldon>>
+
 				<<replace #sunscreenDescription>><<sunscreenApply>><</replace>>
 				<<replace #sunscreenLinks>><<sunscreenLinks>><</replace>>
 			<</link>> <<note `Skin.Sunscreen.usesLeft + ' use'+(Skin.Sunscreen.usesLeft > 1 ? 's' : '') + ' left'`>>
@@ -1692,7 +1696,8 @@
 <</widget>>
 
 <<widget "mirrorHair">>
-	<<mirroricon>><<link "Back">><<handheldon>><<updatesidebarimg>><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
+	<<set _wraithMirror to false>>
+	<<mirroricon>><<link "Back">><<updatesidebarimg>><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 	<<shopClothingFilterSettingsDefault>> /* Due to reusing the traits filtering */
 	<br><br>
 	<div id="hairDescription">
@@ -2147,15 +2152,16 @@
 	<<set _itemType = _args[0]>>
 
 	<<set _items = $makeup.owned[_itemType].filter(x => x.count > 0)>>
+	<<cosmeticsicon _itemType>>	<span class="gold bold"><<= _itemType.toUpperFirst()>>:</span>
 	<<if $makeup.owned[_itemType].length == 0>>
-		<<cosmeticsicon _itemType>> You don't own any _itemType.
+		<br>
+		You don't own any _itemType.
 	<<elseif _items.length == 0>>
+		<br>
 		You ran out of _itemType.
 		<br>
 	<</if>>
 	<<if _items.length != 0 or $makeup[_itemType] != 0>>
-		<<cosmeticsicon _itemType>>
-		<span class="gold bold"><<= _itemType.toUpperFirst()>>:</span>
 		<<if $makeup[_itemType] != 0>>
 			<<capture _itemType>>
 			<span class="no-numberify">
@@ -2182,21 +2188,24 @@
 						`_item.colour <span @class="_itemType+'-'+_item.colour.replace(/ /g, '-')"><span class="colour-sample"></span></span>
 						× _item.count`>>
 						<<button _name>>
-							<<handheldon>>
-							<<if _itemType is "lipstick">>
-								<<set _colour to _item.colour is "dark red" ? "jewel red" : _item.colour is "orange" ? "tangerine" : _item.colour>>
-								<<wearProp _itemType _colour>>
-							<<else>>
-								<<wearProp _itemType>>
-							<</if>>
 							<<if $makeup[_itemType] !== _item.colour>>
 								<<set $makeup[_itemType] = _item.colour>>
 								<<set _item.count -= 1>>
 								<<if _itemType == 'mascara'>>
 									<<set $makeup.mascara_running = 0>>
 								<</if>>
-								<<run Engine.show()>>
 							<</if>>
+							<<set $mirrorMenu to "makeup">>
+							<<replace #mirror>>
+								<<if _itemType is "lipstick">>
+									<<set _colour to _item.colour is "dark red" ? "jewel red" : _item.colour is "orange" ? "tangerine" : _item.colour>>
+									<<wearProp _itemType _colour>>
+								<<else>>
+									<<wearProp _itemType>>
+								<</if>>
+								<<updatesidebarimg>>
+								<<mirrorDisplay>>
+							<</replace>>
 						<</button>>
 					<</capture>>
 				</span>
@@ -2362,8 +2371,11 @@
 						<span class="no-numberify">
 							<<link "Remove">>
 								<<set $makeup.eyelenses = { left: 0, right: 0 }>>
-								<<run Engine.show()>>
-							<</link>>
+									<<replace #mirror>>
+										<<updatesidebarimg>>
+										<<mirrorDisplay>>
+									<</replace>>
+								<</link>>
 						</span>
 						<br>
 						You are wearing
@@ -2392,13 +2404,13 @@
 							<<switch _contact_eye_selected>>
 								<<default>><<set _eye to "left">>
 							<</switch>>
+							<span @class="$makeup.eyelenses.left == _colour || $makeup.eyelenses.right == _colour ? 'makeupWorn' : 'makeupItem'">
 							<span class="makeupItem">
 								<<capture _colour>>
 									<<set _contactName to
 									`_colour <span @class="'eye-'+_colour.replace(/ /g, '-')"><span class="colour-sample bgcolour-eyes left-"></span></span>`>>
 
 									<<button _contactName>>
-										<<handheldon 1>>
 										<<if _contact_eye_selected == "Both">>
 											<<set $makeup.eyelenses = { left: _colour, right: _colour }>>
 										<<elseif _contact_eye_selected == "Left eye">>
@@ -2406,7 +2418,10 @@
 										<<elseif _contact_eye_selected == "Right eye">>
 											<<set $makeup.eyelenses.right = _colour>>
 										<</if>>
-										<<run Engine.show()>>
+										<<replace #mirror>>
+											<<updatesidebarimg>>
+											<<mirrorDisplay>>
+										<</replace>>
 									<</button>>
 								<</capture>>
 							</span>
@@ -2433,59 +2448,18 @@
 										<<elseif _contact_eye_selected == "Right eye">>
 											<<set $makeup.eyelenses.right = _colour>>
 										<</if>>
-										<<run Engine.show()>>
+										<<replace #mirror>>
+											<<updatesidebarimg>>
+											<<mirrorDisplay>>
+										<</replace>>
 									<</button>>
 								<</capture>>
 							</span>
 						<</for>>
-
 					</div>
 				<</if>>
 			</div>
-			/* WHY IS THIS IN THE BEDROOM AND NOT THE BATHROOM WITH THE PUBIC HAIR DYE? WHY IS IT SAVED WITH MAKEUP PRESETS? */
-			<div class="settingsToggleItemWide">
-				<<cosmeticsicon "dyes">>
-				<<set _dyes = $makeup.owned.hairdye.filter(x => x.count > 0)>>
-				<<if _dyes.length == 0>>
-					You have no hair dye to dye your eyebrows with.
-				<<else>>
-					<span class="gold bold">Eyebrow Colour:</span>
-					<br>
-					<<if $mirror_eyebrow_dye is true>>
-						<<handheldon 1>>
-						<<wearProp "hairdye">>
-						<<unset $mirror_eyebrow_dye>>
-						You open up the box with <<= setup.colours.hair_map[$browsDyeOption].name>> dye and prepare the mixture. Using a small brush, you carefully apply the dye to your eyebrows. You wait several minutes for the dye to set and hope you didn't mess up anything.
-						<<set $makeup.owned.hairdye.find(x => x.colour == $browsDyeOption).count -= 1>><<set $makeup.browscolour = $browsDyeOption>><<unset $browsDyeOption>>
-						<hr>
-					<</if>>
 
-					<<if $makeup.browscolour != 0>>
-						Your brows are coloured with <<hairmapcolourtext $makeup.browscolour>> hair dye. Visit a hairdresser to restore them to their natural <<hairmapcolourtext $naturalhaircolour>> colour.
-					<<else>>
-						Your brows are their natural <<hairmapcolourtext $naturalhaircolour>> colour.
-					<</if>>
-					<br><br>
-					Dying your eyebrows will take <span class="gold">0:15</span> minutes.
-					<br>
-					<div class="makeupList no-numberify capitalize">
-						<<for _i to 0; _i lt _dyes.length; _i++>>
-							<<if $makeup.browscolour is _dyes[_i].colour or $naturalhaircolour is _dyes[_i].colour>>
-								<<continue>>
-							<</if>>
-							<<set _displayName = (_dyes[_i].colour in setup.colours.hair_map ? setup.colours.hair_map[_dyes[_i].colour].name : _dyes[_i].colour.charAt(0).toUpperCase() + _dyes[_i].colour.slice(1)) + " ×" + _dyes[_i].count + " ">>
-							<<set _dyeName to _displayName + `<span @class="'hair-' + _dyes[_i].colour.replace(/ /g, '-')"><span class="colour-sample bgcolour-hair colour-hair"></span></span>`>>
-							<<capture _dyes, _i>>
-								<<button _dyeName>>
-									<<set $mirror_eyebrow_dye to true>><<pass 15>>
-									<<set $browsDyeOption to _dyes[_i].colour>>
-									<<run Engine.show()>>
-								<</button>>
-							<</capture>>
-						<</for>>
-					</div>
-				<</if>>
-			</div>
 		<</if>>
 	</div>
 <</widget>>
@@ -2608,6 +2582,7 @@
 	<<set _cat to $transformationParts.cat>>
 	<<set _cow to $transformationParts.cow>>
 	<<set _bear to $transformationParts.bear>>
+	<<set _waterdragon to $transformationParts.waterdragon || {horns:"disabled", ears:"disabled", tail:"disabled"}>>
 	<<set _wolf to $transformationParts.wolf>>
 	<<set _bird to $transformationParts.bird>>
 	<<set _fox to $transformationParts.fox>>
@@ -2624,6 +2599,12 @@
 	<<set _catFullCheck to ($cat gte 6) or $cattf is 1>>
 	<<set _cowFullCheck to ($cow gte 6) or $cowtf is 1>>
 	<<set _bearFullCheck to ($bear gte 6) or $beartf is 1>>
+	<<if $waterdragonSkinLock is undefined>><<set $waterdragonSkinLock to 0>><</if>>
+	<<if $waterdragonCosmeticUnlocked is undefined>><<set $waterdragonCosmeticUnlocked to 0>><</if>>
+	<<set _waterdragonFullCheck to ($waterdragon gte 6 or (_waterdragon.tail isnot "hidden" and _waterdragon.tail isnot "disabled")) or $waterdragontf is 1>>
+	<<set _waterdragonUnlockedCheck to ($waterdragonCosmeticUnlocked is 1)>>
+	<<set _waterdragonTraitsCheck to (_waterdragonFullCheck or _waterdragonUnlockedCheck)>>
+	<<set _waterdragonSkinMenuCheck to (_waterdragonTraitsCheck or $waterdragonSkinLock isnot 0)>>
 	<<set _wolfFullCheck to ($wolfgirl gte 6) or $wolftf is 1>>
 	<<set _birdFullCheck to ($harpy gte 6) or $harpytf is 1>>
 	<<set _foxFullCheck to ($fox gte 6) or $foxtf is 1>>
@@ -2634,6 +2615,8 @@
 	<<set _catPartialCheck to ($cat gte 4) or $cattf is 1>>
 	<<set _cowPartialCheck to ($cow gte 4) or $cowtf is 1>>
 	<<set _bearPartialCheck to ($bear gte 4) or $beartf is 1>>
+	<<set _waterdragonPartialCheck to ($waterdragon gte 4) or $waterdragontf is 1>>
+	<<set _waterdragonAppearanceCheck to (_waterdragonPartialCheck or _waterdragonUnlockedCheck)>>
 	<<set _wolfPartialCheck to ($wolfgirl gte 4) or $wolftf is 1>>
 	<<set _birdPartialCheck to ($harpy gte 4) or $harpytf is 1>>
 	<<set _foxPartialCheck to ($fox gte 4) or $foxtf is 1>>
@@ -2644,14 +2627,16 @@
 	<<set _catInitialCheck to ($cat gte 2) or $cattf is 1>>
 	<<set _cowInitialCheck to ($cow gte 2) or $cowtf is 1>>
 	<<set _bearInitialCheck to ($bear gte 2) or $beartf is 1>>
+	<<set _waterdragonInitialCheck to ($waterdragon gte 2) or $waterdragontf is 1>>
+	<<set _waterdragonMenuCheck to (_waterdragonInitialCheck or _waterdragonUnlockedCheck)>>
 	<<set _wolfInitialCheck to ($wolfgirl gte 2) or $wolftf is 1>>
 	<<set _birdInitialCheck to ($harpy gte 2) or $harpytf is 1>>
 	<<set _foxInitialCheck to ($fox gte 2) or $foxtf is 1>>
 	<<set _bunnyInitialCheck to ($bunny gte 2) or $bunnytf is 1>>
 
-	<<if _wolfInitialCheck or _catInitialCheck or _cowFullCheck or _bearFullCheck or $harpy gte 3 or $harpytf is 1 or $fox gte 3 or $foxtf is 1 or _bunnyInitialCheck or (_demonPartialCheck and $exhibitionism gte 95)>>
+	<<if _wolfInitialCheck or _catInitialCheck or _cowFullCheck or _bearFullCheck or _waterdragonMenuCheck or $harpy gte 3 or $harpytf is 1 or $fox gte 3 or $foxtf is 1 or _bunnyInitialCheck or (_demonPartialCheck and $exhibitionism gte 95)>>
 		__Traits__<br>
-		<<if _wolfInitialCheck or _catInitialCheck or _foxInitialCheck or _bearInitialCheck>>
+		<<if _wolfInitialCheck or _catInitialCheck or _foxInitialCheck or _bearInitialCheck or _waterdragonMenuCheck>>
 			Fangs: <<checkbox "_traits.fangs" "disabled" "default" autocheck>><br>
 		<</if>>
 		<<if _catInitialCheck or _birdInitialCheck or _foxInitialCheck>>
@@ -2675,6 +2660,18 @@
 		<<if _demonPartialCheck and hasSexStat("exhibitionism", 6)>>
 			Flaunting when exposed: <<checkbox "_traits.flaunting" "disabled" "default" autocheck>><br>
 		<</if>>
+		<<if $waterdragon gte 7 or $waterdragontf is 1>>
+			Aquatic Lungs: <<checkbox "_traits.aquatic" "disabled" "default" autocheck>><br>
+		<</if>>
+		<<if _waterdragonSkinMenuCheck>>
+			Water Dragon Skin:
+			<<if $waterdragonSkinLock isnot 1>>
+				<<link [[Set|$passage]]>><<set $waterdragonSkinLock to 1>><<syncWaterDragonSkin>><<updatesidebarimg>><</link>>
+			<<elseif $waterdragonSkinLock isnot -1>>
+				<<link [[Clear|$passage]]>><<set $waterdragonSkinLock to -1>><<syncWaterDragonSkin>><<updatesidebarimg>><</link>>
+			<</if>>
+			<br>
+		<</if>>
 		<<if $cat gte 7 or $cattf is 1>>
 			Heterochromia:
 			<<if _cat.heterochromia isnot "default">>
@@ -2696,6 +2693,9 @@
 			<</if>>
 			<<if _bearFullCheck>>
 				Ursine Strength: <<checkbox "$TFBearBuffs" 0 1 autocheck>><br>
+			<</if>>
+			<<if _waterdragonTraitsCheck>>
+				Dragon's Grace: <<checkbox "$TFWaterDragonBuffs" 0 1 autocheck>><br>
 			<</if>>
 			<<if _birdFullCheck>>
 				Sky's Embrace: <<checkbox "$TFBirdBuffs" 0 1 autocheck>><br>
@@ -2733,6 +2733,12 @@
 				<<set _options["Bear"] = "bear">>
 				<<if _traits.tempTolerance is "bear">>
 					<<set _tempToleranceChoice to _options["Bear"]>>
+				<</if>>
+			<</if>>
+			<<if _waterdragonTraitsCheck>>
+				<<set _options["Water Dragon"] = "waterdragon">>
+				<<if _traits.tempTolerance is "waterdragon">>
+					<<set _tempToleranceChoice to _options["Water Dragon"]>>
 				<</if>>
 			<</if>>
 			<<if _birdFullCheck>>
@@ -2980,14 +2986,23 @@
 	<</if>>
 	<<if _cowPartialCheck>>
 		<<set _options["Cow"] = ["cow", "default"]>>
-		<<set _options["Cow Spotted Black"] = ["cow", "spotted black"]>>
-		<<set _options["Cow Spotted Brown"] = ["cow", "spotted brown"]>>
+		<<set _options["Cow Spotted Black"] = ["cow", "spotted-black"]>>
+		<<set _options["Cow Spotted Brown"] = ["cow", "spotted-brown"]>>
+		<<set _options["Cow Classic"] = ["cow", "classic"]>>
+		<<set _options["Cow Classic Spotted Black"] = ["cow", "classic-spotted-black"]>>
+		<<set _options["Cow Classic Spotted Brown"] = ["cow", "classic-spotted-brown"]>>
 		<<if _cow.ears is "default">>
 			<<set _earsChoice to _options["Cow"]>>
-		<<elseif _cow.ears is "spotted black">>
+		<<elseif _cow.ears is "spotted-black">>
 			<<set _earsChoice to _options["Cow Spotted Black"]>>
-		<<elseif _cow.ears is "spotted brown">>
+		<<elseif _cow.ears is "spotted-brown">>
 			<<set _earsChoice to _options["Cow Spotted Brown"]>>
+		<<elseif _cow.ears is "classic">>
+			<<set _earsChoice to _options["Cow Classic"]>>
+		<<elseif _cow.ears is "classic-spotted-black">>
+			<<set _earsChoice to _options["Cow Classic Spotted Black"]>>
+		<<elseif _cow.ears is "classic-spotted-brown">>
+			<<set _earsChoice to _options["Cow Classic Spotted Brown"]>>
 		<</if>>
 	<</if>>
 	<<if _foxPartialCheck>>
@@ -3015,6 +3030,18 @@
 		<<set _options["Kitsune"] = ["kitsune", "default"]>>
 		<<if _kitsune.ears is "default">>
 			<<set _earsChoice to _options["Kitsune"]>>
+		<</if>>
+	<</if>>
+	<<if _waterdragonAppearanceCheck>>
+		<<set _options["Water Dragon"] = ["waterdragon", "default"]>>
+		<<set _options["Water Dragon Purple"] = ["waterdragon", "purple"]>>
+		<<set _options["Water Dragon Gray"] = ["waterdragon", "gray"]>>
+		<<if _waterdragon.ears is "default">>
+			<<set _earsChoice to _options["Water Dragon"]>>
+		<<elseif _waterdragon.ears is "purple">>
+			<<set _earsChoice to _options["Water Dragon Purple"]>>
+		<<elseif _waterdragon.ears is "gray">>
+			<<set _earsChoice to _options["Water Dragon Gray"]>>
 		<</if>>
 	<</if>>
 	<<if !_earsChoice>>
@@ -3152,6 +3179,15 @@
 			<<set _hornsChoice to _options["Cow"]>>
 		<</if>>
 	<</if>>
+	<<if _waterdragonAppearanceCheck>>
+		<<set _options["Water Dragon"] = ["waterdragon", "default"]>>
+		<<set _options["Water Dragon Short"] = ["waterdragon", "short"]>>
+		<<if _waterdragon.horns is "default">>
+			<<set _hornsChoice to _options["Water Dragon"]>>
+		<<elseif _waterdragon.horns is "short">>
+			<<set _hornsChoice to _options["Water Dragon Short"]>>
+		<</if>>
+	<</if>>
 	<<if !_hornsChoice>>
 		<<set _hornsChoice to 0>>
 	<</if>>
@@ -3262,6 +3298,24 @@
 			<<set _tailChoice to _options["Wolf Feral"]>>
 		<</if>>
 	<</if>>
+	<<if _waterdragonTraitsCheck>>
+		<<set _options["Water Dragon Long"] = ["waterdragon", "default"]>>
+		<<set _options["Water Dragon Short"] = ["waterdragon", "short"]>>
+		<<set _options["Water Dragon Long Purple"] = ["waterdragon", "purple"]>>
+		<<set _options["Water Dragon Long Gray"] = ["waterdragon", "gray"]>>
+		<<set _options["Water Dragon Short Gray"] = ["waterdragon", "sgray"]>>
+		<<if _waterdragon.tail is "default">>
+			<<set _tailChoice to _options["Water Dragon Long"]>>
+		<<elseif _waterdragon.tail is "short">>
+			<<set _tailChoice to _options["Water Dragon Short"]>>
+		<<elseif _waterdragon.tail is "purple">>
+			<<set _tailChoice to _options["Water Dragon Long Purple"]>>
+		<<elseif _waterdragon.tail is "gray">>
+			<<set _tailChoice to _options["Water Dragon Long Gray"]>>
+		<<elseif _waterdragon.tail is "sgray">>
+			<<set _tailChoice to _options["Water Dragon Short Gray"]>>
+		<</if>>
+	<</if>>
 	<<if !_tailChoice>>
 		<<set _tailChoice to 0>>
 	<</if>>
@@ -3324,12 +3378,12 @@
 	<<if _fallenPlusFullCheck>>
 		<<set _options["Fallen Angel Feathered Cherub"] = ["fallenAngel", "cherub-fallenplus"]>>
 		<<set _options["Fallen Angel Feathered"] = ["fallenAngel", "fallenplus"]>>
-		<<set _options["Fallen Angel Classic Feathered"] = ["fallenAngel", "classicfallenplus"]>>
+		<<set _options["Fallen Angel Classic Feathered"] = ["fallenAngel", "classic-fallenplus"]>>
 		<<if _fallen.wings is "cherub-fallenplus">>
 			<<set _divineWingsChoice to _options["Fallen Angel Feathered Cherub"]>>
 		<<elseif _fallen.wings is "fallenplus">>
 			<<set _divineWingsChoice to _options["Fallen Angel Feathered"]>>
-		<<elseif _fallen.wings is "classicfallenplus">>
+		<<elseif _fallen.wings is "classic-fallenplus">>
 			<<set _divineWingsChoice to _options["Fallen Angel Classic Feathered"]>>
 		<</if>>
 	<</if>>
@@ -3491,7 +3545,7 @@
 	<div class="settingsToggleItemWide no-numberify">
 		<span class="gold bold">Layer Adjustments:</span>
 		<br>
-		<<if !["demon", "cow"].every(transform => T[transform].horns is "disabled")>>
+		<<if !["demon", "cow", "waterdragon"].every(transform => !T[transform] || T[transform].horns === "disabled")>>
 			<<switch $hornslayer>>
 				<<case "front">>
 					<<link "Prioritise headwear over horns">>
@@ -3511,7 +3565,7 @@
 			<</switch>>
 			<br>
 		<</if>>
-		<<if !["demon", "cat", "cow", "bear", "wolf", "bird", "fox", "okami", "kitsune"].every(transform => T[transform].tail is "disabled")>>
+		<<if !["demon", "cat", "cow", "bear", "wolf", "bird", "fox", "okami", "kitsune", "waterdragon"].every(transform => T[transform].tail is "disabled")>>
 			<<switch $taillayer>>
 				<<case "front">>
 					<<link "Push tail back">>
@@ -3774,6 +3828,9 @@
 	<</if>>
 	<<if $bearbuild gte 1>>
 	Bear Transform: <<link [[Reset|$passage]]>><<bearTransform 99>><<updatesidebarimg>><</link>><<if $beartf is 1>><span class="green">Safe</span><<else>><span class="red">Unsafe</span><</if>><br>
+	<</if>>
+	<<if $waterdragonbuild gte 1>>
+	Water Dragon Transform: <<link [[Reset|$passage]]>><<if $waterdragontf is 1>><<set $waterdragonCosmeticUnlocked to 1>><</if>><<waterdragonTransform 99>><<syncWaterDragonSkin>><<updatesidebarimg>><</link>><<if $waterdragontf is 1>><span class="green">Safe</span><<else>><span class="red">Unsafe</span><</if>><br>
 	<</if>>
 	<<if $birdbuild gte 1>>
 	Bird Transform: <<link [[Reset|$passage]]>><<harpyTransform 99>><<updatesidebarimg>><</link>><<if $harpytf is 1>><span class="green">Safe</span><<else>><span class="red">Unsafe</span><</if>><br>

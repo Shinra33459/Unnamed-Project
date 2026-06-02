@@ -1,0 +1,78 @@
+// @ts-check
+
+/**
+ * Resolves named NPC-specific ejaculation macros.
+ *
+ * This helper allows callers to use a single lookup instead of repeating
+ * named NPC checks. If a matching macro such as <<ejaculation-robin>>
+ * exists for the resolved NPC name, it is returned for direct use.
+ *
+ * @param {string | number} index NPC index or identifier.
+ * @param {...string} args Optional extra macro arguments.
+ * @returns {string} Matching named NPC ejaculation macro, or an empty string if none applies.
+ */
+function namedNpcEjaculation(index, ...args) {
+	const npcName = V.npc[V.npcrow.indexOf(index)];
+	const npc = V.NPCList[index];
+	if (!npc) return '';
+	const output = args[0] ? " " + args[0] : "";
+	// Prefer NPC-specific ejaculation macros when available.
+	if (npcName && Macro.has(`ejaculation-${npcName.toLowerCase()}`) && setup.NPCNameList.includes(npcName)) {
+		return `<<ejaculation-${npcName.toLowerCase()}${output}>>`;
+	} else {
+		return "";
+	}
+}
+
+window.namedNpcEjaculation = namedNpcEjaculation;
+DefineMacroS("namedNpcEjaculation", namedNpcEjaculation);
+
+/**
+ * Resolves the named NPC combat comment macro.
+ *
+ * Returns the corresponding <<speech-*>> macro for named NPCs.
+ * If no matching handler exists, marks the current comment pass
+ * as having no named NPC comment.
+ *
+ * @param {string} npcName The NPC display name.
+ * @returns {string} The speech macro to print, or an empty string if none applies.
+ */
+function namedNpcComments(npcName) {
+    delete T.noNameComment;
+
+    if (T.silent) return "";
+
+    if (typeof npcName !== "string" || !npcName.trim()) {
+        T.noNameComment = true;
+        return "";
+    }
+
+    const name = npcName.trim();
+
+    const namedNpcSpeechMap = {
+        "Ivory Wraith": "speechWraith",
+    };
+
+    const candidates = [];
+
+    if (namedNpcSpeechMap[name]) {
+        candidates.push(namedNpcSpeechMap[name]);
+    }
+
+    const lowerName = name.toLowerCase();
+
+    candidates.push(`speech-${lowerName}`);
+    candidates.push(`speech-${lowerName.replace(/\s+/g, "")}`);
+    candidates.push(`speech-${lowerName.replace(/\s+/g, "-")}`);
+
+    const macroName = candidates.find(macro => Macro.has(macro));
+
+    if (macroName) {
+        return `<<${macroName}>>`;
+    }
+
+    T.noNameComment = true;
+    return "";
+}
+
+DefineMacroS("namedNpcComments", namedNpcComments);

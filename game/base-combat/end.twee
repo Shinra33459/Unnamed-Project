@@ -91,6 +91,14 @@
 		<br>
 	<</if>>
 
+	/* Unbind any leg shackles applied during consensual sex via <<shackle_legs>>. Last check avoids removing a shackle that was destroyed before end of combat */
+	<<if $legsShackledDuringCombat and $consensual is 1 and ($worn.feet.type.includes("shackle") and $worn.feet.name isnot "vines")>>
+		You hear the click of a key as your $worn.feet.name are removed.
+		<<remove_shackle>>
+		<<set _br to true>>
+		<br>
+	<</if>>
+
 	<<if ($enemyarousal gte $enemyarousalmax || $enemyejaculated gte 1) and canCollectSamples() and !($enemytype is "plant" and $abomination is 1)>>
 		<<set $_samplesCollected to 0>>
 		<<set $_sampleMod to $location is "forest_shop_garden" and $beastRitual ? 2 : 1>>
@@ -118,7 +126,7 @@
 			<<else>>
 				<span class="lewd">You collect as much lewd fluid as you can in the vials Gwylan gave you.</span>
 			<</if>>
-			You obtain <span class="gold"><<number $_samplesCollected>></span> <<pluralise $_samplesCollected "sample" "samples">> of fluid.
+			You obtain <span class="gold"><<number $_samplesCollected>></span> <<pluralise $_samplesCollected "sample">> of fluid.
 			<<set _br to true>>
 			<br>
 		<</if>>
@@ -135,7 +143,7 @@
 			<<else>>
 				<span class="lewd">You collect as much nectar as you can in the vials Gwylan gave you.</span>
 			<</if>>
-			You obtain <span class="gold"><<number $_nectarCollected>></span> <<pluralise $_nectarCollected "sample" "samples">> of nectar.
+			You obtain <span class="gold"><<number $_nectarCollected>></span> <<pluralise $_nectarCollected "sample">> of nectar.
 		<</if>>
 		<<set _br to true>>
 		<br>
@@ -247,6 +255,7 @@
 	<<set $mouthsubmit to 0>>
 	<<set $breastbitten to 0>>
 	<<set $apologised to 0>>
+	<<unset $removed>>
 	<<unset $bodywriting_special>>
 	<<unset $machine_tattoo_success>>
 	<<unset $dodging>>
@@ -322,10 +331,11 @@
 		<<set $head to 0>>
 	<</if>>
 	<<unset $neckuse>>
+	<<if $legsShackledDuringCombat>>
+		<<unset $legsShackledDuringCombat>>
+	<</if>>
 	<<set $position to 0>>
-
-	<<set $walltype to 0>>
-
+	<<set $walltype to "wall">>
 	<<set $underlowerstruggle to 0>>
 	<<set $lowerstruggle to 0>>
 	<<set $upperstruggle to 0>>
@@ -364,7 +374,6 @@
 		<</if>>
 		<<set $suffocating to 0>>
 	<</if>>
-	<<set $walltype to "wall">>
 	<<set $angelforgive to 0>>
 	<<set $fallenangelretribution to 0>>
 	<<set $begoneThot to 0>>
@@ -381,6 +390,7 @@
 	<<unset $handGuideRight>>
 	<<unset $easySteal>>
 	<<unset $canRescue>>
+	<<unset $handOnButtPlug>>
 
 
 	<<set $leftactiondefault to $leftaction>>
@@ -806,17 +816,14 @@
 	<<set $index to 0>>
 	<<set $modeloptionsOverride to {}>>
 
-	<<if $propEquipped is 1>>
-		<<handheldon>>
-		<<set $propEquipped to 0>>
-	<</if>>
-
 	<<if $worn.neck.name is "familiar collar">>
 		/* ToDo: Gwylan - the "leash" type could be used to determine whether the player is allowed to stray from the forest shop. If that is done, remove this whole block. */
 		<<if $worn.neck.type.includes("leash") and !["forest_shop", "forest_shop_garden"].includes($location) and !$beastRitual and !$sexRitual>>
 			<<run $worn.neck.type.delete("leash")>>
 			<<if $familiarLeash>>
 				<<run Errors.report("Magic leash spell misfired! Leash granted on passage: " + $familiarLeash + " and destroyed on passage: " + $passage + " from passage: " + $passagePrev + ". Please report this.")>>
+			<<elseif $magicLeashPassage>>
+				<<run Errors.report("Magic leash spell misfired! An origin passage could not be determined. The leash has been removed on passage: " + $passage + " from passage: " + $passagePrev + ". magicLeash was last seen in passage: " + $magicLeashPassage + " with the previous passage: " + $magicLeashPassagePrev + ". Please report this.")>>
 			<<else>>
 				<<run Errors.report("Magic leash spell misfired! An origin passage could not be determined. The leash has been removed on passage: " + $passage + " from passage: " + $passagePrev + ". Please report this.")>>
 			<</if>>

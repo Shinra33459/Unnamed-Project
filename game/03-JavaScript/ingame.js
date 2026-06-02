@@ -1,4 +1,4 @@
-/* global ClothesItem, ClothedSlots */
+/* global ClothesItem, ClothedSlots, paramError */
 
 function mapMove(moveTo) {
 	const currentPassage = V.passage;
@@ -11,7 +11,7 @@ function mapMove(moveTo) {
 	}
 	const available = V.map.available;
 
-	// if(V.debug == 1 || available[currentPassage].includes(moveTo))
+	// if(V.debug === 1 || available[currentPassage].includes(moveTo))
 	if (V.debug === 1 || (available[currentPassage].includes(moveTo) && destinationTable.includes(moveTo))) {
 		window.ironmanFlag = true;
 		Wikifier.wikifyEval("<<pass 5>>");
@@ -406,9 +406,6 @@ function loveInterestFunction() {
 		delete T.awareChecked;
 		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
 	});
-	jQuery(document).on("change", "#listbox-loveinteresttertiary", function (e) {
-		Wikifier.wikifyEval("<<replace #loveInterest>><<loveInterest>><</replace>>");
-	});
 }
 DefineMacro("loveInterestFunction", loveInterestFunction);
 
@@ -532,9 +529,10 @@ function calculateMarkedChance(deckCount, markedCount, depth, atLeast, doLog = f
 		// log(`One marked card can be picked from MARKED=1 cards in 1c1 = 1 ways, and the remaining three (which are not marked) can be picked from DECK=5-MARKED=1 = 4 cards in 4c3 = 4 ways.
 		log(
 			`${nMarkedPicked} marked cards can be picked from MARKED=${markedCount} cards in ${markedCount}c${nMarkedPicked} = ${markedPoolWays} ways,` +
-			`and the remaining ${deckCount - markedCount} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${deckCount - markedCount
-			} cards in ${deckCount - markedCount}c${possibleMarkedCardsVisibleLimit - nMarkedPicked} = ${unmarkedPoolWays} ways.\n` +
-			`${markedPoolWays}*${unmarkedPoolWays} = ${totalWays} ways.`
+				`and the remaining ${deckCount - markedCount} (which are not marked) can be picked from DECK=${deckCount}-MARKED=${markedCount} = ${
+					deckCount - markedCount
+				} cards in ${deckCount - markedCount}c${possibleMarkedCardsVisibleLimit - nMarkedPicked} = ${unmarkedPoolWays} ways.\n` +
+				`${markedPoolWays}*${unmarkedPoolWays} = ${totalWays} ways.`
 		);
 	}
 
@@ -562,11 +560,11 @@ function updateAskColour() {
 }
 DefineMacroS("updateAskColour", updateAskColour);
 
-function bulkProduceValue(plant, quantity = 250) {
-	if (plant != null) {
-		const baseCost = (plant.plant_cost * quantity) / 2;
+function bulkProduceValue(foodstuff, quantity = 250) {
+	if (foodstuff != null) {
+		const baseCost = (foodstuff.shop.sell_price * quantity) / 2;
 
-		const seasonBoost = !plant.season.includes(Time.season) ? 1.1 : 1;
+		const seasonBoost = foodstuff.tending?.seasons && !foodstuff.tending.seasons.includes(Time.season) ? 1.1 : 1;
 
 		const qualityControlBoost = V.factoryUpgrades.qualityControl ? V.factoryUpgrades.qualityControl * 0.05 : 0; // +5% per level
 		const packagingBoost = V.factoryUpgrades.packaging ? V.factoryUpgrades.packaging * 0.05 : 0; // +5% per level
@@ -634,7 +632,24 @@ function getRobinLocation() {
 		// T.robin_location = "cafe";
 	} else if (Time.schoolDay && between(Time.hour, 8, 15)) {
 		T.robin_location = "school";
-	} else if (Time.hour === 16 && between(Time.minute, 31, 59)) {
+		// Start bathing time half an hour later if Robin has been asked to water the player's garden
+		// Robin will only water if crops are planted, will not water in the rain at all, and will not water during snow before the greenhouse is built
+	} else if (
+		V.robin.autoWater &&
+		C.npc.Robin.trauma < 50 &&
+		Weather.precipitation !== "rain" &&
+		(Weather.precipitation !== "snow" || V.alex_greenhouse >= 3) &&
+		((Time.hour === 16 && between(Time.minute, 30, 59)) || (Time.hour === 17 && between(Time.minute, 0, 29))) &&
+		orphanagePlotsPlanted()
+	) {
+		if (Time.hour === 16 && between(Time.minute, 30, 59) && !orphanagePlotsWatered()) {
+			T.robin_location = "garden";
+		} else if (!V.daily.robin.bath) {
+			T.robin_location = "bath";
+		} else {
+			T.robin_location = "orphanage";
+		}
+	} else if (Time.hour === 16 && between(Time.minute, 30, 59)) {
 		if (!V.daily.robin.bath) {
 			T.robin_location = "bath";
 		} else {
@@ -1221,8 +1236,8 @@ window.clothesIndex = clothesIndex;
 
 function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 	let result = V[skill];
-	if (disableStatNerf == 0) {
-		result *= (V.options.statNerf / 100);
+	if (disableStatNerf === 0) {
+		result *= V.options.statNerf / 100;
 	}
 	if (!result && result !== 0) {
 		/* console.log(`currentSkillValue - skill '${skill}' unknown`); */
@@ -1274,20 +1289,20 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.hands.type.includes("sticky_fingers")) result = Math.floor(result * 1.05);
 			if (V.transformationParts.traits.sharpEyes !== "disabled") result = Math.floor(result * 1.05);
 			if (V.fox >= 6) result = Math.floor(result * 1.1);
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.DoLPTFBuffs == 1) {
-				if (V.TFCatBuffs == 1) {
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFCatBuffs === 1) {
 					result = Math.round(result * 1.2);
 				}
-				if (V.TFBearBuffs == 1) {
+				if (V.TFBearBuffs === 1) {
 					result = Math.round(result * 0.9);
 				}
-				if (V.TFBirdBuffs == 1) {
+				if (V.TFBirdBuffs === 1) {
 					result = Math.round(result * 1.1);
 				}
-				if (V.TFFoxBuffs == 1) {
+				if (V.TFFoxBuffs === 1) {
 					result = Math.round(result * 1.3);
 				}
 			}
@@ -1304,29 +1319,29 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.auriga_artefact === "pc") {
 				result = Math.floor(result * 1.1);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.DoLPTFBuffs == 1) {
-				if (V.TFWolfBuffs == 1) {
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
 					result = Math.round(result * 1.2);
 				}
-				if (V.TFCatBuffs == 1) {
+				if (V.TFCatBuffs === 1) {
 					result = Math.round(result * 0.8);
 				}
-				if (V.TFCowBuffs == 1) {
+				if (V.TFCowBuffs === 1) {
 					result = Math.round(result * 1.4);
 				}
-				if (V.TFBearBuffs == 1) {
+				if (V.TFBearBuffs === 1) {
 					result = Math.round(result * 1.5);
 				}
-				if (V.TFBirdBuffs == 1) {
+				if (V.TFBirdBuffs === 1) {
 					result = Math.round(result * 0.7);
 				}
-				if (V.TFFoxBuffs == 1) {
+				if (V.TFFoxBuffs === 1) {
 					result = Math.round(result * 0.9);
 				}
-				if (V.TFBunnyBuffs == 1) {
+				if (V.TFBunnyBuffs === 1) {
 					result = Math.round(result * 0.7);
 				}
 			}
@@ -1343,29 +1358,29 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.DoLPTFBuffs == 1) {
-				if (V.TFWolfBuffs == 1) {
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
 					result = Math.round(result * 1.1);
 				}
-				if (V.TFCatBuffs == 1) {
+				if (V.TFCatBuffs === 1) {
 					result = Math.round(result * 1.4);
 				}
-				if (V.TFCowBuffs == 1) {
+				if (V.TFCowBuffs === 1) {
 					result = Math.round(result * 0.9);
 				}
-				if (V.TFBearBuffs == 1) {
+				if (V.TFBearBuffs === 1) {
 					result = Math.round(result * 0.7);
 				}
-				if (V.TFBirdBuffs == 1) {
+				if (V.TFBirdBuffs === 1) {
 					result = Math.round(result * 1.3);
 				}
-				if (V.TFFoxBuffs == 1) {
+				if (V.TFFoxBuffs === 1) {
 					result = Math.round(result * 1.1);
 				}
-				if (V.TFBunnyBuffs == 1) {
+				if (V.TFBunnyBuffs === 1) {
 					result = Math.round(result * 1.4);
 				}
 			}
@@ -1395,17 +1410,22 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
 				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
-			if (V.TFCatBuffs == 1) {
-				result = Math.round(result * 0.8);
-			}
-			if (V.TFBearBuffs == 1) {
-				result = Math.round(result * 1.3);
-			}
-			if (V.TFBirdBuffs == 1) {
-				result = Math.round(result * 0.8);
-			}
-			if (V.TFFoxBuffs == 1) {
-				result = Math.round(result * 0.9);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 1.3);
+				}
+				if (V.TFBirdBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFFoxBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFWaterDragonBuffs === 1) {
+					result = Math.round(result * 1.5);
+				}
 			}
 			if (V.worn.upper.type.includes("heavy") || V.worn.lower.type.includes("heavy")) {
 				result *= V.physique / V.physiquesize / 3;
@@ -1422,29 +1442,34 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			}
 			if (V.transformationParts.traits.chase !== "disabled") result = Math.floor(result * 1.1);
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
 				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
 			}
-			if (V.TFWolfBuffs == 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFCatBuffs == 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFCowBuffs == 1) {
-				result = Math.round(result * 0.9);
-			}
-			if (V.TFBearBuffs == 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFBirdBuffs == 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFFoxBuffs == 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFBunnyBuffs == 1) {
-				result = Math.round(result * 1.5);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCowBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFBirdBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFFoxBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFBunnyBuffs === 1) {
+					result = Math.round(result * 1.5);
+				}
+				if (V.TFWaterDragonBuffs == 1) {
+					result = Math.round(result * 1.2);
+				}
 			}
 			if (V.worn.upper.type.includes("heavy") || V.worn.lower.type.includes("heavy")) {
 				result *= V.physique / V.physiquesize / 1.5;
@@ -1456,34 +1481,38 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			} else if (numberOfEarSlime() >= 2) {
 				result = Math.floor(result * 0.9);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFWolfBuffs == 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFCatBuffs == 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFCowBuffs == 1) {
-				result = Math.round(result * 0.8);
-			}
-			if (V.TFBearBuffs == 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFBunnyBuffs == 1) {
-				result = Math.round(result * 0.8);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFCowBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFBunnyBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
 			}
 			break;
 		case "tending":
 			if (V.backgroundTraits.includes("plantlover")) {
 				result = Math.floor(result * (1 + V.trauma / (V.traumamax * 2)));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFCowBuffs == 1) {
-				result = Math.round(result * 1.4);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFCowBuffs === 1) {
+					result = Math.round(result * 1.4);
+				}
 			}
 			break;
 		case "housekeeping":
@@ -1499,20 +1528,22 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.handheld.type.includes("maid")) {
 				result = Math.floor(result * 1.05);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFWolfBuffs == 1) {
-				result = Math.round(result * 0.9);
-			}
-			if (V.TFCatBuffs == 1) {
-				result = Math.round(result * 0.9);
-			}
-			if (V.TFBearBuffs == 1) {
-				result = Math.round(result * 0.8);
-			}
-			if (V.TFBirdBuffs == 1) {
-				result = Math.round(result * 1.3);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFWolfBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 0.8);
+				}
+				if (V.TFBirdBuffs === 1) {
+					result = Math.round(result * 1.3);
+				}
 			}
 			break;
 		case "vaginalskill":
@@ -1526,8 +1557,8 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (playerHeatMinArousal()) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			break;
 		case "penileskill":
@@ -1541,8 +1572,8 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (playerRutMinArousal()) {
 				result = Math.floor(result * (1 + Math.clamp(playerRutMinArousal(), 0, 4000) / 20000));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			break;
 		case "analskill":
@@ -1552,37 +1583,39 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (playerHeatMinArousal() && canBeMPregnant()) {
 				result = Math.floor(result * (1 + Math.clamp(playerHeatMinArousal(), 0, 4000) / 20000));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			break;
 		case "seductionskill":
 			if (V.earSlime.growth > 50 && !V.earSlime.defyCooldown) {
 				result = Math.floor(result * (1 + (V.earSlime.growth - 50) / 600));
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
-			if (V.TFCatBuffs == 1) {
-				result = Math.round(result * 1.2);
-			}
-			if (V.TFCowBuffs == 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFBearBuffs == 1) {
-				result = Math.round(result * 0.9);
-			}
-			if (V.TFBirdBuffs == 1) {
-				result = Math.round(result * 1.1);
-			}
-			if (V.TFFoxBuffs == 1) {
-				result = Math.round(result * 1.2);
+			if (V.DoLPTFBuffs === 1) {
+				if (V.TFCatBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
+				if (V.TFCowBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFBearBuffs === 1) {
+					result = Math.round(result * 0.9);
+				}
+				if (V.TFBirdBuffs === 1) {
+					result = Math.round(result * 1.1);
+				}
+				if (V.TFFoxBuffs === 1) {
+					result = Math.round(result * 1.2);
+				}
 			}
 			break;
 	}
-	if (V.drunk >= 120 && V.substanceRebalance == 1) {
-		result = Math.round(result * (1 - (0.1 * Math.round(V.drunk / 120))));
-	} else if (V.drunk >= 1 && V.substanceRebalance == 1) {
+	if (V.drunk >= 120 && V.substanceRebalance === 1) {
+		result = Math.round(result * (1 - 0.1 * Math.round(V.drunk / 120)));
+	} else if (V.drunk >= 1 && V.substanceRebalance === 1) {
 		result = Math.round(result * 0.95);
 	}
 	return result;
@@ -1866,7 +1899,7 @@ function waterproofCheck(clothing) {
 window.waterproofCheck = waterproofCheck;
 
 function antitransparentCheck(clothing) {
-	return (clothing.type.includesAny("antitransparent") && V.realisticTransparency == 1);
+	return clothing.type.includesAny("antitransparent") && V.realisticTransparency === 1;
 }
 window.antitransparentCheck = antitransparentCheck;
 
@@ -1898,6 +1931,8 @@ function isPossibleLoveInterest(name) {
 			return V.farm_stage >= 7 && V.alex_countdown === undefined;
 		case "Gwylan":
 			return V.gwylanSeen?.includes("partners") || V.gwylanSeen?.includes("romance");
+		case "Poppy":
+			return V.poppyromance >= 0 && C.npc.Poppy && C.npc.Poppy.init === 1;
 		default:
 			return false;
 	}
@@ -1938,7 +1973,7 @@ window.checkTFparts = checkTFparts;
 
 /*
 	Might be good to convert the whole TF mechanic, including `transformationStateUpdate` to something like below at some point.
-	Part of the transformationParts is unused right now, but its to account for this potential.
+	Part of the transformationParts is unused right now, but it's to account for this potential.
 */
 function setupTransformations() {
 	setup.transformations = [
@@ -1958,7 +1993,7 @@ function setupTransformations() {
 			get build() {
 				return V.wolfbuild;
 			},
-			type: "beast",
+			type: "physicalTransform",
 			parts: [
 				{ name: "ears", tfRequired: 4 },
 				{
@@ -1990,7 +2025,6 @@ function setupTransformations() {
 			},
 			type: "physicalTransform",
 			parts: [
-				{ name: "ears", tfRequired: 4 },
 				{ name: "ears", tfRequired: 4 },
 				{ name: "tail", tfRequired: 6 },
 				{ name: "heterochromia", tfRequired: 7 },
@@ -2123,10 +2157,10 @@ function validateTransformations() {
 			physTFs.map(tf => tf.name)
 		);
 	if (V.physicalTransform === 1 && physTFs.length === 0) Errors.report("Couldn't find active physical transformation, modded save?");
-	V.physicalTransform = Math.max(physTFs.length, 1);
+	V.physicalTransform = Math.min(physTFs.length, 1);
 
 	const specTFs = setup.transformations.filter(tf => tf.type === "specialTransform" && tf.level >= (tf.name === "fallenangel" ? 2 : 1));
-	V.specialTransform = Math.max(specTFs.length, 1);
+	V.specialTransform = Math.min(specTFs.length, 1);
 
 	const confirmedTraits = [];
 	setup.transformations.forEach(tf => {
@@ -2153,15 +2187,15 @@ DefineMacro("validateTransformations", validateTransformations);
 // prettier-ignore
 function getSexesFromRandomGroup() {
 	if (maleChance() <= 0) { /* Only females. */
-		if (V.dgchance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
-		if (V.dgchance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
+		if (V.settings.femaleNPCPenisChance <= 0) return SexTypes.ALL_FEMALES;		/* All females, no dickgirls. Always vaginal. */
+		if (V.settings.femaleNPCPenisChance >= 100) return SexTypes.ALL_DICKGIRLS;	/* All females, all dickgirls. Always penises. */
 	}
 	if (maleChance() >= 100) { /* Only males. */
-		if (V.cbchance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
-		if (V.cbchance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
+		if (V.settings.maleNPCVaginaChance <= 0) return SexTypes.ALL_MALES;			/* All males, no cuntboys. Always males. */
+		if (V.settings.maleNPCVaginaChance >= 100) return SexTypes.ALL_CUNTBOYS;	/* All males, all cuntboys. Always vaginal. */
 	}
-	if (V.cbchance >= 100 && V.dgchance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
-	if (V.dgchance >= 100 && V.cbchance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
+	if (V.settings.maleNPCVaginaChance >= 100 && V.settings.femaleNPCPenisChance <= 0) return SexTypes.ALL_VAGINAS;	/* Both females and males, but all males are cuntboys, and there are no dickgirls. */
+	if (V.settings.femaleNPCPenisChance >= 100 && V.settings.maleNPCVaginaChance <= 0) return SexTypes.ALL_DICKS;	/* Both females and males, but all females are dickgirls, and there are no cuntboys. */
 	return SexTypes.BOTH;
 }
 window.getSexesFromRandomGroup = getSexesFromRandomGroup;
@@ -2347,10 +2381,7 @@ function getHalloweenCostume() {
 		return "butterfly";
 	} else if (upper.name === "succubus top" && lower.name === "succubus lower back wings") {
 		return "succubus";
-	} else if (
-		(upper.name === "vintage pantsuit" && lower.name === "vintage pants") ||
-		(upper.name === "vintage skirtsuit" && lower.name === "vintage skirt")
-	) {
+	} else if ((upper.name === "vintage pantsuit" && lower.name === "vintage pants") || (upper.name === "vintage skirtsuit" && lower.name === "vintage skirt")) {
 		return "vintage";
 	} else if (upper.name === "chain tunic" && lower.name === "chain tunic skirt") {
 		return "chain tunic";
@@ -2519,6 +2550,8 @@ function dailyConvert() {
 			wolfCaveDog: V.wolf_cave_dog,
 			jordan_missing: V.jordan_missing,
 			blackWolfMonsterRoll: V.blackWolfMonsterRoll,
+			greatHawkMonsterRoll: V.greatHawkMonsterRoll,
+			nightMonsterMonsterRoll: V.nightMonsterMonsterRoll,
 			templePray: V.temple_pray,
 			lakeMeditate: V.lake_meditate,
 			masonSpoken: V.mason_spoken,
@@ -2526,7 +2559,6 @@ function dailyConvert() {
 			rocksPoolInvite: V.rocks_pool_invite,
 			birdWash: V.bird_wash,
 			birdDailyGreeting: V.birdDailyGreeting,
-			greatHawkMonsterRoll: V.greatHawkMonsterRoll,
 			estateBluffed: V.estate_bluffed,
 			estateChaos: V.estate_chaos,
 			spaEvent: V.spa_event,
@@ -2568,8 +2600,8 @@ function dailyConvert() {
 		if (V.sewersfeeding === 1) V.daily.morgan.feeding = 1;
 		if (V.sewersDaily) V.sewersDaily.forEach(n => (V.daily.morgan[n] = 1));
 		/* `$compoundstate != undefined` is no longer used as an indicator of the access to compound,
-		as it migrated to $daily.compoundState. $compound.card === 2 is used for that instead. */
-		if (V.compoundstate !== undefined) V.compoundcard = 2;
+		as it migrated to $daily.compoundState. $compound.discovered is used for that instead. */
+		if (V.compoundstate !== undefined) V.compound.discovered = true;
 		V.daily.pharm.impatient = V.left_before_nurse_returned;
 
 		/* unset old vars */
@@ -2595,7 +2627,7 @@ function dailyConvert() {
 			// eslint-disable-next-line prettier/prettier
 			/* pharm */ "left_before_nurse_returned", "pharmTriedSeduction", "pharmSexFinished", "pharmClosed", "pharmSeductionFailed", "pharmDaily",
 			// eslint-disable-next-line prettier/prettier
-			/* misc */ "comb", "motherwake", "harpervisit", "policecollarseduceattempt", "tenyclusPlayed", "beachstrip", "compoundstate", "baileyvisit", "lakecouple", "museumgreengemtouch", "fenceclimb", "cafeeaten", "mirrortentacles", "massattended", "dockexhibitionism", "home_event", "leightondanceoffered", "wolf_cave_dog", "jordan_missing", "blackWolfMonsterRoll", "temple_pray", "lake_meditate", "mason_spoken", "stall_rented", "rocks_pool_invite", "bird_wash", "birdDailyGreeting", "greatHawkMonsterRoll", "estate_bluffed", "estate_chaos", "spa_event", "estate_done", "lewd_unlock", "bailey_wake_day", "manor_forage", "manor_garden", "manor_kitchen", "manor_parents", "manor_lab", "promiscuitystress1", "promiscuitystress2", "promiscuitystress3", "promiscuitystress4", "promiscuitystress5", "exhibitionismstress1", "exhibitionismstress2", "exhibitionismstress3", "exhibitionismstress4", "exhibitionismstress5", "deviancystress1", "deviancystress2", "deviancystress3", "deviancystress4", "deviancystress5", "seenPets", "asylumfirsttreatment", "asylumsecondtreatment", "asylumassessment", "asylumexercise", "slimeFarmNaked"
+			/* misc */ "comb", "motherwake", "harpervisit", "policecollarseduceattempt", "tenyclusPlayed", "beachstrip", "compoundstate", "baileyvisit", "lakecouple", "museumgreengemtouch", "fenceclimb", "cafeeaten", "mirrortentacles", "massattended", "dockexhibitionism", "home_event", "leightondanceoffered", "wolf_cave_dog", "jordan_missing", "blackWolfMonsterRoll", "greatHawkMonsterRoll", "nightMonsterMonsterRoll", "temple_pray", "lake_meditate", "mason_spoken", "stall_rented", "rocks_pool_invite", "bird_wash", "birdDailyGreeting", "estate_bluffed", "estate_chaos", "spa_event", "estate_done", "lewd_unlock", "bailey_wake_day", "manor_forage", "manor_garden", "manor_kitchen", "manor_parents", "manor_lab", "promiscuitystress1", "promiscuitystress2", "promiscuitystress3", "promiscuitystress4", "promiscuitystress5", "exhibitionismstress1", "exhibitionismstress2", "exhibitionismstress3", "exhibitionismstress4", "exhibitionismstress5", "deviancystress1", "deviancystress2", "deviancystress3", "deviancystress4", "deviancystress5", "seenPets", "asylumfirsttreatment", "asylumsecondtreatment", "asylumassessment", "asylumexercise", "slimeFarmNaked"
 		].forEach(n => delete V[n]);
 	}
 }
@@ -2725,9 +2757,9 @@ window.npcSemenMod = npcSemenMod;
 
 function maleChance(override) {
 	if (V.settings.maleChanceSplit === false) return V.settings.maleChance;
-	const appearence = override || V.player.gender_appearance;
-	if (appearence === "m") return V.settings.maleChanceMale;
-	if (appearence === "f") return V.settings.maleChanceFemale;
+	const appearance = override || V.player.gender_appearance;
+	if (appearance === "m") return V.settings.maleChanceMale;
+	if (appearance === "f") return V.settings.maleChanceFemale;
 	return 50;
 }
 window.maleChance = maleChance;
@@ -2741,9 +2773,9 @@ window.attractedToBothChance = attractedToBothChance;
 
 function beastMaleChance(override) {
 	if (V.settings.beastMaleChanceSplit === false) return V.settings.beastMaleChance;
-	const appearence = override || V.player.gender_appearance;
-	if (appearence === "m") return V.settings.beastMaleChanceMale;
-	if (appearence === "f") return V.settings.beastMaleChanceFemale;
+	const appearance = override || V.player.gender_appearance;
+	if (appearance === "m") return V.settings.beastMaleChanceMale;
+	if (appearance === "f") return V.settings.beastMaleChanceFemale;
 	return 50;
 }
 window.beastMaleChance = beastMaleChance;
@@ -2751,7 +2783,7 @@ window.beastMaleChance = beastMaleChance;
 function penisNames(override) {
 	const names = ["penis"];
 
-	if (V.player.penissize < 0 && !override) return names;
+	if (V.player.penissize < 2 && !override) return names;
 
 	if ((V.awareness >= 100 && !override) || override >= 1) names.push("dick");
 	if ((V.awareness >= 200 && V.purity < 900 && !override) || override >= 2) names.push("cock");
@@ -2875,14 +2907,44 @@ window.fixIntegrityUpdater = fixIntegrityUpdater;
 // Set plots to watered if it rains
 // Temporary solution until a rework
 $(document).on(":onWeatherChange", () => {
-	if (V.daily?.plotsRain || Weather.precipitation !== "rain") return;
+	if (!V.daily || V.daily?.plotsRain || Weather.precipitation !== "rain") return;
 	V.daily.plotsRain = true;
 	Object.entries(V.plots).forEach(([location, plots]) => {
 		// Don't water greenhouse plants from rain - disabled for now
+		// Alternate text about a rainwater harvester was added, so this may not be needed
 		// if (location === "garden" && V.alex_greenhouse === 3) return;
 		plots.forEach(plot => (plot.water = 1));
 	});
 });
+
+// Returns true if one or more orphanage plots have been planted
+// Used to determine whether Robin should automatically water them
+function orphanagePlotsPlanted() {
+	if (V.plots?.garden) {
+		for (let i = 0; i < V.plots.garden.length; i++) {
+			if (V.plots.garden[i].stage >= 1) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+window.orphanagePlotsPlanted = orphanagePlotsPlanted;
+
+// Returns true if all orphanage plots have been watered
+// Used to determine whether Robin sshould automatically water them
+function orphanagePlotsWatered() {
+	if (V.plots?.garden) {
+		for (let i = 0; i < V.plots.garden.length; i++) {
+			if (V.plots.garden[i].water === 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+window.orphanagePlotsWatered = orphanagePlotsWatered;
 
 // Temporary until a rework
 // Apparently the sugarcube <<script>> parser don't parse the following correctly - so made it a function instead
@@ -2902,7 +2964,7 @@ function tendingDay() {
 			// Growth check
 			if (plot.stage >= 1 && (plot.water === 1 || plot.bed === "water")) {
 				plot.days += 1;
-				if (plot.days >= setup.plants[plot.plant].days * ((plot.stage + 1) / 5)) {
+				if (plot.days >= (setup.foodstuff[plot.plant].tending.growth_days * (plot.stage + 1)) / 5) {
 					plot.stage += 1;
 				}
 			}
@@ -2963,18 +3025,18 @@ function unableTakeVirginity(virginity) {
 		case "penile":
 			return (
 				V.settings.analEnabled === false &&
-				((V.cbchance === 0 && V.dgchance === 100) ||
-					(maleChance() === 100 && V.cbchance === 0) ||
-					(maleChance() === 0 && V.dgchance === 100) ||
-					(maleChance() === 100 && V.cbchance === 100 && V.settings.straponChance === 100) ||
-					(maleChance() === 0 && V.dgchance === 0 && V.settings.straponChance === 100))
+				((V.settings.maleNPCVaginaChance === 0 && V.settings.femaleNPCPenisChance === 100) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 0) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 100) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 100 && V.settings.straponChance === 100) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 0 && V.settings.straponChance === 100))
 			);
 		case "vaginal":
 			return (
 				V.settings.straponChance === 0 &&
-				((V.cbchance === 100 && V.dgchance === 0) ||
-					(maleChance() === 100 && V.cbchance === 100) ||
-					(maleChance() === 0 && V.dgchance === 0))
+				((V.settings.maleNPCVaginaChance === 100 && V.settings.femaleNPCPenisChance === 0) ||
+					(maleChance() === 100 && V.settings.maleNPCVaginaChance === 100) ||
+					(maleChance() === 0 && V.settings.femaleNPCPenisChance === 0))
 			);
 		default:
 			return false;
@@ -2985,8 +3047,8 @@ window.unableTakeVirginity = unableTakeVirginity;
 function canGiftFood(npc) {
 	let amount = 0;
 
-	Object.values(setup.plants).forEach(plants => {
-		if (plants.type === "food" && V.plants[plants.name] && V.plants[plants.name].amount > 0) {
+	Object.entries(setup.foodstuff).forEach(([key, item]) => {
+		if (item.category === "dish" && V.foodstuff[key]?.amount > 0) {
 			amount++;
 		}
 	});
@@ -3001,9 +3063,9 @@ function ingredientIsAllowed(providedKey) {
 	const isAllowed = key => {
 		if (provided.includes(key) || !exceptions || exceptions.includes(key)) return true;
 
-		const setupObject = setup.plants[key];
-		if (Array.isArray(setupObject?.ingredients) && setupObject.ingredients.length) {
-			return setupObject.ingredients.every(ingredient => {
+		const setupObject = setup.foodstuff[key];
+		if (setupObject.recipe?.ingredients.length) {
+			return setupObject.recipe.ingredients.every(ingredient => {
 				return isAllowed(ingredient);
 			});
 		}
@@ -3015,28 +3077,37 @@ function ingredientIsAllowed(providedKey) {
 window.ingredientIsAllowed = ingredientIsAllowed;
 
 function ingredientAlternativesSetup(recipe) {
-	const alternatives = {
-		bottle_of_milk: [],
-		cream: [],
-		strange_flower: ["blood_lemon"],
-		chicken_egg: ["bird_egg"],
-		beef: [],
+	const alternatives = {};
+	const addAlternative = (ingredient, alternative) => {
+		if (!alternatives[ingredient]) alternatives[ingredient] = [];
+		alternatives[ingredient].pushUnique(alternative);
 	};
-	if (V.chef_state >= 3 && T.allowLewdIngredients && (!V.options.ingredientsAutoManage || V.options.ingredientsAutoManageLewd)) {
-		alternatives.bottle_of_milk.pushUnique("baby_bottle_of_breast_milk");
-		alternatives.cream.pushUnique("bottle_of_semen");
+	const lewdAllowed = V.chef_state >= 3 && T.allowLewdIngredients && (!V.options.ingredientsAutoManage || V.options.ingredientsAutoManageLewd);
+
+	Object.entries(setup.foodstuff).forEach(([key, item]) => {
+		const ingredientAlternatives = item?.ingredient_alternatives;
+		if (!ingredientAlternatives) return;
+		ingredientAlternatives.normal.forEach(alternative => addAlternative(key, alternative));
+		if (lewdAllowed) ingredientAlternatives.lewd.forEach(alternative => addAlternative(key, alternative));
+	});
+
+	const recipeAlternatives = setup.foodstuff[recipe]?.recipe?.ingredient_alternatives;
+	if (recipeAlternatives?.normal) {
+		Object.entries(recipeAlternatives.normal).forEach(([ingredient, list]) => {
+			list.forEach(alternative => addAlternative(ingredient, alternative));
+		});
 	}
-	switch (recipe) {
-		case "lasagne":
-			alternatives.beef.pushUnique("chicken");
-			break;
+	if (lewdAllowed && recipeAlternatives?.lewd) {
+		Object.entries(recipeAlternatives.lewd).forEach(([ingredient, list]) => {
+			list.forEach(alternative => addAlternative(ingredient, alternative));
+		});
 	}
 
 	return alternatives;
 }
 
 function ingredientsProvided(mainIngredient, recipe) {
-	if (!setup.plants[mainIngredient] || !setup.plants[recipe]) return false;
+	if (!setup.foodstuff[mainIngredient] || !setup.foodstuff[recipe]) return false;
 	const alternatives = ingredientAlternativesSetup(recipe);
 	const options = [mainIngredient];
 
@@ -3050,18 +3121,18 @@ function ingredientUsed(mainIngredient, recipe) {
 
 	// When auto management has been disabled
 	if (!V.options.ingredientsAutoManage) {
-		if (Array.isArray(alternatives[mainIngredient]) && alternatives[mainIngredient].includes(V.plants[mainIngredient].alternative)) {
-			return V.plants[mainIngredient].alternative;
+		if (Array.isArray(alternatives[mainIngredient]) && alternatives[mainIngredient].includes(V.foodstuff[mainIngredient].alternative)) {
+			return V.foodstuff[mainIngredient].alternative;
 		}
 		return mainIngredient;
 	}
 
 	// Check for any provided ingredients first
-	if (ingredientsProvided(mainIngredient)) return ingredientsProvided(mainIngredient);
+	if (ingredientsProvided(mainIngredient, recipe)) return ingredientsProvided(mainIngredient, recipe);
 
 	// Check for alternatives if there is none of the normal ingredient
-	if (alternatives[mainIngredient]?.length && V.plants[mainIngredient]?.amount <= 0) {
-		const alternative = alternatives[mainIngredient].find(ingredient => V.plants[ingredient]?.amount > 0);
+	if (alternatives[mainIngredient]?.length && V.foodstuff[mainIngredient]?.amount <= 0) {
+		const alternative = alternatives[mainIngredient].find(ingredient => V.foodstuff[ingredient]?.amount > 0);
 		if (alternative) return alternative;
 	}
 	return mainIngredient;
@@ -3069,12 +3140,12 @@ function ingredientUsed(mainIngredient, recipe) {
 window.ingredientUsed = ingredientUsed;
 
 function ingredientsTotal(mainIngredient, recipe, includeAlternatives) {
-	if (!setup.plants[mainIngredient]) return 0;
+	if (!setup.foodstuff[mainIngredient]) return 0;
 	const alternatives = ingredientAlternativesSetup(recipe);
-	let count = V.plants[mainIngredient].amount;
+	let count = V.foodstuff[mainIngredient].amount;
 	if (includeAlternatives && alternatives[mainIngredient] && !T.ingredientsSupplied?.includes(mainIngredient)) {
 		alternatives[mainIngredient].forEach(ingredient => {
-			count += V.plants[ingredient]?.amount || 0;
+			count += V.foodstuff[ingredient]?.amount || 0;
 		});
 	}
 	return count;
@@ -3090,12 +3161,12 @@ function ingredientsOptions(mainIngredient, recipe) {
 window.ingredientsOptions = ingredientsOptions;
 
 function ingredientsNextAlternative(mainIngredient, recipe) {
-	if (!V.plants[mainIngredient]) return;
+	if (!V.foodstuff[mainIngredient]) return;
 	const options = ingredientsOptions(mainIngredient, recipe);
-	const currentAlt = V.plants[mainIngredient].alternative || mainIngredient;
+	const currentAlt = V.foodstuff[mainIngredient].alternative || mainIngredient;
 	const currentIndex = options.indexOf(currentAlt);
 	const nextIndex = currentIndex === -1 || currentIndex + 1 >= options.length ? 0 : currentIndex + 1;
-	V.plants[mainIngredient].alternative = options[nextIndex];
+	V.foodstuff[mainIngredient].alternative = options[nextIndex];
 }
 window.ingredientsNextAlternative = ingredientsNextAlternative;
 
@@ -3110,7 +3181,7 @@ function kitchenFilter() {
 		.split(/[_\s]+/g)
 		.filter(Boolean);
 
-	const norm = (v) => {
+	const norm = v => {
 		if (v == null) return "";
 		if (Array.isArray(v)) return v.join(" ").toLowerCase();
 		return String(v).toLowerCase();
@@ -3120,26 +3191,23 @@ function kitchenFilter() {
 	let providedIngredients = false;
 	let knownRestrictions = false;
 
-	Object.keys(setup.plants).forEach((recipe) => {
-		const item = setup.plants[recipe];
+	Object.keys(setup.foodstuff).forEach(recipe => {
+		const item = setup.foodstuff[recipe];
 
 		// FILTER: only keep items that match at least one term (case-insensitive)
 		if (terms.length) {
-			const matchesAnyTerm = terms.some((term) => {
+			const matchesAnyTerm = terms.some(term => {
 				const matchesInfo =
 					V.options.ingredientsSearch !== "ingredients" &&
-					(
-						norm(item.name).includes(term) ||
-						norm(item.type).includes(term) ||
+					(norm(item.name).includes(term) ||
+						norm(item.category).includes(term) ||
 						norm(item.plural).includes(term) ||
-						norm(item.singular).includes(term)
-					);
+						norm(item.singular).includes(term));
 
 				const matchesRecipe =
 					V.options.ingredientsSearch !== "recipes" &&
-					(item.ingredients ?? []).some((ingredient) =>
-						norm(ingredient).includes(term) ||
-						norm(ingredientUsed(ingredient)).includes(term)
+					(item.recipe?.ingredients ?? []).some(
+						ingredient => norm(ingredient).includes(term) || norm(ingredientUsed(ingredient)).includes(term)
 					);
 
 				return matchesInfo || matchesRecipe;
@@ -3153,30 +3221,27 @@ function kitchenFilter() {
 			providedIngredients = true;
 
 			// FIX: don't shadow "recipe" (was comparing string to object)
-			if (!T.recipeKeys.some((r) => r.key === recipe)) {
+			if (!T.recipeKeys.some(r => r.key === recipe)) {
 				T.recipeKeys.push({ key: recipe, group: "Provided Ingredients" });
 			}
 			return;
 		}
-
-		if (!V.plants[recipe].recipe || !item.ingredients) return;
-
+		if (!V.foodstuff[recipe].knows_recipe || !item.recipe || !item.recipe.ingredients.length) return;
 		let group;
-		if (item.special.includes("sweet")) {
+
+		if (item.food?.tags.includes("sweet")) {
 			group = "sweets";
-		} else if (item.special.includes("drink")) {
+		} else if (item.food?.tags.includes("drink")) {
 			group = "drinks";
-		} else if (item.type.includes("ingredient")) {
+		} else if (item.category === "ingredient") {
 			group = "ingredients";
 		} else {
 			group = "savouries";
 		}
 
 		let missingIngredientsFound = false;
-		item.ingredients.forEach((ingredient) => {
-			if (ingredientsTotal(ingredient, recipe, true) <= 0 && !ingredientsProvided(ingredient, recipe)) {
-				missingIngredientsFound = true;
-			}
+		item.recipe.ingredients.forEach(ingredient => {
+			if (ingredientsTotal(ingredient, recipe, true) <= 0 && !ingredientsProvided(ingredient, recipe)) missingIngredientsFound = true;
 		});
 
 		if (!ingredientIsAllowed(recipe)) {
@@ -3187,7 +3252,7 @@ function kitchenFilter() {
 			missingIngredients = true;
 		}
 
-		if (!T.recipeKeys.some((recipeObj) => recipeObj.key === recipe)) {
+		if (!T.recipeKeys.some(recipeObj => recipeObj.key === recipe)) {
 			T.recipeKeys.push({ key: recipe, group });
 		}
 	});
@@ -3205,24 +3270,24 @@ function marketFilter() {
 
 	let missingItems = false;
 
-	Object.keys(setup.plants).forEach(product => {
-		const item = setup.plants[product];
+	Object.keys(setup.foodstuff).forEach(product => {
+		const item = setup.foodstuff[product];
 
-		if (V.plants[product].amount <= 0 && V.plants[product].marketStall === undefined) return;
+		if (V.foodstuff[product].amount <= 0 && V.foodstuff[product].marketStall === undefined) return;
 
-		// Makes sure items always get this set for older saves
-		if (V.plants[product].marketStall === undefined) V.plants[product].marketStall = !setup.plants[product]?.shop?.length;
+		// Defaults items to not be displayed in the market stall
+		if (V.foodstuff[product].marketStall === undefined) V.foodstuff[product].marketStall = false;
 
 		if (
 			marketFilter &&
-			!marketFilter.find(term => item.name.includes(term) || item.type.includes(term) || item.plural?.includes(term) || item.singular?.includes(term))
+			!marketFilter.find(term => item.name.includes(term) || item.category.includes(term) || item.plural?.includes(term) || item.singular?.includes(term))
 		) {
 			return;
 		}
 
-		T.marketGroups.pushUnique(item.type);
-		let group = item.type;
-		if (V.plants[product].amount <= 0) {
+		T.marketGroups.pushUnique(item.category);
+		let group = item.category;
+		if (V.foodstuff[product].amount <= 0) {
 			missingItems = true;
 			group = "No Stock";
 		}
@@ -3299,9 +3364,9 @@ function hasSharpSenses(sense = "any") {
 		if (currentSkillValue("skulduggery") >= 600) return "experienced ears";
 	}
 	if (["instincts"].includes(sense)) {
-		if (V.wolfgirl >= 6 || V.transformationParts.wolf.tail !== "disabled" && V.transformationParts.wolf.tail !== "hidden") return "wolf instincts";
-		if (V.cat >= 6 || V.transformationParts.cat.tail !== "disabled" && V.transformationParts.cat.tail !== "hidden") return "cat instincts";
-		if (V.fox >= 6 || V.transformationParts.fox.tail !== "disabled" && V.transformationParts.fox.tail !== "hidden") return "fox instincts";
+		if (V.wolfgirl >= 6 || (V.transformationParts.wolf.tail !== "disabled" && V.transformationParts.wolf.tail !== "hidden")) return "wolf instincts";
+		if (V.cat >= 6 || (V.transformationParts.cat.tail !== "disabled" && V.transformationParts.cat.tail !== "hidden")) return "cat instincts";
+		if (V.fox >= 6 || (V.transformationParts.fox.tail !== "disabled" && V.transformationParts.fox.tail !== "hidden")) return "fox instincts";
 		if (V.dryad >= 6 || currentSkillValue("tending") >= 900) return "nature-trained instincts";
 	}
 	return false;
@@ -3309,6 +3374,7 @@ function hasSharpSenses(sense = "any") {
 window.hasSharpSenses = hasSharpSenses;
 
 function displayDefiantOption(amount) {
+	// eslint-disable-next-line no-undef
 	if (isNaN(amount)) paramError("displayDefiantOption", "amount", amount, "Expected a number.");
 	amount = Number(amount);
 	if (amount) {
@@ -3319,3 +3385,17 @@ function displayDefiantOption(amount) {
 	}
 }
 window.displayDefiantOption = displayDefiantOption;
+
+function breakableSoftBinding() {
+	/* Allow unbinding any arm bindings, but limit unbinding legs to soft materials or bugged bound states with no clothing */
+	if (
+		pcAreArmsBound("any") ||
+		((["ropes", "vines"].includes(V.worn.feet.name) || [V.feetuse, V.leftleg, V.rightleg].includes("bound")) &&
+			!["ankle cuffs", "ball and chain"].includes(V.worn.feet.name))
+	) {
+		return true;
+	}
+	return false;
+}
+
+window.breakableSoftBinding = breakableSoftBinding;

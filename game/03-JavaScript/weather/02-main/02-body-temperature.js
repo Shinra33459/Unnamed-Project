@@ -105,7 +105,7 @@ Weather.BodyTemperature = (() => {
 	}
 
 	function getRestingPoint(iterations = 6, warmth = undefined, bodyTemperature, outside) {
-		let ambientTemperature = outside || V.outside ? Weather.temperature : Weather.insideTemperature;
+		let ambientTemperature = outside || V.outside ? Weather.apparentTemperature : Weather.insideTemperature;
 
 		if (T.inWater) {
 			ambientTemperature = Weather.waterTemperature;
@@ -258,6 +258,10 @@ Weather.BodyTemperature = (() => {
 			fox: {
 				coldTolerance: -10, coldToleranceEnd: -15,
 				heatTolerance: 5, heatToleranceEnd: 10
+			},
+			waterdragon: {
+				coldTolerance: -40, coldToleranceEnd: -45,
+				heatTolerance: -1, heatToleranceEnd: -2
 			},
 		};
 

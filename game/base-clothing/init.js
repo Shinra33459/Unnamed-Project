@@ -1,4 +1,4 @@
-/* global initOverUpper, initOverLower, initUpper, initLower, initUnderUpper, initUnderLower, initGenitals, initOverHead, initHead, initFace, initNeck, initHands, initHandheld, initLegs, initFeet, initSpecialClothes, wardrobesUpdate, clothesDataTrimmerLoop, npcAssignClothesToSet */
+/* global initOverUpper, initOverLower, initUpper, initLower, initUnderUpper, initUnderLower, initGenitals, initOverHead, initHead, initFace, initNeck, initHands, initHandheld, initLegs, initFeet, initSpecialClothes, initProps, wardrobesUpdate, clothesDataTrimmerLoop, npcAssignClothesToSet */
 
 function clothingDataInit() {
 	setup.clothes = {};
@@ -21,6 +21,7 @@ function clothingDataInit() {
 	initLegs();
 	initFeet();
 	initSpecialClothes();
+	initProps();
 
 	setup.clothes_all_slots = [
 		"over_upper",
@@ -241,6 +242,8 @@ function givestartclothing() {
 		V.worn.under_lower.colour = "pale white";
 		V.worn.legs = clone(setup.clothes.legs[3]);
 		V.worn.head = clone(setup.clothes.head[1]);
+		V.worn.head.colour = "white";
+		V.worn.head.accessory_colour = "white";
 		V.worn.feet = clone(setup.clothes.feet[1]);
 
 		if (V.player.breastsize <= 3) {
@@ -708,6 +711,10 @@ function initNpcClothes() {
 		{ name: "vintageMale",			type: "formal", gender: "m", outfit: 1, clothes: npcAssignClothesToSet("vintage pantsuit", "vintage pants"), desc: "vintage pantsuit"},
 		{ name: "vintageFemale",		type: "formal", gender: "f", outfit: 1, clothes: npcAssignClothesToSet("vintage skirtsuit", "vintage skirt"), desc: "vintage skirtsuit"},
 		{ name: "ritualRobes",			type: "Gwylan", gender: "n", outfit: 1, clothes: npcAssignClothesToSet("ritual robes", "ritual skirt"), desc: "robes"},
+		/* -------------------------------------------------------------------------------------------------------------------------------------------------- */
+		{ name: "poppyLatexF", 			type: "poppy", gender: "f", outfit: 1, clothes: npcAssignClothesToSet("leather harness", "leather trousers"), desc: "leather harness and trousers" },
+		{ name: "poppyTownM", 			type: "poppy", gender: "m", outfit: 0, clothes: npcAssignClothesToSet("sweater", "breeches"), desc: "sweater and breeches" },
+		{ name: "poppyNeutral",			type: "poppy", gender: "n", outfit: 0, clothes: npcAssignClothesToSet("shirt", "trousers"), desc: "shirt and trousers" },
 		/* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 		{ name: "maleDefault",			type: "default", gender: "m", outfit: 0, clothes: npcAssignClothesToSet("shirt", "trousers"), desc: "shirt and trousers" },
 		{ name: "femaleDefault",		type: "default", gender: "f", outfit: 0, clothes: npcAssignClothesToSet("shirt", "skirt"), desc: "shirt and skirt" },

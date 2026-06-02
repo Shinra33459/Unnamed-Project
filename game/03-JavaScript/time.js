@@ -42,8 +42,6 @@
 
 	Time.dayState - previously $daystate - Returns string of day state (e.g. "dawn", or "day")
 
-	Time.nightState - previously $nightstate- Returns string of night state (e.g. "evening", or "morning")
-
 	Time.nextSchoolTermStartDate - Returns date object of the day when the next school term starts
 
 	Time.nextSchoolTermEndDate - Returns date object of the day when the current school term ends
@@ -99,6 +97,9 @@ const Time = (() => {
 
 	const holidayMonths = [4, 7, 8, 12];
 
+	/* Oxygen recovery duration in seconds. TODO: Move this constant when player stats are refactored */
+	const oxygenResaturationDuration = 480;
+
 	let currentDate = {};
 
 	function set(time = V.timeStamp) {
@@ -114,6 +115,9 @@ const Time = (() => {
 	}
 	/*
 	 * Changes date without "passing time"
+	 *
+	 * Consider using the timeTravel() function instead if you are making a large (1 month+) change to the date to prevent
+	 * too many weather / fog keypoints from generating due to the large gap in time.
 	 */
 	function setDate(date) {
 		set(date.timeStamp - V.startDate);
@@ -141,77 +145,74 @@ const Time = (() => {
 		V.timeMessages ||= [];
 
 		const prevDate = new DateTime(currentDate);
-		set(V.timeStamp + seconds);
+		const minutes = Math.floor((prevDate.second + seconds) / 60);
+		const hours = Math.floor((prevDate.minute + minutes) / 60);
+		const days = Math.floor((prevDate.hour + hours) / 24);
 
-		if (V.oxygenRecovery && !T.oxygenRecoveryBlocked && V.underwater === 0 && V.combat === 0) {
-			/* 8 minute oxygen recovery */
-			const recoveryTime = 480;
-			const recoveryIncrements = V.oxygenmax / recoveryTime;
-			V.oxygen += recoveryIncrements * seconds;
-			if (V.oxygen >= V.oxygenmax) {
-				V.oxygen = V.oxygenmax;
-				delete V.oxygenRecovery;
+		if (V.godClothes === 1) {
+			if (V.worn.upper.name !== "naked") {
+				V.worn.upper.integrity = 2000;
+			}
+			if (V.worn.over_upper.name !== "naked") {
+				V.worn.over_upper.integrity = 2000;
+			}
+			if (V.worn.over_lower.name !== "naked") {
+				V.worn.over_lower.integrity = 2000;
+			}
+			if (V.worn.lower.name !== "naked") {
+				V.worn.lower.integrity = 2000;
+			}
+			if (V.worn.under_lower.name !== "naked") {
+				V.worn.under_lower.integrity = 2000;
+			}
+			if (V.worn.under_upper.name !== "naked") {
+				V.worn.under_upper.integrity = 2000;
 			}
 		}
 
-        if (V.godClothes === 1) {
-			if (V.worn.upper.name !== "naked") { 
-			V.worn.upper.integrity = 2000;
-			}
-			if (V.worn.over_upper.name !== "naked") { 
-			V.worn.over_upper.integrity = 2000;
-			}
-			if (V.worn.over_lower.name !== "naked") { 
-			V.worn.over_lower.integrity = 2000;
-			}
-			if (V.worn.lower.name !== "naked") { 
-			V.worn.lower.integrity = 2000;
-			}
-			if (V.worn.under_lower.name !== "naked") { 
-			V.worn.under_lower.integrity = 2000;
-			}
-			if (V.worn.under_upper.name !== "naked") { 
-			V.worn.under_upper.integrity = 2000;
-			}
-		}
+		try {
+			// it is safe to let secondPassed handle all seconds at once
+			secondPassed(seconds);
 
-		const minutes = Math.floor((currentDate.timeStamp - prevDate.timeStamp) / 60) || (60 + (currentDate.minute - prevDate.minute)) % 60;
-		if (!minutes) return;
-
-		minutePassed(minutes);
-
-		const hours = Math.floor(minutes / 60) || (24 + (currentDate.hour - prevDate.hour)) % 24;
-		if (!hours) return;
-
-		hourPassed(hours);
-		if (
-			!V.daily.dawnCheck &&
-			((prevDate.hour < 6 && (currentDate.hour >= 6 || currentDate.day !== prevDate.day)) || (currentDate.day !== prevDate.day && currentDate.hour >= 6))
-		) {
-			V.daily.dawnCheck = true;
-			dawnCheck();
-		}
-		if (
-			!V.daily.noonCheck &&
-			((prevDate.hour < 12 && (currentDate.hour >= 12 || currentDate.day !== prevDate.day)) ||
-				(currentDate.day !== prevDate.day && currentDate.hour >= 12))
-		) {
-			V.daily.noonCheck = true;
-			noonCheck();
-		}
-
-		const days = Math.floor(hours / 24) || (prevDate.lastDayOfMonth + currentDate.day - prevDate.day) % prevDate.lastDayOfMonth;
-		if (!days) return;
-
-		if (prevDate.weekDay === 7 && currentDate.weekDay === 1) {
-			weekPassed();
-		}
-		dayPassed(days);
-		if (Time.monthDay === 1) {
-			monthPassed();
-		}
-		if (prevDate.yearDay < Time.startDate.yearDay && currentDate.yearDay >= Time.startDate.yearDay) {
-			yearPassed();
+			// the pyramid. pass minutes until next hour, then next hour might affect some stats affecting things in minutePassed, so pass hours until next day, then pass the day, then pass the rest of the hours, then minutes
+			const minsToNextHour = 60 - prevDate.minute;
+			if (minutes < minsToNextHour) {
+				minutePassed(minutes);
+			} else {
+				minutePassed(minsToNextHour);
+				// temporarily update Time with just enough accuracy to be useful in hourPassed
+				set(V.timeStamp + minsToNextHour * 60);
+				const hoursToNextDay = 24 - prevDate.hour;
+				if (hours < hoursToNextDay) {
+					hourPassed(hours);
+				} else {
+					hourPassed(hoursToNextDay);
+					// todo: maybe do it in a better order than week -> day -> year
+					for (let day = 0; day < days; ++day) {
+						if (day !== 0) {
+							// we're here for a long haul, give pc some rest
+							statChange.tiredness(-120);
+							hourPassed(24);
+							statChange.tiredness(-120);
+						}
+						if (prevDate.weekDay === 7 && currentDate.weekDay === 1) weekPassed();
+						dayPassed(days);
+						if (prevDate.yearDay < Time.startDate.yearDay && currentDate.yearDay >= Time.startDate.yearDay) yearPassed();
+					}
+					// pass the remaining hours
+					hourPassed((hours - hoursToNextDay) % 24);
+				}
+				// pass the remaining minutes
+				minutePassed((minutes - minsToNextHour) % 60);
+				// reset BodyTemperature effects
+				delete T.bodyActivity;
+			}
+		} catch (ex) {
+			// we only need to catch it so "finally" can run, so, right back at you
+			throw new Error(ex);
+		} finally {
+			// finally, set the time where it should be
+			setDate(new DateTime(prevDate.timeStamp + seconds));
 		}
 	}
 
@@ -401,13 +402,9 @@ const Time = (() => {
 			return isSchoolTime(currentDate);
 		},
 		get dayState() {
-			const hour = currentDate.hour;
-			if (hour < 6) return "night";
-			if (hour < 9) return "dawn";
-			if (hour < 18) return "day";
-			if (hour < 21) return "dusk";
-			return "night";
+			return currentDate.dayState;
 		},
+
 		get nextSchoolTermStartDate() {
 			return getNextSchoolTermStartDate(currentDate);
 		},
@@ -422,6 +419,10 @@ const Time = (() => {
 		},
 		get secondsSinceMidnight() {
 			return getSecondsSinceMidnight(currentDate);
+		},
+		// Whole minutes since 00:00 of the current in-game day. Referenced by poppySchedule()
+		get minutesSinceMidnight() {
+			return currentDate.hour * 60 + currentDate.minute;
 		},
 		get currentMoonPhase() {
 			return currentMoonPhase(currentDate);
@@ -450,7 +451,28 @@ const Time = (() => {
 		isWeekEnd: () => currentDate.weekEnd,
 		hasDatePassed,
 		betweenHours,
+		openingHours: minutes => betweenHours(7, 20, minutes),
+		oxygenResaturationDuration,
+		timeTravel,
 	});
+
+	/*
+	 * Use this instead of Time.setDate() when jumping to a date far away from the current time. Without it, thousands of weather/fog keypoints
+	 * could be generated to attempt to fill the gap between the time travel date and the current date, which can freeze the browser.
+	 *
+	 * When used as part of a flashback with freezePlayerStats/unfreezePlayerStats, freezePlayerStats must be called before timeTravel() so
+	 * that V.weatherObj and V.timeStamp are captured into V.frozenValues, then unfreezePlayerStats restores them at the end of the event.
+	 *
+	 * This will always randomize the current weather, so if you want to use this to change the time while in a flashback scene, make sure
+	 * to follow it up with calls to Weather.set and Weather.Temperature.set().
+	 */
+	function timeTravel(date) {
+		V.weatherObj.keypointsArr = [];
+		V.weatherObj.fogKeypoints = [];
+		Time.setDate(date);
+		Weather.WeatherGeneration.generate(date);
+		Weather.FogGeneration.generateFogKeypoints(V.weatherObj.keypointsArr);
+	}
 })();
 window.Time = Time;
 
@@ -469,22 +491,21 @@ function yearPassed() {
 	V.yearly.clearProperties();
 }
 
+// eslint-disable-next-line no-unused-vars
 function monthPassed() {
 	if (V.hbsc.account.level >= 5 && V.hbsc.account.deposit >= 250000000) {
-		V.hbsc.account.deposit *= 1 + (0.0025 / 12);
+		V.hbsc.account.deposit *= 1 + 0.0025 / 12;
 	} else if (V.hbsc.account.level >= 4 && V.hbsc.account.deposit >= 50000000) {
-		V.hbsc.account.deposit *= 1 + (0.0075 / 12);
+		V.hbsc.account.deposit *= 1 + 0.0075 / 12;
 	} else if (V.hbsc.account.level >= 3 && V.hbsc.account.deposit >= 10000000) {
-		V.hbsc.account.deposit *= 1 + (0.0125 / 12);
+		V.hbsc.account.deposit *= 1 + 0.0125 / 12;
 	} else if (V.hbsc.account.level >= 2 && V.hbsc.account.deposit >= 50000000) {
-		V.hbsc.account.deposit *= 1 + (0.02 / 12);
+		V.hbsc.account.deposit *= 1 + 0.02 / 12;
 	} else if (V.hbsc.account.level >= 1) {
-		V.hbsc.account.deposit *= 1 + (0.025 / 12);
+		V.hbsc.account.deposit *= 1 + 0.025 / 12;
 	}
 
 	if (V.monthly !== undefined) V.monthly.clearProperties();
-
-	return;
 }
 
 function weekPassed() {
@@ -531,8 +552,14 @@ function weekPassed() {
 		V.history_exam = Math.clamp(V.history_exam - (7 - Math.max(V.historytrait - 2, 0)), -107, 200);
 		wikifier("exam_difficulty");
 	}
-	if (V.robinpaid === 1) V.robinPayout = 0;
-	else {
+	if (V.robinpaid === 1) {
+		V.robinPayout = 0;
+		if (V.robin.weeksSinceProtector) {
+			V.robin.weeksSinceProtector++;
+		} else {
+			V.robin.weeksSinceProtector = 1;
+		}
+	} else {
 		V.robinmoney -= 400;
 		if (V.robinmoney <= 0 && V.robindebt >= 0) {
 			V.robinmoney = 0;
@@ -578,220 +605,248 @@ function weekPassed() {
 
 	if (V.avery_mansion) {
 		V.avery_mansion.date_seen = false;
+		V.avery_tower.progress += 5;
 		if (V.avery_tower.effects.includes("theft")) {
-			V.avery_tower.progress -= 4;
+			V.avery_tower.progress -= 5;
 		}
 		if (V.avery_tower.effects.includes("temple")) {
-			V.avery_tower.progress -= 4;
+			V.avery_tower.progress -= 5;
 		}
 		if (V.avery_tower.effects.includes("mayor")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		if (V.avery_tower.effects.includes("Remy")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		if (V.avery_tower.effects.includes("Harper")) {
-			V.avery_tower.progress += 4;
+			V.avery_tower.progress += 5;
 		}
 		V.avery_tower.progress = Math.clamp(V.avery_tower.progress, 0, 100);
+
+		// Avery forgiving one missed meal per perfect week
+		if (V.avery_mansion.rage.dinner_missed) {
+			if (V.avery_mansion.rage.dinner_missed_lastWeek && V.avery_mansion.rage.dinner_missed_lastWeek === V.avery_mansion.rage.dinner_missed) {
+				V.avery_mansion.rage.dinner_missed--;
+			}
+			V.avery_mansion.rage.dinner_missed_lastWeek = V.avery_mansion.rage.dinner_missed;
+		}
 	}
 
 	supermarketWeekly();
 
 	statChange.worldCorruption("soft", V.world_corruption_hard);
 
+	V.stray_happiness -= Math.floor(V.world_corruption_soft / 10);
+	V.stray_happiness = Math.clamp(V.stray_happiness, 0, 100);
+
 	V.weekly.clearProperties();
 }
 
-function dayPassed(days) {
-	Weather.sky.initSun();
+function dayPassed() {
+	Weather.sidebar.initSun();
+	Weather.WeatherGeneration.updateWeather();
+	Weather.Temperature.updateTemperature();
+	Weather.FogGeneration.generateFogKeypoints(V.weatherObj.keypointsArr);
 
 	if (V.statFreeze) return;
+	if (window.poppyDailyPatienceDecay) {window.poppyDailyPatienceDecay(1);}
+	// Lose one day of tanning
+	Skin.applyTanningLoss(1440);
 
-	for (let i = 0; i < days; i++) {
-		// Lose one day of tanning
-		Skin.applyTanningLoss(1440);
+	wikifier("seenPassageChecks");
+	wikifier("prison_day");
+	wikifier("clearNPC", "pharmNurse");
 
-		wikifier("seenPassageChecks");
-		wikifier("prison_day");
-		wikifier("clearNPC", "pharmNurse");
+	V.physiquechange = 1;
+	V.home_event_timer--;
+	V.park_fame = Math.clamp(V.park_fame - 7, 0, 100);
+	V.museuminterest = Math.clamp(V.museuminterest - (V.museuminterest >= 60 ? 5 : 2), 0, 100);
 
-		V.physiquechange = 1;
-		V.home_event_timer--;
-		V.park_fame = Math.clamp(V.park_fame - 7, 0, 100);
-		V.museuminterest = Math.clamp(V.museuminterest - (V.museuminterest >= 60 ? 5 : 2), 0, 100);
-
-		if (V.gamemode !== "hard" && V.uncomfortable.lewd) {
-			V.exhibitionism = Math.max(V.exhibitionism - 1, 0);
-			V.promiscuity = Math.max(V.promiscuity - 1, 0);
-			V.deviancy = Math.max(V.deviancy - 1, 0);
+	if (V.gamemode !== "hard" && V.uncomfortable.lewd) {
+		V.exhibitionism = Math.max(V.exhibitionism - 1, 0);
+		V.promiscuity = Math.max(V.promiscuity - 1, 0);
+		V.deviancy = Math.max(V.deviancy - 1, 0);
+	}
+	if (V.locker_suspicion > 0) statChange.lockerSuspicion(-1);
+	if (V.whitneyromance || C.npc.Whitney.dom >= 20) {
+		V.bullytimer += 20;
+		V.bullytimeroutside += 10;
+		V.whitney_home_timer += 1;
+	} else {
+		V.bullytimer += 10;
+		V.bullytimeroutside += 5;
+	}
+	if (Time.weekDay === 7) {
+		if (V.brothelshowdata.type !== "none" && !V.brothelshowdata.done && V.brothelshowdata.intro) {
+			V.brothelshowdata.missed = true;
+			V.brothelshowdata.type = "none";
 		}
-		if (V.locker_suspicion > 0) statChange.lockerSuspicion(-1);
-		if (V.whitneyromance || C.npc.Whitney.dom >= 20) {
-			V.bullytimer += 20;
-			V.bullytimeroutside += 10;
+		V.brothelshowdata.done = false;
+	}
+
+	if (V.brothel_escortjob !== undefined && Time.date.timeStamp > V.brothel_escortjob.date) {
+		V.brothel_escortjob.missed = true;
+	}
+
+	if (Time.weekDay === 2) {
+		delete V.museumhorse;
+		delete V.museumduck;
+	}
+
+	if (V.medicated) V.medicated = Math.max(Math.trunc((V.medicated - 1) * 0.5), 0);
+	if (V.asylummedicated) V.asylummedicated = Math.max(Math.trunc((V.asylummedicated - 1) * 0.5), 0);
+	if (V.brothel_rivalry_timer !== undefined) V.brothel_rivalry_timer--;
+	if (V.orphanageWardIntro) V.home_event_ward_timer--;
+	if (V.location === "asylum") V.asylumbound--;
+
+	const rng = random(1, 100);
+	if (rng >= 95) V.brothel_basement_price = 3000;
+	else if (rng >= 85) V.brothel_basement_price = 2000;
+	else if (rng >= 45) V.brothel_basement_price = 1000;
+	else V.brothel_basement_price = 500;
+
+	if (V.chef_rework > 0) V.chef_rework--;
+	if (V.chef_sus > 0) V.chef_sus--;
+	if (V.stall_rejected >= 1) V.stall_rejected = Math.clamp(V.stall_rejected - 1, 0, 100);
+	if (V.temple_garden >= 1) {
+		if (V.gwylan?.ritual >= Time.date.timeStamp) {
+			V.temple_garden = Math.clamp(V.temple_garden - 2, 0, 100);
 		} else {
-			V.bullytimer += 10;
-			V.bullytimeroutside += 5;
+			V.temple_garden = Math.clamp(V.temple_garden - 10, 0, 100);
 		}
-		if (Time.weekDay === 7) {
-			if (V.brothelshowdata.type !== "none" && !V.brothelshowdata.done && V.brothelshowdata.intro) {
-				V.brothelshowdata.missed = true;
-				V.brothelshowdata.type = "none";
-			}
-			V.brothelshowdata.done = false;
+	}
+	if (V.temple_quarters >= 1) V.temple_quarters = Math.clamp(V.temple_quarters - 10, 0, 100);
+	if (V.temple_chastity_timer > 0) V.temple_chastity_timer--;
+	if (V.temple_rank !== "prospective" && V.temple_rank !== "initiate") {
+		if (V.grace >= 1 && !V.daily.graceUp) statChange.grace(-2);
+	}
+	if (V.temple_evaluation) {
+		V.temple_evaluation--;
+		if (V.temple_evaluation <= 0) delete V.temple_evaluation;
+	}
+	if (V.wolfcavebreast >= 1) delete V.wolfcavebreast;
+	if (V.wolfcavepatrol === 1) V.wolfcavepatrolchance = random(1, 3);
+	if (V.temple_jordan_prayer === 1) delete V.temple_jordan_prayer;
+	if (V.temple_event !== undefined) V.temple_event = 1;
+	if (V.school_crossdress_message >= 1 || V.school_herm_message >= 1) V.effectsmessage = 1;
+	if (V.syndromewolves === 1) {
+		wikifier("wolf_cave_update");
+		if (V.wolfchallengetimer === undefined) V.wolfchallengetimer = 14;
+		else V.wolfchallengetimer--;
+	}
+	if (V.estatePersistent) {
+		if (V.estatePersistent.suspicion && V.estatePersistent.suspicion >= 1) wikifier("blackjackSuspicion", -5 - C.npc.Wren.love / 5);
+		if (V.estatePersistent.newDeckTimer > 0 && V.estatePersistent.markedCards && V.estatePersistent.markedCards.size > 0) {
+			/*  we don't re-set this to 3 here - we only do that in the same
+				passage where we actually reset the deck.
+				we don't do that here because we acknowledge the timer and actually reset it
+				when the player enters the cottage, to not confuse things mid-game
+			*/
+			V.estatePersistent.newDeckTimer--;
 		}
+	}
+	if (V.balloonStand.robin.status === "closed") V.balloonStand.robin.status = "sabotaged";
+	if (V.robin.timer.customer >= 1) V.robin.timer.customer--;
+	if (V.robin.timer.hurt >= 1) V.robin.timer.hurt--;
+	if (V.robin.timer.hurt === 0) V.robin.hurtReason = "nothing";
 
-		if (V.brothel_escortjob !== undefined && Time.date.timeStamp > V.brothel_escortjob.date) {
-			V.brothel_escortjob.missed = true;
-		}
+	V.robin.stayup = V.robin.stayup === 1 ? 2 : 0;
 
-		if (Time.weekDay === 2) {
-			delete V.museumhorse;
-			delete V.museumduck;
-		}
+	if (numberOfEarSlime()) {
+		// Daily Corruption
+		if (V.earSlime.growth < 50) statChange.corruption(-1);
+		statChange.corruption(numberOfEarSlime(), true);
+		earSlimeDaily();
+	}
 
-		if (V.medicated) V.medicated = Math.max(Math.trunc((V.medicated - 1) * 0.5), 0);
-		if (V.asylummedicated) V.asylummedicated = Math.max(Math.trunc((V.asylummedicated - 1) * 0.5), 0);
-		if (V.brothel_rivalry_timer !== undefined) V.brothel_rivalry_timer--;
-		if (V.orphanageWardIntro) V.home_event_ward_timer--;
-		if (V.location === "asylum") V.asylumbound--;
-
-		const rng = random(1, 100);
-		if (rng >= 95) V.brothel_basement_price = 3000;
-		else if (rng >= 85) V.brothel_basement_price = 2000;
-		else if (rng >= 45) V.brothel_basement_price = 1000;
-		else V.brothel_basement_price = 500;
-
-		if (V.chef_rework > 0) V.chef_rework--;
-		if (V.chef_sus > 0) V.chef_sus--;
-		if (V.stall_rejected >= 1) V.stall_rejected = Math.clamp(V.stall_rejected - 1, 0, 100);
-		if (V.temple_garden >= 1) {
-			if (V.gwylan?.ritual >= Time.date.timeStamp) {
-				V.temple_garden = Math.clamp(V.temple_garden - 2, 0, 100);
-			} else {
-				V.temple_garden = Math.clamp(V.temple_garden - 10, 0, 100);
-			}
-		}
-		if (V.temple_quarters >= 1) V.temple_quarters = Math.clamp(V.temple_quarters - 10, 0, 100);
-		if (V.temple_chastity_timer > 0) V.temple_chastity_timer--;
-		if (V.temple_rank !== "prospective" && V.temple_rank !== "initiate") {
-			if (V.grace >= 1 && !V.daily.graceUp) statChange.grace(-2);
-		}
-		if (V.temple_evaluation) {
-			V.temple_evaluation--;
-			if (V.temple_evaluation <= 0) delete V.temple_evaluation;
-		}
-		if (V.wolfcavebreast >= 1) delete V.wolfcavebreast;
-		if (V.wolfcavepatrol === 1) V.wolfcavepatrolchance = random(1, 3);
-		if (V.temple_jordan_prayer === 1) delete V.temple_jordan_prayer;
-		if (V.temple_event !== undefined) V.temple_event = 1;
-		if (V.school_crossdress_message >= 1 || V.school_herm_message >= 1) V.effectsmessage = 1;
-		if (V.syndromewolves === 1) {
-			wikifier("wolf_cave_update");
-			if (V.wolfchallengetimer === undefined) V.wolfchallengetimer = 14;
-			else V.wolfchallengetimer--;
-		}
-		if (V.estatePersistent) {
-			if (V.estatePersistent.suspicion && V.estatePersistent.suspicion >= 1) wikifier("blackjackSuspicion", -5 - C.npc.Wren.love / 5);
-			if (V.estatePersistent.newDeckTimer > 0 && V.estatePersistent.markedCards && V.estatePersistent.markedCards.size > 0) {
-				/*  we don't re-set this to 3 here - we only do that in the same
-					passage where we actually reset the deck.
-					we don't do that here because we acknowledge the timer and actually reset it
-					when the player enters the cottage, to not confuse things mid-game
-				*/
-				V.estatePersistent.newDeckTimer--;
-			}
-		}
-		if (V.balloonStand.robin.status === "closed") V.balloonStand.robin.status = "sabotaged";
-		if (V.robin.timer.customer >= 1) V.robin.timer.customer--;
-		if (V.robin.timer.hurt >= 1) V.robin.timer.hurt--;
-		if (V.robin.timer.hurt === 0) V.robin.hurtReason = "nothing";
-
-		V.robin.stayup = V.robin.stayup === 1 ? 2 : 0;
-
-		if (numberOfEarSlime()) {
-			// Daily Corruption
-			if (V.earSlime.growth < 50) statChange.corruption(-1);
-			statChange.corruption(numberOfEarSlime(), true);
-			earSlimeDaily();
-		}
-
-		if (V.bell_timer) V.bell_timer--;
-		if (V.lake_ice_broken >= 1) V.lake_ice_broken--;
-		if (V.lake_ice_broken < 1) delete V.lake_ice_broken;
-		if (V.community_service >= 1) {
-			if (V.community_service_done !== 1 && !["asylum", "prison"].includes(V.location)) {
-				wikifier("crimeUp", 200, "obstruction");
-				V.effectsmessage = 1;
-				V.community_message = "missed";
-			}
-			delete V.community_service_done;
-		}
-
-		if (V.awareness >= 1000) V.awarelevel = 6;
-		else if (V.awareness >= 800) V.awarelevel = 5;
-		else if (V.awareness >= 600) V.awarelevel = 4;
-		else if (V.awareness >= 400) V.awarelevel = 3;
-		else if (V.awareness >= 300) V.awarelevel = 2;
-		else if (V.awareness >= 200) V.awarelevel = 1;
-		else if (V.awareness <= -1) V.awarelevel = -1;
-		else V.awarelevel = 0;
-
-		if (V.awarelevel <= 1 && V.loveInterest.secondary !== "None") {
-			V.loveInterest_message = 1;
-			V.loveInterest.secondary = "None";
+	if (V.bell_timer) V.bell_timer--;
+	if (V.lake_ice_broken >= 1) V.lake_ice_broken--;
+	if (V.lake_ice_broken < 1) delete V.lake_ice_broken;
+	if (V.community_service >= 1) {
+		if (V.community_service_done !== 1 && !["asylum", "prison"].includes(V.location)) {
+			wikifier("crimeUp", 200, "obstruction");
 			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 2 && V.loveInterest.primary !== "None" && V.loveInterest.secondary === "None" && !V.loveInterestAwareMessage) {
-			V.loveInterest_message = 2;
-			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 3 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary === "None" && V.loveInterestAwareMessage == 1) {
-			V.loveInterest_message = 3;
-			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 4 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary === "None" && V.loveInterestAwareMessage == 2) {
-			V.loveInterest_message = 4;
-			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 5 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary === "None" && V.loveInterest.quarternary !== "None" && V.loveInterest.quinary === "None" && V.loveInterestAwareMessage == 3) {
-			V.loveInterest_message = 5;
-			V.effectsmessage = 1;
-		} else if (V.awarelevel >= 6 && V.loveInterest.primary !== "None" && V.loveInterest.secondary !== "None" && V.loveInterest.tertiary !== "None" && V.loveInterest.quarternary !== "None" && V.loveInterest.quinary !== "None" && V.loveInterest.senary === "None" && V.loveInterestAwareMessage == 4) {
-			V.loveInterest_message = 6;
-			V.effectsmessage = 1;
+			V.community_message = "missed";
 		}
-		if (V.pound) {
-			V.pound.compete = 0;
-			wikifier("stray_happiness", -1);
-			V.pound.tasks = [];
-		}
+		delete V.community_service_done;
+	}
 
-		V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][
-			Math.min(Math.max(V.rentstage - 1, 0), 6)
-		];
-		wikifier("rentmod");
-		
-		if (V.avery_mansion && V.avery_fate !== "fallen" && V.avery_fate !== "kicked") {
-			// Avery takes on the PC's debt, but stops if unsatisfied
-			if (Time.weekDay !== 1) {
-				V.avery_mansion.days_absent++;
-			}
-			if (V.avery_mansion.rage.assess >= 9 || V.avery_mansion.days_absent >= 2) {
-				V.renttime--;
-				if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
-					if (V.renttime <= 0) {
-						V.renttime = 7;
-						V.baileyDeposit -= V.rentmoney + (V.babyRent || 0);
-						V.rentstage += 1;
-					}
-				} else {
-					// Not seen bailey for more than 2 weeks, tracks missed rent
-					if (V.renttime < 0 && V.renttime % 7 === 0) {
-						V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
-						V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
-					}
-				}
-			}
-			V.avery_mansion.study_unlocked = 0;
-		} else {
+	if (V.awareness >= 1000) V.awarelevel = 6;
+	else if (V.awareness >= 800) V.awarelevel = 5;
+	else if (V.awareness >= 600) V.awarelevel = 4;
+	else if (V.awareness >= 400) V.awarelevel = 3;
+	else if (V.awareness >= 300) V.awarelevel = 2;
+	else if (V.awareness >= 200) V.awarelevel = 1;
+	else if (V.awareness <= -1) V.awarelevel = -1;
+	else V.awarelevel = 0;
+
+	if (V.awarelevel <= 1 && V.loveInterest.secondary !== "None") {
+		V.loveInterest_message = 1;
+		V.loveInterest.secondary = "None";
+		V.effectsmessage = 1;
+	} else if (V.awarelevel >= 2 && V.loveInterest.primary !== "None" && V.loveInterest.secondary === "None" && !V.loveInterestAwareMessage) {
+		V.loveInterest_message = 2;
+		V.effectsmessage = 1;
+	} else if (
+		V.awarelevel >= 3 &&
+		V.loveInterest.primary !== "None" &&
+		V.loveInterest.secondary !== "None" &&
+		V.loveInterest.tertiary === "None" &&
+		V.loveInterestAwareMessage === 1
+	) {
+		V.loveInterest_message = 3;
+		V.effectsmessage = 1;
+	} else if (
+		V.awarelevel >= 4 &&
+		V.loveInterest.primary !== "None" &&
+		V.loveInterest.secondary !== "None" &&
+		V.loveInterest.tertiary !== "None" &&
+		V.loveInterest.quarternary === "None" &&
+		V.loveInterestAwareMessage === 2
+	) {
+		V.loveInterest_message = 4;
+		V.effectsmessage = 1;
+	} else if (
+		V.awarelevel >= 5 &&
+		V.loveInterest.primary !== "None" &&
+		V.loveInterest.secondary !== "None" &&
+		V.loveInterest.tertiary === "None" &&
+		V.loveInterest.quarternary !== "None" &&
+		V.loveInterest.quinary === "None" &&
+		V.loveInterestAwareMessage === 3
+	) {
+		V.loveInterest_message = 5;
+		V.effectsmessage = 1;
+	} else if (
+		V.awarelevel >= 6 &&
+		V.loveInterest.primary !== "None" &&
+		V.loveInterest.secondary !== "None" &&
+		V.loveInterest.tertiary !== "None" &&
+		V.loveInterest.quarternary !== "None" &&
+		V.loveInterest.quinary !== "None" &&
+		V.loveInterest.senary === "None" &&
+		V.loveInterestAwareMessage === 4
+	) {
+		V.loveInterest_message = 6;
+		V.effectsmessage = 1;
+	}
+	if (V.pound) {
+		V.pound.compete = 0;
+		V.pound.tasks = [];
+	}
+
+	V.rentmoney = [10000, 30000, 50000, 70000, 100000, 150000, 200000][Math.min(Math.max(V.rentstage - 1, 0), 6)];
+	wikifier("rentmod");
+
+	if (V.valentines && Time.monthDay === 13) V.timeMessages.pushUnique("valentinesTomorrow");
+	if (V.valentines && Time.monthDay === 14) V.timeMessages.pushUnique("valentinesToday");
+
+	if (V.avery_mansion && V.avery_fate !== "fallen" && V.avery_fate !== "kicked") {
+		// Avery takes on the PC's debt, but stops if unsatisfied
+		if (Time.weekDay !== 1) {
+			V.avery_mansion.days_absent++;
+		}
+		if (V.avery_mansion.rage.assess >= 9 || V.avery_mansion.days_absent >= 2) {
 			V.renttime--;
 			if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
 				if (V.renttime <= 0) {
@@ -807,247 +862,288 @@ function dayPassed(days) {
 				}
 			}
 		}
-
-		if (V.flashbacktown > 0) V.flashbacktown--;
-		if (V.flashbackhome > 0) V.flashbackhome--;
-		if (V.flashbackbeach > 0) V.flashbackbeach--;
-		if (V.flashbackunderground > 0) V.flashbackunderground--;
-		if (V.flashbackschool > 0) V.flashbackschool--;
-
-		if (V.flashbacktown === 1) V.flashbacktownready = 1;
-		if (V.flashbackhome === 1) V.flashbackhomeready = 1;
-		if (V.flashbackbeach === 1) V.flashbackbeachready = 1;
-		if (V.flashbackunderground === 1) V.flashbackundergroundready = 1;
-		if (V.flashbackschool === 1) V.flashbackschoolready = 1;
-
-		V.smuggler_timer--;
-		if (V.smuggler_timer < 0) {
-			V.smuggler_timer = random(4, 7);
-			const rng = random(1, 100);
-			if (rng >= 76) V.smuggler_location = "forest";
-			else if (rng >= 51) V.smuggler_location = "sewer";
-			else if (rng >= 26) V.smuggler_location = "beach";
-			else V.smuggler_location = "bus";
-			delete V.smuggler_known;
-		}
-
-		if (V.tailorMonthlyService > 0) V.tailorMonthlyService--;
-		else if (V.tailorMonthlyService === 0) delete V.tailorMonthlyService;
-
-		if (V.wardrobeRepair && V.wardrobeRepair.timeLeft === 1) V.wardrobeRepair.timeLeft = 0;
-		if (V.clothingShop.ban > 0) V.clothingShop.ban--;
-		else V.clothingShop.banExtension = false;
-
-		if (V.adultShop !== undefined) {
-			if (V.adultShop.ban > 0) V.adultShop.ban--;
-			else V.adultShop.banExtension = false;
+		V.avery_mansion.study_unlocked = 0;
+	} else {
+		V.renttime--;
+		if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
+			if (V.renttime <= 0) {
+				V.renttime = 7;
+				V.baileyDeposit -= V.rentmoney + (V.babyRent || 0);
+				V.rentstage += 1;
+			}
 		} else {
-			V.adultShop = { ban: 0, banExtension: false, spotted: false, stolenClothes: 0, totalStolenClothes: 0, banCount: 0, rng: random(0, 1000) };
-		}
-
-		if (V.farm) {
-			if (V.farm.milking.catchChance > random(10, 1000) / 10) V.farm.milking.caught = true;
-			if (V.farm.milking.catchChance >= 25) V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.95, 0, 100).toFixed(3);
-			else V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.98, 0, 100).toFixed(3);
-		}
-
-		if (Weather.precipitation === "rain" && V.bird.upgrades?.firepit && !V.bird.upgrades.shelter) {
-			const burnTime = getBirdBurnTime() * 60; // seconds
-			if (burnTime > 0) {
-				Cooker.addBurnTime(V.bird.firepit, Math.floor(-burnTime / 2) + Time.minute * 30);
+			// Not seen bailey for more than 2 weeks, tracks missed rent
+			if (V.renttime < 0 && V.renttime % 7 === 0) {
+				V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
+				V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
 			}
 		}
+	}
 
-		if (V.moorLuck > 0) V.moorLuck--;
-		if (V.officejobintro === 1) V.officelastcomplaintday++;
+	if (V.flashbacktown > 0) V.flashbacktown--;
+	if (V.flashbackhome > 0) V.flashbackhome--;
+	if (V.flashbackbeach > 0) V.flashbackbeach--;
+	if (V.flashbackunderground > 0) V.flashbackunderground--;
+	if (V.flashbackschool > 0) V.flashbackschool--;
 
-		delete V.glideScared;
-		delete V.swimCrossdressPermission;
-		delete V.masturbation_oralSkillMax;
+	if (V.flashbacktown === 1) V.flashbacktownready = 1;
+	if (V.flashbackhome === 1) V.flashbackhomeready = 1;
+	if (V.flashbackbeach === 1) V.flashbackbeachready = 1;
+	if (V.flashbackunderground === 1) V.flashbackundergroundready = 1;
+	if (V.flashbackschool === 1) V.flashbackschoolready = 1;
 
-		if (V.pubfame) {
-			if (V.pubfame.timer >= 1) V.pubfame.timer--;
-			if (V.pubfame.timer <= 0) {
-				if (V.pubfame.status === "hiding") V.pubfame.detail = "hiding";
-				if (V.pubfame.target) V.pubfame.status = "accepted";
-				else V.pubfame.status = "ready";
-				delete V.pubfame.timer;
-			}
-			for (const fameKeys of Object.keys(V.fameDecay)) {
-				if (V.fameDecayTimer[fameKeys] >= 1) {
-					V.fameDecayTimer[fameKeys]--;
-					V.fame[fameKeys] -= V.fameDecay[fameKeys];
-				} else if (V.fameDecayTimer[fameKeys] <= 0) {
-					delete V.fameDecayTimer[fameKeys];
-					delete V.fameDecay[fameKeys];
-					V.fame[fameKeys] = Math.round(V.fame[fameKeys]);
-				}
-			}
+	V.smuggler_timer--;
+	if (V.smuggler_timer < 0) {
+		V.smuggler_timer = random(4, 7);
+		const rng = random(1, 100);
+		if (rng >= 76) V.smuggler_location = "forest";
+		else if (rng >= 51) V.smuggler_location = "sewer";
+		else if (rng >= 26) V.smuggler_location = "beach";
+		else V.smuggler_location = "bus";
+		delete V.smuggler_known;
+	}
+
+	if (V.tailorMonthlyService > 0) {
+		V.tailorMonthlyService--;
+		if (V.tailorMonthlyService === 0) delete V.tailorMonthlyService;
+	}
+
+	if (V.wardrobeRepair && V.wardrobeRepair.timeLeft === 1) V.wardrobeRepair.timeLeft = 0;
+	if (V.clothingShop.ban > 0) V.clothingShop.ban--;
+	else V.clothingShop.banExtension = false;
+
+	if (V.adultShop !== undefined) {
+		if (V.adultShop.ban > 0) V.adultShop.ban--;
+		else V.adultShop.banExtension = false;
+	} else {
+		V.adultShop = { ban: 0, banExtension: false, spotted: false, stolenClothes: 0, totalStolenClothes: 0, banCount: 0, rng: random(0, 1000) };
+	}
+
+	if (V.farm) {
+		if (V.farm.milking.catchChance > random(10, 1000) / 10) V.farm.milking.caught = true;
+		if (V.farm.milking.catchChance >= 25) V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.95, 0, 100).toFixed(3);
+		else V.farm.milking.catchChance = Math.clamp(V.farm.milking.catchChance * 0.98, 0, 100).toFixed(3);
+	}
+
+	if (V.livestock.winter.active === false) {
+		if (Time.month.between(9, 10)) {
+			if (Weather.temperature <= 0) V.livestock.winter.trigger++;
+			else V.livestock.winter.trigger = Math.clamp(V.livestock.winter.trigger - 1, 0, 4);
+		} else if (Time.month >= 11 || Time.month === 1) {
+			if (V.bus === "livestock") V.livestock.winter.trigger = 4;
+			else V.livestock.winter.active = true;
+			V.livestock.winter.exam = false;
+		} else V.livestock.winter.trigger = 0;
+	} else {
+		if (Time.month.between(2, 3)) {
+			if (Weather.temperature > 0) V.livestock.winter.trigger++;
+			else V.livestock.winter.trigger = Math.clamp(V.livestock.winter.trigger - 1, 0, 4);
+		} else if (Time.month >= 3 && Time.month <= 8) {
+			if (V.bus === "livestock") V.livestock.winter.trigger = 4;
+			else V.livestock.winter.active = false;
+			V.livestock.winter.exam = false;
+		} else V.livestock.winter.trigger = 0;
+	}
+
+	if (Weather.precipitation === "rain" && V.bird.upgrades?.firepit && !V.bird.upgrades.shelter) {
+		const burnTime = getBirdBurnTime() * 60; // seconds
+		if (burnTime > 0) {
+			Cooker.addBurnTime(V.bird.firepit, Math.floor(-burnTime / 2) + Time.minute * 30);
 		}
+	}
 
-		if (V.randomNNPCStraponsToClear) {
-			V.NPCName.forEach(npc => {
-				if (npc.strapons && npc.strapons.length >= 1) {
-					/* This removes all strapons that have the temp tag, and ignores any that lack this variable */
-					npc.strapons = npc.strapons.filter(strapon => !strapon.temp);
-					console.debug("Removed temp strap-ons");
-				}
-			});
+	if (V.moorLuck > 0) V.moorLuck--;
+	if (V.officejobintro === 1) V.officelastcomplaintday++;
+
+	delete V.glideScared;
+	delete V.swimCrossdressPermission;
+	delete V.masturbation_oralSkillMax;
+
+	if (V.pubfame) {
+		if (V.pubfame.timer >= 1) V.pubfame.timer--;
+		if (V.pubfame.timer <= 0) {
+			if (V.pubfame.status === "hiding") V.pubfame.detail = "hiding";
+			if (V.pubfame.target) V.pubfame.status = "accepted";
+			else V.pubfame.status = "ready";
+			delete V.pubfame.timer;
 		}
-
-		if (V.adultshopprogress < 22 && Time.weekDay === 6) V.adultshopprogress++;
-		else if (V.adultshopgrandopening) wikifier("unlockAdultShop");
-		else if (V.adultshopprogress >= 22 && !V.adultshopunlocked) V.adultshopgrandopening = true;
-		else if (V.adultshopdegree < 15) V.adultshopdegree += 0.1;
-		delete V.adultshophelped;
-
-		if (V.location !== "tentworld") {
-			delete V.tentacle_forest_lurker;
-		}
-
-		if (V.brothelVending) {
-			const rng = random(Math.min(1, V.brothelVending.condoms), Math.min(10, V.brothelVending.condoms));
-			V.brothelVending.condoms -= rng;
-			V.brothelVending.condomsSold += rng;
-			V.brothelVending.condomsToRefill = 200 - V.brothelVending.condoms;
-			V.brothelVending.total = (V.brothelVending.total || 0) + rng;
-		}
-
-		if (V.brothelVending) {
-			const rng = random(Math.min(1, V.brothelVending.lube), Math.min(10, V.brothelVending.lube));
-			V.brothelVending.lube -= rng;
-			V.brothelVending.lubeSold += rng;
-			V.brothelVending.lubeToRefill = 200 - V.brothelVending.lube;
-			V.brothelVending.total = (V.brothelVending.total || 0) + rng;
-		}
-
-		if (V.dailyBrothelPriceCheck) {
-			V.dailyBrothelPriceCheck = undefined;
-			V.brothelExclusiveGloryholeAccuratePrice = undefined;
-			V.brothelExclusiveGloryholeEstimatePrice = undefined;
-			V.brothelExclusiveGloryholeRoughEstimatePrice = undefined;
-		}
-
-		wikifier("menstruationCycle", "daily");
-		pregnancyProgress();
-		pregnancyProgress("anus");
-		wikifier("rutCycle");
-		npcPregnancyCycle();
-		randomPregnancyProgress();
-		wikifier("physicalAdjustments");
-
-		dailyPlayerEffects();
-		dailyMasochismSadismEffects();
-		dailySchoolEffects();
-		dailyFarmEvents();
-		dailyLiquidEffects();
-		dailyTransformationEffects();
-		dailyNPCEffects();
-		yearlyEventChecks();
-
-		moonState();
-
-		parasiteProgressDay();
-		parasiteProgressDay("vagina");
-		tendingDay();
-		wikifier("creatureContainersProgressDay");
-
-		if (Number.isInteger(V.challengetimer)) {
-			V.challengetimer--;
-			if (V.challengetimer < 0) delete V.challengetimer;
-		}
-
-		if (V.whitneyRescueStatus) {
-			V.whitneyRescueTimer = (V.whitneyRescueTimer || 8) - 1;
-			if (V.whitneyRescueTimer <= 0) {
-				if (V.whitneyRescueStatus === "humiliated") {
-					V.whitneyRescueStatus = "shaken";
-					V.whitneyRescueTimer = 14;
-				} else {
-					delete V.whitneyRescueTimer;
-					delete V.whitneyRescueStatus;
-				}
+		for (const fameKeys of Object.keys(V.fameDecay)) {
+			if (V.fameDecayTimer[fameKeys] >= 1) {
+				V.fameDecayTimer[fameKeys]--;
+				V.fame[fameKeys] -= V.fameDecay[fameKeys];
+			} else if (V.fameDecayTimer[fameKeys] <= 0) {
+				delete V.fameDecayTimer[fameKeys];
+				delete V.fameDecay[fameKeys];
+				V.fame[fameKeys] = Math.round(V.fame[fameKeys]);
 			}
 		}
+	}
 
-		if (V.pirate_journey > 1) {
-			V.pirate_journey--;
-		} else {
-			delete V.pirate_journey;
-		}
-		if (V.pirate_attack) {
-			delete V.pirate_attack;
-		}
-		if (V.moorLessDangerAll > 1) {
-			V.moorLessDangerAll -= 1000;
-		} else {
-			delete V.moorLessDangerAll;
-		}
-		if (V.bird.clean >= 1) V.bird.clean = Math.clamp(V.bird.clean - (10 - V.bird.upgrades.shelter), 0, 100);
+	if (V.randomNNPCStraponsToClear) {
+		V.NPCName.forEach(npc => {
+			if (npc.strapons && npc.strapons.length >= 1) {
+				/* This removes all strapons that have the temp tag, and ignores any that lack this variable */
+				npc.strapons = npc.strapons.filter(strapon => !strapon.temp);
+				console.debug("Removed temp strap-ons");
+			}
+		});
+	}
 
-		if (V.whitney_roof) {
-			delete V.whitney_roof;
-		}
+	if (V.adultshopprogress < 22 && Time.weekDay === 6) V.adultshopprogress++;
+	else if (V.adultshopgrandopening) {
+		T.disableUnlockAdultShopFeat = true;
+		wikifier("unlockAdultShop");
+	} else if (V.adultshopprogress >= 22 && !V.adultshopunlocked) V.adultshopgrandopening = true;
+	else if (V.adultshopdegree < 15) V.adultshopdegree += 0.1;
+	delete V.adultshophelped;
 
-		// daysTillLaying only applies to unfertilised eggs
-		if (V.harpyEggs) V.harpyEggs.daysTillLaying--;
-		if (V.harpyEggsPrevent) {
-			V.harpyEggsPrevent--;
-			if (V.harpyEggsPrevent <= 0) delete V.harpyEggsPrevent;
-		}
+	if (V.location !== "tentworld") {
+		delete V.tentacle_forest_lurker;
+	}
 
-		// Activate the robin pillory
-		if (V.robinPillory && V.robinPillory.danger !== undefined && (V.robindebtevent <= 1 || !V.baileySold)) V.robinPillory.active = true;
+	if (V.brothelVending) {
+		const rng = random(Math.min(1, V.brothelVending.condoms), Math.min(10, V.brothelVending.condoms));
+		V.brothelVending.condoms -= rng;
+		V.brothelVending.condomsSold += rng;
+		V.brothelVending.condomsToRefill = 200 - V.brothelVending.condoms;
+		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
+	}
 
-		// Save today's HC ending in local storage
-		if (V.daily.winterStoryTime && V.hcEndings)
-			localStorage.setItem("hopelessCycle", localStorage.getItem("hopelessCycle").split(",").concatUnique(V.hcEndings));
+	if (V.brothelVending) {
+		const rng = random(Math.min(1, V.brothelVending.lube), Math.min(10, V.brothelVending.lube));
+		V.brothelVending.lube -= rng;
+		V.brothelVending.lubeSold += rng;
+		V.brothelVending.lubeToRefill = 200 - V.brothelVending.lube;
+		V.brothelVending.total = (V.brothelVending.total || 0) + rng;
+	}
 
-		V.daily.clearProperties();
+	if (V.dailyBrothelPriceCheck) {
+		V.dailyBrothelPriceCheck = undefined;
+		V.brothelExclusiveGloryholeAccuratePrice = undefined;
+		V.brothelExclusiveGloryholeEstimatePrice = undefined;
+		V.brothelExclusiveGloryholeRoughEstimatePrice = undefined;
+	}
 
-		if (V.stallDeposit >= 3000) {
-			V.stallDeposit -= 3000;
-			V.daily.stallRented = 1;
-		}
+	wikifier("menstruationCycle", "daily");
+	pregnancyProgress();
+	pregnancyProgress("anus");
+	wikifier("rutCycle");
+	npcPregnancyCycle();
+	randomPregnancyProgress();
+	wikifier("physicalAdjustments");
 
-		/* Set flag to determine Kylar's position at lunch */
-		V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
+	dailyPlayerEffects();
+	dailyMasochismSadismEffects();
+	dailySchoolEffects();
+	dailyFarmEvents();
+	dailyDockEffects();
+	dailyLiquidEffects();
+	dailyTransformationEffects();
+	dailyNPCEffects();
+	yearlyEventChecks();
 
-		if (V.bike >= 1) {
-			if (V.bikeSecurityGear == 5) {
-				T.bikeTheftProtection = 999;
-			} else if (V.bikeSecurityGear == 4) {
-				T.bikeTheftProtection = 750;
-			} else if (V.bikeSecurityGear == 3) {
-				T.bikeTheftProtection = 500;
-			} else if (V.bikeSecurityGear == 2) {
-				T.bikeTheftProtection = 300;
-			} else if (V.bikeSecurityGear == 1) {
-				T.bikeTheftProtection = 100;
+	moonState();
+
+	parasiteProgressDay();
+	parasiteProgressDay("vagina");
+	tendingDay();
+	wikifier("creatureContainersProgressDay");
+
+	if (Number.isInteger(V.challengetimer)) {
+		V.challengetimer--;
+		if (V.challengetimer < 0) delete V.challengetimer;
+	}
+
+	if (V.whitneyRescueStatus) {
+		V.whitneyRescueTimer = (V.whitneyRescueTimer || 8) - 1;
+		if (V.whitneyRescueTimer <= 0) {
+			if (V.whitneyRescueStatus === "humiliated") {
+				V.whitneyRescueStatus = "shaken";
+				V.whitneyRescueTimer = 14;
 			} else {
-				T.bikeTheftProtection = 0;
+				delete V.whitneyRescueTimer;
+				delete V.whitneyRescueStatus;
 			}
-			if (V.bikeLocationCategory == "lake") {
-				T.bikeTheftChance = 500 - T.bikeTheftProtection;
-			} else if (V.bikeLocationCategory == "left" || V.bikeLocationCategory == "mid" || V.bikeLocationCategory == "right") {
-				if (V.baileydefeatedchain >= 1) {
-					T.bikeTheftChanceBonus = 250;
-				} else {
-					T.bikeTheftChanceBonus = 0;
-				}
-				T.bikeTheftChance = 750 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
-			} else if (V.bikeLocationCategory == "farm") {
-				if (V.farm?.aggro) T.bikeTheftChanceBonus = 900 * (V.farm.aggro / 100);
-				T.bikeTheftChance = 100 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
+		}
+	}
+
+	if (V.pirate_journey > 1) {
+		V.pirate_journey--;
+	} else {
+		delete V.pirate_journey;
+	}
+	if (V.pirate_attack) {
+		delete V.pirate_attack;
+	}
+	if (V.moorLessDangerAll > 1) {
+		V.moorLessDangerAll -= 1000;
+	} else {
+		delete V.moorLessDangerAll;
+	}
+	if (V.bird.clean >= 1) V.bird.clean = Math.clamp(V.bird.clean - (10 - V.bird.upgrades.shelter), 0, 100);
+
+	if (V.whitney_roof) {
+		delete V.whitney_roof;
+	}
+
+	// daysTillLaying only applies to unfertilised eggs
+	if (V.harpyEggs) V.harpyEggs.daysTillLaying--;
+	if (V.harpyEggsPrevent) {
+		V.harpyEggsPrevent--;
+		if (V.harpyEggsPrevent <= 0) delete V.harpyEggsPrevent;
+	}
+
+	// Activate the robin pillory
+	if (V.robinPillory && V.robinPillory.danger !== undefined && (V.robindebtevent <= 1 || !V.baileySold)) V.robinPillory.active = true;
+
+	// Save today's HC ending in local storage
+	if (V.daily.winterStoryTime && V.hcEndings)
+		localStorage.setItem("hopelessCycle", localStorage.getItem("hopelessCycle").split(",").concatUnique(V.hcEndings));
+
+	V.daily.clearProperties();
+
+	if (V.stallDeposit >= 3000) {
+		V.stallDeposit -= 3000;
+		V.daily.stallRented = 1;
+	}
+
+	/* Set flag to determine Kylar's position at lunch */
+	V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
+
+	if (V.bike >= 1) {
+		if (V.bikeSecurityGear === 5) {
+			T.bikeTheftProtection = 999;
+		} else if (V.bikeSecurityGear === 4) {
+			T.bikeTheftProtection = 750;
+		} else if (V.bikeSecurityGear === 3) {
+			T.bikeTheftProtection = 500;
+		} else if (V.bikeSecurityGear === 2) {
+			T.bikeTheftProtection = 300;
+		} else if (V.bikeSecurityGear === 1) {
+			T.bikeTheftProtection = 100;
+		} else {
+			T.bikeTheftProtection = 0;
+		}
+		if (V.bikeLocationCategory === "lake") {
+			T.bikeTheftChance = 500 - T.bikeTheftProtection;
+		} else if (V.bikeLocationCategory === "left" || V.bikeLocationCategory === "mid" || V.bikeLocationCategory === "right") {
+			if (V.baileydefeatedchain >= 1) {
+				T.bikeTheftChanceBonus = 250;
 			} else {
-				T.bikeTheftChance = 0;
+				T.bikeTheftChanceBonus = 0;
 			}
-			if ((random(1, 1000) <= T.bikeTheftChance) && V.bikeSecurity == 1) {
-				V.bikeStolen = 1;
-				V.bike = 0;
-				if (V.bikeSecurityGear >= 1) V.bikeSecurityGearStolen = 1;
-				V.bikeSecurityGear = 0;
-			}
+			T.bikeTheftChance = 750 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
+		} else if (V.bikeLocationCategory === "farm") {
+			if (V.farm?.aggro) T.bikeTheftChanceBonus = 900 * (V.farm.aggro / 100);
+			T.bikeTheftChance = 100 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
+		} else {
+			T.bikeTheftChance = 0;
+		}
+		if (random(1, 1000) <= T.bikeTheftChance && V.bikeSecurity === 1) {
+			V.bikeStolen = 1;
+			V.bike = 0;
+			if (V.bikeSecurityGear >= 1) V.bikeSecurityGearStolen = 1;
+			V.bikeSecurityGear = 0;
 		}
 	}
 
@@ -1064,11 +1160,16 @@ function dayPassed(days) {
 }
 
 function hourPassed(hours) {
-	if (V.statFreeze) return;
+	if (V.statFreeze) {
+		// minutes still need to pass
+		if (hours > 1) minutePassed((hours - 1) * 60);
+		return;
+	}
 
 	// reset hourly vars
 	V.hourly = {};
 
+	/* code that needs to run every hour */
 	for (let i = 0; i < hours; i++) {
 		if (V.innocencestate === 1 && V.control <= 0) statChange.awareness(1);
 		statChange.control(1);
@@ -1076,7 +1177,7 @@ function hourPassed(hours) {
 		statChange.arousal(0, "time");
 		wikifier("wetnessCalculate");
 		// special clothes effects
-		// currently, only these slots can have lustful traits, consider universalizing
+		// currently, only these slots can have lustful traits, consider universalising
 		["upper", "lower", "feet", "head"].forEach(slot => {
 			["bimbo", "pimp"].forEach(type => {
 				if (V.worn[slot].type.includes(type)) ++V.specialClothesEffects[type].progress;
@@ -1118,9 +1219,39 @@ function hourPassed(hours) {
 			}
 		}
 		if (!V.avery_mansion || ["fallen", "kicked"].includes(V.avery_fate)) {
-			V.home_gone++;
+			V.hoursGoneFromHome++;
+		}
+
+		// Robin autowatering
+		// Include "bath" as a location since bathing is from 17:00-17:29
+		if (
+			Time.hour === 17 &&
+			V.robin.autoWater &&
+			C.npc.Robin.trauma < 50 &&
+			["orphanage", "garden", "bath"].includes(getRobinLocation()) &&
+			Weather.precipitation !== "rain" &&
+			(Weather.precipitation !== "snow" || V.alex_greenhouse >= 3) &&
+			// eslint-disable-next-line no-undef
+			orphanagePlotsPlanted() &&
+			// eslint-disable-next-line no-undef
+			!orphanagePlotsWatered()
+		) {
+			V.plots.garden?.forEach(plot => (plot.water = 1));
+			V.daily.robin.watered = "alone";
+		}
+		// robin pillory
+		if (V.robinPillory && V.robinPillory.danger !== undefined && V.robinPillory.active) wikifier("robinPilloryHour");
+
+		// time checks
+		if (Time.hour === 6) dawnCheck();
+		if (Time.hour === 12) noonCheck();
+		// the first hour already has minutes passed and time set before hourPassed even ran, but subsequent hours still need it
+		if (i !== 0) {
+			minutePassed(60);
+			Time.set(V.timeStamp + 3600);
 		}
 	}
+	/* changes that can be applied just once. consider if using V.hourly would make better sense before putting things here */
 	calchairlengthstage();
 
 	if (
@@ -1132,17 +1263,16 @@ function hourPassed(hours) {
 		V.pregnancyDailyEvent = true;
 	}
 
-	V.openinghours = Time.hour >= 7 && Time.hour < 21 ? 1 : 0;
 	V.timeMessages.pushUnique("feats");
 
 	if (!V.wolfevent) V.wolfevent = 1;
 	if (V.wolfpatrolsent >= 24) delete V.wolfpatrolsent;
 
-	if (V.robinPillory && V.robinPillory.danger !== undefined && V.robinPillory.active) wikifier("robinPilloryHour");
 	if (V.pillory.tenant.exists && V.pillory.tenant.endTime < V.timeStamp) wikifier("clear_pillory");
 
 	if (V.robinbed === "yours" && !["sleep", "orphanage"].includes(getRobinLocation())) delete V.robinbed;
 
+	// todo: why is it here? look for a better way to handle it
 	if (V.per_npc.pubfame_receptionist) {
 		wikifier("clearNPC", "pubfame_receptionist");
 		V.pubfame.hospital = {};
@@ -1156,7 +1286,7 @@ function minutePassed(minutes) {
 	const isCrossdresser = V.backgroundTraits.includes("crossdresser");
 	// Not using isCrossdressing() since the stress gains/penalties should not be based on NudeGenderDC
 	const isCrossdressing = V.player.sex !== V.player.gender_appearance && V.player.sex !== "h";
-	if (V.controlled === 0 && V.anxiety >= 2 && V.timeSkip == undefined) V.stress += minutes * ((isCrossdresser && !isCrossdressing) + 1);
+	if (V.controlled === 0 && V.anxiety >= 2 && V.timeSkip === undefined) V.stress += minutes * ((isCrossdresser && !isCrossdressing) + 1);
 	else if (V.stress < V.stressmax && (V.controlled === 1 || V.anxiety === 0)) V.stress -= minutes * ((isCrossdresser && isCrossdressing) + 1);
 
 	parasiteProgressTime(minutes);
@@ -1172,21 +1302,17 @@ function minutePassed(minutes) {
 	Skin.applyTanningGain(minutes);
 
 	// Body temperature
-	const temperature = V.outside ? Weather.temperature : Weather.insideTemperature;
+	const temperature = V.outside ? Weather.apparentTemperature : Weather.insideTemperature;
 	if (!V.possessed) Weather.BodyTemperature.update(temperature, minutes);
-	if (V.timeSkip == undefined) V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
+	if (V.timeSkip === undefined) V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
 
 	// Snow & ice
 	Weather.setAccumulatedSnow(minutes);
 	Weather.setIceThickness(minutes);
 
-	// Overcast
-	Weather.sky.updateFade();
-	V.weatherObj.overcast = round(Weather.sky.fadables.overcast.factor, 2);
-
 	// Effects
 	V.stress = Math.min(V.stress, V.stressmax);
-	if (V.substanceRebalance == 1) {
+	if (V.substanceRebalance === 1) {
 		if (V.drunk > 0) {
 			// use fancy math to ensure that `pass(60);` and `pass(30);pass(30);` apply the same amount of tiredness regardless of changed V.drunk value
 			const sum = (from, to) => ((from - to) * (from + to + 1)) / 2;
@@ -1214,8 +1340,8 @@ function minutePassed(minutes) {
 		if (V.drugged > 0) statChange.drugs(-minutes);
 	}
 	// prevent fatigue from being an issue when passing days (actually 20+ hours) at a time
-	if (minutes < 1200 && V.timeSkip == undefined) statChange.tiredness(minutes / 15);
-	statChange.pain(minutes, -1);
+	if (minutes < 1200 && V.timeSkip === undefined) statChange.tiredness(minutes / 15);
+	statChange.pain(minutes, -0.5);
 
 	// Arousal
 	const arousalMultiplier = V.backgroundTraits.includes("lustful") ? 0.2 * (12 - Math.floor(V.purity / 80)) + 1 + (V.purity <= 50 ? 1 : 0) : -10;
@@ -1235,12 +1361,26 @@ function minutePassed(minutes) {
 	}
 }
 
+function secondPassed(seconds) {
+	// Oxygen
+	if (V.oxygenRecovery && !T.oxygenRecoveryBlocked && V.underwater === 0 && V.combat === 0) {
+		const recoveryRate = V.oxygenmax / Time.oxygenResaturationDuration;
+		V.oxygen += recoveryRate * seconds;
+		if (V.oxygen >= V.oxygenmax) {
+			V.oxygen = V.oxygenmax;
+			delete V.oxygenRecovery;
+		}
+	}
+}
+
 function noonCheck() {
-	Weather.sky.initMoon();
-	Weather.sky.setMoonPhase();
+	Weather.sidebar.initMoon();
+	Weather.sidebar.setMoonPhase();
 
 	if (V.statFreeze) return;
 
+	V.robinwakeday = 0;
+	delete V.robin_kicked_out;
 	delete V.bartend_info;
 	delete V.bartend_info_other;
 	if (V.per_npc.bartend) wikifier("clearNPC", "bartend");
@@ -1267,12 +1407,18 @@ function noonCheck() {
 		}
 		V.avery_mansion.sleep_interrupt = 0;
 	}
+
+	if (V.loftIngredients && Object.keys(V.loftIngredients).length >= 1) {
+		Object.keys(V.loftIngredients).forEach(x => {
+			V.loftIngredients[x]--;
+			if (V.loftIngredients[x] <= 0) delete V.loftIngredients[x];
+		});
+	}
 }
 
 function dawnCheck() {
 	if (V.statFreeze) return;
 
-	V.robinwakeday = 0;
 	V.wolfwake = 0;
 	V.edenwake = 0;
 	delete V.skul_dock_init;
@@ -1284,9 +1430,9 @@ function dawnCheck() {
 	delete V.alexSomno;
 	delete V.alexSomnoAngry;
 	delete V.connudatus_stripped;
-	delete V.robin_kicked_out;
 	delete V.gwylanWake;
 	delete V.gwylanCafeWake;
+	delete V.whitney_night_knock;
 
 	if (V.schoolBlocked) delete V.schoolBlocked;
 
@@ -1434,8 +1580,12 @@ function dailyNPCEffects() {
 				}
 			}
 
-			if (V.avery_mansion.rage.dinner_done !== 1 && between(Time.weekDay, 3, 7)) {
-				V.avery_mansion.rage.dinner_missed++;
+			if (V.avery_mansion.rage.dinner_done !== 1 && between(Time.weekDay, 3, 7) && !V.avery_injury) {
+				if (V.avery_valentines?.done && Time.monthDay === 15 && Time.monthName === "February") {
+					// do not spoil the valentines
+				} else {
+					V.avery_mansion.rage.dinner_missed++;
+				}
 			}
 
 			V.avery_mansion.outfit_warning = false;
@@ -1467,7 +1617,10 @@ function dailyNPCEffects() {
 					V.avery_mansion.injury_stage = "healing";
 				} else if (V.avery_mansion.injury_timer <= 15 && !["cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)) {
 					V.avery_mansion.injury_stage = "cast";
-				} else if (V.avery_mansion.injury_timer <= 30 && !["sling", "sling_done", "cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)) {
+				} else if (
+					V.avery_mansion.injury_timer <= 30 &&
+					!["sling", "sling_done", "cast", "cast_done", "healing", "healed"].includes(V.avery_mansion.injury_stage)
+				) {
 					V.avery_mansion.injury_stage = "sling";
 				}
 			}
@@ -1587,7 +1740,7 @@ function dailyNPCEffects() {
 			}
 		}
 		V.wraith.days++;
-		if (V.wraith.days >= 31 && V.wraithIntro && !V.wraithCompoundCooldown && !V.wraithCompoundEvent && V.compound.card === 2) {
+		if (V.wraith.days >= 31 && V.wraithIntro && !V.wraithCompoundCooldown && !V.wraithCompoundEvent && V.compound.discovered) {
 			if (!V.wraithCompoundChance) {
 				V.wraithCompoundChance = 0;
 				if (V.wraith.offspring === "sold") V.wraithCompoundChance += 10;
@@ -1608,9 +1761,7 @@ function dailyNPCEffects() {
 		if (C.npc.Gwylan.state === "active" && !isGwylanAbsent() && !V.daily.gwylan.noTalk && !V.daily.gwylan.locked) {
 			if (V.gwylan.request.event && V.gwylan.request.timer) {
 				if (V.hypnosis_traits.devotion >= 1 && V.gwylan.request.timer < Time.date.timeStamp) {
-					V.gwylan.request.timer = V.gwylan.request.missed
-						? new DateTime(Time.date).addDays(4).timeStamp
-						: new DateTime(Time.date).addDays(2).timeStamp;
+					V.gwylan.request.timer = V.gwylan.request.missed ? new DateTime(Time.date).addDays(4).timeStamp : new DateTime(Time.date).addDays(2).timeStamp;
 					const traumaDevotion = 15 * V.hypnosis_traits.devotion;
 					const hallucinogenDevotion = 40 * V.hypnosis_traits.devotion;
 					statChange.trauma(traumaDevotion);
@@ -1666,7 +1817,7 @@ function dailyNPCEffects() {
 }
 
 function dailyPlayerEffects() {
-	if (V.willpowerDecay == 1) {
+	if (V.willpowerDecay === 1) {
 		V.willpower *= 0.99;
 	}
 
@@ -1689,8 +1840,8 @@ function dailyPlayerEffects() {
 	V.hairlength += 3;
 	V.fringelength += 3;
 	calchairlengthstage();
-	statChange.skill("beauty", (100 - (V.trauma / V.traumamax) * 100) * V.beautyMult);
-	if (V.stressBeauty == 1) statChange.skill("beauty", (100 - (V.stress / V.stressmax) * 100) * V.beautyMult);
+	statChange.skill("beauty", (70 - (V.trauma / V.traumamax) * 100) * V.beautyMult);
+	if (V.stressBeauty === 1) statChange.skill("beauty", (100 - (V.stress / V.stressmax) * 100) * V.beautyMult);
 	lustfulUpdate();
 
 	if (V.orgasmstat >= 1000 && V.orgasmtrait === 0) {
@@ -1781,8 +1932,8 @@ function dailyPlayerEffects() {
 
 	/* Disabled due to bug, and I'm not sure it's necessary anyway - Vrel
 	// Lower acceptance when it no longer applies, takes 200 days for it to drop to 0 from max
-	if (!(V.player.penisExist && V.player.penissize <= 1)) statChange.acceptance("penis_small", -5);
-	if (!(V.player.penisExist && V.player.penissize >= (V.player.sex === "m" ? 4 : 2))) statChange.acceptance("penis_big", -5);
+	if (!(V.player.penisExist && V.player.penissize <= 3)) statChange.acceptance("penis_small", -5);
+	if (!(V.player.penisExist && V.player.penissize >= (V.player.sex === "m" ? 6 : 4))) statChange.acceptance("penis_big", -5);
 	if (V.player.sex === "f" && !between(V.player.breastsize, 0, 4)) statChange.acceptance("breasts_small", -5);
 	if (!(V.player.breastsize >= (V.player.sex === "m" ? 1 : 8))) statChange.acceptance("breasts_big", -5);
 	*/
@@ -1802,6 +1953,9 @@ function dailyPlayerEffects() {
 				(key === "devotion" && !(V.worn.neck.name === "familiar collar" && V.worn.neck.cursed === 1))
 			) {
 				V.hypnosisTimers[key].time--;
+				if (key === "devotion" && V.gwylan?.timer?.lastSeen && Math.abs(Time.date.dayDifference(new DateTime(V.gwylan.timer.lastSeen))) >= 7) {
+					V.hypnosisTimers[key].time -= 2;
+				}
 			}
 			if (key !== "devotion" && V.hypnosisTimers[key].time <= 0) {
 				V.hypnosis_timer_messages ||= [];
@@ -1935,6 +2089,9 @@ function dailyLiquidEffects() {
 			V.nectar_timer = 21;
 		}
 	}
+	if (window.poppyDailyTraits) {
+		poppyDailyTraits();
+	}
 }
 
 function yearlyEventChecks() {
@@ -1948,6 +2105,35 @@ function yearlyEventChecks() {
 		delete V.valentines_eden_bought;
 		delete V.valentines_eden_bath;
 		delete V.valentines_eden_breakfast;
+		delete V.valentines_supermarket;
+	}
+
+	if (Time.monthName === "February" && Time.monthDay <= 14 && !V.avery_valentines && V.avery_mansion) {
+		V.avery_valentines = {};
+
+		V.avery_valentines.intro = false;
+		V.avery_valentines.invite = false;
+		V.avery_valentines.ready = false;
+		V.avery_valentines.done = false;
+		V.avery_valentines.reservation = false;
+		V.avery_valentines.chocolate = false;
+		V.avery_valentines.chocolate_asked = false;
+		V.avery_valentines.opinion = "none";
+		V.avery_valentines.confess = false;
+		V.avery_valentines.food = "none";
+		V.avery_valentines.soften = false;
+		V.avery_valentines.talk = false;
+		V.avery_valentines.talk_count = 0;
+		V.avery_valentines.sex = "none";
+		V.avery_valentines.end = "none";
+		V.avery_valentines.end_talk = false;
+		V.avery_valentines.missed_approach = false;
+	} else if (V.avery_valentines && Time.monthName === "February" && Time.monthDay === 15) {
+		if (V.avery_valentines.invite === true && !V.avery_valentines.done && !V.avery_valentines.missed_approach) {
+			V.avery_valentines_missed = true;
+		}
+	} else if (V.avery_valentines && Time.monthName === "January") {
+		delete V.avery_valentines;
 	}
 
 	// Halloween
@@ -1998,6 +2184,11 @@ function yearlyEventChecks() {
 		delete V.christmas_whitney;
 		delete V.edenmeal;
 		delete V.eden_christmas_dinner;
+		// Poppy Christmas flags clearing
+		delete V.christmas_poppy_orphanage;
+		delete V.christmas_poppy_flat_pending;
+		delete V.christmas_poppy_flat_done;
+		delete V.christmas_poppy_route;
 		delete V.christmas_wraith;
 	}
 }
@@ -2153,14 +2344,31 @@ function dailySchoolEffects() {
 	}
 
 	V.school = V.science + V.english + V.maths + V.history;
-	V.schooltrait = V.school >= 8000 ? 8 : V.school >= 6500 ? 7 : V.school >= 5000 ? 6 : V.school >= 4000 ? 5 : V.school >= 2800 ? 4 : V.school >= 2000 ? 3 : V.school >= 1600 ? 2 : V.school >= 1200 ? 1 : 0;
+	V.schooltrait =
+		V.school >= 8000
+			? 8
+			: V.school >= 6500
+			? 7
+			: V.school >= 5000
+			? 6
+			: V.school >= 4000
+			? 5
+			: V.school >= 2800
+			? 4
+			: V.school >= 2000
+			? 3
+			: V.school >= 1600
+			? 2
+			: V.school >= 1200
+			? 1
+			: 0;
 
 	if (V.studyBooks) {
 		wikifier("passiveStudy");
 		if (V.studyBooks.rented.count >= 1 && Time.schoolTerm) {
 			T.totalRentPrice = 0;
 			for (T.i = 1; T.i <= V.studyBooks.rented.count; T.i++) {
-				T.totalRentPrice += Math.round(2000 * (1 + (T.i * T.i)));
+				T.totalRentPrice += Math.round(2000 * (1 + T.i * T.i));
 			}
 			if (V.book_rent_deposit >= Math.round(T.totalRentPrice / 14)) {
 				V.book_rent_deposit -= Math.round(T.totalRentPrice / 14);
@@ -2268,8 +2476,6 @@ function dailyMasochismSadismEffects() {
 		V.effectsmessage = 1;
 	}
 }
-
-
 
 function dailyFarmEvents() {
 	if (V.alex_greenhouse === 1) {
@@ -2382,10 +2588,10 @@ function dailyFarmEvents() {
 		if (V.farm.compostbin >= 1) {
 			wikifier("composting");
 		}
-		if (V.farm.watchtowerDailyAttempt == 1) {
+		if (V.farm.watchtowerDailyAttempt === 1) {
 			V.farm.watchtowerDailyAttempt = 0;
 		}
-		if (V.farm.dailyHelp == 1) {
+		if (V.farm.dailyHelp === 1) {
 			V.farm.dailyHelp = 0;
 		}
 	}
@@ -2400,17 +2606,17 @@ function dailyFarmEvents() {
 			if (V.farm.player_still_timer >= 0) {
 				V.farm.player_still_timer--;
 			}
-			if (V.farm.player_still_timer == 0) {
-				if (V.lurkers_stored >= 3 && V.farm.extractOverdrive == 1) {
+			if (V.farm.player_still_timer === 0) {
+				if (V.lurkers_stored >= 3 && V.farm.extractOverdrive === 1) {
 					V.lurkers_stored -= 3;
 					V.phials_stored += 2;
-					if (V.farm.extract == 2 && V.lurkers_stored > 0) {
+					if (V.farm.extract === 2 && V.lurkers_stored > 0) {
 						V.farm.player_still_timer = 9 - V.sciencetrait;
 					}
 				} else {
 					V.lurkers_stored--;
 					V.phials_stored++;
-					if (V.farm.extract == 2 && V.lurkers_stored > 0) {
+					if (V.farm.extract === 2 && V.lurkers_stored > 0) {
 						V.farm.player_still_timer = 9 - V.sciencetrait;
 					}
 				}
@@ -2433,6 +2639,12 @@ function dailyFarmEvents() {
 	delete V.alex_breakfast;
 	delete V.alex_tea;
 	delete V.alex_to_bed;
+}
+
+function dailyDockEffects() {
+	if (typeof V.docks.pub.cooldown !== "undefined" && V.docks.pub.cooldown >= 1) {
+		V.docks.pub.cooldown--;
+	}
 }
 
 function passWater(passMinutes) {
@@ -2583,11 +2795,9 @@ function earSlimeDaily(passageEffects = false) {
 		V.earSlime.eventTimer = Math.clamp(V.earSlime.eventTimer, V.earSlime.corruption / -5 - 5, 10);
 
 		// Daily Growth
-		if (V.earSlime.corruption >= 60 && numberOfEarSlime() > 1) {
-			if (V.earSlime.growth < 100) V.earSlime.growth++;
-			if (V.earSlime.corruption >= 100) V.earSlime.growth++;
-		} else if (V.earSlime.corruption >= 60) {
-			if (V.earSlime.growth < 50) V.earSlime.growth++;
+		if (V.earSlime.corruption >= 60 && V.earSlime.corruption > V.earSlime.growth / 2) {
+			if (numberOfEarSlime() > 1) V.earSlime.growth += 2;
+			else if (V.earSlime.growth < 50) V.earSlime.growth++;
 		} else if (V.earSlime.corruption < 30 && V.earSlime.growth <= 50) {
 			// Reduce the growth variable only if below or equal to 50
 			V.earSlime.growth--;
@@ -2719,8 +2929,8 @@ window.getShortFormattedDate = function (date) {
 
 /* Determines and replenishes stock at supermarket */
 function supermarketWeekly() {
-	Object.keys(setup.plants).forEach(key => {
-		if (setup.plants[key].shop?.includes("supermarket")) V.plants[key].supermarket = Math.trunc(3000 / setup.plants[key].plant_cost);
+	Object.keys(setup.foodstuff).forEach(key => {
+		if (setup.foodstuff[key].shop.available_in?.includes("supermarket")) V.foodstuff[key].supermarket = Math.trunc(3000 / setup.foodstuff[key].shop.sell_price);
 	});
 }
 DefineMacro("supermarketWeekly", supermarketWeekly);

@@ -43,6 +43,19 @@
 <</if>>
 <<schoolperiodtext>>
 
+<<if modLISelected("Poppy")>><<set _inClass to !["early","late","earlynoschool","latenoschool","daynoschool","morning","lunch","afternoon"].includes($schoolstate)>>
+<<set _inBreak to ["morning","lunch","afternoon"].includes($schoolstate)>>
+<!-- Treat both the first 5 minutes and the last minute of a class period as corridor transition time. -->
+<<set _classTransit to _inClass and (Time.minute lt 5 or Time.minute gte 59)>><</if>>
+<<if modLISelected("Poppy") and random(1,100) lte 20 and $eventskip is 0 and Array.isArray($poppySeen) and $poppySeen.includes("talk_intro") and C.npc.Poppy and C.npc.Poppy.init is 1 and (_inClass or _inBreak)>>
+	<<run poppySchedule()>>
+	<<set _poppyCanHallwayEvent to T.poppy_location is "schoolHallways" and Array.isArray(T.poppyStatus) and !T.poppyStatus.includes("DataInvalid")>>
+	<!-- During class transition time, fall through to the casual break branches instead of Skipping. -->
+	<<set _poppyHallwayContext to (_inClass and !_classTransit) ? "class" : "break">>
+<<else>>
+	<<set _poppyCanHallwayEvent to false>>
+<</if>>
+
 <<if !$settings.forcedCrossdressingEnabled>><<unset $whitneyskirtmaths>><</if>>
 <<if $whitneypantiesmaths or $whitneyskirtmaths>>
 	<<if $whitneypantiesmaths is "seen" and ($worn.under_lower.type.includes("naked") or ($whitneypantiescheck is 2 and $worn.under_lower.gender is "f"))>>
@@ -118,6 +131,9 @@
 	<<else>>
 		<<link [[Everything fades to black...|School Passout]]>><</link>>
 	<</if>>
+
+<<elseif _poppyCanHallwayEvent and $eventskip is 0>>
+	<<include "Hallways Poppy Event Dispatch">>
 
 <<elseif !["early", "late", "earlynoschool", "latenoschool", "daynoschool"].includes($schoolstate) and dangerEvent() and $eventskip is 0>>
 	<<if $exposed gte 1>>
@@ -457,7 +473,7 @@ You turn and slap the <<person>> before <<he>> can get away, wiping the smirk of
 
 <<cleareventpool>>
 
-/* Okay, so the math here is a bit complex, so let me summarize the intended outcomes of the event weightings:
+/* Okay, so the maths here is a bit complex, so let me summarize the intended outcomes of the event weightings:
 	 fame.sex from 0-399 (unknown through known), 	NPC has a 1 in 6 chance (16%) of asking for sex
 	 fame.sex from 400-599 (all of recognised), 	NPC has a 2 in 7 chance (28%) of asking for sex
 	 fame.sex from 600-800 (lower half of famous), 	NPC has a 3 in 8 chance (37%) of asking for sex
@@ -941,7 +957,7 @@ You turn and glare at the <<person>>. <<anticatcall>>
 	<<case 2>>"It was just a joke, you frigid <<bitch>>," <<he>> mutters, not meeting your eyes. <<He>> makes a hasty retreat.
 	<<case 3>>"Ha! I-it was just a joke." <<He>> tries to laugh it off unsuccessfully. <<He>> quickly hurries away.
 	<<case 4>>The <<persons>> face goes pale and <<he>> hurries away, eyes downcast.
-	<<case 5>>"You <<bitch>>", <<he>> sneers. "That's what I get for trying to giving you a compliment?" <<He>> walks off, glaring back at you the whole time.
+	<<case 5>>"You <<bitch>>," <<he>> sneers. "That's what I get for trying to giving you a compliment?" <<He>> walks off, glaring back at you the whole time.
 <</switch>>
 <br><br>
 
@@ -1132,7 +1148,7 @@ You shove the <<person>> away from you. "Crazy fuck," <<he>> says. "I'm telling 
 	<<set $rescued += 1>>
 	Someone bashes on the door. "What's going on in there?" says a strong voice. It's <<generateRandomTeacher 2>>.
 	<br><br>
-	The <<person>> fixes <<his>> clothing and opens the door. "I ain't done nothing," <<he>> says. _teacher isn't fooled. The <<person>> finds <<himself>> grabbed by the arms and hauled away.
+	The <<person1>><<person>> fixes <<his>> clothing and opens the door. "I ain't done nothing," <<he>> says. _teacher isn't fooled. The <<person>> finds <<himself>> grabbed by the arms and hauled away.
 	<br><br>
 	<<tearful>> you leave the cupboard.
 	<br><br>
@@ -1154,7 +1170,7 @@ You shove the <<person>> away from you. "Crazy fuck," <<he>> says. "I'm telling 
 		<br><br>
 		<<link [[Fight|Bully Parasite Fight]]>><<set $molestationstart to 1>><</link>>
 	<<else>>
-		<<physiquedifficulty 1 10000 true>>
+		<<physiquedifficulty 1 9000 true>>
 		<<if $physiqueSuccess>>
 			Horrified and enraged, you struggle for your freedom. You throw one of Whitney's cronies off you, shocking the others with your brawn. Another replaces them though, and then another, until they have enough for Whitney to plant a firm punch into your abdomen, robbing you of your strength.
 			<<pain 10>><<gpain>>
@@ -1365,13 +1381,13 @@ The pair of you draw some odd looks on the walk over. The staff room is small, w
 	<<set $eventskip to 1>>
 	<<endevent>>
 	<<if $worn.upper.exposed gte 1>>
-		<<upperwear 5>>
+		<<upperwear "school shirt">>
 	<</if>>
 	<<if $worn.lower.exposed gte 1>>
 		<<if $player.gender_appearance is "f">>
-			<<lowerwear 7>>
+			<<lowerwear "school skirt">>
 		<<else>>
-			<<lowerwear 6>>
+			<<lowerwear "school shorts">>
 		<</if>>
 	<</if>>
 <</link>>
@@ -2300,7 +2316,7 @@ The <<person1>><<person>> looks at you with concern, <<his>> anger begins to tur
 	<<set _extort to either(500,500,500,500,1000,1000,1000,2000,2000,5000)>>
 	You get close to the locker and whisper through the grate. "How much do you want to get out of there?"
 	<br><br>
-	"Please. I really need to get out! I'm—" a <<personsimple>>'s voice starts, but you interrupt <<him>>.<br>
+	"Please. I really need to get out! I'm—" a <<personssimple>> voice starts, but you interrupt <<him>>.<br>
 	"Yes," you say. "And I'm asking: How. Much. Do you want to get out?"<br>
 	"How much? I really w- Oh! Oh, right. Oh."
 	<br><br>
@@ -2338,7 +2354,7 @@ The <<person1>><<person>> looks at you with concern, <<his>> anger begins to tur
 
 	You approach the <<person1>><<person>>.
 	<<if $speech_attitude is "meek">>
-		<<if currentSkillValue('physique') gte (($physiquesize / 7) * 5)>>
+		<<if currentSkillValue('physique') gte ($physiquesize / 7) * 5>>
 			<<addinlineevent "meek_intimidate">>
 				"P-please leave <<person2>><<him>> alone," you say. "It's not nice."
 				<br><br>
@@ -2423,10 +2439,10 @@ The <<person1>><<person>> looks at you with concern, <<his>> anger begins to tur
 
 		<<if _eventpool.length lte 0>>
 			<<addinlineevent "meek_default">>
-				"P-please stop that. It's not right," you say as you step in between the <<him>> and <<his>> victim.
+				"P-please stop that. It's not right," you say as you step in between <<him>> and <<his>> victim.
 				<br><br>
 				<<He>> looks you up and down and then lunges at you.
-				<<if currentSkillValue('physique') gte (($physiquesize / 7) * 3)>>
+				<<if currentSkillValue('physique') gte ($physiquesize / 7) * 3>>
 					You're stronger than <<him>>, so <<he>> can't get control of the struggle and you eventually break free.
 				<<else>>
 					<<Hes>> stronger and meaner, and soon has you pinned and is trying to grope you.
@@ -2439,7 +2455,7 @@ The <<person1>><<person>> looks at you with concern, <<his>> anger begins to tur
 	<<elseif $speech_attitude is "bratty">>
 		"Leave <<person2>><<him>> alone, creep," you say. "Walk away."
 		<br><br>
-		<<if currentSkillValue('physique') gte (($physiquesize / 7) * 5)>>
+		<<if currentSkillValue('physique') gte ($physiquesize / 7) * 5>>
 			<<addinlineevent "brat_intimidate">>
 				The <<person1>><<person>> looks you up and down. "S-Sorry. I didn't mean anything by it." <<His>> eyes slide away. "Sorry." <<He>> turns and hurries in the other direction, clearly intimidated by your attitude and physique. <<gcool>><<status 1>>
 			<</addinlineevent>>
@@ -2476,7 +2492,7 @@ The <<person1>><<person>> looks at you with concern, <<his>> anger begins to tur
 			<</addinlineevent>>
 		<</if>>
 
-		<<if currentSkillValue('physique') gte (($physiquesize / 7) * 3)>>
+		<<if currentSkillValue('physique') gte ($physiquesize / 7) * 3>>
 			<<addinlineevent "brat_scuffle">>
 				The <<person1>><<person>> looks you up and down and then shoves you hard, making you take a step back. You scoff and step forward, shoving <<him>> back twice as hard and knocking <<him>> sprawling to the floor.
 				<br><br>
@@ -2492,7 +2508,7 @@ The <<person1>><<person>> looks at you with concern, <<his>> anger begins to tur
 	<<else>>
 		"Stop that," you say. "Leave <<person2>><<him>> alone."
 		<br><br>
-		<<if currentSkillValue('physique') gte (($physiquesize / 7) * 5)>>
+		<<if currentSkillValue('physique') gte ($physiquesize / 7) * 5>>
 			<<addinlineevent "default_intimidate">>
 				The <<person1>><<person>> looks you up and down. "Sorry. I didn't mean anything by it." The <<person>> lowers <<his>> head. "We're cool." <<He>> backs away, clearly intimidated by you. <<gcool>><<status 1>>
 			<</addinlineevent>>
@@ -2533,7 +2549,7 @@ The <<person1>><<person>> looks at you with concern, <<his>> anger begins to tur
 			<</addinlineevent>>
 		<</if>>
 
-		<<if currentSkillValue('physique') gte (($physiquesize / 7) * 3)>>
+		<<if currentSkillValue('physique') gte ($physiquesize / 7) * 3>>
 			<<addinlineevent "default_scuffle">>
 				The <<person1>><<person>> looks you up and down and then tries to shove you, but you grab onto <<him>>. There are a few a moments of scuffle, but you're stronger and able to overpower <<him>>.<<gpain>><<pain 2>>
 				<br><br>
@@ -2603,7 +2619,7 @@ The <<person1>><<person>> looks at you with concern, <<his>> anger begins to tur
 	<<elseif $physique lt ($physiquesize / 7) * 3>>
 		It's not like you're strong enough to stop them.
 	<<elseif $cool gte 140>>
-		<<person2>>In a school like this, surely the <<person>>'s friends will look out for <<him>>.
+		<<person2>>In a school like this, surely the <<persons>> friends will look out for <<him>>.
 	<</if>>
 	<br><br>
 	<<link [[Next|Hallways]]>><<endevent>><<set $eventskip to 1>><</link>>
@@ -3170,7 +3186,7 @@ You ignore the group and keep moving down the hallway.
 	<<else>>
 		have begun to stretch out significantly. Seeing an opportunity to humiliate the <<personsimple>> further, the <<person1>><<person>> grabs the rear waistband from your hand and pulls it over <<person3>><<his>> head, before letting go.
 		<br><br>
-		The elastic loudly snaps back against the <<personsimple>>'s eyebrows. <<He>> founders for a moment as the group of popular students laugh and take photos, before managing to push it off.
+		The elastic loudly snaps back against the <<personssimple>> eyebrows. <<He>> flounders for a moment as the group of popular students laugh and take photos, before managing to push it off.
 		<br><br>
 	<</if>>
 	Finding <<himself>> free, the <<person>> quickly grabs up <<his>> $NPCList[$index].clothes.lower.name and sprints down the hall, out of sight. A <<person2>><<person>> congratulates you on your technique.
@@ -3185,7 +3201,7 @@ You ignore the group and keep moving down the hallway.
 	<<else>>
 		have begun to stretch out significantly. Seeing an opportunity to humiliate the <<personsimple>> further, the <<person1>><<person>> pulls the rear waistband over <<person3>><<his>> head and lets go.
 		<br><br>
-		The elastic snaps back loudly against the <<personsimple>>'s eyebrows. <<He>> founders for a moment as the group of popular students laugh and take photos, before managing to push it off.
+		The elastic snaps back loudly against the <<personssimple>> eyebrows. <<He>> flounders for a moment as the group of popular students laugh and take photos, before managing to push it off.
 		<br><br>
 	<</if>>
 	Finding <<himself>> free, the <<person>> quickly grabs up <<his>> $NPCList[$index].clothes.lower.name and sprints down the hall away from the group, and you.
@@ -3193,7 +3209,7 @@ You ignore the group and keep moving down the hallway.
 <<elseif $phase is 5>>
 	You watch the group leave, then turn to the <<person3>><<person>>. You tell <<him>> to watch out for popular people like that, and that you won't always be here to protect <<him>>.
 	<br><br>
-	<<He>> thanks you for your kindness and hurries off to <<his>> next class.
+	<<He>> thanks you for your kindness and hurries off<<if Time.schoolTime>> to <<his>> next class<</if>>.
 	<br><br>
 <<elseif $phase is 6>>
 	<<outfitChecks>>
@@ -3234,7 +3250,7 @@ By the time you've looped back around to where you started, you're certain that 
 	<<case 1>>
 		"Pull it again," you say, turning back around and presenting your tail.
 		<br><br>
-		
+
 		The <<personsimple>> gives you a weird look, but yanks on your tail a second time. This time, you moan. The students laugh again, and you laugh with them. <<if random(1, 4) lte $masochism_level>>The extra pain gets you excited.<<arousal 900>><<garousal>><<else>>It still hurts, though.<<pain 8>><<gpain>><</if>><<stress -6>><<lstress>>
 		<br><br>
 	<<case 2>>
@@ -3242,9 +3258,9 @@ By the time you've looped back around to where you started, you're certain that 
 	<<case 3>>
 		You bare your teeth and hiss at the <<personsimple>>, <<if $transformationParts.wolf.ears isnot "hidden">>pinning your ears back and <</if>>fluffing your tail for good measure.
 	<<case 4>>
-		You let out a horrible, howling scream and snap at the <<personsimple>>'s hand.
+		You let out a horrible, howling scream and snap at the <<personssimple>> hand.
 	<<case 5>>
-		You screech and slap the <<personsimple>>'s hand away<<if $transformationParts.bird.wings isnot "hidden">> with your wings<</if>>.
+		You screech and slap the <<personssimple>> hand away<<if $transformationParts.bird.wings isnot "hidden">> with your wings<</if>>.
 	<<case 6>>
 		You snort and lower your head in preparation to ram the <<personsimple>><<if $transformationParts.cow.horns isnot "hidden">> with your horns<</if>>.
 	<<default>>
@@ -3273,7 +3289,7 @@ You nod and move closer, presenting your $selectedtfpart.
 <</if>>
 <br><br>
 
-<<He>> nods, then reaches out to touch you. 
+<<He>> nods, then reaches out to touch you.
 <<if $selectedtfpart is "tail">>
 	<<if $demon gte 6 or $cat gte 6 or $cow gte 6>>
 		<<His>> hand strokes down the length of your tail, which curls gently around <<his>> wrist.
@@ -3283,8 +3299,8 @@ You nod and move closer, presenting your $selectedtfpart.
 		<<He>> runs <<his>> fingers through your tail. You flick it as soon as <<he>> lifts <<his>> hand, trying to unruffle the feathers.
 	<</if>>
 <<elseif $selectedtfpart is "wings">>
-	You shiver a little at the contact, letting your wings fall open. 
-	<<if $transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled" and $chimera.demonharpy.wings is false>>
+	You shiver a little at the contact, letting your wings fall open.
+	<<if $transformationParts.demon.wings isnot "hidden" and $transformationParts.demon.wings isnot "disabled" and ($transformationParts.bird.wings is "hidden" or $transformationParts.bird.wings is "disabled" or $chimera.demonharpy.wings is false)>>
 		<<He>> runs <<his>> hand down the leathery surface,
 	<<else>>
 		<<He>> cards <<his>> fingers through your feathers,
@@ -3366,7 +3382,7 @@ The <<personsimple>> blushes and eagerly agrees. The two of you find a large clo
 	<<set $rescued += 1>>
 	Someone bashes on the door. "What's going on in there?" says a strong voice. It's <<generateRandomTeacher 2>>.
 	<br><br>
-	The <<person>> quickly fixes <<his>> clothing as the door swings open. "I just wanted to look! <<pShe>> wanted me to, I-" <<he>> stammers. _teacher isn't fooled. The <<personsimple>> finds <<himself>> grabbed by the arms and hauled away.
+	The <<person1>><<person>> quickly fixes <<his>> clothing as the door swings open. "I just wanted to look! <<pShe>> wanted me to, I—" <<he>> stammers. _teacher isn't fooled. The <<personsimple>> finds <<himself>> grabbed by the arms and hauled away.
 	<br><br>
 	<<tearful>> you leave the closet.
 <</if>>
@@ -3386,7 +3402,7 @@ The <<personsimple>> blushes and eagerly agrees. The two of you find a large clo
 <<if $phase is 0>>
 	You refuse, saying you have places to be. The <<personsimple>> looks disappointed but doesn't keep you, giving you one last compliment.<<stress -4>><<lstress>>
 <<elseif $phase is 1>>
-	You gently extract yourself from the <<personsimple>>'s grasp. <<He>> apologizes again for keeping you, and you say your goodbyes before continuing down the hall.
+	You gently extract yourself from the <<personssimple>> grasp. <<He>> apologizes again for keeping you, and you say your goodbyes before continuing down the hall.
 <</if>>
 <br><br>
 

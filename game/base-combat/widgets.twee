@@ -42,6 +42,7 @@
 						<<case "Bailey">><<displayFeatFake "Bailey the 'caretaker'">>
 						<<case "Zephyr">><<displayFeatFake "Zephyr the captain">>
 						<<case "Gwylan">><<displayFeatFake "Gwylan the Bewitching">>
+						<<case "Poppy">><<displayFeatFake "Poppy's Jewel">>
 					<</switch>>
 					<<if !$activeNightmare>>
 						<<set $_taker to "Ivory Wraith">>
@@ -63,6 +64,7 @@
 						<<case "Bailey">><<earnFeat "Bailey the 'caretaker'">>
 						<<case "Zephyr">><<earnFeat "Zephyr the captain">>
 						<<case "Gwylan">><<earnFeat "Gwylan the Bewitching">>
+						<<case "Poppy">><<earnFeat "Poppy's Jewel">>
 					<</switch>>
 				<</if>>
 
@@ -243,7 +245,9 @@
 				<span class="blue">You feel conflicted about giving away your first kiss like this.</span><<stress 20>><<ggstress>>
 		<</switch>>
 		<<takeVirginity $_fullDescription "kiss">>
-		<br><br>
+		<<set _pcKissVirginityTaken to 1>>
+	<<else>>
+		<<set _pcKissVirginityTaken to 0>>
 	<</if>>
 	<<recordSperm `{target: "pc", spermOwner: _args[0], spermType: $_type, genital: "kiss"}`>>
 	<<recordSperm `{target: _args[0], spermOwner: "pc", spermType: "human", genital: "kiss"}`>>
@@ -262,6 +266,7 @@
 		<<case "Great Hawk">> <<set $_isLoveInterest to ($syndromebird is 1)>>
 		<<case "Alex">>       <<set $_isLoveInterest to ($farm_stage gte 7 and $alex_countdown is undefined)>>
 		<<case "Gwylan">>     <<set $_isLoveInterest to ($gwylanSeen?.includes("romance"))>>
+		<<case "Poppy">>      <<set $_isLoveInterest to ($poppyromance gte 1)>>
 		<<default>>           <<run $NPCNameList.includes(_args[0]) ? $_isLoveInterest = false : Errors.report("wrong argument passed to takeKissVirginityNamed: ", _args)>>
 	<</switch>>
 
@@ -513,6 +518,17 @@
 		<<else>>
 			<<set $monster to 0>>
 		<</if>>
+		<!-- since we're not calling <<combatinit>>, re-init the first npc here -->
+		<<if $NPCList[0].penis is "none" and $player.penisExist>>
+			<<set $position to "missionary">>
+		<<else>>
+			<<set $position to ["doggy", "doggy", "doggy", "doggy", "missionary"].random()>>
+		<</if>>
+		<<if $NPCList[0].stance isnot "defeated">>
+			<<set $NPCList[0].active to "active">>
+		<</if>>
+		<<resetLastOptions>>
+		<<wetnessCalculate>>
 	<<else>>
 		<<for _e_n to 0; _e_n lt $combatTrain.total_length + 1; _e_n++>>
 			<<loadNPC _e_n `"beast_" + _e_n`>>

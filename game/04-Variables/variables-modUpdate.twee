@@ -21,6 +21,38 @@
 	<<if $wolftf is undefined>>
 		<<set $wolftf to 0>>
 	<</if>>
+	<<if $player.skin_temp is undefined>>
+		<<set $player.skin_temp to $player.skin>>
+		<<set $player.skin_temp.color to $player.skin.color>>
+	<</if>>
+	<<if $transformationParts.traits.aquatic is undefined>>
+		<<set $transformationParts.traits.aquatic to "disabled">>
+	<</if>>
+	<<if $transformationParts.traits.leviathan is undefined>>
+		<<set $transformationParts.traits.leviathan to "disabled">>
+	<</if>>
+	<<if $waterdragon is undefined>>
+		<<set $waterdragon to 0>>
+	<</if>>
+	<<if $waterdragontf is undefined>>
+		<<set $waterdragontf to 0>>
+	<</if>>
+	<<if $TFWaterDragonBuffs is undefined>>
+		<<if $waterdragon gte 7>>
+			<<set $TFWaterDragonBuffs to 1>>
+		<<else>>
+			<<set $TFWaterDragonBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $waterdragonbuild is undefined>>
+		<<set $waterdragonbuild to 0>>
+	<</if>>
+	<<if $transformationParts.waterdragon is undefined>>
+		<<set $transformationParts.waterdragon to {horns:"disabled", ears:"disabled", tail:"disabled"}>>
+	<</if>>
+	<<if $waterdragonSkinLock is undefined>>
+		<<set $waterdragonSkinLock to 0>>
+	<</if>>
 	<<if $harpytf is undefined>>
 		<<set $harpytf to 0>>
 	<</if>>
@@ -578,10 +610,6 @@
 		<<set $tirednessMaxScalingToggle to 0>>
 	<</if>>
 
-	<<if $dockbonus is undefined>>
-		<<set $dockbonus to 0>>
-	<</if>>
-
 	<<set $CTAngryLowC to ["snarls", "sneers", "growls", "groans", "yells"]>>
 	<<set $CTAngryMidC to ["mocks you", "sneers", "growls", "groans", "yells"]>>
 	<<set $CTAngryHighC to ["snarls", "sneers", "screams", "shouts", "yells"]>>
@@ -1075,6 +1103,16 @@
 		}>>
 	<</if>>
 
+	<<set _food_keys to Object.keys(setup.foodstuff)>>
+	<<for _i to 0; _i lt _food_keys.length; _i++>>
+		<<set $_type to _food_keys[_i]>>
+		<<if $foodstuff[$_type] is undefined>>
+			<<set $foodstuff[$_type] to {"name": setup.foodstuff[$_type].name, "plural": setup.foodstuff[$_type].plural, "amount": 0}>>
+		<<elseif $foodstuff[$_type].name is undefined>>
+			<<set $foodstuff[$_type] to {"name": setup.foodstuff[$_type].name, "plural": setup.foodstuff[$_type].plural, "amount": $foodstuff[$_type].amount, "knows_recipe": $foodstuff[$_type].knows_recipe}>>
+		<</if>>
+	<</for>>
+
 	<<if $loveInterest.quarternary is undefined>>
 		<<set $loveInterest.quarternary to "None">>
 	<</if>>
@@ -1086,16 +1124,6 @@
 	<<if $loveInterest.senary is undefined>>
 		<<set $loveInterest.senary to "None">>
 	<</if>>
-
-	<<set _food_keys to Object.keys(setup.plants)>>
-	<<for _i to 0; _i lt _food_keys.length; _i++>>
-		<<set $_type to _food_keys[_i]>>
-		<<if $plants[$_type] is undefined>>
-			<<set $plants[$_type] to {"name": setup.plants[$_type].name, "plural": setup.plants[$_type].plural, "amount": 0}>>
-		<<elseif $plants[$_type].name is undefined>>
-			<<set $plants[$_type] to {"name": setup.plants[$_type].name, "plural": setup.plants[$_type].plural, "amount": $plants[$_type].amount}>>
-		<</if>>
-	<</for>>
 
 	<<if $baileyDeposit is undefined>>
 		<<set $baileyDeposit to 0>>
@@ -1330,48 +1358,70 @@
 		<<unset $furnitureMovePrice>>
 	<</if>>
 
-	<<if $plants.ghost_orchid.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.ghost_orchid isnot undefined and $stall_stats.ghost_orchid.sold.amount gte 1)>>
-		<<earnFeat "Phantom Bloom">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.ghost_orchid.amount gte 1 or ($stall_stats.ghost_orchid isnot undefined and $stall_stats.ghost_orchid.sold.amount gte 1)>>
+			<<earnFeat "Phantom Bloom">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.hen_of_the_woods.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.hen_of_the_woods isnot undefined and $stall_stats.hen_of_the_woods.sold.amount gte 1)>>
-		<<earnFeat "Whispering Fungi">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.hen_of_the_woods.amount gte 1 or ($stall_stats.hen_of_the_woods isnot undefined and $stall_stats.hen_of_the_woods.sold.amount gte 1)>>
+			<<earnFeat "Whispering Fungi">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.red_helleborine.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.red_helleborine isnot undefined and $stall_stats.red_helleborine.sold.amount gte 1)>>
-		<<earnFeat "Crimson Veil">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.red_helleborine.amount gte 1 or ($stall_stats.red_helleborine isnot undefined and $stall_stats.red_helleborine.sold.amount gte 1)>>
+			<<earnFeat "Crimson Veil">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.lady_orchid.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.lady_orchid isnot undefined and $stall_stats.lady_orchid.sold.amount gte 1)>>
-		<<earnFeat "Noble Harvest">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.lady_orchid.amount gte 1 or ($stall_stats.lady_orchid isnot undefined and $stall_stats.lady_orchid.sold.amount gte 1)>>
+			<<earnFeat "Noble Harvest">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.fly_agaric.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.fly_agaric isnot undefined and $stall_stats.fly_agaric.sold.amount gte 1)>>
-		<<earnFeat "Fabled Cap">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.fly_agaric.amount gte 1 or ($stall_stats.fly_agaric isnot undefined and $stall_stats.fly_agaric.sold.amount gte 1)>>
+			<<earnFeat "Fabled Cap">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.spiked_rampion.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.spiked_rampion isnot undefined and $stall_stats.spiked_rampion.sold.amount gte 1)>>
-		<<earnFeat "Thorned Crown">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.spiked_rampion.amount gte 1 or ($stall_stats.spiked_rampion isnot undefined and $stall_stats.spiked_rampion.sold.amount gte 1)>>
+			<<earnFeat "Thorned Crown">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.cloudberry.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.cloudberry isnot undefined and $stall_stats.cloudberry.sold.amount gte 1)>>
-		<<earnFeat "Amber Harvest">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.cloudberry.amount gte 1 or ($stall_stats.cloudberry isnot undefined and $stall_stats.cloudberry.sold.amount gte 1)>>
+			<<earnFeat "Amber Harvest">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.scottish_bog_myrtle.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.scottish_bog_myrtle isnot undefined and $stall_stats.scottish_bog_myrtle.sold.amount gte 1)>>
-		<<earnFeat "Scent of the Highlands">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.scottish_bog_myrtle.amount gte 1 or ($stall_stats.scottish_bog_myrtle isnot undefined and $stall_stats.scottish_bog_myrtle.sold.amount gte 1)>>
+			<<earnFeat "Scent of the Highlands">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.bog_orchid.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.bog_orchid isnot undefined and $stall_stats.bog_orchid.sold.amount gte 1)>>
-		<<earnFeat "Bog Whisperer">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.bog_orchid.amount gte 1 or ($stall_stats.bog_orchid isnot undefined and $stall_stats.bog_orchid.sold.amount gte 1)>>
+			<<earnFeat "Bog Whisperer">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.marsh_saxifrage.amount gte 1 or ($stall_stats isnot undefined and $stall_stats.marsh_saxifrage isnot undefined and $stall_stats.marsh_saxifrage.sold.amount gte 1)>>
-		<<earnFeat "Marshlight">>
+	<<if (!$foodstuff and !$stall_stats)>>
+		<<if $foodstuff.marsh_saxifrage.amount gte 1 or ($stall_stats.marsh_saxifrage isnot undefined and $stall_stats.marsh_saxifrage.sold.amount gte 1)>>
+			<<earnFeat "Marshlight">>
+		<</if>>
 	<</if>>
 
-	<<if $plants.fly_agaric.plural is "fly agaric">>
-		<<set $plants.fly_agaric.plural to "fly agarics">>
+	<<if !$foodstuff>>
+		<<if $foodstuff.fly_agaric.plural is "fly agaric">>
+			<<set $foodstuff.fly_agaric.plural to "fly agarics">>
+		<</if>>
 	<</if>>
 
 	<<if $hbsc is undefined>>
@@ -1484,6 +1534,8 @@
 		<<set $options.lowerHalo to true>>
 	<</if>>
 
+	<<modNewNamedNPCs>>
+
 	<<if $options.autoNNPCDisplay is undefined>>
 		<<set $options.autoNNPCDisplay to {
 			enabled: true
@@ -1495,6 +1547,8 @@
 				<<set _name = "great_hawk">>
 			<<elseif _name == "Ivory Wraith">>
 				<<set _name = "ivory_wraith">>
+			<<elseif _name == "Night Monster">>
+				<<set _name = "night_monster">>
 			<</if>>
 			<<set $options.autoNNPCDisplay[_name.toLowerCase()] to {
 				slot: 1,
@@ -1512,6 +1566,8 @@
 				<<set _name = "great_hawk">>
 			<<elseif _name == "Ivory Wraith">>
 				<<set _name = "ivory_wraith">>
+			<<elseif _name == "Night Monster">>
+				<<set _name = "night_monster">>
 			<</if>>
 			<<if $options.autoNNPCDisplay[_name.toLowerCase()].genderOverride is undefined>>
 				<<set $options.autoNNPCDisplay[_name.toLowerCase()].genderOverride to false>>
@@ -1544,6 +1600,8 @@
 				<<set _name = "great_hawk">>
 			<<elseif _name == "Ivory Wraith">>
 				<<set _name = "ivory_wraith">>
+			<<elseif _name == "Night Monster">>
+				<<set _name = "night_monster">>
 			<</if>>
 			<<if $options.autoNNPCDisplay[_name.toLowerCase()].gender is "">>
 				<<if C.npc[_nameReal].pronoun is "m">>
@@ -1602,7 +1660,7 @@
 		"Darryl": () => "Affection",
 		"Doren": () => "Affection",
 		"Eden": () => "Love",
-		"Gwylan": () => "Interest",
+		"Gwylan": () => V.gwylanSeen?.includes("partners") ? "Love" : "Interest",
 		"Harper": () => "Interest",
 		"Jordan": () => "Respect",
 		"Kylar": () => "Love",
@@ -1627,7 +1685,50 @@
 		"Ivory Wraith": () => "Love",
 		"Zephyr": () => "Interest",
 		"Riley": () => "Respect",
+		"Night Monster": () => "Love",
+		"Poppy": () => "Love",
+
+		/* Persistent NPC */
+		"anxious_guard": () => "Respect",
+		"hacker": () => "Respect",
+		"manager": () => "Affection",
+		"methodical_guard": () => "Respect",
+		"relaxed_guard": () => "Respect",
+		"scarred_inmate": () => "Affection",
+		"tattoed_inmate": () => "Interest",
+		"veteran_guard": () => "Respect"
 	}>>
+
+	<<modLI-init>>
+
+	/* Poppy LI data migration */
+	<<if $objectVersion.poppyLIData is undefined or $objectVersion.poppyLIData lt 1>>
+		<<if $daily is undefined>><<set $daily to {}>><</if>>
+		<<if $daily.poppy is undefined>><<set $daily.poppy to {}>><</if>>
+
+		<<if !Array.isArray($poppySeen)>>
+			<<if $poppySeen isnot undefined>>
+				<<run console.warn("[Poppy migration] $poppySeen was not an array, resetting:", V.poppySeen)>>
+			<</if>>
+			<<set $poppySeen to []>>
+		<</if>>
+
+		<<if C.npc.Poppy>>
+			<<if C.npc.Poppy.timer is undefined>><<set C.npc.Poppy.timer to {}>><</if>>
+
+			<<if C.npc.Poppy.timer.lastInteraction is undefined>>
+				<<set C.npc.Poppy.timer.lastInteraction to Time.date.timeStamp>>
+			<</if>>
+			<<if C.npc.Poppy.timer.lastPatienceDecay is undefined>>
+				<<set C.npc.Poppy.timer.lastPatienceDecay to Time.date.timeStamp>>
+			<</if>>
+			<<if typeof C.npc.Poppy.patience !== "number">>
+				<<set C.npc.Poppy.patience to 100>>
+			<</if>>
+
+			<<set $objectVersion.poppyLIData to 1>>
+		<</if>>
+	<</if>>
 
 	<<set $robinmoney to Math.round($robinmoney)>>
 
@@ -1649,6 +1750,27 @@
 		<</for>>
 	<</if>>
 
+	<<if C.npc is undefined or C.npc.Poppy is undefined>>
+		/* stop here; Poppy base object must exist first */
+	<<else>>
+		<<set _poppyIndex to $NPCNameList.indexOf("Poppy")>>
+		<<if _poppyIndex is -1>>
+			/* Poppy missing entirely: append both list + object */
+			<<run $NPCNameList.push("Poppy")>>
+			<<run $NPCName.push(C.npc.Poppy)>>
+		<<else>>
+			/* Poppy name exists, but object slot may be missing/wrong */
+			<<if $NPCName[_poppyIndex] is undefined or $NPCName[_poppyIndex].nam isnot "Poppy">>
+				<<set $NPCName[_poppyIndex] to C.npc.Poppy>>
+			<</if>>
+		<</if>>
+	<</if>>
+
+	<<set $opium_addiction to $opium_addiction ?? 0>>
+	<<set $opium_timer to $opium_timer ?? 0>>
+	<<set $opium_knowledge to $opium_knowledge ?? 0>>
+	<<set $opium_message to $opium_message ?? "">>
+
 	<<if $player.virginity.penile is "Frostberg">>
 		<<set $player.virginity.penile to "unknown">>
 	<</if>>
@@ -1665,24 +1787,13 @@
 		<<set $whitneyFamiliarCollarKnown to 0>>
 	<</if>>
 
-	<<for _plants range Object.keys(V.plants)>>
-		<<if setup.plants[_plants] is undefined>>
-			<<run delete V.plants[_plants]>>
-		<</if>>
-	<</for>>
-
-	<<modNewNamedNPCs>>
-
 	<<modParasiteCapUpdate>>
 
 	<<modWardrobeUpdate>>
 
 	<<amcTraitsUpdate>>
-	
 	<<modRingsEarrings>>
-
 	<<clamp>>
-	
 <</widget>>
 
 <<widget "amcTraitsUpdate">>
@@ -1790,6 +1901,7 @@
 	<<set $analskillmax to 1000>>
 	<<set $thighskillmax to 1000>>
 	<<set $feetskillmax to 1000>>
+
 	<<if $AMCTraits.oral>>
 		<<set $AMCTraits.oralskill to $AMCTraits.oral>>
 		<<unset $AMCTraits.oral>>
@@ -1992,7 +2104,8 @@
 <<widget "modNewNamedNPCs">>
 	<<if $dolpNpcListVersion is undefined>>
 		<<set _newNNPCs to {
-			"riley": {nam : "Riley", title: "MMA coach", insecurity: "skill", adult: 1}
+			"riley": {nam : "Riley", title: "MMA coach", insecurity: "skill", adult: 1},
+			"poppy": {nam : "Poppy", title: "tolerant", insecurity: "skill", adult: 1}
 		}>>
 		<<for _npc range Object.keys(_newNNPCs)>>
 			<<if !$NPCNameList.includes(_newNNPCs[_npc].nam)>>
@@ -2006,59 +2119,66 @@
 		<<set $dolpNpcListVersion to 1>>
 	<</if>>
 
-	<<if $NPCName[31].description is "Riley" and $NPCName[31].title is undefined>>
-		<<set $NPCName[31].title to "MMA coach">>
-		<<set $NPCName[31].insecurity to "skill">>
+	<<if $NPCName[32].description is "Riley" and $NPCName[31].title is undefined>>
+		<<set $NPCName[32].title to "MMA coach">>
+		<<set $NPCName[32].insecurity to "skill">>
+	<</if>>
+	<<if $NPCName[33].description is "Poppy" and $NPCName[31].title is undefined>>
+		<<set $NPCName[33].title to "tolerant">>
+		<<set $NPCName[33].insecurity to "skill">>
 	<</if>>
 <</widget>>
 
 <<mirrorMood>>
 
 <<widget "modRingsEarrings">>
-	/* Fixing what I broke in the 14 version and changing to 7.5 in case of future compatibility. */
-	<<if $objectVersion.wardrobes lt 7 or $objectVersion.wardrobes is 14 or $objectVersion.wardrobes is 15 or $objectVersion.wardrobes is undefined>>
-		<<set $objectVersion.wardrobes to 7>>
-		<<wardrobesUpdate>>
-		<<set $objectVersion.wardrobes to 7.5>>
-	<</if>>
-	<<if $wear_rings is undefined>>		
-		<<set $worn.earrings to clone(setup.clothes.earrings[0])>>
-		<<set $carried.earrings to clone(setup.clothes.earrings[0])>>
-		<<set $wardrobe.earrings to []>>
-		<<set $store.earrings to []>>
-		<<set $wear_earrings to "none">>
-		
-		<<set $worn.rings to clone(setup.clothes.rings[0])>>
-		<<set $carried.rings to clone(setup.clothes.rings[0])>>
-		<<set $wardrobe.rings to []>>
-		<<set $store.rings to []>>
-		<<set $wear_rings to "none">>
-		
-		<<for $_i to 0; $_i lt $outfit.length; $_i++>>
-			<<if $outfit[$_i].earrings is undefined>>
-				<<set $outfit[$_i].earrings to "naked">>
-			<</if>>
-			<<if $outfit[$_i].rings is undefined>>
-				<<set $outfit[$_i].rings to "naked">>
-			<</if>>
-			<<if $outfit[$_i].colors and !$outfit[$_i].colors.earrings>>
-				<<set $outfit[$_i].colors.earrings to [0, 0]>>
-			<</if>>
-			<<if $outfit[$_i].colors and !$outfit[$_i].colors.rings>>
-				<<set $outfit[$_i].colors.rings to [0, 0]>>
-			<</if>>
-		<</for>>
-		<<set $ears_pierced to 0>>
-	<</if>>
-	<<script>>
-		for (const i of Object.keys(V.wardrobes)) {
-			if (i == "shopReturn" || i == "wardrobe") continue;
-			if (V.wardrobes[i].earrings == undefined) {
-				V.wardrobes[i].earrings = [];
-			}
-			if (V.wardrobes[i].rings == undefined) {
-				V.wardrobes[i].rings = [];
-			}
-		}
-	<</script>>
+    /* Fixing what I broke in the 14 version and changing to 7.5 in case of future compatibility. */
+    <<if $objectVersion.wardrobes lt 7 or $objectVersion.wardrobes is 14 or $objectVersion.wardrobes is 15 or $objectVersion.wardrobes is undefined>>
+        <<set $objectVersion.wardrobes to 7>>
+        <<wardrobesUpdate>>
+        <<set $objectVersion.wardrobes to 7.5>>
+    <</if>>
+
+    <<if $wear_earrings is undefined>>
+        <<set $worn.earrings to clone(setup.clothes.earrings[0])>>
+        <<set $carried.earrings to clone(setup.clothes.earrings[0])>>
+        <<set $wardrobe.earrings to []>>
+        <<set $store.earrings to []>>
+        <<set $wear_earrings to "none">>
+        <<set $ears_pierced to 0>>
+    <</if>>
+
+    <<if $wear_rings is undefined>>
+        <<set $worn.rings to clone(setup.clothes.rings[0])>>
+        <<set $carried.rings to clone(setup.clothes.rings[0])>>
+        <<set $wardrobe.rings to []>>
+        <<set $store.rings to []>>
+        <<set $wear_rings to "none">>
+    <</if>>
+
+    <<for $_i to 0; $_i lt $outfit.length; $_i++>>
+        <<if $outfit[$_i].earrings is undefined>>
+            <<set $outfit[$_i].earrings to "naked">>
+        <</if>>
+        <<if $outfit[$_i].rings is undefined>>
+            <<set $outfit[$_i].rings to "naked">>
+        <</if>>
+        <<if $outfit[$_i].colors and !$outfit[$_i].colors.earrings>>
+            <<set $outfit[$_i].colors.earrings to [0, 0]>>
+        <</if>>
+        <<if $outfit[$_i].colors and !$outfit[$_i].colors.rings>>
+            <<set $outfit[$_i].colors.rings to [0, 0]>>
+        <</if>>
+    <</for>>
+
+    <<script>>
+        if (V.wardrobes && typeof V.wardrobes === "object") {
+            for (const i of Object.keys(V.wardrobes)) {
+                if (i === "shopReturn" || i === "wardrobe") continue;
+                if (!V.wardrobes[i] || typeof V.wardrobes[i] !== "object") continue;
+                if (V.wardrobes[i].earrings === undefined)     {V.wardrobes[i].earrings = [];}
+                if (V.wardrobes[i].rings     === undefined)    {V.wardrobes[i].rings = [];}
+            }
+        }
+    <</script>>
 <</widget>>

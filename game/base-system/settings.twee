@@ -8,12 +8,13 @@
 	<<set $player.ballsExist to false>>
 	<<set $player.freckles to false>>
 	<<set $player.breastsize to 0>>
-	<<set $player.penissize to 1>>
+	<<set $player.penissize to 3>>
 	<<set $bodysize to 2>>
 	<<set $mouthsensitivity to 1>>
 	<<set $breastsensitivity to 1>>
 	<<set $bottomsensitivity to 1>>
 	<<set $genitalsensitivity to 1>>
+	<<set $alcoholMod to 1>>
 	<<set $facestyle to "default">>
 	<<set $facevariant to "default">>
 	<<set $eyeselect to "purple">>
@@ -70,6 +71,7 @@
 	<<set $settings.skillCheckStyle to "words">>
 	<<set $blackwolfmonster to 1>>
 	<<set $greathawkmonster to 1>>
+	<<set $nightmonstermonster to 1>>
 	<<set $reducedLineHeight to false>>
 	<<set $settings.clothingCostModifier to 1>>
 	<<set $settings.underwearCostModifier to 1>>
@@ -95,6 +97,8 @@
 	<<set $settings.multipleWardrobes to "isolated">>
 	<<set $settings.tendingYieldModifier to 5>>
 	<<set $notifyUpdate = true>>
+	<<set $ModExclusiveLIEnabled to $ModExclusiveLIEnabled is undefined ? 0 : $ModExclusiveLIEnabled>>
+	<<run ensureModLISettings()>>
 	<<set _tan to 0>>
 
 	<<startingPlayerImageReset>>
@@ -197,7 +201,7 @@
 	</div>
 
 	<hr>
-	<<set _featTabName to "Feat Boosts<span class='red'> *</span>"+ ($options.images is 1 ? " <img class='imgButton' src='img/ui/GoldCoin.gif'/>" : "")>>
+	<<set _featTabName to "Feat Boosts<span class='red'> *</span>"+ ($options.images is 1 ? " <img class='imgButton' src='img/ui/coin-gold.gif'/>" : "")>>
 	<<switch _selectedStart>>
 		/*Basic Start is selected */
 		<<case "default">>
@@ -338,15 +342,6 @@
 		<<switch _selectedStart>>
 			<<case "default">>
 				<div class="my-1"><span class="gold bold">Current Settings:</span> <i>Adjustable</i></div>
-				/* Reset these settings if going back to this tab */
-				<<set $settings.maleChanceSplit to false>>
-				<<set $settings.maleChance to 50>>
-				<<set $settings.maleChanceMale to 50>>
-				<<set $settings.maleChanceFemale to 50>>
-				<<set $settings.beastMaleChanceSplit to false>>
-				<<set $settings.beastMaleChance to 50>>
-				<<set $settings.beastMaleChanceMale to 50>>
-				<<set $settings.beastMaleChanceFemale to 50>>
 				<<button "Start Game!">>
 					<<presets _kinkPreset "save">>
 					<<presets _namedNpcPreset "save">>
@@ -641,24 +636,40 @@
 	<<set $saveName to $saveName.replace(/[^a-zA-Z\u4e00-\u9fa5 0-9]+/g,"")>>
 	<<unset $importString>>
 
-	/* Updates the penis max size for females so its never below 1 */
-	<<if $player.sex is "f" && $penissizemax < 0>>
-		<<set $penissizemax to 0>>
+	/* Updates the penis max size for females so its never below 2 */
+	<<if $player.sex is "f" && $penissizemax < 2>>
+		<<set $penissizemax to 2>>
 	<</if>>
 
 	<<for _name range setup.NPCNameList>>
 		<<set _nameReal to _name>>
-		<<if _name == "Black Wolf">>
-			<<set _name = "black_wolf">>
-		<<elseif _name == "Great Hawk">>
-			<<set _name = "great_hawk">>
-		<<elseif _name == "Ivory Wraith">>
-			<<set _name = "ivory_wraith">>
-		<</if>>
-		<<if C.npc[_nameReal].pronoun is "m">>
-			<<set $options.autoNNPCDisplay[_name.toLowerCase()].gender to "male">>
+		<<set _nnpcKey to _name.toLowerCase().split(" ").join("_")>>
+
+		<<if $options.autoNNPCDisplay is undefined>>
+			<<run console.warn("[settingsExitFunction] autoNNPCDisplay is missing. It should be initialised in variables-modUpdate.", _nameReal, _nnpcKey)>>
 		<<else>>
-			<<set $options.autoNNPCDisplay[_name.toLowerCase()].gender to "female">>
+		/* create missing display entry for modded/new NNPCs on old saves */
+			<<if $options.autoNNPCDisplay[_nnpcKey] is undefined>>
+				<<set $options.autoNNPCDisplay[_nnpcKey] to {}>>
+			<</if>>
+			<<if $options.autoNNPCDisplay[_nnpcKey].slot is undefined>>
+				<<set $options.autoNNPCDisplay[_nnpcKey].slot to 1>>
+			<</if>>
+			<<if $options.autoNNPCDisplay[_nnpcKey].layer is undefined>>
+				<<set $options.autoNNPCDisplay[_nnpcKey].layer to "front">>
+			<</if>>
+			<<if $options.autoNNPCDisplay[_nnpcKey].genderOverride is undefined>>
+				<<set $options.autoNNPCDisplay[_nnpcKey].genderOverride to false>>
+			<</if>>
+
+			/* Guard in case an entry exists in setup.NPCNameList but C.npc data is missing */
+			<<if C.npc[_nameReal] is undefined>>
+				<<run console.warn("[settingsExitFunction] Missing C.npc entry while syncing autoNNPCDisplay gender.", _nameReal, _nnpcKey)>>
+			<<elseif C.npc[_nameReal].pronoun is "m">>
+				<<set $options.autoNNPCDisplay[_nnpcKey].gender to "male">>
+			<<else>>
+				<<set $options.autoNNPCDisplay[_nnpcKey].gender to "female">>
+			<</if>>
 		<</if>>
 	<</for>>
 <</widget>>
@@ -962,7 +973,7 @@
 			</div>
 			<div class="settingsToggleItem">
 			<<if StartConfig.enableImages is true>>
-				<span class="gold">Sidebar Preview:</span><br> <label>Hide clothes <<checkbox "_showClothes" true false autocheck>></label> | <label>Hide underwear <<checkbox "_showUnderwear" true false autocheck>></label>
+				<span class="gold">Sidebar Preview:</span><br> <label>Hide clothes <<checkbox "_showClothes" true false autocheck>></label> | <label>Hide underwear <<checkbox "_showUnderwear" true false autocheck>></label><<if $player.sex isnot "f">> | <label>Flaccid penis <<checkbox "_flaccidPenis" false true autocheck>></label><</if>>
 				<br>
 			<</if>>
 			</div>
@@ -1069,13 +1080,13 @@
 				<div class="settingsToggleItem">
 					<span data-target="player.sex" data-disabledif="V.player.sex==='f'">
 					<span class="gold">Penis size - if applicable:</span><br>
-					<label>Micro <<radiobutton "$player.penissize" -2 autocheck>></label> |
-					<label>Mini <<radiobutton "$player.penissize" -1 autocheck>></label> |
-					<label>Tiny <<radiobutton "$player.penissize" 0 autocheck>></label> |
-					<label>Small <<radiobutton "$player.penissize" 1 autocheck>></label> |
-					<label>Normal <<radiobutton "$player.penissize" 2 autocheck>></label> |
-					<label>Large <<radiobutton "$player.penissize" 3 autocheck>></label> |
-					<label>Enormous <<radiobutton "$player.penissize" 4 autocheck>></label>
+					<label>Micro <<radiobutton "$player.penissize" 0 autocheck>></label> |
+					<label>Mini <<radiobutton "$player.penissize" 1 autocheck>></label> |
+					<label>Tiny <<radiobutton "$player.penissize" 2 autocheck>></label> |
+					<label>Small <<radiobutton "$player.penissize" 3 autocheck>></label> |
+					<label>Normal <<radiobutton "$player.penissize" 4 autocheck>></label> |
+					<label>Large <<radiobutton "$player.penissize" 5 autocheck>></label> |
+					<label>Enormous <<radiobutton "$player.penissize" 6 autocheck>></label>
 					</span>
 				</div>
 			<</if>>
@@ -1186,8 +1197,12 @@
 		<hr>
 
 		<div class="settingsGrid">
-			<<set _skinTone to "">>
-			<<set _skinShade to "light">>
+			<<if !_skinTone>>
+				<<set _skinTone to "">>
+			<</if>>
+			<<if !_skinShade>>
+				<<set _skinShade to "light">>
+			<</if>>
 
 			<div class="settingsHeader">
 				Skin Colour
@@ -1259,6 +1274,12 @@
 				<label><span class="light-pink">Sensitive</span> <<radiobutton "$genitalsensitivity" 2 autocheck>></label> |
 				<label><span class="pink">Very sensitive</span> <<radiobutton "$genitalsensitivity" 3 autocheck>></label> |
 				<label><span class="red">Hyper sensitive</span> <<radiobutton "$genitalsensitivity" 4 autocheck>></label>
+			</div>
+			<div class="settingsToggleItem">
+				<span class="gold">Alcohol Tolerance</span><br>
+				<label><span class="blue">Heavyweight </span><<radiobutton "$alcoholMod" 0.5 autocheck>></label> |
+				<label>Normal <<radiobutton "$alcoholMod" 1 autocheck>></label> |
+				<label><span class="red">Lightweight</span> <<radiobutton "$alcoholMod" 1.5 autocheck>></label>
 			</div>
 		</div>
 
@@ -1370,7 +1391,7 @@
 					<<script>>
 						localStorage.removeItem("dolFeats");
 					<</script>>
-					<<setupFeats true>>
+					<<setupFeatBoosts true>>
 					<<displaySettings "featSettings">>
 				<</link>>
 				<span class="red"> This will remove all feats that have been earned so far, meaning you will have to collect them again.</span>
@@ -1431,7 +1452,7 @@
 	<<else>>
 		<<if $passage is "Start">>
 			<label data-target="settingscheatsenabledtoggle" data-disabledif="V.settings.cheatsEnabledToggle===true">
-				<input id="checkbox-ironmanmode" onclick="IronMan.UI.checkBox()" name="checkbox-ironmanmode" type="checkbox" tabindex="0" class="macro-checkbox"> <mouse class="tooltip white">Ironman mode<span>To prevent save-scumming and other practices in that spirit<br><br>You can save, you will then be led to Start Menu. You can then load that save, but then it will delete itself.<br><br>There will also be an additional save every 4-8 in-game days just in case you lose the other save.</span></mouse>&nbsp;<i class="ironman-clarify">(Cannot be unset after game start)</i>
+				<input id="checkbox-ironmanmode" onclick="IronMan.UI.checkBox()" name="checkbox-ironmanmode" type="checkbox" tabindex="0" class="macro-checkbox"> <mouse class="tooltip white">Ironman mode<span>To prevent save-scumming and other practices in that spirit.<br><br>You can save, you will then be led to Start Menu. You can then load that save, but then it will delete itself.<br><br>There will also be an additional save every 4-8 in-game days just in case you lose the other save.</span></mouse>&nbsp;<i class="ironman-clarify">(Cannot be unset after game start)</i>
 				<<run IronMan.UI.checkBox(`init`)>>
 			</label>
 			<br>
@@ -1732,17 +1753,17 @@
 						<<set $fregularchance to $fregular>>
 						<<run delete $fregular>>
 					<<else>>
-						<<set $fregularchance to 100-$dgchance>>
+						<<set $fregularchance to 100-$settings.femaleNPCPenisChance>>
 						<<set $fhermchance to 0>>
 					<</if>>
 				<</if>>
 				<div style="font-size:0.9em; margin-bottom: 1%">
 					<span class="gold">Percentage of women that have only a vagina:</span> <span id="numberslider-value-fregularchance">$fregularchance</span><br>
 					<span class="gold">Percentage of women that have both:</span> <span id="numberslider-value-fhermchance">$fhermchance</span><br>
-					<span class="gold">Percentage of women that have only a penis:</span> <span id="numberslider-value-dgchance">$dgchance</span><br>
+					<span class="gold">Percentage of women that have only a penis:</span> <span id="numberslider-value-settings.femaleNPCPenisChance">$settings.femaleNPCPenisChance</span><br>
 				</div>
 
-				<<doubleslider "fregularchance" "fhermchance" "dgchance" "var(--pink)" "var(--purple-secondary)" "var(--blue)">>
+				<<doubleslider "fregularchance" "fhermchance" "$settings.femaleNPCPenisChance" "var(--pink)" "var(--purple-secondary)" "var(--blue)">>
 			</div>
 			<div class="solidBorderContainer">
 				<<if $mregularchance is undefined>>
@@ -1750,17 +1771,17 @@
 						<<set $mregularchance to $mregular>>
 						<<run delete $mregular>>
 					<<else>>
-						<<set $mregularchance to 100-$cbchance>>
+						<<set $mregularchance to 100-$settings.maleNPCVaginaChance>>
 						<<set $mhermchance to 0>>
 					<</if>>
 				<</if>>
 				<div style="font-size:0.9em; margin-bottom: 1%">
 					<span class="gold">Percentage of men that have only a penis:</span> <span id="numberslider-value-mregularchance">$mregularchance</span><br>
 					<span class="gold">Percentage of men that have both:</span> <span id="numberslider-value-mhermchance">$mhermchance</span><br>
-					<span class="gold">Percentage of men that have only a vagina:</span> <span id="numberslider-value-cbchance">$cbchance</span><br>
+					<span class="gold">Percentage of men that have only a vagina:</span> <span id="numberslider-value-settings.maleNPCVaginaChance">$settings.maleNPCVaginaChance</span><br>
 				</div>
 
-				<<doubleslider "mregularchance" "mhermchance" "cbchance" "var(--blue)" "var(--purple-secondary)" "var(--pink)">>
+				<<doubleslider "mregularchance" "mhermchance" "$settings.maleNPCVaginaChance" "var(--blue)" "var(--purple-secondary)" "var(--pink)">>
 			</div>
 			<div class="settingsToggleItemWide numberslider-inline">
 				<span class="gold">Percentage of Women with Strap-ons:</span>
@@ -2478,17 +2499,17 @@
 		<<if ($passage is "Start" and $player.sex isnot "f") or $player.penisExist>>
 			<div class="settingsToggleItemWide">
 			<span class="gold">Penis Size Limits:</span> <span class="tooltip-anchor linkBlue" tooltip="Penises already below the minimum size won't automatically grow.">(?)</span>
-			<<rangeslider "$penissizemin" "$penissizemax" $penissizemin $penissizemax -2 4 1
+			<<rangeslider "$penissizemin" "$penissizemax" $penissizemin $penissizemax 0 6 1
 				{
-					minClamp: 0,
+					minClamp: 2,
 					minClampMessage: `<span class="red">Cannot increase minimum size further.</span>`
 				}
 				{
 					value: (v1, v2) => {
-						const color1 = ColourUtils.interpolateMultiple(["--teal", "--pink"], normalise(v1, 4, -2));
-						const color2 = ColourUtils.interpolateMultiple(["--teal", "--pink"], normalise(v2, 4, -2));
+						const color1 = ColourUtils.interpolateMultiple(["--teal", "--pink"], normalise(v1, 6, 0));
+						const color2 = ColourUtils.interpolateMultiple(["--teal", "--pink"], normalise(v2, 6, 0));
 						var name = ["Micro","Mini", "Tiny", "Small", "Normal", "Large", "Enormous"];
-						return `<span style="color: ${color1}">${name[v1+2]}</span> - <span style="color: ${color2}">${name[v2+2]}</span>`;
+						return `<span style="color: ${color1}">${name[v1]}</span> - <span style="color: ${color2}">${name[v2]}</span>`;
 					},
 				}
 
@@ -2595,6 +2616,37 @@
 				<</link>>
 			<</if>>
 		</div>
+		<div class="settingsToggleIndent">
+			<<foldout false "_gender">>
+				<span class="gold">Assign to all Named NPCs:</span>
+				Gender:
+				<<link "Male">><<assignAllNPCs "pronoun" "m">><</link>> | <<link "Female">><<assignAllNPCs "pronoun" "f">><</link>>
+				<br>
+				Genitals:
+				<<link "Penis">><<assignAllNPCs "gender" "m">><</link>> | <<link "Vagina">><<assignAllNPCs "gender" "f">><</link>>
+				<br>
+				Penis size:
+				<<set _penisNames to ["", "Tiny", "Average", "Thick", "Huge"]>> /* the empty first element is necessary because _j starts at 1 */
+				<<for _j to 1; _j lt _penisNames.length; _j++>>
+					<<capture _j>>
+						<<link _penisNames[_j]>><<assignAllNPCs "penissize" _j>><</link>>
+						<<if _j isnot _penisNames.length -1>>|<</if>>
+					<</capture>>
+				<</for>>
+				<br>
+				Breast size:
+				<<set _breastNames to ["Flat", "Budding", "Tiny", "Small", "Pert", "Modest", "Full", "Large", "Ample", "Massive", "Huge", "Gigantic", "Enormous"]>>
+				<<for _k to 0; _k lt _breastNames.length; _k++>>
+					<<capture _k>>
+						<<link _breastNames[_k]>><<assignAllNPCs "breastsize" _k>><</link>>
+						<<if _k isnot _breastNames.length -1>>|<</if>>
+					<</capture>>
+				<</for>>
+				<br>
+				Skin colour:
+				<<link "Pale">><<assignAllNPCs "skincolour" "white">><</link>> | <<link "Dark">><<assignAllNPCs "skincolour" "black">><</link>>
+			<</foldout>>
+		</div>
 		<hr>
 		<<if _npcId is undefined>>
 			<<set _npcId to 25>> /* Should be set to the index of the NPC that is at the top of the list when sorted alphabetically by name */
@@ -2614,15 +2666,15 @@
 
 		<<if _npcList is undefined>>
 			<<set _npcList to {}>>
-			<<set _sortedNPCList to clone($NPCNameList)>>
-			<<run _sortedNPCList.sort()>>
+			<<set _sortedNPCList to clone($NPCNameList).sort()>>
 
 			<<for $_i to 0; $_i lt _sortedNPCList.length; $_i++>>
-				<<set _npcList[_sortedNPCList[$_i]] to clone($NPCNameList.indexOf(_sortedNPCList[$_i]))>>
+				<<set _npcList[_sortedNPCList[$_i]] to $NPCNameList.indexOf(_sortedNPCList[$_i])>>
 			<</for>>
 
 			<<if $passage is "Start" or !$wraithIntro>>
 				<<run delete _npcList["Ivory Wraith"]>>
+				<<run _sortedNPCList.delete("Ivory Wraith")>>
 			<</if>>
 		<</if>>
 
@@ -2641,7 +2693,7 @@
 
 					T.npcKeys = {};
 					T.npcKeyNames = [];
-					const allowed_npcs = ["steed", "guard", "inmate", "panty_thief", "school_nurse", "tower_creature", "pinch", "black_dog", "hacker", "bishop", "bishop_right_hand", "bishop_left_hand", "manager"];
+					const allowed_npcs = ["steed", "guard", "inmate", "panty_thief", "school_nurse", "pinch", "black_dog", "hacker", "bishop", "bishop_right_hand", "bishop_left_hand", "manager", "alexs_parent1", "alexs_parent2", "whitneys_auncle", "whitney_parent_flat"];
 					Object.keys(V.per_npc).forEach(k => {
 						for (const j of allowed_npcs){
 							if (k.includes(j)){
@@ -2667,6 +2719,28 @@
 			<<set _listActive to true>>
 		<</if>>
 	</div>
+<</widget>>
+
+<<widget "assignAllNPCs">>
+	<<set $_characteristic to _args[0]>>
+	<<set $_value to _args[1]>>
+	<<for $_i to 0; $_i lt $NPCName.length; $_i++>>
+		<<set $NPCName[$_i][$_characteristic] to $_value>>
+		<<if $_characteristic is "breastsize">>
+			<<set $NPCName[$_i].breastdesc to $_i > 0 ? setup.breastsizes[$_value] + " breast" : "nipple">>
+			<<set $NPCName[$_i].breastsdesc to $_i > 0 ? setup.breastsizes[$_value] + " breasts" : "nipples">>
+		<</if>>
+	<</for>>
+	<<if $passage isnot "start" and $per_npc and Object.keys($per_npc).length gt 0>>
+		<<for $_i range Object.keys($per_npc)>>
+			<<set $per_npc[$_i][$_characteristic] to $_value>>
+			<<if $_characteristic is "breastsize">>
+				<<set $per_npc[$_i].breastdesc to $_i > 0 ? setup.breastsizes[$_value] + " breast" : "nipple">>
+				<<set $per_npc[$_i].breastsdesc to $_i > 0 ? setup.breastsizes[$_value] + " breasts" : "nipples">>
+			<</if>>
+		<</for>>
+	<</if>>
+	<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
 <</widget>>
 
 <<widget "exportsettings">>
@@ -2741,25 +2815,23 @@
 			<span style="font-size:80%">
 				<br>
 				<<link "Previous">>
-					<<if _npcId is 0>>
-						<<set _npcId to $NPCNameList.length - 1>>
+					<<set _sortedId to _sortedNPCList.indexOf($NPCNameList[_npcId])>>
+					<<if _sortedId is 0>>
+						<<set _sortedId to $NPCNameList.length - 2>>
 					<<else>>
-						<<set _npcId-->>
+						<<set _sortedId-->>
 					<</if>>
-					<<if _npcList[$NPCName[_npcId].nam] is undefined>>
-						<<set _npcId-->>
-					<</if>>
+					<<set _npcId to _npcList[_sortedNPCList[_sortedId]]>>
 					<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
 				<</link>> <span style="color:white">|</span>
 				<<link "Next">>
-					<<if _npcId is $NPCNameList.length - 1>>
-						<<set _npcId to 0>>
+					<<set _sortedId to _sortedNPCList.indexOf($NPCNameList[_npcId])>>
+					<<if _sortedId gte $NPCNameList.length - 1>>
+						<<set _sortedId to 0>>
 					<<else>>
-						<<set _npcId++>>
+						<<set _sortedId++>>
 					<</if>>
-					<<if _npcList[$NPCName[_npcId].nam] is undefined>>
-						<<set _npcId++>>
-					<</if>>
+					<<set _npcId to _npcList[_sortedNPCList[_sortedId]]>>
 					<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
 				<</link>>
 			</span>
@@ -2792,10 +2864,7 @@
 				<span class="gold">Penis Size:</span>
 				<br>
 				<<for _j to 1; _j lt _penisNames.length; _j++>>
-					<label>
-						<<radiobutton "$NPCName[_npcId].penissize" _j autocheck>>
-						<<print _penisNames[_j]>>
-					</label>
+					<label>	<<radiobutton "$NPCName[_npcId].penissize" _j autocheck>><<= _penisNames[_j]>></label>
 					<<if _j isnot _penisNames.length -1>>|<</if>>
 				<</for>>
 			</span>
@@ -2832,8 +2901,13 @@
 				<label><<radiobutton "$NPCName[_npcId].skincolour" "white" autocheck>> Pale</label> |
 				<label><<radiobutton "$NPCName[_npcId].skincolour" "black" autocheck>> Dark</label>
 				</span>
-			<<elseif $NPCName[_npcId].nam is "Great Hawk">>/*disable skin colour toggle when player has BW set to 'always a beast'*/
+			<<elseif $NPCName[_npcId].nam is "Great Hawk">>/*disable skin colour toggle when player has GH set to 'always a beast'*/
 				<span data-target="greathawkmonster" data-disabledif="V.greathawkmonster===0">
+				<label><<radiobutton "$NPCName[_npcId].skincolour" "white" autocheck>> Pale</label> |
+				<label><<radiobutton "$NPCName[_npcId].skincolour" "black" autocheck>> Dark</label>
+				</span>
+			<<elseif $NPCName[_npcId].nam is "Night Monster">>/*disable skin colour toggle when player has NM set to 'always a beast'*/
+				<span data-target="nightmonstermonster" data-disabledif="V.nightmonstermonster===0">
 				<label><<radiobutton "$NPCName[_npcId].skincolour" "white" autocheck>> Pale</label> |
 				<label><<radiobutton "$NPCName[_npcId].skincolour" "black" autocheck>> Dark</label>
 				</span>
@@ -2860,6 +2934,14 @@
 				<label><<radiobutton "$greathawkmonster" 0 autocheck>> Always a beast</label> |
 				<label><<radiobutton "$greathawkmonster" 1 autocheck>> Monster girl or boy when requirements met</label> |
 				<label><<radiobutton "$greathawkmonster" 2 autocheck>> Always a monster girl or boy</label>
+			</div>
+		<<elseif $NPCName[_npcId].nam is "Night Monster">>
+			<div class="settingsToggleItemWide">
+				<span class="gold">Beast Type:</span>
+				<br>
+				<label><<radiobutton "$nightmonstermonster" 0 autocheck>> Always a beast</label> |
+				<label><<radiobutton "$nightmonstermonster" 1 autocheck>> Monster girl or boy when requirements met</label> |
+				<label><<radiobutton "$nightmonstermonster" 2 autocheck>> Always a monster girl or boy</label>
 			</div>
 		<</if>>
 
@@ -2930,8 +3012,6 @@
 			<div class="settingsHeader">
 				<<if $per_npc[_pNPCId].name_known or _pNPCId is "farm_tower_guard">>
 					$per_npc[_pNPCId].name the <<= toTitleCase(_pNPCId.toUpperFirst().replace(/_/g, ' '))>>
-				<<elseif _pNPCId is "tower_creature">>
-					The Night Monster
 				<<elseif _pNPCId is "hacker">>
 					'Mickey' the Hacker
 				<<elseif _pNPCId is "bishop">>
@@ -2940,6 +3020,30 @@
 					The Bishop's Right Hand
 				<<elseif _pNPCId is "bishop_left_hand">>
 					The Bishop's Left Hand
+				<<elseif _pNPCId is "alexs_parent1">>
+					<<if $per_npc[_pNPCId].pronoun is "m">>
+						Alex's Hardy Dad
+					<<else>>
+						Alex's Hardy Mum
+					<</if>>
+				<<elseif _pNPCId is "alexs_parent2">>
+					<<if $per_npc[_pNPCId].pronoun is "m">>
+						Alex's Calculating Dad
+					<<else>>
+						Alex's Calculating Mum
+					<</if>>
+				<<elseif _pNPCId is "whitneys_auncle">>
+					<<if $per_npc[_pNPCId].pronoun is "m">>
+						Whitney's Uncle
+					<<else>>
+						Whitney's Aunt
+					<</if>>
+				<<elseif _pNPCId is "whitney_parent_flat">>
+					<<if $per_npc[_pNPCId].pronoun is "m">>
+						Whitney's Dad
+					<<else>>
+						Whitney's Mum
+					<</if>>
 				<<else>>
 					<<= toTitleCase(_pNPCId.toUpperFirst().replace(/_/g, ' '))>>
 				<</if>>
@@ -3001,7 +3105,7 @@
 				<br>
 				<<numberslider "$per_npc[_pNPCId].breastsize" $per_npc[_pNPCId].breastsize 0 12 1 {
 					onInputChange: v => {
-						V.per_npc[_pNPCId].breastdesc = (v > 0) ? setup.breastsizes[v] + " breast" : "nipple";;
+						V.per_npc[_pNPCId].breastdesc = (v > 0) ? setup.breastsizes[v] + " breast" : "nipple";
 						V.per_npc[_pNPCId].breastsdesc = (v > 0) ? setup.breastsizes[v] + " breasts" : "nipples";
 					},
 					value: v => {
@@ -4025,9 +4129,51 @@
 	</div>
 <</widget>>
 
+<<widget "modLISettingsSection">>
+	<<run ensureModLISettings()>>
+	<<set _enabledModLIs to getActivatedModLIs()>>
+	<<set _availableModLIs to getAvailableModLIs()>>
+	<div class="settingsToggleItemWide">
+		<<if $ModExclusiveLIEnabled is 1>>
+			<div class="small-description red">Warning: activating a Mod-exclusive love interest is permanent for this save. Once activated, that LI stays available in this playthrough.</div>
+			<label>Select a custom LI to activate for this save:</label><br>
+			<<if _availableModLIs.length gt 0>>
+				<<for _modLIName range _availableModLIs>>
+					<<button _modLIName>>
+						<<run activateModLI(_modLIName)>>
+						<<replace #modLISettingsPanel>><<modLISettingsSection>><</replace>>
+					<</button>>
+					<<if _modLIName neq _availableModLIs[_availableModLIs.length - 1]>> | <</if>>
+				<</for>>
+			<<else>>
+				<div class="green">All Mod-exclusive love interests have already been activated for this save.</div>
+			<</if>>
+			<br>
+			<span class="gold">Activated in this save</span><br>
+			<<if _enabledModLIs.length gt 0>>
+				<<for _enabledName range _enabledModLIs>>
+					<<print _enabledName>>
+					<<if _enabledName neq _enabledModLIs[_enabledModLIs.length - 1]>> | <</if>>
+				<</for>>
+			<<else>>
+				<span class="small-description">No Mod-exclusive love interests have been permanently activated for this save yet.</span>
+			<</if>>
+		<<else>>
+			<span class="small-description">Turn on Mod-exclusive love interests to open the permanent activation menu. Already-activated LIs remain locked into this save even if this menu is hidden again later.</span>
+		<</if>>
+	</div>
+<</widget>>
+
 <<widget "dolpSettings">>
 	<div class="solidBorderContainer settings-container">
 		<div class="settingsGrid">
+			<div class="settingsToggleItem" id="modExclusiveLISetting">
+				<span class="gold">Mod-exclusive Love Interests</span>
+				<br>
+				<label><<checkbox "$ModExclusiveLIEnabled" 0 1 autocheck>> Show Mod-exclusive love interests</label>
+			</div>
+			<div id="modLISettingsPanel"><<modLISettingsSection>></div>
+			<<run $(() => {$('#modExclusiveLISetting input[type="checkbox"]').off('change.modli').on('change.modli', () => {Wikifier.wikifyEval('<<replace #modLISettingsPanel>><<modLISettingsSection>><</replace>>');});})>>
 			<<if $options.images is 1>>
 				<div class="settingsToggleItem">
 					<span class="gold">Banner Toggle</span> <mouse class = "tooltip linkBlue">(?)<span>Toggle which version of the banner you want to use.</span></mouse>
@@ -4513,7 +4659,7 @@
 	<br><br>
 	<div id="featsFinishButton" class="hidden">
 		<<link "Next">>
-			<<setupFeats true>>
+			<<setupFeatBoosts true>>
 			<<replace "#startCaption">><<startCaption>><</replace>>
 			<<replace "#settingsStart">><<settingsStart>><</replace>>
 		<</link>>

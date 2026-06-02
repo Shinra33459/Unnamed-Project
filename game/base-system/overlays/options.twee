@@ -53,6 +53,7 @@ IMPORTANT:
 				<<if $options.neverNudeMenus>><<set _toSaveDefaults.neverNudeMenus to $options.neverNudeMenus>><</if>>
 				<<if $options.autosaveDisabled>><<set _toSaveDefaults.autosaveDisabled to $options.autosaveDisabled>><</if>>
 				<<if $options.numberify_enabled>><<set _toSaveDefaults.numberify_enabled to $options.numberify_enabled>><</if>>
+				<<if $options.clothingReplacementWarning>><<set _toSaveDefaults.clothingReplacementWarning to $options.clothingReplacementWarning>><</if>>
 				<<run localStorage.setItem("dolDefaultGeneralSettings",JSON.stringify(_toSaveDefaults))>>
 				<<replace #customOverlayContent>><<optionsgeneral>><</replace>>
 			<</button>>
@@ -98,6 +99,12 @@ IMPORTANT:
 				<<option "Radio buttons" false>>
 				<<option "List box" true>>
 			<</listbox>>
+		</div>
+		<div class="settingsToggleItem">
+			<label>
+				<<checkbox "$options.clothingReplacementWarning" false true autocheck>>
+				Enable clothing replacement warning
+			</label>
 		</div>
 	</div>
 	<hr>
@@ -205,6 +212,8 @@ IMPORTANT:
 				<<set _options["Ivory Wraith"] = "ivory_wraith">>
 				<<set _options["Zephyr"] = "zephyr">>
 				<<set _options["Riley"] = "riley">>
+				<<set _options["Night Monster"] = "night_monster">>
+				<<set _options["Poppy"] = "poppy">>
 				<<set _options["Others"] = "others">>
 				<<if Object.keys(_options).length > 1>>
 					<label>NNPC:
@@ -351,9 +360,6 @@ IMPORTANT:
 
 							<<replace #autoNNPCSave>>
 								<<link "Save">>
-									<<if $options.autoNNPCDisplay[_nnpcKey] is undefined>>
-										<<set $options.autoNNPCDisplay[_nnpcKey] to {}>>
-									<</if>>
 									<<set $options.autoNNPCDisplay[_nnpcKey].slot to $options.nnpcDisplaySlot>>
 									<<set $options.autoNNPCDisplay[_nnpcKey].layer to $options.nnpcDisplayLayer>>
 									<<set $options.autoNNPCDisplay[_nnpcKey].skin to $options.nnpcDisplaySkin>>
@@ -679,7 +685,8 @@ IMPORTANT:
 			<br>
 			<span class="gold">Accessibility:</span>
 			<label class="OpenDyslexicMono"><<radiobutton "$options.font" "OpenDyslexicMono" autocheck>> OpenDyslexic Mono</label> |
-			<label class="ComicSans"><<radiobutton "$options.font" "ComicSans" autocheck>> Comic Sans</label>
+			<label class="ComicSans"><<radiobutton "$options.font" "ComicSans" autocheck>> Comic Sans</label> |
+			<label class="Lexend"><<radiobutton "$options.font" "Lexend" autocheck>> Lexend</label>
 		</div>
 	</div>
 	<hr>
@@ -830,9 +837,22 @@ IMPORTANT:
 		<hr>
 		<div>
 			<div class="settingsGrid" data-target='["images", "combatImages", "combatLightEnabled"]' data-disabledif="V.options.images===0||!V.options.combatImages||V.options.characterLightEnabled===false" oninput='Renderer.refresh(Renderer.locateModel("lighting", "combat-lighting"));Renderer.refresh(Renderer.locateModel("lighting", "combat-lighting-demo"));'>
-				<div class="settingsHeader options">Combat Lighting</div>
-				<div class="settingsToggleItemWide d-flex justify-content-center lighting-demo-container">
-					<<setupCombatLightingDemo>>
+				<div class="settingsHeader options">Combat Visuals</div>
+				<div class="settingsToggleItem d-flex justify-content-center lighting-demo-container">
+					<div id="combatLightingDemo"><<setupCombatLightingDemo>></div>
+					<div id="combatLightingToggle" onchange="new Wikifier(null, '<<updateCombatLightingDemo #combatLightingDemo>>')">
+						<label data-target='["images", "combatImages"]' data-disabledif="V.options.images===0||!V.options.combatImages">
+							<<checkbox "$options.combatLightEnabled" false true autocheck>> Enable combat lighting
+						</label>
+					</div>
+				</div>
+				<div class="settingsToggleItem d-flex justify-content-center boob-demo-container">
+					<div id="closeBreastDemo"><<setupBreastjobDemo>></div>
+					<div id="closeBreastToggle" onchange="new Wikifier(null, '<<replace #closeBreastDemo>><<setupBreastjobDemo>><</replace>>')">
+						<label data-target='["images", "combatImages"]' data-disabledif="V.options.images===0||!V.options.combatImages">
+							<<checkbox "$options.topdownBreastjob" false true autocheck>> Enable topdown breastjob (large breasts only)
+						</label>
+					</div>
 				</div>
 				<div class="settingsToggleItem">
 					<label>
@@ -884,11 +904,6 @@ IMPORTANT:
 					</label>
 				</div>
 			</div>
-			<div style="margin-left: 10px" onchange="new Wikifier(null, '<<updateCombatLightingDemo .lighting-demo-container>>')">
-				<label data-target='["images", "combatImages"]' data-disabledif="V.options.images===0||!V.options.combatImages">
-					<<checkbox "$options.combatLightEnabled" false true autocheck>> Enable combat lighting
-				</label>
-			</div>
 		</div>
 	<<else>>
 		<br>
@@ -922,6 +937,22 @@ IMPORTANT:
 		<<rendermodel "combatMainPc">>
 	<<else>>
 		<<rendermodel "lighting z-hidden">>
+	<</if>>
+<</widget>>
+
+<<widget "setupBreastjobDemo">>
+	<<run Renderer.refresh(Renderer.locateModel("combatCloseDemo", "combat-boob-demo"))>>
+	<<set T.breastjobDemo to true>>
+	<<selectmodel "combatCloseDemo" "combat-boob-demo">>
+	<<if $passage isnot "Start">>
+		<<selectmodel "combatCloseDemo" "combatCloseDemo">>
+		<<if $options.sidebarAnimations isnot false>>
+			<<animatemodel "combatCloseDemo">>
+		<<else>>
+			<<rendermodel "combatCloseDemo">>
+		<</if>>
+	<<else>>
+		<<rendermodel "combatCloseDemo z-hidden">>
 	<</if>>
 <</widget>>
 
@@ -1007,6 +1038,26 @@ IMPORTANT:
 		<div class="m-2">
 			<p class="gold m-0">Unofficial Wiki</p>
 			[[degreesoflewdity.miraheze.org|"https://degreesoflewdity.miraheze.org/wiki/Main_Page"]]
+		</div>
+	</div>
+
+	<div class="p-3 text-align-center">
+		<h3>Water Dragon TF Credits</h3>
+
+		<div class="m-2">
+			<span class="teal">Idea: </span><span>NovaCyber</span>
+		</div>
+		<div class="m-2">
+			<span class="teal">Coded by: </span><span>Isari</span>
+		</div>
+		<div class="m-2">
+			<span class="teal">Vanilla Sprites: </span><span>Taken from Freedom Planet 2 by GalaxyTrail</span>
+		</div>
+		<div class="m-2">
+			<span class="teal">Fixed / Updated by: </span><span>Bec and D.N.A.</span>
+		</div>
+		<div class="m-2">
+			<span class="teal">Applicator: </span><span>D.N.A.</span>
 		</div>
 	</div>
 
@@ -1099,5 +1150,6 @@ IMPORTANT:
 	<<removeclass "html" "Monaco">>
 	<<removeclass "html" "ComicSans">>
 	<<removeclass "html" "OpenDyslexicMono">>
+	<<removeclass "html" "Lexend">>
 	<<if $options.font>><<addclass "html" $options.font>><</if>> <!--Adding to the body would remove it on changing passage-->
 <</widget>>

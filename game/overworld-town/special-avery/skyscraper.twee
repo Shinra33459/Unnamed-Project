@@ -9,6 +9,7 @@ You approach Avery's skyscraper.
 <</if>>
 <<gtowerprogress>>
 <br><br>
+<<set $avery_tower.progress to Math.clamp($avery_tower.progress, 0, 100)>>
 <<if $avery_tower.progress gte 100>>
 	The building towers above you. It looks <span class="green">100%</span> done. The opening ceremony will be soon.
 <<elseif $avery_tower.progress gte 80>>
@@ -70,9 +71,39 @@ You approach Avery's skyscraper.
 
 <<avery_mansion_skyscraper_calc>>
 
-Weekly Progress: <<print _tower_progress>>%
+Weekly Progress:
+<<if ($avery_tower.progress + _tower_progress) lt 0>>
+	<<set _tower_progress to -$avery_tower.progress>>
+<<elseif ($avery_tower.progress + _tower_progress) gt 100>>
+	<<set _tower_progress to 100 - $avery_tower.progress>>
+<</if>>
+<<print _tower_progress>>%
 <br><br>
-
+<<if $cheatsEnabled is true and (($avery_tower.progress lt 25 and $avery_tower.stage is 0) or ($avery_tower.progress lt 60 and $avery_tower.stage is 1) or ($avery_tower.progress lt 100 and $avery_tower.stage is 2))>>
+	<<linkreplace "Super sneaky help">>
+		<<if $auriga_artefact is "Avery">>
+			Doing this will be helping Avery with <<nnpc_his "Avery">> plans. Do you wish to proceed?
+		<<elseif $auriga_artefact is "pc">>
+			You have sabotaged Avery's plan. Do you wish to proceed?
+		<<else>>
+			This will push Avery's tower progress to the next important point. Do you wish to proceed?
+		<</if>>
+		<<ind>>
+		<<link [[Proceed|$passage]]>>
+			<<if $avery_tower.progress lt 25 and $avery_tower.stage is 0>>
+				<<set $avery_tower.progress to 25>>
+			<<elseif $avery_tower.progress lt 60 and $avery_tower.stage is 1>>
+				<<set $avery_tower.progress to 60>>
+			<<else>>
+				<<set $avery_tower.progress to 100>>
+			<</if>>
+		<</link>>
+	<</linkreplace>>
+	<br>
+	<i>Increases tower progress enough to unlock the next tier of events.</i> | <span class="red">Cheat.</span><!-- Appears even with blind stats enabled. Intentional --><br>
+<<elseif $cheatsEnabled is true>>
+	<i>Avery has something to show you. Please check the mansion.</i><br>
+<</if>>
 <<link [[Leave (0:01)|Elk Street]]>><</link>>
 <br>
 
@@ -593,7 +624,7 @@ The lift returns. Even this close, you hear no sound as it opens. Avery steps in
 
 Harper produces two fox masks. One larger, the ears tipped with silver. <<person3>><<He>> hands the smaller one to you.
 <br><br>
-<<facewear 42>>
+<<facewear "fox mask">>
 "There's usually only one fox," <<he>> says. "There was a hiccup. Something that shouldn't have happened. I looked long and hard, and found a precedent."
 <br><br>
 
@@ -820,7 +851,7 @@ The second child looks terrified, close to tears. <<pShe>> runs for the balcony.
 :: Skyscraper Dream 3
 <<effects>>
 
-The room distorts again, reforming into another with similar decor. Avery still stands beside you. Child Avery is here too, crying. In front of <<person1>><<him>> is an adult. For a moment you think it another Avery, but they're not identical. <span class="red"><<He>> looks like Avery's <<father>>.</span>
+The room distorts again, reforming into another with similar decor. Avery still stands beside you. Child Avery is here too, crying. In front of <<person1>><<him>> is an adult. For a moment you think it's another Avery, but they're not identical. <span class="red"><<He>> looks like Avery's <<father>>.</span>
 <br><br>
 
 "Why are you still snivelling?" <<he>> asks.
@@ -1355,7 +1386,7 @@ Your lungs hungrily take in fresh air, although it's still marred with the stenc
 	<br><br>
 
 	<<Hes>> pulled away by a firefighter. "Alright, hero, give them some breathing room." <<He>> stubbornly clings to you for another moment, but relents.
-	"I-ll see you at h—" <<he>> stops <<himself>>, looking at Avery. <<He>> closes <<his>> eyes, and yells. "I'll see you at home!" <<He>> wears a hopeful smile.
+	"I'll see you at h—" <<he>> stops <<himself>>, looking at Avery. <<He>> closes <<his>> eyes, and yells. "I'll see you at home!" <<He>> wears a hopeful smile.
 	It looks like <<hes>> staying to help. <<npcincr Robin dom 10>><<ggdom "Robin">>
 <<elseif C.npc.Sirris.state is "active">>
 	Sirris walks up to the two of you. "Sydney will be happy that you're alright." <<person3>><<He>> kneels down, and ruffles your hair. "And how are you, Avery?"
@@ -1373,7 +1404,7 @@ Avery sighs deeply. You take one last look towards the building.
 	<<if $avery_mansion.fox.nobody>>
 		<span class="purple">Nobody emerges. Nobody smiles at you one last time before vanishing into the night.</span>
 	<<else>>
-		<span class="green">You see the <<say_brown_fox>> emerge,</span> <<person2>><<his>> cloak now lightly burnt. <<He>> smiles and nods at you, before vanishing into the night.
+		<span class="green">You see <<say_brown_fox>> emerge,</span> <<person2>><<his>> cloak now lightly burnt. <<He>> smiles and nods at you, before vanishing into the night.
 	<</if>>
 <<else>>
 	<span class="red">You never saw <<say_brown_fox>> leave.</span>
@@ -1552,12 +1583,12 @@ You remain silent. Avery looks at <<his>> hands while the doctor fusses with <<h
 		<<set $clothingselector to $player.gender_appearance>>
 	<</if>>
 	<<if $clothingselector is "m">>
-		<<underlowerwear 4>>
-		<<upperwear 4>>
-		<<lowerwear 5>>
+		<<underlowerwear "briefs">>
+		<<upperwear "t-shirt">>
+		<<lowerwear "shorts">>
 	<<else>>
-		<<upperwear 1>>
-		<<underlowerwear 1>>
+		<<upperwear "sundress">>
+		<<underlowerwear "plain panties">>
 	<</if>>
 <<else>>
 	A doctor patches you up.
@@ -2366,7 +2397,7 @@ Avery notices you're still with <<person1>><<him>>. "Wait here."
 :: Skyscraper Foundation 4
 <<effects>>
 
-"Who are you?" says a <<person3>><<personsimple>>'s voice to your side. You turn. A <<person>> stands there, with ragged clothes and crazed eyes. <<He>> glances around you, anxious. "Avery's here isn't <<person1>><<he>>? Tell me!"
+"Who are you?" says a <<person3>><<personssimple>> voice to your side. You turn. A <<person>> stands there, with ragged clothes and crazed eyes. <<He>> glances around you, anxious. "Avery's here isn't <<person1>><<he>>? Tell me!"
 <br><br>
 
 <span class="red"><<person3>><<He>> pulls out a knife.</span><<ggtrauma>><<ggstress>><<trauma 12>><<stress 12>>
@@ -2378,7 +2409,7 @@ Avery notices you're still with <<person1>><<him>>. "Wait here."
 <br>
 <<link [[Remain silent|Skyscraper Foundation Silent 2]]>><</link>>
 <br>
-<<link [[Tackle|Skyscraper Foundation Tackle]]>><</link>><<physiquedifficulty 1 16000>>
+<<link [[Tackle|Skyscraper Foundation Tackle]]>><</link>><<physiquedifficulty 1 15000>>
 <br>
 
 :: Skyscraper Foundation Yes
@@ -2497,7 +2528,7 @@ The <<person>> turns on Avery. "I've found you. At last."
 :: Skyscraper Foundation Avery
 <<effects>>
 
-Avery dodges the <<person3>><<person>>'s knife, then delivers a punch to <<his>> gut, forcing <<him>> to keel over. A second punch to <<his>> face leaves <<him>> sprawled on the ground.
+Avery dodges the <<person3>><<persons>> knife, then delivers a punch to <<his>> gut, forcing <<him>> to keel over. A second punch to <<his>> face leaves <<him>> sprawled on the ground.
 <br><br>
 
 A number of people dressed as construction workers arrive. Avery gestures at them, and they step closer.
@@ -3007,8 +3038,8 @@ You land with Avery on the pier, but the edge is close. Avery tries to hold onto
 <br>
 
 :: Skyscraper Whitney Stay 2
-<<water>>
-<<effects>>
+<<water>><<waterbr 2>><<effects>>
+
 You sink deep enough that your feet touch the ground. A moment later, a huge mass plunges after you, just several metres away. It's the van. The force pushes you back, and disorients you.
 <br><br>
 
@@ -3056,7 +3087,7 @@ Whitney's friends arrive at the distant pier, and let a rope down into the water
 You leer at Whitney. <<His>> friends laugh. Whitney puts <<his>> hands behind <<his>> head and reclines. "Like what you see, slut?" <<he>> says. "Of course you do."
 <br><br>
 
-Avery manages to get the car working, and drives off the pier. "I think your sugar<<if C.npc.Avery.pronoun is "f">>mummy<<else>>daddy<</if>> forgot about you." <<He>> jumps to <<his>> feet, and holds out <<his>> arm. "Let's go get dry."
+Avery manages to get the car working, and drives off the pier. "I think your sugar<<nnpc_mummy "Avery">> forgot about you." <<He>> jumps to <<his>> feet, and holds out <<his>> arm. "Let's go get dry."
 <br><br>
 
 <<link [[Next|Skyscraper Whitney Fire]]>><</link>>
@@ -3068,7 +3099,7 @@ Avery manages to get the car working, and drives off the pier. "I think your sug
 You rise to your feet. Whitney leans back, as if to observe you from a better angle, then joins you.
 <br><br>
 
-Avery manages to get the car working, and drives off the pier. "I think your sugar<<if C.npc.Avery.pronoun is "f">>mummy<<else>>daddy<</if>> forgot about you." <<He>> jumps to <<his>> feet, and holds out <<his>> arm. "Let's go get dry."
+Avery manages to get the car working, and drives off the pier. "I think your sugar<<nnpc_mummy "Avery">> forgot about you." <<He>> jumps to <<his>> feet, and holds out <<his>> arm. "Let's go get dry."
 <br><br>
 
 <<link [[Next|Skyscraper Whitney Fire]]>><</link>>
@@ -3175,7 +3206,7 @@ You keep Whitney at arm's length, and undress yourself. <<He>> and <<his>> frien
 <<dry_full>>
 You stand near the fire, opposite Whitney, close enough that the heat dries out your clothes. Whitney's friends joke around, but Whitney stares into the fire, lost in thought.
 <br><br>
-After several minutes, Whitney rises and kicks sand over the fire. "That's enough. See you around, slut. Say hi to your sugar<<if C.npc.Avery.pronoun is "f">>mummy<<else>>daddy<</if>> for me." <<He>> and <<his>> friends walk away.
+After several minutes, Whitney rises and kicks sand over the fire. "That's enough. See you around, slut. Say hi to your sugar<<nnpc_mummy "Avery">> for me." <<He>> and <<his>> friends walk away.
 <br><br>
 
 <<link [[Next|Mer Street]]>><<set $eventskip to 1>><<endevent>><</link>>
@@ -3184,13 +3215,13 @@ After several minutes, Whitney rises and kicks sand over the fire. "That's enoug
 :: Skyscraper Whitney Fire Sex Refuse
 <<effects>>
 
-You step away from Whitney. <<His>> friends laugh. "What do you think?" Whitney asks them. "Shall I give <<phim>> a break?" The response is a clear no, but Whitney shakes <<his>> head. "I think I should. It's not every day your sugar<<if C.npc.Avery.pronoun is "f">>mummy<<else>>daddy<</if>> proves they care more about their car than you." <<He>> walks towards the fire, and crouches beside it.
+You step away from Whitney. <<His>> friends laugh. "What do you think?" Whitney asks them. "Shall I give <<phim>> a break?" The response is a clear no, but Whitney shakes <<his>> head. "I think I should. It's not every day your sugar<<nnpc_mummy "Avery">> proves they care more about their car than you." <<He>> walks towards the fire, and crouches beside it.
 <<pass 10>>
 <<dry_full>>
 <br><br>
 You stand near the fire, opposite Whitney. <<He>> plants sticks around it, and suspends your clothes on them. They dry fast. Whitney's friends joke around, but Whitney stares into the fire, lost in thought.
 <br><br>
-After several minutes, Whitney rises and kicks sand over the fire. "That's enough. See you around, slut. Say hi to your sugar<<if C.npc.Avery.pronoun is "f">>mummy<<else>>daddy<</if>> for me." <<He>> and <<his>> friends walk away.
+After several minutes, Whitney rises and kicks sand over the fire. "That's enough. See you around, slut. Say hi to your sugar<<nnpc_mummy "Avery">> for me." <<He>> and <<his>> friends walk away.
 <br><br>
 
 <<link [[Next|Mer Street]]>><<clotheson>><<set $eventskip to 1>><<endevent>><</link>>
@@ -3247,7 +3278,7 @@ After several minutes, Whitney rises and kicks sand over the fire. "That's enoug
 <<dry_full>>
 You stand near the fire, opposite Whitney. <<He>> plants sticks around it, and suspends your clothes on them. They dry fast. Whitney's friends joke around, but Whitney stares into the fire, lost in thought.
 <br><br>
-After several minutes, Whitney rises and smothers the flame with a footfull of sand. "That's enough. See you around, slut. Say hi to your sugar<<if C.npc.Avery.pronoun is "f">>mummy<<else>>daddy<</if>> for me." <<He>> and <<his>> friends walk away.
+After several minutes, Whitney rises and smothers the flame with a footfull of sand. "That's enough. See you around, slut. Say hi to your sugar<<nnpc_mummy "Avery">> for me." <<He>> and <<his>> friends walk away.
 <br><br>
 
 <<link [[Next|Mer Street]]>><<clotheson>><<set $eventskip to 1>><<endevent>><</link>>

@@ -10,33 +10,34 @@ const statChange = (() => {
 			}`
 		);
 		throw new Error(
-			`Unexpected value for the function "${functionName}". Param "${param}" had unexpected value of "${value}".${
-				expectedValues ? ` ${expectedValues}` : ""
-			}`
+			`Unexpected value for the function "${functionName}". Param "${param}" had unexpected value of "${value}".${expectedValues ? ` ${expectedValues}` : ""}`
 		);
 	}
 
 	function trauma(amount) {
-		if (isNaN(amount)) paramError("trauma", "amount", amount, "Expected a number.");
+		if (isNaN(amount)) return paramError("trauma", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
+			let traumaMod = 1;
 			if (amount >= 0) {
-				let traumaMod = 1;
-
 				if (V.rapetrait) traumaMod *= 0.7;
 				if (V.bestialitytrait >= 1 && V.enemytype === "beast") traumaMod *= 0.7;
 				if (V.tentacletrait >= 1 && V.enemytype === "tentacles") traumaMod *= 0.7;
-				if (V.drunk >= 1 && V.substanceRebalance == 1) traumaMod *= 1 - (0.1 * Math.round(V.drunk / 120));
+				if (V.drunk >= 1 && V.substanceRebalance === 1) traumaMod *= 1 - 0.1 * Math.round(V.drunk / 120);
 
 				// eslint-disable-next-line prettier/prettier
 				V.trauma += Math.trunc(((amount * 3) - ((amount * 1.5) * (V.control / V.controlmax))) * traumaMod)
 			} else {
-				// eslint-disable-next-line prettier/prettier
-				V.trauma += Math.trunc((amount * 3) + ((amount * 1.5) * (V.control / V.controlmax)));
+				// good doctors know how to help you
+				if (["asylum", "hospital"].includes(V.location)) traumaMod *= 2;
+				// decrease trauma by 1.5x amount with no control, 3x with full control
+				V.trauma += Math.trunc(amount * (1.5 + 1.5 * (V.control / V.controlmax)) * traumaMod);
 			}
 		}
 
-		V.sleeptrouble = V.trauma >= 1 ? 1 : 0;
+		// Opium Addict trait: inhaling opium suppresses insomnia for the current sleep cycle.
+		
+		V.sleeptrouble = V.trauma >= 1 && !V.poppyDrug?.insomniaSuppress ? 1 : 0;
 		V.nightmares = V.trauma >= (V.traumamax / 10) * 1 ? 1 : 0;
 
 		if (V.trauma >= (V.traumamax / 10) * 7) {
@@ -81,7 +82,7 @@ const statChange = (() => {
 				if (V.rapetrait) traumaMod *= 0.7;
 				if (V.bestialitytrait >= 1 && V.enemytype === "beast") traumaMod *= 0.7;
 				if (V.tentacletrait >= 1 && V.enemytype === "tentacles") traumaMod *= 0.7;
-				if (V.drunk >= 1 && V.substanceRebalance == 1) traumaMod *= 1 - (0.1 * Math.round(V.drunk / 120));
+				if (V.drunk >= 1 && V.substanceRebalance === 1) traumaMod *= 1 - 0.1 * Math.round(V.drunk / 120);
 
 				// eslint-disable-next-line prettier/prettier
 				V.trauma += Math.trunc(((amount * 1) - ((amount * 0.5) * (V.control / V.controlmax))) * traumaMod)
@@ -140,17 +141,21 @@ const statChange = (() => {
 	function control(amount, combat) {
 		if (isNaN(amount)) paramError("control", "amount", amount, "Expected a number.");
 		if (V.gamemode === "soft") {
+			// everything is a consensual consensual roleplay
 			V.control = V.controlmax;
 			V.controlled = 1;
 			return;
 		}
 		amount = Number(amount);
-		if (amount) {
-			V.control += amount * 10;
-			if (combat && V.control >= V.controlstart) V.control = V.controlstart;
-			else if (V.controlstart < V.control) V.controlstart = Math.min(V.control, V.controlmax);
-			V.controlled = V.control >= (V.controlmax / 5) * 2 ? 1 : 0;
-		}
+
+		// halve control gains outside of combat
+		if (amount > 0 && !V.combat) amount /= 2;
+		V.control += amount * 10;
+		// if you're looking here to fix a bug where an action that should increase control in combat actually lowers it instead - check State.history/State.expired for the combat start passage and look for a missing <<controlloss>> that failed to set $controlstart to the right value
+		if (combat && V.control >= V.controlstart) V.control = V.controlstart;
+		else if (!combat) V.controlstart = Math.min(V.control, V.controlmax);
+		const threshold = V.controltrait ? V.controlmax / 3 : V.controlmax / 2;
+		V.controlled = V.control > threshold ? 1 : 0;
 		V.control = Math.clamp(V.control, 0, V.controlmax);
 	}
 	DefineMacro("control", amount => control(amount));
@@ -175,10 +180,10 @@ const statChange = (() => {
 		amount = Number(amount);
 		if (V.player.penisExist && amount) {
 			amount *= 3;
-			if (V.cow >= 6 || V.transformationParts.cow.tail == "default" || V.transformationParts.cow.tail == "black") amount *= 2;
-			if (V.semen_volume >= V.semen_max || V.AMCTraits.halfGain == 1) amount /= 2;
+			if (V.cow >= 6 || V.transformationParts.cow.tail === "default" || V.transformationParts.cow.tail === "black") amount *= 2;
+			if (V.semen_volume >= V.semen_max || V.AMCTraits.halfGain === 1) amount /= 2;
 			/* Prevents those who can only have "female climax" increase their cum volume */
-			if (V.player.penissize > -2 || amount <= 0) V.semen_volume += amount * (V.statGainMult / 100);
+			if (V.player.penissize > 0 || amount <= 0) V.semen_volume += amount * (V.statGainMult / 100);
 
 			V.semen_volume = Math.clamp(V.semen_volume, 0, V.semen_max * V.AMCTraits.semen);
 		}
@@ -198,10 +203,10 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("milkvolume", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
-			if (amount > 0) lactationPressure(V.cow >= 6 || V.transformationParts.cow.tail == "default" || V.transformationParts.cow.tail == "black" ? 2 : 1);
+			if (amount > 0) lactationPressure(V.cow >= 6 || V.transformationParts.cow.tail === "default" || V.transformationParts.cow.tail === "black" ? 2 : 1);
 			if (V.lactating) {
-				if (V.cow >= 6 || V.transformationParts.cow.tail == "default" || V.transformationParts.cow.tail == "black") amount *= 2;
-				if (V.milk_volume >= V.milk_max || V.AMCTraits.halfGain == 1) amount /= 2;
+				if (V.cow >= 6 || V.transformationParts.cow.tail === "default" || V.transformationParts.cow.tail === "black") amount *= 2;
+				if (V.milk_volume >= V.milk_max || V.AMCTraits.halfGain === 1) amount /= 2;
 				V.milk_volume = Math.clamp(V.milk_volume + amount * (V.statGainMult / 100), 24, V.milk_max * V.AMCTraits.milk);
 			}
 		}
@@ -253,26 +258,22 @@ const statChange = (() => {
 				if (V.drunk <= 0) {
 					stressMod = 40;
 				} else {
-					if (V.substanceRebalance == 1) {
-						let drunkMod = Math.floor(V.drunk / 120);
-						stressMod = Math.max(1 - (0.15 * (1 + drunkMod)), 0);
+					if (V.substanceRebalance === 1) {
+						const drunkMod = Math.floor(V.drunk / 120);
+						stressMod = Math.max(1 - 0.15 * (1 + drunkMod), 0);
 					} else {
-						let drunkMod = Math.clamp(Math.floor(V.drunk / 120), 0, 4);
+						const drunkMod = Math.clamp(Math.floor(V.drunk / 120), 0, 4);
 						stressMod = 30 - drunkMod * 5;
 					}
 				}
 				V.stress += amount * stressMod;
 			}
+			V.stress = Math.clamp(V.stress, 0, V.stressmax);
 		}
 	}
 	DefineMacro("stress", stress);
 
-	/*
-		When the player has the full wolf transformation, choosing Defiant dialogue options
-		in lists of links lowers stress, but submissive characters are traumatized and
-		lose control for acting unlike themselves. This function is inserted inside links,
-		takes a target value (usually 500 or 850), and makes extra stat adjustments if too submissive.
-	*/
+	/* See wolfDefiant in twee-config for information */
 	function wolfDefiant(amount) {
 		if (isNaN(amount)) paramError("wolfDefiant", "amount", amount, "Expected a number.");
 		amount = Number(amount);
@@ -321,7 +322,7 @@ const statChange = (() => {
 					so that the aphrodisiacs become quite threatening during nonconsensual use,
 					and more thrilling when used intentionally
 				*/
-				if (V.substanceRebalance == 1) {
+				if (V.substanceRebalance === 1) {
 					mod *= 1 + V.drugged / 250;
 				} else {
 					mod *= 1 + V.drugged / 1000;
@@ -442,11 +443,18 @@ const statChange = (() => {
 			amount *= 1.5;
 		}
 		if (amount) {
-			if (V.athleticsFitnessToggle == 1) {
-				V.tiredness += Math.round((amount * Weather.BodyTemperature.fatigueModifier * (amount > 0 ? 15 : 20)) * (1 - ((V.athletics * 5) / 40000)));
+			if (V.athleticsFitnessToggle === 1) {
+				V.tiredness += Math.round(amount * Weather.BodyTemperature.fatigueModifier * (amount > 0 ? 15 : 20) * (1 - (V.athletics * 5) / 40000));
 			} else {
 				V.tiredness += Math.round(amount * Weather.BodyTemperature.fatigueModifier * (amount > 0 ? 15 : 20));
 			}
+		}
+		const overflow = V.tiredness - C.tiredness.max;
+		if (overflow > 0) {
+			// channel excessive fatigue into stress and trauma
+			stress(overflow / 3);
+			trauma(overflow / 6);
+			V.tiredness -= overflow;
 		}
 	}
 	DefineMacro("tiredness", tiredness);
@@ -472,7 +480,7 @@ const statChange = (() => {
 				}
 			}
 
-			if (V.drunk >= 1 && V.substanceRebalance == 1) pain *= 1 - (0.075 * (1 + Math.round(V.drunk / 120)));
+			if (V.drunk >= 1 && V.substanceRebalance === 1) pain *= 1 - 0.075 * (1 + Math.round(V.drunk / 120));
 
 			V.pain += pain * Weather.BodyTemperature.painModifier;
 		}
@@ -714,25 +722,25 @@ const statChange = (() => {
 		amount = Number(amount);
 		if (amount) {
 			switch (V.player.penissize) {
-				case 4:
+				case 6:
 					insecurity("penis_big", amount);
 					return statDisplay.ginsecurity("penis_big");
-				case 3:
+				case 5:
 					if (V.player.gender !== "m") {
 						insecurity("penis_big", amount);
 						return statDisplay.ginsecurity("penis_big");
 					}
 					break;
-				case 1:
+				case 3:
 					insecurity("penis_small", amount);
 					return statDisplay.ginsecurity("penis_small");
-				case 0:
+				case 2:
 					insecurity("penis_small", Math.floor(amount * 1.5));
 					return statDisplay.ginsecurity("penis_small");
-				case -1:
+				case 1:
 					insecurity("penis_small", Math.floor(amount * 2));
 					return statDisplay.ginsecurity("penis_small");
-				case -2:
+				case 0:
 					insecurity("penis_small", Math.floor(amount * 2.5));
 					return statDisplay.ginsecurity("penis_small");
 			}
@@ -764,8 +772,8 @@ const statChange = (() => {
 
 		return [
 			{
-				penis_small: V.player.penisExist && V.player.penissize <= 1,
-				penis_big: V.player.penisExist && V.player.penissize >= (V.player.gender === "m" ? 4 : 3),
+				penis_small: V.player.penisExist && V.player.penissize <= 3,
+				penis_big: V.player.penisExist && V.player.penissize >= (V.player.gender === "m" ? 6 : 5),
 				breasts_small: V.player.gender === "f" && between(V.player.breastsize, 0, 4),
 				breasts_big: V.player.breastsize >= (V.player.gender === "m" ? 1 : 8),
 				pregnancy: playerBellySize() >= 8,
@@ -847,16 +855,16 @@ const statChange = (() => {
 		if (amount > 0) {
 			let type;
 			switch (V.player.penissize) {
-				case 4:
+				case 6:
 					type = "penis_big";
 					break;
-				case 3:
+				case 5:
 					if (V.player.gender !== "m") type = "penis_big";
 					break;
+				case 3:
+				case 2:
 				case 1:
 				case 0:
-				case -1:
-				case -2:
 					type = "penis_small";
 					break;
 			}
@@ -933,7 +941,7 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("livestockObey", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
-			V.livestock_obey = Math.clamp((V.livestock_obey || 0) + amount, 0, 100);
+			V.livestock.obey = Math.clamp((V.livestock.obey || 0) + amount, 0, 100);
 		}
 	}
 	DefineMacro("livestock_obey", livestockObey);
@@ -988,7 +996,7 @@ const statChange = (() => {
 		if (type === "penileskill" && !(V.player.penisExist || playerHasStrapon())) return;
 		amount = Number(amount);
 		if (amount) {
-			if (V[type] >= V[type + "max"] || V.AMCTraits.halfGain == 1) amount /= 2;
+			if (V[type] >= V[type + "max"] || V.AMCTraits.halfGain === 1) amount /= 2;
 			V[type] = Math.clamp(V[type] + amount * (V.statGainMult / 100), 0, V[type + "max"] * V.AMCTraits[type] || 1000);
 		}
 	}
@@ -1028,8 +1036,8 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("alcohol", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
-			let mod = 1;
-			if (V.backgroundTraits.includes("plantlover") && amount > 0) mod = 1.5;
+			let mod = V.alcoholMod;
+			if ((V.backgroundTraits.includes("plantlover") || V.backgroundTraits.includes("opiumaddict")) && amount > 0) mod = 1.5;
 			V.drunk = Math.clamp(V.drunk + amount * mod, 0, 1000);
 		}
 	}
@@ -1040,7 +1048,7 @@ const statChange = (() => {
 		amount = Number(amount);
 		if (amount) {
 			let mod = 1;
-			if (V.backgroundTraits.includes("plantlover") && amount > 0) mod = 1.5;
+			if ((V.backgroundTraits.includes("plantlover") || V.backgroundTraits.includes("opiumaddict")) && amount > 0) mod = 1.5;
 			V.drugged = Math.clamp(V.drugged + amount * mod, 0, 1000);
 		}
 	}
@@ -1050,7 +1058,7 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("hallucinogen", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
-			if (V.substanceRebalance == 1 && V.passage.includes("Gwylan")) amount /= 2;
+			if (V.substanceRebalance === 1 && V.passage.includes("Gwylan")) amount /= 2;
 			V.hallucinogen = Math.clamp(V.hallucinogen + amount, 0, 1000);
 		}
 	}
@@ -1285,7 +1293,7 @@ const statChange = (() => {
 		if (lastBadEnd && !lastBadEnd.trackedEnd) {
 			badEndTrackingEnd(lastBadEnd.source, {
 				reason: "unknown",
-				notes: `Not tracked in passage ${V.passage}, likely from an error`,
+				notes: `A bad end started in passage ${V.passage} while the previous bad end was still active. This is an error. Please report this to Vrelnir.`,
 			});
 		}
 
@@ -1309,7 +1317,8 @@ const statChange = (() => {
 		if (!lastBadEnd || lastBadEnd.source !== source || lastBadEnd.trackedEnd) {
 			badEndTracking(source, {
 				reason: "unknown",
-				notes: `Not correctly tracked in passage ${V.passage}, ${V.badEndStats.length ? "likely from an error" : "likely from loading an old save"}`,
+				notes: `No bad end was considered active in ${V.passage} when badEndTrackingEnd was called. This is
+				 ${V.badEndStats.length ? "an error. Please report this to Vrelnir" : "likely due to loading an old save"}.`,
 			});
 			lastBadEnd = V.badEndStats.last();
 		}

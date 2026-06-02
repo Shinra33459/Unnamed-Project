@@ -774,11 +774,7 @@ function importSettingsData(data) {
 				// eslint-disable-next-line no-var
 				for (let j = 0; j < listKey.length; j++) {
 					// Overwrite to allow for "none" default value in the start passage to allow for rng to decide
-					if (
-						V.passage === "Start" &&
-						["pronoun", "gender", "skincolour"].includes(listKey[j]) &&
-						overrides.npc[V.NPCNameList[i]][listKey[j]] === "none"
-					) {
+					if (V.passage === "Start" && ["pronoun", "gender", "skincolour"].includes(listKey[j]) && overrides.npc[V.NPCNameList[i]][listKey[j]] === "none") {
 						V.NPCName[i][listKey[j]] = overrides.npc[V.NPCNameList[i]][listKey[j]];
 					} else if (validateValue(listObject[listKey[j]], overrides.npc[V.NPCNameList[i]][listKey[j]])) {
 						V.NPCName[i][listKey[j]] = overrides.npc[V.NPCNameList[i]][listKey[j]];
@@ -843,7 +839,7 @@ function exportSettings(data, type) {
 			shopDefaults: {},
 			options: {},
 			settings: {},
-			wardrobeDefaults: {},			
+			wardrobeDefaults: {},
 			combatExtended: {},
 			AMCTraits: {},
 		},
@@ -927,11 +923,11 @@ function settingsObjects(type) {
 		case "starting":
 			result = {
 				bodysize: {
-					min: 0,
+					min: -1,
 					max: 3,
 					decimals: 0,
 					displayName: "Body size:",
-					textMap: { 0: "Tiny", 1: "Small", 2: "Normal", 3: "Large" },
+					textMap: {"-1": "Miniscule", 0: "Tiny", 1: "Small", 2: "Normal", 2.5: "Tall", 3: "Large", 4: "Giant" },
 					randomize: "characterAppearance",
 				},
 				facevariant: {
@@ -972,6 +968,14 @@ function settingsObjects(type) {
 					textMap: { 1: "Normal", 2: "Sensitive", 3: "Very Sensitive" },
 					randomize: "characterTrait",
 				},
+				alcoholMod: {
+					min: 0.5,
+					max: 1.5,
+					decimals: 1,
+					displayName: "Alcohol tolerance:",
+					textMap: { 0.5: "Heavyweight", 1: "Normal", 1.5: "Lightweight" },
+					randomize: "characterTrait",
+				},
 				eyeselect: {
 					strings: ["purple", "dark blue", "light blue", "amber", "hazel", "green", "lime green", "red", "pink", "grey", "light grey", "random"],
 					randomize: "characterAppearance",
@@ -1004,19 +1008,7 @@ function settingsObjects(type) {
 					randomize: "characterTrait",
 				},
 				background: {
-					strings: [
-						"waif",
-						"nerd",
-						"athlete",
-						"delinquent",
-						"promiscuous",
-						"exhibitionist",
-						"deviant",
-						"beautiful",
-						"crossdresser",
-						"lustful",
-						"plantlover",
-					],
+					strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful", "plantlover"],
 					displayName: "Background:",
 					randomize: "characterTrait",
 				},
@@ -1115,12 +1107,13 @@ function settingsObjects(type) {
 			break;
 		case "general":
 			result = {
-				npcHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Health Max Multiplier:" },
-				npcArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Arousal Max Multiplier:" },
-				beastHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "Beast Health Max Multiplier:" },
-				beastArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "Beast Arousal Max Multiplier:" },
-				tentacleHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "Tentacle Health Max Multiplier:" },
-				struggleHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "Struggle Health Max Multiplier:" },
+				// dupes?
+				// npcHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Health Max Multiplier:" },
+				// npcArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "NPC Arousal Max Multiplier:" },
+				// beastHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "Beast Health Max Multiplier:" },
+				// beastArousalMult: { min: 1, max: 1000000, decimals: 0, displayName: "Beast Arousal Max Multiplier:" },
+				// tentacleHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "Tentacle Health Max Multiplier:" },
+				// struggleHealthMult: { min: 1, max: 1000000, decimals: 0, displayName: "Struggle Health Max Multiplier:" },
 				bannerstyle: { strings: ["default", "alien", "blood", "bronze", "silver", "gold"], displayName: "Banner style:" },
 				enemystatstyle: { strings: ["full", "default"], randomize: "gameplay", displayName: "Enemy stat display:" },
 				dpctext: { min: 0, max: 1, decimals: 0, displayName: "Meme Text Expanded:" },
@@ -1139,10 +1132,10 @@ function settingsObjects(type) {
 					antiques: { min: 0, max: 1, decimals: 0, displayName: "Antique Price Buff:" },
 					stolen: { min: 0, max: 1, decimals: 0, displayName: "Stolen Goods Price Buff:" },
 					market: { min: 0, max: 1, decimals: 0, displayName: "Market Stall Price Buff:" },
-					aphrodisiacPhials: { min: 0, max: 1, decimals: 0, displayName: "Aphrodisiac Phial Price Buff:" }
+					aphrodisiacPhials: { min: 0, max: 1, decimals: 0, displayName: "Aphrodisiac Phial Price Buff:" },
 				},
 				historyTraitBuffs: {
-					improvedChances: { min: 0, max: 1, decimals: 0, displayName: "Antique Chance Buff:" }
+					improvedChances: { min: 0, max: 1, decimals: 0, displayName: "Antique Chance Buff:" },
 				},
 				DoLPTFBuffs: { min: 0, max: 1, decimals: 0, displayName: "Animal TF Buffs and Nerfs:" },
 				DoLPTFTempTolerance: { min: 0, max: 1, decimals: 0, displayName: "Animal TF Temperature Tolerance:" },
@@ -1213,7 +1206,7 @@ function settingsObjects(type) {
 					enemyHealthDefeatScalingMult: { min: 1, max: 1000000, decimals: 1, displayName: "Enemy Health Defeats Scaling Multiplier:" },
 					enemyDefeatScaling: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Defeats Scaling Interval:" },
 					enemyInfiniteDefeatScaling: { min: 0, max: 1, decimals: 0, displayName: "Enemy Infinite Defeats Scaling:" },
-					enemyDefeatScalingLimit: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Defeats Scaling Limit:" }
+					enemyDefeatScalingLimit: { min: 1, max: 1000000, decimals: 0, displayName: "Enemy Defeats Scaling Limit:" },
 				},
 				AMCTraits: {
 					halfGain: { min: 0, max: 1, decimals: 0, displayName: "Half Gain:" },
@@ -1413,6 +1406,14 @@ function settingsObjects(type) {
 					textMap: { 0: "Always a beast", 1: "Monster girl or boy when requirements met", 2: "Always a monster girl or boy" },
 					randomize: "encounter",
 				},
+				nightmonstermonster: {
+					min: 0,
+					max: 2,
+					decimals: 0,
+					displayName: "Night Monster beast type:",
+					textMap: { 0: "Always a beast", 1: "Monster girl or boy when requirements met", 2: "Always a monster girl or boy" },
+					randomize: "encounter",
+				},
 				breastsizemin: {
 					min: 0,
 					max: 4,
@@ -1455,13 +1456,13 @@ function settingsObjects(type) {
 					displayName: "Maximum bottom size:",
 					textMap: { 0: "Slender", 1: "Slim", 2: "Modest", 3: "Cushioned", 4: "Soft", 5: "Round", 6: "Plump", 7: "Large", 8: "Huge" },
 				},
-				penissizemin: { min: -2, max: 0, decimals: 0, displayName: "Minimum penis size:", textMap: { "-2": "Micro", "-1": "Mini", 0: "Tiny" } },
+				penissizemin: { min: 0, max: 2, decimals: 0, displayName: "Minimum penis size:", textMap: { 0: "Micro", 1: "Mini", 2: "Tiny" } },
 				penissizemax: {
-					min: -2,
-					max: 4,
+					min: 0,
+					max: 6,
 					decimals: 0,
 					displayName: "Maximum penis size:",
-					textMap: { "-2": "Micro", "-1": "Mini", 0: "Tiny", 1: "Small", 2: "Normal", 3: "Large", 4: "Enormous" },
+					textMap: { 0: "Micro", 1: "Mini", 2: "Tiny", 3: "Small", 4: "Normal", 5: "Large", 6: "Enormous" },
 				},
 				confirmSave: { bool: true, displayName: "Require confirmation on save:" },
 				confirmLoad: { bool: true, displayName: "Require confirmation on load:" },
@@ -1472,6 +1473,7 @@ function settingsObjects(type) {
 					neverNudeMenus: { bool: true, displayName: "Hide player nudity in menus:" },
 					showCaptionText: { bool: true, displayName: "Show caption text in sidebar:" },
 					clothingCaption: { bool: true, displayName: "Show clothing description in sidebar:" },
+					clothingReplacementWarning: { bool: true, displayName: "Enable clothing replacement warning:" },
 					sidebarStats: { strings: ["disabled", "limited", "all"], displayName: "Closed sidebar stats:" },
 					sidebarTime: { strings: ["disabled", "top", "bottom"], displayName: "Closed sidebar time:" },
 					combatControls: { strings: ["radio", "columnRadio", "lists", "limitedLists"], displayName: "Combat controls:" },
@@ -1563,7 +1565,21 @@ function settingsObjects(type) {
 					displayName: "Skin colour: ",
 					textMap: { none: "N/A", white: "Pale", black: "Dark", ghost: "Ghostly Pale" },
 				},
-				penissize: { min: 0, max: 4, decimals: 0, displayName: "Penis size: ", textMap: { 0: "N/A", 1: "Tiny", 2: "Average", 3: "Thick", 4: "Huge" } },
+				penissize: {
+					min: 0,
+					max: 6,
+					decimals: 0,
+					displayName: "Penis size: ",
+					textMap: {
+						0: "Micro",
+						1: "Mini",
+						2: "Tiny",
+						3: "Small",
+						4: "Normal",
+						5: "Large",
+						6: "Enormous",
+					},
+				},
 				breastsize: {
 					min: 0,
 					max: 12,

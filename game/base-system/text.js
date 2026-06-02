@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 const statDisplay = {
-	statChange(statType, amount, colorClass, condition = () => true) {
+	statChange(statType, amount, textClasses, condition = () => true) {
 		amount = Number(amount);
 		if (V.settings.blindStatsEnabled || !condition()) return document.createDocumentFragment();
 
 		const fragment = document.createDocumentFragment();
 		const span = document.createElement("span");
-		span.className = colorClass;
+		span.className = textClasses;
 		const prefix = amount < 0 ? "- " : "+ ";
 
 		span.textContent = `${prefix.repeat(Math.abs(amount))}${statType}`;
@@ -103,12 +103,12 @@ statDisplay.create("gpain", () => statDisplay.statChange("Pain", 1, "red"));
 statDisplay.create("ggpain", () => statDisplay.statChange("Pain", 2, "red"));
 statDisplay.create("gggpain", () => statDisplay.statChange("Pain", 3, "red"));
 
-statDisplay.create("lpurity", () => statDisplay.statChange("Purity", -1, "red"));
-statDisplay.create("llpurity", () => statDisplay.statChange("Purity", -2, "red"));
-statDisplay.create("lllpurity", () => statDisplay.statChange("Purity", -3, "red"));
-statDisplay.create("gpurity", () => statDisplay.statChange("Purity", 1, "green"));
-statDisplay.create("ggpurity", () => statDisplay.statChange("Purity", 2, "green"));
-statDisplay.create("gggpurity", () => statDisplay.statChange("Purity", 3, "green"));
+statDisplay.create("lpurity", () => statDisplay.statChange("Purity", -1, V.demon >= 6 ? "green demon-tf-purity" : "red"));
+statDisplay.create("llpurity", () => statDisplay.statChange("Purity", -2, V.demon >= 6 ? "green demon-tf-purity" : "red"));
+statDisplay.create("lllpurity", () => statDisplay.statChange("Purity", -3, V.demon >= 6 ? "green demon-tf-purity" : "red"));
+statDisplay.create("gpurity", () => statDisplay.statChange("Purity", 1, V.demon >= 6 ? "red demon-tf-purity" : "green"));
+statDisplay.create("ggpurity", () => statDisplay.statChange("Purity", 2, V.demon >= 6 ? "red demon-tf-purity" : "green"));
+statDisplay.create("gggpurity", () => statDisplay.statChange("Purity", 3, V.demon >= 6 ? "red demon-tf-purity" : "green"));
 
 statDisplay.create("ldelinquency", () => statDisplay.statChange("Delinquency", -1, "green"));
 statDisplay.create("lldelinquency", () => statDisplay.statChange("Delinquency", -2, "green"));
@@ -231,7 +231,7 @@ statDisplay.create("ggglove", (npc, simple) => {
 });
 
 statDisplay.create("lperlove", (npc, simple) => {
-	const selectedNPC = npc || V.per_npc[V.NPCList[V.index].per];
+	const selectedNPC = npc || V.NPCList[V.index].per;
 	const loveAlias = `${(selectedNPC && setup.loveAlias[selectedNPC]()) || "Love"}`;
 	const NPCName = `${(selectedNPC && setup.perName[selectedNPC]()) || ""}`;
 	return statDisplay.statChange(selectedNPC && !simple && (npc || V.enemyno >= 2) ? `${NPCName}'s ${loveAlias}` : loveAlias, -1, "red");
@@ -255,17 +255,30 @@ statDisplay.create("gperlove", (npc, simple) => {
 	return statDisplay.statChange(selectedNPC && !simple && (npc || V.enemyno >= 2) ? `${NPCName}'s ${loveAlias}` : loveAlias, 1, "green");
 });
 statDisplay.create("ggperlove", (npc, simple) => {
-	const selectedNPC = npc || V.per_npc[V.NPCList[V.index].per];
+	const selectedNPC = npc || V.NPCList[V.index].per;
 	const loveAlias = `${(selectedNPC && setup.loveAlias[selectedNPC]()) || "Love"}`;
 	const NPCName = `${(selectedNPC && setup.perName[selectedNPC]()) || ""}`;
 	return statDisplay.statChange(selectedNPC && !simple && (npc || V.enemyno >= 2) ? `${NPCName}'s ${loveAlias}` : loveAlias, 2, "green");
 });
 statDisplay.create("gggperlove", (npc, simple) => {
-	const selectedNPC = npc || V.per_npc[V.NPCList[V.index].per];
+	const selectedNPC = npc || V.NPCList[V.index].per;
 	const loveAlias = `${(selectedNPC && setup.loveAlias[selectedNPC]()) || "Love"}`;
 	const NPCName = `${(selectedNPC && setup.perName[selectedNPC]()) || ""}`;
 	return statDisplay.statChange(selectedNPC && !simple && (npc || V.enemyno >= 2) ? `${NPCName}'s ${loveAlias}` : loveAlias, 3, "green");
 });
+
+statDisplay.create("gpatience", () => {return statDisplay.statChange("Patience", 1, "green");});
+statDisplay.create("ggpatience", () => {return statDisplay.statChange("Patience", 2, "green");});
+statDisplay.create("gggpatience", () => {return statDisplay.statChange("Patience", 3, "green");});
+statDisplay.create("lpatience", () => {return statDisplay.statChange("Patience", -1, "red");});
+statDisplay.create("llpatience", () => {return statDisplay.statChange("Patience", -2, "red");});
+statDisplay.create("lllpatience", () => {return statDisplay.statChange("Patience", -3, "red");});
+statDisplay.create("ganger", () => {return statDisplay.statChange("Anger", 1, "red");});
+statDisplay.create("gganger", () => {return statDisplay.statChange("Anger", 2, "red");});
+statDisplay.create("ggganger", () => {return statDisplay.statChange("Anger", 3, "red");});
+statDisplay.create("langer", () => {return statDisplay.statChange("Anger", -1, "green");});
+statDisplay.create("llanger", () => {return statDisplay.statChange("Anger", -2, "green");});
+statDisplay.create("lllanger", () => {return statDisplay.statChange("Anger", -3, "green");});
 
 statDisplay.create("llust", npc => statDisplay.statChange(npc ? `${npc}'s Lust` : "Lust", -1, "teal"));
 statDisplay.create("lllust", npc => statDisplay.statChange(npc ? `${npc}'s Lust` : "Lust", -2, "teal"));

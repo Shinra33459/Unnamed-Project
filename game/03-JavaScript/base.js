@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable jsdoc/require-description-complete-sentence */
-// adjust mousetrap behavior, see mousetrap.js
+// adjust mousetrap behaviour, see mousetrap.js
 Mousetrap.prototype.stopCallback = function (e, element, combo) {
 	// game uses V.tempDisable to indicate when the keyboard shortcuts shouldn't trigger
 	// e.g. when typing a name of a new outfit
@@ -152,11 +152,39 @@ function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext)
  */
 
 function pluralise(count, singular, plural) {
+	const irregulars = Object.freeze({
+		child: "children",
+		baby: "babies",
+		person: "people",
+		man: "men",
+		woman: "women",
+		penis: "penises",
+		foot: "feet",
+		leaf: "leaves",
+		watch: "watches",
+		this: "these",
+		that: "those",
+		is: "are",
+		it: "them",
+	});
+
 	count = Wikifier.getValue(count);
-	if (plural === undefined) {
-		plural = singular + "s";
+	if (!Number.isFinite(count)) throw new TypeError(`Pluralise: invalid value for 'count': ${count}`);
+
+	if (count === 1) return singular;
+
+	if (plural == null) {
+		const key = singular.toLowerCase();
+		const irregularForm = Object.hasOwn(irregulars, key) ? irregulars[key] : undefined;
+
+		plural = irregularForm ?? singular + "s";
+
+		if (singular[0] === singular[0].toUpperCase()) {
+			plural = plural.toUpperFirst();
+		}
 	}
-	return count === 1 ? singular : plural;
+
+	return plural;
 }
 window.pluralise = pluralise;
 DefineMacroS("pluralise", pluralise);
@@ -184,7 +212,7 @@ window.wetnessKeyword = wetnessKeyword;
 
 /**
  * Returns an optional wetness prefix for the article of clothing.
- 
+
  * @param {string} slot clothing article slot used
  * @returns {string} printable integrity prefix
  */
@@ -690,12 +718,13 @@ window.nullable = nullable;
 Macro.add("icon", {
 	handler() {
 		if (!V.options.images) return;
+		if (typeof this.args[0] !== "string") return this.error(`bad evaluation: icon type '${this.args[0]}' is not a string`);
 		const basePath = this.name === "iconUi" ? "img/ui/" : "img/misc/icon/";
-		const name = typeof this.args[0] === "string" ? this.args[0] : "error";
+		const name = normaliseFileName(this.args[0]);
 		const iconImg = document.createElement("img");
 		iconImg.className = [
 			"icon",
-			this.name === "iconUi" && (this.args?.[1] === "with-text" ? "icon-container-with-text" : "icon-container"),
+			(this.name === "iconUi" || name.includes("clothes/")) && (this.args?.[1] === "with-text" ? "icon-container-with-text" : "icon-container"),
 			this.args.includes("infront") && "infront",
 			this.args.includes("flip") && "flip",
 		]
@@ -703,7 +732,7 @@ Macro.add("icon", {
 			.join(" ");
 		iconImg.src = basePath + name;
 		this.output.append(iconImg);
-		// append a whitespace for compatibility with old icon behavior
+		// append a whitespace for compatibility with old icon behaviour
 		if (!this.args.includes("nowhitespace")) this.output.append(" ");
 	},
 });

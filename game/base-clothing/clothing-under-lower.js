@@ -1932,7 +1932,7 @@ function initUnderLower() {
 			one_piece: 1,
 			state: "waist",
 			state_base: "waist",
-			plural: 1,
+			plural: 0,
 			colour: 0,
 			colour_options: ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow", "custom"],
 			colour_sidebar: 1,
@@ -2529,8 +2529,8 @@ function initUnderLower() {
 	setup.clothes.under_lower = clothing;
 
 	/*
-		Clothes that modders add go into this array, this should be empty in the base game at all times.
-		These items should have a `modder` variable with a the modders name in a short string
+		Clothes that modders add go into this array. This should be empty in the base game at all times.
+		These items should have a `modder` variable with the modder's name in a short string.
 	*/
 	setup.moddedClothes.under_lower = [];
 

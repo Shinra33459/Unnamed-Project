@@ -90,7 +90,7 @@ DEBUG PC (P/V/A/M/LARM): $penisstate $vaginastate $anusstate $mouthstate $leftar
 	<<generateBEAST 5 lizard>>
 	<<generateBEAST 6 creature>>
 	<<beastTrainGenerate>>
-		You stumble from the woods onto the verge of a steep cliff. Losing your balance <span class="red">you tip over the edge, tumbling to the bottom.</span>
+		You stumble from the woods onto the verge of a steep cliff. Losing your balance, <span class="red">you tip over the edge, tumbling to the bottom.</span>
 		<br><br>
 		When you recover, you find yourself in the main yard of a small farm. You are stunned to see several animals dancing around you... singing...
 		<br><br>
@@ -102,7 +102,7 @@ DEBUG PC (P/V/A/M/LARM): $penisstate $vaginastate $anusstate $mouthstate $leftar
 		<br>
 		E-I-E-I-O</span>
 		<br><br>
-		<span class="red">They stop singing and advance on you</span>
+		<span class="red">They stop singing and advance on you.</span>
 		<br>
 	<<controlloss>>
 	<<violence 1>>
@@ -402,6 +402,13 @@ PenActiv: <span class="gold">$NPCList[_x].penis</span> VagActiv: <span class="go
 	<<generate1>><<generate2>><<maninit>>
 	<<set $NPCList[0].penis to "vagina">><<set $vaginause to "penis">><<set $vaginastate to "penetrated">><<set $vaginatarget to 0>>
 	<<set $NPCList[1].penis to "anus">><<set $anususe to "penis">><<set $anusstate to "penetrated">><<set $anustarget to 1>>
+	
+	<<set $mouthtarget to 0>>
+	/% DP Test setup: force valid penetrators so penisinit/xray don't desync %/
+	<<set $NPCList[0].gender to "m">><<set $NPCList[0].pronoun to "m">>
+	<<set $NPCList[1].gender to "m">><<set $NPCList[1].pronoun to "m">>
+	<<set $NPCList[0].penisdesc to "natural">><<set $NPCList[1].penisdesc to "natural">>
+	<<set $NPCList[0].penissize to 3>><<set $NPCList[1].penissize to 3>>
 <</if>>
 
 <<effects>>
@@ -1104,7 +1111,7 @@ A terminal is attached to the tube. You look at the prompts.
 	<<neutral 1>>
 
 	<<maninit>>
-	With a hiss of steam, the tube retracts to the ceiling. A figure walks out, a <<if $pronoun is "m">>man<<else>>woman<</if>>. You recognise <<him>> as the <<person>> you selected.
+	With a hiss of steam, the tube retracts to the ceiling. A figure walks out, a <<woman_npc>>. You recognise <<him>> as the <<person>> you selected.
 	<br><br>
 
 	"Beginning sex encounter," the <<person>> says in a flat tone, before <<his>> face morphs into a lascivious smile. <<catcall>>
@@ -1116,7 +1123,7 @@ A terminal is attached to the tube. You look at the prompts.
 	<<set $enemytrust -= 100>>
 	<<set $enemyanger += 200>>
 	<<npcidlegenitals>>
-	With a hiss of steam, the tube retracts to the ceiling. A figure walks out, a <<if $pronoun is "m">>man<<else>>woman<</if>>. You recognise <<him>> as the <<person>> you selected.
+	With a hiss of steam, the tube retracts to the ceiling. A figure walks out, a <<woman_npc>>. You recognise <<him>> as the <<person>> you selected.
 	<br><br>
 
 	"Beginning combat encounter," the <<person>> says in a flat tone, before <<his>> face morphs into an angry scowl. "Oh, you're in for it now!"
@@ -1429,7 +1436,7 @@ A terminal is attached to the tube.
 		although fully nude and holding a <<print $NPCList[0].strapon.description>> in <<his>> hand.
 		<br><br>
 		<<setNPCStrapon $NPCList[0] `C.npc.Whitney.strapons[0]`>>
-		"This thing is cute and all, but I've already got one", <<he>> says,
+		"This thing is cute and all, but I've already got one," <<he>> says,
 		throwing it away and pulling <<his>> favourite <<print $NPCList[0].strapon.description>> out of nowhere.
 	<<else>>
 		although fully nude and wearing a <<print $NPCList[0].strapon.description>>.
@@ -2218,31 +2225,31 @@ OTHER:<br>
 Take penile virginity: <span class="gold"><<= !unableTakeVirginity("penile") ? "Yes":"No">>.</span><br>
 
 male vaginas 0% + female penises 100% + disable anal:
-<span class="gold"><<= ($cbchance is 0 and $dgchance is 100 and !$settings.analEnabled) ? "true":"false">></span><br>
+<span class="gold"><<= ($settings.maleNPCVaginaChance is 0 and $settings.femaleNPCPenisChance is 100 and !$settings.analEnabled) ? "true":"false">></span><br>
 
 All NPCs are male + male vaginas 0% + disable anal:
-<span class="gold"><<= (maleChance() is 100 and $cbchance is 0 and !$settings.analEnabled) ? "true":"false">></span><br>
+<span class="gold"><<= (maleChance() is 100 and $settings.maleNPCVaginaChance is 0 and !$settings.analEnabled) ? "true":"false">></span><br>
 
 All NPCs are female + female penises 100% + disable anal:
-<span class="gold"><<= (maleChance() is 0 and $dgchance is 100 and !$settings.analEnabled) ? "true":"false">></span><br>
+<span class="gold"><<= (maleChance() is 0 and $settings.femaleNPCPenisChance is 100 and !$settings.analEnabled) ? "true":"false">></span><br>
 
 All NPCs are male + male vaginas 100% + strap-on penises 100% + disable anal:
-<span class="gold"><<= (maleChance() is 100 and $cbchance is 100 and $settings.straponChance is 100 and !$settings.analEnabled) ? "true":"false">></span><br>
+<span class="gold"><<= (maleChance() is 100 and $settings.maleNPCVaginaChance is 100 and $settings.straponChance is 100 and !$settings.analEnabled) ? "true":"false">></span><br>
 
 All NPCs are female + female penises 0% + strap-on penises 100% + disable anal:
-<span class="gold"><<= (maleChance() is 0 and $dgchance is 0 and $settings.straponChance is 100 and !$settings.analEnabled) ? "true":"false">></span>
+<span class="gold"><<= (maleChance() is 0 and $settings.femaleNPCPenisChance is 0 and $settings.straponChance is 100 and !$settings.analEnabled) ? "true":"false">></span>
 <br><br>
 
 Take vaginal virginity: <span class="gold"><<= !unableTakeVirginity("vaginal") ? "Yes":"No">>.</span><br>
 
 male vaginas 100% + female penises 0% + strap-on penises 0%:
-<span class="gold"><<= ($cbchance is 100 and $dgchance is 0 and $settings.straponChance is 0) ? "true":"false">></span><br>
+<span class="gold"><<= ($settings.maleNPCVaginaChance is 100 and $settings.femaleNPCPenisChance is 0 and $settings.straponChance is 0) ? "true":"false">></span><br>
 
 All NPCs are male + male vaginas 100% + strap-on penises 0%:
-<span class="gold"><<= (maleChance() is 100 and $cbchance is 100 and $settings.straponChance is 0) ? "true":"false">></span><br>
+<span class="gold"><<= (maleChance() is 100 and $settings.maleNPCVaginaChance is 100 and $settings.straponChance is 0) ? "true":"false">></span><br>
 
 All NPCs are female + female penises 0% + strap-on penises 0%:
-<span class="gold"><<= (maleChance() is 0 and $dgchance is 0 and $settings.straponChance is 0) ? "true":"false">></span>
+<span class="gold"><<= (maleChance() is 0 and $settings.femaleNPCPenisChance is 0 and $settings.straponChance is 0) ? "true":"false">></span>
 <br><br>
 
 <<set _test to "Virginity Show Test">>
@@ -2263,9 +2270,9 @@ Virginity: <span class="gold"><<= !unableTakeVirginity() and $player.virginity.p
 
 Brothel Virginity Show:
 <br>
-<<link [[Briar's Office Show|Briar's Office Show]]>><<endevent>><<npc Briar>><<person1>><<set Time.setDate(Time.getNextWeekdayDate(5))>><</link>>
+<<link [[Briar's Office Show|Briar's Office Show]]>><<endevent>><<npc Briar>><<person1>><<set Time.timeTravel(Time.getNextWeekdayDate(5))>><</link>>
 <br>
-<<link [[Brothel Virginity Show|Brothel Stage]]>><<endevent>><<set $brothelVirginityIntro to true>><<set Time.setDate(Time.getNextWeekdayDate(5))>><<acceptbrothelshow "virginity">><<set Time.setDate(Time.getNextWeekdayDate(6))>><</link>>
+<<link [[Brothel Virginity Show|Brothel Stage]]>><<endevent>><<set $brothelVirginityIntro to true>><<set Time.timeTravel(Time.getNextWeekdayDate(5))>><<acceptbrothelshow "virginity">><<set Time.timeTravel(Time.getNextWeekdayDate(6))>><</link>>
 <br>
 <<link [[Show Virginity Auction|Brothel Show Virginity Auction]]>><<endevent>><<set $virginitytip to 0>><<set $weekly.brothelVirginityShow to 0>><</link>>
 <br>

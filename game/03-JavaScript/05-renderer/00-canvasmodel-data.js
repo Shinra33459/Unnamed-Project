@@ -7,7 +7,7 @@ const ZIndices = {
 	gradientlight: -3,
 	glowlight: -2,
 	spotlight: -1,
-	bg: 0,
+	background: 0,
 	over_head_back: 0,
 	head_back: 1,
 	basehead: 5,
@@ -83,10 +83,7 @@ const ZIndices = {
 	over_lower: 103.3,
 	over_upper: 103.6,
 	over_upper_arms: 103.9,
-
-	handheld: 104,
 	rings: 104,
-	arms_cover: 105,
 	under_upper_arms_cover: 109,
 	hands: 110,
 	upper_arms_cover: 112,
@@ -94,28 +91,30 @@ const ZIndices = {
 	lower_high: 115,
 	lower_top_high: 117,
 
-	hairforwards: 132,
-	fronthair: 133,
+	left_cover_arm: 105,
+	right_cover_arm: 106,
+	hair_forward: 132,
 	ears: 132.5,
-	semencough: 135,
-	backbrow: 58,
+	front_hair: 133,
+	semen_cough: 135,
+	back_brow: 58,
 	brow: 138,
 	horns: 140,
-	face: 145,
+	facewear: 145,
 	head: 150,
 	over_head: 152,
+	handheld: 131,
+	handheld_over_sleeve: 160,
 
 	old_over_upper: 164,
 
 	tailPenisCover: 165,
 	tailPenisCoverOverlay: 166,
 
-	old_over_upper: 171,
-
 	deco_fg2: 295,
 	deco_fg1: 300,
 
-	precipitationFront: 170,
+	foreground: 170,
 };
 window.ZIndices = ZIndices;
 

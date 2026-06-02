@@ -658,6 +658,14 @@ setup.feats = {
 		filter: ["All", "Social"],
 		hint: "Hint: Turn the tables on a wealthy patron.",
 	},
+	"Most Exclusive": {
+		title: "Most Exclusive",
+		desc: "Ate at a restaurant with a year-long waiting list.",
+		difficulty: 2,
+		series: "",
+		filter: ["All", "Social"],
+		hint: "Hint: Go on a Valentine's date with a wealthy patron.",
+	},
 	"Pride Cometh": {
 		title: "Pride Cometh",
 		desc: "Finished Avery's tower.",
@@ -802,6 +810,31 @@ setup.feats = {
 		filter: ["All", "Social"],
 		hidden: true,
 	},
+	"Poppy's Jewel": {
+		title: "Fall with me",
+		desc: "You gave your virginity to Poppy.",
+		difficulty: 2,
+		series: "",
+		hint: "Hint: Dedicate yourself for the foxy.",
+		filter: ["All", "Social"],
+	},
+	"Hungry Fox": {
+		title: "Hungry Fox",
+		desc: "You gifted Poppy a favourite food.",
+		difficulty: 2,
+		series: "",
+		hint: "Hint: Food for the foxy.",
+		filter: ["All", "Social"],
+	},
+	"Prey to the Slaughter": {
+		title: "Prey to the Slaughter",
+		desc: "Congrats, you're a terrible lover!",
+		difficulty: 3,
+		series: "",
+		hint: "Hint: Be terrible to the foxy.",
+		filter: ["All", "Social"],
+	},
+
 	"Love Triangles": {
 		title: "Love Triangles",
 		desc: "You don't know who to choose.",
@@ -814,6 +847,12 @@ setup.feats = {
 		desc: "Three wasn't enough for you.",
 		difficulty: 3,
 		series: "love triangles",
+		filter: ["All", "Social"],
+	},
+	"Be My Valentine": {
+		title: "Be My Valentine",
+		desc: "Gifted valentines chocolate at the right time.",
+		difficulty: 1,
 		filter: ["All", "Social"],
 	},
 	"Ballroom Show-off": {
@@ -1044,6 +1083,13 @@ setup.feats = {
 	Cattle: {
 		title: "Mess With the Bull...",
 		desc: "Ready for milking.",
+		difficulty: 1,
+		series: "",
+		filter: ["All", "Transformation"],
+	},
+	"Lost Legacy": {
+		title: "Lost Legacy",
+		desc: "Came back from extinction.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Transformation"],
@@ -2943,19 +2989,19 @@ function displayFeat(featName) {
 		const coin = $("<img>", { class: "featCoin" });
 		switch (feat.difficulty) {
 			case 1:
-				coin.attr("src", "img/ui/CopperCoin.gif");
+				coin.attr("src", "img/ui/coin-copper.gif");
 				break;
 			case 2:
-				coin.attr("src", "img/ui/SilverCoin.gif");
+				coin.attr("src", "img/ui/coin-silver.gif");
 				break;
 			case 3:
-				coin.attr("src", "img/ui/GoldCoin.gif");
+				coin.attr("src", "img/ui/coin-gold.gif");
 				break;
 			case 4:
-				coin.attr("src", "img/ui/PlatinumCoin.gif");
+				coin.attr("src", "img/ui/coin-platinum.gif");
 				break;
 			case 5:
-				coin.attr("src", "img/ui/JeweledCoin.gif");
+				coin.attr("src", "img/ui/coin-jeweled.gif");
 				break;
 		}
 
@@ -3036,20 +3082,33 @@ function earnHourlyFeats() {
 		specialClothesUnlock("set", "antiques");
 	}
 
+	if (V.specialClothes) {
+		const unlockedFeatSets = getUnlockedSpecialSets().filter(set => setup.specialClothesSets[set].feat);
+		const totalFeatSets = getSpecialSets(set => set.feat).length;
+		if (unlockedFeatSets.length >= Math.ceil(totalFeatSets / 2)) {
+			earnFeat("Curious Attire");
+		}
+		if (unlockedFeatSets.length >= totalFeatSets) {
+			earnFeat("Wicked Wardrobe");
+		}
+	}
+
+
 	// LI Romance
 	const loveCount = (V.robinromance ? 1 : 0) + (V.whitneyromance ? 1 : 0) + (V.kylarenglish ? 1 : 0) + (V.sydneyromance ? 1 : 0);
 	if (loveCount >= 3) earnFeat("Love Triangles");
 	if (loveCount >= 4) earnFeat("Love Trapezoids");
 
-	if (V.cat >= 6) earnFeat("Neko");
-	if (V.wolfgirl >= 6) earnFeat("Wolf");
-	if (V.angel >= 6) earnFeat("Angel");
-	if (V.fallenangel >= 2) earnFeat("Fallen Angel");
-	if (V.demon >= 6) earnFeat("Demon");
-	if (V.cow >= 6) earnFeat("Cattle");
-	if (V.bear >= 6) earnFeat("Bear");
-	if ((V.harpy >= 6 || V.transformationParts.bird.wings == "default")) earnFeat("Harpy");
-	if (V.fox >= 6) earnFeat("Fox");
+	if (V.cat >= 6 || (V.transformationParts.cat.tail !== "hidden" && V.transformationParts.cat.tail !== "disabled")) earnFeat("Neko");
+	if (V.wolfgirl >= 6 || (V.transformationParts.wolf.tail !== "hidden" && V.transformationParts.wolf.tail !== "disabled")) earnFeat("Wolf");
+	if (V.angel >= 6 || (V.transformationParts.angel.wings !== "hidden" && V.transformationParts.angel.wings !== "disabled")) earnFeat("Angel");
+	if (V.fallenangel >= 2 || (V.transformationParts.fallenAngel.wings !== "hidden" && V.transformationParts.fallenAngel.wings !== "disabled")) earnFeat("Fallen Angel");
+	if (V.demon >= 6 || (V.transformationParts.demon.wings !== "hidden" && V.transformationParts.demon.wings !== "disabled")) earnFeat("Demon");
+	if (V.cow >= 6 || (V.transformationParts.cow.tail !== "hidden" && V.transformationParts.cow.tail !== "disabled")) earnFeat("Cattle");
+	if (V.waterdragon >= 7 || (V.transformationParts.waterdragon && V.transformationParts.waterdragon.tail !== "hidden" && V.transformationParts.waterdragon.tail !== "disabled")) earnFeat("Lost Legacy");
+	if (V.bear >= 6|| (V.transformationParts.bear.tail !== "hidden" && V.transformationParts.bear.tail !== "disabled")) earnFeat("Bear");
+	if (V.harpy >= 6 || (V.transformationParts.bird.wings !== "hidden" && V.transformationParts.bird.wings !== "disabled")) earnFeat("Harpy");
+	if (V.fox >= 6|| (V.transformationParts.fox.tail !== "hidden" && V.transformationParts.fox.tail !== "disabled")) earnFeat("Fox");
 
 	const specialTraits =
 		(V.orgasmtrait >= 1 ? 1 : 0) +
@@ -3073,6 +3132,10 @@ function earnHourlyFeats() {
 		// typesSeen: fish, snake, slime, spider, maggot, worm, eel, wasp, bee, lurker, squid, slug, tentacle, vine
 		// variantsSeen: pale, metal
 		earnFeat("Broodmother Zoologist");
+	}
+
+	if (V.sexStats.anus.pregnancy.motherStatus === 2 || V.sexStats.vagina.pregnancy.motherStatus === 2) {
+		earnFeat("Broodmother Host");
 	}
 
 	if (V.spraymax >= 7) earnFeat("Max Those Shots");
@@ -3208,7 +3271,7 @@ function earnHourlyFeats() {
 		earnFeat("Fully Covered");
 	}
 
-	if (V.physique >= 16000) earnFeat("Powerful");
+	if (V.physique >= 15000) earnFeat("Powerful");
 	if (V.willpower >= 1000) earnFeat("Disciplined");
 	if (V.skulduggery >= 1000) earnFeat("Thief");
 	if (V.danceskill >= 1000) earnFeat("May I have this Dance?");
@@ -3222,7 +3285,7 @@ function earnHourlyFeats() {
 	if (V.earSlime.corruption >= 100) earnFeat("Ear Slime Lover");
 	if (V.earSlime.corruption >= 100 && V.earSlime.growth >= 200) earnFeat("Ear Slime Amalgam");
 
-	if (V.physique >= 32000) earnFeat("Unstoppable Force");
+	if (V.physique >= 30000) earnFeat("Unstoppable Force");
 	if (V.willpower >= 2000) earnFeat("Immovable Object");
 	if (V.skulduggery >= 2000) earnFeat("Agent 47");
 	if (V.danceskill >= 2000) earnFeat("Can't Touch This");
@@ -3323,7 +3386,710 @@ function earnHourlyFeats() {
 	if (V.feats.allSaves.points >= Math.floor(currentMax * 0.95)) earnFeat("My Timeless Collection of Feats");
 
 	// Bugged in saves that used the "Show them the stolen card" link in many older versions
-	if (V.compound.card === 2) earnFeat("Illicit Science");
+	if (V.compound.discovered) earnFeat("Illicit Science");
 
 	return fragment;
 }
+
+function updateFeats() {
+	let coins = 0;
+	let writeFlag = false;
+	// some entries within the feats object are not actually feats
+	const notFeats = ["points", "specialClothes"];
+	// at the game start, V.feats is not yet imported
+	const allFeats = (passage() === "Start" ? JSON.parse(localStorage.getItem("dolFeats")) : V.feats.allSaves) || {};
+	const curFeats = V.feats.currentSave;
+	// make sure feats from all saves contain the ones from current one
+	Object.keys(curFeats).forEach(feat => {
+		// skip unknown/modded/future/not feats
+		if (notFeats.includes(feat) || !(feat in setup.feats)) return;
+		if (!(curFeats[feat] instanceof Date)) {
+			if (isJsonString(curFeats[feat])) curFeats[feat] = JSON.parse(curFeats[feat]);
+			else curFeats[feat] = new Date(curFeats[feat]);
+			// somehow new date is neither json nor a date string. reset it and mark as ancient
+			if (!curFeats[feat]?.valueOf()) curFeats[feat] = new Date(1);
+		}
+		// if feat was unlocked earlier, do nothing
+		if (allFeats[feat] && getTimeNumber(allFeats[feat] <= getTimeNumber(curFeats[feat]))) return;
+		// else update allFeats and capture the flag
+		allFeats[feat] = clone(curFeats[feat]);
+		writeFlag = true;
+	});
+	// tally the points
+	Object.keys(allFeats).forEach(feat => {
+		if (notFeats.includes(feat) || !(feat in setup.feats)) return;
+		// fix bad dates while we're at it
+		if (!(allFeats[feat] instanceof Date)) {
+			let newDate;
+			if (isJsonString(allFeats[feat])) newDate = JSON.parse(allFeats[feat]);
+			else newDate = new Date(allFeats[feat]);
+			if (!newDate?.valueOf()) {
+				Errors.report(`updateFeats "${feat}": Invalid date "${allFeats[feat]}"`);
+				newDate = new Date(1);
+			}
+			allFeats[feat] = newDate;
+			writeFlag = true;
+		}
+		coins += setup.feats[feat].difficulty;
+	});
+	allFeats.points = coins;
+
+	// update old specialClothes to new system
+	let specialClothes = allFeats.specialClothes || [];
+	if (!Array.isArray(specialClothes)) {
+		specialClothes = getUnlockedSpecialSets(updateSpecialClothesNames(specialClothes)).filter(set => setup.specialClothesSets[set].feat);
+		writeFlag = true;
+	}
+
+	// check specialClothes
+	if (V.specialClothes && !V.feats.locked && !V.cheatsEnabled) {
+		const unlockedSets = getUnlockedSpecialSets().filter(set => setup.specialClothesSets[set].feat);
+		// merge unlockedSets into specialClothes
+		unlockedSets.forEach(set => {
+			if (!specialClothes.includes(set)) {
+				specialClothes.push(set);
+				writeFlag = true;
+			}
+		});
+	}
+	allFeats.specialClothes = specialClothes;
+	V.feats.allSaves = allFeats;
+
+	// update permanent feat storage
+	if (writeFlag) localStorage.setItem("dolFeats", JSON.stringify(allFeats));
+}
+DefineMacro("updateFeats", updateFeats);
+window.updateFeats = updateFeats;
+
+// setup feat boosts
+function setupFeatBoosts(force) {
+	if (V.featsBoosts && !force) return;
+
+	V.featsBoosts = {
+		upgrades: {}, // coins spent on upgrades
+		upgradeDetails: {}, // junk data
+		purchased: {}, // amount of upgrades purchased
+		missing: {}, // ugh
+		name: {}, // why
+		pointsUsed: 0, // hatred and also suffering
+		clothingGender: "Either",
+		clothingCustomColors: false,
+		hidden: { greenThumb: true },
+		tattoos: {
+			1: { bodypart: "Random", tattoo: "Random", pen: "Tattoo" },
+			2: { bodypart: "Random", tattoo: "Random", pen: "Tattoo" },
+			3: { bodypart: "Random", tattoo: "Random", pen: "Tattoo" },
+			4: { bodypart: "Random", tattoo: "Random", pen: "Tattoo" },
+			5: { bodypart: "Random", tattoo: "Random", pen: "Tattoo" },
+		},
+		sexToys: [{}, {}, {}, {}, {}, {}],
+		specialClothesSets: {},
+		earSlimeType: "immaturePassive",
+		divineTFs: "",
+		animalTFs: "",
+	};
+
+	const boostData = {
+		money: {
+			name: "Starting Money",
+			required: ["Pocket Change", "Money Maker", "Tycoon", "Millionaire", "Decamillionaire", "Hectomillionaire", "Billionaire"],
+			cost: 5,
+			maxMultiplier: 2,
+			missing: "Unlock this boost by obtaining the 'Pocket Change' feat",
+		},
+		grades: {
+			name: "School Grades",
+			required: ["Perfect Record", "Return to Monke"],
+			cost: 15,
+			max: 2,
+			missing: "Unlock this boost by obtaining the 'Perfect Record' feat",
+		},
+		skulduggery: {
+			name: "Skulduggery Grade",
+			required: ["Thief", "Agent 47"],
+			cost: 5,
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Thief' feat"
+
+		},
+		dancing: {
+			name: "Dancing Grade",
+			required: ["May I have this Dance?", "Can't Touch This"],
+			cost: 5,
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'May I have this Dance?' feat"
+		},
+		swimming: {
+			name: "Swimming Grade",
+			required: ["Aquanaut", "Atlantean"],
+			cost: 5,
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Aquanaut' feat"
+		},
+		athletics: {
+			name: "Athletics Grade",
+			required: ["Swift", "Ludicrous Speed"],
+			cost: 5,
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Swift' feat"
+		},
+		tending: {
+			name: "Tending Grade",
+			required: ["Green Fingered", "Grass Toucher"],
+			cost: 5,
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Green Fingered' feat"
+		},
+		greenThumb: {
+			name: "Green Thumb Trait",
+			required: ["Green Fingered", "Grass Toucher"],
+			cost: 40,
+			max: 1,
+			missing: "Unlock this boost by obtaining the 'Green Fingered' feat"
+		},
+		housekeeping: {
+			name: "Housekeeping Grade",
+			required: ["Majordomo", "Demolisher of Filth"],
+			cost: 5,
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Majordomo' feat"
+		},
+		seduction: {
+			name: "Seduction Grade",
+			required: ["Seductress", "Irresistible"],
+			cost: 5,
+			maxMultiplier: 5,
+			missing: "Unlock this boost by obtaining the 'Seductress' feat"
+		},
+		purity: {
+			name: "Daily Purity Boost",
+			required: ["Angel", "Fallen Angel"],
+			cost: 20,
+			max: 5,
+			exclusive: "impurity",
+			missing: "Unlock this boost by obtaining the 'Walk Like an Angel' and 'Falling, Falling, Falling...' feats",
+		},
+		impurity: {
+			name: "Daily Impurity Boost",
+			required: ["Demon"],
+			cost: 20,
+			max: 5,
+			exclusive: "purity",
+			missing: "Unlock this boost by obtaining the 'Devilish Looks' feat",
+		},
+		newLife: {
+			name: "A New Life",
+			required: ["Broodmother Host", "Top Broodmother Host"],
+			cost: 20,
+			missing: "Unlock this boost by obtaining a hidden feat (" + setup.feats["Broodmother Host"].hint + ")",
+		},
+		aNewBestFriend: {
+			name: "A New Best Friend",
+			required: ["Ear Slime Lover", "Ear Slime Amalgam"],
+			cost: 10,
+			missing: "Unlock this boost by obtaining a hidden feat (" + setup.feats["Ear Slime Lover"].hint + ")",
+		},
+		tattoos: {
+			name: "Starting Tattoos",
+			required: ["A Living Canvas", "Billboard"],
+			cost: 5,
+			max: 5,
+			missing: "Unlock this boost by obtaining the 'Billboard' and 'A Living Canvas' feats",
+		},
+		randomClothing: {
+			name: "Random Clothing",
+			required: [],
+			cost: 1,
+			max: 20,
+			missing: "",
+		},
+		specialClothing: {
+			name: "Special Clothing",
+			required: ["Curious Attire", "Wicked Wardrobe"],
+			cost: 0,
+			missing: "Unlock this boost by obtaining a hidden feat (" + setup.feats["Curious Attire"].hint + ")",
+		},
+		sexToys: {
+			name: "Sex Toys",
+			required: ["Opened Pandoras Box", "Opened Pandoras Cocks"],
+			cost: 30,
+			missing: "Unlock this boost by obtaining a hidden feat (" + setup.feats["Opened Pandoras Box"].hint + ")",
+		},
+	};
+
+	const earnedFeats = Object.keys(V.feats.allSaves);
+	const hasFeat = feat => earnedFeats.includes(feat);
+	Object.assign(boostData, {
+		divineTFs: {
+			name: "Divine Transformations",
+			required: ["Angel", "Fallen Angel", "Demon", "Demon of Purity"],
+			cost: 50,
+			max: 1,
+			missing: "Unlock this boost by obtaining one of the divine transformations",
+		},
+		animalTFs: {
+			name: "Animal Transformations",
+			required: ["Neko", "Wolf", "Cattle", "Harpy", "Fox"],
+			cost: 30,
+			max: 1,
+			missing: "Unlock this boost by obtaining one of the animal transformations",
+		},
+		sadism: {
+			name: "Sadism",
+			required: ["Twisted Desire", "Served Hot"],
+			cost: 10,
+			maxMultiplier: 1,
+			missing: "Unlock this boost by obtaining one of the sadism or masochism feats",
+		},
+		masochism: {
+			name: "Masochism",
+			required: ["Twisted Desire", "Served Hot"],
+			cost: 10,
+			maxMultiplier: 1,
+			missing: "Unlock this boost by obtaining one of the sadism or masochism feats",
+		},
+		physique: {
+			name: "Physique",
+			required: ["Powerful", "Unstoppable Force"],
+			cost: 10,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Powerful' feat",
+		},
+		willpower: {
+			name: "Willpower",
+			required: ["Disciplined", "Immovable Object"],
+			cost: 10,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Disciplined' feat",
+		},
+		oral: {
+			name: "Oral",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		chest: {
+			name: "Chest",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		hands: {
+			name: "Hands",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		buttocks: {
+			name: "Buttocks",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		penile: {
+			name: "Penile",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		anal: {
+			name: "Anal",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		vaginal: {
+			name: "Vaginal",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		feet: {
+			name: "Feet",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		thighs: {
+			name: "Thighs",
+			required: ["Sex Specialist", "God of Lust"],
+			cost: 5,
+			maxMultiplier: 2.5,
+			missing: "Unlock this boost by obtaining the 'Sex Specialist' feat",
+		},
+		promiscuity: {
+			name: "Promiscuity",
+			required: ["No More Control"],
+			cost: 15,
+			max: 4,
+			missing: "Unlock this boost by obtaining the 'No More Control' feat",
+		},
+		exhibitionism: {
+			name: "Exhibitionism",
+			required: ["No More Control"],
+			cost: 15,
+			max: 4,
+			missing: "Unlock this boost by obtaining the 'No More Control' feat",
+		},
+		deviancy: {
+			name: "Deviancy",
+			required: ["No More Control"],
+			cost: 15,
+			max: 4,
+			missing: "Unlock this boost by obtaining the 'No More Control' feat",
+		},
+		transcend: {
+			name: "Transcendence",
+			required: [
+				"Unstoppable Force", "Immovable Object", "Agent 47", "Can't Touch This", "Atlantean", "Ludicrous Speed",
+				"Grass Toucher", "Demolisher of Filth", "Smarter than Einstein", "Human Calculator", "Voice of All Things",
+				"Errm, ackshually", "Irresistible", "God of Lust", "Rivers of White", "Sticky Fountain",
+				"Many Punch Man", "Fleet-Footed", "Knockout Artist", "Bladed Legs"
+			],
+			cost: 100,
+			max: Math.floor([
+				"Unstoppable Force", "Immovable Object", "Agent 47", "Can't Touch This", "Atlantean", "Ludicrous Speed",
+				"Grass Toucher", "Demolisher of Filth", "Smarter than Einstein", "Human Calculator", "Voice of All Things",
+				"Errm, ackshually", "Irresistible", "God of Lust", "Rivers of White", "Sticky Fountain",
+				"Many Punch Man", "Fleet-Footed", "Knockout Artist", "Bladed Legs"
+			].filter(hasFeat).length / 10),
+			missing: "Unlock this boost by obtaining at least 10 skill-related and fluid production AMC feats",
+		},
+		adaptiveGenes: {
+			name: "Adaptive Genes",
+			required: ["Angel", "Fallen Angel", "Demon", "Demon of Purity", "Neko", "Wolf", "Cattle", "Harpy", "Fox"],
+			cost: 50,
+			max: Math.floor([
+				"Angel", "Fallen Angel", "Demon", "Demon of Purity", "Neko", "Wolf", "Cattle", "Harpy", "Fox", "Bear", "Bunny"
+			].filter(hasFeat).length / 5),
+			missing: "Unlock this boost by obtaining at least 5 transformation feats",
+		},
+	});
+	Object.entries(boostData).forEach(([k, f]) => {
+		const maxEarned = !f.required.length ? 1 : f.required.filter(x => earnedFeats.includes(x)).length;
+		const max = !maxEarned ? 0 : f.max ?? (f.maxMultiplier * maxEarned || maxEarned);
+
+		V.featsBoosts.upgrades[k] = 0;
+		V.featsBoosts.upgradeDetails[k] = { cost: f.cost, max, purchased: 0, ...(f.exclusive ? { exclusive: f.exclusive } : {}) };
+		V.featsBoosts.missing[k] = f.missing;
+		V.featsBoosts.name[k] = max > 0 ? f.name : "?????";
+	});
+}
+DefineMacro("setupFeatBoosts", setupFeatBoosts);
+
+function applyFeatBoosts() {
+	const upgrades = V.featsBoosts.upgrades;
+	const details = V.featsBoosts.upgradeDetails;
+
+	// reincarnated into the same nightmare
+	if (V.featsBoosts.pointsUsed > 0) earnFeat("A New Life");
+
+	// starting money
+	if (upgrades.money > 0) statChange.money(details.money.purchased * details.money.max * 2500, "startingMoney");
+
+	const gain = (skill, mult = 1) => (upgrades[skill] / details[skill].cost) * mult;
+
+	// starting grades
+	if (upgrades.grades) {
+		["science", "english", "maths", "history"].forEach(subject => {
+			V[subject + "trait"] += gain("grades", 1);
+			V[subject] = [100, 200, 400, 700, 1000][Math.clamp(V[subject + "trait"], 0, 4) || 0];
+		});
+	}
+	// skills
+	if (upgrades.skulduggery) {
+		V.skulduggery = gain("skulduggery", 100);
+		V.skulduggeryday = V.skulduggery;
+	}
+	if (upgrades.dancing) V.danceskill = gain("dancing", 100);
+	if (upgrades.tending) V.tending += gain("tending", 100);
+	if (upgrades.swimming) V.swimmingskill += gain("swimming", 100);
+	if (upgrades.athletics) V.athletics += gain("athletics", 100);
+	if (upgrades.seduction) V.seductionskill = gain("seduction", 100);
+	if (upgrades.housekeeping) V.housekeeping = gain("housekeeping", 100);
+
+	// daily (im)purity
+	if (upgrades.purity) V.featsPurityBoost = gain("purity", 1);
+	if (upgrades.impurity) V.featsPurityBoost = gain("impurity", -1);
+
+	// green thumb
+	if (upgrades.greenThumb) {
+		V.backgroundTraits.pushUnique("greenthumb");
+		if (V.fertilizer) ++V.fertilizer.current;
+	}
+
+	// parasitic pregnancy
+	if (upgrades.newLife) {
+		// you bought it - you pay for it
+		if (!V.settings.parasitePregnancyEnabled) V.settings.parasitePregnancyEnabled = true;
+		// get pregnant
+		wikifier("impregnateParasite", "tentacle", 400);
+		wikifier("fertiliseParasites");
+		V.pregnancyStats.parasiteDoctorEvents = 2;
+		V.sexStats.anus.pregnancy.motherStatus = 2;
+		// adjust stats
+		const para = V.sexStats.anus.pregnancy.fetus[0].stats;
+		para.gender = "Hermaphrodite";
+		if (upgrades.newLife === 40) {
+			para.growth = 7;
+			para.speed = 54;
+		}
+		para.lastEgg = Math.floor(para.growth / 3);
+	}
+
+	// ear slime
+	if (upgrades.aNewBestFriend) {
+		wikifier("parasite", "left_ear", "slime");
+		if (upgrades.aNewBestFriend > 10) wikifier("parasite", "right_ear", "slime");
+		switch (V.featsBoosts.earSlimeType) {
+			case "grownAggressive":
+				V.earSlime.corruption = 100;
+				V.earSlime.growth = 25;
+				V.earSlime.startedThreats = true;
+				V.earSlime.exhibitionism = 2;
+				V.earSlime.deviancy = 2;
+				V.earSlime.promiscuity = 2;
+				break;
+			case "immatureAggressive":
+				V.earSlime.corruption = 20;
+				V.earSlime.growth = 0;
+				V.earSlime.startedThreats = true;
+				V.earSlime.exhibitionism = 2;
+				V.earSlime.deviancy = 2;
+				V.earSlime.promiscuity = 2;
+				break;
+			default:
+				V.earSlime.corruption = 0;
+		}
+	} else {
+		delete V.featsBoosts.earSlimeType;
+	}
+
+	// transformation starts
+	if (upgrades.divineTFs) {
+		switch (V.featsBoosts.divineTFs) {
+			case "angel":
+				wikifier("angelTransform");
+				break;
+			case "fallenAngel":
+				wikifier("fallenButNotOut", 98);
+				if (V.player.vaginaExist || V.player.virginity.vaginal !== true) V.player.virginity.vaginal = false;
+				if (V.player.penisExist || V.player.virginity.penile !== true) V.player.virginity.penile = false;
+				break;
+			case "demon":
+				V.purity = 0;
+				wikifier("demonTransform");
+				if (V.player.vaginaExist || V.player.virginity.vaginal !== true) V.player.virginity.vaginal = false;
+				if (V.player.penisExist || V.player.virginity.penile !== true) V.player.virginity.penile = false;
+				break;
+			case "virginDemon":
+				V.purity = 0;
+				wikifier("demonTransform");
+				break;
+		}
+	}
+	if (upgrades.animalTFs) {
+		switch (V.featsBoosts.animalTFs) {
+			case "cat":
+				wikifier("catTransform");
+				break;
+			case "wolf":
+				wikifier("wolfTransform");
+				break;
+			case "cow":
+				wikifier("cowTransform");
+				break;
+			case "waterdragon":
+				wikifier("waterdragonTransform");
+				V.waterdragonCosmeticUnlocked = 1;
+				break;
+			case "bear":
+				wikifier("bearTransform");
+				break;
+			case "harpy":
+				wikifier("harpyTransform");
+				break;
+			case "fox":
+				wikifier("foxTransform");
+				break;
+			case "bunny":
+				wikifier("bunnyTransform");
+				break;
+		}
+	}
+
+	// AMC-adjacent and sex specialist
+	if (upgrades.sadism) V.featsSadismBoost = gain("sadism", 1);
+	if (upgrades.masochism) V.featsMasochismBoost = gain("masochism", 1);
+	if (upgrades.physique) V.physique += gain("physique", 1500);
+	if (upgrades.willpower) V.willpower += gain("willpower", 200);
+	if (upgrades.oral) V.oralskill += gain("oral", 200);
+	if (upgrades.chest) V.chestskill += gain("chest", 200);
+	if (upgrades.hands) V.handskill += gain("hands", 200);
+	if (upgrades.buttocks) V.bottomskill += gain("buttocks", 200);
+	if (upgrades.penile) V.penileskill += gain("penile", 200);
+	if (upgrades.anal) V.analskill += gain("anal", 200);
+	if (upgrades.vaginal) V.vaginalskill += gain("vaginal", 200);
+	if (upgrades.feet) V.feetskill += gain("feet", 200);
+	if (upgrades.thighs) V.thighskill += gain("thighs", 200);
+	if (upgrades.promiscuity) V.promiscuity += gain("promiscuity", 15);
+	if (upgrades.exhibitionism) V.exhibitionism += gain("exhibitionism", 15);
+	if (upgrades.deviancy) V.deviancy += gain("deviancy", 15);
+
+	// random clothes
+	if (upgrades.randomClothing) {
+		const clothingItems = upgrades.randomClothing * 3;
+		const equip = clone(setup.clothingLayer.body);
+		const options = {};
+		equip.forEach(slot => {
+			options[slot] = setup.clothes[slot].filter(c => {
+				if (V.featsBoosts.clothingGender === "Female" && c.gender === "m") return false;
+				if (V.featsBoosts.clothingGender === "Male" && c.gender === "f") return false;
+				if (c.outfitSecondary) return false;
+				if (!c.shop.includes("clothing")) return false;
+				return true;
+			});
+		});
+
+		// make normal clothes and underwear more likely to appear than accessories
+		equip.push("upper", "upper", "upper", "upper", "lower", "lower", "lower", "lower", "under_upper", "under_upper", "under_lower", "under_lower");
+		for (let i = 0; i < clothingItems; ++i) {
+			// pick random item from weighted slot list
+			const item = clone(options[equip.random()].random());
+			// make sure there's enough space in our wardrobe
+			if (item.outfitPrimary && Object.keys(item.outfitPrimary).length + 1 > clothingItems - i) {
+				--i;
+				continue;
+			}
+			// pick the color if available
+			if (item.colour_options?.length) {
+				const colors = clone(item.colour_options);
+				if (colors.includes("custom") && V.featsBoosts.clothingCustomColors) {
+					item.colour = "custom";
+					item.colourCustom = customColour(random(0, 360), random(0, 20) / 10, random(5, 40) / 10, random(0, 20) / 10, random(0, 100) / 100);
+				} else {
+					colors.delete("custom");
+					item.colour = colors.random();
+				}
+			}
+			// pick accessory color
+			if (item.accessory_colour_options?.length) {
+				const colors = clone(item.accessory_colour_options);
+				if (colors.includes("custom") && V.featsBoosts.clothingCustomColors) {
+					item.accessory_colour = "custom";
+					item.accessory_colourCustom = customColour(
+						random(0, 360),
+						random(0, 20) / 10,
+						random(5, 40) / 10,
+						random(0, 20) / 10,
+						random(0, 100) / 100
+					);
+				} else {
+					colors.delete("custom");
+					item.accessory_colour = colors.random();
+				}
+			}
+			// pick the pattern
+			if (item.pattern_options?.length) item.pattern = clone(item.pattern_options.random());
+
+			// oh no. the outfits.
+			if (item.outfitPrimary) {
+				Object.keys(item.outfitPrimary).forEach(slot => {
+					const item2 = clone(setup.clothes[slot].find(c => c.name === item.outfitPrimary[slot]));
+					// transfer colors and patterns
+					["colour", "colourCustom", "accessory_colour", "accessory_colourCustom", "pattern"].forEach(p => {
+						if (item[p]) item2[p] = clone(item[p]);
+					});
+					V.wardrobe[item2.slot].push(item2);
+				});
+			}
+			V.wardrobe[item.slot].push(item);
+		}
+	}
+
+	// special clothes
+	if (upgrades.specialClothing) {
+		const unlocked = V.feats.allSaves.specialClothes;
+		specialClothesUpdate();
+		const level = details.specialClothing.purchased;
+		// old notes on the level:
+		/* Level 1 upgrade - unlock previosuly unlocked special clothing sets by selection. */
+		/* Level 2 upgrade - unlock all special clothes unlocked in any other save. */
+		/* Level 3 upgrade - everything is remembered. */
+		unlocked.forEach(c => {
+			if (V.featsBoosts.specialClothesSets[c] === true) specialClothesUnlock("set", c, Math.clamp(level, 2, 3));
+		});
+	}
+
+	// tattoos
+	if (upgrades.tattoos) {
+		// number of tattoos to apply
+		const totalTattoos = gain("tattoos", 1);
+		// list of all available tattoos
+		const featsTattooAll = Object.values(setup.bodywriting)
+			.filter(t => !t.featSkip)
+			.map(m => m.writing);
+		// list of all available bodyparts
+		const bodyparts = clone(setup.bodyparts);
+		// boost options
+		const boostObj = V.featsBoosts.tattoos;
+
+		// remove non-random claimed locations from the pool
+		// slots do not start at 0, they go 1-5!!!
+		for (let i = 1; i <= totalTattoos; ++i) {
+			const location = boostObj[i].bodypart;
+			if (location !== "Random") bodyparts.delete(location.toLowerCase().replaceAll(" ", "_"));
+		}
+
+		// apply tattoos
+		for (let i = 1; i <= totalTattoos; ++i) {
+			const location = boostObj[i].bodypart === "Random" ? bodyparts.pluck() : boostObj[i].bodypart.toLowerCase().replaceAll(" ", "_");
+			const tattooWriting = boostObj[i].tattoo === "Random" ? featsTattooAll.random() : boostObj[i].tattoo;
+			const tattoo = Object.keys(setup.bodywriting).find(k => setup.bodywriting[k].writing === tattooWriting);
+			const pen = boostObj[i].pen.toLowerCase();
+			wikifier("add_bodywriting", location, tattoo, pen);
+		}
+		wikifier("bodywritingExposureCheck", true);
+	}
+
+	// sex toys
+	if (upgrades.sexToys) {
+		const totalToys = gain("sexToys", 3);
+		// stupid code uses stupid indexes, arrrr
+		const toyIndexes = setup.sextoys.filter(t => !t.shop.includes("forest")).map(m => m.index);
+		const boostObj = V.featsBoosts.sexToys;
+		// remove claimed non-random toys from the pool
+		for (let i = 0; i < totalToys; ++i) {
+			if (toyIndexes.includes(boostObj[i].index)) toyIndexes.delete(boostObj[i].index);
+		}
+		for (let i = 0; i < totalToys; ++i) {
+			// index
+			let index = boostObj[i].index;
+			if (index == null || index === -1) index = toyIndexes.pluck();
+			// color
+			let color = boostObj[i].colour;
+			if (color == null || color === -1) color = setup.sextoys[index].colour_options.random();
+
+			sexShopOnBuyClick(index, false, color, false);
+		}
+	}
+
+	// cleanup
+	["name", "missing", "clothingCustomColors", "clothingGender", "upgradeDetails", "tattoos", "sexToys", "hidden", "purchased", "specialClothesSets"].forEach(
+		k => delete V.featsBoosts[k]
+	);
+}
+DefineMacro("applyFeatBoosts", applyFeatBoosts);
+
+/*
+Paste in the console to get the total number of vrelcoins
+Object.values(setup.feats).reduce((num, feat) => num + feat.difficulty, 0)
+*/

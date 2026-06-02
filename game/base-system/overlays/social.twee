@@ -3,14 +3,18 @@
 <<widget "social">>
 	<div id="relation-display">
 		<<silently>>
+			<<poppySocialPrep>>
 			<<script>>
-				if (V.wolfpackharmony) C.npc["Black Wolf"].harmony = V.wolfpackharmony;
-				if (V.wolfpackferocity) C.npc["Black Wolf"].ferocity = V.wolfpackferocity;
+				/* Black Wolf: keep original behavior, but don't crash if missing */
+				if (C.npc["Black Wolf"]) {
+					if (V.wolfpackharmony != null) C.npc["Black Wolf"].harmony = V.wolfpackharmony;
+					if (V.wolfpackferocity != null) C.npc["Black Wolf"].ferocity = V.wolfpackferocity;
+				}
 				/*data config for non-standard NPCs boxes, allows for different stat configs, custom display data, and dynamic requirements*/
 				T.npcConfig = {
 					"Robin" : {
 						important : true,
-						dom : { name : "Confidence", activeIcon : "img/ui/sym_confidence.png", color: "blue" }
+						dom : { name : "Confidence", activeIcon : "img/ui/sym-confidence.png", color: "blue" }
 					},
 					"Whitney" : {
 						important : true,
@@ -24,20 +28,41 @@
 					},
 					"Kylar" : {
 						important : true,
-						rage : { name : "Jealousy", activeIcon : "img/ui/sym_jealousy.png", color: "green" }
+						rage : { name : "Jealousy", activeIcon : "img/ui/sym-jealousy.png", color: "green" }
 					},
 					"Avery" : {
 						important : true,
-						rage : { requirements : V.averyragerevealed, inactiveIcon : 'img/ui/sym_rage_empty.png', }
+						rage : { requirements : V.averyragerevealed, inactiveIcon : 'img/ui/sym-rage-empty.png' }
+					},
+					/* --- Poppy config added, rest is original --- */
+					"Poppy" : {
+						important : true,
+						love : { maxValue : 100 },
+						lust : { requirements : T.poppyLustUnlocked, maxValue : 100 },
+						patience : {
+							name : "Patience",
+							requirements : (T.poppyPatienceRaw || 0) > 0,
+							maxValue : 100,
+							minValue : 0,
+							activeIcon : setup.poppyPatienceIcon ? setup.poppyPatienceIcon(C.npc.Poppy ? C.npc.Poppy.patience : 0) : "img/ui/sym-patience-empty.png",
+							inactiveIcon : "img/ui/sym-patience-empty.png",
+						},
+						anger : {
+							name : "Anger",
+							requirements : (T.poppyPatienceRaw || 0) < 0,
+							maxValue : 100,
+							minValue : 0,
+							activeIcon : "img/ui/sym-poppy-rage.png",
+						},
 					},
 					"Great Hawk" : {
 						important : true,
 					},
 					"Black Wolf" : {
 						important : true,
-						love : { maxValue : 30 },
-						harmony : { name : "Wolf Pack Harmony", maxValue: 20, activeIcon : "img/ui/wolfharmony.png" },
-						ferocity : { name : "Wolf Pack Ferocity", maxValue: 20, activeIcon : "img/ui/wolfferocity.png" }
+						love : { maxValue : 150 },
+						harmony : { name : "Wolf Pack Harmony", maxValue: 20, activeIcon : "img/ui/sym-harmony.png" },
+						ferocity : { name : "Wolf Pack Ferocity", maxValue: 20, activeIcon : "img/ui/sym-ferocity.png" }
 					},
 					"Sydney" : {
 						important : true,
@@ -54,9 +79,9 @@
 					"Gwylan" : {
 						important: V.gwylanSeen?.includes("yearning"),
 						love : { maxValue : (getSpecialSets(sets => sets.shop.includes("forest")).length * 2),
-								activeIcon: V.gwylanSeen?.includes("yearning") ? "img/ui/sym_love_green.png" : "img/ui/sym_love.png",
+								activeIcon: V.gwylanSeen?.includes("yearning") ? "img/ui/sym-love-green.png" : "img/ui/sym-love.png",
 								color: 'green' },
-						dom : { name : "Yearning", activeIcon : "img/ui/sym_yearning.png", requirements : V.gwylanSeen?.includes("yearning"), maxValue : 150, color: 'forest-green' }
+						dom : { name : "Yearning", activeIcon : "img/ui/sym-yearning.png", requirements : V.gwylanSeen?.includes("yearning"), maxValue : 150, color: 'forest-green' }
 					},
 
 					"Mason" : {
@@ -82,7 +107,7 @@
 						dom : { maxValue : 50 }
 					},
 					"Ivory Wraith" : {
-						lust : { name: "Obsession", activeIcon : (V.wraith && (V.wraith.state == "haunt" || V.wraith.state == "despair") ? "img/ui/obsessionblood.png" : "img/ui/obsession.png"), inactiveIcon : "img/ui/obsessionempty.png", maxValue : 20 }
+						lust : { name: "Obsession", activeIcon : (V.wraith && (V.wraith.state == "haunt" || V.wraith.state == "despair") ? "img/ui/sym-obsession-blood.png" : "img/ui/sym-obsession.png"), inactiveIcon : "img/ui/sym-obsession-empty.png", maxValue : 20 }
 					},
 					"Riley" : {
 						love : { maxValue : 50 }
@@ -90,19 +115,18 @@
 				};
 
 				/* This list dictates the order that the important NPCs will show up in on the social menu screen */
-				T.importantNpcOrder = ["Robin", "Whitney", "Eden", "Kylar", "Sydney", "Avery", "Great Hawk", "Black Wolf", "Alex"];
+				T.importantNpcOrder = ["Robin", "Whitney", "Eden", "Kylar", "Sydney", "Poppy", "Avery", "Great Hawk", "Black Wolf", "Alex"];
 				if (V.gwylanSeen?.includes("yearning")) T.importantNpcOrder.pushUnique("Gwylan");
 				T.specialNPCs = ["Ivory Wraith"];
 
 				/* this list is sorted */
-				T.importantNPCs = T.importantNpcOrder.map(name => V.NPCName[V.NPCNameList.indexOf(name)]);
+				T.importantNPCs = T.importantNpcOrder.map(function(name){ return V.NPCName[V.NPCNameList.indexOf(name)];}).filter(function(x){ return !!x; });
 
 				/* this list is unsorted */
-				T.otherNPCs = V.NPCName.filter(npc => !T.importantNpcOrder.includes(npc.nam) && !T.specialNPCs.includes(npc.nam));
+				T.otherNPCs = V.NPCName.filter(function(npc){return npc && T.importantNpcOrder.indexOf(npc.nam) === -1 && T.specialNPCs.indexOf(npc.nam) === -1;});
 
 				/* sorting takes the lower value and puts it first, so if a < b, a goes first. */
-				/* yes, this works on words, somehow. it's math shit, but it works. read a book if necessary. */
-				T.otherNPCs.sort((a,b) => a.nam - b.nam);
+				T.otherNPCs.sort(function(a,b){return String(a.nam).localeCompare(String(b.nam));});
 			<</script>>
 		<</silently>>
 
@@ -226,7 +250,7 @@
 					{ requiredValue: 400,	color: 'green',		preText: 'Your fellow students ', description: 'aspire to be seen with you.'}
 				]}>>
 				<<set _teacherBoxConfig = { name : "Teachers", icon : "img/misc/icon/school.png", description: "<<relation-text _teacherRepConfig>> <<statbar 0 $delinquency 1000>>"}>>
-				<<set _studentBoxConfig = { name : "Students", icon : "img/misc/icon/schoolnew.png", description: "<<relation-text _studentRepConfig>> <<statbarinverted $cool $coolmax>>"}>>
+				<<set _studentBoxConfig = { name : "Students", icon : "img/misc/icon/school-building.png", description: "<<relation-text _studentRepConfig>> <<statbarinverted $cool $coolmax>>"}>>
 
 				/*Crossdressing*/
 				<<if $schoolrep.crossdress neq 0>>
@@ -311,18 +335,19 @@
 						{ requiredValue: 80,	color: 'teal',		description: 'respect you.'},
 						{ requiredValue: 100,	color: 'green',		description: 'think you\'re the boss.'}
 					]}>>
-					<<set _prisonBoxConfig = { name : "Prison Atmosphere", icon : "img/misc/icon/prison_cell.png", description: "<<relation-text _prisonMoodConfig>>"}>>
-					<<set _guardBoxConfig = { name : "Prison Guards", icon : "img/misc/icon/prison_cell.png", description: "<<relation-text _guardRepConfig>>"}>>
-					<<set _inmateBoxConfig = { name : "Prison Inmates", icon : "img/misc/icon/prison_cell.png", description: "<<relation-text _inmateRepConfig>>"}>>
+					<<set _prisonBoxConfig = { name : "Prison Atmosphere", icon : "img/misc/icon/prison-cell.png", description: "<<relation-text _prisonMoodConfig>>"}>>
+					<<set _guardBoxConfig = { name : "Prison Guards", icon : "img/misc/icon/prison-cell.png", description: "<<relation-text _guardRepConfig>>"}>>
+					<<set _inmateBoxConfig = { name : "Prison Inmates", icon : "img/misc/icon/prison-cell.png", description: "<<relation-text _inmateRepConfig>>"}>>
 				<</if>>
 				/*Docks */
-				<<if $dockwork gte 2>>
-					<<set _dockRepConfig = { currentValue: $dockstatus, preText: 'The other workers ', states : [
-						{ requiredValue: 0,		color: 'purple',	description: 'view you with contempt.'},
-						{ requiredValue: 10,	color: 'blue',		description: 'view you with suspicion.'},
-						{ requiredValue: 30,	color: 'lblue',		description: 'tolerate you.'},
-						{ requiredValue: 80,	color: 'teal',		description: 'accept you.'},
-						{ requiredValue: 100,	color: 'green',		description: 'respect you.'}
+				<<if $docks.hired>>
+					<<set _dockRepConfig = { currentValue: $docks.status, preText: 'The other workers ', states : [
+						{ requiredValue: 0,		color: 'red',		description: 'view you with contempt.'},
+						{ requiredValue: 20,	color: 'purple',	description: 'view you with suspicion.'},
+						{ requiredValue: 40,	color: 'blue',		description: 'tolerate you.'},
+						{ requiredValue: 60,	color: 'lblue',		description: 'accept you.'},
+						{ requiredValue: 80,	color: 'teal',		description: 'respect you.'},
+						{ requiredValue: 100,	color: 'green',		description: 'admire you.'}
 					]}>>
 					<<set _dockBoxConfig = { name : "Docks", icon : "img/misc/icon/docks.png", description : '<<relation-text _dockRepConfig>>'}>>
 				<</if>>
@@ -362,7 +387,7 @@
 				<<relation-box-simple _inmateBoxConfig>>
 				<<relation-box-simple _prisonBoxConfig>>
 			<</if>>
-			<<if $dockwork gte 2>>
+			<<if $docks.hired>>
 				<<relation-box-simple _dockBoxConfig>>
 			<</if>>
 			<<if $pirate_rank gte 0>>

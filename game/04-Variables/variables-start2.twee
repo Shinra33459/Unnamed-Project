@@ -22,11 +22,11 @@
 	<<switch $bodysize>>
 		<<case -1>><<set $physiquesize to 3000>>
 		<<case 0>><<set $physiquesize to 6000>>
-		<<case 1>><<set $physiquesize to 10000>>
-		<<case 2>><<set $physiquesize to 12000>>
+		<<case 1>><<set $physiquesize to 9000>>
+		<<case 2>><<set $physiquesize to 10000>>
 		<<case 2.5>><<set $physiquesize to 12000>>
-		<<case 3>><<set $physiquesize to 16000>>
-		<<case 4>><<set $physiquesize to 20000>>
+		<<case 3>><<set $physiquesize to 14000>>
+		<<case 4>><<set $physiquesize to 16000>>
 	<</switch>>
 
 	<<clamp>>
@@ -128,15 +128,14 @@
 
 	/* Do not use this object directly - use the Weather singleton instead */
 	<<set $weatherObj to {
-		name: "clear",
 		snow: 0,
 		ice: {},
-		fog: 0,
-		overcast: 0,
-		targetOvercast: 0,
 		monthlyTemperatures: [],
-		keypointsArr: []
+		keypointsArr: [],
+		previousWeatherIndex: 0,
+		fogKeypoints: [],
 	}>>
+
 
 	/* Default start date: 6 sept (sunday), 2020, 07:00 */
 	/* Do not change start date during gameplay as time is relative to the start date */
@@ -156,8 +155,11 @@
 	<<unset $startingseason>>
 	<<set $timeStamp to 0>>
 	<<set Time.set()>>
-	<<run Weather.activeRenderer = Weather.sky>>
-	<<run Weather.sky.initialize()>>
+	<<run Weather.WeatherGeneration.updateWeather()>>
+	<<run Weather.Temperature.updateTemperature()>>
+	<<run Weather.FogGeneration.generateFogKeypoints(V.weatherObj.keypointsArr)>>
+	<<run Weather.activeRenderer = Weather.sidebar>>
+	<<run Weather.sidebar.initialize()>>
 	<<set $hourly to {}>>
 
 	<<set $backgroundTraits to []>>
@@ -326,8 +328,6 @@
 		rng: random(0,1000)
 	}>>
 
-	<<set $propEquipped to 0>>
-
 	<<set $balloonStand to {
 		open: false,
 		owner: "friendly",
@@ -436,7 +436,7 @@
 	<<set $yearly to { }>>
 
 	<<if $feats.allSaves.points gt 0>>
-		<<applyFeatsBoost>>
+		<<applyFeatBoosts>>
 	<</if>>
 
 	<<set $school to $science + $english + $maths + $history>>
@@ -457,7 +457,9 @@
 	<<set $compound to {
 		alarm: 0,
 		bluff: false,
-		card: 0,
+		card: false,
+		discovered: false,
+		allowed: false,
 		interrogation: {},
 		theft: {
 			centre: false,
@@ -468,6 +470,67 @@
 	}>>
 
 	<<set $transformationHistory to []>>
+
+	<<set $docks to {
+		askedForWork: false,
+		hired: false,
+		wage: 1500,
+		status: 30,
+		firstDay: true,
+		dayType: "normal",
+		suspicion: 0,
+		fakeID: "not considered",
+		dailyHours: {
+			shift: {
+				total: 0,
+				workedHard: 0,
+				slacked: 0,
+				unpaid: 0,
+			},
+			overtime: {
+				total: 0,
+				workedHard: 0,
+				slacked: 0,
+				unpaid: 0,
+			}
+		},
+		slave: {
+			seen: false,
+			money: 0,
+		},
+		pub: {
+			count: 0,
+			cooldown: 0,
+		},
+		quiz: {
+			bet: "nothing",
+			home: 0,
+			away: 0,
+		},
+		bonus: 0,
+	}>>
+
+	<<set $danceStudio to {
+		intro: false,
+		jobOffered: false,
+		anger: 0,
+		handVirginProtected: false,
+	}>>
+
+	<<set $nightMonsterNNPCUpdate to 2>>
+
+	<<set $livestock to {
+		seen: [],
+		dig: {},
+		horse: {},
+		jobs: {},
+		lock: {},
+		winter: {
+			active: (Time.season is "winter" ? true : false),
+			exam: false,
+			trigger: 0
+		}
+	}>>
 
 	<<generateTipsList>>
 
