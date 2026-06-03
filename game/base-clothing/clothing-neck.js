@@ -1620,7 +1620,7 @@ function initNeck() {
 			slot: "neck",
 			name: "Whitney's collar",
 			name_cap: "Whitney's collar",
-			variable: "Whitney's collar",
+			variable: "whitney's collar",
 			combat: {
 				reference: "clothchoker",
 			},
@@ -1655,7 +1655,7 @@ function initNeck() {
 			slot: "neck",
 			name: "Whitney's collar with leash",
 			name_cap: "Whitney's collar with leash",
-			variable: "Whitney's collar with leash",
+			variable: "whitney's collar with leash",
 			combat: {
 				reference: "clothchoker",
 				mainColour: "#000000",
