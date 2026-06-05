@@ -4091,7 +4091,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				worn.setup
+				const setupItem = worn.setup;
 				return options.show_clothes && worn.index > 0 && setupItem.leftImage === 1 && options.arm_left !== "none";
 			},
 			zfn(options) {
@@ -4113,7 +4113,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				worn.setup
+				const setupItem = worn.setup;
 				return options.show_clothes && worn.index > 0 && setupItem.leftImage === 1 && options.arm_left !== "none";
 			},
 			zfn(options) {
@@ -4135,7 +4135,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				worn.setup
+				const setupItem = worn.setup;
 				return options.show_clothes && worn.index > 0 && setupItem.leftImage === 1 && setupItem.accessory === 1 && options.arm_left !== "none";
 			},
 			zfn(options) {
@@ -4148,8 +4148,9 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				worn.setup
-				if (!setupItem.variable) return "";
+				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
+				if (!ringVariable) return "";
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
@@ -4183,7 +4184,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				worn.setup
+				const setupItem = worn.setup;
 				return options.show_clothes
 					&& worn.index > 0
 					&& setupItem.leftImage === 1
@@ -4217,7 +4218,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				worn.setup
+				const setupItem = worn.setup;
 				return options.show_clothes
 					&& worn.index > 0
 					&& setupItem.leftImage === 1
@@ -4245,7 +4246,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				worn.setup
+				const setupItem = worn.setup;
 				return options.show_clothes && worn.index > 0 && setupItem.rightImage === 1 && options.arm_right !== "none";
 			},
 			zfn(options) {
@@ -4269,7 +4270,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				worn.setup
+				const setupItem = worn.setup;
 				return options.show_clothes && worn.index > 0 && setupItem.rightImage === 1 && setupItem.accessory === 1 && options.arm_right !== "none";
 			},
 			zfn(options) {
@@ -4680,7 +4681,7 @@ Renderer.CanvasModels.main = {
                 const pattern = worn.pattern && !["tertiary", "secondary"].includes(setupItem.pattern_layer)
                     ? "-" + worn.pattern?.replace(/ /g, "-")
                     : "";
-                return `img/clothes/earrings/${ringVariable}/${worn.integrity}${pattern}${alt}.png`;
+                return `img/clothes/earrings/${setupItem.variable}/${worn.integrity}${pattern}${alt}.png`;
             },
             showfn(options) {
                 const worn = options.worn.earrings;
@@ -4711,7 +4712,7 @@ Renderer.CanvasModels.main = {
                 const pattern = worn.pattern && setupItem.pattern_layer === "secondary"
                     ? "-" + worn.pattern?.replace(/ /g, "-")
                     : "";
-                return `img/clothes/earrings/${ringVariable}/acc${integrity}${pattern}${alt}.png`;
+                return `img/clothes/earrings/${setupItem.variable}/acc${integrity}${pattern}${alt}.png`;
             },
             showfn(options) {
                 const worn = options.worn.earrings;
@@ -6363,13 +6364,22 @@ function redirectRemovedRingStep(setupItem) {
 		"-25": "-20",
 	};
 
+	// Guard against a missing setup/variable; hand back whatever the variable
+	// is (possibly undefined) so callers can decide what to do.
+	if (!setupItem || typeof setupItem.variable !== "string") {
+		return setupItem && setupItem.variable;
+	}
+
+	let variable = setupItem.variable;
 	for (const [removedSuffix, newSuffix] of Object.entries(redirects)) {
-		if (setupItem.variable.endsWith(removedSuffix)) {
-			setupItem.variable =
-				setupItem.variable.slice(0, -removedSuffix.length) + newSuffix;
+		if (variable.endsWith(removedSuffix)) {
+			variable = variable.slice(0, -removedSuffix.length) + newSuffix;
 			break;
 		}
 	}
 
-	return setupItem;
+	// Return the (possibly redirected) variable STRING. Do NOT mutate setupItem:
+	// worn.setup is often a direct reference to setup.clothes.rings[index], so
+	// writing to it would corrupt the shared clothing definition for the session.
+	return variable;
 }
