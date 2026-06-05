@@ -23,7 +23,7 @@ const events = [
 		// example of a lazy event that will still work
 		name: "tomorrow",
 		condition() {
-			return Time.isSchoolDay(Time.tomorrow) && (!Time.schoolDay || Time.hour > 14);
+			return Time.isSchoolDay(Time.tomorrow) && (!Time.schoolDay || Time.hour >= 14);
 		},
 		text: "You have school tomorrow.",
 	},
