@@ -1,0 +1,311 @@
+:: Widgets Bike [widget]
+
+<<widget "bike">>
+	<<if ($bikeLocation is $bikeStart and $bikePersistentLocation is 1) or $bikePersistentLocation is 0>>
+		<<if (($exposed gte 1 and Time.dayState is "night") or $exposed is 0) and $bike gte 1 and $bikeBroken is undefined and $bikeStolen is undefined>>
+			<<bikeicon>><<link [[Get on your bike (0:01)|Bike]]>><<pass 1>><</link>>
+		<<elseif $bikeStolen isnot undefined>>
+			<span class="red">Your bike was stolen!</span>
+			<<if $bikeSecurityGearStolen isnot undefined>>
+				<span class="red">They've even taken your security gear!</span>
+			<</if>>
+			<<if $bikeLocationCategory is "lake">>
+				Some student must've stolen it.
+			<<elseif $bikeLocationCategory is "left" or $bikeLocationCategory is "mid" or $bikeLocationCategory is "right">>
+				<<if $baileydefeatedchain gte 1>>
+					Bailey's goons probably had something to do with it.
+				<<else>>
+					Some townie must've stolen it.
+				<</if>>
+			<<elseif $bikeLocationCategory is "farm">>
+				<<if $farm?.aggro gte 20>>
+					Remy's goons probably had something to do with it.
+				<<else>>
+					Some bumpkin must've stolen it.
+				<</if>>
+			<</if>>
+			<<unset $bikeStolen>>
+			<<unset $bikeSecurityGearStolen>>
+		<<elseif $bikeBroken isnot undefined>>
+			<span class="red">Your bike is broken!</span> It's unusable until you repair it back at the bike depot.
+		<<elseif !(($exposed gte 1 and Time.dayState is "night") or $exposed is 0)>>
+			<span class="blue">You're too exposed to ride the bike!</span>
+		<</if>>
+		<br>
+	<</if>>
+<</widget>>
+
+<<widget "cancelBike">>
+	<<switch $bikeStart>>
+		<<case "nightingale">>
+			<<nightingalequick>>
+		<<case "domus">>
+			<<domusquick>>
+		<<case "elk">>
+			<<elkquick>>
+		<<case "high">>
+			<<highquick>>
+		<<case "starfish">>
+			<<starfishquick>>
+		<<case "barb">>
+			<<barbquick>>
+		<<case "connudatus">>
+			<<connudatusquick>>
+		<<case "wolf">>
+			<<wolfquick>>
+		<<case "harvest">>
+			<<harvestquick>>
+		<<case "oxford">>
+			<<oxfordquick>>
+		<<case "danube">>
+			<<danubequick>>
+		<<case "mer">>
+			<<merquick>>
+		<<case "cliff">>
+			<<cliffquick>>
+		<<case "lake">>
+			<<lakequick>>
+		<<case "eden">>
+			<<edenicon>><<link [[Eden's Cabin|Eden Clearing]]>><</link>>
+		<<case "wolfCave">>
+			<<wolfcaveicon>><<link [[Wolf Cave|Wolf Cave Clearing]]>><</link>>
+		<<case "farm">>
+			<<farmicon>><<link [[Farmland|Farmland]]>><</link>>
+		<<case "moor">>
+			<<mooricon>><<link [[Moor Castle|Moor]]>><</link>>
+	<</switch>>
+	<br><br>
+<</widget>>
+
+<<widget "destinationBike">>
+	<<bikeTime>>
+	<<if _error isnot undefined>>
+		<<unset _error>>
+		<<bikeError>>
+	<<else>>
+		<<if _roughTerrainModifier gt 0>>
+			<<set _roughTerrainModifierDurability to (_roughTerrainModifier * 2)>>
+			<<if $bikeSuspension is 1>><<set _roughTerrainModifierDurability *= 0.75>><</if>>
+			<<if $bikeTires is 1>><<set _roughTerrainModifierDurability *= 0.85>><</if>>
+			<<if $bikeTubeless is 1>><<set _roughTerrainModifierDurability *= 0.9>><</if>>
+			<<if $bikeBrakes is 1>><<set _roughTerrainModifierDurability *= 0.95>><</if>>
+			<<if $bikePedals is 1>><<set _roughTerrainModifierDurability *= 0.95>><</if>>
+			<<if $bikeGrips is 1>><<set _roughTerrainModifierDurability *= 0.95>><</if>>
+		<<else>>
+			<<set _roughTerrainModifierDurability to 0>>
+		<</if>>
+		<<set $bikeDurability to Math.round(Math.max($bikeDurability - (_time + _roughTerrainModifierDurability), 0))>>
+		<<if $bikeDurability is 0>><<set $bikeBroken to 1>><</if>>
+		<<set $bikeLocation to $bikeDestination>>
+		<<set $bikeLocationCategory to $bikeDestination>>
+		<<set _tirednessGain to (_time + _roughTerrainModifier) / 10>><<set _athleticsGain to (_time + _roughTerrainModifier) / 5>><<set _physiqueGain to (_baseGain + _roughTerrainModifier) / 15>>
+		<<tiredness _tirednessGain>><<athletics _athleticsGain>><<physique _physiqueGain>>
+		<<gtiredness>><<gathletics>>
+		<br><br>
+		<<set _timeString to getTimeString(_time)>>
+		<<switch $bikeDestination>>
+			<<case "nightingale">>
+				<<nightingaleicon>><<link [["Nightingale Street (" + _timeString + ") (Hospital)"|Nightingale Street]]>><<pass _time>><</link>><br>
+			<<case "domus">>
+				<<domusicon>><<link [["Domus Street (" + _timeString + ") (Home)"|Domus Street]]>><<pass _time>><</link>><br>
+			<<case "elk">>
+				<<elkicon>><<link [["Elk Street (" + _timeString + ")"|Elk Street]]>><<pass _time>><</link>><br>
+			<<case "high">>
+				<<highicon>><<link [["High Street (" + _timeString + ") (Shopping Centre)"|High Street]]>><<pass _time>><</link>><br>
+			<<case "starfish">>
+				<<starfishicon>><<link [["Starfish Street (" + _timeString + ") (Beach)"|Starfish Street]]>><<pass _time>><</link>><br>
+			<<case "barb">>
+				<<barbicon>><<link [["Barb Street (" + _timeString + ") (Studio)"|Barb Street]]>><<pass _time>><</link>><br>
+			<<case "connudatus">>
+				<<connudatusicon>><<link [["Connudatus Street (" + _timeString + ") (Clubs)"|Connudatus Street]]>><<pass _time>><</link>><br>
+			<<case "wolf">>
+				<<wolficon>><<link [["Wolf Street (" + _timeString + ") (Temple)"|Wolf Street]]>><<pass _time>><</link>><br>
+			<<case "harvest">>
+				<<harvesticon>><<link [["Harvest Street (" + _timeString + ") (Pub)"|Harvest Street]]>><<pass _time>><</link>><br>
+			<<case "oxford">>
+				<<oxfordicon>><<link [["Oxford Street (" + _timeString + ") (School)"|Oxford Street]]>><<pass _time>><</link>><br>
+			<<case "danube">>
+				<<danubeicon>><<link [["Danube Street (" + _timeString + ") (Mansions)"|Danube Street]]>><<pass _time>><</link>><br>
+			<<case "mer">>
+				<<mericon>><<link [["Mer Street (" + _timeString + ") (Docks)"|Mer Street]]>><<pass _time>><</link>><br>
+			<<case "cliff">>
+				<<clifficon>><<link [["Cliff Street (" + _timeString + ") (Cafe)"|Cliff Street]]>><<pass _time>><</link>><br>
+			<<case "lake">>
+				<<lakeicon>><<link [["Lake (" + _timeString + ")"|Forest]]>><<pass _time>><<set $forest to 25>><<set $eventskip to 1>><</link>><br>
+			<<case "farm">>
+				<<farmicon>><<link [["Farmland (" + _timeString + ")"|Farmland]]>><<pass _time>><</link>><br>
+			<<case "eden">>
+				<<if $edenfreedom gte 1 or $syndromeeden gte 1>>
+					<<if $edenFluidsCheck is "cleanLeave" and ($goocount + $semencount gte 10) and Time.hour gte 7 or $edenFluidsCheck is "run">>
+						<<edenicon>><<link [["Eden's Cabin (" + _timeString + ")"|Eden Fluids Punishment]]>><<pass _time>><</link>>
+					<<elseif !$edenHotSpring and Weather.isFreezing>>
+						<<edenicon>><<link [["Eden's Cabin (" + _timeString + ")"|Eden Hot Spring Creation 1]]>><<pass _time>><</link>>
+					<<else>>
+						<<edenicon>><<link [["Eden's Cabin (" + _timeString + ")"|Eden Clearing]]>><<pass _time>><</link>>
+					<</if>>
+					<br>
+				<</if>>
+			<<case "wolfCave">>
+				<<wolfcaveicon>><<link [["Wolf Cave (" + _timeString + ")"|Wolf Cave Clearing]]>><<pass _time>><</link>><br>
+			<<case "moor">>
+				<<mooricon>><<link [["Moor Castle (" + _timeString + ")"|Moor]]>><<pass _time>><<set $moor to 100>><<set $eventskip to 1>><</link>><br>
+		<</switch>>
+	<</if>>
+<</widget>>
+
+<<widget "bikeError">>
+	<span class="red">Something went wrong.</span> Please inform Frostberg and include your save.
+	<br><br>
+	<<domusquick>>
+<</widget>>
+
+<<widget "bikeTime">>
+	<<set _townToTown to 1>>
+	<<if $town_projects.road gte 4>>
+		<<set _townToLake to 5>>
+	<<else>>
+		<<set _townToLake to 21>>
+		<<if $bikeSuspension is 1>><<set _townToLake *= 0.9>><</if>>
+		<<if $bikeTires is 1>><<set _townToLake *= 0.95>><</if>>
+		<<if $bikeTubeless is 1>><<set _townToLake *= 0.95>><</if>>
+		<<if $bikePedals is 1>><<set _townToLake *= 0.975>><</if>>
+		<<if $bikeGrips is 1>><<set _townToLake *= 0.975>><</if>>
+		<<set _townToLake to Math.round(_townToLake)>>
+	<</if>>
+	<<set _lakeToDeepForest to 28>>
+	<<set _townToFarm to 19>>
+	<<set _farmToMoor to 80>>
+	<<if $bikeSuspension is 1>><<set _lakeToDeepForest *= 0.9>><<set _farmToMoor *= 0.9>><</if>>
+	<<if $bikeTires is 1>><<set _lakeToDeepForest *= 0.95>><<set _farmToMoor *= 0.95>><</if>>
+	<<if $bikeTubeless is 1>><<set _lakeToDeepForest *= 0.95>><<set _farmToMoor *= 0.95>><</if>>
+	<<if $bikePedals is 1>><<set _lakeToDeepForest *= 0.975>><<set _farmToMoor *= 0.975>><</if>>
+	<<if $bikeGrips is 1>><<set _lakeToDeepForest *= 0.975>><<set _farmToMoor *= 0.975>><</if>>
+	<<set _lakeToDeepForest to Math.round(_lakeToDeepForest)>><<set _farmToMoor to Math.round(_farmToMoor)>>
+	<<set _time to 1>><<set _roughTerrainModifier to 0>>
+	<<switch $bikeStart>>
+		<<case "lake">>
+			<<switch $bikeDestination>>
+				<<case "domus" "barb" "danube" "connudatus" "wolf" "high"  "cliff" "nightingale" "starfish">>
+					<<set _time += _townToLake>><<set _roughTerrainModifier to _townToLake>>
+				<<case "oxford" "elk" "mer" "harvest">>
+					<<set _time += _townToLake + _townToTown>><<set _roughTerrainModifier to _townToLake>>
+				<<case "lake">>
+				<<case "wolfCave" "eden">>
+					<<set _time += _lakeToDeepForest>><<set _roughTerrainModifier to _lakeToDeepForest>>
+				<<case "farm">>
+					<<set _time += _townToLake + _townToTown + _townToFarm>><<set _roughTerrainModifier to _townToLake>>
+				<<case "moor">>
+					<<set _time += _townToLake + _townToTown + _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _townToLake>>
+				<<default>>
+					<<set _error to 1>>
+			<</switch>>
+		<<case "domus" "barb" "danube" "connudatus">>
+			<<switch $bikeDestination>>
+				<<case "domus" "barb" "danube" "connudatus">>
+				<<case "wolf" "high"  "cliff" "nightingale" "starfish">>
+					<<set _time += _townToTown>>
+				<<case "oxford" "elk" "mer" "harvest">>
+					<<set _time += _townToTown + _townToTown>>
+				<<case "lake">>
+					<<set _time +=  _townToLake>><<set _roughTerrainModifier to _townToLake>>
+				<<case "wolfCave" "eden">>
+					<<set _time += _townToLake + _lakeToDeepForest>><<set _roughTerrainModifier to _townToLake + _lakeToDeepForest>>
+				<<case "farm">>
+					<<set _time += _townToTown + _townToTown + _townToFarm>>
+				<<case "moor">>
+					<<set _time += _townToTown + _townToTown + _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
+				<<default>>
+					<<set _error to 1>>
+			<</switch>>
+		<<case "wolf" "high"  "cliff" "nightingale" "starfish">>
+			<<switch $bikeDestination>>
+				<<case "domus" "barb" "danube" "connudatus" "oxford" "elk" "mer" "harvest">>
+					<<set _time += _townToTown>>
+				<<case "wolf" "high"  "cliff" "nightingale" "starfish">>
+				<<case "lake">>
+					<<set _time += _townToLake>><<set _roughTerrainModifier to _townToLake>>
+				<<case "wolfCave" "eden">>
+					<<set _time += _townToLake + _lakeToDeepForest>><<set _roughTerrainModifier to _townToLake + _lakeToDeepForest>>
+				<<case "farm">>
+					<<set _time += _townToTown + _townToFarm>>
+				<<case "moor">>
+					<<set _time += _townToTown + _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
+				<<default>>
+					<<set _error to 1>>
+			<</switch>>
+		<<case "oxford" "elk" "mer" "harvest">>
+			<<switch $bikeDestination>>
+				<<case "domus" "barb" "danube" "connudatus">>
+					<<set _time += _townToTown + _townToTown>>
+				<<case "wolf" "high"  "cliff" "nightingale" "starfish">>
+					<<set _time += _townToTown>>
+				<<case "oxford" "elk" "mer" "harvest">>
+				<<case "lake">>
+					<<set _time += _townToTown + _townToLake>><<set _roughTerrainModifier to _townToLake>>
+				<<case "wolfCave" "eden">>
+					<<set _time += _townToTown + _townToLake + _lakeToDeepForest>><<set _roughTerrainModifier to _townToLake + _lakeToDeepForest>>
+				<<case "farm">>
+					<<set _time += _townToFarm>>
+				<<case "moor">>
+					<<set _time += _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
+				<<default>>
+					<<set _error to 1>>
+			<</switch>>
+		<<case "farm">>
+			<<switch $bikeDestination>>
+				<<case "domus" "barb" "danube" "connudatus">>
+					<<set _time += _townToFarm + _townToTown + _townToTown>>
+				<<case "wolf" "high"  "cliff" "nightingale" "starfish">>
+					<<set _time += _townToFarm + _townToTown>>
+				<<case "oxford" "elk" "mer" "harvest">>
+					<<set _time += _townToFarm>>
+				<<case "lake">>
+					<<set _time += _townToFarm + _townToTown + _townToLake>><<set _roughTerrainModifier to _townToLake>>
+				<<case "wolfCave" "eden">>
+					<<set _time += _townToFarm + _townToTown + _townToLake + _lakeToDeepForest>><<set _roughTerrainModifier to _townToLake + _lakeToDeepForest>>
+				<<case "farm">>
+				<<case "moor">>
+					<<set _time += _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
+				<<default>>
+					<<set _error to 1>>
+			<</switch>>
+		<<case "wolfCave" "eden">>
+			<<switch $bikeDestination>>
+				<<case "domus" "barb" "danube" "connudatus">>
+					<<set _time += _lakeToDeepForest + _townToLake + _townToTown>><<set _roughTerrainModifier to _lakeToDeepForest + _townToLake>>
+				<<case "wolf" "high"  "cliff" "nightingale" "starfish">>
+					<<set _time += _lakeToDeepForest + _townToLake + _townToTown>><<set _roughTerrainModifier to _lakeToDeepForest + _townToLake>>
+				<<case "oxford" "elk" "mer" "harvest">>
+					<<set _time += _lakeToDeepForest + _townToLake + _townToTown + _townToTown>><<set _roughTerrainModifier to _lakeToDeepForest + _townToLake>>
+				<<case "lake">>
+					<<set _time += _lakeToDeepForest>>
+				<<case "wolfCave" "eden">>
+				<<case "farm">>
+					<<set _time += _lakeToDeepForest + _townToLake + _townToTown + _townToTown + _townToFarm>><<set _roughTerrainModifier to _lakeToDeepForest + _townToLake>>
+				<<case "moor">>
+					<<set _time += _lakeToDeepForest + _townToLake + _townToTown + _townToTown + _townToFarm + _farmToMoor>><<set _roughTerrainModifier to _lakeToDeepForest + _townToLake + _farmToMoor>>
+				<<default>>
+					<<set _error to 1>>
+			<</switch>>
+		<<case "moor">>
+			<<switch $bikeDestination>>
+				<<case "domus" "barb" "danube" "connudatus">>
+					<<set _time += _farmToMoor + _townToFarm + _townToTown + _townToTown>><<set _roughTerrainModifier to _farmToMoor>>
+				<<case "wolf" "high"  "cliff" "nightingale" "starfish">>
+					<<set _time += _farmToMoor + _townToFarm + _townToTown>><<set _roughTerrainModifier to _farmToMoor>>
+				<<case "oxford" "elk" "mer" "harvest">>
+					<<set _time += _farmToMoor + _townToFarm>><<set _roughTerrainModifier to _farmToMoor>>
+				<<case "lake">>
+					<<set _time += _farmToMoor + _townToFarm + _townToTown + _townToLake>><<set _roughTerrainModifier to _farmToMoor + _townToLake>>
+				<<case "wolfCave" "eden">>
+					<<set _time += _farmToMoor + _townToFarm + _townToTown + _townToLake + _lakeToDeepForest>><<set _roughTerrainModifier to _farmToMoor + _townToLake + _lakeToDeepForest>>
+				<<case "farm">>
+					<<set _time += _farmToMoor>><<set _roughTerrainModifier to _farmToMoor>>
+				<<case "moor">>
+				<<default>>
+					<<set _error to 1>>
+			<</switch>>
+		<<default>>
+			<<set _error to 1>>
+	<</switch>>
+<</widget>>
