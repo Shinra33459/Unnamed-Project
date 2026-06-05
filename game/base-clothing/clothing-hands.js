@@ -636,6 +636,9 @@ function initHands() {
 			name_cap: "Thin metal bracelet",
 			variable: "metal-thin",
 			shopGroup: "metal",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -676,6 +679,9 @@ function initHands() {
 			name_cap: "Simple metal bracelet",
 			variable: "metal-medium",
 			shopGroup: "metal",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -716,6 +722,9 @@ function initHands() {
 			name_cap: "Metal bracelet",
 			variable: "metal",
 			shopGroup: "metal",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -757,6 +766,9 @@ function initHands() {
 			name_cap: "Thick metal bracelet",
 			variable: "metal-thick",
 			shopGroup: "metal",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -797,6 +809,9 @@ function initHands() {
 			name_cap: "Tiny faux jewel bracelet",
 			variable: "2ctbracelet",
 			shopGroup: "faux",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -837,6 +852,9 @@ function initHands() {
 			name_cap: "Small faux jewel bracelet",
 			variable: "5ctbracelet",
 			shopGroup: "faux",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -877,6 +895,9 @@ function initHands() {
 			name_cap: "Medium faux jewel bracelet",
 			variable: "10ctbracelet",
 			shopGroup: "faux",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -917,6 +938,9 @@ function initHands() {
 			name_cap: "Big faux jewel bracelet",
 			variable: "20ctbracelet",
 			shopGroup: "faux",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -957,6 +981,9 @@ function initHands() {
 			name_cap: "2ct diamond bracelet",
 			variable: "2ctbraceletdiamond",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -996,6 +1023,9 @@ function initHands() {
 			name_cap: "5ct diamond bracelet",
 			variable: "5ctbraceletdiamond",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1035,6 +1065,9 @@ function initHands() {
 			name_cap: "10ct diamond bracelet",
 			variable: "10ctbraceletdiamond",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1074,6 +1107,9 @@ function initHands() {
 			name_cap: "20ct diamond bracelet",
 			variable: "20ctbraceletdiamond",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1113,6 +1149,9 @@ function initHands() {
 			name_cap: "2ct ruby bracelet",
 			variable: "2ctbraceletruby",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1152,6 +1191,9 @@ function initHands() {
 			name_cap: "5ct ruby bracelet",
 			variable: "5ctbraceletruby",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1191,6 +1233,9 @@ function initHands() {
 			name_cap: "10ct ruby bracelet",
 			variable: "10ctbraceletruby",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1230,6 +1275,9 @@ function initHands() {
 			name_cap: "20ct ruby bracelet",
 			variable: "20ctbraceletruby",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1269,6 +1317,9 @@ function initHands() {
 			name_cap: "2ct emerald bracelet",
 			variable: "2ctbraceletemerald",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1308,6 +1359,9 @@ function initHands() {
 			name_cap: "5ct emerald bracelet",
 			variable: "5ctbraceletemerald",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1347,6 +1401,9 @@ function initHands() {
 			name_cap: "10ct emerald bracelet",
 			variable: "10ctbraceletemerald",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1386,6 +1443,9 @@ function initHands() {
 			name_cap: "20ct emerald bracelet",
 			variable: "20ctbraceletemerald",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1425,6 +1485,9 @@ function initHands() {
 			name_cap: "2ct sapphire bracelet",
 			variable: "2ctbraceletsapphire",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1464,6 +1527,9 @@ function initHands() {
 			name_cap: "5ct sapphire bracelet",
 			variable: "5ctbraceletsapphire",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1503,6 +1569,9 @@ function initHands() {
 			name_cap: "10ct sapphire bracelet",
 			variable: "10ctbraceletsapphire",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1542,6 +1611,9 @@ function initHands() {
 			name_cap: "20ct sapphire bracelet",
 			variable: "20ctbraceletsapphire",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1581,6 +1653,9 @@ function initHands() {
 			name_cap: "2ct aquamarine bracelet",
 			variable: "2ctbraceletaquamarine",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1620,6 +1695,9 @@ function initHands() {
 			name_cap: "5ct aquamarine bracelet",
 			variable: "5ctbraceletaquamarine",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1659,6 +1737,9 @@ function initHands() {
 			name_cap: "10ct aquamarine bracelet",
 			variable: "10ctbraceletaquamarine",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1698,6 +1779,9 @@ function initHands() {
 			name_cap: "20ct aquamarine bracelet",
 			variable: "20ctbraceletaquamarine",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1737,6 +1821,9 @@ function initHands() {
 			name_cap: "2ct tanzanite bracelet",
 			variable: "2ctbracelettanzanite",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1776,6 +1863,9 @@ function initHands() {
 			name_cap: "5ct tanzanite bracelet",
 			variable: "5ctbracelettanzanite",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1815,6 +1905,9 @@ function initHands() {
 			name_cap: "10ct tanzanite bracelet",
 			variable: "10ctbracelettanzanite",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1854,6 +1947,9 @@ function initHands() {
 			name_cap: "20ct tanzanite bracelet",
 			variable: "20ctbracelettanzanite",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1893,6 +1989,9 @@ function initHands() {
 			name_cap: "2ct topaz bracelet",
 			variable: "2ctbracelettopaz",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1932,6 +2031,9 @@ function initHands() {
 			name_cap: "5ct topaz bracelet",
 			variable: "5ctbracelettopaz",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -1971,6 +2073,9 @@ function initHands() {
 			name_cap: "10ct topaz bracelet",
 			variable: "10ctbracelettopaz",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2010,6 +2115,9 @@ function initHands() {
 			name_cap: "20ct topaz bracelet",
 			variable: "20ctbracelettopaz",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2049,6 +2157,9 @@ function initHands() {
 			name_cap: "2ct amethyst bracelet",
 			variable: "2ctbraceletamethyst",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2088,6 +2199,9 @@ function initHands() {
 			name_cap: "5ct amethyst bracelet",
 			variable: "5ctbraceletamethyst",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2127,6 +2241,9 @@ function initHands() {
 			name_cap: "10ct amethyst bracelet",
 			variable: "10ctbraceletamethyst",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2166,6 +2283,9 @@ function initHands() {
 			name_cap: "20ct amethyst bracelet",
 			variable: "20ctbraceletamethyst",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2205,6 +2325,9 @@ function initHands() {
 			name_cap: "2ct spinel bracelet",
 			variable: "2ctbraceletspinel",
 			shopGroup: "2bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2244,6 +2367,9 @@ function initHands() {
 			name_cap: "5ct spinel bracelet",
 			variable: "5ctbraceletspinel",
 			shopGroup: "5bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2283,6 +2409,9 @@ function initHands() {
 			name_cap: "10ct spinel bracelet",
 			variable: "10ctbraceletspinel",
 			shopGroup: "10bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
@@ -2322,6 +2451,9 @@ function initHands() {
 			name_cap: "20ct spinel bracelet",
 			variable: "20ctbraceletspinel",
 			shopGroup: "20bracelet",
+			combat: {
+				reference: "naked",
+			},
 			state: 0,
 			state_base: 0,
 			integrity: 200,
