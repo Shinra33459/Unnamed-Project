@@ -4083,14 +4083,14 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
 				return `img/clothes/rings/${setupItem.variable}/left${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				return options.show_clothes && worn.index > 0 && setupItem.leftImage === 1 && options.arm_left !== "none";
 			},
 			zfn(options) {
@@ -4103,7 +4103,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
@@ -4111,7 +4111,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				return options.show_clothes && worn.index > 0 && setupItem.leftImage === 1 && options.arm_left !== "none";
 			},
 			zfn(options) {
@@ -4124,7 +4124,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
@@ -4132,7 +4132,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				return options.show_clothes && worn.index > 0 && setupItem.leftImage === 1 && setupItem.accessory === 1 && options.arm_left !== "none";
 			},
 			zfn(options) {
@@ -4145,7 +4145,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				if (!setupItem.variable) return "";
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
@@ -4171,7 +4171,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
@@ -4179,7 +4179,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				return options.show_clothes
 					&& worn.index > 0
 					&& setupItem.leftImage === 1
@@ -4203,7 +4203,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
@@ -4212,7 +4212,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				return options.show_clothes
 					&& worn.index > 0
 					&& setupItem.leftImage === 1
@@ -4230,7 +4230,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
@@ -4239,7 +4239,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				return options.show_clothes && worn.index > 0 && setupItem.rightImage === 1 && options.arm_right !== "none";
 			},
 			zfn(options) {
@@ -4253,7 +4253,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
@@ -4262,7 +4262,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				return options.show_clothes && worn.index > 0 && setupItem.rightImage === 1 && setupItem.accessory === 1 && options.arm_right !== "none";
 			},
 			zfn(options) {
@@ -4275,7 +4275,7 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
@@ -4284,7 +4284,7 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
-				const setupItem = worn.setup;
+				const setupItem = redirectRemovedRingStep(worn.setup);
 				return options.show_clothes
 					&& worn.index > 0
 					&& setupItem.rightImage === 1
@@ -6340,4 +6340,28 @@ function makeupAdjustment(options) {
 	const [min, max] = limit;
 	const ratio = options.skin_tone / 100;
 	options.makeup_adjustment = min + (max - min) * ratio;
+}
+
+function redirectRemovedRingStep(setupItem) {
+	const redirects = {
+		"-015": "-01",
+		"-02": "-01",
+		"-03": "-025",
+		"-2-5": "-2",
+		"-4": "-3",
+		"-7": "-5",
+		"-8": "-5",
+		"-15": "-10",
+		"-25": "-20",
+	};
+
+	for (const [removedSuffix, newSuffix] of Object.entries(redirects)) {
+		if (setupItem.variable.endsWith(removedSuffix)) {
+			setupItem.variable =
+				setupItem.variable.slice(0, -removedSuffix.length) + newSuffix;
+			break;
+		}
+	}
+
+	return setupItem;
 }
