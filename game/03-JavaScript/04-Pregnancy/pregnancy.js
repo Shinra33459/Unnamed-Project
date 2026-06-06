@@ -405,7 +405,7 @@ function endPlayerPregnancy(birthLocation, location) {
 	}
 
 	// Poppy post-birth cleanup: clear reveal/test flags after the PC gives birth to Poppy's baby.
-	if (f0.father === "Poppy") {
+	if (pregnancy.fetus[0].father === "Poppy") {
 		delete C.npc.Poppy.pregnancy.pcKnowledge;
 		delete C.npc.Poppy.pregnancy.test;
 		delete C.npc.Poppy.pregnancy.ultraSound;
