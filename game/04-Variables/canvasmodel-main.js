@@ -1263,9 +1263,9 @@ Renderer.CanvasModels.main = {
 				switch (options.tummy_parasite) {
 					case "urchin":
 						/* Swap to img/body/tummyurchingray for new sprites, make sure to include colour changes to the code */
-						return 'img/body/urchin-tummy.png';
+						return 'img/body/parasites/urchin-tummy.png';
 					case "slime":
-						return 'img/body/slime-tummy.png';
+						return 'img/body/parasites/slime-tummy.png';
 					default:
 						return "";
 				}
@@ -1783,7 +1783,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				return `img/body/${options.clit_parasite}.png`;
+				return `img/body/parasites/${options.clit_parasite}.png`;
 			},
 			showfn(options) {
 				return options.crotch_visible && !!options.clit_parasite && !options.chastity && !options.belly_hides_under_lower
