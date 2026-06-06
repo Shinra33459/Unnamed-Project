@@ -940,7 +940,7 @@ Renderer.CanvasModels.main = {
 				options[`${slot}_fitted_left_move_src`] = isFormfitting ? "img/clothes/masks/formfitting-left-move.png" : null;
 			});
 		} else if (soft) {
-			const upperCheck = !(options.worn.lower.setup.outfitSecondary && options.worn.lower.setup.outfitSecondary[1] === options.worn.upper.setup.name) && !options.worn.lower.setup.type.includes("covered") && !options.high_waist_suspenders && !options.belly_mask_clip_src;
+			const upperCheck = !(options.worn.lower.setup.outfitSecondary && options.worn.lower.setup.outfitSecondary[1] === options.worn.upper.setup.name) && !options.worn.lower.setup.type.includes("overalls") && !options.high_waist_suspenders && !options.belly_mask_clip_src;
 			const underUpperCheck = !(options.worn.under_lower.setup.outfitSecondary && options.worn.under_lower.setup.outfitSecondary[1] === options.worn.under_upper.setup.name) && !options.belly_mask_clip_src;
 			["upper", "under_upper"].forEach(slot => {
 				options[`${slot}_fitted_right_move_src`] = "img/clothes/masks/soft-right-move.png";
@@ -1227,7 +1227,7 @@ Renderer.CanvasModels.main = {
 			filters: ["tan"],
 			animation: "idle",
 			zfn(options) {
-				return (options.arm_left === "cover") ? ZIndices.left_cover_arm : options.zarms;
+				return (options.arm_left === "cover") ? ZIndices.left_cover_arm : ZIndices.armsidle;
 			},
 			showfn(options) {
 				return options.arm_left !== "none";
@@ -2867,7 +2867,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return options.show_face
 					&& !!options.drip_mouth
-					&& !options.worn.face.setup.type.includesAny("mask", "covered");
+					&& !options.worn.face.setup.type.includesAny("mask", "face_covering");
 			},
 			dxfn(options) {
 				return options.facestyle === "small-eyes" ? 2 : 0;
@@ -3415,7 +3415,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3468,7 +3468,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3482,7 +3482,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3496,7 +3496,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3510,7 +3510,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3532,7 +3532,7 @@ Renderer.CanvasModels.main = {
 				if (setup.zIndex) return ZIndices[setup.zIndex];
 				if (options.worn.lower.setup.name.includes("ballgown") || options.worn.lower.setup.name.includes("pinafore"))
 					return ZIndices.upper_top;
-				if (options.worn.lower.setup.type.includes("covered")) return ZIndices.lower_cover;
+				if (options.worn.lower.setup.type.includes("overalls")) return ZIndices.lower_cover;
 				return ZIndices.lower;
 			},
 			masksrcfn(options) {
@@ -4430,9 +4430,10 @@ Renderer.CanvasModels.main = {
 				return `img/clothes/handheld/${options.worn.handheld.setup.variable}/left-${options.arm_left}${pattern}.png`;
 			},
 			showfn(options) {
-				if (options.worn.handheld.index <= 0 || !options.show_clothes || options.hide_all || options.arm_left === "none" || (options.prop && options.prop.armPosition !== "handsfree")) return false;
+				if (options.worn.handheld.index <= 0 || !options.show_clothes || options.hide_all || options.arm_left === "none" || (options.prop && options.prop.armPosition !== "handsfree"))
+				return false;
 
-				const hasLeftDetail = !!options.worn.handheld.pattern && options.worn.handheld.setup.pattern_layer === "tertiary";
+				const hasLeftDetail = options.worn.handheld.setup.leftImage === 1 && !!options.worn.handheld.pattern && options.worn.handheld.setup.pattern_layer === "tertiary";
 
 				if (options.arm_left === "cover") return hasLeftDetail && options.worn.handheld.setup.coverImage;
 				return hasLeftDetail;
@@ -4472,8 +4473,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const dmg = options.worn.head.setup.accessory_integrity_img ? options.worn.upper.integrity : options.worn.head.integrity;
 				const pattern = options.worn.head.pattern && !["tertiary", "secondary"].includes(options.worn.head.setup.pattern_layer) ? "-" + options.worn.head.pattern?.replace(/ /g,"-") : '';
+				const isAltPosition = !options.alt_override && options.worn.head.setup.altposition !== undefined
+					&& options.worn.head.alt === "alt"
+					&& !options.worn.head.setup.altdisabled.includes("full");
+				const end = isAltPosition ? '-alt' : '';
 
-				return `img/clothes/head/${options.worn.head.setup.variable}/${dmg}${pattern}.png`;
+				return `img/clothes/head/${options.worn.head.setup.variable}/${dmg}${pattern}${end}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -4631,6 +4636,8 @@ Renderer.CanvasModels.main = {
 				return options.high_waist_suspenders ? "img/clothes/neck/suspenders/mask.png" : null;
 			},
 			zfn(options) {
+				const setup = options.worn.neck.setup;
+				if (setup.zIndex) return ZIndices[setup.zIndex];
 				return options.hood_mask ? ZIndices.collar : ZIndices.neck;
 			},
 		}),
@@ -4654,6 +4661,8 @@ Renderer.CanvasModels.main = {
 					&& !options.hideLeash;
 			},
 			zfn(options) {
+				const setup = options.worn.neck.setup;
+				if (setup.zIndex) return ZIndices[setup.zIndex];
 				const check = options.worn.head.setup.mask_img === 1
 					&& !(options.hood_down
 						&& options.worn.head.setup.hood
@@ -5401,6 +5410,7 @@ function filterFnArm(state, slot, options) {
 		case "":
 		case "primary":
 			return altFilterSwap ? [`worn_${slot}_acc`] : [`worn_${slot}`];
+		case 1:
 		case "secondary":
 			return altFilterSwap ? [`worn_${slot}`] : [`worn_${slot}_acc`];
 		case "pattern":

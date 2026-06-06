@@ -125,7 +125,7 @@ function initFoodstuff() {
 			index: 5,
 			name: "lotus",
 			singular: "lotus",
-			plural: "lotus",
+			plural: "lotuses",
 			icon: "lotus.png",
 			category: "flower",
 			kitchen_item_type_icon: "recipe-flower.png",
@@ -207,7 +207,8 @@ function initFoodstuff() {
 			kitchen_item_type_icon: "recipe-fruit.png",
 			prop_folder: "tending",
 			shop: {
-				sell_price: 45,
+				sell_price: 300,
+				available_in: ["supermarket"],
 			},
 		},
 		banana: {
@@ -220,7 +221,8 @@ function initFoodstuff() {
 			kitchen_item_type_icon: "recipe-fruit.png",
 			prop_folder: "tending",
 			shop: {
-				sell_price: 70,
+				sell_price: 100,
+				available_in: ["supermarket"],
 			},
 		},
 		lemon: {
@@ -1972,7 +1974,7 @@ function initFoodstuff() {
 				tags: ["vegetarian", "sweet"],
 			},
 		},
-		soufflé: {
+		souffle: {
 			index: 95,
 			name: "soufflé",
 			singular: "soufflé",
@@ -2166,7 +2168,7 @@ function initFoodstuff() {
 				tags: ["vegetarian", "sweet"],
 			},
 		},
-		crème_brulee: {
+		creme_brulee: {
 			index: 103,
 			name: "crème brûlée",
 			singular: "pot of crème brûlée",
@@ -3169,8 +3171,27 @@ function initFoodstuff() {
 				tags: ["vegetarian", "sweet"],
 			},
 		},
-		green_manure: {
+		sunflower: {
 			index: 149,
+			name: "sunflower",
+			singular: "sunflower",
+			plural: "sunflowers",
+			icon: "sunflower.png",
+			category: "flower",
+			kitchen_item_type_icon: "recipe-flower.png",
+			prop_folder: "tending",
+			tending: {
+				yield_multiplier: 1,
+				has_seeds: true,
+				seasons: ["summer"],
+				tags: [],
+			},
+			shop: {
+				sell_price: 300,
+			},
+		},
+		green_manure: {
+			index: 150,
 			name: "green_manure",
 			singular: "green manure",
 			plural: "green manure",
@@ -3191,7 +3212,7 @@ function initFoodstuff() {
 			},
 		},
 		ghost_orchid: {
-			index: 150,
+			index: 151,
 			name: "ghost_orchid",
 			singular: "ghost orchid (epipogium aphyllum)",
 			plural: "ghost orchids (epipogium aphyllum)",
@@ -3204,7 +3225,7 @@ function initFoodstuff() {
 			},
 		},
 		hen_of_the_woods: {
-			index: 151,
+			index: 152,
 			name: "hen_of_the_woods",
 			singular: "hen of the woods",
 			plural: "hen of the woods",
@@ -3217,7 +3238,7 @@ function initFoodstuff() {
 			},
 		},
 		red_helleborine: {
-			index: 152,
+			index: 153,
 			name: "red_helleborine",
 			singular: "red helleborine (Cephalanthera rubra)",
 			plural: "red helleborines (Cephalanthera rubra)",
@@ -3230,7 +3251,7 @@ function initFoodstuff() {
 			},
 		},
 		lady_orchid: {
-			index: 153,
+			index: 154,
 			name: "lady_orchid",
 			singular: "lady orchid",
 			plural: "lady orchids",
@@ -3243,7 +3264,7 @@ function initFoodstuff() {
 			},
 		},
 		fly_agaric: {
-			index: 154,
+			index: 155,
 			name: "fly_agaric",
 			singular: "fly agaric",
 			plural: "fly agarics",
@@ -3256,7 +3277,7 @@ function initFoodstuff() {
 			},
 		},
 		spiked_rampion: {
-			index: 155,
+			index: 156,
 			name: "spiked_rampion",
 			singular: "spiked rampion",
 			plural: "spiked rampions",
@@ -3269,7 +3290,7 @@ function initFoodstuff() {
 			},
 		},
 		cloudberry: {
-			index: 156,
+			index: 157,
 			name: "cloudberry",
 			singular: "cloudberry",
 			plural: "cloudberries",
@@ -3283,7 +3304,7 @@ function initFoodstuff() {
 			},
 		},
 		scottish_bog_myrtle: {
-			index: 157,
+			index: 158,
 			name: "scottish_bog_myrtle",
 			singular: "scottish bog myrtle",
 			plural: "scottish bog myrtles",
@@ -3296,7 +3317,7 @@ function initFoodstuff() {
 			},
 		},
 		bog_orchid: {
-			index: 158,
+			index: 159,
 			name: "bog_orchid",
 			singular: "bog orchid",
 			plural: "bog orchids",
@@ -3309,7 +3330,7 @@ function initFoodstuff() {
 			},
 		},
 		marsh_saxifrage: {
-			index: 159,
+			index: 160,
 			name: "marsh_saxifrage",
 			singular: "marsh saxifrage",
 			plural: "marsh saxifrages",

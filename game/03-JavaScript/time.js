@@ -209,7 +209,7 @@ const Time = (() => {
 			}
 		} catch (ex) {
 			// we only need to catch it so "finally" can run, so, right back at you
-			throw new Error(ex);
+			throw ex;
 		} finally {
 			// finally, set the time where it should be
 			setDate(new DateTime(prevDate.timeStamp + seconds));
@@ -1704,6 +1704,10 @@ function dailyNPCEffects() {
 			C.npc.Sydney.chastity.anus = "";
 			V.sydneyAnalShieldComment = true;
 		}
+		if (V.sydney.heartbroken) V.sydney.heartbroken--;
+		else if (V.sydney.heartbroken === 0) {
+			delete V.sydney.heartbroken;
+		}
 	}
 
 	// Great Hawk
@@ -1761,8 +1765,10 @@ function dailyNPCEffects() {
 		if (C.npc.Gwylan.state === "active" && !isGwylanAbsent() && !V.daily.gwylan.noTalk && !V.daily.gwylan.locked) {
 			if (V.gwylan.request.event && V.gwylan.request.timer) {
 				if (V.hypnosis_traits.devotion >= 1 && V.gwylan.request.timer < Time.date.timeStamp) {
-					V.gwylan.request.timer = V.gwylan.request.missed ? new DateTime(Time.date).addDays(4).timeStamp : new DateTime(Time.date).addDays(2).timeStamp;
-					const traumaDevotion = 15 * V.hypnosis_traits.devotion;
+					V.gwylan.request.timer = V.gwylan.request.missed
+						? new DateTime(Time.date).addDays(4).timeStamp
+						: new DateTime(Time.date).addDays(2).timeStamp;
+					const traumaDevotion = 10 * V.hypnosis_traits.devotion;
 					const hallucinogenDevotion = 40 * V.hypnosis_traits.devotion;
 					statChange.trauma(traumaDevotion);
 					statChange.hallucinogen(hallucinogenDevotion);
@@ -2016,7 +2022,7 @@ function dailyTransformationEffects() {
 	}
 
 	if (V.auriga_scar && V.location !== "asylum") {
-		const scarTrauma = V.auriga_scar * 50;
+		const scarTrauma = V.auriga_scar * 25;
 		const scarAwareness = V.auriga_scar;
 		const scarPurity = V.auriga_scar * -5;
 		if (V.trauma <= (V.traumamax / 5) * 3) statChange.trauma(scarTrauma);
