@@ -3609,7 +3609,7 @@ function setupFeatBoosts(force) {
 			name: "Random Clothing",
 			required: [],
 			cost: 1,
-			max: 20,
+			max: 2,
 			missing: "",
 		},
 		specialClothing: {

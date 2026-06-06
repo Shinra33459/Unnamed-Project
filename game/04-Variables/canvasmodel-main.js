@@ -1263,9 +1263,15 @@ Renderer.CanvasModels.main = {
 				switch (options.tummy_parasite) {
 					case "urchin":
 						/* Swap to img/body/tummyurchingray for new sprites, make sure to include colour changes to the code */
+<<<<<<< HEAD
 						return 'img/body/parasite/urchin-tummy.png';
 					case "slime":
 						return 'img/body/parasite/slime-tummy.png';
+=======
+						return 'img/body/parasites/urchin-tummy.png';
+					case "slime":
+						return 'img/body/parasites/slime-tummy.png';
+>>>>>>> sei-did-a-funni
 					default:
 						return "";
 				}
@@ -1783,7 +1789,11 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
+<<<<<<< HEAD
 				return `img/body/parasite/${options.clit_parasite}.png`;
+=======
+				return `img/body/parasites/${options.clit_parasite}.png`;
+>>>>>>> sei-did-a-funni
 			},
 			showfn(options) {
 				return options.crotch_visible && !!options.clit_parasite && !options.chastity && !options.belly_hides_under_lower
@@ -4084,9 +4094,10 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/left${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/left${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4104,10 +4115,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4125,10 +4137,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4146,11 +4159,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				if (!setupItem.variable) return "";
+				const ringVariable = redirectRemovedRingStep(setupItem);
+				if (!ringVariable) return "";
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn() {
 				return false;
@@ -4172,10 +4186,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4204,11 +4219,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4231,11 +4247,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4254,11 +4271,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4276,11 +4294,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${setupItem.variable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -6208,23 +6227,25 @@ function genlayer_halo(side, tf, overrideOptions) {
 }
 
 function genlayer_tail(tf, hair, overrideOptions) {
-	return genlayer_tf(tf, "tail", "tail", Object.assign({
-		z: ZIndices.tailPenisCover,
-		filters: hair ? ["hair"] : [],
+    // Each TF whose tail can become a demon-chimera tail -> its chimera key.
+    // TFs not listed here (waterdragon, bird, ...) never use demon cover/flaunt.
+    const demonChimera = { cow: "demoncow", cat: "demoncat", wolf: "demonwolf", fox: "demonfox" };
+    // True for the demon tail, or this TF's own demon-chimera tail when it's active.
+    const isDemonTail = () => tf === "demon" || (!!demonChimera[tf] && isChimeraEnabled(demonChimera[tf], "tail"));
 
-		srcfn(options) {
-			const demon = tf === "demon" || isChimeraEnabled("demoncow", "tail") || isChimeraEnabled("demoncat", "tail") || isChimeraEnabled("demonwolf", "tail") || isChimeraEnabled("demonfox", "tail");
-			const tail = demon ? `tail-${options.demon_tail_state}` : "tail-idle";
-
-			return `img/transformations/${tf}/${tail}/${options[`${tf}_tail_type`]}.png`;
-		},
-		zfn(options) {
-			const cover = ["cover", "flaunt"].includes(options.demon_tail_state) && (tf === "demon" || isChimeraEnabled("demoncow", "tail") || isChimeraEnabled("demoncat", "tail") || isChimeraEnabled("demonwolf", "tail") || isChimeraEnabled("demonfox", "tail"));
-			if (cover) return ZIndices.tailPenisCover;
-			if (options[`${tf}_tail_layer`] === "back") return ZIndices.tail;
-			return ZIndices.back_lower;
-		},
-	}, overrideOptions))
+    return genlayer_tf(tf, "tail", "tail", Object.assign({
+        z: ZIndices.tailPenisCover,
+        filters: hair ? ["hair"] : [],
+        srcfn(options) {
+            const tail = isDemonTail() ? `tail-${options.demon_tail_state}` : "tail-idle";
+            return `img/transformations/${tf}/${tail}/${options[`${tf}_tail_type`]}.png`;
+        },
+        zfn(options) {
+            if (isDemonTail() && ["cover", "flaunt"].includes(options.demon_tail_state)) return ZIndices.tailPenisCover;
+            if (options[`${tf}_tail_layer`] === "back") return ZIndices.tail;
+            return ZIndices.back_lower;
+        },
+    }, overrideOptions))
 }
 
 function genlayer_cheeks(tf, overrideOptions) {
@@ -6340,4 +6361,37 @@ function makeupAdjustment(options) {
 	const [min, max] = limit;
 	const ratio = options.skin_tone / 100;
 	options.makeup_adjustment = min + (max - min) * ratio;
+}
+
+function redirectRemovedRingStep(setupItem) {
+	const redirects = {
+		"-015": "-01",
+		"-02": "-01",
+		"-03": "-025",
+		"-2-5": "-2",
+		"-4": "-3",
+		"-7": "-5",
+		"-8": "-5",
+		"-15": "-10",
+		"-25": "-20",
+	};
+
+	// Guard against a missing setup/variable; hand back whatever the variable
+	// is (possibly undefined) so callers can decide what to do.
+	if (!setupItem || typeof setupItem.variable !== "string") {
+		return setupItem && setupItem.variable;
+	}
+
+	let variable = setupItem.variable;
+	for (const [removedSuffix, newSuffix] of Object.entries(redirects)) {
+		if (variable.endsWith(removedSuffix)) {
+			variable = variable.slice(0, -removedSuffix.length) + newSuffix;
+			break;
+		}
+	}
+
+	// Return the (possibly redirected) variable STRING. Do NOT mutate setupItem:
+	// worn.setup is often a direct reference to setup.clothes.rings[index], so
+	// writing to it would corrupt the shared clothing definition for the session.
+	return variable;
 }
