@@ -1249,7 +1249,7 @@ window.clothesIndex = clothesIndex;
  * @param {number} disableModifiers How much of an effect that modifiers will have on the player's current skill. Higher values means a lower effect. Stops at 2.
  * @returns Returns the current value of the requested skill, accounting for potential modifiers.
  */
-function currentSkillValue(skill, disableModifiers = 0) {
+function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 	let result = V[skill];
 	if (disableStatNerf === 0) {
 		result *= V.options.statNerf / 100;
