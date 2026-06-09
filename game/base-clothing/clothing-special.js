@@ -1033,7 +1033,7 @@ function specialClothesUnlockText(toUnlock, group) {
 	}
 	return output;
 }
-
+window.specialClothesUnlockText = specialClothesUnlockText;
 /**
  * @param {Function?} filterfn array filter
  */
