@@ -1488,7 +1488,7 @@ Renderer.CanvasModels.main = {
 			},
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/${options.facevariant}/lipstick-${options.mouth}.png`;return `img/face/${options.facestyle}/lipstick-${options.mouth}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/lipstick-${options.mouth}.png`;
 			},
 			showfn(options) {
 				return options.show_face && !!options.lipstick_colour;
@@ -2628,6 +2628,9 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return options.show_tf && isPartEnabled(options.kitsune_cheeks_type) && !options.hideAll;
 			},
+			filters: ["hair"],
+			z: ZIndices.lower,
+			animation: "idle"
 		},
 		"kitsune_misc": {
 			z: ZIndices.old_over_upper,
@@ -2713,7 +2716,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				const writing = setup.bodywriting[options.writing_breasts];
+				let writing = setup.bodywriting[options.writing_breasts];
 				if ((!writing.sprites || writing.sprites.length == 0)
 					&& writing.type === "text" && options.breast_size >= 2) {
 					return `img/bodywriting/text/default/breasts-${options.breast_size}.png`;
@@ -2754,8 +2757,8 @@ Renderer.CanvasModels.main = {
 				return 0;
 			},
 			zfn(options) {
-				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.01 : ZIndices.under_upper_arm_right - 0.2;
-				return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.01 : options.zarms + 0.01;
+				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.right_cover_arm + 0.5 : ZIndices.under_upper_arm_right - 0.2;
+				return ["cover", "hold"].includes(options.arm_right) ? ZIndices.right_cover_arm + 0.5 : options.zarms + 0.01;
 			},
 		},
 		"writing_pubic": {
@@ -3823,8 +3826,8 @@ Renderer.CanvasModels.main = {
 		"under_upper_back": genlayer_clothing_back_img('under_upper'),
 		"under_upper_rightarm": genlayer_clothing_arm("right", "under_upper", {
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.under_upper_arms_cover;
-				return V.rightArmPosition == "above" ? ZIndices.under_upper_arm_right : ZIndices.under_upper_arms;
+				return options.arm_right === "cover" || options.arm_right === "hold" ?
+					options.zupperright - 1 : (V.rightArmPosition == "above" ? ZIndices.under_upper_arm_right : ZIndices.under_upper_arms);
 			},
 		}),
 		"under_upper_leftarm": genlayer_clothing_arm("left", "under_upper", {
@@ -4013,8 +4016,7 @@ Renderer.CanvasModels.main = {
 					&& options.arm_right !== "none";
 			},
 			zfn(options) {
-				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
-				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
+				return ["cover", "hold"].includes(options.arm_right) ? options.zupperright - 0.5 : ((V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2);
 			},
 		},
 		"hands_right_acc": {
@@ -4029,7 +4031,7 @@ Renderer.CanvasModels.main = {
 					&& options.worn.hands.alt === "alt";
 				const alt = isAltPosition ? '_alt' : '';
 				
-				return`img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}${pattern}${alt}-acc.png`;
+				return `img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}${pattern}${alt}-acc.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -4084,10 +4086,9 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/left${alt}.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/left${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4105,11 +4106,10 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4127,11 +4127,10 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4149,12 +4148,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
-				if (!ringVariable) return "";
+				if (!setupItem.variable) return "";
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
 			},
 			showfn() {
 				return false;
@@ -4176,11 +4174,10 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4209,12 +4206,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4237,12 +4233,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4261,12 +4256,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4284,12 +4278,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4638,7 +4631,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.neck.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				return options.hood_mask ? ZIndices.collar : ZIndices.neck;
+				return options.hood_mask ? ZIndices.collar : options.zneck;
 			},
 		}),
 		"neck_acc": genlayer_clothing_accessory('neck', {
@@ -4667,7 +4660,7 @@ Renderer.CanvasModels.main = {
 					&& !(options.hood_down
 						&& options.worn.head.setup.hood
 						&& options.worn.head.setup.outfitSecondary !== undefined);
-				return check ? ZIndices.collar : ZIndices.neck;
+				return check ? ZIndices.collar : options.zneck;
 			},
 			dyfn(options) {
 				return options.high_waist_suspenders ? -8 : 0;
@@ -5681,7 +5674,7 @@ function genlayer_clothing_breasts_detail(slot, overrideOptions) {
 
 			const pattern = options.worn[slot].pattern ? options.worn[slot].pattern?.replace(/ /g,"-") : '';
 			const folder = normaliseFileName(slot);
-			return`img/clothes/${folder}/${options.worn[slot].setup.variable}/${breastSize}-${pattern}.png`;
+			return `img/clothes/${folder}/${options.worn[slot].setup.variable}/${breastSize}-${pattern}.png`;
 		},
 	}, overrideOptions));
 }
