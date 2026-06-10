@@ -197,6 +197,7 @@ const Time = (() => {
 						}
 						if (prevDate.weekDay === 7 && currentDate.weekDay === 1) weekPassed();
 						dayPassed(days);
+						if (prevDate.month === currentDate.month - 1) monthPassed();
 						if (prevDate.yearDay < Time.startDate.yearDay && currentDate.yearDay >= Time.startDate.yearDay) yearPassed();
 					}
 					// pass the remaining hours
@@ -504,8 +505,12 @@ function monthPassed() {
 	} else if (V.hbsc.account.level >= 1) {
 		V.hbsc.account.deposit *= 1 + 0.025 / 12;
 	}
-
-	if (V.monthly !== undefined) V.monthly.clearProperties();
+	
+	V.volunteer = "none";
+	V.soupKitchen = "none";
+	V.foodDropoff = "none";
+	
+	V.monthly.clearProperties();
 }
 
 function weekPassed() {
