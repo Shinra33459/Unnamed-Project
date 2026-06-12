@@ -1263,15 +1263,9 @@ Renderer.CanvasModels.main = {
 				switch (options.tummy_parasite) {
 					case "urchin":
 						/* Swap to img/body/tummyurchingray for new sprites, make sure to include colour changes to the code */
-<<<<<<< HEAD
-						return 'img/body/parasite/urchin-tummy.png';
-					case "slime":
-						return 'img/body/parasite/slime-tummy.png';
-=======
 						return 'img/body/parasites/urchin-tummy.png';
 					case "slime":
 						return 'img/body/parasites/slime-tummy.png';
->>>>>>> sei-did-a-funni
 					default:
 						return "";
 				}
@@ -1787,13 +1781,8 @@ Renderer.CanvasModels.main = {
 		},
 		"clit_parasite": {
 			animation: "idle",
-
 			srcfn(options) {
-<<<<<<< HEAD
 				return `img/body/parasite/${options.clit_parasite}.png`;
-=======
-				return `img/body/parasites/${options.clit_parasite}.png`;
->>>>>>> sei-did-a-funni
 			},
 			showfn(options) {
 				return options.crotch_visible && !!options.clit_parasite && !options.chastity && !options.belly_hides_under_lower
