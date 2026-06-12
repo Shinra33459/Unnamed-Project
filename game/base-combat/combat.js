@@ -40,39 +40,22 @@ DefineMacroS("namedNpcEjaculation", namedNpcEjaculation);
 function namedNpcComments(npcName) {
     delete T.noNameComment;
 
-    if (T.silent) return "";
-
-    if (typeof npcName !== "string" || !npcName.trim()) {
-        T.noNameComment = true;
-        return "";
-    }
-
-    const name = npcName.trim();
-
-    const namedNpcSpeechMap = {
-        "Ivory Wraith": "speechWraith",
-    };
-
-    const candidates = [];
-
-    if (namedNpcSpeechMap[name]) {
-        candidates.push(namedNpcSpeechMap[name]);
-    }
-
-    const lowerName = name.toLowerCase();
-
-    candidates.push(`speech-${lowerName}`);
-    candidates.push(`speech-${lowerName.replace(/\s+/g, "")}`);
-    candidates.push(`speech-${lowerName.replace(/\s+/g, "-")}`);
-
-    const macroName = candidates.find(macro => Macro.has(macro));
-
-    if (macroName) {
-        return `<<${macroName}>>`;
-    }
-
-    T.noNameComment = true;
-    return "";
+	// Do not return any comment while the current pass is silent.
+	if (T.silent) return "";
+	
+	// Named NPCs with registered handlers resolve to their matching speech macro.
+	if (npcName && Macro.has(`speech-${npcName.toLowerCase()}`) && setup.NPCNameList.includes(npcName)) {
+		return `<<speech-${npcName.toLowerCase()}>>`;
+	}
+	// Special case for Ivory Wraith, which uses a dedicated speech macro name.
+	else if (npcName === "Ivory Wraith") {
+		return "<<speechWraith>>";
+	}
+	// No valid named NPC comment was found for this pass.
+	else {
+		T.noNameComment = true;
+		return "";
+	}
 }
 
 DefineMacroS("namedNpcComments", namedNpcComments);
