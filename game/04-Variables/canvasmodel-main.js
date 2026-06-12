@@ -4660,7 +4660,7 @@ Renderer.CanvasModels.main = {
 					&& !(options.hood_down
 						&& options.worn.head.setup.hood
 						&& options.worn.head.setup.outfitSecondary !== undefined);
-				return check ? ZIndices.collar : options.zneck;
+				return check ? ZIndices.collar : ZIndices.neck;
 			},
 			dyfn(options) {
 				return options.high_waist_suspenders ? -8 : 0;
