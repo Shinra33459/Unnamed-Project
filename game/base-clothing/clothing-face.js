@@ -237,7 +237,7 @@ function initFace() {
 			gender: "n",
 			warmth: 1,
 			cost: 3000,
-			description: "Keeps your mouth shut and eyes covered_face.",
+			description: "Keeps your mouth shut and eyes covered.",
 			shop: [""],
 			accessory: 0,
 			accessory_colour: 0,
