@@ -1877,15 +1877,11 @@ Renderer.CanvasModels.main = {
 			},
 		}),
 		"cow_ear_left": genlayer_ears("cow", false, {
-			z: ZIndices.horns,
 			masksrcfn() {
 				return "img/face/masks/left.png"
 			}
 		}),
 		"cow_ear_right": genlayer_ears("cow", false, {
-			zfn() {
-				return ZIndices.ears + 0.5;
-			},
 			masksrcfn() {
 				return "img/face/masks/right.png"
 			}
@@ -2061,11 +2057,7 @@ Renderer.CanvasModels.main = {
 			},
 			filters: ["hair"],
 			zfn(options) {
-				if (V.tfearsposition === "back") {
-					return ZIndices.backhair;
-				} else {
-					return ZIndices.brow;
-				}
+				return tfEarsZ();
 			},
 			animation: "idle"
 		},
@@ -2463,11 +2455,7 @@ Renderer.CanvasModels.main = {
 				return options.head_mask_src;
 			},
 			zfn(options) {
-				if (V.tfearsposition === "back") {
-					return ZIndices.backhair;
-				} else {
-					return ZIndices.brow;
-				}
+				return tfEarsZ();
 			},
 			animation: "idle"
 		},
@@ -2599,11 +2587,7 @@ Renderer.CanvasModels.main = {
 			filters: ["hair"],
 			// z: ZIndices.backhair,
 			zfn(options) {
-				if (V.tfearsposition === "back") {
-					return ZIndices.backhair;
-				} else {
-					return ZIndices.brow;
-				}
+				return tfEarsZ();
 			},
 			animation: "idle",
 
@@ -6274,6 +6258,23 @@ function genlayer_tf_pits(tf, folder, overrideOptions) {
 	}, overrideOptions))
 }
 
+/**
+ * Resolve the z-index for a TF ear layer from the player's $tfearsposition setting.
+ * Ordered back -> front. Add new positions here and expose them in the mirror UI.
+ *   "behind" - behind ALL hair (back + front/fringe)
+ *   "back"   - behind the front hair/fringe, in front of the back hair
+ *   "front"  - in front of ALL hair
+ * @returns {number}
+ */
+function tfEarsZ() {
+	switch (V.tfearsposition) {
+		case "behind": return ZIndices.backhair - 0.1;
+		case "front":  return ZIndices.brow;
+		case "back":
+		default:       return ZIndices.basehead;
+	}
+}
+
 function genlayer_ears(tf, hair, overrideOptions) {
 	return genlayer_tf(tf, "ears", "ears", Object.assign({
 		filters: hair ? ["hair"] : [],
@@ -6286,11 +6287,7 @@ function genlayer_ears(tf, hair, overrideOptions) {
 			if (options.hideHeadAcc) {
 				return ZIndices.over_head;
 			}
-			if (V.tfearsposition === "back") {
-				return ZIndices.basehead;
-			} else {
-				return ZIndices.brow;
-			}
+			return tfEarsZ();
 		}
 	}, overrideOptions))
 }
