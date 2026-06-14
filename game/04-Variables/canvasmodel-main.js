@@ -4631,7 +4631,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.neck.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				return options.hood_mask ? ZIndices.collar : options.zneck;
+				return options.hood_mask ? ZIndices.collar : ZIndices.neck;
 			},
 		}),
 		"neck_acc": genlayer_clothing_accessory('neck', {

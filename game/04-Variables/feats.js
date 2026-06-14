@@ -2820,7 +2820,7 @@ async function featsMergePre() {
 		} else if ((T.saveDataImportCount >= 10 && Browser.isMobile.any()) || T.saveDataImportCount >= 25) {
 			$("#featsBeginText").html(`${T.saveDataImportCount} saves detected, this might take some time on a slower device.`);
 		} else {
-			$("#featsBeginText").html(`Only ${T.saveDataImportCount} saves detected, this shouldn't take too long.`);
+			$("#featsBeginText").html(`Only ${T.saveDataImportCount} ${pluralise(T.saveDataImportCount, "save")} detected, this shouldn't take too long.`);
 		}
 		$("#featsBeginLoadingText").addClass("hidden");
 		$("#featsBeginButton").removeClass("hidden");
@@ -3106,16 +3106,14 @@ function earnHourlyFeats() {
 	if (loveCount >= 3) earnFeat("Love Triangles");
 	if (loveCount >= 4) earnFeat("Love Trapezoids");
 
-	if (V.cat >= 6 || (V.transformationParts.cat.tail !== "hidden" && V.transformationParts.cat.tail !== "disabled")) earnFeat("Neko");
-	if (V.wolfgirl >= 6 || (V.transformationParts.wolf.tail !== "hidden" && V.transformationParts.wolf.tail !== "disabled")) earnFeat("Wolf");
-	if (V.angel >= 6 || (V.transformationParts.angel.wings !== "hidden" && V.transformationParts.angel.wings !== "disabled")) earnFeat("Angel");
-	if (V.fallenangel >= 2 || (V.transformationParts.fallenAngel.wings !== "hidden" && V.transformationParts.fallenAngel.wings !== "disabled")) earnFeat("Fallen Angel");
-	if (V.demon >= 6 || (V.transformationParts.demon.wings !== "hidden" && V.transformationParts.demon.wings !== "disabled")) earnFeat("Demon");
-	if (V.cow >= 6 || (V.transformationParts.cow.tail !== "hidden" && V.transformationParts.cow.tail !== "disabled")) earnFeat("Cattle");
-	if (V.waterdragon >= 7 || (V.transformationParts.waterdragon && V.transformationParts.waterdragon.tail !== "hidden" && V.transformationParts.waterdragon.tail !== "disabled")) earnFeat("Lost Legacy");
-	if (V.bear >= 6|| (V.transformationParts.bear.tail !== "hidden" && V.transformationParts.bear.tail !== "disabled")) earnFeat("Bear");
-	if (V.harpy >= 6 || (V.transformationParts.bird.wings !== "hidden" && V.transformationParts.bird.wings !== "disabled")) earnFeat("Harpy");
-	if (V.fox >= 6|| (V.transformationParts.fox.tail !== "hidden" && V.transformationParts.fox.tail !== "disabled")) earnFeat("Fox");
+	if (V.cat >= 6) earnFeat("Neko");
+	if (V.wolfgirl >= 6) earnFeat("Wolf");
+	if (V.angel >= 6) earnFeat("Angel");
+	if (V.fallenangel >= 2) earnFeat("Fallen Angel");
+	if (V.demon >= 6) earnFeat("Demon");
+	if (V.cow >= 6) earnFeat("Cattle");
+	if (V.harpy >= 6) earnFeat("Harpy");
+	if (V.fox >= 6) earnFeat("Fox");
 
 	const specialTraits =
 		(V.orgasmtrait >= 1 ? 1 : 0) +
@@ -3514,57 +3512,56 @@ function setupFeatBoosts(force) {
 			required: ["Thief", "Agent 47"],
 			cost: 5,
 			maxMultiplier: 5,
-			missing: "Unlock this boost by obtaining the 'Thief' feat"
-
+			missing: "Unlock this boost by obtaining the 'Thief' feat",
 		},
 		dancing: {
 			name: "Dancing Grade",
 			required: ["May I have this Dance?", "Can't Touch This"],
 			cost: 5,
 			maxMultiplier: 5,
-			missing: "Unlock this boost by obtaining the 'May I have this Dance?' feat"
+			missing: "Unlock this boost by obtaining the 'May I have this Dance?' feat",
 		},
 		swimming: {
 			name: "Swimming Grade",
 			required: ["Aquanaut", "Atlantean"],
 			cost: 5,
 			maxMultiplier: 5,
-			missing: "Unlock this boost by obtaining the 'Aquanaut' feat"
+			missing: "Unlock this boost by obtaining the 'Aquanaut' feat",
 		},
 		athletics: {
 			name: "Athletics Grade",
 			required: ["Swift", "Ludicrous Speed"],
 			cost: 5,
 			maxMultiplier: 5,
-			missing: "Unlock this boost by obtaining the 'Swift' feat"
+			missing: "Unlock this boost by obtaining the 'Swift' feat",
 		},
 		tending: {
 			name: "Tending Grade",
 			required: ["Green Fingered", "Grass Toucher"],
 			cost: 5,
 			maxMultiplier: 5,
-			missing: "Unlock this boost by obtaining the 'Green Fingered' feat"
+			missing: "Unlock this boost by obtaining the 'Green Fingered' feat",
 		},
 		greenThumb: {
 			name: "Green Thumb Trait",
 			required: ["Green Fingered", "Grass Toucher"],
 			cost: 40,
 			max: 1,
-			missing: "Unlock this boost by obtaining the 'Green Fingered' feat"
+			missing: "Unlock this boost by obtaining the 'Green Fingered' feat",
 		},
 		housekeeping: {
 			name: "Housekeeping Grade",
 			required: ["Majordomo", "Demolisher of Filth"],
 			cost: 5,
 			maxMultiplier: 5,
-			missing: "Unlock this boost by obtaining the 'Majordomo' feat"
+			missing: "Unlock this boost by obtaining the 'Majordomo' feat",
 		},
 		seduction: {
 			name: "Seduction Grade",
 			required: ["Seductress", "Irresistible"],
 			cost: 5,
 			maxMultiplier: 5,
-			missing: "Unlock this boost by obtaining the 'Seductress' feat"
+			missing: "Unlock this boost by obtaining the 'Seductress' feat",
 		},
 		purity: {
 			name: "Daily Purity Boost",
@@ -3605,7 +3602,7 @@ function setupFeatBoosts(force) {
 			name: "Random Clothing",
 			required: [],
 			cost: 1,
-			max: 2,
+			max: 20,
 			missing: "",
 		},
 		specialClothing: {
@@ -3951,45 +3948,78 @@ function applyFeatBoosts() {
 
 	// random clothes
 	if (upgrades.randomClothing) {
-		const clothingItems = upgrades.randomClothing * 3;
+		let clothingItems = upgrades.randomClothing * 3;
+		let retries = clothingItems * 3; // cap retries to prevent infinite loop
+		const options = {
+			head: [],
+			face: [],
+			neck: [],
+			hands: [],
+			handheld: [],
+			earrings: [],
+			rings: [],
+			upper: [],
+			lower: [],
+			under_upper: [],
+			under_lower: [],
+			legs: [],
+			feet: [],
+		};
 		const equip = clone(setup.clothingLayer.body);
-		const options = {};
-		equip.forEach(slot => {
-			options[slot] = setup.clothes[slot].filter(c => {
-				if (V.featsBoosts.clothingGender === "Female" && c.gender === "m") return false;
-				if (V.featsBoosts.clothingGender === "Male" && c.gender === "f") return false;
-				if (c.outfitSecondary) return false;
-				if (!c.shop.includes("clothing")) return false;
-				return true;
-			});
-		});
+		for (const slot of equip) {
+			if (!options[slot]) options[slot] = []; // handle slots not in hardcoded list
+			if (!Array.isArray(setup.clothes?.[slot])) continue;
+			for (let index = 0; index < setup.clothes[slot].length; index++) {
+				const clothing = setup.clothes[slot][index];
+				if (!clothing) continue;
+				if ((clothing.gender === "f" && V.featsBoosts.clothingGender === "Male") || (clothing.gender === "m" && V.featsBoosts.clothingGender === "Female")) {
+					continue;
+				}
+				if (clothing.outfitSecondary !== undefined) continue;
+				if (!clothing.shop?.includes("clothing")) continue;
+				options[slot].push(index);
+			}
+		}
 
 		// make normal clothes and underwear more likely to appear than accessories
-		equip.push("upper", "upper", "upper", "upper", "lower", "lower", "lower", "lower", "under_upper", "under_upper", "under_lower", "under_lower");
+		const weightedSlots = [
+			"head", "face", "neck",
+			"upper", "upper", "upper", "upper", "upper",
+			"lower", "lower", "lower", "lower", "lower",
+			"under_upper", "under_upper", "under_upper",
+			"under_lower", "under_lower", "under_lower",
+			"hands", "legs", "feet",
+		];
 		for (let i = 0; i < clothingItems; ++i) {
-			// pick random item from weighted slot list
-			const item = clone(options[equip.random()].random());
-			// make sure there's enough space in our wardrobe
-			if (item.outfitPrimary && Object.keys(item.outfitPrimary).length + 1 > clothingItems - i) {
-				--i;
+			const slot = weightedSlots.random();
+			const index = options[slot]?.random();
+			if (index == null) continue;
+
+			const item = clone(setup.clothes[slot][index]);
+			if (!item) {
+				console.warn("[Feats] Random clothing: failed to clone item.", { slot, index });
 				continue;
 			}
+
 			// pick the color if available
 			if (item.colour_options?.length) {
 				const colors = clone(item.colour_options);
-				if (colors.includes("custom") && V.featsBoosts.clothingCustomColors) {
-					item.colour = "custom";
-					item.colourCustom = customColour(random(0, 360), random(0, 20) / 10, random(5, 40) / 10, random(0, 20) / 10, random(0, 100) / 100);
-				} else {
+				if (V.featsBoosts.clothingCustomColors !== true) {
 					colors.delete("custom");
-					item.colour = colors.random();
+				}
+				item.colour = colors.random();
+				if (V.featsBoosts.clothingCustomColors === true && item.colour === "custom") {
+					item.colourCustom = customColour(random(0, 360), random(0, 20) / 10, random(5, 40) / 10, random(0, 20) / 10, random(0, 100) / 100);
 				}
 			}
 			// pick accessory color
 			if (item.accessory_colour_options?.length) {
 				const colors = clone(item.accessory_colour_options);
-				if (colors.includes("custom") && V.featsBoosts.clothingCustomColors) {
-					item.accessory_colour = "custom";
+				if (V.featsBoosts.clothingCustomColors !== true) {
+					colors.delete("custom");
+				}
+				item.accessory_colour = colors.random();
+				if (V.featsBoosts.clothingCustomColors === true && item.accessory_colour === "custom") {
 					item.accessory_colourCustom = customColour(
 						random(0, 360),
 						random(0, 20) / 10,
@@ -3997,41 +4027,57 @@ function applyFeatBoosts() {
 						random(0, 20) / 10,
 						random(0, 100) / 100
 					);
-				} else {
-					colors.delete("custom");
-					item.accessory_colour = colors.random();
 				}
 			}
 			// pick the pattern
-			if (item.pattern_options?.length) item.pattern = clone(item.pattern_options.random());
-
-			// oh no. the outfits.
-			if (item.outfitPrimary) {
-				Object.keys(item.outfitPrimary).forEach(slot => {
-					const item2 = clone(setup.clothes[slot].find(c => c.name === item.outfitPrimary[slot]));
-					// transfer colors and patterns
-					["colour", "colourCustom", "accessory_colour", "accessory_colourCustom", "pattern"].forEach(p => {
-						if (item[p]) item2[p] = clone(item[p]);
-					});
-					V.wardrobe[item2.slot].push(item2);
-				});
+			if (item.pattern_options?.length) {
+				item.pattern = clone(item.pattern_options.random());
 			}
-			V.wardrobe[item.slot].push(item);
+
+			const itemsToAdd = {};
+			itemsToAdd[slot] = clone(item);
+			if (item.outfitPrimary !== undefined) {
+				for (const [outfitSlot, outfitName] of Object.entries(item.outfitPrimary)) {
+					const base = setup.clothes?.[outfitSlot]?.find(c => c.name === outfitName);
+					if (!base) {
+						console.warn("[Feats] Random clothing: missing outfitPrimary piece.", { slot, outfitSlot, outfitName, itemName: item.name });
+						delete itemsToAdd[slot];
+						break;
+					}
+					itemsToAdd[outfitSlot] = clone(base);
+					itemsToAdd[outfitSlot].colour = clone(itemsToAdd[slot].colour);
+					itemsToAdd[outfitSlot].accessory_colour = clone(itemsToAdd[slot].accessory_colour);
+					if (itemsToAdd[outfitSlot].pattern_options?.length) {
+						itemsToAdd[outfitSlot].pattern = clone(itemsToAdd[slot].pattern);
+					}
+					if (V.featsBoosts.clothingCustomColors === true && item.colour === "custom") {
+						itemsToAdd[outfitSlot].colourCustom = clone(itemsToAdd[slot].colourCustom);
+					}
+					if (V.featsBoosts.clothingCustomColors === true && item.accessory_colour === "custom") {
+						itemsToAdd[outfitSlot].accessory_colourCustom = clone(itemsToAdd[slot].accessory_colourCustom);
+					}
+				}
+			}
+
+			if (itemsToAdd[slot] !== undefined && Array.isArray(V.wardrobe?.[slot]) && V.wardrobe[slot].length < V.wardrobe.space) {
+				for (const [wardrobeSlot, wardrobeItem] of Object.entries(itemsToAdd)) {
+					V.wardrobe[wardrobeSlot].push(wardrobeItem);
+				}
+			} else if (retries-- > 0) {
+				clothingItems += 1;
+			}
 		}
 	}
 
 	// special clothes
 	if (upgrades.specialClothing) {
-		const unlocked = V.feats.allSaves.specialClothes;
 		specialClothesUpdate();
-		const level = details.specialClothing.purchased;
-		// old notes on the level:
-		/* Level 1 upgrade - unlock previously unlocked special clothing sets by selection. */
-		/* Level 2 upgrade - unlock all special clothes unlocked in any other save. */
-		/* Level 3 upgrade - everything is remembered. */
-		unlocked.forEach(c => {
-			if (V.featsBoosts.specialClothesSets[c] === true) specialClothesUnlock("set", c, Math.clamp(level, 2, 3));
-		});
+		// cost is 0, so gain() would be Infinity. In DoLX this causes the level 1/2/3 switch
+		// to always fall through to the else (level 1) path, which iterates specialClothesSets directly.
+		// We replicate that behavior here to match DoLP.
+		for (const [setName, selected] of Object.entries(V.featsBoosts.specialClothesSets)) {
+			if (selected === true) specialClothesUnlock("set", setName, 2);
+		}
 	}
 
 	// tattoos
