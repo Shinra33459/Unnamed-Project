@@ -148,8 +148,12 @@ function sexToysInventoryOnCarryClick(index, category) {
 	const handheld = Boolean(setup.props && setup.props[propKey]);
 
 	// if player has reached maximum item carried, stop the function
+	if (!toy.carried && countCarriedSextoys() >= maxCarried) return;
+
+	toy.carried = !toy.carried;
+
 	if (toy.carried && handheld) {
-		// Show the toy in hand only when actually picking it up (previously this fired before the carry-limit check and also on put-back).
+		// Picking it up: show the toy in hand.
 		Wikifier.wikifyEval(`<<wearProp '${toy.name}' '${colour.replace("-", " ")}'>><<updatesidebarimg>>`);
 	} else if (!toy.carried) {
 		// Putting it back: stop displaying it if it's the prop currently in hand.
@@ -157,9 +161,6 @@ function sexToysInventoryOnCarryClick(index, category) {
 		if (handheld && T.prop && stripKey(T.prop.name) === stripKey(propKey)) delete T.prop;
 		Wikifier.wikifyEval("<<updatesidebarimg>>");
 	}
-
-	toy.carried = !toy.carried;
-	if (!toy.carried) Wikifier.wikifyEval("<<updatesidebarimg>>");
 
 	// if player chose "Put back in the cupboard", also unwear the item
 	if (!toy.carried && toy.worn) {
