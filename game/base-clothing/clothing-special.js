@@ -801,6 +801,7 @@ function initSpecialClothes() {
 		antiques: {
 			text: "antique jewellery",
 			hint: "find them all",
+			shop: [],
 			featCost: 50,
 			requirements: () => (V.museumAntiques.museumCount === V.museumAntiques.maxCount),
 			feat: true,
