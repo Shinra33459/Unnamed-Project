@@ -3181,6 +3181,8 @@ function initFoodstuff() {
 			kitchen_item_type_icon: "recipe-flower.png",
 			prop_folder: "tending",
 			tending: {
+				planting_bed: "earth",
+				growth_days: 7,
 				yield_multiplier: 1,
 				has_seeds: true,
 				seasons: ["summer"],
