@@ -8,6 +8,8 @@ function statusCheck(name) {
 	}
 
 	const nnpc = C.npc[name];
+	if (name === "Poppy") T.poppyStatus = [];
+	if (!nnpc) return nnpc;
 
 	/* To remove later:
 	 * When debugging, this temp var not being set will cause an error in scenes that use legacy temporary variables.

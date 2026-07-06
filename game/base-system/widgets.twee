@@ -3886,8 +3886,11 @@
 	<<set _i to $NPCNameList.indexOf("Poppy")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
 	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
-	<<set $NPCName[_i].patience = Math.clamp($NPCName[_i].patience, 0, 100)>>
-	<<set $NPCName[_i].anger = Math.clamp($NPCName[_i].anger, 0, 100)>>
+	<<set $NPCName[_i].patience = Math.clamp(Number($NPCName[_i].patience) || 0, -100, 100)>>
+	<<if (Number($NPCName[_i].patience) || 0) is 0 and (Number($NPCName[_i].anger) || 0) gt 0>>
+		<<set $NPCName[_i].patience = Math.clamp(0 - (Number($NPCName[_i].anger) || 0), -100, 100)>>
+	<</if>>
+	<<set $NPCName[_i].anger = Math.max(0, 0 - (Number($NPCName[_i].patience) || 0))>>
 
 	<<set _fastlovennpcclamps to ["Darryl", "River", "Mason", "Sam", "Wren", "Charlie"]>>
 	<<for _name range _fastlovennpcclamps>>
