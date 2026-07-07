@@ -654,7 +654,9 @@ function dayPassed() {
 	Weather.FogGeneration.generateFogKeypoints(V.weatherObj.keypointsArr);
 
 	if (V.statFreeze) return;
-	if (window.poppyDailyPatienceDecay) {window.poppyDailyPatienceDecay(1);}
+	if (window.poppyDailyPatienceDecay) {
+		window.poppyDailyPatienceDecay(1);
+	}
 	// Lose one day of tanning
 	Skin.applyTanningLoss(1440);
 
@@ -1102,8 +1104,7 @@ function dayPassed() {
 	if (V.robinPillory && V.robinPillory.danger !== undefined && (V.robindebtevent <= 1 || !V.baileySold)) V.robinPillory.active = true;
 
 	// Save today's HC ending in local storage
-	if (V.daily.winterStoryTime && V.hcEndings)
-		localStorage.setItem("hopelessCycle", localStorage.getItem("hopelessCycle").split(",").concatUnique(V.hcEndings));
+	if (V.daily.winterStoryTime && V.hcEndings) localStorage.setItem("hopelessCycle", localStorage.getItem("hopelessCycle").split(",").concatUnique(V.hcEndings));
 
 	V.daily.clearProperties();
 
@@ -1115,41 +1116,10 @@ function dayPassed() {
 	/* Set flag to determine Kylar's position at lunch */
 	V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
 
-	if (V.bike >= 1) {
-		if (V.bikeSecurityGear === 5) {
-			T.bikeTheftProtection = 999;
-		} else if (V.bikeSecurityGear === 4) {
-			T.bikeTheftProtection = 750;
-		} else if (V.bikeSecurityGear === 3) {
-			T.bikeTheftProtection = 500;
-		} else if (V.bikeSecurityGear === 2) {
-			T.bikeTheftProtection = 300;
-		} else if (V.bikeSecurityGear === 1) {
-			T.bikeTheftProtection = 100;
-		} else {
-			T.bikeTheftProtection = 0;
-		}
-		if (V.bikeLocationCategory === "lake") {
-			T.bikeTheftChance = 500 - T.bikeTheftProtection;
-		} else if (V.bikeLocationCategory === "left" || V.bikeLocationCategory === "mid" || V.bikeLocationCategory === "right") {
-			if (V.baileydefeatedchain >= 1) {
-				T.bikeTheftChanceBonus = 250;
-			} else {
-				T.bikeTheftChanceBonus = 0;
-			}
-			T.bikeTheftChance = 750 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
-		} else if (V.bikeLocationCategory === "farm") {
-			if (V.farm?.aggro) T.bikeTheftChanceBonus = 900 * (V.farm.aggro / 100);
-			T.bikeTheftChance = 100 - T.bikeTheftProtection + T.bikeTheftChanceBonus;
-		} else {
-			T.bikeTheftChance = 0;
-		}
-		if (random(1, 1000) <= T.bikeTheftChance && V.bikeSecurity === 1) {
-			V.bikeStolen = 1;
-			V.bike = 0;
-			if (V.bikeSecurityGear >= 1) V.bikeSecurityGearStolen = 1;
-			V.bikeSecurityGear = 0;
-		}
+	// DoLP Bike Theft Cooldown
+	if (V.bicycle.stolenCoolDown > 0) {
+		V.bicycle.stolenCoolDown--;
+		if (V.bicycle.stolenCoolDown <= 0) delete V.bicycle.stolenCoolDown;
 	}
 
 	if (random(1, 8) === 1) V.daily.robin.orphanageKitchen = true;
@@ -1236,9 +1206,7 @@ function hourPassed(hours) {
 			["orphanage", "garden", "bath"].includes(getRobinLocation()) &&
 			Weather.precipitation !== "rain" &&
 			(Weather.precipitation !== "snow" || V.alex_greenhouse >= 3) &&
-			// eslint-disable-next-line no-undef
 			orphanagePlotsPlanted() &&
-			// eslint-disable-next-line no-undef
 			!orphanagePlotsWatered()
 		) {
 			V.plots.garden?.forEach(plot => (plot.water = 1));
@@ -1246,7 +1214,10 @@ function hourPassed(hours) {
 		}
 		// robin pillory
 		if (V.robinPillory && V.robinPillory.danger !== undefined && V.robinPillory.active) wikifier("robinPilloryHour");
-
+		// DOLP Bike Theft
+		if (V.bicycle.theftEnabled === true) {
+			bikeSecurity();
+		}
 		// time checks
 		if (Time.hour === 6) dawnCheck();
 		if (Time.hour === 12) noonCheck();

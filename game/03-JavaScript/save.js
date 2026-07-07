@@ -927,7 +927,7 @@ function settingsObjects(type) {
 					max: 3,
 					decimals: 0,
 					displayName: "Body size:",
-					textMap: {"-1": "Miniscule", 0: "Tiny", 1: "Small", 2: "Normal", 2.5: "Tall", 3: "Large", 4: "Giant" },
+					textMap: { "-1": "Miniscule", 0: "Tiny", 1: "Small", 2: "Normal", 2.5: "Tall", 3: "Large", 4: "Giant" },
 					randomize: "characterAppearance",
 				},
 				facevariant: {
@@ -1120,8 +1120,10 @@ function settingsObjects(type) {
 				dpctext: { min: 0, max: 1, decimals: 0, displayName: "Meme Text Expanded:" },
 				realisticTransparency: { min: 0, max: 1, decimals: 0, displayName: "Realistic Clothing Transparency:" },
 				wardrobeMult: { min: 0, max: 20, decimals: 0, displayName: "Wardrobe Capacity Multiplier:" },
-				bikePersistentLocation: { min: 0, max: 1, decimals: 0, displayName: "Persistent Bike Location:" },
-				bikeSecurity: { min: 0, max: 1, decimals: 0, displayName: "Bike Security:" },
+				bicycle: {
+					persistentLocation: { bool: true, displayName: "Persistent Bike Location:" },
+					theftEnabled: { bool: true, displayName: "Bike Security:" },
+				},
 				combatTimePass: { min: 0, max: 1000000, decimals: 0, displayName: "Combat Time Pass:" },
 				depositMax: { min: 0, max: 12, decimals: 0, displayName: "Deposit Max Weeks:" },
 				depositWithdrawalFee: { min: 0, max: 100, decimals: 0, displayName: "Deposit Withdrawal Fee (%):" },
