@@ -2159,7 +2159,7 @@ function initNeck() {
 	*/
 	setup.moddedClothes.neck = [
 		{
-			index: 41,
+			index: 1,
 			slot: "neck",
 			name: "Whitney's collar",
 			name_cap: "Whitney's collar",
@@ -2194,7 +2194,7 @@ function initNeck() {
 			accIcon: 0,
 		},
 		{
-			index: 42,
+			index: 2,
 			slot: "neck",
 			name: "Whitney's collar with leash",
 			name_cap: "Whitney's collar with leash",
@@ -2231,7 +2231,7 @@ function initNeck() {
 			accIcon: 0,
 		},
 		{
-			index: 43,
+			index: 3,
 			slot: "neck",
 			name: "harness",
 			name_cap: "Harness",
@@ -2287,7 +2287,7 @@ function initNeck() {
 			accIcon: 0,
 		},		
 		{
-			index: 44,
+			index: 4,
 			slot: "neck",
 			name: "harness with leash",
 			name_cap: "Harness with leash",
@@ -2338,7 +2338,7 @@ function initNeck() {
 			accIcon: 0,
 		},
 		{
-			index: 18,
+			index: 5,
 			slot: "neck",
 			name: "metal chain",
 			name_cap: "Metal chain",
@@ -2413,7 +2413,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 7,
 			slot: "neck",
 			name: "heart jewel choker",
 			name_cap: "Heart jewel choker",
@@ -2455,7 +2455,7 @@ function initNeck() {
 		
 
 		{
-			index: 11,
+			index: 8,
 			slot: "neck",
 			name: "small solitaire faux jewel pendant",
 			name_cap: "Small solitaire faux jewel pendant",
@@ -2494,7 +2494,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 9,
 			slot: "neck",
 			name: "Classic solitaire faux jewel pendant",
 			name_cap: "Classic solitaire faux jewel pendant",
@@ -2533,7 +2533,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 10,
 			slot: "neck",
 			name: "multistone faux jewel pendant",
 			name_cap: "Multistone faux jewel pendant",
@@ -2611,7 +2611,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 12,
 			slot: "neck",
 			name: "rivière faux jewel necklace",
 			name_cap: "Rivière faux jewel necklace",
@@ -2689,7 +2689,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 13,
 			slot: "neck",
 			name: "full faux jewel strand",
 			name_cap: "Full faux jewel strand",
@@ -2727,7 +2727,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 14,
 			slot: "neck",
 			name: "heart diamond choker",
 			name_cap: "Heart diamond choker",
@@ -2767,7 +2767,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 15,
 			slot: "neck",
 			name: "small solitaire diamond pendant",
 			name_cap: "Small solitaire diamond pendant",
@@ -2807,7 +2807,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 16,
 			slot: "neck",
 			name: "Classic solitaire diamond pendant",
 			name_cap: "Classic solitaire diamond pendant",
@@ -2847,7 +2847,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 17,
 			slot: "neck",
 			name: "multistone diamond pendant",
 			name_cap: "Multistone diamond pendant",
@@ -2887,7 +2887,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 18,
 			slot: "neck",
 			name: "fringe diamond necklace",
 			name_cap: "Fringe diamond necklace",
@@ -2927,7 +2927,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 19,
 			slot: "neck",
 			name: "rivière diamond necklace",
 			name_cap: "Rivière diamond necklace",
@@ -2967,7 +2967,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 20,
 			slot: "neck",
 			name: "bib diamond strand",
 			name_cap: "Big diamond strand",
@@ -3007,7 +3007,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 21,
 			slot: "neck",
 			name: "full diamond strand",
 			name_cap: "Full diamond strand",
@@ -3046,7 +3046,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 22,
 			slot: "neck",
 			name: "heart ruby choker",
 			name_cap: "Heart ruby choker",
@@ -3086,7 +3086,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 23,
 			slot: "neck",
 			name: "Classic solitaire ruby pendant",
 			name_cap: "Classic solitaire ruby pendant",
@@ -3126,7 +3126,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 24,
 			slot: "neck",
 			name: "multistone ruby pendant",
 			name_cap: "Multistone ruby pendant",
@@ -3166,7 +3166,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 25,
 			slot: "neck",
 			name: "fringe ruby necklace",
 			name_cap: "Fringe ruby necklace",
@@ -3206,7 +3206,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 26,
 			slot: "neck",
 			name: "rivière ruby necklace",
 			name_cap: "Rivière ruby necklace",
@@ -3246,7 +3246,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 27,
 			slot: "neck",
 			name: "bib ruby strand",
 			name_cap: "Big ruby strand",
@@ -3286,7 +3286,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 28,
 			slot: "neck",
 			name: "full ruby strand",
 			name_cap: "Full ruby strand",
@@ -3325,7 +3325,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 29,
 			slot: "neck",
 			name: "heart emerald choker",
 			name_cap: "Heart emerald choker",
@@ -3364,7 +3364,7 @@ function initNeck() {
 			accIcon: "jewellery/emerald-heart-choker-acc.png",
 		},
 		{
-			index: 11,
+			index: 30,
 			slot: "neck",
 			name: "Classic solitaire emerald pendant",
 			name_cap: "Classic solitaire emerald pendant",
@@ -3404,7 +3404,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 31,
 			slot: "neck",
 			name: "multistone emerald pendant",
 			name_cap: "Multistone emerald pendant",
@@ -3444,7 +3444,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 32,
 			slot: "neck",
 			name: "fringe emerald necklace",
 			name_cap: "Fringe emerald necklace",
@@ -3484,7 +3484,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 33,
 			slot: "neck",
 			name: "rivière emerald necklace",
 			name_cap: "Rivière emerald necklace",
@@ -3524,7 +3524,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 34,
 			slot: "neck",
 			name: "bib emerald strand",
 			name_cap: "Big emerald strand",
@@ -3564,7 +3564,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 35,
 			slot: "neck",
 			name: "full emerald strand",
 			name_cap: "Full emerald strand",
@@ -3603,7 +3603,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 36,
 			slot: "neck",
 			name: "heart sapphire choker",
 			name_cap: "Heart sapphire choker",
@@ -3643,7 +3643,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 37,
 			slot: "neck",
 			name: "Classic solitaire sapphire pendant",
 			name_cap: "Classic solitaire sapphire pendant",
@@ -3683,7 +3683,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 38,
 			slot: "neck",
 			name: "multistone sapphire pendant",
 			name_cap: "Multistone sapphire pendant",
@@ -3723,7 +3723,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 39,
 			slot: "neck",
 			name: "fringe sapphire necklace",
 			name_cap: "Fringe sapphire necklace",
@@ -3763,7 +3763,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 40,
 			slot: "neck",
 			name: "rivière sapphire necklace",
 			name_cap: "Rivière sapphire necklace",
@@ -3803,7 +3803,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 41,
 			slot: "neck",
 			name: "bib sapphire strand",
 			name_cap: "Big sapphire strand",
@@ -3843,7 +3843,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 42,
 			slot: "neck",
 			name: "full sapphire strand",
 			name_cap: "Full sapphire strand",
@@ -3882,7 +3882,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 43,
 			slot: "neck",
 			name: "heart aquamarine choker",
 			name_cap: "Heart aquamarine choker",
@@ -3921,7 +3921,7 @@ function initNeck() {
 			accIcon: "jewellery/aquamarine-heart-choker-acc.png",
 		},
 		{
-			index: 11,
+			index: 44,
 			slot: "neck",
 			name: "Classic solitaire aquamarine pendant",
 			name_cap: "Classic solitaire aquamarine pendant",
@@ -3961,7 +3961,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 45,
 			slot: "neck",
 			name: "multistone aquamarine pendant",
 			name_cap: "Multistone aquamarine pendant",
@@ -4001,7 +4001,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 46,
 			slot: "neck",
 			name: "fringe aquamarine necklace",
 			name_cap: "Fringe aquamarine necklace",
@@ -4041,7 +4041,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 47,
 			slot: "neck",
 			name: "rivière aquamarine necklace",
 			name_cap: "Rivière aquamarine necklace",
@@ -4081,7 +4081,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 48,
 			slot: "neck",
 			name: "bib aquamarine strand",
 			name_cap: "Big aquamarine strand",
@@ -4121,7 +4121,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 49,
 			slot: "neck",
 			name: "full aquamarine strand",
 			name_cap: "Full aquamarine strand",
@@ -4160,7 +4160,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 50,
 			slot: "neck",
 			name: "heart tanzanite choker",
 			name_cap: "Heart tanzanite choker",
@@ -4199,7 +4199,7 @@ function initNeck() {
 			accIcon: "jewellery/tanzanite-heart-choker-acc.png",
 		},
 		{
-			index: 11,
+			index: 51,
 			slot: "neck",
 			name: "Classic solitaire tanzanite pendant",
 			name_cap: "Classic solitaire tanzanite pendant",
@@ -4239,7 +4239,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 52,
 			slot: "neck",
 			name: "multistone tanzanite pendant",
 			name_cap: "Multistone tanzanite pendant",
@@ -4279,7 +4279,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 53,
 			slot: "neck",
 			name: "fringe tanzanite necklace",
 			name_cap: "Fringe tanzanite necklace",
@@ -4319,7 +4319,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 54,
 			slot: "neck",
 			name: "rivière tanzanite necklace",
 			name_cap: "Rivière tanzanite necklace",
@@ -4359,7 +4359,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 55,
 			slot: "neck",
 			name: "bib tanzanite strand",
 			name_cap: "Big tanzanite strand",
@@ -4399,7 +4399,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 56,
 			slot: "neck",
 			name: "full tanzanite strand",
 			name_cap: "Full tanzanite strand",
@@ -4438,7 +4438,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 57,
 			slot: "neck",
 			name: "heart topaz choker",
 			name_cap: "Heart topaz choker",
@@ -4478,7 +4478,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 58,
 			slot: "neck",
 			name: "small solitaire topaz pendant",
 			name_cap: "Small solitaire topaz pendant",
@@ -4518,7 +4518,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 59,
 			slot: "neck",
 			name: "Classic solitaire topaz pendant",
 			name_cap: "Classic solitaire topaz pendant",
@@ -4558,7 +4558,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 60,
 			slot: "neck",
 			name: "multistone topaz pendant",
 			name_cap: "Multistone topaz pendant",
@@ -4598,7 +4598,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 61,
 			slot: "neck",
 			name: "fringe topaz necklace",
 			name_cap: "Fringe topaz necklace",
@@ -4638,7 +4638,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 62,
 			slot: "neck",
 			name: "rivière topaz necklace",
 			name_cap: "Rivière topaz necklace",
@@ -4678,7 +4678,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 63,
 			slot: "neck",
 			name: "bib topaz strand",
 			name_cap: "Big topaz strand",
@@ -4718,7 +4718,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 64,
 			slot: "neck",
 			name: "full topaz strand",
 			name_cap: "Full topaz strand",
@@ -4757,7 +4757,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 65,
 			slot: "neck",
 			name: "heart amethyst choker",
 			name_cap: "Heart amethyst choker",
@@ -4797,7 +4797,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 66,
 			slot: "neck",
 			name: "small solitaire amethyst pendant",
 			name_cap: "Small solitaire amethyst pendant",
@@ -4837,7 +4837,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 67,
 			slot: "neck",
 			name: "Classic solitaire amethyst pendant",
 			name_cap: "Classic solitaire amethyst pendant",
@@ -4877,7 +4877,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 68,
 			slot: "neck",
 			name: "multistone amethyst pendant",
 			name_cap: "Multistone amethyst pendant",
@@ -4917,7 +4917,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 69,
 			slot: "neck",
 			name: "fringe amethyst necklace",
 			name_cap: "Fringe amethyst necklace",
@@ -4957,7 +4957,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 70,
 			slot: "neck",
 			name: "rivière amethyst necklace",
 			name_cap: "Rivière amethyst necklace",
@@ -4997,7 +4997,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 71,
 			slot: "neck",
 			name: "bib amethyst strand",
 			name_cap: "Big amethyst strand",
@@ -5037,7 +5037,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 72,
 			slot: "neck",
 			name: "full amethyst strand",
 			name_cap: "Full amethyst strand",
@@ -5076,7 +5076,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 11,
+			index: 73,
 			slot: "neck",
 			name: "heart spinel choker",
 			name_cap: "Heart spinel choker",
@@ -5116,7 +5116,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 74,
 			slot: "neck",
 			name: "small solitaire spinel pendant",
 			name_cap: "Small solitaire spinel pendant",
@@ -5156,7 +5156,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 75,
 			slot: "neck",
 			name: "Classic solitaire spinel pendant",
 			name_cap: "Classic solitaire spinel pendant",
@@ -5196,7 +5196,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 76,
 			slot: "neck",
 			name: "multistone spinel pendant",
 			name_cap: "Multistone spinel pendant",
@@ -5236,7 +5236,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 77,
 			slot: "neck",
 			name: "fringe spinel necklace",
 			name_cap: "Fringe spinel necklace",
@@ -5276,7 +5276,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 78,
 			slot: "neck",
 			name: "rivière spinel necklace",
 			name_cap: "Rivière spinel necklace",
@@ -5316,7 +5316,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 79,
 			slot: "neck",
 			name: "bib spinel strand",
 			name_cap: "Big spinel strand",
@@ -5356,7 +5356,7 @@ function initNeck() {
 		},
 
 		{
-			index: 11,
+			index: 80,
 			slot: "neck",
 			name: "full spinel strand",
 			name_cap: "Full spinel strand",
@@ -5395,7 +5395,7 @@ function initNeck() {
 			accIcon: "jewellery/20ct-necklace-acc.png",
 		},
 		{
-			index: 45,
+			index: 81,
 			slot: "neck",
 			name: "antique gold amulet",
 			name_cap: "Antique gold amulet",
@@ -5431,7 +5431,7 @@ function initNeck() {
 			accIcon: 0,
 		},	
 		{
-			index: 46,
+			index: 82,
 			slot: "neck",
 			name: "antique gold necklace",
 			name_cap: "Antique gold necklace",
