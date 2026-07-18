@@ -208,6 +208,7 @@ const Time = (() => {
 				// reset BodyTemperature effects
 				delete T.bodyActivity;
 			}
+			/* eslint-disable no-useless-catch */
 		} catch (ex) {
 			// we only need to catch it so "finally" can run, so, right back at you
 			throw ex;
@@ -329,7 +330,7 @@ const Time = (() => {
 	/**
 	 *
 	 * @param {number} from starting hour
-	 * @param {number} to ending hour, inclusive, so Time.betweenHours(5,5) won't be always false. keep in mind when thinking about opeining hours advertised as 8:00 to 21:00 - they are not actually open at 21:00, it's a lie! at best it's 8:00 to 20:59, so use (8, 20) when you see those
+	 * @param {number} to ending hour, inclusive, so Time.betweenHours(5,5) won't be always false. keep in mind when thinking about opening hours advertised as 8:00 to 21:00 - they are not actually open at 21:00, it's a lie! at best it's 8:00 to 20:59, so use (8, 20) when you see those
 	 * @param {?number} pass minutes to pass before checking
 	 * @returns {boolean} whether current time after passing `pass` minutes will be between specified hours
 	 */
@@ -594,7 +595,7 @@ function weekPassed() {
 	}
 	if (V.syndromewolves === 1) V.wolfcavepatrol = 1;
 	if (V.photo) {
-		if (V.photo.silly === "paid") V.photo.silly = 0;
+		V.photo.job = 0;
 		V.photo.shoot = 0;
 	}
 	if (V.nightmareTimer && V.nightmareTimer > 0) {
@@ -770,7 +771,7 @@ function dayPassed() {
 	if (V.lake_ice_broken >= 1) V.lake_ice_broken--;
 	if (V.lake_ice_broken < 1) delete V.lake_ice_broken;
 	if (V.community_service >= 1) {
-		if (V.community_service_done !== 1 && !["asylum", "prison"].includes(V.location)) {
+		if (V.community_service_done !== 1 && !["asylum", "prison"].includes(V.location) && !V.daily?.asylumPrison) {
 			wikifier("crimeUp", 200, "obstruction");
 			V.effectsmessage = 1;
 			V.community_message = "missed";
@@ -1132,6 +1133,11 @@ function dayPassed() {
 	}
 
 	localStorage.removeItem("gwylanTalk");
+
+	delete V.daily.asylumPrison;
+	if (["asylum", "prison"].includes(V.location)) {
+		V.daily.asylumPrison = 1;
+	}
 }
 
 function hourPassed(hours) {
@@ -1280,7 +1286,8 @@ function minutePassed(minutes) {
 	// Body temperature
 	const temperature = V.outside ? Weather.apparentTemperature : Weather.insideTemperature;
 	if (!V.possessed) Weather.BodyTemperature.update(temperature, minutes);
-	if (V.timeSkip === undefined) V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
+	V.stress += Math.round(Weather.BodyTemperature.stressModifier * minutes);
+	statChange.stressClamp();
 
 	// Snow & ice
 	Weather.setAccumulatedSnow(minutes);
@@ -1318,6 +1325,8 @@ function minutePassed(minutes) {
 	// prevent fatigue from being an issue when passing days (actually 20+ hours) at a time
 	if (minutes < 1200 && V.timeSkip === undefined) statChange.tiredness(minutes / 15);
 	statChange.pain(minutes, -0.5);
+
+	// If passive Trauma decreases ever get implemented, they will need to be handled in a way that prevents the "trauma" widget from automatically updating the PC's trauma traits during combat.
 
 	// Arousal
 	const arousalMultiplier = V.backgroundTraits.includes("lustful") ? 0.2 * (12 - Math.floor(V.purity / 80)) + 1 + (V.purity <= 50 ? 1 : 0) : -10;
@@ -1454,7 +1463,11 @@ function dailyNPCEffects() {
 	if (C.npc.Robin.trauma > 0) wikifier("npcincr", "Robin", "trauma", -1);
 
 	if (V.robindebtevent === 0) V.robinmissing = 0;
-	if (V.robinpaid >= 1) statChange.trauma(-25);
+	if (V.robinpaid >= 1) {
+		// Edge case for when the PC is in combat at midnight.
+		if (V.combat === 1) statChange.trauma(-25, "combat");
+		else statChange.trauma(-25);
+	}
 	if (V.robinromance === 1 && C.npc.Robin.dom >= 40) wikifier("npcincr", "Robin", "lust", 1);
 	if (V.robinPilloryFail) {
 		delete V.robinPilloryFail;
@@ -1512,7 +1525,7 @@ function dailyNPCEffects() {
 		V.averyseen = 0;
 		if (V.averydate && Time.weekDay === 1) {
 			V.averydate = 0;
-			if (V.averydateattended !== 1) V.averydatemissed = 1;
+			if (V.averydateattended !== 1 && !V.avery_injury) V.averydatemissed = 1;
 			V.averydateattended = 0;
 		}
 		delete V.averydatedone;
@@ -1536,7 +1549,7 @@ function dailyNPCEffects() {
 				}
 
 				// We skipped/missed, if the party is finished properly we handle the next guest SOMEWHERE ELSE
-				if (V.avery_mansion.party_state !== "finished") {
+				if (V.avery_mansion.party_state !== "finished" && V.avery_mansion.party_state !== "started") {
 					// If Bailey is the guest we repeat Bailey, otherwise we rotate, skipping Jordan as appropriate
 					const rotation = {
 						Bailey: "Bailey",
@@ -1551,7 +1564,8 @@ function dailyNPCEffects() {
 				}
 
 				// If the state is still "missed" we don't reset the state. We still need to trigger Avery being angry we missed a party
-				if (V.avery_mansion.party_state !== "missed") {
+				// Do not reset the state if the party is still on going
+				if (V.avery_mansion.party_state !== "missed" && V.avery_mansion.party_state !== "started") {
 					V.avery_mansion.party_state = "waiting";
 				}
 			}
@@ -1746,7 +1760,11 @@ function dailyNPCEffects() {
 						: new DateTime(Time.date).addDays(2).timeStamp;
 					const traumaDevotion = 10 * V.hypnosis_traits.devotion;
 					const hallucinogenDevotion = 40 * V.hypnosis_traits.devotion;
-					statChange.trauma(traumaDevotion);
+
+					// Edge case for when the PC is in combat at midnight.
+					if (V.combat === 1) statChange.trauma(traumaDevotion, "combat");
+					else statChange.trauma(traumaDevotion);
+
 					statChange.hallucinogen(hallucinogenDevotion);
 					if (["meetAtShop", "meetAtCafe"].includes(V.gwylan.request.event)) {
 						V.hypnosis_devotion_message = V.gwylan.request.event;
@@ -1799,7 +1817,7 @@ function dailyNPCEffects() {
 }
 
 function dailyPlayerEffects() {
-	if (V.willpowerDecay === 1) {
+	if (V.fallenangel < 4 || V.willpowerDecay === 1) {
 		V.willpower *= 0.99;
 	}
 
@@ -1822,8 +1840,13 @@ function dailyPlayerEffects() {
 	V.hairlength += 3;
 	V.fringelength += 3;
 	calchairlengthstage();
-	statChange.skill("beauty", (70 - (V.trauma / V.traumamax) * 100) * V.beautyMult);
-	if (V.stressBeauty === 1) statChange.skill("beauty", (100 - (V.stress / V.stressmax) * 100) * V.beautyMult);
+	/**
+	 * Each day, the PC's beauty will increase by 100, scaling down to -100 at maximum trauma.
+	 *
+	 * This is equivalent to a 1% increase or decrease.
+	 */
+	statChange.skill("beauty", (100 - (V.trauma / V.traumamax) * 200) * V.beautyMult);
+	if (V.stressBeauty === 1) statChange.skill("beauty", (100 - (V.stress / V.stressmax) * 200) * V.beautyMult);
 	lustfulUpdate();
 
 	if (V.orgasmstat >= 1000 && V.orgasmtrait === 0) {
@@ -1921,7 +1944,10 @@ function dailyPlayerEffects() {
 	*/
 	if (playerBellySize() < 8) {
 		statChange.insecurity("pregnancy", -5);
-		statChange.acceptance("pregnancy", -5);
+		// after third pregnancy, acceptance no longer decays
+		if (playerNormalPregnancyTotal() < 3) {
+			statChange.acceptance("pregnancy", -5);
+		}
 	}
 
 	for (const bodypart of setup.bodyparts) {
@@ -2001,7 +2027,13 @@ function dailyTransformationEffects() {
 		const scarTrauma = V.auriga_scar * 25;
 		const scarAwareness = V.auriga_scar;
 		const scarPurity = V.auriga_scar * -5;
-		if (V.trauma <= (V.traumamax / 5) * 3) statChange.trauma(scarTrauma);
+
+		if (V.trauma <= (V.traumamax / 5) * 3) {
+			// Edge case for when the PC is in combat at midnight.
+			if (V.combat === 1) statChange.trauma(scarTrauma, "combat");
+			else statChange.trauma(scarTrauma);
+		}
+
 		statChange.awareness(scarAwareness);
 		statChange.purity(scarPurity);
 	}
@@ -2260,15 +2292,18 @@ function dailySchoolEffects() {
 			V.englishPlay = "missed";
 		}
 	}
-	if (V.schooltrait >= 8) statChange.trauma(-150);
-	else if (V.schooltrait === 7) statChange.trauma(-125);
-	else if (V.schooltrait === 6) statChange.trauma(-100);
-	else if (V.schooltrait === 5) statChange.trauma(-75);
-	else if (V.schooltrait === 4) statChange.trauma(-50);
-	else if (V.schooltrait === 3) statChange.trauma(-40);
-	else if (V.schooltrait === 2) statChange.trauma(-30);
-	else if (V.schooltrait === 1) statChange.trauma(-20);
-	else statChange.trauma(-10);
+	if (V.schooltrait >= 8) statChange.trauma(-125);
+	else if (V.schooltrait === 7) statChange.trauma(-100);
+	else if (V.schooltrait === 6) statChange.trauma(-75);
+	else if (V.schooltrait === 5) statChange.trauma(-50);
+	else if (V.schooltrait === 4) statChange.trauma(-25);
+	else if (V.schooltrait === 3) statChange.trauma(-20);
+	else if (V.schooltrait === 2) statChange.trauma(-15);
+	else if (V.schooltrait === 1) statChange.trauma(-10);
+
+	// Edge case for when the PC is in combat at midnight.
+	if (V.combat === 1) statChange.trauma(schoolTrauma, "combat");
+	else statChange.trauma(schoolTrauma);
 
 	if (Time.isSchoolDay(Time.yesterday) && V.location !== "prison") {
 		const attended = Object.keys(V.daily.school.attended).length;
@@ -2504,65 +2539,72 @@ function dailyFarmEvents() {
 			}
 		}
 		if (V.farm.woodland >= 7) {
-			wikifier("farm_stock", "truffles", 192, 384);
+			wikifier("farm_stock", "truffles", 144, 384);
 			wikifier("farm_pigs", -4);
 		} else if (V.farm.woodland >= 6) {
-			wikifier("farm_stock", "truffles", 96, 192);
+			wikifier("farm_stock", "truffles", 72, 192);
 			wikifier("farm_pigs", -3);
 		} else if (V.farm.woodland >= 5) {
-			wikifier("farm_stock", "truffles", 48, 96);
+			wikifier("farm_stock", "truffles", 36, 96);
 			wikifier("farm_pigs", -3);
 		} else if (V.farm.woodland >= 4) {
-			wikifier("farm_stock", "truffles", 24, 48);
+			wikifier("farm_stock", "truffles", 18, 48);
 			wikifier("farm_pigs", -2);
 		} else if (V.farm.woodland >= 3) {
-			wikifier("farm_stock", "truffles", 12, 24);
+			wikifier("farm_stock", "truffles", 9, 24);
 			wikifier("farm_pigs", -2);
 		} else if (V.farm.woodland >= 2) {
 			wikifier("farm_stock", "truffles", 6, 12);
 			wikifier("farm_pigs", -1);
 		} else if (V.farm.woodland >= 1) {
+			// This generates £8.00 * 4.5 = £36.00 each day
 			wikifier("farm_stock", "truffles", 3, 6);
-			wikifier("farm_pigs", -1);
+			wikifier("farm_pigs", -0.5);
 		}
 		if (V.farm.barn >= 7) {
-			wikifier("farm_stock", "milk", 1280, 2560);
-			wikifier("farm_stock", "cream", 1280, 2560);
+			wikifier("farm_stock", "milk", 1215, 2430); // *1.25
+			wikifier("farm_stock", "cream", 810, 1620);
 		} else if (V.farm.barn >= 6) {
-			wikifier("farm_stock", "milk", 640, 1280);
-			wikifier("farm_stock", "cream", 640, 1280);
+			wikifier("farm_stock", "milk", 972, 1944); // *2
+			wikifier("farm_stock", "cream", 648, 1296);
 		} else if (V.farm.barn >= 5) {
-			wikifier("farm_stock", "milk", 320, 640);
-			wikifier("farm_stock", "cream", 320, 640);
+			wikifier("farm_stock", "milk", 486, 972); // *2
+			wikifier("farm_stock", "cream", 324, 648);
 		} else if (V.farm.barn >= 4) {
-			wikifier("farm_stock", "milk", 160, 320);
-			wikifier("farm_stock", "cream", 160, 320);
+			wikifier("farm_stock", "milk", 243, 486); // *3
+			wikifier("farm_stock", "cream", 162, 323);
 		} else if (V.farm.barn >= 3) {
-			wikifier("farm_stock", "milk", 80, 160);
-			wikifier("farm_stock", "cream", 80, 160);
+			wikifier("farm_stock", "milk", 81, 162); // *3
+			wikifier("farm_stock", "cream", 54, 108);
 		} else if (V.farm.barn >= 2) {
-			wikifier("farm_stock", "milk", 40, 80);
-			wikifier("farm_stock", "cream", 40, 80);
+			wikifier("farm_stock", "milk", 27, 48); // *3
+			wikifier("farm_stock", "cream", 18, 36);
 		} else if (V.farm.barn >= 1) {
-			wikifier("farm_stock", "milk", 20, 40);
-			wikifier("farm_stock", "cream", 20, 40);
+			wikifier("farm_stock", "milk", 9, 12);
+			wikifier("farm_stock", "cream", 6, 9);
 		}
 		if (V.farm.coop >= 7) {
-			wikifier("farm_stock", "eggs", 1280, 2560);
+			wikifier("farm_stock", "eggs", 1200, 2880); // *2
 		} else if (V.farm.coop >= 6) {
-			wikifier("farm_stock", "eggs", 640, 1280);
+			wikifier("farm_stock", "eggs", 600, 1440); // *2
 		} else if (V.farm.coop >= 5) {
-			wikifier("farm_stock", "eggs", 320, 640);
+			wikifier("farm_stock", "eggs", 300, 720); // *2
 		} else if (V.farm.coop >= 4) {
-			wikifier("farm_stock", "eggs", 160, 320);
+			wikifier("farm_stock", "eggs", 150, 360); // *2
 		} else if (V.farm.coop >= 3) {
-			wikifier("farm_stock", "eggs", 80, 160);
+			wikifier("farm_stock", "eggs", 75, 180); // *2.5
 		} else if (V.farm.coop >= 2) {
-			wikifier("farm_stock", "eggs", 40, 80);
+			wikifier("farm_stock", "eggs", 30, 72); // *2.5
 		} else if (V.farm.coop >= 1) {
-			wikifier("farm_stock", "eggs", 20, 40);
+			// This generates £0.40 * (18) = £7.20 each day
+			wikifier("farm_stock", "eggs", 12, 24);
 		}
 		if (V.farm.kennel >= 1) {
+			/**
+			 * I think it would be very funny if the Kennel also gave -1 Horse Respect per day. That way, if the player returns to the farm with every animal at -30 respect, there will be an Animal Farm easter egg saying stuff like, "The animals are plotting." or "You hear singing in the barn +Stress" after midnight.
+			 *
+			 * Probably too political for DOL, though.
+			 */
 			wikifier("farm_dogs", -1);
 			wikifier("farm_cattle", -1);
 		}
@@ -2819,7 +2861,7 @@ function earSlimeDaily(passageEffects = false) {
 			}
 		}
 
-		// Breaks chastity gear over time, attempts to equip a chastity parasite if it aplies
+		// Breaks chastity gear over time, attempts to equip a chastity parasite if it applies
 		if (!["naked", "chastity parasite"].includes(V.worn.genitals.name) && playerChastity()) {
 			V.worn.genitals.integrity -= 500;
 			if (V.worn.genitals.integrity <= 0) {

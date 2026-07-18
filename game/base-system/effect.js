@@ -1045,19 +1045,19 @@ function effects() {
 			element("i", "Your mind is open to the possibility of another lover. You may now choose a second love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 1;
-		} else if (V.loveInterest_message === 3 && V.loveInterestAwareMessage == 1) {
+		} else if (V.loveInterest_message === 3 && V.loveInterestAwareMessage === 1) {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a third love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 2;
-		} else if (V.loveInterest_message === 4 && V.loveInterestAwareMessage == 2) {
+		} else if (V.loveInterest_message === 4 && V.loveInterestAwareMessage === 2) {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a fourth love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 3;
-		} else if (V.loveInterest_message === 5 && V.loveInterestAwareMessage == 3) {
+		} else if (V.loveInterest_message === 5 && V.loveInterestAwareMessage === 3) {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a fifth love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 4;
-		} else if (V.loveInterest_message === 6 && V.loveInterestAwareMessage == 4) {
+		} else if (V.loveInterest_message === 6 && V.loveInterestAwareMessage === 4) {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a sixth love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 5;
@@ -1948,10 +1948,6 @@ function effects() {
 
 	if (V.worn.genitals.cursed === 1 && V.worn.genitals.integrity <= 0) V.worn.genitals.type.push("broken");
 
-	if (V.worn.feet.type.includes("heels") && currentSkillValue("feetskill") < V.worn.feet.reveal) {
-		V.tiredness += (V.worn.feet.reveal - currentSkillValue("feetskill")) / 150;
-	}
-
 	sWikifier("<<exposure>>");
 
 	if (V.combat) sWikifier("<<pass 10 seconds>>");
@@ -1987,8 +1983,8 @@ Macro.add("effects", {
 		.off(':passageend.effects') 
 		.on(':passageend.effects', function () {
 			if (!V.passage.includes("Waiting Room")) {
-				if (V.options.bigCanvas == true) {
-					if (V.options.images == 1) {
+				if (V.options.bigCanvas === true) {
+					if (V.options.images === 1) {
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "267px";
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 95px - 1.32em)";
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width  = "392px";
@@ -2002,7 +1998,7 @@ Macro.add("effects", {
 					}
 					if (!Browser.isMobile.any() && !/joiplay|cyou\.joiplay\.joiplay|wv/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "27em";
 				} else {
-					if (V.options.images == 1) {
+					if (V.options.images === 1) {
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "192px";
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 20px - 1.32em)";
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width  = "280px";
@@ -2023,7 +2019,7 @@ Macro.add("effects", {
 				for (const mutation of mutations) {
 					if (mutation.type === "attributes" && mutation.attributeName === "class") {
 						if (document.getElementById("ui-bar").classList.contains("stowed")) {
-							if (V.options.bigCanvas == true) {
+							if (V.options.bigCanvas === true) {
 								document.querySelector("#ui-bar").style.left = "-22.5em";
 							} else {
 								document.querySelector("#ui-bar").style.left = "-15.5em";
