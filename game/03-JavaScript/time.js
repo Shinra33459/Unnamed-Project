@@ -506,11 +506,11 @@ function monthPassed() {
 	} else if (V.hbsc.account.level >= 1) {
 		V.hbsc.account.deposit *= 1 + 0.025 / 12;
 	}
-	
+
 	V.volunteer = "none";
 	V.soupKitchen = "none";
 	V.foodDropoff = "none";
-	
+
 	V.monthly.clearProperties();
 }
 
@@ -1755,9 +1755,7 @@ function dailyNPCEffects() {
 		if (C.npc.Gwylan.state === "active" && !isGwylanAbsent() && !V.daily.gwylan.noTalk && !V.daily.gwylan.locked) {
 			if (V.gwylan.request.event && V.gwylan.request.timer) {
 				if (V.hypnosis_traits.devotion >= 1 && V.gwylan.request.timer < Time.date.timeStamp) {
-					V.gwylan.request.timer = V.gwylan.request.missed
-						? new DateTime(Time.date).addDays(4).timeStamp
-						: new DateTime(Time.date).addDays(2).timeStamp;
+					V.gwylan.request.timer = V.gwylan.request.missed ? new DateTime(Time.date).addDays(4).timeStamp : new DateTime(Time.date).addDays(2).timeStamp;
 					const traumaDevotion = 10 * V.hypnosis_traits.devotion;
 					const hallucinogenDevotion = 40 * V.hypnosis_traits.devotion;
 
@@ -2292,14 +2290,15 @@ function dailySchoolEffects() {
 			V.englishPlay = "missed";
 		}
 	}
-	if (V.schooltrait >= 8) statChange.trauma(-125);
-	else if (V.schooltrait === 7) statChange.trauma(-100);
-	else if (V.schooltrait === 6) statChange.trauma(-75);
-	else if (V.schooltrait === 5) statChange.trauma(-50);
-	else if (V.schooltrait === 4) statChange.trauma(-25);
-	else if (V.schooltrait === 3) statChange.trauma(-20);
-	else if (V.schooltrait === 2) statChange.trauma(-15);
-	else if (V.schooltrait === 1) statChange.trauma(-10);
+	let schoolTrauma = -5;
+	if (V.schooltrait >= 8) schoolTrauma = -125;
+	else if (V.schooltrait === 7) schoolTrauma = -100;
+	else if (V.schooltrait === 6) schoolTrauma = -75;
+	else if (V.schooltrait === 5) schoolTrauma = -50;
+	else if (V.schooltrait === 4) schoolTrauma = -25;
+	else if (V.schooltrait === 3) schoolTrauma = -20;
+	else if (V.schooltrait === 2) schoolTrauma = -15;
+	else if (V.schooltrait === 1) schoolTrauma = -10;
 
 	// Edge case for when the PC is in combat at midnight.
 	if (V.combat === 1) statChange.trauma(schoolTrauma, "combat");
