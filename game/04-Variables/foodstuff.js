@@ -3469,6 +3469,32 @@ function initFoodstuff() {
 				sell_price: 250000,
 			},
 		},
+		clover: {
+			index: 161,
+			name: "clover",
+			singular: "three-leaf clover",
+			plural: "three-leaf clovers",
+			icon: "clover.png",
+			category: "flower",
+			kitchen_item_type_icon: "recipe-flower.png",
+			prop_folder: "tending",
+			shop: {
+				sell_price: 2,
+			},
+		},
+		four_leaf_clover: {
+			index: 162,
+			name: "four leaf clover",
+			singular: "four-leaf clover",
+			plural: "four-leaf clovers",
+			icon: "four-leaf-clover.png",
+			category: "flower",
+			kitchen_item_type_icon: "recipe-flower.png",
+			prop_folder: "tending",
+			shop: {
+				sell_price: 2000,
+			},
+		},
 	};
 	finalizefoodstuff();
 }
