@@ -2255,7 +2255,17 @@
 			<<default>>
 				<<set $bicycle.security to 0>>
 		<</switch>>
-		<<if !$bikeStolen>>
+		<<set $bicycle.travel to {}>>
+		<<set $bicycle.roughTerrain to 0>>
+		<<set $bicycle.gains to {}>>
+		<<set $bicycle.destinations to {
+			Residential: ["Barb Street", "Domus Street", "Danube Street", "Wolf Street"],
+			Commercial: ["High Street", "Connudatus Street", "Cliff Street", "Nightingale Street", "Oxford Street", "Starfish Street"],
+			Industrial: ["Elk Street", "Harvest Street", "Mer Street"],
+			Forest: ["Lake Shore", "Forest", "Eden Clearing", "Eden Hot Spring Creation 1", "Eden Fluids Punishment", "Wolf Cave Clearing"],
+			Plains: ["Farmland", "Moor"],
+		}>>
+		<<if $bikeStolen is undefined>>
 			<<set $bicycle.stolen to false>>
 			<<set $bicycle.securityStolen to false>>
 		<<else>>
@@ -2278,18 +2288,29 @@
 		<<else>>
 			<<set $bicycle.theftEnabled to true>>
 		<</if>>
-		<<set $bicycle.travel to {}>>
-		<<set $bicycle.roughTerrain to 0>>
-		<<set $bicycle.gains to {}>>
-		<<set $bicycle.destinations to {
-			Residential: ["Barb Street", "Domus Street", "Danube Street", "Wolf Street"],
-			Commercial: ["High Street", "Connudatus Street", "Cliff Street", "Nightingale Street", "Oxford Street", "Starfish Street"],
-			Industrial: ["Elk Street", "Harvest Street", "Mer Street"],
-			Forest: ["Lake Shore", "Forest", "Eden Clearing", "Eden Hot Spring Creation 1", "Eden Fluids Punishment", "Wolf Cave Clearing"],
-			Plains: ["Farmland", "Moor"],
-		}>>
-
-		<<unset $bikeBrakes, $bikeGrips, $bikePedals, $bikeSuspension, $bikeTires, $bikeTubeless, $bikeSecurityGear, $bikeSecurityGearStolen, $bikeDestination, $bikeEndCategory, $bikeStartCategory, $bike>>
+				<<if $bicycle.quality is 0>>
+			<<set $bicycle.own to false>>
+		<</if>>
+		<<set $bicycle.location to $bikeLocation>>
+		/* Forgot to set locationRegion in first update woops */
+		<<switch $bicycle.location>>
+			<<case "domus" "barb" "danube" "wolf">>
+				<<set $bicycle.locationRegion to "residential">>
+			<<case "connudatus" "cliff" "high" "starfish" "oxford" "nightingale">>
+				<<set $bicycle.locationRegion to "commercial">>
+			<<case "mer" "elk" "harvest">>
+				<<set $bicycle.locationRegion to "industrial">>
+			<<case "cabin" "wolf_cave_yard" "forest">>
+				<<set $bicycle.locationRegion to "forest">>
+			<<case "lake">><<set $bicycle.locationRegion to "lake">>
+			<<case "alex_farm">><<set $bicycle.locationRegion to "alex_farm">>
+			<<case "moor">><<set $bicycle.locationRegion to "moor">>
+			<<default>>
+				<<set $bicycle.locationRegion to "">>
+		<</switch>>
+		<<unset $bikeLocation, $bikeStart>>
+		<<set $bicycle.stolenCooldown to 3>>
+		<<unset $bikeLocation, $bikeStart, $bikeBrakes, $bikeGrips, $bikePedals, $bikeSuspension, $bikeTires, $bikeTubeless, $bikeSecurityGear, $bikeSecurityGearStolen, $bikeDestination, $bikeEndCategory, $bikeStartCategory, $bike>>
 	<</if>>
 	<<if $bikeUpdate lt 3>>
 		<<if $bicycle.quality is 0>>
@@ -2313,6 +2334,7 @@
 				<<set $bicycle.locationRegion to "">>
 		<</switch>>
 		<<unset $bikeLocation, $bikeStart>>
+		<<set $bicycle.stolenCooldown to 3>>
 	<</if>>
 	/* increment this whenever you need to i guess */
 	<<set $bikeUpdate to 3>>
