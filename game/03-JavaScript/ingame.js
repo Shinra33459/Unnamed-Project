@@ -43,7 +43,7 @@ window.toggleAllHairTraitsFilter = toggleAllHairTraitsFilter;
 
 // A wrapper for wikifyEval, only use for singular macro calls.
 function wikifier(widget, ...args) {
-	if (widget == null) return document.createDocumentFragment();
+	if (widget === null) return document.createDocumentFragment();
 	return Wikifier.wikifyEval("<<" + widget + (args.length ? " " + args.join(" ") : "") + ">>");
 }
 window.wikifier = wikifier;
@@ -1131,7 +1131,7 @@ window.resetClothingState = resetClothingState;
 
 /* Returns array of clothing items that are stored in [loc] */
 function clothingInStorage(loc) {
-	if (loc == null) return;
+	if (loc === null) return;
 	const clothing = [];
 	for (const slot of setup.clothingLayer.all) {
 		const item = V.store[slot].find(item => item.location === loc);
@@ -1248,9 +1248,10 @@ window.clothesIndex = clothesIndex;
 /**
  * @param {string} skill The name of the requested skill.
  * @param {number} disableModifiers How much of an effect that modifiers will have on the player's current skill. Higher values means a lower effect. Stops at 2.
- * @returns Returns the current value of the requested skill, accounting for potential modifiers.
+ * @param {number} disableStatNerf How much of an effect that statnerf will have on the player's current skill.
+ * @returns {number} Returns the current value of the requested skill, accounting for potential modifiers.
  */
-function currentSkillValue(skill, disableModifiers = 0) {
+function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 	let result = V[skill];
 	if (disableStatNerf === 0) {
 		result *= V.options.statNerf / 100;
@@ -1423,8 +1424,8 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			if (V.DoLPTFBuffs === 1) {
 				if (V.TFCatBuffs === 1) {
@@ -1459,7 +1460,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 			if (V.transformationParts.traits.chase !== "disabled") result = Math.floor(result * 1.1);
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
 			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			if (V.DoLPTFBuffs === 1) {
 				if (V.TFWolfBuffs === 1) {
@@ -1483,7 +1484,7 @@ function currentSkillValue(skill, disableModifiers = 0) {
 				if (V.TFBunnyBuffs === 1) {
 					result = Math.round(result * 1.5);
 				}
-				if (V.TFWaterDragonBuffs == 1) {
+				if (V.TFWaterDragonBuffs === 1) {
 					result = Math.round(result * 1.2);
 				}
 			}
@@ -1709,7 +1710,7 @@ function heatRutSexStatModifier(input) {
 	if (minArousal === 0) return 0;
 
 	const statName = sexStatNameMapper(input);
-	if (statName == null) {
+	if (statName === null) {
 		Errors.report(`[heatRutSexStatModifier]: input '${statName}' null.`, {
 			Stacktrace: Utils.GetStack(),
 			statName,
@@ -1739,7 +1740,7 @@ window.heatRutSexStatModifier = heatRutSexStatModifier;
 function hasSexStat(input, required, modifiers = true) {
 	const statName = sexStatNameMapper(input);
 	// check if stat name is valid.
-	if (statName == null) {
+	if (statName === null) {
 		Errors.report(`[hasSexStat]: input '${statName}' null.`, {
 			Stacktrace: Utils.GetStack(),
 			statName,
@@ -3207,7 +3208,7 @@ function kitchenFilter() {
 		.filter(Boolean);
 
 	const norm = v => {
-		if (v == null) return "";
+		if (v === null) return "";
 		if (Array.isArray(v)) return v.join(" ").toLowerCase();
 		return String(v).toLowerCase();
 	};
@@ -3224,16 +3225,11 @@ function kitchenFilter() {
 			const matchesAnyTerm = terms.some(term => {
 				const matchesInfo =
 					V.options.ingredientsSearch !== "ingredients" &&
-					(norm(item.name).includes(term) ||
-						norm(item.category).includes(term) ||
-						norm(item.plural).includes(term) ||
-						norm(item.singular).includes(term));
+					(norm(item.name).includes(term) || norm(item.category).includes(term) || norm(item.plural).includes(term) || norm(item.singular).includes(term));
 
 				const matchesRecipe =
 					V.options.ingredientsSearch !== "recipes" &&
-					(item.recipe?.ingredients ?? []).some(
-						ingredient => norm(ingredient).includes(term) || norm(ingredientUsed(ingredient)).includes(term)
-					);
+					(item.recipe?.ingredients ?? []).some(ingredient => norm(ingredient).includes(term) || norm(ingredientUsed(ingredient)).includes(term));
 
 				return matchesInfo || matchesRecipe;
 			});
@@ -3363,7 +3359,7 @@ function isMonsterHallucinationAllowed(rng = random(1, 100)) {
 	if (!V.settings.bestialityEnabled && isDragonEyesActive()) return false;
 	return (!V.settings.monsterHallucinationsOnly || V.hallucinations > 0) && V.settings.monsterChance >= rng;
 }
-window.isMonsterHallucinationAllowed = isMonsterHallucinationAllowed;	
+window.isMonsterHallucinationAllowed = isMonsterHallucinationAllowed;
 
 function isBeastSceneAllowed(rng = random(1, 100)) {
 	return V.settings.bestialityEnabled || isMonsterHallucinationAllowed(rng);
