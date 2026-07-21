@@ -53,6 +53,7 @@ const statChange = (() => {
 
 	/**
 	 * Fatigue ($tiredness) has a maximum value of 2,000.
+	 * DOLP: Max scaling toggles change this value, so we use C.tiredness.max instead.
 	 *
 	 * Stress ($stress) has a maximum value of 10,000.
 	 * Trauma ($trauma) has a maximum value of 5,000.
@@ -69,7 +70,7 @@ const statChange = (() => {
 	 */
 	function fatigueClamp() {
 		// Overflow check
-		const overflow = V.tiredness - 2000;
+		const overflow = V.tiredness - C.tiredness.max;
 		if (overflow > 0) {
 			// Add 15x the overflow to the player's stress.
 			V.stress += overflow * 15;
@@ -82,7 +83,7 @@ const statChange = (() => {
 		}
 
 		// Clamps for safety.
-		V.tiredness = Math.clamp(V.tiredness, 0, 2000);
+		V.tiredness = Math.clamp(V.tiredness, 0, C.tiredness.max);
 		stressClamp(); // Calls traumaClamp()
 	}
 	DefineMacro("fatigueClamp", fatigueClamp);
@@ -178,6 +179,8 @@ const statChange = (() => {
 		/**
 		 * The "Dendrophile" trait amplifies the impact of alcohol consumption, without affecting how quickly the player
 		 * recovers.
+		 *
+		 * DOLP: "Opium Addict" trait from enabling LI "Poppy" amplifies the impact of substance abuse as well.
 		 */
 		if ((V.backgroundTraits.includes("plantlover") || V.backgroundTraits.includes("opiumaddict")) && amount > 0) mod *= 1.5;
 
@@ -247,7 +250,9 @@ const statChange = (() => {
 				if (V.drunk <= 0) {
 					stressMod = 40;
 				} else {
-					// DOLP Substance rebalance
+					/**
+					 * DOLP: Substance rebalance influence on Stress. Attempts to make substances have a greater impact on the player.
+					 */
 					if (V.substanceRebalance === 1) {
 						const drunkMod = Math.floor(V.drunk / 120);
 						stressMod = Math.max(1 - 0.15 * (1 + drunkMod), 0);
@@ -294,8 +299,9 @@ const statChange = (() => {
 			}
 		}
 
-		// Opium Addict trait: inhaling opium suppresses insomnia for the current sleep cycle.
-
+		/**
+		 * DOLP: Opium Addict trait: inhaling opium suppresses insomnia for the current sleep cycle.
+		 */
 		V.sleeptrouble = V.trauma >= 1 && !V.poppyDrug?.insomniaSuppress ? 1 : 0;
 		V.nightmares = V.trauma >= (V.traumamax / 10) * 1 ? 1 : 0;
 
@@ -555,6 +561,8 @@ const statChange = (() => {
 					Comment Akoz: I chose to make it multiply, rather than add to the modifier
 					so that the aphrodisiacs become quite threatening during nonconsensual use,
 					and more thrilling when used intentionally
+
+					DOLP: Substance rebalance - significantly increases the effects of drug use.
 				*/
 				if (V.substanceRebalance === 1) {
 					mod *= 1 + V.drugged / 250;
@@ -915,6 +923,9 @@ const statChange = (() => {
 	DefineMacro("def", (amount, modifier) => submissive(-amount, modifier));
 
 	function subCheck() {
+		/** 
+		 * DOLP: Allows players to choose their attitude rather than it be a result of actions over time.
+		 * 
 		/* if (V.speech_attitude === "bratty" && V.submissive >= 1150) {
 			V.speech_attitude = "neutral";
 			V.effectsmessage = 1;
@@ -923,7 +934,8 @@ const statChange = (() => {
 			V.speech_attitude = "neutral";
 			V.effectsmessage = 1;
 			V.speech_attitude_meek_message = 1;
-		} */
+		}
+		 */
 	}
 	DefineMacro("sub_check", subCheck);
 
@@ -1092,6 +1104,9 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("willpower", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
+			/**
+			 * DOLP: AMCTraits.willpower increases max value
+			 */
 			V.willpower = Math.clamp(V.willpower + amount * 2, 0, V.willpowermax * V.AMCTraits.willpower);
 		}
 	}
@@ -1207,12 +1222,17 @@ const statChange = (() => {
 		if (type === "penileskill" && !(V.player.penisExist || playerHasStrapon())) return;
 		amount = Number(amount);
 		if (amount) {
-			let maxValue = 1000;
-			if (type === "beauty") {
-				maxValue = V.beautymax; // Special-case for the $beautymax value
-			}
-			V[type] = Math.clamp(V[type] + amount, 0, maxValue);
-			// From DOL merge: this needs another set of eyes ^^vanilla vv dolp
+			/**
+			 * DOLP: Preserving vanilla function in case it's needed later...
+			 *
+			 * let maxValue = 1000;
+			 * if (type === "beauty") {
+			 * maxValue = V.beautymax; // Special-case for the $beautymax value
+			 * }
+			 * V[type] = Math.clamp(V[type] + amount, 0, maxValue);
+			 *
+			 * Otherwise we have the AMCTraits values to use below.
+			 */
 			if (V[type] >= V[type + "max"] || V.AMCTraits.halfGain === 1) amount /= 2;
 			V[type] = Math.clamp(V[type] + amount * (V.statGainMult / 100), 0, V[type + "max"] * V.AMCTraits[type] || 1000);
 		}
@@ -1254,6 +1274,9 @@ const statChange = (() => {
 		amount = Number(amount);
 		if (amount) {
 			let mod = 1;
+			/**
+			 * DOLP: "Opium Addict" is applied where "Dendrophile" is
+			 */
 			if ((V.backgroundTraits.includes("plantlover") || V.backgroundTraits.includes("opiumaddict")) && amount > 0) mod = 1.5;
 			V.drugged = Math.clamp(V.drugged + amount * mod, 0, 1000);
 		}
@@ -1264,6 +1287,9 @@ const statChange = (() => {
 		if (isNaN(amount)) paramError("hallucinogen", "amount", amount, "Expected a number.");
 		amount = Number(amount);
 		if (amount) {
+			/**
+			 * DOLP: Substance rebalance tweak for Gwylan's ritual content. Gwylan hits the pipe a little too hard.
+			 */
 			if (V.substanceRebalance === 1 && V.passage.includes("Gwylan")) amount /= 2;
 			V.hallucinogen = Math.clamp(V.hallucinogen + amount, 0, 1000);
 		}
