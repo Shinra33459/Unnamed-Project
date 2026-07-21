@@ -46,14 +46,20 @@ You are in the Bike Depot. It has a quite the stock of bikes.
 	<br><br>
 	<<set $phase to 0>><<unset _repairAmount>>
 <<elseif $phase is 3>>
+	<<set $bicycle.own to true>><<set $bicycle.quality to 3>><<set $bicycle.durability.current to 12000>>
+	<<set $bicycle.durability.max to $bicycle.durability.current>><<set $bicycle.location to "high">>
 	Your high-end bike has been purchased and put outside of the shopping centre.
 	<br><br>
 	<<set $phase to 0>>
-<<elseif $phase is 2>>
+<<elseif $phase is 2>>	
+	<<set $bicycle.own to true>><<set $bicycle.quality to 2>><<set $bicycle.durability.current to 6000>>
+	<<set $bicycle.durability.max to $bicycle.durability.current>><<set $bicycle.location to "high">>
 	Your intermediate bike has been purchased and put outside of the shopping centre.
 	<br><br>
 	<<set $phase to 0>>
 <<elseif $phase is 1>>
+	<<set $bicycle.own to true>><<set $bicycle.quality to 1>><<set $bicycle.durability.current to 3000>>
+	<<set $bicycle.durability.max to $bicycle.durability.current>><<set $bicycle.location to "high">>
 	Your basic bike has been purchased and put outside of the shopping centre.
 	<br><br>
 	<<set $phase to 0>>
@@ -87,9 +93,9 @@ You are in the Bike Depot. It has a quite the stock of bikes.
 			<<shopicon "register">><<link [[Examine the cash register|Bike Depot Register]]>><</link>>
 			<br><br>
 		<<elseif $exposed lte 0 and Time.dayState isnot "night" and Time.hour isnot 21>>
-			<<if $bicycle.quality lt 3>>
+			<<if $bicycle.quality lt 3 || $bicycle.own is false>>
 				<<if $money gte 250000>>
-					<<bikeicon>><<link [[Purchase a high-end bike (£2500 0:05)|Bike Depot]]>><<pass 5>><<set $phase to 3>><<set $bicycle.quality to 3>><<set $bicycle.durability.current to 12000>><<set $bicycle.durability.max to $bicycle.durability.current>><<set $bicycle.location to "high">><<set $money -= 250000>><</link>>
+					<<bikeicon>><<link [[Purchase a high-end bike (£2500 0:05)|Bike Depot]]>><<pass 5>><<set $phase to 3>><<set $money -= 250000>><</link>>
 				<<else>>
 					<span class="red">You don't have the £2500 to purchase a high-end bike.</span>
 				<</if>>
@@ -98,9 +104,9 @@ You are in the Bike Depot. It has a quite the stock of bikes.
 				You already have a high-end bike.
 				<br>
 			<</if>>
-			<<if $bicycle.quality lt 2>>
+			<<if $bicycle.quality lt 2 || $bicycle.own is false>>
 				<<if $money gte 100000>>
-					<<bikeicon>><<link [[Purchase an intermediate bike (£1000 0:05)|Bike Depot]]>><<pass 5>><<set $phase to 2>><<set $bicycle.quality to 2>><<set $bicycle.durability.current to 6000>><<set $bicycle.durability.max to $bicycle.durability.current>><<set $bicycle.location to "high">><<set $money -= 100000>><</link>>
+					<<bikeicon>><<link [[Purchase an intermediate bike (£1000 0:05)|Bike Depot]]>><<pass 5>><<set $phase to 2>><<set $money -= 100000>><</link>>
 				<<else>>
 					<span class="red">You don't have the £1000 to purchase an intermediate bike.</span>
 				<</if>>
@@ -109,9 +115,9 @@ You are in the Bike Depot. It has a quite the stock of bikes.
 				You already have an intermediate bike.
 				<br>
 			<</if>>
-			<<if $bicycle.own is "false">>
+			<<if $bicycle.own is false>>
 				<<if $money gte 50000>>
-					<<bikeicon>><<link [[Purchase a basic bike (£500 0:05)|Bike Depot]]>><<pass 5>><<set $phase to 1>><<set $bicycle.quality to 1>><<set $bicycle.durability.current to 3000>><<set $bicycle.durability.max to $bicycle.durability.current>><<set $bicycle.location to "high">><<set $money -= 50000>><</link>>
+					<<bikeicon>><<link [[Purchase a basic bike (£500 0:05)|Bike Depot]]>><<pass 5>><<set $phase to 1>><<set $money -= 50000>><</link>>
 				<<else>>
 					<span class="red">You don't have the £500 to purchase a basic bike.</span>
 				<</if>>
@@ -241,9 +247,9 @@ You browse through the selection of security gears.
 You browse through the selection of Off-Road upgrades.
 <br><br>
 
-<<if !$bicycle.upgrades.suspension>>
+<<if !$bicycle.upgrades.includes("suspension")>>
 	<<if $money gte 60000>>
-		<<link [[Suspension fork (£600)|Bike Depot Off-Road]]>><<set $money -= 60000>><<set $bicycle.upgrades.pushUnique("suspension")>><</link>><<note "-10% travel time and -25% durability loss in Rough Terrain">>
+		<<link [[Suspension fork (£600)|$passage]]>><<set $money -= 60000>><<set $bicycle.upgrades.pushUnique("suspension")>><</link>><<note "-10% travel time and -25% durability loss in Rough Terrain">>
 	<<else>>
 		<span class="red">You don't have the £600 to upgrade your suspension fork.</span>
 	<</if>>
@@ -252,9 +258,9 @@ You browse through the selection of Off-Road upgrades.
 	You already have a high-quality air fork.
 	<br>
 <</if>>
-<<if !$bicycle.upgrades.tyres>>
+<<if !$bicycle.upgrades.includes("tyres")>>
 	<<if $money gte 10000>>
-		<<link [[Wider tyres with tread (£100)|Bike Depot Off-Road]]>><<set $money -= 10000>><<set $bicycle.upgrades.pushUnique("tyres")>><</link>><<note "-5% travel time and -15% durability loss in Rough Terrain">>
+		<<link [[Wider tyres with tread (£100)|$passage]]>><<set $money -= 10000>><<set $bicycle.upgrades.pushUnique("tyres")>><</link>><<note "-5% travel time and -15% durability loss in Rough Terrain">>
 	<<else>>
 		<span class="red">You don't have the £100 to upgrade your tyres.</span>
 	<</if>>
@@ -263,9 +269,9 @@ You browse through the selection of Off-Road upgrades.
 	You already have durable off-road tyres.
 	<br>
 <</if>>
-<<if !$bicycle.upgrades.tubeless>>
+<<if !$bicycle.upgrades.includes("tubeless")>>
 	<<if $money gte 10000>>
-		<<link [[Tubeless Setup (£100)|Bike Depot Off-Road]]>><<set $money -= 10000>><<set $bicycle.upgrades.pushUnique("tubeless")>><</link>><<note "-5% travel time and -10% durability loss in Rough Terrain">>
+		<<link [[Tubeless Setup (£100)|$passage]]>><<set $money -= 10000>><<set $bicycle.upgrades.pushUnique("tubeless")>><</link>><<note "-5% travel time and -10% durability loss in Rough Terrain">>
 	<<else>>
 		<span class="red">You don't have the £100 to upgrade to a tubeless setup.</span>
 	<</if>>
@@ -274,9 +280,9 @@ You browse through the selection of Off-Road upgrades.
 	You already have a tubeless setup.
 	<br>
 <</if>>
-<<if !$bicycle.upgrades.brakes>>
+<<if !$bicycle.upgrades.includes("brakes")>>
 	<<if $money gte 30000>>
-		<<link [[Hydraulic Disk Brakes (£300)|Bike Depot Off-Road]]>><<set $money -= 30000>><<set $bicycle.upgrades.pushUnique("brakes")>><</link>><<note "-5% durability loss in Rough Terrain">>
+		<<link [[Hydraulic Disk Brakes (£300)|$passage]]>><<set $money -= 30000>><<set $bicycle.upgrades.pushUnique("brakes")>><</link>><<note "-5% durability loss in Rough Terrain">>
 	<<else>>
 		<span class="red">You don't have the £300 to upgrade your brakes.</span>
 	<</if>>
@@ -285,9 +291,9 @@ You browse through the selection of Off-Road upgrades.
 	You already have hydraulic disk brakes.
 	<br>
 <</if>>
-<<if !$bicycle.upgrades.pedals>>
+<<if !$bicycle.upgrades.includes("pedals")>>
 	<<if $money gte 8000>>
-		<<link [[Grippy pedals (£80)|Bike Depot Off-Road]]>><<set $money -= 8000>><<set $bicycle.upgrades.pushUnique("pedals")>><</link>><<note "-2.5% travel time and -5% durability loss in Rough Terrain">>
+		<<link [[Grippy pedals (£80)|$passage]]>><<set $money -= 8000>><<set $bicycle.upgrades.pushUnique("pedals")>><</link>><<note "-2.5% travel time and -5% durability loss in Rough Terrain">>
 	<<else>>
 		<span class="red">You don't have the £80 to upgrade your pedals.</span>
 	<</if>>
@@ -296,9 +302,9 @@ You browse through the selection of Off-Road upgrades.
 	You already have flat grippy pedals.
 	<br>
 <</if>>
-<<if !$bicycle.upgrades.grips>>
+<<if !$bicycle.upgrades.includes("grips")>>
 	<<if $money gte 6000>>
-		<<link [[Ergonomic grips and bar ends (£60)|Bike Depot Off-Road]]>><<set $money -= 6000>><<set $bicycle.upgrades.pushUnique("grips")>><</link>><<note "-2.5% travel time and -5% durability loss in Rough Terrain">>
+		<<link [[Ergonomic grips and bar ends (£60)|$passage]]>><<set $money -= 6000>><<set $bicycle.upgrades.pushUnique("grips")>><</link>><<note "-2.5% travel time and -5% durability loss in Rough Terrain">>
 	<<else>>
 		<span class="red">You don't have the £60 to upgrade your cockpit.</span>
 	<</if>>
