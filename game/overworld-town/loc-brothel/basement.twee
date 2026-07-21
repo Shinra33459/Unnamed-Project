@@ -32,8 +32,12 @@
 		<<passoutshop>>
 	<<else>>
 		<<if hasSexStat("promiscuity", 4)>>
+				<<if $gloryholeRounds gte 10>>
+					The other employees hover near the public doors protectively. <span class="blue">Maybe you can try again tomorrow.</span><br>
+				<<else>>
 				<<brothelicon "gloryhole">><<link [[Occupy a room (0:10)|Brothel Gloryhole]]>><<pass 10>><<set $phase to 1>><</link>><<promiscuous4>>
 				<br>
+				<</if>>
 				<<if $brothelExclusiveGloryholeIntro is 1>>
 					<<ind>><<link [[Set your price|Brothel Exclusive Price]]>><</link>>
 					<br>
@@ -61,6 +65,8 @@
 	<br><br>
 	
 <<elseif $phase is 2>><<set $phase to 0>>
+	<<if !$gloryholeRounds>><<set $gloryholeRounds to 1>>
+	<<else>><<set $gloryholeRounds ++>><</if>>
 	/* $gloryHoleEvent.virginity values are set in <<gloryHoleServiceEffects>> 
 	 * undefined check clears errors for saves in the middle of combat */
 	 <<if !$gloryHoleEvent.virginity || $gloryHoleEvent.virginity is true>>
@@ -85,6 +91,7 @@
 	<<set $enemyarousal to $enemyarousalmax>>
 	<<ejaculation "short">><<fetishPregnancyImg>>
 	<<set $gloryholestat += 1>><<set $prostitutionstat += 1>>
+	<<promiscuityN $gloryHoleEvent.prom>>
 	<<tearful>> you count the money <<he>> pushes through the hole. You've gained <<printmoney $brothel_basement_price>>.
 	<<clearnpc>><<set $gloryHoleEvent to {}>>
 	<<set $money += $brothel_basement_price>>
@@ -94,6 +101,11 @@
 
 <<if $stress gte $stressmax>>
 	<<passoutshop>>
+<<elseif $gloryholeRounds gte 10>>
+	You wait for several minutes, and before the light can change color you hear a knock at the door.
+	<br><br>
+	"Times up. We've got another employee who's reserved this room now. Collect your things and go."
+	<br><br>
 <<else>>
 	<<if !$gloryholestrip>>
 		<<generate1>><<person1>>
@@ -131,16 +143,16 @@
 			<<case "penile">>
 				The $NPCList[0].penisdesc poking through the hole twitches impatiently.
 			<<case "anal">>
-				The glistening bottom wiggles impatiently on the other side of the hole.
+				<<His>> glistening bottom wiggles impatiently on the other side of the hole.
 			<<case "oral">>
-				The client licks <<his>> lips impatiently on the other side of the hole.
+				<<He>> licks <<his>> lips impatiently on the other side of the hole.
 			<<case "vaginal">>
 				The pussy on the other side of the hole drips with an air of impatience.
 		<</switch>>
 		<br><br>
 		<<switch $gloryholestrip>>
 			<<case "mask">>
-				You pull down your $worn.face.name, <span class="lewd">revealing your face.</span>
+				You pull down your $worn.face.name, <span class="lewd">freeing your mouth.</span>
 				<<set $mouthuse to 0>><<facestrip>><br>
 			<<case "lower">>
 				<<if setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
@@ -182,24 +194,24 @@
 
 	<<gloryHoleServiceInit "normal">>
 	
-	<<if $promiscuity gte 35>>
+	<<if hasSexStat("promiscuity", 2)>>
 		<<if pcAreArmsBound("both")>>
 			<span class="blue"><<ind>>You can't use your hands with your arms bound.</span>
 			<br>
 		<<elseif $gloryHoleEvent.target isnot "anal" && $gloryHoleEvent.target isnot "oral">>
 			<<ind>><<link [["Service with your hand (" + getTimeString(_service.hands.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "hand" "normal">><</link>><<ghandskill>><<gtiredness>><<garousal>>
+			<<gloryHoleServiceEffects "hand" "normal">><<set $gloryHoleEvent.prom to 2>><</link>><<ghandskill>><<gtiredness>><<garousal>>
 			<br>
 		<</if>>
 	<</if>>
 
-	<<if $promiscuity gte 55>>
+	<<if hasSexStat("promiscuity", 4)>>
 		<<if $worn.face.type.includes("face_covering") or $worn.face.type.includes("gag")>>
 			/* <<ind>><span class="blue">You can't use your mouth with your face covered.</span> */
 			<<set _facecovered to true>>
 		<<else>>
-			<<ind>><<link [["Service with your mouth (" + getTimeString(_service.mouth.time) + ")"|$passage]]>><<gloryHoleServiceEffects "mouth" "normal">>
-			<</link>><<goralskill>><<gtiredness>><<garousal>>
+			<<ind>><<link [["Service with your mouth (" + getTimeString(_service.mouth.time) + ")"|$passage]]>>
+			<<gloryHoleServiceEffects "mouth" "normal">><<set $gloryHoleEvent.prom to 4>><</link>><<goralskill>><<gtiredness>><<garousal>>
 			<<if $gloryHoleEvent.target is "penile">><<oralvirginitywarning>>
 			<<elseif $gloryHoleEvent.target is "oral">><<kissvirginitywarning>>
 			<</if>>
@@ -207,69 +219,69 @@
 		<</if>>
 	<</if>>
 
-	<<if $gloryHoleEvent.target is "penile" and $promiscuity gte 55>>
+	<<if $gloryHoleEvent.target is "penile" and hasSexStat("promiscuity", 3)>>
 	<<ind>><<link [["Service with your chest (" + getTimeString(_service.chest.time) + ")"|$passage]]>>
-	<<gloryHoleServiceEffects "chest" "normal">><</link>><<gchestskill>><<gtiredness>><<garousal>>
+	<<gloryHoleServiceEffects "chest" "normal">><<set $gloryHoleEvent.prom to 3>><</link>><<gchestskill>><<gtiredness>><<garousal>>
 	<br>
 	<</if>>
 
-	<<if $promiscuity gte 35 and $gloryHoleEvent.target isnot "anal" && $gloryHoleEvent.target isnot "oral">>
+	<<if hasSexStat("promiscuity", 2) and $gloryHoleEvent.target isnot "anal" && $gloryHoleEvent.target isnot "oral">>
 		<<ind>><<link [["Service with your feet (" + getTimeString(_service.feet.time) + ")"|$passage]]>>
-		<<gloryHoleServiceEffects "feet" "normal">><</link>><<gfeetskill>><<gtiredness>><<garousal>>
+		<<gloryHoleServiceEffects "feet" "normal">><<set $gloryHoleEvent.prom to 2>><</link>><<gfeetskill>><<gtiredness>><<garousal>>
 		<br>
 	<</if>>
 
-	<<if $gloryHoleEvent.target is "penile" and $promiscuity gte 35>>
+	<<if $gloryHoleEvent.target is "penile" and hasSexStat("promiscuity", 2)>>
 		<<ind>><<link [["Service with your thighs (" + getTimeString(_service.thigh.time) + ")"|$passage]]>>			
-		<<gloryHoleServiceEffects "thigh" "normal">><</link>><<gthighskill>><<gtiredness>><<garousal>>
+		<<gloryHoleServiceEffects "thigh" "normal">><<set $gloryHoleEvent.prom to 2>><</link>><<gthighskill>><<gtiredness>><<garousal>>
 		<br>
 	<</if>>
 
-	<<if $gloryHoleEvent.target is "penile" and $promiscuity gte 35>>
+	<<if $gloryHoleEvent.target is "penile" and hasSexStat("promiscuity", 2)>>
 		<<ind>><<link [["Service with your cheeks (" + getTimeString(_service.bottom.time) + ")"|$passage]]>>
-		<<gloryHoleServiceEffects "butt" "normal">><</link>><<gbottomskill>><<gtiredness>><<garousal>>
+		<<gloryHoleServiceEffects "butt" "normal">><<set $gloryHoleEvent.prom to 2>><</link>><<gbottomskill>><<gtiredness>><<garousal>>
 		<br>
 	<</if>>
 
-	<<if $player.penisExist and !playerChastity("penis") and $promiscuity gte 75>>
+	<<if $player.penisExist and !playerChastity("penis") and hasSexStat("promiscuity", 5)>>
 		<<if $worn.under_lower.exposed < 1 || $worn.lower.exposed < 1>>
 			<<set _genitalscovered to true>>
 		<<else>>
 			<<ind>><<link [["Service with your penis (" + getTimeString(_service.penis.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "penis" "normal">><</link>><<gpenileskill>><<gtiredness>><<garousal>>
+			<<gloryHoleServiceEffects "penis" "normal">><<set $gloryHoleEvent.prom to 5>><</link>><<gpenileskill>><<gtiredness>><<garousal>>
 			<<if $gloryHoleEvent.target isnot "penile">><<penilevirginitywarning>><</if>>
 			<br>
 		<</if>>
 	<</if>>
 
-	<<if ($worn.genitals.type.includes("strap-on") or playerHasStrapon()) and !playerChastity("penis") and $promiscuity gte 75>>
+	<<if ($worn.genitals.type.includes("strap-on") or playerHasStrapon()) and !playerChastity("penis") and hasSexStat("promiscuity", 4)>>
 		<<if $worn.under_lower.exposed < 1 || $worn.lower.exposed < 1>>
 			<<set _genitalscovered to true>>
 		<<else>>
 			<<ind>><<link [["Service with your strap-on (" + getTimeString(_service.penis.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "strap" "normal">><</link>><<gpenileskill>><<gtiredness>><<garousal>>
+			<<gloryHoleServiceEffects "strap" "normal">><<set $gloryHoleEvent.prom to 4>><</link>><<gpenileskill>><<gtiredness>><<garousal>>
 			<br>
 		<</if>>
 	<</if>>
 
-	<<if $gloryHoleEvent.target isnot "anal" and $player.vaginaExist and !playerChastity("vagina") and $promiscuity gte 75>>
+	<<if $gloryHoleEvent.target isnot "anal" and $player.vaginaExist and !playerChastity("vagina") and hasSexStat("promiscuity", 5)>>
 		<<if $worn.under_lower.exposed < 1 || $worn.lower.exposed < 1>>
 			<<set _genitalscovered to true>>
 		<<else>>
 			<<ind>><<link [["Service with your vagina (" + getTimeString(_service.vagina.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "vagina" "normal">><</link>><<gvaginalskill>><<gtiredness>><<garousal>>
+			<<gloryHoleServiceEffects "vagina" "normal">><<set $gloryHoleEvent.prom to 5>><</link>><<gvaginalskill>><<gtiredness>><<garousal>>
 			<<if $gloryHoleEvent.target is "penile">><<vaginalvirginitywarning>><</if>>
 			<br>
 		<</if>>
 	<</if>>
 
-	<<if $settings.analEnabled and !playerChastity("anus") and $gloryHoleEvent.target is "penile" and $promiscuity gte 75>>
+	<<if $settings.analEnabled and !playerChastity("anus") and $gloryHoleEvent.target is "penile" and hasSexStat("promiscuity", 5)>>
 		<<if $worn.under_lower.exposed < 1 || $worn.lower.exposed < 1>>
 			/* <<ind>><span class="blue">You can't use your anus with it covered. </span> */
 			<<set _asscovered to true>>
 		<<else>>
 			<<ind>><<link [["Service with your anus (" + getTimeString(_service.anus.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "anus" "normal">><</link>><<ganalskill>><<gtiredness>><<garousal>><<analvirginitywarning>>
+			<<gloryHoleServiceEffects "anus" "normal">><<set $gloryHoleEvent.prom to 5>><</link>><<ganalskill>><<gtiredness>><<garousal>><<analvirginitywarning>>
 			<br>
 		<</if>>
 	<</if>>
@@ -290,11 +302,10 @@
 	<<else>>
 		<<run console.log("Anal and oral engagements are WIP and aren't accessible yet")>>
 	<</if>>
+<</if>>
 	<br>
 	<<getouticon>><<link [[Leave|Brothel Basement]]>><<endcombat>><<set $punishmentposition to 0>><<unset $desperateaction>><<unset $gloryHoleEvent>><</link>>
 	<br>
-<</if>>
-
 :: Brothel Basement Sex
 
 <<if $sexstart is 1>>
@@ -374,13 +385,22 @@
 	<br><br>
 	
 <<elseif $phase is 2>><<set $phase to 0>>
-	<<if $gloryHoleEvent.virginity is true>>
-		<<if $NPCList[0].mouth is "kiss">>
-			<<takeKissVirginity $NPCList[0].fullDescription>>
-		<<else>>
-			<<takeNPCVirginity 0 $gloryHoleEvent.target>>
-			<<takeVirginity $NPCList[0].fullDescription $gloryHoleEvent.tool>>
-		<</if>>
+	/* $gloryHoleEvent.virginity values are set in <<gloryHoleServiceEffects>> 
+	 * undefined check clears errors for saves in the middle of combat */
+	 <<if !$gloryHoleEvent.virginity || $gloryHoleEvent.virginity is true>>
+		<<set $gloryHoleEvent.virginity to []>>
+	<</if>>
+	<<if $gloryHoleEvent.virginity.includes("pc")>>
+		<<takeVirginity $NPCList[0].fullDescription $gloryHoleEvent.tool>>
+	<</if>>
+	<<if $gloryHoleEvent.virginity.includes("pckiss")>>
+		<<takeKissVirginity>>
+	<</if>>
+	<<if $gloryHoleEvent.virginity.includes("npc")>>
+		<<takeNPCVirginity 0 $gloryHoleEvent.target>>
+	<</if>>
+	<<if $gloryHoleEvent.virginity.includes("npckiss") && !$gloryHoleEvent.virginity.includes("pckiss")>>
+		<<takeNPCVirginity 0 $gloryHoleEvent.target>>
 	<</if>>
 
 	<<if $arousal gte $arousalmax and $orgasmdown lte 0>>
@@ -390,10 +410,11 @@
 	<<set $enemyarousal to $enemyarousalmax>>
 	<<ejaculation "short">><<fetishPregnancyImg>>
 	<<set $gloryholestat += 1>><<set $prostitutionstat += 1>>
-		<<set _moneyGain to $brothelExclusiveGloryholePrice * 100>>
-		<<tearful>> you count the money <<he>> pushes through the hole. You've gained <<printmoney _moneyGain>>.
-		<<clearnpc>><<set $gloryHoleEvent to {}>>
-		<<set $money += _moneyGain>>
+	<<set _moneyGain to $brothelExclusiveGloryholePrice * 100>>
+	<<promiscuityN $gloryHoleEvent.prom>>
+	<<tearful>> you count the money <<he>> pushes through the hole. You've gained <<printmoney _moneyGain>>.
+	<<clearnpc>><<set $gloryHoleEvent to {}>>
+	<<set $money += _moneyGain>>
 	<br><br>
 <</if>>
 	
@@ -410,8 +431,8 @@
 		<<else>>
 			<<set $gloryHoleEvent.customer to false>>
 			<<clearnpc>>
-			You wait for several minutes, and the light stays green.
-			<span class="red">Nobody came.</span>
+			You wait for several minutes, but the light stays green.
+			<span class="red"> Nobody came.</span>
 			<br><br>
 		<</if>>
 	<</if>>
@@ -453,16 +474,16 @@
 			<<case "penile">>
 				The $NPCList[0].penisdesc poking through the hole twitches impatiently.
 			<<case "anal">>
-				The glistening bottom wiggles impatiently on the other side of the hole.
+				<<His>> glistening bottom wiggles impatiently on the other side of the hole.
 			<<case "oral">>
-				The client licks <<his>> lips impatiently on the other side of the hole.
+				<<He>> licks <<his>> lips impatiently on the other side of the hole.
 			<<case "vaginal">>
 				The pussy on the other side of the hole drips with an air of impatience.
 		<</switch>>
 		<br><br>
 		<<switch $gloryholestrip>>
 			<<case "mask">>
-				You pull down your $worn.face.name, <span class="lewd">revealing your face.</span>
+				You pull down your $worn.face.name, <span class="lewd">freeing your mouth.</span>
 				<<set $mouthuse to 0>><<facestrip>><br>
 			<<case "lower">>
 				<<if setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
@@ -504,24 +525,24 @@
 	<<gloryHoleServiceInit "exclusive">>
 
 	<<if $gloryHoleEvent.customer is true>>
-		<<if $promiscuity gte 35>>
+		<<if hasSexStat("promiscuity", 2)>>
 			<<if pcAreArmsBound("both")>>
 				<span class="blue"><<ind>>You can't use your hands with your arms bound.</span>
 				<br>
 			<<elseif $gloryHoleEvent.target isnot "anal" && $gloryHoleEvent.target isnot "oral">>
 				<<ind>><<link [["Service with your hand (" + getTimeString(_service.hands.time) + ")"|$passage]]>>
-				<<gloryHoleServiceEffects "hand" "exclusive">><</link>><<ghandskill>><<gtiredness>><<garousal>>
+				<<gloryHoleServiceEffects "hand" "exclusive">><<set $gloryHoleEvent.prom to 2>><</link>><<ghandskill>><<gtiredness>><<garousal>>
 				<br>
 			<</if>>
 		<</if>>
 
-		<<if $promiscuity gte 55>>
+		<<if hasSexStat("promiscuity", 4)>>
 			<<if $worn.face.type.includes("face_covering") or $worn.face.type.includes("gag")>>
 				/* <<ind>><span class="blue">You can't use your mouth with your face covered.</span> */
 				<<set _facecovered to true>>
 			<<else>>
 				<<ind>><<link [["Service with your mouth (" + getTimeString(_service.mouth.time) + ")"|$passage]]>>
-				<<gloryHoleServiceEffects "mouth" "exclusive">><</link>><<goralskill>><<gtiredness>><<garousal>>
+				<<gloryHoleServiceEffects "mouth" "exclusive">><<set $gloryHoleEvent.prom to 4>><</link>><<goralskill>><<gtiredness>><<garousal>>
 				<<if $gloryHoleEvent.target is "penile">><<oralvirginitywarning>>
 				<<elseif $gloryHoleEvent.target is "oral">><<kissvirginitywarning>>
 				<</if>>
@@ -529,64 +550,64 @@
 			<</if>>
 		<</if>>
 
-		<<if $gloryHoleEvent.target is "penile" and $promiscuity gte 55>>
+		<<if $gloryHoleEvent.target is "penile" and hasSexStat("promiscuity", 3)>>
 			<<ind>><<link [["Service with your chest (" + getTimeString(_service.chest.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "chest" "exclusive">><</link>><<gchestskill>><<gtiredness>><<garousal>>
+			<<gloryHoleServiceEffects "chest" "exclusive">><<set $gloryHoleEvent.prom to 3>><</link>><<gchestskill>><<gtiredness>><<garousal>>
 			<br>
 		<</if>>
 
-		<<if $promiscuity gte 35 and $gloryHoleEvent.target isnot "anal" && $gloryHoleEvent.target isnot "oral">>
+		<<if hasSexStat("promiscuity", 2) and $gloryHoleEvent.target isnot "anal" && $gloryHoleEvent.target isnot "oral">>
 			<<ind>><<link [["Service with your feet (" + getTimeString(_service.feet.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "feet" "exclusive">><</link>><<gfeetskill>><<gtiredness>><<garousal>>
+			<<gloryHoleServiceEffects "feet" "exclusive">><<set $gloryHoleEvent.prom to 2>><</link>><<gfeetskill>><<gtiredness>><<garousal>>
 			<br>
 		<</if>>
 
-		<<if $gloryHoleEvent.target is "penile" and $promiscuity gte 35>>
+		<<if $gloryHoleEvent.target is "penile" and hasSexStat("promiscuity", 2)>>
 			<<ind>><<link [["Service with your thighs (" + getTimeString(_service.thigh.time) + ")"|$passage]]>>			
-			<<gloryHoleServiceEffects "thigh" "exclusive">><</link>><<gthighskill>><<gtiredness>><<garousal>>
+			<<gloryHoleServiceEffects "thigh" "exclusive">><<set $gloryHoleEvent.prom to 2>><</link>><<gthighskill>><<gtiredness>><<garousal>>
 			<br>
 		<</if>>
 
-		<<if $gloryHoleEvent.target is "penile" and $promiscuity gte 35>>
+		<<if $gloryHoleEvent.target is "penile" and hasSexStat("promiscuity", 2)>>
 			<<ind>><<link [["Service with your cheeks (" + getTimeString(_service.bottom.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "butt" "exclusive">><</link>><<gbottomskill>><<gtiredness>><<garousal>>
+			<<gloryHoleServiceEffects "butt" "exclusive">><<set $gloryHoleEvent.prom to 2>><</link>><<gbottomskill>><<gtiredness>><<garousal>>
 			<br>
 		<</if>>
 
-		<<if $player.penisExist and !playerChastity("penis") and $promiscuity gte 75>>
+		<<if $player.penisExist and !playerChastity("penis") and hasSexStat("promiscuity", 5)>>
 			<<if $worn.under_lower.exposed < 1 || $worn.lower.exposed < 1>>
 				<<set _genitalscovered to true>>
 			<<else>>
 				<<ind>><<link [["Service with your penis (" + getTimeString(_service.penis.time) + ")"|$passage]]>>
-				<<gloryHoleServiceEffects "penis" "exclusive">><</link>><<gpenileskill>><<gtiredness>><<garousal>>
+				<<gloryHoleServiceEffects "penis" "exclusive">><<set $gloryHoleEvent.prom to 5>><</link>><<gpenileskill>><<gtiredness>><<garousal>>
 				<<if $gloryHoleEvent.target isnot "penile">><<penilevirginitywarning>><</if>>
 				<br>
 			<</if>>
 		<</if>>
 
-		<<if ($worn.genitals.type.includes("strap-on") or playerHasStrapon()) and !playerChastity("penis") and $promiscuity gte 75>>
+		<<if ($worn.genitals.type.includes("strap-on") or playerHasStrapon()) and !playerChastity("penis") and hasSexStat("promiscuity", 5)>>
 			<<if $worn.under_lower.exposed < 1 || $worn.lower.exposed < 1>>
 				<<set _genitalscovered to true>>
 			<<else>>
 				<<ind>><<link [["Service with your strap-on (" + getTimeString(_service.penis.time) + ")"|$passage]]>>
-				<<gloryHoleServiceEffects "strap" "exclusive">><</link>><<gpenileskill>><<gtiredness>><<garousal>>
+				<<gloryHoleServiceEffects "strap" "exclusive">><<set $gloryHoleEvent.prom to 4>><</link>><<gpenileskill>><<gtiredness>><<garousal>>
 				<br>
 			<</if>>
 		<</if>>
 
-		<<if $gloryHoleEvent.target isnot "anal" and $player.vaginaExist and !playerChastity("vagina") and $promiscuity gte 75>>
+		<<if $gloryHoleEvent.target isnot "anal" and $player.vaginaExist and !playerChastity("vagina") and hasSexStat("promiscuity", 5)>>
 			<<ind>><<link [["Service with your vagina (" + getTimeString(_service.vagina.time) + ")"|$passage]]>>
-			<<gloryHoleServiceEffects "vagina" "exclusive">><</link>><<gvaginalskill>><<gtiredness>><<garousal>><<vaginalvirginitywarning>>
+			<<gloryHoleServiceEffects "vagina" "exclusive">><<set $gloryHoleEvent.prom to 5>><</link>><<gvaginalskill>><<gtiredness>><<garousal>><<vaginalvirginitywarning>>
 			<br>
 		<</if>>
 
-		<<if $settings.analEnabled and !playerChastity("anus") and $gloryHoleEvent.target is "penile" and $promiscuity gte 75>>
+		<<if $settings.analEnabled and !playerChastity("anus") and $gloryHoleEvent.target is "penile" and hasSexStat("promiscuity", 5)>>
 			<<if $worn.under_lower.exposed < 1 || $worn.lower.exposed < 1>>
 				/* <<ind>><span class="blue">You can't use your anus with it covered. </span> */
 				<<set _asscovered to true>>
 			<<else>>
 				<<ind>><<link [["Service with your anus (" + getTimeString(_service.anus.time) + ")"|$passage]]>>
-				<<gloryHoleServiceEffects "anus" "exclusive">><</link>><<ganalskill>><<gtiredness>><<garousal>><<analvirginitywarning>>
+				<<gloryHoleServiceEffects "anus" "exclusive">><<set $gloryHoleEvent.prom to 5>><</link>><<ganalskill>><<gtiredness>><<garousal>><<analvirginitywarning>>
 				<br>
 			<</if>>
 		<</if>>
@@ -604,11 +625,11 @@
 		<<if $gloryHoleEvent.target isnot "anal" && $gloryHoleEvent.target isnot "oral">>
 			<br><<set $gloryHoleEvent.passage to $passage>>
 			<<brothelicon>><<link [[Engage|Brothel Basement Sex]]>><<set $sexstart to 1>><<tiredness 3>><</link>><<gtiredness>>
-			<br>
 		<<else>>
 			<<run console.log("Anal and oral engagements are WIP and aren't accessible yet")>>
 		<</if>>
 	<</if>>
+	<br>
 	<<ind>><<link [[Wait (0:10)|$passage]]>><<tiredness -1>><<clearnpc>><<unset $desperateaction>><<pass 10>><</link>><<ltiredness>>
 	<br><br>
 	<<getouticon>><<link [[Leave|Brothel Basement]]>><<endcombat>><<set $punishmentposition to 0>><<unset $desperateaction>><</link>>

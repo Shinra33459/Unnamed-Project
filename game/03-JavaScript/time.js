@@ -1421,7 +1421,7 @@ function dawnCheck() {
 	delete V.gwylanWake;
 	delete V.gwylanCafeWake;
 	delete V.whitney_night_knock;
-
+	delete V.gloryholeRounds;
 	if (V.schoolBlocked) delete V.schoolBlocked;
 
 	delete V.foxCrimeProgress;
