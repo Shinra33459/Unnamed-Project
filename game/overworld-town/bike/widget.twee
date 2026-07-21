@@ -28,6 +28,28 @@
 			<span class="blue">At least you can always buy a new one...</span>
 			<<set $bicycle.stolen to false>><<set $bicycle.securityStolen to false>>
 		<<elseif $bicycle.own is true>>
+						/* Weird location stuff, will need to be edited if location stuff is ever changed. */
+				<<if $location is "town" || $location is "plains" || $location is "forest" || $location is "industrial">>
+					<<set $bicycle.location to $sublocation>>
+				<<else>>
+					<<set $bicycle.location to $location>>
+				<</if>>
+				<<switch $bicycle.location>>
+					<<case "domus" "barb" "danube" "wolf">>
+						<<set $bicycle.locationRegion to "residential">>
+					<<case "connudatus" "cliff" "high" "starfish" "oxford" "nightingale">>
+						<<set $bicycle.locationRegion to "commercial">>
+					<<case "mer" "elk" "harvest">>
+						<<set $bicycle.locationRegion to "industrial">>
+					<<case "cabin" "wolf_cave_yard" "forest">>
+						<<set $bicycle.locationRegion to "forest">>
+					<<case "lake">><<set $bicycle.locationRegion to "lake">>
+					<<case "alex_farm">><<set $bicycle.locationRegion to "alex_farm">>
+					<<case "moor">><<set $bicycle.locationRegion to "moor">>
+					<<default>>
+						<<set _error to 1>>
+				<</switch>>
+				<<set $bicycle.start to $bicycle.locationRegion>>
 			<<if $bicycle.durability.current lte 0>>
 				<span class="red">Your bike is broken!</span> It's unusable until you repair it back at the bike depot<<if $bicycle.durability.repair isnot undefined>> or patch it yourself<</if>>.
 				<<if $bicycle.durability.repair gt 0>>
@@ -52,28 +74,6 @@
 			<<elseif !(($exposed gte 1 and Time.dayState is "night") or $exposed is 0)>>
 				<span class="blue">You're too exposed to ride your bike!</span>
 			<<else>>
-				/* Weird location stuff, will need to be edited if location stuff is ever changed. */
-				<<if $location is "town" || $location is "plains" || $location is "forest" || $location is "industrial">>
-					<<set $bicycle.location to $sublocation>>
-				<<else>>
-					<<set $bicycle.location to $location>>
-				<</if>>
-				<<switch $bicycle.location>>
-					<<case "domus" "barb" "danube" "wolf">>
-						<<set $bicycle.locationRegion to "residential">>
-					<<case "connudatus" "cliff" "high" "starfish" "oxford" "nightingale">>
-						<<set $bicycle.locationRegion to "commercial">>
-					<<case "mer" "elk" "harvest">>
-						<<set $bicycle.locationRegion to "industrial">>
-					<<case "cabin" "wolf_cave_yard" "forest">>
-						<<set $bicycle.locationRegion to "forest">>
-					<<case "lake">><<set $bicycle.locationRegion to "lake">>
-					<<case "alex_farm">><<set $bicycle.locationRegion to "alex_farm">>
-					<<case "moor">><<set $bicycle.locationRegion to "moor">>
-					<<default>>
-						<<set _error to 1>>
-				<</switch>>
-				<<set $bicycle.start to $bicycle.locationRegion>>
 				<<bikeicon>><<link [[Get on your bike (0:01)|Bike]]>><<pass 1>><</link>>
 			<</if>>
 		<</if>>
