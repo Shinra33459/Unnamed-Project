@@ -1295,6 +1295,9 @@ function minutePassed(minutes) {
 
 	// Effects
 	V.stress = Math.min(V.stress, V.stressmax);
+	/**
+	 * DOLP: Substance rebalance effects on drugs and alcohol
+	 */
 	if (V.substanceRebalance === 1) {
 		if (V.drunk > 0) {
 			// use fancy math to ensure that `pass(60);` and `pass(30);pass(30);` apply the same amount of tiredness regardless of changed V.drunk value
