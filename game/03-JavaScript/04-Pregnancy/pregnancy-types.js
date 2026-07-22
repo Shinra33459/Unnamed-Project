@@ -281,7 +281,7 @@ function beastTransform(mother, father) {
 		if (V.cow >= 6) return "cow";
 		if (V.bear >= 6) return "bear";
 		if (V.wolfgirl >= 6) return "wolf";
-		if (V.harpy >= 6 || V.transformationParts.bird.wings == "default")) return "bird";
+		if (V.harpy >= 6 || V.transformationParts.bird.wings == "default") return "bird";
 		if (V.fox >= 6) return "fox";
 		if (V.waterdragon >= 7) return "waterdragon";
 		if (V.bunny >= 6) return "bunny";
@@ -400,7 +400,7 @@ window.pregnancyGenerator = {
 			if (random(0, 100) > 98 - tripletBoost) count++;
 			/* Ready for the cloning of PurityGuy to begin */
 			for (let i = 0; i < count; i++) {
-				const childId  	"m" + motherObject.parentId.id + "b" + motherObject.parentId.kids + "d" + fatherObject.parentId.id + "f" + fatherObject.parentId.kids;
+				const childId = "m" + motherObject.parentId.id + "b" + motherObject.parentId.kids + "d" + fatherObject.parentId.id + "f" + fatherObject.parentId.kids;
 				if (identical && result.fetus.length) {
 					result.fetus.push(clone(result.fetus[0]));
 					result.fetus.last().childId = childId;
@@ -409,7 +409,7 @@ window.pregnancyGenerator = {
 				}
 				const birthId = motherObject.parentId.births;
 				let gender = random(0, 100) > 50 ? "f" : "m";
-				if ((motherObject.gender === "h" || fatherObject.gender === "h") && (motherObject.name === fatherObject.name || random(0, 100) >= 75) 	gender = "h";
+				if ((motherObject.gender === "h" || fatherObject.gender === "h") && (motherObject.name === fatherObject.name || random(0, 100) >= 75)) gender = "h";
 				const baby = babyBase({
 					childId,
 					birthId,
@@ -478,10 +478,10 @@ window.pregnancyGenerator = {
 				furColour = furColour.concat(["black", "black", "black"]);
 			}
 			for (let i = 0; i < 8; i++) {
-				const childId  	"m" + motherObject.parentId.id + "b" + motherObject.parentId.kids + "d" + fatherObject.parentId.id + "f" + fatherObject.parentId.kids;
+				const childId = "m" + motherObject.parentId.id + "b" + motherObject.parentId.kids + "d" + fatherObject.parentId.id + "f" + fatherObject.parentId.kids;
 				const birthId = motherObject.parentId.births;
 				let gender = random(0, 100) > 50 ? "f" : "m";
-				if ((motherObject.gender === "h" || fatherObject.gender === "h") && (motherObject.name === fatherObject.name || random(0, 100) >= 75) 	gender = "h";
+				if ((motherObject.gender === "h" || fatherObject.gender === "h") && (motherObject.name === fatherObject.name || random(0, 100) >= 75)) gender = "h";
 				if ((mother === "pc" || father === "pc") && V.player.sex === "h" && random(0, 100) >= 75) gender = "h";
 				const baby = babyBase({
 					childId,
@@ -568,7 +568,7 @@ window.pregnancyGenerator = {
 			if (genderCheck < 70) {
 				// Female parasites are most likely
 				parasite.stats.gender = "Female";
-			} else if genderCheck > 90 && maxParasites(genital) > 1 && !pregnancy.fetus.find(currentParasite => currentParasite.stats.gender === "Hermaphrodite")	) {
+			} else if (genderCheck > 90 && maxParasites(genital) > 1 && !pregnancy.fetus.find(currentParasite => currentParasite.stats.gender === "Hermaphrodite")) {
 				// You can only get a futa if you're ready for a futa and don't currently have one
 				parasite.stats.gender = "Hermaphrodite";
 				parasite.stats.lastEgg = Math.floor(parasite.stats.growth / 3);
@@ -618,10 +618,10 @@ window.pregnancyGenerator = {
 			for (let i = 0; i < count; i++) {
 				// Hard coded limit
 				if (limit + result.fetus.length >= 1000) return;
-				const childId  	"m" + motherObject.parentId.id + "b" + motherObject.parentId.kids + "d" + fatherObject.parentId.id + "f" + fatherObject.parentId.kids;
+				const childId = "m" + motherObject.parentId.id + "b" + motherObject.parentId.kids + "d" + fatherObject.parentId.id + "f" + fatherObject.parentId.kids;
 				const birthId = motherObject.parentId.births;
 				let gender = random(0, 100) > 50 ? "f" : "m";
-				if ((motherObject.gender === "h" || fatherObject.gender === "h") && (motherObject.name === fatherObject.name || random(0, 100) >= 75) 	gender = "h";
+				if ((motherObject.gender === "h" || fatherObject.gender === "h") && (motherObject.name === fatherObject.name || random(0, 100) >= 75)) gender = "h";
 				const baby = babyBase({
 					childId,
 					birthId,
