@@ -12,7 +12,7 @@ Warmth checklist:
 function initNeck() {
 	/** @type {ClothesItem[]} */
 	const clothing = [
-		{
+		new ClothesItem({
 			index: 0,
 			slot: "neck",
 			name: "naked",
@@ -43,9 +43,8 @@ function initNeck() {
 			iconFile: 0,
 			accIcon: 0,
 			mainImage: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 1,
 			slot: "neck",
 			name: "collar",
@@ -79,9 +78,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "collar.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 2,
 			slot: "neck",
 			name: "bunny collar",
@@ -116,11 +114,10 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "bunny-collar.png",
-			accIcon: "bunny-collar-acc.png",
-		},
-
-		{
+			iconFile: "bunny_collar.png",
+			accIcon: "bunny_collar_acc.png",
+		}),
+		new ClothesItem({
 			index: 3,
 			slot: "neck",
 			name: "holy pendant",
@@ -154,9 +151,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "holy-pendant.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 4,
 			slot: "neck",
 			name: "dark pendant",
@@ -190,9 +186,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "dark-pendant.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 5,
 			slot: "neck",
 			name: "stone pendant",
@@ -226,9 +221,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "stone-pendant.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 6,
 			slot: "neck",
 			name: "gold choker",
@@ -263,9 +257,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "gold-choker.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 7,
 			slot: "neck",
 			name: "cat bell collar",
@@ -299,11 +292,10 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "cat-bell-collar.png",
-			accIcon: "cat-bell-collar-acc.png",
-		},
-
-		{
+			iconFile: "cat_bell_collar.png",
+			accIcon: "cat_bell_collar_acc.png",
+		}),
+		new ClothesItem({
 			index: 8,
 			slot: "neck",
 			name: "cow bell",
@@ -334,11 +326,10 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "cow-bell.png",
-			accIcon: "cow-bell-acc.png",
-		},
-
-		{
+			iconFile: "cow_bell.png",
+			accIcon: "cow_bell_acc.png",
+		}),
+		new ClothesItem({
 			index: 9,
 			slot: "neck",
 			name: "lace choker",
@@ -375,9 +366,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "lace-choker.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 10,
 			slot: "neck",
 			name: "spiked collar",
@@ -413,9 +403,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "spiked-collar.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 11,
 			slot: "neck",
 			name: "heart choker",
@@ -452,11 +441,10 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "heart-choker.png",
-			accIcon: "heart-choker-acc.png",
-		},
-
-		{
+			iconFile: "heart_choker.png",
+			accIcon: "heart_choker_acc.png",
+		}),
+		new ClothesItem({
 			index: 12,
 			slot: "neck",
 			name: "ringed collar",
@@ -492,9 +480,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "ringed-collar.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 13,
 			slot: "neck",
 			name: "necktie",
@@ -532,10 +519,9 @@ function initNeck() {
 			altposition: "none",
 			altdisabled: [],
 			iconFile: "necktie.png",
-			accIcon: "necktie-acc.png",
-		},
-
-		{
+			accIcon: "necktie_acc.png",
+		}),
+		new ClothesItem({
 			index: 14,
 			slot: "neck",
 			name: "suspenders",
@@ -575,9 +561,8 @@ function initNeck() {
 			accIcon: 0,
 			altposition: "none",
 			altdisabled: [],
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 15,
 			slot: "neck",
 			name: "cloth choker",
@@ -609,9 +594,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "cloth-choker.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 16,
 			slot: "neck",
 			name: "scarf",
@@ -662,9 +646,8 @@ function initNeck() {
 			iconFile: "scarf.png",
 			accIcon: 0,
 			zIndex: "head",
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 17,
 			slot: "neck",
 			name: "gold chain",
@@ -700,9 +683,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "gold-chain.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 18,
 			slot: "neck",
 			name: "iron chain",
@@ -737,9 +719,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "iron-chain.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 19,
 			slot: "neck",
 			name: "holy stole",
@@ -773,11 +754,10 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "holy-stole.png",
-			accIcon: "holy-stole-acc.png",
-		},
-
-		{
+			iconFile: "holy_stole.png",
+			accIcon: "holy_stole_acc.png",
+		}),
+		new ClothesItem({
 			index: 20,
 			slot: "neck",
 			name: "free use collar",
@@ -812,9 +792,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "collar.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 21,
 			slot: "neck",
 			name: "collar with leash",
@@ -850,9 +829,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "collar.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 22,
 			slot: "neck",
 			name: "free use collar with leash",
@@ -888,9 +866,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "collar.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 23,
 			slot: "neck",
 			name: "ivory necklace",
@@ -924,9 +901,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "ivory-necklace.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 24,
 			slot: "neck",
 			name: "leather collar with leash",
@@ -962,9 +938,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "collar.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 25,
 			slot: "neck",
 			name: "leather collar",
@@ -999,9 +974,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "collar-no-leash.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 26,
 			slot: "neck",
 			name: "spiked collar with leash",
@@ -1038,9 +1012,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "spiked-collar.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 27,
 			slot: "neck",
 			name: "short tie",
@@ -1076,10 +1049,9 @@ function initNeck() {
 			cursed: 0,
 			location: 0,
 			iconFile: "necktie.png",
-			accIcon: "necktie-acc.png",
-		},
-
-		{
+			accIcon: "necktie_acc.png",
+		}),
+		new ClothesItem({
 			index: 28,
 			slot: "neck",
 			name: "fur boa",
@@ -1130,9 +1102,8 @@ function initNeck() {
 			cursed: 0,
 			location: 0,
 			iconFile: "boa.png",
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 29,
 			slot: "neck",
 			name: "sailor ribbon",
@@ -1167,9 +1138,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "serafuku-ribbon.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 30,
 			slot: "neck",
 			name: "love locket",
@@ -1205,8 +1175,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "love-locket.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 31,
 			slot: "neck",
 			name: "classic lace choker",
@@ -1243,8 +1213,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "lace-choker.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 32,
 			slot: "neck",
 			name: "bowtie",
@@ -1281,8 +1251,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "bowtie.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 33,
 			slot: "neck",
 			name: "ribbon tie",
@@ -1334,8 +1304,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "ribbon-tie.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 34,
 			slot: "neck",
 			name: "whistle",
@@ -1370,8 +1340,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "whistle.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 35,
 			slot: "neck",
 			name: "large ribbon tie",
@@ -1423,8 +1393,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "large-ribbon-tie.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 36,
 			slot: "neck",
 			name: "bolo tie",
@@ -1459,11 +1429,10 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "bolo-tie.png",
-			accIcon: "bolo-tie-acc.png",
-		},
-
-		{
+			iconFile: "bolo_tie.png",
+			accIcon: "bolo_tie_acc.png",
+		}),
+		new ClothesItem({
 			index: 37,
 			slot: "neck",
 			name: "long holy stole",
@@ -1497,10 +1466,10 @@ function initNeck() {
 			accessory_colour_options: [],
 			cursed: 0,
 			location: 0,
-			iconFile: "holy-stole.png",
-			accIcon: "holy-stole-acc.png",
-		},
-		{
+			iconFile: "holy_stole.png",
+			accIcon: "holy_stole_acc.png",
+		}),
+		new ClothesItem({
 			index: 38,
 			slot: "neck",
 			name: "feather necklace",
@@ -1531,10 +1500,10 @@ function initNeck() {
 			accessory_colour_sidebar: 1,
 			cursed: 0,
 			location: 0,
-			iconFile: "feather-necklace.png",
-			accIcon: "feather-necklace-acc.png",
-		},
-		{
+			iconFile: "feather_necklace.png",
+			accIcon: "feather_necklace_acc.png",
+		}),
+		new ClothesItem({
 			index: 39,
 			slot: "neck",
 			name: "jasper pendant",
@@ -1568,9 +1537,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "jasper-pendant.png",
 			accIcon: 0,
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 40,
 			slot: "neck",
 			name: "familiar collar",
@@ -1607,8 +1575,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "familiar-collar.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 41,
 			slot: "neck",
 			name: "wool scarf",
@@ -1644,8 +1612,8 @@ function initNeck() {
 			iconFile: "woolscarf.png",
 			accIcon: 0,
 			zIndex: "head",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 42,
 			slot: "neck",
 			name: "flannel scarf",
@@ -1682,12 +1650,12 @@ function initNeck() {
 			iconFile: "flannelscarf.png",
 			accIcon: "flannelscarf_acc.png",
 			zIndex: "head",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 43,
 			slot: "neck",
 			name: "fox scarf",
-			name_cap: "fox scarf",
+			name_cap: "Fox scarf",
 			variable: "foxscarf",
 			combat: {
 				reference: "scarf",
@@ -1719,8 +1687,8 @@ function initNeck() {
 			iconFile: "foxscarf.png",
 			accIcon: "foxscarf_acc.png",
 			zIndex: "head",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 44,
 			slot: "neck",
 			name: "pompom scarf",
@@ -1756,8 +1724,8 @@ function initNeck() {
 			iconFile: "pompomscarf.png",
 			accIcon: 0,
 			zIndex: "head",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 45,
 			slot: "neck",
 			name: "ribbon scarf",
@@ -1809,8 +1777,8 @@ function initNeck() {
 			iconFile: "ribbonscarf.png",
 			accIcon: 0,
 			zIndex: "head",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 46,
 			slot: "neck",
 			name: "cashmere scarf",
@@ -1862,8 +1830,8 @@ function initNeck() {
 			iconFile: "cashmerescarf.png",
 			accIcon: 0,
 			zIndex: "head",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 47,
 			slot: "neck",
 			name: "bow brooch",
@@ -1929,8 +1897,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "bow-brooch.png",
 			accIcon: "bow-brooch-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 48,
 			slot: "neck",
 			name: "gothic choker",
@@ -1996,8 +1964,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "gothic-choker.png",
 			accIcon: "gothic-choker-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 49,
 			slot: "neck",
 			name: "kitty neck cushion",
@@ -2047,8 +2015,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "kitty-neck-cushion.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 50,
 			slot: "neck",
 			name: "puppy neck cushion",
@@ -2098,8 +2066,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "puppy-neck-cushion.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 51,
 			slot: "neck",
 			name: "gemstone necklace",
@@ -2149,7 +2117,7 @@ function initNeck() {
 			location: 0,
 			iconFile: "gemstone necklace.png",
 			accIcon: "gemstone necklace-acc.png",
-		},
+		}),
 	];
 	setup.clothes.neck = clothing;
 
@@ -2158,7 +2126,7 @@ function initNeck() {
 		These items should have a `modder` variable with the modder's name in a short string.
 	*/
 	setup.moddedClothes.neck = [
-		{
+		new ClothesItem({
 			index: 1,
 			slot: "neck",
 			name: "Whitney's collar",
@@ -2192,8 +2160,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "Whitneys-collar.png",
 			accIcon: 0,
-		},
-		{
+			modder: "Frostberg",
+		}),
+		new ClothesItem({
 			index: 2,
 			slot: "neck",
 			name: "Whitney's collar with leash",
@@ -2229,8 +2198,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "Whitneys-collar.png",
 			accIcon: 0,
-		},
-		{
+			modder: "Frostberg",
+		}),
+		new ClothesItem({
 			index: 3,
 			slot: "neck",
 			name: "harness",
@@ -2285,8 +2255,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "harness.png",
 			accIcon: 0,
-		},		
-		{
+			modder: "WinterPeach",
+		}),		
+		new ClothesItem({
 			index: 4,
 			slot: "neck",
 			name: "harness with leash",
@@ -2336,8 +2307,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "harness.png",
 			accIcon: 0,
-		},
-		{
+			modder: "WinterPeach",
+		}),
+		new ClothesItem({
 			index: 5,
 			slot: "neck",
 			name: "metal chain",
@@ -2373,8 +2345,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "metal-chain.png",
 			accIcon: 0,
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 6,
 			slot: "neck",
 			name: "metal choker",
@@ -2410,9 +2383,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "metal-choker.png",
 			accIcon: 0,
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 7,
 			slot: "neck",
 			name: "heart jewel choker",
@@ -2451,10 +2424,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/heart-choker-acc.png",
-		},
-		
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 8,
 			slot: "neck",
 			name: "small solitaire faux jewel pendant",
@@ -2491,9 +2463,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/small-solitare-pendant.png",
 			accIcon: "jewellery/acc-small-solitare-pendant.png",
-		},
-
-		{
+		}),
+		new ClothesItem({
 			index: 9,
 			slot: "neck",
 			name: "Classic solitaire faux jewel pendant",
@@ -2530,9 +2501,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 10,
 			slot: "neck",
 			name: "multistone faux jewel pendant",
@@ -2569,9 +2540,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 11,
 			slot: "neck",
 			name: "fringe faux jewel necklace",
@@ -2608,9 +2579,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 12,
 			slot: "neck",
 			name: "rivière faux jewel necklace",
@@ -2647,9 +2618,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 11,
 			slot: "neck",
 			name: "bib faux jewel strand",
@@ -2686,9 +2657,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 13,
 			slot: "neck",
 			name: "full faux jewel strand",
@@ -2725,8 +2696,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 14,
 			slot: "neck",
 			name: "heart diamond choker",
@@ -2764,9 +2736,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/diamond-heart-choker-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 15,
 			slot: "neck",
 			name: "small solitaire diamond pendant",
@@ -2804,9 +2776,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/diamond-small-solitare-pendant.png",
 			accIcon: "jewellery/acc-small-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 16,
 			slot: "neck",
 			name: "Classic solitaire diamond pendant",
@@ -2844,9 +2816,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/diamond-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 17,
 			slot: "neck",
 			name: "multistone diamond pendant",
@@ -2884,9 +2856,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/diamond-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 18,
 			slot: "neck",
 			name: "fringe diamond necklace",
@@ -2924,9 +2896,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/diamond-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 19,
 			slot: "neck",
 			name: "rivière diamond necklace",
@@ -2964,9 +2936,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/diamond-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 20,
 			slot: "neck",
 			name: "bib diamond strand",
@@ -3004,9 +2976,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-diamond-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 21,
 			slot: "neck",
 			name: "full diamond strand",
@@ -3044,8 +3016,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-diamond-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 22,
 			slot: "neck",
 			name: "heart ruby choker",
@@ -3083,9 +3056,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/ruby-heart-choker-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 23,
 			slot: "neck",
 			name: "Classic solitaire ruby pendant",
@@ -3123,9 +3096,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/ruby-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 24,
 			slot: "neck",
 			name: "multistone ruby pendant",
@@ -3163,9 +3136,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/ruby-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 25,
 			slot: "neck",
 			name: "fringe ruby necklace",
@@ -3203,9 +3176,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/ruby-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 26,
 			slot: "neck",
 			name: "rivière ruby necklace",
@@ -3243,9 +3216,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/ruby-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 27,
 			slot: "neck",
 			name: "bib ruby strand",
@@ -3283,9 +3256,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-ruby-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 28,
 			slot: "neck",
 			name: "full ruby strand",
@@ -3323,8 +3296,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-ruby-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 29,
 			slot: "neck",
 			name: "heart emerald choker",
@@ -3362,8 +3336,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/emerald-heart-choker-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 30,
 			slot: "neck",
 			name: "Classic solitaire emerald pendant",
@@ -3401,9 +3376,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/emerald-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 31,
 			slot: "neck",
 			name: "multistone emerald pendant",
@@ -3441,9 +3416,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/emerald-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 32,
 			slot: "neck",
 			name: "fringe emerald necklace",
@@ -3481,9 +3456,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/emerald-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 33,
 			slot: "neck",
 			name: "rivière emerald necklace",
@@ -3521,9 +3496,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/emerald-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 34,
 			slot: "neck",
 			name: "bib emerald strand",
@@ -3561,9 +3536,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-emerald-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 35,
 			slot: "neck",
 			name: "full emerald strand",
@@ -3601,8 +3576,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-emerald-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 36,
 			slot: "neck",
 			name: "heart sapphire choker",
@@ -3640,9 +3616,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/sapphire-heart-choker-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 37,
 			slot: "neck",
 			name: "Classic solitaire sapphire pendant",
@@ -3680,9 +3656,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/sapphire-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 38,
 			slot: "neck",
 			name: "multistone sapphire pendant",
@@ -3720,9 +3696,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/sapphire-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 39,
 			slot: "neck",
 			name: "fringe sapphire necklace",
@@ -3760,9 +3736,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/sapphire-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 40,
 			slot: "neck",
 			name: "rivière sapphire necklace",
@@ -3800,9 +3776,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/sapphire-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 41,
 			slot: "neck",
 			name: "bib sapphire strand",
@@ -3840,9 +3816,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-sapphire-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 42,
 			slot: "neck",
 			name: "full sapphire strand",
@@ -3880,8 +3856,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-sapphire-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 43,
 			slot: "neck",
 			name: "heart aquamarine choker",
@@ -3919,8 +3896,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/aquamarine-heart-choker-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 44,
 			slot: "neck",
 			name: "Classic solitaire aquamarine pendant",
@@ -3958,9 +3936,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/aquamarine-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 45,
 			slot: "neck",
 			name: "multistone aquamarine pendant",
@@ -3998,9 +3976,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/aquamarine-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 46,
 			slot: "neck",
 			name: "fringe aquamarine necklace",
@@ -4038,9 +4016,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/aquamarine-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 47,
 			slot: "neck",
 			name: "rivière aquamarine necklace",
@@ -4078,9 +4056,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/aquamarine-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 48,
 			slot: "neck",
 			name: "bib aquamarine strand",
@@ -4118,9 +4096,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-aquamarine-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 49,
 			slot: "neck",
 			name: "full aquamarine strand",
@@ -4158,8 +4136,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-aquamarine-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 50,
 			slot: "neck",
 			name: "heart tanzanite choker",
@@ -4197,8 +4176,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/tanzanite-heart-choker-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 51,
 			slot: "neck",
 			name: "Classic solitaire tanzanite pendant",
@@ -4236,9 +4216,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/tanzanite-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 52,
 			slot: "neck",
 			name: "multistone tanzanite pendant",
@@ -4276,9 +4256,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/tanzanite-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 53,
 			slot: "neck",
 			name: "fringe tanzanite necklace",
@@ -4316,9 +4296,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/tanzanite-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 54,
 			slot: "neck",
 			name: "rivière tanzanite necklace",
@@ -4356,9 +4336,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/tanzanite-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 55,
 			slot: "neck",
 			name: "bib tanzanite strand",
@@ -4396,9 +4376,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-tanzanite-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 56,
 			slot: "neck",
 			name: "full tanzanite strand",
@@ -4436,8 +4416,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-tanzanite-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 57,
 			slot: "neck",
 			name: "heart topaz choker",
@@ -4475,9 +4456,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/topaz-heart-choker-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 58,
 			slot: "neck",
 			name: "small solitaire topaz pendant",
@@ -4515,9 +4496,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/topaz-small-solitare-pendant.png",
 			accIcon: "jewellery/acc-small-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 59,
 			slot: "neck",
 			name: "Classic solitaire topaz pendant",
@@ -4555,9 +4536,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/topaz-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 60,
 			slot: "neck",
 			name: "multistone topaz pendant",
@@ -4595,9 +4576,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/topaz-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 61,
 			slot: "neck",
 			name: "fringe topaz necklace",
@@ -4635,9 +4616,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/topaz-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 62,
 			slot: "neck",
 			name: "rivière topaz necklace",
@@ -4675,9 +4656,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/topaz-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 63,
 			slot: "neck",
 			name: "bib topaz strand",
@@ -4715,9 +4696,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-topaz-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 64,
 			slot: "neck",
 			name: "full topaz strand",
@@ -4755,8 +4736,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-topaz-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 65,
 			slot: "neck",
 			name: "heart amethyst choker",
@@ -4794,9 +4776,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/amethyst-heart-choker-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 66,
 			slot: "neck",
 			name: "small solitaire amethyst pendant",
@@ -4834,9 +4816,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/amethyst-small-solitare-pendant.png",
 			accIcon: "jewellery/acc-small-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 67,
 			slot: "neck",
 			name: "Classic solitaire amethyst pendant",
@@ -4874,9 +4856,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/amethyst-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 68,
 			slot: "neck",
 			name: "multistone amethyst pendant",
@@ -4914,9 +4896,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/amethyst-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 69,
 			slot: "neck",
 			name: "fringe amethyst necklace",
@@ -4954,9 +4936,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/amethyst-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 70,
 			slot: "neck",
 			name: "rivière amethyst necklace",
@@ -4994,9 +4976,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/amethyst-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 71,
 			slot: "neck",
 			name: "bib amethyst strand",
@@ -5034,9 +5016,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-amethyst-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 72,
 			slot: "neck",
 			name: "full amethyst strand",
@@ -5074,8 +5056,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-amethyst-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 73,
 			slot: "neck",
 			name: "heart spinel choker",
@@ -5113,9 +5096,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "heart-choker.png",
 			accIcon: "jewellery/spinel-heart-choker-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 74,
 			slot: "neck",
 			name: "small solitaire spinel pendant",
@@ -5153,9 +5136,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/spinel-small-solitare-pendant.png",
 			accIcon: "jewellery/acc-small-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 75,
 			slot: "neck",
 			name: "Classic solitaire spinel pendant",
@@ -5193,9 +5176,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/spinel-solitare-pendant.png",
 			accIcon: "jewellery/acc-solitare-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 76,
 			slot: "neck",
 			name: "multistone spinel pendant",
@@ -5233,9 +5216,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/spinel-multigem-pendant.png",
 			accIcon: "jewellery/acc-multigem-pendant.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 77,
 			slot: "neck",
 			name: "fringe spinel necklace",
@@ -5273,9 +5256,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/spinel-fringe-necklace.png",
 			accIcon: "jewellery/acc-fringe-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 78,
 			slot: "neck",
 			name: "rivière spinel necklace",
@@ -5313,9 +5296,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/spinel-rivière-necklace.png",
 			accIcon: "jewellery/acc-rivière-necklace.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 79,
 			slot: "neck",
 			name: "bib spinel strand",
@@ -5353,9 +5336,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/15ct-spinel-necklace.png",
 			accIcon: "jewellery/15ct-necklace-acc.png",
-		},
-
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 80,
 			slot: "neck",
 			name: "full spinel strand",
@@ -5393,8 +5376,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/20ct-spinel-necklace.png",
 			accIcon: "jewellery/20ct-necklace-acc.png",
-		},
-		{
+			modder: "Isari",
+		}),
+		new ClothesItem({
 			index: 81,
 			slot: "neck",
 			name: "antique gold amulet",
@@ -5429,8 +5413,9 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/antique-gold-amulet.png",
 			accIcon: 0,
-		},	
-		{
+			modder: "Isari",
+		}),	
+		new ClothesItem({
 			index: 82,
 			slot: "neck",
 			name: "antique gold necklace",
@@ -5465,7 +5450,8 @@ function initNeck() {
 			location: 0,
 			iconFile: "jewellery/antique-gold-necklace.png",
 			accIcon: 0,
-		},	
+			modder: "Isari",
+		}),	
 	];
 
 	setup.moddedClothes.neck.forEach((x, i) => (x.index = setup.clothes.neck.length + i));

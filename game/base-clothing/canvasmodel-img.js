@@ -430,6 +430,8 @@ DefineMacro("modelprepare-player-body", function () {
 
 
 
+	T.modeloptions.tf_ears_layer = V.tfearslayer;
+
 	/*
 			██████ ██   ██ ██ ███    ███ ███████ ██████   █████
 			██      ██   ██ ██ ████  ████ ██      ██   ██ ██   ██

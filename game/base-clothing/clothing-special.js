@@ -353,7 +353,7 @@ function initSpecialClothes() {
 		},
 		underground_farm: {
 			text: "cow print set",
-			requirements: () => V.livestock.intro !== undefined,
+			requirements: () => V.livestock?.intro !== undefined,
 			hint: "become livestock",
 			shop: ["forest", "adult"],
 			subsetOf: ["bad_end", "transformation"],
@@ -797,7 +797,7 @@ function initSpecialClothes() {
 			feat: false,
 			icon: "clothes/fox-mask.png",
 		},
-		//Modded
+		// Modded
 		antiques: {
 			text: "antique jewellery",
 			hint: "find them all",
@@ -954,15 +954,10 @@ function specialClothesUnlockText(toUnlock, group) {
 					return output;
 				}
 				output +=
-					'<span class="teal">' +
-					toUnlock[0].toUpperFirst() +
-					'</span> <span class="gold">' +
-					pluralText +
-					" now available at the forest shop!</span><br><br>";
+					'<span class="teal">' + toUnlock[0].toUpperFirst() + '</span> <span class="gold">' + pluralText + " now available at the forest shop!</span><br><br>";
 				return output;
 			}
-			const fullSetBeingUnlocked =
-				group && setup.specialClothes.filter(clothes => clothes.sets.includes(group)).every(item => toUnlock.includes(item.name));
+			const fullSetBeingUnlocked = group && setup.specialClothes.filter(clothes => clothes.sets.includes(group)).every(item => toUnlock.includes(item.name));
 			if (fullSetBeingUnlocked) {
 				switch (group) {
 					case "witch":
@@ -971,12 +966,10 @@ function specialClothesUnlockText(toUnlock, group) {
 					case "scarecrow":
 					case "skeleton":
 					case "pumpkin":
-						output +=
-							'<span class="orange">The ' + group + ' costume</span> <span class="gold">is now available at the forest shop!</span><br><br>';
+						output += '<span class="orange">The ' + group + ' costume</span> <span class="gold">is now available at the forest shop!</span><br><br>';
 						break;
 					case "future_suit":
-						output +=
-							'<span class="orange">The futuristic bodysuit costume</span> <span class="gold">is now available at the forest shop!</span><br><br>';
+						output += '<span class="orange">The futuristic bodysuit costume</span> <span class="gold">is now available at the forest shop!</span><br><br>';
 						break;
 					case "foreign_school":
 						output += '<span class="blue">Foreign school clothes</span> <span class="gold">are now available at the forest shop!</span><br><br>';
@@ -985,8 +978,7 @@ function specialClothesUnlockText(toUnlock, group) {
 						output += `<span class="lewd">The belly dancer's set and harem set</span> <span class="gold">are now available at the forest shop!</span><br><br>`;
 						break;
 					case "underground_farm":
-						output +=
-							'<span class="lewd">Cow print clothes and a cow bell</span> <span class="gold">are now available at the forest shop.</span><br><br>';
+						output += '<span class="lewd">Cow print clothes and a cow bell</span> <span class="gold">are now available at the forest shop.</span><br><br>';
 						break;
 					case "chain_tunic":
 						output += '<span class="grey">A set of antique chainmail</span> <span class="gold">is now available at the forest shop!</span><br><br>';
@@ -1004,8 +996,7 @@ function specialClothesUnlockText(toUnlock, group) {
 						output += `<span class="black">Confessor's robes</span> <span class="gold">are now available at the forest shop...</span><br><br>`;
 						break;
 					case "temple_sexy":
-						output +=
-							'<span class="lewd">Sexy nun and priest outfits</span> <span class="gold">are now available at the forest shop!</span><br><br>';
+						output += '<span class="lewd">Sexy nun and priest outfits</span> <span class="gold">are now available at the forest shop!</span><br><br>';
 						break;
 					case "butterfly":
 						output += '<span class="teal">The butterfly costume</span> <span class="gold">is now available at the forest shop!</span><br><br>';

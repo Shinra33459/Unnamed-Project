@@ -224,6 +224,8 @@ function averySchedule() {
 		return T.avery_available;
 	}
 
+	if (!V.avery_mansion) return;
+
 	if (V.avery_mansion.schedule === "away" && V.avery_skyscraper_fire_time <= 0 && V.avery_injury) V.avery_mansion.schedule = "return";
 	else if (
 		V.avery_mansion.schedule === "away" &&
@@ -251,7 +253,8 @@ function averySchedule() {
 			/* Sunday */
 			case 1:
 				if (Time.hour <= 4) V.avery_mansion.schedule = "sleep";
-				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing") V.avery_mansion.schedule = "bath";
+				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing")
+					V.avery_mansion.schedule = "bath";
 				else if (Time.hour <= 6 && V.timeStamp < V.daily.avery.dressing_timer && V.daily.avery.morning_bath === "dressing")
 					V.avery_mansion.schedule = "dressing";
 				else if (Time.hour <= 6) V.avery_mansion.schedule = "breakfast";
@@ -265,7 +268,8 @@ function averySchedule() {
 			/* Monday */
 			case 2:
 				if (Time.hour <= 4) V.avery_mansion.schedule = "sleep";
-				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing") V.avery_mansion.schedule = "bath";
+				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing")
+					V.avery_mansion.schedule = "bath";
 				else if (Time.hour <= 6 && V.timeStamp < V.daily.avery.dressing_timer && V.daily.avery.morning_bath === "dressing")
 					V.avery_mansion.schedule = "dressing";
 				else if (Time.hour <= 6) V.avery_mansion.schedule = "breakfast";
@@ -278,7 +282,8 @@ function averySchedule() {
 			/* Tuesday */
 			case 3:
 				if (Time.hour <= 4) V.avery_mansion.schedule = "sleep";
-				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing") V.avery_mansion.schedule = "bath";
+				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing")
+					V.avery_mansion.schedule = "bath";
 				else if (Time.hour <= 6 && V.timeStamp < V.daily.avery.dressing_timer && V.daily.avery.morning_bath === "dressing")
 					V.avery_mansion.schedule = "dressing";
 				else if (Time.hour <= 6) V.avery_mansion.schedule = "breakfast";
@@ -291,7 +296,8 @@ function averySchedule() {
 			/* Wednesday */
 			case 4:
 				if (Time.hour <= 4) V.avery_mansion.schedule = "sleep";
-				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing") V.avery_mansion.schedule = "bath";
+				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing")
+					V.avery_mansion.schedule = "bath";
 				else if (Time.hour <= 6 && V.timeStamp < V.daily.avery.dressing_timer && V.daily.avery.morning_bath === "dressing")
 					V.avery_mansion.schedule = "dressing";
 				else if (Time.hour <= 6) V.avery_mansion.schedule = "breakfast";
@@ -304,7 +310,8 @@ function averySchedule() {
 			/* Thursday */
 			case 5:
 				if (Time.hour <= 4) V.avery_mansion.schedule = "sleep";
-				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing") V.avery_mansion.schedule = "bath";
+				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing")
+					V.avery_mansion.schedule = "bath";
 				else if (Time.hour <= 6 && V.timeStamp < V.daily.avery.dressing_timer && V.daily.avery.morning_bath === "dressing")
 					V.avery_mansion.schedule = "dressing";
 				else if (Time.hour <= 6) V.avery_mansion.schedule = "breakfast";
@@ -317,7 +324,8 @@ function averySchedule() {
 			/* Friday */
 			case 6:
 				if (Time.hour <= 4) V.avery_mansion.schedule = "sleep";
-				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing") V.avery_mansion.schedule = "bath";
+				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing")
+					V.avery_mansion.schedule = "bath";
 				else if (Time.hour <= 6 && V.timeStamp < V.daily.avery.dressing_timer && V.daily.avery.morning_bath === "dressing")
 					V.avery_mansion.schedule = "dressing";
 				else if (Time.hour <= 6) V.avery_mansion.schedule = "breakfast";
@@ -330,7 +338,8 @@ function averySchedule() {
 			/* Saturday */
 			case 7:
 				if (Time.hour <= 4) V.avery_mansion.schedule = "sleep";
-				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing") V.avery_mansion.schedule = "bath";
+				else if (Time.hour <= 5 && V.daily.avery.morning_bath !== "done" && V.daily.avery.morning_bath !== "dressing")
+					V.avery_mansion.schedule = "bath";
 				else if (Time.hour <= 6 && V.timeStamp < V.daily.avery.dressing_timer && V.daily.avery.morning_bath === "dressing")
 					V.avery_mansion.schedule = "dressing";
 				else if (Time.hour <= 6) V.avery_mansion.schedule = "breakfast";
@@ -538,7 +547,11 @@ function gwylanSchedule() {
 	} else if (Time.hour === 5 || (Time.hour === 6 && Time.minute < 45)) {
 		return "garden"; // ToDo: Gwylan: watching Gwylan sleep or stretch in the garden during temperate weather
 	} else if (!V.daily.gwylan.cafeSkip && Time.hour === 7 && Time.minute < 20 && !V.daily.gwylan.cafe) {
-		return "walking_to_cafe";
+		if (between(V.chef_state, 7, 8) && V.chef_rework <= 30) {
+			return "cliff";
+		} else {
+			return "walking_to_cafe";
+		}
 	} else if (
 		!V.daily.gwylan.cafeSkip &&
 		((Time.hour === 7 && (Time.minute >= 20 || V.daily.gwylan.cafe)) || Time.hour === 8 || (Time.hour === 9 && Time.minute <= 20))

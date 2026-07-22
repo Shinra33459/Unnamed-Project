@@ -67,6 +67,7 @@ module.exports = {
 		Stack: "readonly",
 		Wikifier: "readonly",
 		// DoL other namespaces/objects
+		ClothesItem: "readonly",
 		Constants: "readonly",
 		ConstantsLoader: "readonly",
 		Cooker: "readonly",
@@ -206,6 +207,7 @@ module.exports = {
 		pregnancyGenerator: "readonly",
 		pregnancyProgress: "readonly",
 		pregPrep: "readonly",
+		removeDiacritics: "readonly",
 		randomPregnancyProgress: "readonly",
 		registerGeneratedPattern: "readonly",
 		registerImagePattern: "readonly",
@@ -303,10 +305,14 @@ module.exports = {
 		CanvasModel: "readonly",
 		PRNG: "readonly",
 		// DOLP functions
+		initEarrings: "readonly",
+		initRingsL: "readonly",
 		bikeSecurity: "readonly",
 		bikeTime: "readonly",
 		poppyDailyTraits: "readonly",
 		poppyStatusCheck: "readonly",
+		poppyConsumePendingOpiumMessage: "readonly",
+		poppyConsumePendingPavlovMessage: "readonly",
 		// Third-party
 		define: "readonly",
 		iro: "readonly",

@@ -632,7 +632,7 @@ function calculateallure() {
 	if (V.auriga_scar) allure += V.auriga_scar * 500;
 	allure = Math.clamp(allure, 0, 8000);
 	V.baseAllure = allure;
-	if (V.hallucinogen >= 1 && V.substanceRebalance == 1) V.allure *= 1 + (0.25 * (V.hallucinogen / 250))
+	if (V.hallucinogen >= 1 && V.substanceRebalance === 1) V.allure *= 1 + (0.25 * (V.hallucinogen / 250))
 	/* extra modifiers */
 	allure *= V.settings.allureModifier;
 	if (V.moorLuck > 0) allure *= 1 - V.moorLuck / 100;
@@ -669,7 +669,7 @@ function exposure() {
 		// wardrobes should not be safe locations though, as they must show what clothes are appropriate outside. if you wanna stop pc from covering themselves - use "don't cover yourself" link in the wardrobes instead of altering the libertine score.
 		safeLocations.some(location => V.passage.includes(location)) &&
 		V.NPCList.every(npc => !npc.fullDescription || Object.values(V.loveInterest).includes(npc.fullDescription)) &&
-		V.audiencepresent === 0
+		!V.audiencepresent
 	) {
 		// alone (or with a li) in safe locations - anything goes
 		V.libertine = 2;

@@ -117,8 +117,8 @@
 
 <<widget "oxygenrecovery">>
 	<<if $oxygenRecovery and $oxygen lt $oxygenmax>>
-		/* 8 minutes to recover from 0 oxygen */
-		<<set $_seconds to Math.ceil((1 - $oxygen/$oxygenmax) * Time.oxygenResaturationDuration)>>
+		/* 16 minutes to recover from 0 oxygen and be ready to dive again (this time is roughly equal to the duration of the dive) */
+		<<set $_seconds to Math.ceil((1 - $oxygen/$oxygenmax) * Time.oxygenResaturationDuration * 2)>>
 		<<set $_minutes to Math.ceil($_seconds / TimeConstants.secondsPerMinute)>>
 		<<loitericon>><<capture $_seconds>><<link [[`Catch your breath (${getTimeString($_minutes)})`|$passage]]>>
 			<<if ['string', 'number'].includes(typeof(_args[0]))>>
@@ -491,7 +491,7 @@
 			<<set $_crimemod to Number(_args[0])>>
 			<<set $_crimeMult to 1>>
 
-			<<if !["coercion", "resisting"].includes(_crimeType)>>
+			<<if !["coercion", "resisting", "food"].includes(_crimeType)>>
 				<!-- ignore stealth (or concealed identity) for crimes where it is irrelevant; -->
 				<!-- resisting arrest where the player's identity is explicitly known and coercion where the player's force of personality is needed -->
 				/* The following commented code contains experimental factors for calculating stealth */
@@ -1439,11 +1439,6 @@
 				<</if>>
 			</div>
 
-			<<if $tiredness gte C.tiredness.max>>
-				<<set $stress += (($tiredness - C.tiredness.max) * 16)>><<set $trauma += (($tiredness - C.tiredness.max) / 3)>>
-			<</if>>
-
-			<<set $tiredness = Math.clamp($tiredness, 0, C.tiredness.max)>>
 			<<set _showCaptionText to !$options.showCaptionText>>
 			<<statbar 0 $tiredness `C.tiredness.max` _showCaptionText>>
 		</div>
@@ -2959,9 +2954,9 @@
 	<</if>>
 
 	<<if _args[0] is "serving">>
-		<!-- +20% for every visible clothing item with 'serving' tag -->
+		<!-- +20% for a visible clothing item with 'serving' tag, then diminishing returns -->
 		<<set $_servingClothesCount to getVisibleClothesList().countWith(item => item.type.includes("serving"))>>
-		<<set $tip += $tip * 0.2 * $_servingClothesCount>>
+		<<set $tip *= (1 + (0.75 * (1 - Math.pow(2/3, $_servingClothesCount))))>>
 	<</if>>
 
 	<<set $tip to $tipmod * $tip>>
@@ -2986,8 +2981,9 @@
 <</widget>>
 
 <<widget "tipreceive">>
-	<span class="gold"><<if random(1, 10000) is 10000>>You gain Brouzouf<<else>>You make<</if>> <<printmoney $tip>>.</span>
-	<<money $tip `_args[0] ? _args[0] : ""`>>
+	<<set _profit to $tip + 500>>
+	<span class="gold"><<if random(1, 10000) is 10000>>You gain Brouzouf<<else>>You make<</if>> <<printmoney _profit>>.</span>
+	<<money _profit `_args[0] ? _args[0] : ""`>>
 	<<if $tip gte 50000>>
 		<<earnFeat "Negotiator">>
 	<</if>>
@@ -3062,7 +3058,7 @@
 				<span class="lewd">You absorb the sexual essence. You feel soothed.</span>
 			<</if>>
 			<<set $demonabsorb to 0>>
-			<<traumaclamp>>
+			<<traumaClamp>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -3939,7 +3935,7 @@
 	<</if>>
 <</widget>>
 
-<<!-- The "game\04-Variables\variables-start2.twee" descriptions for hair and fringe length have their growth values
+<!-- The "game\04-Variables\variables-start2.twee" descriptions for hair and fringe length have their growth values
 	equal to each other. However, this widget contradicts that description and assumes the player's fringe will never
 	grow past their face.
 
@@ -3947,7 +3943,7 @@
 	there's much interest, so will treat these descriptions as the default.
 
 	Someone will need to update the $fringelengthstage values to reflect the current in-game descriptions, to prevent
-	future confusion. -->>>
+	future confusion. -->
 <<widget "fringedescription">>
 	<<if $haircolour isnot $hairfringecolour>>
 		<<if $hairFringeColourStyle is "gradient">>
@@ -3976,12 +3972,11 @@
 <</widget>>
 
 
-<<!-- Added a hair and fringe details widget to make hair length discrimination more viable.
-	Not sure if there's another file where this widget would be better placed. Feel free to move.
-	Descriptions based on the values in "game\base-system\overlays\characteristics.twee" and
-	the "game\04-Variables\variables-start2.twee".
+<!--
+	Descriptions based on the values in "game\base-system\overlays\characteristics.twee" and "game\04-Variables\variables-start2.twee".
 
-	See "game\overworld-plains\loc-farm\events.twee" for examples of its use. -->>>>
+	See "game\overworld-plains\loc-farm\events.twee" for examples of its use.
+-->
 <<widget "hairDetails">>
 	<<if $hairlength gte 900>>
 		extremely long <<haircolourtext>> hair\
@@ -4015,13 +4010,16 @@
 	<</silently>>
 <</widget>>
 
+
 <<widget "templeLossLower">>
 	<span class="pink">a hollowness flows through you, reminding you of your loss. The loss of something that was never yours.</span>
 <</widget>>
 
+
 <<widget "templeLossUpper">>
 	<span class="pink">A hollowness flows through you, reminding you of your loss. The loss of something that was never yours.</span>
 <</widget>>
+
 
 <<widget "willpowerpain">>
 	<<if $pain gte 100 and $willpowerpain is undefined and _willpowerpainchecked isnot true>>
@@ -4430,7 +4428,7 @@
 		/*Chance of abuse based on crowd and time passed*/
 		<<if $pillory.tenant.crowd lte 1>><<set $pillory.tenant.crowd to 1>><</if>>
 		<<set $_chance to Math.clamp($_firechance, 1, 24)>>
-		 /* If you do not visit for a long time, there is a higher chance for at least one event to happen */
+		/* If you do not visit for a long time, there is a higher chance for at least one event to happen */
 		<<if $_chance gte 1>><<set $_chance to $_chance**1.5>><</if>>
 		<<set $_chance *= $pillory.tenant.crowd>>
 
@@ -5920,6 +5918,14 @@
 	<<if $worn.neck.cursed is 1>>
 		<<set $worn.neck.type.push("broken")>>
 		<<neckruined>>
+	<</if>>
+	<<if $worn.hands.cursed is 1>>
+		<<set $worn.hands.type.push("broken")>>
+		<<handsruined>>
+	<</if>>
+	<<if $worn.feet.cursed is 1>>
+		<<set $worn.feet.type.push("broken")>>
+		<<feetruined>>
 	<</if>>
 
 	<<for _bodypart range $parasite.bodyparts>>

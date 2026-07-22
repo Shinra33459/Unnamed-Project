@@ -1581,6 +1581,29 @@
 						<<run Engine.show()>>
 					<</link>>
 			<</switch>>
+			|
+			<<switch $earringsposition>>
+				<<case "fringe">>
+					<<link "Position earrings behind hair">>
+						<<run State.setVar("$earringsposition", "back")>>
+						<<run Engine.show()>>
+					<</link>>
+				<<case "back">>
+					<<link "Position earrings in front of hair">>
+						<<run State.setVar("$earringsposition", "front")>>
+						<<run Engine.show()>>
+					<</link>>
+				<<case "front">>
+					<<link "Position earrings behind fringe">>
+						<<run State.setVar("$earringsposition", "fringe")>>
+						<<run Engine.show()>>
+					<</link>>
+				<<default>>
+					<<link "Position earrings behind fringe">>
+						<<run State.setVar("$earringsposition", "fringe")>>
+						<<run Engine.show()>>
+					<</link>>
+			<</switch>>
 			<br><br>
 		</div>
 	<<else>>
@@ -1710,6 +1733,29 @@
 				<<default>>
 					<<link "Position brows behind hair">>
 						<<run State.setVar("$browsposition", "back")>>
+						<<run Engine.show()>>
+					<</link>>
+			<</switch>>
+			|
+			<<switch $earringsposition>>
+				<<case "fringe">>
+					<<link "Position earrings behind hair">>
+						<<run State.setVar("$earringsposition", "back")>>
+						<<run Engine.show()>>
+					<</link>>
+				<<case "back">>
+					<<link "Position earrings in front of hair">>
+						<<run State.setVar("$earringsposition", "front")>>
+						<<run Engine.show()>>
+					<</link>>
+				<<case "front">>
+					<<link "Position earrings behind fringe">>
+						<<run State.setVar("$earringsposition", "fringe")>>
+						<<run Engine.show()>>
+					<</link>>
+				<<default>>
+					<<link "Position earrings behind fringe">>
+						<<run State.setVar("$earringsposition", "fringe")>>
 						<<run Engine.show()>>
 					<</link>>
 			<</switch>>
@@ -3567,85 +3613,111 @@
 		<<link [[Set|$passage]]>><<set $traumaeyes to true>><<updatesidebarimg>><</link>> / <<link [[Clear|$passage]]>><<set $traumaeyes to false>><<updatesidebarimg>><</link>><br>
 		<br>
 	<</if>>
-
-	<div class="settingsToggleItemWide no-numberify">
-		<span class="gold bold">Layer Adjustments:</span>
-		<br>
-		<<if !["demon", "cow", "waterdragon"].every(transform => !T[transform] || T[transform].horns === "disabled")>>
-			<<switch $hornslayer>>
-				<<case "front">>
-					<<link "Prioritise headwear over horns">>
-						<<run State.setVar("$hornslayer", "back")>>
-						<<run Engine.show()>>
-					<</link>>
-				<<case "back">>
-					<<link "Prioritise horns over headwear">>
-						<<run State.setVar("$hornslayer", "front")>>
-						<<run Engine.show()>>
-					<</link>>
-				<<default>>
-					<<link "Prioritise horns over headwear">>
-						<<run State.setVar("$hornslayer", "front")>>
-						<<run Engine.show()>>
-					<</link>>
-			<</switch>>
+	
+	<<if !["demon", "cow"].every(transform => T[transform].horns is "disabled") || !["demon", "cat", "cow", "wolf", "bird", "fox"].every(transform => T[transform].tail is "disabled") || !["angel", "fallen", "demon", "bird"].every(transform => T[transform].wings is "disabled") || !["fox", "wolf", "cat"].every(transform => T[transform].ears is "disabled")>>
+		<div class="settingsToggleItemWide no-numberify">
+			<span class="gold bold">Layer Adjustments:</span>
 			<br>
-		<</if>>
-		<<if !["demon", "cat", "cow", "bear", "wolf", "bird", "fox", "okami", "kitsune", "waterdragon"].every(transform => T[transform].tail is "disabled")>>
-			<<switch $taillayer>>
-				<<case "front">>
-					<<link "Push tail back">>
-						<<run State.setVar("$taillayer", "back")>>
-						<<run Engine.show()>>
-					<</link>>
-				<<case "back">>
-					<<link "Move tail forward">>
-						<<run State.setVar("$taillayer", "front")>>
-						<<run Engine.show()>>
-					<</link>>
-				<<default>>
-					<<link "Push tail back">>
-						<<run State.setVar("$taillayer", "back")>>
-						<<run Engine.show()>>
-					<</link>>
-			<</switch>>
-			<br>
-		<</if>>
-		<<if !["angel", "fallen", "demon", "bird", "okami"].every(transform => T[transform].wings is "disabled")>>
-			<<switch $wingslayer>>
-				<<case "front">>
-					<<link "Push wings behind">>
-						<<run State.setVar("$wingslayer", "back")>>
-						<<run Engine.show()>>
-					<</link>>
-				<<case "back">>
-					<<link "Move wings forward">>
-						<<run State.setVar("$wingslayer", "front")>>
-						<<run Engine.show()>>
-					<</link>>
-				<<default>>
-					<<link "Push wings behind">>
-						<<run State.setVar("$wingslayer", "back")>>
-						<<run Engine.show()>>
-					<</link>>
-			<</switch>>
-			<br>
-		<</if>>
-	</div>
-
-	<<if _isMenuEnabled>>
-		<details class="expandMenu">
-			<summary class="expandMenu">Custom Colours</summary>
-			<div class="menuWarning">
-				You haven't chosen any transformation parts! Select the checkboxes for the parts you'd like to recolour.
-			</div>
-			<div class="menuContent hidden">
-				<<set _options to ['ffffff', 'ff0000', '00ff00', '0000ff', '590099', '000000']>>
-				<<gencoloursquares _options>>
-				<<gencolourpicker>>
-			</div>
-		</details>
+			<<if !["demon", "cow", "waterdragon"].every(transform => !T[transform] || T[transform].horns === "disabled")>>
+				<<switch $hornslayer>>
+					<<case "front">>
+						<<link "Prioritise headwear over horns">>
+							<<run State.setVar("$hornslayer", "back")>>
+							<<run Engine.show()>>
+						<</link>>
+					<<case "back">>
+						<<link "Prioritise horns over headwear">>
+							<<run State.setVar("$hornslayer", "front")>>
+							<<run Engine.show()>>
+						<</link>>
+					<<default>>
+						<<link "Prioritise horns over headwear">>
+							<<run State.setVar("$hornslayer", "front")>>
+							<<run Engine.show()>>
+									<<updatesidebarimg true>>
+								<</link>>
+						<</switch>>
+						<br>
+					<</if>>
+					/* TF ears position WIP*/
+					<<if !["fox", "wolf", "cat"].every(transform => T[transform].ears is "disabled")>>
+							<<switch $tfearslayer>>
+								<<case "front">>
+									<<link "Position hair in front of animal ears">>
+										<<run State.setVar("$tfearslayer", "back")>>
+										<<run Engine.show()>>
+										<<updatesidebarimg true>>
+									<</link>>
+								<<case "back">>
+									<<link "Tuck hair behind animal ears">>
+										<<run State.setVar("$tfearslayer", "front")>>
+										<<run Engine.show()>>
+										<<updatesidebarimg true>>
+									<</link>>
+								<<default>>
+									<<link "Tuck hair behind animal ears">>
+										<<run State.setVar("$tfearslayer", "front")>>
+										<<run Engine.show()>>
+										<<updatesidebarimg true>>
+									<</link>>
+							<</switch>>
+							<br>
+			<</if>>
+			<<if !["demon", "cat", "cow", "bear", "wolf", "bird", "fox", "okami", "kitsune", "waterdragon"].every(transform => T[transform].tail is "disabled")>>
+				<<switch $taillayer>>
+					<<case "front">>
+						<<link "Push tail back">>
+							<<run State.setVar("$taillayer", "back")>>
+							<<run Engine.show()>>
+						<</link>>
+					<<case "back">>
+						<<link "Move tail forward">>
+							<<run State.setVar("$taillayer", "front")>>
+							<<run Engine.show()>>
+						<</link>>
+					<<default>>
+						<<link "Push tail back">>
+							<<run State.setVar("$taillayer", "back")>>
+							<<run Engine.show()>>
+						<</link>>
+				<</switch>>
+				<br>
+			<</if>>
+			<<if !["angel", "fallen", "demon", "bird", "okami"].every(transform => T[transform].wings is "disabled")>>
+				<<switch $wingslayer>>
+					<<case "front">>
+						<<link "Push wings behind">>
+							<<run State.setVar("$wingslayer", "back")>>
+							<<run Engine.show()>>
+						<</link>>
+					<<case "back">>
+						<<link "Move wings forward">>
+							<<run State.setVar("$wingslayer", "front")>>
+							<<run Engine.show()>>
+						<</link>>
+					<<default>>
+						<<link "Push wings behind">>
+							<<run State.setVar("$wingslayer", "back")>>
+							<<run Engine.show()>>
+						<</link>>
+				<</switch>>
+				<br>
+			<</if>>
+		</div>
 	<</if>>
+		<<if _isMenuEnabled>>
+			<details class="expandMenu">
+				<summary class="expandMenu">Custom Colours</summary>
+				<div class="menuWarning">
+					You haven't chosen any transformation parts! Select the checkboxes for the parts you'd like to recolour.
+				</div>
+				<div class="menuContent hidden">
+					<<set _options to ['ffffff', 'ff0000', '00ff00', '0000ff', '590099', '000000']>>
+					<<gencoloursquares _options>>
+					<<gencolourpicker>>
+				</div>
+			</details>
+		<</if>>
 
 	<br>
 	<<link "Top of Page">>

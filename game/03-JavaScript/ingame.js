@@ -43,7 +43,7 @@ window.toggleAllHairTraitsFilter = toggleAllHairTraitsFilter;
 
 // A wrapper for wikifyEval, only use for singular macro calls.
 function wikifier(widget, ...args) {
-	if (widget == null) return document.createDocumentFragment();
+	if (widget === null) return document.createDocumentFragment();
 	return Wikifier.wikifyEval("<<" + widget + (args.length ? " " + args.join(" ") : "") + ">>");
 }
 window.wikifier = wikifier;
@@ -723,7 +723,8 @@ function isInPark(name) {
 			// prettier-ignore
 			return C.npc.Kylar.state === "active"
 				&& Weather.precipitation === "none"
-				&& Time.dayState === "day" && V.kylarwatched !== 1;
+				&& Time.dayState === "day" && !Time.schoolTime
+				&& V.kylarwatched !== 1;
 		case "robin":
 			return getRobinLocation() === "park";
 		case "whitney":
@@ -740,7 +741,7 @@ function isInPark(name) {
 		case "sam":
 			// prettier-ignore
 			return C.npc.Sam.init === 1
-				&& (Time.hour >= 6 && Time.hour < 7)
+				&& (Time.hour >= 6 && Time.hour < 7 && Time.minute <= 55)
 				&& Weather.precipitation === "none";
 		default:
 			return false;
@@ -1130,7 +1131,7 @@ window.resetClothingState = resetClothingState;
 
 /* Returns array of clothing items that are stored in [loc] */
 function clothingInStorage(loc) {
-	if (loc == null) return;
+	if (loc === null) return;
 	const clothing = [];
 	for (const slot of setup.clothingLayer.all) {
 		const item = V.store[slot].find(item => item.location === loc);
@@ -1247,7 +1248,8 @@ window.clothesIndex = clothesIndex;
 /**
  * @param {string} skill The name of the requested skill.
  * @param {number} disableModifiers How much of an effect that modifiers will have on the player's current skill. Higher values means a lower effect. Stops at 2.
- * @returns Returns the current value of the requested skill, accounting for potential modifiers.
+ * @param {number} disableStatNerf How much of an effect that statnerf will have on the player's current skill.
+ * @returns {number} Returns the current value of the requested skill, accounting for potential modifiers.
  */
 function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 	let result = V[skill];
@@ -1422,8 +1424,8 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.worn.feet.type.includes("shackle")) {
 				result = Math.floor(result * 0.5);
 			}
-			if (V.hallucinogen >= 1 && V.substanceRebalance == 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			if (V.DoLPTFBuffs === 1) {
 				if (V.TFCatBuffs === 1) {
@@ -1458,7 +1460,7 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 			if (V.transformationParts.traits.chase !== "disabled") result = Math.floor(result * 1.1);
 			if (V.worn.feet.type.includes("shackle")) result /= 10;
 			if (V.hallucinogen >= 1 && V.substanceRebalance === 1) {
-				result = Math.round(result * (1 - (0.125 * Math.round(V.hallucinogen / 250))));
+				result = Math.round(result * (1 - 0.125 * Math.round(V.hallucinogen / 250)));
 			}
 			if (V.DoLPTFBuffs === 1) {
 				if (V.TFWolfBuffs === 1) {
@@ -1482,7 +1484,7 @@ function currentSkillValue(skill, disableModifiers = 0, disableStatNerf = 0) {
 				if (V.TFBunnyBuffs === 1) {
 					result = Math.round(result * 1.5);
 				}
-				if (V.TFWaterDragonBuffs == 1) {
+				if (V.TFWaterDragonBuffs === 1) {
 					result = Math.round(result * 1.2);
 				}
 			}
@@ -1708,7 +1710,7 @@ function heatRutSexStatModifier(input) {
 	if (minArousal === 0) return 0;
 
 	const statName = sexStatNameMapper(input);
-	if (statName == null) {
+	if (statName === null) {
 		Errors.report(`[heatRutSexStatModifier]: input '${statName}' null.`, {
 			Stacktrace: Utils.GetStack(),
 			statName,
@@ -1738,7 +1740,7 @@ window.heatRutSexStatModifier = heatRutSexStatModifier;
 function hasSexStat(input, required, modifiers = true) {
 	const statName = sexStatNameMapper(input);
 	// check if stat name is valid.
-	if (statName == null) {
+	if (statName === null) {
 		Errors.report(`[hasSexStat]: input '${statName}' null.`, {
 			Stacktrace: Utils.GetStack(),
 			statName,
@@ -1954,15 +1956,13 @@ function isPossibleLoveInterest(name) {
 }
 window.isPossibleLoveInterest = isPossibleLoveInterest;
 
-window.isPossibleLoveInterestVirginity = function(taker) {
+function isPossibleLoveInterestVirginity(taker) {
 	if (typeof taker !== "string") return false;
 	if (taker.includes(" and ")) {
-		return taker.split(" and ").some(name => 
-			isPossibleLoveInterest(name.trim())
-		);
+		return taker.split(" and ").some(name => isPossibleLoveInterest(name.trim()));
 	}
 	return isPossibleLoveInterest(taker);
-};
+}
 window.isPossibleLoveInterestVirginity = isPossibleLoveInterestVirginity;
 
 function fameTotal() {
@@ -2698,8 +2698,8 @@ function calculateSemenReleased() {
 	released += V.semen_volume / 30;
 
 	if (V.femaleclimax === 1) released /= 30;
-	if (V.orgasmtrait >= 1) released *= 2.5;
-	if (V.cow >= 6) released *= 2;
+	if (V.orgasmtrait >= 1) released *= 1.5;
+	if (V.cow >= 6) released *= 1.2;
 
 	/* if the player doesn't have enough semen, set $_semen_released to whatever they have left */
 	if (V.semen_amount < released) released = V.semen_amount;
@@ -3208,7 +3208,7 @@ function kitchenFilter() {
 		.filter(Boolean);
 
 	const norm = v => {
-		if (v == null) return "";
+		if (v === null) return "";
 		if (Array.isArray(v)) return v.join(" ").toLowerCase();
 		return String(v).toLowerCase();
 	};
@@ -3225,16 +3225,11 @@ function kitchenFilter() {
 			const matchesAnyTerm = terms.some(term => {
 				const matchesInfo =
 					V.options.ingredientsSearch !== "ingredients" &&
-					(norm(item.name).includes(term) ||
-						norm(item.category).includes(term) ||
-						norm(item.plural).includes(term) ||
-						norm(item.singular).includes(term));
+					(norm(item.name).includes(term) || norm(item.category).includes(term) || norm(item.plural).includes(term) || norm(item.singular).includes(term));
 
 				const matchesRecipe =
 					V.options.ingredientsSearch !== "recipes" &&
-					(item.recipe?.ingredients ?? []).some(
-						ingredient => norm(ingredient).includes(term) || norm(ingredientUsed(ingredient)).includes(term)
-					);
+					(item.recipe?.ingredients ?? []).some(ingredient => norm(ingredient).includes(term) || norm(ingredientUsed(ingredient)).includes(term));
 
 				return matchesInfo || matchesRecipe;
 			});
@@ -3364,7 +3359,7 @@ function isMonsterHallucinationAllowed(rng = random(1, 100)) {
 	if (!V.settings.bestialityEnabled && isDragonEyesActive()) return false;
 	return (!V.settings.monsterHallucinationsOnly || V.hallucinations > 0) && V.settings.monsterChance >= rng;
 }
-window.isMonsterHallucinationAllowed = isMonsterHallucinationAllowed;	
+window.isMonsterHallucinationAllowed = isMonsterHallucinationAllowed;
 
 function isBeastSceneAllowed(rng = random(1, 100)) {
 	return V.settings.bestialityEnabled || isMonsterHallucinationAllowed(rng);
@@ -3372,8 +3367,15 @@ function isBeastSceneAllowed(rng = random(1, 100)) {
 window.isBeastSceneAllowed = isBeastSceneAllowed;
 
 /**
- * check if event is going to be dangerous based on rng and player allure
- * for consistency, danger rng is rolled once per passage, unless specified otherwise
+ * Check if an event is going to be dangerous based on rng and the player's Allure. Another target's Allure can
+ * be substitued as needed.
+ *
+ * For consistency, danger rng is rolled once per passage, unless specified through the "reroll" parameter.
+ *
+ * Lowering the floor increases the player's flat probability of triggering an event. Changing the mod
+ * increases / decreases the chance of triggering the event with increasing / decreasing Allure.
+ *
+ * For a guaranteed activation at 8,000 Allure, set a mod of 1.25, or a floor of 8,000.
  *
  * @param {number} mod allure multiplier
  * @param {number} floor how high of a bar rng(1,10000) needs to pass to qualify as dangerous with 0 allure. default is 9900 (1% chance of danger event)
@@ -3382,6 +3384,17 @@ window.isBeastSceneAllowed = isBeastSceneAllowed;
  * @returns {boolean} whether the roll is dangerous
  */
 function dangerEvent(mod = 1, floor = 9900, allure = V.allure, reroll = false) {
+	/**
+	 * (mod = 1, floor = 8,000)
+	 * 8,000 Allure:	100% pass chance
+	 * 6,000 Allure:	80% pass chance
+	 * 0 Allure:		20% pass chance
+	 *
+	 * (mod = 1.25, floor = 9,900)
+	 * 8,000 Allure:	100% pass chance
+	 * 6,000 Allure:	76% pass chance
+	 * 0 Allure:		1% pass chance
+	 */
 	if (!T.danger || reroll) T.danger = random(1, 10000);
 	return T.danger >= floor - allure * mod;
 }
@@ -3438,3 +3451,48 @@ function breakableSoftBinding() {
 }
 
 window.breakableSoftBinding = breakableSoftBinding;
+
+function averageBunPrice(toSell = T.buns_sold) {
+	/* Calculates the average price of a bun with diminishing returns */
+	let totalRevenue = 0;
+	let remaining = toSell;
+	if (V.daily.buns_sold === undefined) {
+		V.daily.buns_sold = 0;
+	}
+	let batch = 1;
+	let harmonics = 1;
+
+	/* Calculates the current divisor for buns */
+	for (let soldToday = 20; soldToday <= V.daily.buns_sold; soldToday += 20) {
+		if (batch === 1) {
+			harmonics += 0.5;
+		} else {
+			harmonics += 1 / Math.max(batch / 20, 1);
+		}
+		batch++;
+	}
+	let doneToday = V.daily.buns_sold % 20;
+	let pricePerBun = V.bun_value / harmonics;
+	let bunsInBatch = 0;
+
+	/* Sells the new buns */
+	while (remaining > 0) {
+		bunsInBatch = Math.min(20 - doneToday, remaining);
+		doneToday = 0;
+
+		totalRevenue += bunsInBatch * pricePerBun;
+		remaining -= bunsInBatch;
+		if (batch === 1) {
+			harmonics += 0.5;
+		} else {
+			harmonics += 1 / Math.max(batch / 20, 1);
+		}
+		batch++;
+		pricePerBun = V.bun_value / harmonics;
+	}
+
+	V.daily.buns_sold += T.buns_sold;
+
+	return totalRevenue / toSell;
+}
+window.averageBunPrice = averageBunPrice;

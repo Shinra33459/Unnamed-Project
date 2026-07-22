@@ -16,7 +16,7 @@ warmth checklist:
 function initEarrings() {
 	/** @type {ClothesItem[]} */
 	const clothing = [
-		{
+		new ClothesItem({
 			index: 0,
 			slot: "earrings",
 			name: "naked",
@@ -46,8 +46,8 @@ function initEarrings() {
 			iconFile: 0,
 			accIcon: 0,
 			mainImage: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 1,
 			slot: "earrings",
 			name: "metal earrings",
@@ -79,8 +79,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/base.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 2,
 			slot: "earrings",
 			name: "shiny metal earrings",
@@ -112,8 +112,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/base-shiny.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 3,
 			slot: "earrings",
 			name: "drop metal earrings",
@@ -145,8 +145,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/base-long.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 4,
 			slot: "earrings",
 			name: "flower metal earrings",
@@ -180,8 +180,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/base-flower.png",
 			accIcon: "jewellery/base-flower-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 5,
 			slot: "earrings",
 			name: "jewelled flower metal earrings",
@@ -215,8 +215,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/base-flower.png",
 			accIcon: "jewellery/base-flower-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 6,
 			slot: "earrings",
 			name: "gold stud earrings",
@@ -248,8 +248,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/gold.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 7,
 			slot: "earrings",
 			name: "shiny gold earrings",
@@ -281,8 +281,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/gold-shiny.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 8,
 			slot: "earrings",
 			name: "drop gold earrings",
@@ -314,8 +314,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/gold-long.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 9,
 			slot: "earrings",
 			name: "flower gold earrings",
@@ -349,9 +349,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/gold-flower.png",
 			accIcon: "jewellery/base-flower-acc.png",
-		},
-		
-		{
+		}),
+		new ClothesItem({
 			index: 10,
 			slot: "earrings",
 			name: "silver stud earrings",
@@ -383,8 +382,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/silver.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 11,
 			slot: "earrings",
 			name: "shiny silver earrings",
@@ -416,8 +415,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/silver-shiny.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 12,
 			slot: "earrings",
 			name: "drop silver earrings",
@@ -449,8 +448,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/silver-long.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 13,
 			slot: "earrings",
 			name: "flower silver earrings",
@@ -484,8 +483,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/silver-flower.png",
 			accIcon: "jewellery/base-flower-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 14,
 			slot: "earrings",
 			name: "jewelled flower silver earrings",
@@ -519,8 +518,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/silver-flower.png",
 			accIcon: "jewellery/base-flower-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 15,
 			slot: "earrings",
 			name: "round earrings",
@@ -552,8 +551,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/round.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 16,
 			slot: "earrings",
 			name: "oval earrings",
@@ -585,8 +584,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/oval.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 17,
 			slot: "earrings",
 			name: "cross earrings",
@@ -618,8 +617,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/cross.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 18,
 			slot: "earrings",
 			name: "upside-down cross earrings",
@@ -651,8 +650,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/cross-u.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 19,
 			slot: "earrings",
 			name: "elf ears",
@@ -684,8 +683,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/elf.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 20,
 			slot: "earrings",
 			name: "snake earrings",
@@ -717,8 +716,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/snake.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 21,
 			slot: "earrings",
 			name: "graphic earrings",
@@ -824,8 +823,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/empty.png",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 22,
 			slot: "earrings",
 			name: "jewelled flower gold earrings",
@@ -859,8 +858,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/silver-flower.png",
 			accIcon: "jewellery/base-flower-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 23,
 			slot: "earrings",
 			name: "flower gold earrings",
@@ -893,8 +892,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/gold-flower-silver.png",
 			accIcon: 0,
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 24,
 			slot: "earrings",
 			name: "small diamond stud earrings",
@@ -927,8 +926,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/diamond-stud.png",
 			accIcon: "jewellery/studs-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 25,
 			slot: "earrings",
 			name: "diamond stud earrings",
@@ -966,8 +965,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern-acc",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 26,
 			slot: "earrings",
 			name: "ruby stud earrings",
@@ -1005,8 +1004,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 27,
 			slot: "earrings",
 			name: "sapphire stud earrings",
@@ -1044,8 +1043,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 28,
 			slot: "earrings",
 			name: "emerald stud earrings",
@@ -1083,8 +1082,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 29,
 			slot: "earrings",
 			name: "tanzanite stud earrings",
@@ -1122,8 +1121,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 30,
 			slot: "earrings",
 			name: "aquamarine stud earrings",
@@ -1161,8 +1160,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 31,
 			slot: "earrings",
 			name: "spinel stud earrings",
@@ -1200,8 +1199,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 32,
 			slot: "earrings",
 			name: "topaz stud earrings",
@@ -1239,8 +1238,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 33,
 			slot: "earrings",
 			name: "amethyst stud earrings",
@@ -1278,8 +1277,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "pattern",
 			accIcon: "pattern",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 34,
 			slot: "earrings",
 			name: "pearl stud earrings",
@@ -1312,8 +1311,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/pearl-stud.png",
 			accIcon: "jewellery/studs-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 35,
 			slot: "earrings",
 			name: "diamond drop earrings",
@@ -1347,8 +1346,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/diamond-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 36,
 			slot: "earrings",
 			name: "ruby drop earrings",
@@ -1382,8 +1381,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/ruby-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 37,
 			slot: "earrings",
 			name: "sapphire drop earrings",
@@ -1417,8 +1416,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/sapphire-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 38,
 			slot: "earrings",
 			name: "emerald drop earrings",
@@ -1452,8 +1451,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/emerald-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 39,
 			slot: "earrings",
 			name: "tanzanite drop earrings",
@@ -1487,8 +1486,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/tanzanite-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 40,
 			slot: "earrings",
 			name: "aquamarine drop earrings",
@@ -1522,8 +1521,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/aquamarine-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 41,
 			slot: "earrings",
 			name: "spinel drop earrings",
@@ -1557,8 +1556,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/spinel-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 42,
 			slot: "earrings",
 			name: "topaz drop earrings",
@@ -1592,8 +1591,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/topaz-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 43,
 			slot: "earrings",
 			name: "amethyst drop earrings",
@@ -1627,8 +1626,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/amethyst-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 44,
 			slot: "earrings",
 			name: "pearl drop earrings",
@@ -1661,8 +1660,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/pearl-drop.png",
 			accIcon: "jewellery/drops-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 45,
 			slot: "earrings",
 			name: "diamond halo earrings",
@@ -1696,8 +1695,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/diamond-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 46,
 			slot: "earrings",
 			name: "ruby halo earrings",
@@ -1731,8 +1730,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/ruby-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 47,
 			slot: "earrings",
 			name: "sapphire halo earrings",
@@ -1766,8 +1765,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/sapphire-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 48,
 			slot: "earrings",
 			name: "emerald halo earrings",
@@ -1801,8 +1800,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/emerald-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 49,
 			slot: "earrings",
 			name: "tanzanite halo earrings",
@@ -1836,8 +1835,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/tanzanite-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 50,
 			slot: "earrings",
 			name: "aquamarine halo earrings",
@@ -1871,8 +1870,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/aquamarine-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 51,
 			slot: "earrings",
 			name: "spinel halo earrings",
@@ -1906,8 +1905,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/spinel-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 52,
 			slot: "earrings",
 			name: "topaz halo earrings",
@@ -1941,8 +1940,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/topaz-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 53,
 			slot: "earrings",
 			name: "amethyst halo earrings",
@@ -1976,8 +1975,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/amethyst-halo.png",
 			accIcon: "jewellery/halo-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 54,
 			slot: "earrings",
 			name: "pearl halo earrings",
@@ -2010,8 +2009,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/pearl-halo.png",
 			accIcon: "jewellery/pearl-big-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 55,
 			slot: "earrings",
 			name: "diamond cocktail earrings",
@@ -2045,8 +2044,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/diamond-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 56,
 			slot: "earrings",
 			name: "ruby cocktail earrings",
@@ -2080,8 +2079,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/ruby-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 57,
 			slot: "earrings",
 			name: "sapphire cocktail earrings",
@@ -2115,8 +2114,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/sapphire-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 58,
 			slot: "earrings",
 			name: "emerald cocktail earrings",
@@ -2150,8 +2149,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/emerald-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 59,
 			slot: "earrings",
 			name: "tanzanite cocktail earrings",
@@ -2185,8 +2184,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/tanzanite-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 60,
 			slot: "earrings",
 			name: "aquamarine cocktail earrings",
@@ -2220,8 +2219,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/aquamarine-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 61,
 			slot: "earrings",
 			name: "spinel cocktail earrings",
@@ -2255,8 +2254,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/spinel-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 62,
 			slot: "earrings",
 			name: "topaz cocktail earrings",
@@ -2290,8 +2289,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/topaz-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 63,
 			slot: "earrings",
 			name: "amethyst cocktail earrings",
@@ -2325,8 +2324,8 @@ function initEarrings() {
 			location: 0,
 			iconFile: "jewellery/amethyst-cocktail.png",
 			accIcon: "jewellery/cocktail-acc.png",
-		},
-		{
+		}),
+		new ClothesItem({
 			index: 64,
 			slot: "earrings",
 			name: "lilac earrings",
@@ -2362,7 +2361,7 @@ function initEarrings() {
 			location: 0,
 			iconFile: "lilacheadpiece.png",
 			accIcon: 0,
-		},
+		}),
 	];
 	setup.clothes.earrings = clothing;
 

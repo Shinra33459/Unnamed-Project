@@ -750,14 +750,8 @@ function initProps() {
 		restored_spear: {
 			overUnderSplit: true,
 		},
-		crème_brulee: {
-			folder: "food",
-		},
-		creme_brulee: {
-			folder: "food",
-		},
-		crème_brûlée: {
-			folder: "food",
+		flyers: {
+			zIndex: "handheld_over_sleeve",
 		},
 	};
 

@@ -3620,7 +3620,7 @@
 	/* Code that should not be moved into a check like above */
 	<<set $runWardrobeSanityChecker to true>>
 
-	<<if $objectVersion.updateClothes lt 81 or $objectVersion.updateClothes is undefined>>
+	<<if $objectVersion.updateClothes lt 83 or $objectVersion.updateClothes is undefined>>
 		<<updateClothes>>
 		<<if $objectVersion.updateClothes lt 38>>
 			<!-- V0.4.0.7 return items stuck in $store without proper .location -->
@@ -3662,7 +3662,7 @@
 
 		<!-- do NOT forget to bump this version in variables-start.twee, too -->
 
-		<<set $objectVersion.updateClothes to 81>>
+		<<set $objectVersion.updateClothes to 83>>
 	<</if>>
 
 	<<if !$specialClothesEffects?.pimp>>
@@ -5661,6 +5661,12 @@
 		<<set $objectVersion.missingChildSkinColors to 3>>
 	<</if>>
 
+	<!-- v0.5.10.12: repair children whose eyeColour was saved as a parent's name (!4578) -->
+	<<if $objectVersion.childEyeColour lt 1 or $objectVersion.childEyeColour is undefined>>
+		<<run fixChildEyeColours()>>
+		<<set $objectVersion.childEyeColour to 1>>
+	<</if>>
+
 	<!-- 0.5 Weather update -->
 	<<if Time.year is 361 and $location is "temple">>
 		<<set $location to "old_temple">>
@@ -7141,9 +7147,9 @@
 	<</if>>
 
 	<!-- Increment in variables-start.twee as well whenever new foodstuff objects are added -->
-	<<if !$objectVersion.foodstuff or $objectVersion.foodstuff lt 5>>
+	<<if !$objectVersion.foodstuff or $objectVersion.foodstuff lt 6>>
 		<<updatePlants>>
-		<<set $objectVersion.foodstuff to 5>>
+		<<set $objectVersion.foodstuff to 6>>
 	<</if>>
 
 	<!-- UFarm variable refactor -->
@@ -7329,12 +7335,8 @@
 	<</if>>
 
 	/* Renamed foodstuff keys to avoid diacritics. The name properties remain unchanged */
-	<<if $foodstuff.crème_brulee>>
-		<<updateFoodstuffKey "crème_brulee" "creme_brulee">>
-	<</if>>
-	<<if $foodstuff.soufflé>>
-		<<updateFoodstuffKey "soufflé" "souffle">>
-	<</if>>
+	<<updateFoodstuffVariables "crème_brulee" "creme_brulee">>
+	<<updateFoodstuffVariables "soufflé" "souffle">>
 
 	/* Add skin type(tanning difficulty) options, from easiest 0 to hardest 4*/
 	<<if $settings.tanningDifficulty is undefined>>
@@ -7388,8 +7390,8 @@
 	<</if>>
 
 	/* Fixed Butterfly Eyepatch not being unlocked */
-	<<if $specialClothes[125].unlocked is 3>>
-		<<set $specialClothes[133].unlocked to 3>>
+	<<if $specialClothes[$specialClothes.findIndex(x => x.name === "butterfly dress")].unlocked is 3>>
+		<<set $specialClothes[$specialClothes.findIndex(x => x.name === "butterfly eyepatch")].unlocked to 3>>
 	<</if>>
 
 	/* Remove Duplicate Sunflower from $plants_known */
@@ -7439,11 +7441,6 @@
 		})>>
 	<</if>>
 
-	/* Fix for é in V.avery_mansion.food souffle */
-	<<if $avery_mansion?.food is "soufflé">>
-		<<set $avery_mansion.food to "souffle">>
-	<</if>>
-
 	<!-- 5.10.9 -->
 	<<if $monthly is undefined>>
 		<<set $monthly = {}>>
@@ -7459,5 +7456,37 @@
 		<<set $foodstuff["valentines_chocolate"] to {amount: 0} >>
 	<</if>>
 
+
+	<!-- 0.5.11.0 Jobs and buns rebalance-->
+	<<if $bun_value is 10000 and $chef_state lt 9>>
+		<<set $bun_value to 7500>>
+	<<elseif $bun_value is 15000>>
+		<<set $bun_value to 10000>>
+	<</if>>
+	<<if $semen_max is 6000>>
+		<<set $semen_max to 4000>>
+	<</if>>
+	<<if ["talk","museum","found"].includes($museumAntiques.antiques.antiquegoldchastitybelt)>>
+		<<set $lakeRuin.goldchastityfound to true>> /* Increases danger in the lake once a belt is found at least once. */
+	<</if>>
+	<<if $settings.tendingYieldModifier gt 5 and $feats.locked isnot true>>
+		<<set $settings.tendingYieldModifier to 5>>
+	<</if>>
+	<<if $daily.stallRented is 1 and $daily.stall_lewdity is undefined>>
+		<<set $daily.stall_lewdity to Math.min(4,$stall_rejected)>>
+	<</if>>
+
+	<<if $robinSeen is undefined>>
+		<<set $robinSeen to []>>
+	<</if>>
+
+	<<if $specialClothes[$specialClothes.findIndex(x => x.name === "sage witch hat")].unlocked is 3 and !$gwylanSeen?.includes("ritual_sex")>>
+		<<set $specialClothes[$specialClothes.findIndex(x => x.name === "sage witch hat")].unlocked to 0>>
+	<</if>>
+
+	<!-- 0.5.11.3 -->
+	<!-- These variables were used in Woodland update's sneaky release, but have since been patched out. -->
+	<<unset $tempConsensual>>
+	<<unset $tempPigsLeft>>
 <</widget>>
 
