@@ -287,6 +287,13 @@ const constants = {
 	// 		max: 1000,
 	// 		min: 0,
 	// 	},
+	// /**
+	//  * Variable name: "penileskill"
+	//  */
+	// penile: {
+	// 	max: 1000,
+	// 	min: 0,
+	// },
 	// 	/**
 	// 	 * Variable name: "seductionskill"
 	// 	 */
@@ -398,5 +405,5 @@ const constants = {
 };
 
 /* Hoist Constants to the top (For statevars.js) */
-var Constants = ConstantsLoader.init(constants);
+const Constants = ConstantsLoader.init(constants);
 window.Constants = Constants;
