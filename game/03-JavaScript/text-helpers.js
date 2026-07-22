@@ -1,16 +1,16 @@
-/* returns text without diacritics, e.g. "Crème Brûlée" -> "Creme Brulee" */
+/* returns text without diacritics e.g. "crème brûlée" -> "creme brulee" */
 function removeDiacritics(text) {
 	return text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
 }
 window.removeDiacritics = removeDiacritics;
 
-/* returns text in lowercase snake case, e.g. "Crème Brûlée" -> "crème_brûlée" */
+/* returns text in lowercase snake case e.g. crème_brulee */
 function normaliseKey(text) {
 	return text.replace(/[\s-]+/g, "_").toLowerCase();
 }
 window.normaliseKey = normaliseKey;
 
-/* returns text in lowercase kebab case without diacritics, e.g. "Crème Brûlée" -> "creme-brulee" */
+/* returns text in lowercase kebab case without diacritics e.g creme-brulee.png */
 function normaliseFileName(text) {
 	return removeDiacritics(text)
 		.replace(/([A-Z])/g, "-$1")

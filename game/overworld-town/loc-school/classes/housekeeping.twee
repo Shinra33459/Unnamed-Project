@@ -28,7 +28,7 @@
 		<br><br> good starting point for when you can go to class naked-->
 		<<link [[Next|Hallways]]>><<endevent>><</link>>
 		<br><br>
-	<<elseif wearingSchoolOutfit() and !pcAreArmsBound("right")>>
+	<<elseif $worn.upper.type.includes("school") and $worn.lower.type.includes("school") and !pcAreArmsBound("right")>>
 		<<if $daily.school.attended.housekeeping>>
 			You rejoin the housekeeping lesson,
 			<<if $worn.over_upper.name isnot "naked" or $worn.over_lower.name isnot "naked" or $worn.over_head.name isnot "naked">>
@@ -165,7 +165,7 @@
 				<br>
 				<<getouticon>><<link [[Leave|Hallways]]>><<endevent>><</link>>
 			<<elseif (typeof C.npc.Poppy.lust is "number" and C.npc.Poppy.lust gte 60)>>
-				<<npcincr Poppy patience -5>>
+				<<set C.npc.Poppy.patience to Math.max(0, (C.npc.Poppy.patience || 0) - 5)>>
 				<<set $daily.poppy.hkClassroomLocked to 1>>
 				As you enter the housekeeping classroom once more, Poppy grabs you by the wrist and throws you against the nearest wall, pinning both hands beside your head. 
 				<br><br>
@@ -175,7 +175,7 @@
 				<br>
 				<<link [[Apologise|Housekeeping Classroom Poppy Apologise]]>><</link>>
 			<<else>>
-				<<npcincr Poppy patience -5>>
+				<<set C.npc.Poppy.patience to Math.max(0, (C.npc.Poppy.patience || 0) - 5)>>
 				<<set $daily.poppy.hkClassroomLocked to 1>>
 				Poppy looks up from <<his>> paperwork with an annoyed sigh. "Please stop disturbing me unless it's something important." 
 				<br><br>
@@ -307,7 +307,7 @@
 	<br>
 	<<socialiseicon>><<link [[Socialise with classmates|Housekeeping Lesson Socialise]]>><</link>><<gcool>><<ltrauma>><<lstress>><<gharass>>
 	<br>
-	<<daydreamicon>><<link [[Daydream|Housekeeping Lesson Daydream]]>><</link>><<lstress>><<ltiredness>><<lharass>>
+	<<daydreamicon>><<link [[Daydream|Housekeeping Lesson Daydream]]>><</link>><<lstress>><<lharass>>
 	<br>
 	<<if $tiredness gte (C.tiredness.max / 5) * 3>>
 		<<bedicon "zzz">><<link [[Sleep at your desk|Housekeeping Lesson Sleep]]>><</link>><<ltiredness>>
@@ -478,12 +478,9 @@ You look through the cabinets. Most of the ingredients you use during classes ar
 	<<if Time.schoolDay>>
 		<<if $schoolstate is "early" or $schoolstate is "lunch" or $schoolstate is "late">>
 			<<generatey1>><<person1>>
-			The <<recipe_name $phase "plural">> are behind some jars, so you move them off your way as quietly as possible. You are in the middle of your crime, when you hear a gasp behind you. You turn around.
-			<br><br>
-			"Are you stealing the ingredients!?" The <<person>> exclaims." It's not okay! I'm going to tell <<set _tellTarget to random(1, 6)>><<switch _tellTarget>><<case 1>>the head<<case 2>>the <<nnpc_title "Leighton">><<case 3>>Leighton<<case 4>>the teacher<<default>>River<</switch>>" <<He>> runs out before you can say anything.<<detention 1>><<gdelinquency>>
-			<br><br>
-			You look at the <<recipe_name $phase>> in your hand. You'll still be in trouble even if you leave it here, but it will be worse if you take it with you.
-			<br><br><<set $weekly.theft.school.Ban to true>> /* being set but not being used anywhere? */
+			The <<recipe_name $phase "plural">> are behind some jars, so you move them off your way as quietly as possible. You are in the middle of your crime, when you hear a gasp behind you. You turn around.<br>
+			"Are you stealing the ingredients!?" The <<person>> exclaims." It's not okay! I'm going to tell <<print either("the head", "the <<nnpc_title "Leighton">>", "Leighton", "the teacher", "River", "River")>>" <<He>> runs out before you can say anything.<br><<detention 1>><<gdelinquency>>
+			You look at the <<recipe_name $phase>> in your hand. You'll still be in trouble even if you leave it here, but it will be wore if you take it will you.<br><br><<set $weekly.theft.school.Ban = true>>
 			<<link [[Leave the <<recipe_name $phase "plural">>|Housekeeping Leave]]>><</link>><br>
 			<<link [[Take the <<recipe_name $phase "plural">>|Housekeeping Take]]>><<detention 4>><</link>><br><<ggdelinquency>>
 		<<else>>
@@ -496,7 +493,7 @@ You look through the cabinets. Most of the ingredients you use during classes ar
 		<<beastNEWinit 1 cat>>
 		You move some jars out of the way to reach for <<recipe_name $phase "plural">>, but accidentally hit them on each other causing some noise. You freeze for a moment, and then you hear 
 		<<beastNEWinit 1 cat>>
-		<<if ($monster is 1 or $settings.bestialityEnabled) and not ($NPCList[0] and $NPCList[0].lewdBlocked)>>
+		<<if $monster is 1 or $settings.bestialityEnabled>>
 			a low growl behind you. A large <<beasttype>> pounces on you from the shadows, forcing you to your knees. The jar drops, shattering on the floor.
 			<br><br>
 			<<if ($cat gte 6 or ($transformationParts.cat.tail isnot "hidden" and $transformationParts.cat.tail isnot "disabled"))>>

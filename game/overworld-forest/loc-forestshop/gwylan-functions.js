@@ -764,15 +764,15 @@ function gwylanRequestIngredients() {
 			category: "tending",
 			name: ingredientKey,
 			type: setupItem.category,
-			need: 1,
+			need: 0,
 		};
 		if (setupItem.shop.available_in?.includes("supermarket")) {
 			const supermarketMaxNeed = Math.trunc(3000 / setup.foodstuff[ingredientKey].shop.sell_price); // supermarket items are set to this every week, so ensure it can't take more than 1 week to complete request
 			const yieldMultiplier = setupItem.tending?.yield_multiplier ?? 1;
 			requestItem.need = Math.clamp(Math.ceil(ingredientBaseAmount * random(yieldMultiplier, yieldMultiplier + 2)), 1, supermarketMaxNeed);
-		} else if (setupItem.name === "wild honeycomb") {
-			requestItem.need = Math.min(requestItem.need, 3);
-		} else if (setupItem.name === "blood lemon") {
+		} else if (setupItem.name === "wild_honeycomb") {
+			requestItem.need = Math.ceil(ingredientBaseAmount / 3);
+		} else if (setupItem.name === "blood_lemon") {
 			requestItem.need = Math.min(requestItem.need, 6); // Ensure that it only takes one succesfull pick to complete the blood lemon request. The 6 comes from the min number of blood lemons you can harvest in one succesful attempt.
 		} else {
 			const yieldMultiplier = setupItem.tending?.yield_multiplier ?? 1;
@@ -915,7 +915,7 @@ function gwylanRequestClothingSlotCheck(slot) {
 		thing =>
 			thing.category === "clothing" &&
 			V.worn[slot].name === thing.name &&
-			(thing.slot !== "upper" || (V.worn[slot].one_piece === 1 && V.worn.lower.name !== "naked") || V.worn[slot].one_piece === 0) &&
+			(thing.slot !== "upper" || (V.worn[slot].one_piece === 1 && gwylanRequestClothingSlotCheck("lower")) || V.worn[slot].one_piece === 0) &&
 			(thing.colour_requirement === "any" ||
 				V.worn[slot].colour === thing.colour_requirement ||
 				window.clothesColour(V.worn[slot]) === thing.colour_requirement) &&

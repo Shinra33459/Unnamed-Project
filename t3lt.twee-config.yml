@@ -82,7 +82,7 @@ sugarcube-2:
     namedNPCDesc: '`"Avery"` | `"Bailey"` | `"Briar"` | `"Charlie"` | `"Darryl"` | `"Doren"` | `"Eden"` | `"Gwylan"` | `"Harper"` | `"Jordan"` | `"Kylar"` | `"Landry"` | `"Leighton"` | `"Mason"` | `"Morgan"` | `"River"` | `"Robin"` | `"Sam"` | `"Sirris"` | `"Whitney"` | `"Winter"` | `"Black Wolf"` | `"Niki"` | `"Quinn"` | `"Remy"` | `"Alex"` | `"Great Hawk"` | `"Wren"` | `"Sydney"` | `"Ivory Wraith"` | `"Zephyr"` | `"Night Monster"`|"Riley"|"Poppy"'
     plantTypes: '"apple"|"baby_bottle_of_breast_milk"|"banana"|"bird_egg"|"blackberry"|"blood_lemon"|"bottle_of_breast_milk"|"bottle_of_milk"|"bottle_of_semen"|"broccoli"|"cabbage"|"carnation"|"chicken_egg"|"daisy"|"garlic_bulb"|"ghostshroom"|"lemon"|"lily"|"lotus"|"mushroom"|"onion"|"orange"|"orchid"|"peach"|"pear"|"pink_rose"|"plum"|"plumeria"|"poppy"|"potato"|"red_rose"|"strange_flower"|"strawberry"|"truffle"|"tulip"|"turnip"|"white_rose"|"wild_carrot"|"wild_honeycomb"|"wolfshroom"'
     plantTypesDesc: '`"apple"` | `"baby_bottle_of_breast_milk"` | `"banana"` | `"bird_egg"` | `"blackberry"` | `"blood_lemon"` | `"bottle_of_breast_milk"` | `"bottle_of_milk"` | `"bottle_of_semen"` | `"broccoli"` | `"cabbage"` | `"carnation"` | `"chicken_egg"` | `"daisy"` | `"garlic_bulb"` | `"ghostshroom"` | `"lemon"` | `"lily"` | `"lotus"` | `"mushroom"` | `"onion"` | `"orange"` | `"orchid"` | `"peach"` | `"pear"` | `"pink_rose"` | `"plum"` | `"plumeria"` | `"poppy"` | `"potato"` | `"red_rose"` | `"strange_flower"` | `"strawberry"` | `"truffle"` | `"tulip"` | `"turnip"` | `"white_rose"` | `"wild_carrot"` | `"wild_honeycomb"` | `"wolfshroom"`'
-    pronouns: "he, him, girl, girlfriend, sir, lass"
+    pronouns: 'he, him, girl, girlfriend, sir, lass'
     timeTrackingSources: '"adultShop"|"brothel"|"brothelDanceTips"|"brothelShow"|"cafe"|"cafeChef"|"cafeBuns"|"cafeWaiter"|"docks"|"party"|"danube"|"office"|"photoStudio"|"spa"|"stripClub"|"stripClubBartender"|"stripClubDancer"|"stripClubDanceTips"|"danceJobs"|"partyDanceJob"|"partyDanceTips"|"docksDanceJob"|"docksDanceTips"|"danubeDanceJob"|"danubeDanceTips"'
     timeTrackingSourcesDesc: '`"adultShop"` | `"brothel"` | `"brothelDanceTips"` |
       `"brothelShow"` | `"cafe"` | `"cafeChef"` | `"cafeBuns"` | `"cafeWaiter"`
@@ -627,17 +627,22 @@ sugarcube-2:
       description: |-
         Adds an inline event to the current eventpool.
 
+        `<<addinlineevent name>> ... <</addinlineevent>>`
+        or
+        `<<addinlineevent weight>> ... <</addinlineevent>>`
+        or
+        `<<addinlineevent name weight>> ... <</addinlineevent>>`
+
+        Weight is a relative probability, so an event with weight of 2 would appear twice as often as event with weight of 1.
+        Default weight is 1.
+
         To display your events, use `<<runeventpool>>`
 
         To remove any existing events, use `<<cleareventpool>>`
-
-        Usage:
-        `<<addinlineevent name? weight?>> ... <</addinlineevent>>`
-
-        - **name** _optional_: `string` - The name of the event. If not provided, defaults to "".
-        - **weight** _optional_: `number` - The relative probability of the event. An event with weight 2 will occur twice as often as an event with weight 1. If not provided, defaults to 1.
       parameters:
-        - "|+ (number | (string |+ number))"
+        - "|+ string"
+        - "|+ number"
+        - "string &+ number"
     addNNPCOutfit:
       name: addNNPCOutfit
     addVaginalWetness:
@@ -676,25 +681,19 @@ sugarcube-2:
     alarmstate:
       name: alarmstate
     alcohol:
-      description: |-
-        Changes the PC's alcohol levels, where `$drunk` is a measure of the PC's intoxication.
-        - Goes from 0 to 1,000, where 0 means the PC is sober.
-        - While `$drunk` goes up to 1,000, its effects stop increasing after `$drunk gte 480`. Values past this point are just a way for the PC to extend the duration of its effects.
+      description: >-
+        Adds alcohol to pc's system
 
-        1 point of `change` = 1 point of `$drunk`.
+
+        `$drunk` is a measure of how much alcohol is in the pc's system where 0
+        is none (0-1,000)
+
 
         `<<alcohol change>>`
-        - **change**: `number` - +/- change to apply.
+
+        - **change**: `number` - +/- change to apply
       parameters:
         - number
-    alcoholClamp:
-      description: |-
-        Converts 1 point of excess $drunk into 1 point of $tiredness and 0.25 points of $trauma.
-
-        Trauma gains increase by up to 100% at low $control.
-
-        Called at the end of every "alcohol" function call.
-      name: alcoholClamp
     alex_baby_interactions:
       name: alex_baby_interactions
     alex_cottage_pregnancy_reveal:
@@ -711,12 +710,6 @@ sugarcube-2:
       description: |-
         Prints worn over, middle, and under bottom clothing names
       tags: ["text"]
-    alleyways_capture_text:
-      name: alleyways_capture_text
-    alleyways_rescue_end:
-      name: alleyways_rescue_end
-    alleyways_rescue_start:
-      name: alleyways_rescue_start
     allowLewdIngredients:
       name: allowLewdIngredients
     allSettings:
@@ -1050,14 +1043,6 @@ sugarcube-2:
       name: audiencecameraswarm
     audiencespeech:
       name: audiencespeech
-    auntie:
-      description: |-
-        Prints `auntie` or `uncle` depending on npc pronouns
-      tags: ["text"]
-    Auntie:
-      description: |-
-        Prints `Auntie` or `Uncle` depending on npc pronouns
-      tags: ["text"]
     autoTakePillCheck:
       name: autoTakePillCheck
     avery_antiques_end:
@@ -1129,6 +1114,7 @@ sugarcube-2:
     avery_mansion_clean_bedroom:
       description: |-
         Takes an optional parameter (true) to skip Avery's reaction (only for use after convincing Avery to clean anyway).
+
     avery_mansion_clean_dining:
       name: avery_mansion_clean_dining
     avery_mansion_clean_display:
@@ -1171,8 +1157,6 @@ sugarcube-2:
       name: avery_mansion_links
     avery_mansion_location_tracker:
       name: avery_mansion_location_tracker
-    avery_mansion_morning_change:
-      name: avery_mansion_morning_change
     avery_mansion_move:
       name: avery_mansion_links
     avery_mansion_party_end:
@@ -1218,9 +1202,6 @@ sugarcube-2:
     avery_valentines_date_check:
       description: |-
         Checks the date and prevents Avery's regular dates from interfering with their Valentine's date.
-    avery_valentines_end:
-      description: |-
-        Unsets story variables used for Avery's Valetine's date that should not be maintianed, and satiates Avery.
     avery_valentines_init:
       description: |-
         Initialises the $avery_valentines object, used for Avery's Valentine's date.
@@ -1237,14 +1218,6 @@ sugarcube-2:
       name: averyscore
     averyspa:
       name: averyspa
-    awardVirginityFeat:
-      description: |-
-        Awards virginity loss feat if the NPC gives one. 
-
-        `<<awardVirginityFeat NPCDescription>>`
-        - **NPCDescription**: `string` - the NPC's fullDescription attribute
-      parameters:
-        - string
     awareness:
       description: >-
         Adds awareness to pc's state, with appropriate modifiers
@@ -1261,8 +1234,6 @@ sugarcube-2:
         - number
     awarenessup:
       name: awarenessup
-    babyIntro:
-      name: babyIntro
     babyIs:
       description: >-
         Prints `<<pregnancyBabyText>>` with the corresponding conjugation of
@@ -1331,7 +1302,7 @@ sugarcube-2:
           - **reason** _optional_: `string` - key corresponding to start reason
           - **notes** _optional_: `string` - additional text to include
       parameters:
-        - "|+ string |+ ...(var|bareword|text)"
+        - '|+ string |+ ...(var|bareword|text)'
     badEndTrackingEnd:
       description: >-
         Records the end of a bad end
@@ -1353,7 +1324,7 @@ sugarcube-2:
           - **reason** _optional_: `string` - key corresponding to end reason
           - **notes** _optional_: `string` - additional text to include
       parameters:
-        - "|+ string |+ ...(var|bareword|text)"
+        - '|+ string |+ ...(var|bareword|text)'
     balloonRobinAngryHelp:
       name: balloonRobinAngryHelp
       tags:
@@ -1404,12 +1375,6 @@ sugarcube-2:
         - text
     bathroomLink:
       name: bathroomLink
-    baywindowicon:
-      name: baywindowicon
-    bboy:
-      name: bboy
-    bBoy:
-      name: bBoy
     beach_cave_caught:
       name: beach_cave_caught
     beach_cave_end:
@@ -1511,7 +1476,7 @@ sugarcube-2:
       name: beastMaleChanceSplitControls
     beastNEWinit:
       description: |-
-        Generates a new beast and sets $monster to 1 as appropriate. This widget must occur outside of checks for `<<if $settings.bestialityEnabled or $monster is 1>>`.
+       Generates a new beast and sets $monster to 1 as appropriate. This widget must occur outside of checks for `<<if $settings.bestialityEnabled or $monster is 1>>`.
     beastNNPCinit:
       name: beastNNPCinit
       tags:
@@ -1947,34 +1912,8 @@ sugarcube-2:
       name: bird_telescope_options
     birdEggLayEvent:
       name: birdEggLayEvent
-    birthAftercareNappy:
-      description: |-
-        Prints the helper teaching/assisting with changing & bathing the
-        newborn(s). Branches on `$first_birth` and `$litter_size`.
-      tags: ["text"]
-    birthBabySleeps:
-      description: |-
-        Prints the one-line description of the sleeping newborn(s); picks
-        "chest"/"chests" from `$litter_size`.
-      tags: ["text"]
     birthChildElement:
       name: birthChildElement
-    birthCradle:
-      description: |-
-        Prints the player cradling their newborn(s), branching on `$litter_size`.
-        Optional arguments: who places the third baby as plain text (e.g. "the midwife");
-        omit it to use `<<he>>` for the current person1 NPC.
-      tags: ["text"]
-    birthDissociationGlee:
-      description: |-
-        Prints the rush of post-birth joy shown when the player is dissociating.
-        Pairs with birthDissociationVision (which plays earlier, during labour).
-      tags: ["text"]
-    birthDissociationVision:
-      description: |-
-        Prints the shared "black abyss / white light" dream shown during birth
-        when the player is dissociating.
-      tags: ["text"]
     birthUi:
       name: birthUi
     bishop:
@@ -2140,8 +2079,6 @@ sugarcube-2:
       name: bodypart_admire_parasite_convert
     bodypart_admire_plant:
       name: bodypart_admire_plant
-    bodypart_admire_poppy:
-      name: bodypart_admire_poppy
     bodypart_admire_pregnancy:
       name: bodypart_admire_pregnancy
     bodypart_admire_promiscuity:
@@ -2497,8 +2434,6 @@ sugarcube-2:
       name: browsDyeReset
     bruise:
       name: bruise
-    bunnyTransform:
-      name: bunnyTransform
     busstationex1:
       name: busstationex1
     buswait:
@@ -3009,6 +2944,7 @@ sugarcube-2:
     cheats-other:
       name: cheats-other
     cheats-teleport:
+      name: cheats-teleport
       description: |-
         Print cheat teleport options
     cheats-teleport-function:
@@ -3035,7 +2971,7 @@ sugarcube-2:
       tags: ["links"]
     cheatSection:
       description: |-
-        Large sections of `<<cheatStats>>`
+       Large sections of `<<cheatStats>>`
     cheatsFaceStyle:
       description: |-
         Prints links corresponding to the game's face styles, allowing the player to change their `$player.facestyle`.
@@ -3172,12 +3108,6 @@ sugarcube-2:
       name: childActivity
     childAge:
       name: childAge
-    childBatheScene:
-      description: |-
-        Prints the full bathe-the-child scene (intro + one of four flavours +
-        wrap-up) and sets the right prop. Optional arg: "gentle" | "shampoo" |
-        "calm" | "tantrum"; omit for a random flavour.
-      tags: ["text"]
     childcry:
       name: childcry
     childfeet:
@@ -3986,7 +3916,6 @@ sugarcube-2:
     combatstate:
       name: combatstate
     combatTrainAdvance:
-      description: For use after a beast / monster in a train is finished with their turn. Loads next in line into $NPCList[0]. Loads them all back into $NPCList if at the end of the train.
       name: combatTrainAdvance
     combattrauma:
       description: |-
@@ -3995,6 +3924,7 @@ sugarcube-2:
         This trauma is half of normal trauma gain
 
         Trauma effects on pc are not updated after change.
+        Consider refactoring to call `<<trauma>>` instead of `<<traumaclamp>>`
 
         `<<combattrauma change>>`
         - **change**: `number` - +/- change to apply
@@ -4104,12 +4034,6 @@ sugarcube-2:
     controlcaption:
       name: controlcaption
     controlloss:
-      description: |-
-        Checks if the player entered the event in a non-consensual way.
-
-        If they did, decrease the player's control and print a short blurb about their emotional state.
-
-        No control loss if $gamemode is "soft".
       name: controlloss
     corruption:
       description: >-
@@ -4873,8 +4797,7 @@ sugarcube-2:
 
         Used when the player returns to the cabin, or when the player gains freedom in the first place.
     effects:
-      description: |-
-        Does a LOT of different things. Should be called at the start of every passage.
+      name: effects
     effects_prison:
       name: effects_prison
     effectsabomination:
@@ -4945,7 +4868,7 @@ sugarcube-2:
       name: effectsspray
     effectssprayFree:
       description: Prints message if pc's proficiency saved spray ammo
-      tags: ["text"]
+      tags: [ "text" ]
     effectssteal:
       name: effectssteal
     effectstentacleadv:
@@ -5249,10 +5172,6 @@ sugarcube-2:
       name: endRainWraith
     endstall:
       name: endstall
-    endWoodlandForage:
-      description: |-
-        Resets the variables initialized by entering the "Farm Woodland Forage" passage.
-      name: endWoodlandForage
     endWraith:
       name: endWraith
     enemyarousal:
@@ -6019,16 +5938,8 @@ sugarcube-2:
     farm_forest_event:
       name: farm_forest_event
     farm_gen:
-      description: |-
-        Re-generates the gender and genitalia of the selected farm animal.
-
-        `<<farm_gen type>>`
-        - **type**: `string` - type of `$farmwork` being performed
-          - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
       name: farm_gen
     farm_gen_all:
-      description: |-
-        Re-generates the gender and genitalia of all farm animals the player can currently have sex with.
       name: farm_gen_all
     farm_guard_paid:
       name: farm_guard_paid
@@ -6037,80 +5948,75 @@ sugarcube-2:
     farm_guard_wage:
       name: farm_guard_wage
     farm_he:
-      description: |-
-        Prints singular pronoun (he/she) for beast on farm, modified by hallucinations
+      description: >-
+        Prints singular pronoun (he/she) for beast on farm, modified by
+        hallucinations
 
-        Can specify an optional forced gender in the second argument ("m" or "f")
 
         `<<farm_he type>>`
 
         - **type**: `string` - type of `$farmwork` being performed
           - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
-          - `"m"` | `"f"`
-      name: farm_he
       parameters:
-        - '"dog"|"pig"|"horse"|"cattle" |+ "m"|"f"'
-      tags: ["text"]
+        - '"dog"|"pig"|"horse"|"cattle"'
+      tags:
+        - text
     farm_He:
-      description: |-
-        Prints capitalised singular pronoun (He/She) for beast on farm, modified by hallucinations
+      description: >-
+        Prints capitalised singular pronoun (He/She) for beast on farm, modified
+        by hallucinations
 
-        Can specify an optional forced gender in the second argument ("m" or "f")
 
         `<<farm_He type>>`
 
         - **type**: `string` - type of `$farmwork` being performed
           - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
-          - `"m"` | `"f"`
-      name: farm_He
       parameters:
-        - '"dog"|"pig"|"horse"|"cattle" |+ "m"|"f"'
-      tags: ["text"]
+        - '"dog"|"pig"|"horse"|"cattle"'
+      tags:
+        - text
     farm_him:
-      description: |-
-        Prints objective singular pronoun (him/her) for beast on farm, modified by hallucinations
+      description: >-
+        Prints objective singular pronoun (him/her) for beast on farm, modified
+        by hallucinations
 
-        Can specify an optional forced gender in the second argument ("m" or "f")
 
         `<<farm_him type>>`
 
         - **type**: `string` - type of `$farmwork` being performed
           - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
-          - `"m"` | `"f"`
-      name: farm_him
       parameters:
-        - '"dog"|"pig"|"horse"|"cattle" |+ "m"|"f"'
-      tags: ["text"]
+        - '"dog"|"pig"|"horse"|"cattle"'
+      tags:
+        - text
     farm_his:
-      description: |-
-        Prints possessive pronoun (his/her) for beast on farm, modified by hallucinations
+      description: >-
+        Prints possessive pronoun (his/her) for beast on farm, modified by
+        hallucinations
 
-        Can specify an optional forced gender in the second argument ("m" or "f")
 
         `<<farm_his type>>`
 
         - **type**: `string` - type of `$farmwork` being performed
           - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
-          - `"m"` | `"f"`
-      name: farm_his
       parameters:
-        - '"dog"|"pig"|"horse"|"cattle" |+ "m"|"f"'
-      tags: ["text"]
+        - '"dog"|"pig"|"horse"|"cattle"'
+      tags:
+        - text
     farm_His:
-      description: |-
-        Prints capitalised possessive pronoun (His/Her) for beast on farm, modified by hallucinations
+      description: >-
+        Prints capitalised possessive pronoun (His/Her) for beast on farm,
+        modified by hallucinations
 
-        Can specify an optional forced gender in the second argument ("m" or "f")
 
         `<<farm_His type>>`
 
         - **type**: `string` - type of `$farmwork` being performed
           - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
-          - `"m"` | `"f"`
-      name: farm_His
       parameters:
-        - '"dog"|"pig"|"horse"|"cattle" |+ "m"|"f"'
-      tags: ["text"]
+        - '"dog"|"pig"|"horse"|"cattle"'
+      tags:
+        - text
     farm_horses:
       name: farm_horses
     farm_init:
@@ -6147,41 +6053,24 @@ sugarcube-2:
       description: |-
         Prints singular type of beast on farm, modified by hallucinations
 
-        Can specify an optional forced gender in the second argument ("m" or "f")
-
         `<<farm_text type>>`
         - **type**: `string` - type of `$farmwork` being performed
           - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
-          - `"m"` | `"f"`
-      name: farm_text
       parameters:
-        - '"dog"|"pig"|"horse"|"cattle" |+ "m"|"f"'
-      tags: ["text"]
+        - '"dog"|"pig"|"horse"|"cattle"'
+      tags:
+        - text
     farm_text_many:
       description: |-
         Prints plural type of beasts on farm, modified by hallucinations
 
-        Can specify an optional forced gender in the second argument ("m" or "f")
-
         `<<farm_text type>>`
         - **type**: `string` - type of `$farmwork` being performed
           - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
-          - `"m"` | `"f"`
-      name: farm_text_many
       parameters:
-        - '"dog"|"pig"|"horse"|"cattle" |+ "m"|"f"'
-      tags: ["text"]
-    farm_text_neutral:
-      description: |-
-        Prints singular genderless type of beast on farm, modified by hallucinations
-
-        English doesn't have a genderless singular form for "cattle". Defaulting to "cow" and "cowperson".
-
-        `<<farm_text type>>`
-        - **type**: `string` - type of `$farmwork` being performed
-          - `"dog"` | `"pig"` | `"horse"` | `"cattle"`
-      name: farm_text_neutral
-      tags: ["text"]
+        - '"dog"|"pig"|"horse"|"cattle"'
+      tags:
+        - text
     farm_trust:
       name: farm_trust
     farm_update:
@@ -6195,20 +6084,8 @@ sugarcube-2:
     farm_work:
       name: farm_work
     farm_work_time:
-      description: |-
-        Sets "_farm_work_time" to the current time on the farm (Based on the farm's work schedule).
-        Alex will be active on the farm while 1 <= _farm_work_time <= 45.
-
-        Work on the farm officially starts at 6:00 AM and ends at 9:00 PM
-
-        Alex gets up at 5:00 AM. If Alex's Cottage is unlocked, he will make breakfast and watch TV until 6:00 AM.
-        After 6:00 AM, he will shower until 7:00 AM (Lol) then start doing farm work.
       name: farm_work_time
     farm_work_update:
-      description: |-
-        Updates variables for the current state of the farm.
-
-        Calls the "farm_work_time" widget automatically.
       name: farm_work_update
     farm_yield:
       description: >-
@@ -6244,14 +6121,6 @@ sugarcube-2:
       name: father
     Father:
       name: Father
-    fatigueClamp:
-      description: |-
-        Converts 1 point of excess $tiredness into 15 points of $stress and 0.25 points of $trauma.
-
-        Trauma gains increase by up to 100% at low $control.
-
-        Called at the end of every "tiredness" function call.
-      name: fatigueClamp
     featExplanation:
       name: featExplanation
     featName:
@@ -6558,24 +6427,6 @@ sugarcube-2:
 
         See `<<food_list>>` for specific category
       tags: ["text", "unused"]
-    foodstuffReport:
-      description: |-
-        Prints a brief description of the given item and quantity, formatted as:
-
-        "[item icon] [item quantity] [item name]"
-
-        Only works with <<foodstufficon>> icons.
-
-        `<<foodstuffReport name quantity icon>>`
-        - **name**: `string` - Name of the item
-        - **quantity**: `number` - Number of items
-        - **icon** _optional_: `string` - Associated icon of the item. If left blank, no icon will be shown.
-
-        Examples:
-        - `<<foodstuffReport "apple" 11>>`
-        - `<<foodstuffReport "peach" 24 "peach">>`
-        - `<<foodstuffReport "carrot" 42 "wild_carrot">>`
-      name: foodstuffReport
     forestBullyLeaves:
       name: forestBullyLeaves
     forestCabinReturnLinks:
@@ -6654,12 +6505,6 @@ sugarcube-2:
         - text
     fringedescription:
       name: fringedescription
-    fringeDetails:
-      description: |-
-        Prints the current state of the player's fringe.
-
-        The player's fringe can grow from the top of their head the front of their face.
-      name: fringeDetails
     fullGroup:
       description: >-
         Prints gender makeup of currently active npcs as a list (ie, `Robin,
@@ -6731,8 +6576,6 @@ sugarcube-2:
       description: Prints `| Anal skill`
       tags:
         - text
-    ganger:
-      name: ganger
     ganginit:
       name: ganginit
     gapproval:
@@ -6881,9 +6724,8 @@ sugarcube-2:
         Prints `| + Dominance` or `| + NPCName's Dominance` if provided
 
         `<<gdom NPCName?>>`
-        - **NPCName** _optional_: `string` - name to display as their dominance
+        - **NPCName** _optional_: `string` - name to display as their lust
           - `"Robin"`: Displays "Confidence" instead
-          - `"Doren"`: Displays "Protectiveness" instead
       parameters:
         - "|+ text|string"
       tags:
@@ -6957,7 +6799,7 @@ sugarcube-2:
         currently located
           - `$worn` | `$carried`
       parameters:
-        - "%clothesTypes% &+ var|bareword"
+        - '%clothesTypes% &+ var|bareword'
     generalSend:
       name: generalSend
     generalSteal:
@@ -7791,12 +7633,6 @@ sugarcube-2:
 
         See `<<lady>>`
       tags: ["text"]
-    gentleman_npc:
-      description: |-
-        Prints `gentleman` or `lady` depending on $pronoun
-
-        See `<<lady_npc>>`
-      tags: ["text"]
     gescape_chance:
       description: |-
         Prints `| + Escape chance`
@@ -7873,8 +7709,6 @@ sugarcube-2:
       description: Prints `| + + Alcohol`
       tags:
         - text
-    gganger:
-      name: gganger
     ggapproval:
       name: ggapproval
       tags:
@@ -7995,9 +7829,8 @@ sugarcube-2:
         Prints `| + + Dominance` or `| + + NPCName's Dominance` if provided
 
         `<<ggdom NPCName?>>`
-        - **NPCName** _optional_: `string` - name to display as their dominance
+        - **NPCName** _optional_: `string` - name to display as their lust
           - `"Robin"`: Displays "Confidence" instead
-          - `"Doren"`: Displays "Protectiveness" instead
       parameters:
         - "|+ text|string"
       tags:
@@ -8036,8 +7869,6 @@ sugarcube-2:
       tags:
         - unused
         - text
-    ggganger:
-      name: ggganger
     gggapproval:
       name: gggapproval
       tags:
@@ -8161,9 +7992,8 @@ sugarcube-2:
         Prints `| + + + Dominance` or `| + + + NPCName's Dominance` if provided
 
         `<<gggdom NPCName?>>`
-        - **NPCName** _optional_: `string` - name to display as their dominance
+        - **NPCName** _optional_: `string` - name to display as their lust
           - `"Robin"`: Displays "Confidence" instead
-          - `"Doren"`: Displays "Protectiveness" instead
       parameters:
         - "|+ text|string"
       tags:
@@ -8203,13 +8033,9 @@ sugarcube-2:
       tags:
         - text
     ggghallucinogens:
-      description: |-
-        Prints `| + + + Hallucinogens`
-      tags: ["text"]
-    gggheat:
-      description: |-
-        Prints `| + + + Heat`
-      tags: ["text"]
+      description: Prints `| + + + Hallucinogens`
+      tags:
+        - text
     ggghistory:
       description: Prints `| + + + History`
       tags:
@@ -8289,8 +8115,6 @@ sugarcube-2:
       description: |-
         Prints `| + + + Pain`
       tags: ["text"]
-    gggpatience:
-      name: gggpatience
     gggperlove:
       description: |-
         Prints `| + + + Love` or `| + + + NPCName's Love` if provided, for persistent NPCs
@@ -8463,13 +8287,9 @@ sugarcube-2:
         Prints `| + + + Yearning` or `| + + + ???`
       tags: ["text"]
     gghallucinogens:
-      description: |-
-        Prints `| + + Hallucinogens`
-      tags: ["text"]
-    ggheat:
-      description: |-
-        Prints `| + + Heat`
-      tags: ["text"]
+      description: Prints `| + + Hallucinogens`
+      tags:
+        - text
     gghistory:
       description: Prints `| + + History`
       tags:
@@ -8548,8 +8368,6 @@ sugarcube-2:
       description: |-
         Prints `| + + Pain`
       tags: ["text"]
-    ggpatience:
-      name: ggpatience
     ggperlove:
       description: |-
         Prints `| + + Love` or `| + + NPCName's Love` if provided, for persistent NPCs
@@ -8733,11 +8551,8 @@ sugarcube-2:
 
 
         See `<<lharmony>>`
-      tags: ["text"]
-    gheat:
-      description: |-
-        Prints `| + Heat`
-      tags: ["text"]
+      tags:
+        - text
     ghistory:
       description: Prints `| + History`
       tags:
@@ -8791,16 +8606,12 @@ sugarcube-2:
         - text
     girl:
       name: girl
-    Girl:
-      name: Girl
     girl_npc:
       name: girl_npc
     girlfriend:
       description: |-
         Prints the relationship title appropriate for the pc's gender, using `<<girl>>` as reference.
       tags: ["text"]
-    girlfriend_npc:
-      name: girlfriend_npc
     girls:
       name: girls
     gisland_tide:
@@ -8810,12 +8621,12 @@ sugarcube-2:
         Gives love interest named NPC a gift
 
         Relies on `$gift` being set
-
+        
         `<<give_gift npcName>>`
         - **npcName**: `string` - love interest NPC name
           - %loveInterestDesc%
       parameters:
-        - "%loveInterest%"
+        - '%loveInterest%'
     giveHarpyEggs:
       description: Sets the amount of eggs a harpy player will produce as part of their menstrual cycle and, if unfertilised, the number of days until they will be laid
     giveNNPCnewstrapon:
@@ -8906,8 +8717,6 @@ sugarcube-2:
       description: Prints `| + Pain`
       tags:
         - text
-    gpatience:
-      name: gpatience
     gpenileskill:
       description: Prints `| + Penile skill`
       tags:
@@ -8958,19 +8767,7 @@ sugarcube-2:
           - `"monk"` | `"priest"` | `"bishop"`
           - Defaults to any rank
       parameters:
-        - 'number |+ "monk"|"priest"|"bishop"'
-    grandpa:
-      description: |-
-        Prints grandma/grandpa
-
-        See <<Grandpa>> for capitalised prose
-      tags: ["text"]
-    Grandpa:
-      description: |-
-        Prints Grandma/Grandpa
-
-        See <<grandpa>> for uncapitalised prose
-      tags: ["text"]
+        - number |+ "monk"|"priest"|"bishop"
     greadiness:
       name: greadiness
     greb:
@@ -9204,7 +9001,7 @@ sugarcube-2:
         - **duration**: `number` - duration in days
         - **level** _optional_: `number` - for devotion, the level of the event for determining whether it causes any increase
       parameters:
-        - "%hypnosisTimedTypes% &+ number |+ number"
+        - '%hypnosisTimedTypes% &+ number |+ number'
     gwylanitem:
       name: gwylanitem
       tags: ["unused"]
@@ -9296,12 +9093,6 @@ sugarcube-2:
       description: Prints colour of `$haircolour` or `two-toned`
     hairDescription:
       name: hairDescription
-    hairDetails:
-      description: |-
-        Prints the current state of the player's hair.
-
-        The player's hair can grow from the top of their head to their feet.
-      name: hairDetails
     hairDressersOptions:
       name: hairDressersOptions
     hairDressersOptionsSydney:
@@ -9383,7 +9174,7 @@ sugarcube-2:
         - **noRebuy** _optional_: `boolean` - do not rebuy item
         - **propOnly** _optional_: `boolean` - only destroy prop
       parameters:
-        - "|+ bool |+ bool"
+        - '|+ bool |+ bool'
     handheldsend:
       name: handheldsend
     HandheldShop:
@@ -9486,8 +9277,6 @@ sugarcube-2:
         - unused
     harvestquick:
       name: harvestquick
-    harvestText:
-      name: harvestText
     has:
       description: >-
         Prints plural/singular prose of has (have/has) for provided clothing
@@ -9535,7 +9324,7 @@ sugarcube-2:
         `<<hcChallengeMenu challenge>>`
 
         - **challenge**: `string` - The challenge to set for the checkbox. Changes checkbox variable, text printed, colour and mouseover.
-      tags: ["text", "inputs"]
+      tags: ["text","inputs"]
     hcChallengeRandomSelect:
       description: |-
         Picks a random amount of random Hopeless Cycle challenges, within a range determined by `<<hcChallengeRandomSliders>>`.
@@ -9734,11 +9523,9 @@ sugarcube-2:
     headwear:
       name: headwear
     heat:
-      description: |-
-        Prints `| Heat`
-      tags: ["text"]
-    heatericon:
-      name: heatericon
+      description: Prints `| Heat`
+      tags:
+        - text
     heatRutDisplay:
       name: heatRutDisplay
     heelsUpdate:
@@ -9983,8 +9770,6 @@ sugarcube-2:
       name: homeeventalex
     homeeventchef:
       name: homeeventchef
-    homeeventgh:
-      name: homeeventgh
     homeeventhopehi:
       name: homeeventhopehi
     homeeventhopelo:
@@ -10003,8 +9788,6 @@ sugarcube-2:
       name: homeeventriver
     homeeventwhitney:
       name: homeeventwhitney
-    homeeventwren:
-      name: homeeventwren
     homeStudyOptions:
       name: homeStudyOptions
     hookah_init:
@@ -10059,7 +9842,7 @@ sugarcube-2:
         Freezes the story variables, then morphs the pc into the gaoler
     hopelessCycleStatus:
       description: |-
-        Display the witch's status
+       Display the witch's status
     hopelessCycleSus:
       description: |-
         Prints 'Suspicion' if revealed, with a number of plusses or minuses depending on argument
@@ -10085,12 +9868,12 @@ sugarcube-2:
         - **amount**: `number` - amount of skill to gain
         - **maxSkill** _optional_: `number` - max skill level achievable through this source
       parameters:
-        - "number |+ number"
+        - 'number |+ number'
     housekeeping_exam_select:
       description: |-
         Chooses a recipe for the housekeeping exam
 
-         Sets results in `$chosen_recipe` as food key
+        Sets results in `$chosen_recipe` as food key
     housekeeping_text:
       description: |-
         Prints colour-coded description of how good the player is at housekeeping
@@ -10124,25 +9907,21 @@ sugarcube-2:
         - number
     hunger_description:
       name: hunger_description
-    hunter:
-      description: |-
-        Prints `hunter` or `hintress` depending on npc pronouns
-      tags: ["text"]
     hygiene:
       name: hygiene
       tags: ["unused"]
     hypnosisText:
       description: |-
-        Wraps its argument in the css for hypnosis effects. If the hypnosis text animation is disabled, instead adds the hypnosis icon before and after its contents.
+       Wraps its argument in the css for hypnosis effects. If the hypnosis text animation is disabled, instead adds the hypnosis icon before and after its contents.
     hypnotised:
       name: hypnotised
     hypothermiaClothes:
       description: |-
-        Gives players up to two pieces of warm clothing after passing out of hypothermia: a top and bottom if exposed, potentially a hat or scarf otherwise. Sets temporary variables that can be referenced in the text.
-         - `_warmClothes`: prints a description (`any clothes`, `dry clothes`, `any bottoms`, `a jacket`, `a shirt`, `a scarf`, `a hat`, `something warmer`) of what the player's attire is lacking. Intended to be used in dialogue such as `You shouldn't be walking around without _warmClothes.`
-         - `_clothes`: array of clothes the player is given. Print `_clothes.join(" and ")` to print what the player is given.
-           - **Example:** `You're wearing <<= _clothes.join(" and ")` may print `You're wearing a winter jacket and jeans` or `You're wearing a scarf`
-         - `_wet`: if the player had wet clothes at the time of rescue
+       Gives players up to two pieces of warm clothing after passing out of hypothermia: a top and bottom if exposed, potentially a hat or scarf otherwise. Sets temporary variables that can be referenced in the text.
+        - `_warmClothes`: prints a description (`any clothes`, `dry clothes`, `any bottoms`, `a jacket`, `a shirt`, `a scarf`, `a hat`, `something warmer`) of what the player's attire is lacking. Intended to be used in dialogue such as `You shouldn't be walking around without _warmClothes.`
+        - `_clothes`: array of clothes the player is given. Print `_clothes.join(" and ")` to print what the player is given.
+          - **Example:** `You're wearing <<= _clothes.join(" and ")` may print `You're wearing a winter jacket and jeans` or `You're wearing a scarf`
+        - `_wet`: if the player had wet clothes at the time of rescue
     icon:
       description: >-
         Prints icon image from icon folder
@@ -10266,7 +10045,7 @@ sugarcube-2:
         `<<ingredientsExceptions ...foodKey>>`
         - ...**foodKey**: `string` - food key to add to supply
       parameters:
-        - "...text|string"
+        - '...text|string'
       tags: ["text"]
     ingredientsSupplied:
       description: |-
@@ -10277,7 +10056,7 @@ sugarcube-2:
         `<<ingredientsSupplied ...foodKey>>`
         - ...**foodKey**: `string` - food key to add to supply
       parameters:
-        - "...text|string"
+        - '...text|string'
       tags: ["text"]
     inheritOutfitAttributes:
       name: inheritOutfitAttributes
@@ -10351,29 +10130,8 @@ sugarcube-2:
         - "%insecurityTypes% &+ number"
     inspectionexpect:
       name: inspectionexpect
-    insufficientQuantity:
-      description: |-
-        Prints warning that the player has too few items for the task
-
-        Example:
-        ```
-        <<if $foodstuff["potato"].amount gte _requiredPotatoes>>
-          <<link [[Feed them potatoes|Farm Woodland Forage Reward]]>><<set $phase to "potato">><</link>>
-        <<else>>
-          <<insufficientQuantity "potatoes to satisfy them" "blue" "<<foodstufficon 'potato'>>">>
-        <</if>>
-        ```
-
-        `<<insufficientQuantity statement color? icon?>>`
-        - **statement**: `string` - the relevant statement
-        - **color** _optional_: `string` - the colour of the text alert
-          - Defaults to `"blue"`
-        - **icon** _optional_: `string` - the associated icon for the text alert
-          - Leaving the argument blank will prevent an icon from being shown
-      name: insufficientQuantity
-      tags: ["text"]
     insufficientStat:
-      description: |-
+      description: >-
         Prints warning that a stat is too low for the task
 
 
@@ -10564,8 +10322,6 @@ sugarcube-2:
       name: kennel_treat_options
     kennel_treats:
       name: kennel_treats
-    king:
-      name: king
     kissvirginitywarning:
       description: |-
         Prints `This action will take your first kiss` if your first kiss can still be lost
@@ -10606,8 +10362,6 @@ sugarcube-2:
 
         Uses `_foodSearch` to set `_recipeKeys` and `_recipeGroups`.
       tags: ["temporary"]
-    kitchenicon:
-      name: kitchenicon
     knot_stat:
       name: knot_stat
     knownFoodRecipes:
@@ -10688,12 +10442,6 @@ sugarcube-2:
 
         See `<<gentleman>>`
       tags: ["text"]
-    lady_npc:
-      description: |-
-        Prints `man` or `lady` depending on $pronoun
-
-        See `<<gentleman_npc>> or <<lord>>`
-      tags: ["text"]
     laggro:
       description: Prints `| - Remy's Encroachment`
       tags:
@@ -10716,8 +10464,6 @@ sugarcube-2:
       name: lakereturnjourney
     landryoptions:
       name: landryoptions
-    langer:
-      name: langer
     lapproval:
       name: lapproval
     larage:
@@ -10734,17 +10480,9 @@ sugarcube-2:
       tags:
         - text
     lass:
-      description: |-
-        Prints `lad` or `lass` depending on pc's appearance
       name: lass
     Lass:
       name: Lass
-    lassie:
-      description: |-
-        Prints `lad` or `lass`, prints `laddie` or `lassie` when Doren's affection gte 50
-      name: lassie
-    Lassie:
-      name: Lassie
     lattention:
       description: Prints `| - Attention`
       tags:
@@ -10813,9 +10551,8 @@ sugarcube-2:
         Prints `| - Dominance` or `| - NPCName's Dominance` if provided
 
         `<<ldom NPCName?>>`
-        - **NPCName** _optional_: `string` - name to display as their dominance
+        - **NPCName** _optional_: `string` - name to display as their lust
           - `"Robin"`: Displays "Confidence" instead
-          - `"Doren"`: Displays "Protectiveness" instead
       parameters:
         - "|+ text|string"
       tags: ["text"]
@@ -10828,7 +10565,7 @@ sugarcube-2:
         `<<learn_recipe foodKey>>`
         - **foodKey**: `string` - food key to learn
       parameters:
-        - "text|string"
+        - 'text|string'
     learn_recipe_all:
       description: |-
         Gain the knowledge to make all food items
@@ -11021,8 +10758,6 @@ sugarcube-2:
           - Defaults to `1`
       parameters:
         - '"english"|"history"|"maths"|"science"|"housekeeping" |+ number'
-    lewdity:
-      name: lewdity
     lewditycaption:
       name: lewditycaption
     lewdness:
@@ -11061,11 +10796,8 @@ sugarcube-2:
         Subtracts 1 from wolfpack's harmony and prints `| - Harmony`
 
         See `<<gharmony>>`
-      tags: ["text"]
-    lheat:
-      description: |-
-        Prints `| - Heat`
-      tags: ["text"]
+      tags:
+        - text
     lhistory:
       description: Prints `| - History`
       tags:
@@ -11178,8 +10910,6 @@ sugarcube-2:
       description: Prints `| - - Remy's Encroachment`
       tags:
         - text
-    llanger:
-      name: llanger
     llapproval:
       name: llapproval
       tags:
@@ -11256,9 +10986,8 @@ sugarcube-2:
         Prints `| - - Dominance` or `| - - NPCName's Dominance` if provided
 
         `<<lldom NPCName?>>`
-        - **NPCName** _optional_: `string` - name to display as their dominance
+        - **NPCName** _optional_: `string` - name to display as their lust
           - `"Robin"`: Displays "Confidence" instead
-          - `"Doren"`: Displays "Protectiveness" instead
       parameters:
         - "|+ text|string"
       tags:
@@ -11286,11 +11015,8 @@ sugarcube-2:
           - `"monk"` | `"priest"` | `"bishop"`
       parameters:
         - '|+ "monk"|"priest"|"bishop"'
-      tags: ["text"]
-    llheat:
-      description: |-
-        Prints `| - - Heat`
-      tags: ["text"]
+      tags:
+        - text
     llhope:
       description: Prints `| - - Hope`
       tags:
@@ -11321,8 +11047,6 @@ sugarcube-2:
       description: Prints `| - - - Remy's Encroachment`
       tags:
         - text
-    lllanger:
-      name: lllanger
     lllapproval:
       name: lllapproval
       tags:
@@ -11398,9 +11122,8 @@ sugarcube-2:
         Prints `| - - - Dominance` or `| - - - NPCName's Dominance` if provided
 
         `<<llldom NPCName?>>`
-        - **NPCName** _optional_: `string` - name to display as their dominance
+        - **NPCName** _optional_: `string` - name to display as their lust
           - `"Robin"`: Displays "Confidence" instead
-          - `"Doren"`: Displays "Protectiveness" instead
       parameters:
         - "|+ text|string"
       tags:
@@ -11431,11 +11154,8 @@ sugarcube-2:
           - `"monk"` | `"priest"` | `"bishop"`
       parameters:
         - '|+ "monk"|"priest"|"bishop"'
-      tags: ["text"]
-    lllheat:
-      description: |-
-        Prints `| - - - Heat`
-      tags: ["text"]
+      tags:
+        - text
     lllhope:
       description: Prints `| - - - Hope`
       tags:
@@ -11501,8 +11221,6 @@ sugarcube-2:
       description: |-
         Prints `| - - - Pain`
       tags: ["text"]
-    lllpatience:
-      name: lllpatience
     lllperlove:
       description: |-
         Prints `| - - - Love` or `| - - - NPCName's Love` if provided, for persistent NPCs
@@ -11575,13 +11293,9 @@ sugarcube-2:
         Prints `| - - - Sydney's Purity` or `| + + + Sydney's Corruption`
       tags: ["unused", "text"]
     lllstockholm:
-      description: |-
-        Prints `| - - - Stockholm Syndrome`
-      tags: ["text"]
-    lllstray_happiness:
-      description: |-
-        Prints `| - - - Stray contentment`
-          tags: ["unused", "text"]
+      description: Prints `| - - - Stockholm Syndrome`
+      tags:
+        - text
     lllstress:
       description: Prints `| - - - Stress`
       tags:
@@ -11638,8 +11352,6 @@ sugarcube-2:
       description: |-
         Prints `| - - Pain`
       tags: ["text"]
-    llpatience:
-      name: llpatience
     llperlove:
       description: |-
         Prints `| - - Love` or `| - - NPCName's Love` if provided, for persistent NPCs
@@ -11712,13 +11424,10 @@ sugarcube-2:
         Prints `| - - Sydney's Purity` or `| + + Sydney's Corruption`
       tags: ["text"]
     llstockholm:
-      description: |-
-        Prints `| - - Stockholm Syndrome`
-      tags: ["unused", "text"]
-    llstray_happiness:
-      description: |-
-        Prints `| - - Stray contentment`
-      tags: ["unused", "text"]
+      description: Prints `| - - Stockholm Syndrome`
+      tags:
+        - unused
+        - text
     llstress:
       description: Prints `| - - Stress`
       tags:
@@ -11875,27 +11584,12 @@ sugarcube-2:
     lockerkeyoptions:
       description: |-
         Shows the options for what to do with the locker key, in all cases of `:: Hallways Delinquent Lockers` where the player ends up with the key
-    loft_window_options:
-      name: loft_window_options
     log:
       name: log
       tags:
         - unused
     loiter:
       name: loiter
-    lord:
-      description: |-
-        Prints lord/lady
-
-        See <<lady_npc>>
-        See <<Lord>> for capitalised prose
-      tags: ["text"]
-    Lord:
-      description: |-
-        Prints Lord/Lady
-
-        See <<lord>> for uncapitalised prose
-      tags: ["text"]
     loveInterest:
       name: loveInterest
     loveInterestAdd:
@@ -11917,7 +11611,7 @@ sugarcube-2:
         - **npcName**: `string` - love interest NPC name
           - %loveInterestDesc%
       parameters:
-        - "%loveInterest%"
+        - '%loveInterest%'
     lowerhas:
       description: |-
         Prints plural/singular prose of has (have/has) for worn `"lower"` slot
@@ -11993,8 +11687,6 @@ sugarcube-2:
       description: |-
         Prints `| - Pain`
       tags: ["text"]
-    lpatience:
-      name: lpatience
     lperlove:
       description: |-
         Prints `| - Love` or `| - NPCName's Love` if provided, for persistent NPCs
@@ -12068,13 +11760,10 @@ sugarcube-2:
         Prints `| - Sydney's Purity` or `| + Sydney's Corruption`
       tags: ["text"]
     lstockholm:
-      description: |-
-        Prints `| - Stockholm Syndrome`
-      tags: ["unused", "text"]
-    lstray_happiness:
-      description: |-
-        Prints `| - Stray contentment`
-      tags: ["unused", "text"]
+      description: Prints `| - Stockholm Syndrome`
+      tags:
+        - unused
+        - text
     lstress:
       description: Prints `| - Stress`
       tags:
@@ -12128,18 +11817,6 @@ sugarcube-2:
     lyearning:
       description: |-
         Prints `| - Yearning` or `| - ???`
-      tags: ["text"]
-    ma:
-      name: ma
-    Ma:
-      name: Ma
-    maam:
-      description: |-
-        Prints `sir` or `maam` depending on pc's appearance
-      tags: ["text"]
-    Maam:
-      description: |-
-        Prints capitalised `Sir` or `Maam` depending on pc's appearance
       tags: ["text"]
     machine_actions:
       name: machine_actions
@@ -12306,8 +11983,6 @@ sugarcube-2:
       name: masturbationeffects
     masturbationSlimeControl:
       name: masturbationSlimeControl
-    masturbationStallInterrupt:
-      name: masturbationStallInterrupt
     masturbationstart:
       name: masturbationstart
     masturbationStopControls:
@@ -12538,17 +12213,9 @@ sugarcube-2:
       name: modelprepare-player-body
     modelprepare-player-clothes:
       name: modelprepare-player-clothes
-    modLISettingsSection:
-      name: modLISettingsSection
     molestbusinit:
       name: molestbusinit
     molested:
-      description: |-
-        Triggers flashbacks if the player is suffering from them.
-
-        Raises the player's awareness and increases the counter for the number of times they've been molested.
-
-        No increases if the $gamemode is "soft"
       name: molested
     moleststat:
       name: moleststat
@@ -12821,10 +12488,6 @@ sugarcube-2:
         - unused
     moveCreature:
       name: moveCreature
-    mum:
-      name: mum
-    Mum:
-      name: Mum
     mummy:
       name: mummy
     Mummy:
@@ -12852,8 +12515,6 @@ sugarcube-2:
       name: museumtalk
     namedNpcComments:
       name: namedNpcComments
-    namedNpcEjaculation:
-      name: namedNpcEjaculation
     namedNpcPregnancy:
       name: namedNpcPregnancy
     nDays:
@@ -12910,10 +12571,6 @@ sugarcube-2:
       tags:
         - text
     neutral:
-      description: |-
-        \"\<!-- This widget's names ('neutral') is awful. Maybe 'molest' might better describe its use? -->"
-
-        Raises the player character's stress level, and both their and their enemy's Arousal.
       name: neutral
     neutralbreast:
       name: neutralbreast
@@ -12942,16 +12599,12 @@ sugarcube-2:
       description: >-
         Doesn't do anything, sort of
 
-        Next links have stopped receiving this widget for a while now. Consider refactoring
-      tags: ["legacy", "refactor"]
-    niece:
-      description: |-
-        Prints `niece` or `nephew` depending on npc pronouns
-      tags: ["text"]
-    Niece:
-      description: |-
-        Prints `Niece` or `Nephew` depending on npc pronouns
-      tags: ["text"]
+
+        Next links have stopped receiving this widget for a while now. Consider
+        refactoring
+      tags:
+        - legacy
+        - refactor
     nightingale:
       name: nightingale
     nightingaleeventend:
@@ -13192,145 +12845,8 @@ sugarcube-2:
           - %namedNPCDesc%
       parameters:
         - "%namedNPC%"
-      tags: ["text"]
-    nnpc_maam:
-      description: |-
-        Prints `ma'am` or `sir` for named NPC
-
-        `<<nnpc_maam namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_Maam:
-      description: |-
-        Prints `Ma'am` or `Sir` for named NPC
-
-        `<<nnpc_Maam namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_master:
-      description: |-
-        Prints `master` or `mistress` for named NPC
-
-        `<<nnpc_master namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_monk:
-      description: |-
-        Prints `monk` or `nun` for named NPC
-
-        `<<nnpc_monk namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_Monk:
-      description: |-
-        Prints `Monk` or `Nun` for named NPC
-
-        `<<nnpc_Monk namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_mother:
-      description: |-
-        Prints `mother` or `sister` for named NPC
-
-        `<<nnpc_mother namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_Mother:
-      description: |-
-        Prints `Mother` or `Father` for named NPC
-
-        `<<nnpc_Mother namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_mrs:
-      description: |-
-        Prints `mrs` or `mr` for named NPC
-
-        `<<nnpc_mrs namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_Mrs:
-      description: |-
-        Prints `Mrs` or `Mr` for named NPC
-
-        `<<nnpc_Mrs namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_ms:
-      description: |-
-        Prints `ms` or `mr` for named NPC
-
-        `<<nnpc_ms namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_Ms:
-      description: |-
-        Prints `Ms` or `Mr` for named NPC
-
-        `<<nnpc_Ms namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
-    nnpc_mum:
-      description: |-
-        Prints `mum` or `dad` for named NPC
-
-        `<<nnpc_mum namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-    nnpc_Mum:
-      description: |-
-        Prints `Mum` or `Dad` for named NPC
-
-        `<<nnpc_Mum namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-    nnpc_mummy:
-      description: |-
-        Prints `mummy` or `daddy` for named NPC
-
-        `<<nnpc_mummy namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-    nnpc_Mummy:
-      description: |-
-        Prints `Mummy` or `Daddy` for named NPC
-
-        `<<nnpc_Mummy namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
+      tags:
+        - text
     nnpc_title:
       description: |-
         Prints title of named NPC
@@ -13351,17 +12867,8 @@ sugarcube-2:
           - %namedNPCDesc%
       parameters:
         - "%namedNPC%"
-      tags: ["text"]
-    nnpc_waiter:
-      description: |-
-        Prints `waiter` or `waitress` for named NPC
-
-        `<<nnpc_waiter namedNPCName>>`
-        - **namedNPCName**: `string` - named NPC name
-          - %namedNPCDesc%
-      parameters:
-        - "%namedNPC%"
-      tags: ["text"]
+      tags:
+        - text
     nnpc_wife:
       description: |-
         Prints `husband` or `wife` for named NPC
@@ -13986,7 +13493,7 @@ sugarcube-2:
           - Defaults to true
       parameters:
         - 'var|bareword|text |+ "cap" |+ bareword|text |+ bool'
-        - "var|bareword|text |+ bareword|text |+ bool"
+        - 'var|bareword|text |+ bareword|text |+ bool'
     orgasm:
       name: orgasm
     orgasmbeach:
@@ -14441,8 +13948,8 @@ sugarcube-2:
           - `"sec"` | `"seconds"` | `"min"` | `"mins"` | `"minute"` | `"minutes"` | `"hour"` | `"hours"` | `"day"` | `"days"` | `"week"` | `"weeks"`
           - Defaults to `"min"`
       parameters:
-        - number
-        - '|+ "sec"|"seconds"|"min"|"mins"|"minute"|"minutes"|"hour"|"hours"|"day"|"days"|"week"|"weeks"'
+        - number |+
+          "sec"|"seconds"|"min"|"mins"|"minute"|"minutes"|"hour"|"hours"|"day"|"days"|"week"|"weeks"
     passagestrip:
       description: |-
         Strips player and prints a paragraph of description of the sequence
@@ -14662,13 +14169,11 @@ sugarcube-2:
 
         - **npcName**: `string` - example kind to output
           - `"Avery"` | `"Gwylan"` | `"Wraith"`
-        - **npcEmotionMod** _optional_: `string` - npc's emotional intention when using this pet name
-          - `"angry"` | `"nice"`
       parameters:
         - '"Avery"|"Gwylan"|"Wraith"'
         - '"Avery" |+ "my"'
         - '"Wraith" |+ "angry"|"nice"'
-        - '"Gwylan" |+ "bad"|"naughty"|"good"|"dear"|"my"|"simple"|"name"'
+        - '"Gwylan" |+ "bad"|"naughty"|"good"|"dear"|"my"|"simple"'
       tags: ["text", "refactor"]
     pcPregnancyRevealToAlex:
       name: pcPregnancyRevealToAlex
@@ -14678,10 +14183,6 @@ sugarcube-2:
 
         Most commonly used in conjunction with crossdressing.
       tags: ["text"]
-    pdaughter:
-      name: pdaughter
-    pDaughter:
-      name: pDaughter
     penetrationPainCalculate:
       name: penetrationPainCalculate
     peniledifficulty:
@@ -14879,8 +14380,6 @@ sugarcube-2:
       name: personselect
     personsimple:
       name: personsimple
-    personssimple:
-      name: personssimple
     persony:
       description: |-
         Prints `boy` or `girl` randomly based on world gender distribution
@@ -14961,85 +14460,12 @@ sugarcube-2:
 
 
         See `<<phim>>` for uncapitalised prose
-      tags: ["text"]
-    photo_attention:
-      description: |-
-        Changes attention level during Niki Flier Job
-
-        Arguments
-        - **value**: `number` - Number to raise/lower the attention level by.
-      name: photo_attention
+      tags:
+        - text
+    photo_end:
+      name: photo_end
     photo_evidence_upload:
       name: photo_evidence_upload
-    photo_heat:
-      description: |-
-        Changes heat level during Niki Flier Job
-
-        Arguments
-        - **value**: `number` - Number to raise/lower the heat level by.
-      name: photo_heat
-    photo_high_abduction_options:
-      description: |-
-        Options for Abduction Event during Niki Flier Job
-      name: photo_high_abduction_options
-    photo_high_calc:
-      description: |-
-        Calculates results of Niki Flier Job
-      name: photo_high_calc
-    photo_high_check_location:
-      description: |-
-        Checks current location in Niki Flier Job
-      name: photo_high_check_location
-    photo_high_description:
-      description: |-
-        Describes current location during Niki Flier Job
-      name: photo_high_description
-    photo_high_events:
-      description: |-
-        Potential events for Niki Flier Job
-      name: photo_high_events
-    photo_high_gang_clear:
-      description: |-
-        Clears gang of NPCs in Niki Flier Job
-      name: photo_high_gang_clear
-    photo_high_gang_load:
-      description: |-
-        Generates gang of NPCs for Niki Flier Job
-      name: photo_high_gang_load
-    photo_high_money_calc:
-      description: |-
-        Calculates money earned from Niki Flier Job
-      name: photo_high_money_calc
-    photo_high_options:
-      description: |-
-        Options for Niki Flier Job
-      name: photo_high_options
-    photo_high_options_check:
-      description: |-
-        Checks for events that prevent the options from appearing in the Niki Flier Job
-      name: photo_high_options_check
-    photo_init:
-      description: |-
-        Initializes Niki Flier Job
-      name: photo_init
-    photo_interest:
-      description: |-
-        Changes interest level during Niki Flier Job
-
-        Arguments
-        - **value**: `number` - Number to raise/lower the interest level by.
-      name: photo_interest
-    photo_pass:
-      description: |-
-        Passes time during Niki Flier Job
-
-        Arguments
-        - **minutes**: `number` - How many minutes to pass.
-      name: photo_pass
-    photo_unset:
-      description: |-
-        Resets state after Niki Flier Job
-      name: photo_unset
     physicalAdjustments:
       name: physicalAdjustments
     physicalAdjustmentsInit:
@@ -15052,20 +14478,6 @@ sugarcube-2:
       name: physiquedifficulty
     pickupSexToy:
       name: pickupSexToy
-    pigsOpinion:
-      description: |-
-        Prints a short blurb of what the pig's think about the player's appearance.
-
-        Calls the "outfitChecks" widget internally.
-
-        Only prints if bestiality is enabled or if the farm pigs are in their monster forms.
-
-        The descriptions depend on the player's Allure, but if the player's upper and lower clothing slots are completely naked, the widget is special-cased to use the highest-Allure description.
-
-        Arguments
-        - **silent** _optional_: `boolean` - Disables the printed text if set to True. Defaults to False.
-        - **newlineCount** _optional_: `number` - Number of newlines to print after the statement is printed. Disabled if the statement isn't printed. Defaults to 2.
-      name: pigsOpinion
     pillory_type:
       name: pillory_type
     pillorypeniscomment:
@@ -15166,12 +14578,6 @@ sugarcube-2:
         - **change**: `number` - amount to change by
       parameters:
         - number
-    pking:
-      description: |-
-        Prints title for pc as a monarch (king/queen)
-
-        No existing capitalized version
-      tags: ["text"]
     plant_details:
       description: >-
         Prints season and location appropriate details for a plant person's hair
@@ -15272,7 +14678,6 @@ sugarcube-2:
         `that -> those`
         `is -> are`
         `it -> them`
-        `potato -> potatoes`
       parameters:
         - "number|var|bareword &+ text|string |+ text|string"
       tags: ["text"]
@@ -15281,65 +14686,17 @@ sugarcube-2:
         Prints respectful title for pc as a parent (mother/father)
 
         See `<<pMother>>` for capitalised prose
-      tags: ["text"]
+      tags:
+        - unused
+        - text
     pMother:
       description: |-
         Prints capitalised respectful title for pc as a parent (Mother/Father)
 
         See `<<pmother>>` for uncapitalised prose
-      tags: ["unused", "text"]
-    pmrs:
-      description: |-
-        Prints respectful title for pc (mr/mrs)
-
-        See `<<pMrs>>` for capitalised prose
-      tags: ["text"]
-    pMrs:
-      description: |-
-        Prints capitalised respectful title for pc (Mr/Mrs)
-
-        See `<<pmrs>>` for uncapitalised prose
-      tags: ["text"]
-    pms:
-      description: |-
-        Prints respectful title for pc (mr/ms)
-
-        See `<<pMs>>` for capitalised prose
-      tags: ["text"]
-    pMs:
-      description: |-
-        Prints capitalised respectful title for pc (Mr/Ms)
-
-        See `<<pms>>` for uncapitalised prose
-      tags: ["text"]
-    pmum:
-      description: |-
-        Prints title for pc as a parent (mum/dad)
-
-        See `<<pMum>>` for capitalised prose
-      tags: ["unused", "text"]
-    pMum:
-      description: |-
-        Prints capitalised title for pc as a parent (mum/dad)
-
-        See `<<pmum>>` for uncapitalised prose
-      tags: ["unused", "text"]
-    pmummy:
-      description: |-
-        Prints title for pc as a parent (mummy/daddy)
-
-        See `<<pMummy>>` for capitalised prose
-      tags: ["text"]
-    pMummy:
-      description: |-
-        Prints capitalised title for pc as a parent (mummy/daddy)
-
-        See `<<pmummy>>` for uncapitalised prose
-      tags: ["unused", "text"]
-    pniece:
-      name: pniece
-    pNiece:
-      name: pNiece
+      tags:
+        - unused
+        - text
     police_computer_action:
       name: police_computer_action
     popcornEat:
@@ -15348,48 +14705,6 @@ sugarcube-2:
       name: popcornSpill
       tags:
         - text
-    poppyChooseEndearment:
-      name: poppyChooseEndearment
-    poppyDismissalStreetCheck:
-      name: poppyDismissalStreetCheck
-    poppyDismissalWatched:
-      name: poppyDismissalWatched
-    poppyFirstMeetingInit:
-      name: poppyFirstMeetingInit
-    poppyFlatContents:
-      name: poppyFlatContents
-    poppyFlatsMenu:
-      name: poppyFlatsMenu
-    poppyicon:
-      name: poppyicon
-    poppyLakeMenu:
-      name: poppyLakeMenu
-    poppyLakeReturn:
-      name: poppyLakeReturn
-    poppyMoan:
-      name: poppyMoan
-    poppyOpiumPulse:
-      name: poppyOpiumPulse
-    poppyPregnancy:
-      description: >-
-        This does NOT touch Poppy's anatomy. 
-        She keeps whatever gender / penis / vagina the vanilla NPC system gave
-        her at creation (via initnpcgendersingle), 
-        respecting the player's NPC gender override settings.
-        As a result:
-          • Male Poppy   → she can impregnate the PC (uses canImpregnatePlayer)
-          • Female Poppy → she can be impregnated by the PC (uses canBePregnant)
-        The setup arrays in system-poppy-pregnancy.js register her on BOTH
-        lists; 
-        only the one matching her actual gender ever fires, because
-        npcPregObject derives the role from anatomy.
-      name: poppyPregnancy
-    poppySocialPrep:
-      name: poppySocialPrep
-    poppyTemper:
-      name: poppyTemper
-    poppyTemperDesc:
-      name: poppyTemperDesc
     portalPantiesClear:
       name: portalPantiesClear
     portalPantiesDisplay:
@@ -15552,16 +14867,11 @@ sugarcube-2:
     priestAttack:
       name: priestAttack
     priests:
-      description: |-
-        Prints `priests` or `priestesses` depending on active NPC pronoun
-      tags: ["text"]
-    princess:
-      name: princess
+      description: Prints `priests` or `priestesses` depending on active NPC pronoun
+      tags:
+        - text
     printbuysendhome:
       name: printbuysendhome
-    printChastity:
-      description: |-
-        Prints the name of the currently-worn chastity device
     printCombatMenu:
       name: printCombatMenu
     printcursed:
@@ -15905,10 +15215,6 @@ sugarcube-2:
       name: pussyinspection
     pussyinspectionherm:
       name: pussyinspectionherm
-    pwaitress:
-      name: pwaitress
-    questmarker:
-      name: questmarker
     quicksand_actions:
       name: quicksand_actions
     quicksand_end:
@@ -16010,11 +15316,10 @@ sugarcube-2:
     rapestat:
       name: rapestat
     rapeTrait:
-      description: |-
-        Prints `| Survivor` or `| Fucktoy` depending on pc's `$submissive`
-      tags: ["unused", "text"]
-    reading_nook_recipe:
-      name: reading_nook_recipe
+      description: Prints `| Survivor` or `| Fucktoy` depending on pc's `$submissive`
+      tags:
+        - unused
+        - text
     reb:
       description: >-
         Adds rebelliousness to orphanage
@@ -16201,8 +15506,8 @@ sugarcube-2:
         - **recipeStack** _optional_: `Array` - stack of recipes to go back to during navigation
           - Currently does nothing and is not implemented
       parameters:
-        - "bareword|text"
-        - "bareword|text |+ ...(var|bareword|text)"
+        - 'bareword|text'
+        - 'bareword|text |+ ...(var|bareword|text)'
     reroute:
       name: reroute
       skipArgs: true
@@ -16220,7 +15525,7 @@ sugarcube-2:
 
         - **key**: `string` -
       parameters:
-        - "string"
+        - 'string'
     resetCompound:
       description: |-
         Resets compound alarm, bluff, and theft to their initial values. Used when escaping the compound.
@@ -16487,8 +15792,6 @@ sugarcube-2:
     safereplace:
       container: true
       name: safereplace
-    SamOptions:
-      name: SamOptions
     save_anxious_guard:
       name: save_anxious_guard
     save_methodical_guard:
@@ -16513,7 +15816,7 @@ sugarcube-2:
         - **npcName**: `string` - key to save favourite as
         - **foodName**: `string` - key for a foodstuff item in `F` to record it as a favourite
       parameters:
-        - "bareword|text &+ bareword|text"
+        - 'bareword|text &+ bareword|text'
     saveList:
       name: saveList
     saveNameSection:
@@ -16648,8 +15951,6 @@ sugarcube-2:
       name: sea_chest
     sea_eye:
       name: sea_eye
-    sea_hairwrap:
-      name: sea_hairwrap
     sea_pair_orgasm:
       name: sea_pair_orgasm
     sea_struggle:
@@ -16837,10 +16138,10 @@ sugarcube-2:
       description: |-
         Adds semen to pc's semen supply
 
-         `$semen_amount` is the current pc semen amount remaining
+        `$semen_amount` is the current pc semen amount remaining
 
-         `<<semen_amount change>>`
-         - **change**: `number` - +/- change to apply
+        `<<semen_amount change>>`
+        - **change**: `number` - +/- change to apply
     semenOrgasm:
       name: semenOrgasm
     semenswallowedstat:
@@ -16935,9 +16236,7 @@ sugarcube-2:
 
         - **slot**: `string` -
       parameters:
-        - "string &+ string &+ string"
-    setupBreastjobDemo:
-      name: setupBreastjobDemo
+        - 'string &+ string &+ string'
     setupCombatLightingDemo:
       description: |-
         No description.
@@ -16972,15 +16271,6 @@ sugarcube-2:
       name: sewersstart
     sex:
       name: sex
-    sexactiondifficulty:
-      description: |-
-        Prints colour-coded adjective of sex action difficulty in current combat, for use by [sexskill]actiondifficulty widgets
-
-        `<<sexactiondifficulty skill>>`
-        - **skill**: `"analskill"|"bottomskill"|"chestskill"|"feetskill"|"handskill"|"oralskill"|"penileskill"|"thighskill"|"vaginalskill"` - the skill with which to check action likelihood of success by
-      parameters:
-        - '"analskill"|"bottomskill"|"chestskill"|"feetskill"|"handskill"|"oralskill"|"penileskill"|"thighskill"|"vaginalskill"'
-      tags: ["text"]
     sexcheck:
       name: sexcheck
     sexControl:
@@ -17277,25 +16567,25 @@ sugarcube-2:
       description: |-
         Adjusts $shopHuntMess, to keep track of messes and damage made during shop shop hunts
 
-         `<<shopHuntMess value? events?>>`
+        `<<shopHuntMess value? events?>>`
 
-         - **value** _optional_: `number` The amount of damage done, the amount to increment $shopHuntMess.value. Defaults to 1
-         - **events** _optional_: `Array|string` The types of events to add to $shopHuntMess.events. Defaults to none
+        - **value** _optional_: `number` The amount of damage done, the amount to increment $shopHuntMess.value. Defaults to 1
+        - **events** _optional_: `Array|string` The types of events to add to $shopHuntMess.events. Defaults to none
     shopHuntOptions:
       description: |-
         Prints all the links, and text describing the links, for a standard turn
 
-         `<<shopHuntOptions>>`
+        `<<shopHuntOptions>>`
     shopHuntPronoun:
       description: |-
         Prints the specified pronoun of the specified actor's gender
 
-         `<<shopHuntPronoun word actorID?>>`
+        `<<shopHuntPronoun word actorID?>>`
 
-         - **word**: `string` the pronoun to print
-           - `"boy"` | `"he"` | `"hers"` | `"him"` | `"himself"` | `"his"` | `"man"` | `"men"`
-           - Capitalised arguments will automatically capitalise the output, no "cap" argument required
-         - **actorID** _optional_: `number` the actor whose pronouns to use. Defaults to the last specified actor, stored in `$shopHuntActive`
+        - **word**: `string` the pronoun to print
+          - `"boy"` | `"he"` | `"hers"` | `"him"` | `"himself"` | `"his"` | `"man"` | `"men"`
+          - Capitalised arguments will automatically capitalise the output, no "cap" argument required
+        - **actorID** _optional_: `number` the actor whose pronouns to use. Defaults to the last specified actor, stored in `$shopHuntActive`
     shopHuntResistGrip:
       description: |-
         Prints the `<<physiquedifficulty>>` check based on actor grip strength when being dragged. NOTE: for the future, this will also handle willpower checks for resisting the Wraith.
@@ -17424,16 +16714,6 @@ sugarcube-2:
       name: skill_difficulty
     skillDifficultyText:
       name: skillDifficultyText
-    skilllettergrade:
-      description: |-
-        Prints 11-tier colour-coded letter grade of difficulty based on argument
-
-        `<<skilllettergrade difficulty>>`
-        - **difficulty**: `number` - prints some grade in {<0: None, 0: F, <=100: F+, <=200: D, <=300: D+, <=400: C, 
-          <=500: C+, <=600: B, <=700: B+, <=800: A, <=900: A+, >900: S}
-      parameters:
-        - "number"
-      tags: ["text"]
     skinColourName:
       name: skinColourName
     skincolourtext:
@@ -17443,9 +16723,6 @@ sugarcube-2:
     skinColourVariableCombine:
       description: |-
         Combines `_skinTone` and `_skinShade` and applies that value to `$player.skin.color`.
-    skintonetext:
-      description: |-
-        Prints `X skin tone.`
     skipToOrgasm:
       name: skipToOrgasm
     skirt:
@@ -17615,11 +16892,10 @@ sugarcube-2:
       tags:
         - text
     small_text:
-      description: |-
-        Prints appropriate `| Small body` descriptor that allowed this text option
-      tags: ["text"]
-    smuggler_pub_wren:
-      name: smuggler_pub_wren
+      description: Prints appropriate `| Small body` descriptor that allowed this text
+        option
+      tags:
+        - text
     smugglerdifficultyactions:
       name: smugglerdifficultyactions
     smugglerdifficultynpcs:
@@ -17821,8 +17097,6 @@ sugarcube-2:
       name: stall_actions
     stall_amount:
       name: stall_amount
-    stall_autosale:
-      name: stall_autosale
     stall_chance:
       name: stall_chance
     stall_check_text:
@@ -17844,10 +17118,7 @@ sugarcube-2:
     stall_trust:
       name: stall_trust
     stall_update:
-      description: |-
-        Generates new amount and cost of produce stall items being haggled
-    stallCustomerArousal:
-      name: stallCustomerArousal
+      description: Generates new amount and cost of produce stall items being haggled
     stallShop-text:
       name: stallShop-text
       tags:
@@ -18117,7 +17388,7 @@ sugarcube-2:
         Adds trauma to pc without any modifiers whatsoever
 
         Trauma effects on pc are not updated after change.
-        Consider refactoring to call `<<trauma>>` instead of `<<traumaClamp>>`
+        Consider refactoring to call `<<trauma>>` instead of `<<traumaclamp>>`
 
         `<<straighttrauma change>>`
         - **change**: `number` - +/- change to apply
@@ -18275,30 +17546,24 @@ sugarcube-2:
     streetwhorebodywriting:
       name: streetwhorebodywriting
     stress:
-      description: |-
-        Changes the PC's stress, where `$stress` is a measure of the PC's stress.
-        - Goes from 0 to 10,000, where 0 means the PC is serene.
+      description: >-
+        Adds stress to pc with appropriate modifiers
 
-        +1 point of `change` = 40 points of `$stress`.
-        - Being intoxicated will reduce stress gains by 25%. This reduction increases up to 75%, capping off when `$drunk` >= 480.
 
-        -1 point of `change` = -80 points of `$stress`.
+        `$stress` is pc's stress amount where 0 is healthy (0-10,000)
+
 
         `<<stress change multiplierOverride?>>`
-        - **change**: `number` - +/- change to apply.
-        - **multiplierOverride** _optional_: `number` - multiplier to use in place of the pre-set amount.
+
+        - **change**: `number` - +/- change to apply
+
+        - **multiplierOverride** _optional_: `number` - multiplier to use in
+        place of calculated one
+          - Defaults to some modification of `1` or `0.8` if negative
       parameters:
         - number |+ number
     stresscaption:
       name: stresscaption
-    stressClamp:
-      description: |-
-        Converts 1 point of excess $stress into 0.01 points of $trauma.
-
-        Trauma gains increase by up to 100% at low $control.
-
-        Called at the end of every "stress" function call.
-      name: stressClamp
     strip:
       name: strip
     stripobject:
@@ -18375,8 +17640,6 @@ sugarcube-2:
       name: struggle_region
     struggle_skin:
       name: struggle_skin
-    struggle_softlock_prevent:
-      name: struggle_softlock_prevent
     struggle_state:
       name: struggle_state
     struggleClearActions:
@@ -18644,14 +17907,6 @@ sugarcube-2:
       name: temple_title
     temple_Title:
       name: temple_Title
-    templeLossLower:
-      description: |-
-        "a hollowness flows through you, reminding you of your loss. The loss of something that was never yours."
-      name: templeLossLower
-    templeLossUpper:
-      description: |-
-        "A hollowness flows through you, reminding you of your loss. The loss of something that was never yours."
-      name: templeLossUpper
     tending:
       name: tending
     tending_bird_eggs:
@@ -18981,24 +18236,22 @@ sugarcube-2:
     tipset:
       name: tipset
     tiredness:
-      description: |-
-        Changes the PC's tiredness, where `$tiredness` is a measure of the PC's fatigue.
-        - Goes from 0 to 2,000, where 0 means the PC is refreshed.
+      description: >-
+        Adds tiredness to pc's state
 
-        When `source` is `"pass"`, 1 point of `change` = 1 point of `$tiredness`.
 
-        When `source` isn't `"pass"`, +1 point of `change` = +15 points of `$tiredness`.
-        - Heavy clothing increases this by 50%.
-        - Wearing heels with an inadequate Feet Skill increases this by up to 100%.
-        - The PC overheating increases this up to 200%.
-        - If all 3 conditions are maxed, the PC will gain 350% more $tiredness than normal.
+        `$tiredness` is pc's amount of tiredness where 0 is not-tired (0-2,000)
 
-        When `source` isn't `"pass"`, -1 point of `change` = -20 points of `tiredness`.
+
+        tiredness is unclamped and source is unused. Consider refactoring
+
 
         `<<tiredness change source?>>`
-        - **change**: `number` - +/- change to apply.
-        - **source** _optional_: `string` - The source of the fatigue change.
-          - `"pass"`: Fatigue gained from the passage of time.
+
+        - **change**: `number` - +/- change to apply
+
+        - **source** _optional_: `string` - source of tiredness change
+          - `"pass"`: tiredness gained from passage of time, not affected by modifiers
       parameters:
         - number |+ "pass"
       tags:
@@ -19033,14 +18286,14 @@ sugarcube-2:
       name: titleStats
     titleTraits:
       name: titleTraits
-    tml:
+    tml: 
       description: |-
         Wraps text map text to link to correct location
 
         `<<tml target>>`
         - **target**: `string` - location name
       parameters:
-        - "text|string"
+        - 'text|string'
     toggleAltLink:
       description: >-
         Creates link that toggles unique clothing between alternate states
@@ -19237,42 +18490,33 @@ sugarcube-2:
     trashSelect:
       name: trashSelect
     trauma:
-      description: |-
-        Changes the PC's trauma, where `$trauma` is a measure of the PC's trauma.
-        - Goes from 0 to 5,000, where 0 means the PC is healthy.
+      description: >-
+        Adds trauma to pc based on control and trait modifiers
 
-        +1 point of `change` = 1.5 points of `$trauma`.
-        - Trauma gains are reduced by 0.7x if the PC has the "Fucktoy" trait.
-        - Trauma gains are reduced by 0.7x if the PC has the "Bitch" trait while having sex with beasts.
-        - Trauma gains are reduced by 0.7x if the PC has the "Prey" trait while having sex with tentacles.
-        - Trauma gains are increased by up to 100%, if the PC has low `$control`.
 
-        -1 point of `change` = -1.5 points of `$trauma`.
-        - Trauma losses are increased by 2x while at the Asylum or the Hospital.
-        - Trauma losses are increased by up to 100%, if the PC has high `$control`.
+        `$trauma` is pc's trauma amount where 0 is healthy (0-5,000)
 
-        See `<<combattrauma>>` and `<<straighttrauma>>` for other use cases.
 
-        `<<trauma change source?>>`
-        - **change**: `number` - +/- change to apply.
-          - If set to 0, just updates the PC's trauma effects.
-        - **source**: _optional_ - The source of the trauma change.
-          - `"combat"`: Fatigue gained from the passage of time. If used, the PC's trauma traits will not be updated.
+        See `<<combattrauma>>` and `<<straighttrauma>>` for other use cases
+
+
+        `unusedArg` is not implemented. Consider refactoring to remove or
+        implement
+
+
+        `<<trauma change? unusedArg?>>`
+
+        - **change** _optional_: `number` - +/- change to apply
+          - if not provided, just updates pc's trauma effects
+        - **unusedArg** _optional_: `boolean` - doesn't do anything (truthy)
       parameters:
-        - 'number |+ "combat"'
-      tags: ["refactor"]
+        - number
+      tags:
+        - refactor
     traumacaption:
       name: traumacaption
-    traumaClamp:
-      description: |-
-        Converts 1 point of $trauma into 1 point of $innocencetrauma when the PC's $innocencestate is 1.
-
-        Converts 1 point of excess $trauma into -0.2 points of $beauty.
-
-        Called at the end of every "trauma" function call.
-      name: traumaClamp
-    troughicon:
-      name: troughicon
+    traumaclamp:
+      name: traumaclamp
     tryOnInit:
       name: tryOnInit
     tryOnReset:
@@ -19300,14 +18544,6 @@ sugarcube-2:
       name: unbind
     unbindtemp:
       name: unbindtemp
-    uncle:
-      description: |-
-        Prints `aunt` or `uncle` depending on npc pronouns
-      tags: ["text"]
-    Uncle:
-      description: |-
-        Prints `Aunt` or `Uncle` depending on npc pronouns
-      tags: ["text"]
     underbottoms:
       description: Prints under_lower clothing layer, taking into account if it is
         part of an outfit
@@ -19419,10 +18655,6 @@ sugarcube-2:
     underslither:
       name: underslither
     undertop:
-      description: |-
-        Prints the current state of the player's under_upper clothing, assuming the over_upper clothing has been destroyed.
-
-        The corresponding lower check is called "undies"
       name: undertop
     UnderTopShop:
       name: UnderTopShop
@@ -19526,15 +18758,6 @@ sugarcube-2:
       tags:
         - text
     undies:
-      description: |-
-        Prints the current state of the player's under_lower clothing, assuming the over_lower clothing has been destroyed.
-
-        Optional parameter [0] possible values:
-        - 0 or omitted or null - display full name of undies or full genital description
-        - 1 - display simple name of undies or full genital description
-        - 2 - display simple name of undies or simple genital description
-
-        The corresponding upper check is called "undertop"
       name: undies
     undiestrauma:
       name: undiestrauma
@@ -19556,7 +18779,7 @@ sugarcube-2:
         `<<undressKeepSlot wardrobe slots>>`
         - **slot**: `string`or `array` - slots to keep
       parameters:
-        - "|+ text|string |+ text|string"
+        - '|+ text|string |+ text|string'
     undressmid:
       name: undressmid
     undressNPC:
@@ -19596,9 +18819,6 @@ sugarcube-2:
       name: updateFeats
     updateFeatsPointsMenu:
       name: updateFeatsPointsMenu
-    updateFoodstuffKey:
-      description: |-
-        For use when renaming (not deleting) setup.foodstuff keys. This widget mirrors changes to V.foodstuff and other variables
     updateHallucinations:
       description: Updates pc's hallucination state based on trauma, awareness, drugs,
         weather, and clothing
@@ -19682,9 +18902,6 @@ sugarcube-2:
     updatePlants:
       description: |-
         Verifies `V.plants` has a matching entry for every foodstuff object in `F`. Required after addition of cooking class, as tending objects are no longer optional.
-    updatePlayerTraumaState:
-      description: |-
-        Updates pc's trauma-derived state based on current trauma, including sleep trouble, nightmares, anxiety, flashbacks, panic attacks, and dissociation
     updateRecordedSperm:
       name: updateRecordedSperm
     updatesidebardescription:
@@ -19922,8 +19139,6 @@ sugarcube-2:
     victimgirls:
       name: victimgirls
     violence:
-      description: |-
-        Increases / decreases the player's stress, trauma, and pain based on the violence level. Positive violence = increase stress, trauma, and pain, while negative violence has the opposite effect.
       name: violence
     violence_noncombat:
       name: violence_noncombat
@@ -19971,8 +19186,6 @@ sugarcube-2:
         - text
     vore:
       name: vore
-    vore_img:
-      name: vore_img
     voreactions:
       name: voreactions
     voreeffects:
@@ -19984,8 +19197,6 @@ sugarcube-2:
         - text
     waist_goo:
       name: waist_goo
-    waiter_default:
-      name: waiter_default
     wakingEffects:
       name: wakingEffects
     wallet:
@@ -20195,12 +19406,6 @@ sugarcube-2:
       name: wetnessCalculate
     wheeze:
       name: wheeze
-    whitney_gang_options:
-      name: whitney_gang_options
-    whitney_home_events:
-      name: whitney_home_events
-    whitney_home_events_gang:
-      name: whitney_home_events_gang
     whitney_parent:
       name: whitney_parent
     WhitneyChastityCheck:
@@ -20262,8 +19467,6 @@ sugarcube-2:
       name: wife
     Wife:
       name: Wife
-    wife_npc:
-      name: wife_npc
     willpower:
       description: >-
         Adds willpower to pc's state
@@ -20350,12 +19553,6 @@ sugarcube-2:
       name: wolfquick
     wolfTransform:
       name: wolfTransform
-    woman:
-      name: woman
-    woman_npc:
-      name: woman_npc
-    women_npc:
-      name: women_npc
     wood_required:
       name: wood_required
     word:
@@ -20436,3 +19633,79 @@ sugarcube-2:
         - '|+ "cap"'
       tags:
         - text
+    bunnyTransform:
+      name: bunnyTransform
+    kitchenicon:
+      name: kitchenicon
+    poppyicon:
+      name: poppyicon
+    poppyOpiumPulse:
+      name: poppyOpiumPulse
+    gpatience:
+      name: gpatience
+    langer:
+      name: langer
+    ggpatience:
+      name: ggpatience
+    llanger:
+      name: llanger
+    gggpatience:
+      name: gggpatience
+    lllanger:
+      name: lllanger
+    poppyLakeMenu:
+      name: poppyLakeMenu
+    lpatience:
+      name: lpatience
+    llpatience:
+      name: llpatience
+    lllpatience:
+      name: lllpatience
+    ganger:
+      name: ganger
+    gganger:
+      name: gganger
+    ggganger:
+      name: ggganger
+    poppyFlatsMenu:
+      name: poppyFlatsMenu
+    poppyFlatContents:
+      name: poppyFlatContents
+    poppyLakeReturn:
+      name: poppyLakeReturn
+    poppyMoan:
+      name: poppyMoan
+    poppyChooseEndearment:
+      name: poppyChooseEndearment
+    modLISettingsSection:
+      name: modLISettingsSection
+    bodypart_admire_poppy:
+      name: bodypart_admire_poppy
+    poppySocialPrep:
+      name: poppySocialPrep
+    poppyTemper:
+      name: poppyTemper
+    poppyTemperDesc:
+      name: poppyTemperDesc
+    poppyFirstMeetingInit:
+      name: poppyFirstMeetingInit
+    poppyDismissalWatched:
+      name: poppyDismissalWatched
+    poppyDismissalStreetCheck:
+      name: poppyDismissalStreetCheck
+    poppyPregnancy:
+      name: poppyPregnancy
+      description: >-
+        This does NOT touch Poppy's anatomy. 
+        She keeps whatever gender / penis / vagina the vanilla NPC system gave
+        her at creation (via initnpcgendersingle), 
+        respecting the player's NPC gender override settings.
+        As a result:
+          • Male Poppy   → she can impregnate the PC (uses canImpregnatePlayer)
+          • Female Poppy → she can be impregnated by the PC (uses canBePregnant)
+        The setup arrays in system-poppy-pregnancy.js register her on BOTH
+        lists; 
+        only the one matching her actual gender ever fires, because
+        npcPregObject derives the role from anatomy.
+    babyIntro:
+      name: babyIntro

@@ -1985,7 +1985,7 @@
 
 	<<if $o_long_and_beautiful gt 10>>
 		<<set $o_long_and_beautiful to 10>>
-	<<elseif !$hy_parent and !$hy_student and $o_long_and_beautiful gte 10>>
+	<<elseif !$hy_parent and !$hy_student and $o_long_and_beautiful is 10>>
 		<<set $o_long_and_beautiful to 9>>
 	<</if>>
 
@@ -3620,7 +3620,7 @@
 	/* Code that should not be moved into a check like above */
 	<<set $runWardrobeSanityChecker to true>>
 
-	<<if $objectVersion.updateClothes lt 83 or $objectVersion.updateClothes is undefined>>
+	<<if $objectVersion.updateClothes lt 77 or $objectVersion.updateClothes is undefined>>
 		<<updateClothes>>
 		<<if $objectVersion.updateClothes lt 38>>
 			<!-- V0.4.0.7 return items stuck in $store without proper .location -->
@@ -3662,7 +3662,7 @@
 
 		<!-- do NOT forget to bump this version in variables-start.twee, too -->
 
-		<<set $objectVersion.updateClothes to 83>>
+		<<set $objectVersion.updateClothes to 77>>
 	<</if>>
 
 	<<if !$specialClothesEffects?.pimp>>
@@ -3672,7 +3672,7 @@
 		}>>
 	<</if>>
 
-	<<if $objectVersion.specialClothes lt 21 or $objectVersion.specialClothes is undefined>>
+	<<if $objectVersion.specialClothes lt 20 or $objectVersion.specialClothes is undefined>>
 
 		<!-- Old special clothing system conversion code, DO NOT INCREMENT -->
 		<<if $objectVersion.specialClothes lt 20 and !Array.isArray($specialClothes)>>
@@ -3709,7 +3709,7 @@
 		<<specialClothesRefresh>>
 
 		<!-- DO increment this, and don't forget to do it in variables-start.twee, too -->
-		<<set $objectVersion.specialClothes to 21>>
+		<<set $objectVersion.specialClothes to 20>>
 	<</if>>
 	<<if $objectVersion.feats lt 2>>
 		<<updateFeats>>
@@ -5661,12 +5661,6 @@
 		<<set $objectVersion.missingChildSkinColors to 3>>
 	<</if>>
 
-	<!-- v0.5.10.12: repair children whose eyeColour was saved as a parent's name (!4578) -->
-	<<if $objectVersion.childEyeColour lt 1 or $objectVersion.childEyeColour is undefined>>
-		<<run fixChildEyeColours()>>
-		<<set $objectVersion.childEyeColour to 1>>
-	<</if>>
-
 	<!-- 0.5 Weather update -->
 	<<if Time.year is 361 and $location is "temple">>
 		<<set $location to "old_temple">>
@@ -6459,12 +6453,10 @@
 	<!-- 0.5.5.1, add kitchen stock to Avery's mansion object -->
 	<<if $avery_mansion and !$avery_mansion.kitchen_stock>>
 		<<set $avery_mansion.kitchen_stock to {
-			normal: ["salt", "vegetable_oil", "bottle_of_milk", "flour", "chicken_egg", "beef", "pork", "truffle", "cream", "tomato", "red_wine", "white_wine", "rice", "chilli_pepper", "banana"],
+			normal: ["salt", "vegetable_oil", "bottle_of_milk", "flour", "chicken_egg", "beef", "pork", "truffle", "cream", "tomato", "red_wine", "white_wine", "rice", "chilli_pepper"],
 			requested: []
 		}>>
 		<<set $avery_mansion.kitchen_made to 0>>
-	<<elseif $avery_mansion and !$avery_mansion.kitchen_stock?.normal.includes("banana")>>
-		<<set $avery_mansion.kitchen_stock.normal.pushUnique("banana")>>
 	<</if>>
 
 	<!-- 0.5.5.2, proper skyscraper init -->
@@ -7147,9 +7139,9 @@
 	<</if>>
 
 	<!-- Increment in variables-start.twee as well whenever new foodstuff objects are added -->
-	<<if !$objectVersion.foodstuff or $objectVersion.foodstuff lt 6>>
+	<<if !$objectVersion.foodstuff or $objectVersion.foodstuff lt 4>>
 		<<updatePlants>>
-		<<set $objectVersion.foodstuff to 6>>
+		<<set $objectVersion.foodstuff to 4>>
 	<</if>>
 
 	<!-- UFarm variable refactor -->
@@ -7333,164 +7325,4 @@
 			<<set $furniture.bedroom.poster.nameCap to "Cow-girl">>
 		<</if>>
 	<</if>>
-
-	/* Renamed foodstuff keys to avoid diacritics. The name properties remain unchanged */
-	<<if $foodstuff.crème_brulee>>
-		<<updateFoodstuffKey "crème_brulee" "creme_brulee">>
-	<</if>>
-	<<if $foodstuff.soufflé>>
-		<<updateFoodstuffKey "soufflé" "souffle">>
-	<</if>>
-
-	/* Add skin type(tanning difficulty) options, from easiest 0 to hardest 4*/
-	<<if $settings.tanningDifficulty is undefined>>
-		<<set $settings.tanningDifficulty to 2>>
-	<</if>>
-
-	/* Fixed the amount of Honeycomb and Blood Lemons that Gwylan asks for */
-	<<if $gwylan?.request?.items?.length>>
-		<<for _item range $gwylan.request.items>>
-			<<if _item.name is "wild_honeycomb" and _item.need gt 3>>
-				<<set _item.need to 3>>
-			<<elseif _item.name is "blood_lemon" and _item.need gt 6>>
-				<<set _item.need to 6>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-	/* Fixed Scarred Inmate not having a name */
-	<<if $per_npc.scarred_inmate && $per_npc.scarred_inmate.name is undefined>>
-		<<set $per_npc.scarred_inmate.name to ($per_npc.scarred_inmate.pronoun is "f" ? $NPC_names_f.random() : $NPC_names_m.random())>>
-		<<set $per_npc.scarred_inmate.fullDescription to $per_npc.scarred_inmate.name>>
-	<</if>>
-
-	/* Supermarket Backcomp for Bananas and Orange additions */
-	<<for _key range Object.keys(setup.foodstuff)>>
-		<<if setup.foodstuff[_key].shop.available_in?.includes("supermarket") and V.foodstuff[_key].supermarket is undefined>>
-			<<set V.foodstuff[_key].supermarket to Math.trunc(3000 / setup.foodstuff[_key].shop.sell_price)>>
-		<</if>>
-	<</for>>
-
-	/* Unsetting $avery_valentines.invite to false when $avery_valentines.done is already true */
-	<<if $avery_valentines?.done is true and $avery_valentines?.invite is true>>
-		<<set $avery_valentines.invite to false>>
-	<</if>>
-
-	/* setting npcSeen for already initiated NPCs */
-	<<if C.npc.Whitney.init is 1 and !$whitneySeen>>
-		<<set $whitneySeen to []>>
-	<</if>>
-	<<if C.npc.Eden.init is 1 and !$edenSeen>>
-		<<set $edenSeen to []>>
-	<</if>>
-	<<if C.npc.Doren.init is 1 and !$dorenSeen>>
-		<<set $dorenSeen to []>>
-	<</if>>
-	<<if C.npc.Sam.init is 1 and !$samSeen>>
-		<<set $samSeen to []>>
-	<</if>>
-	<<if C.npc.Alex.init is 1 and !$alexSeen>>
-		<<set $alexSeen to []>>
-	<</if>>
-
-	/* Fixed Butterfly Eyepatch not being unlocked */
-	<<if $specialClothes[$specialClothes.findIndex(x => x.name === "butterfly dress")].unlocked is 3>>
-		<<set $specialClothes[$specialClothes.findIndex(x => x.name === "butterfly eyepatch")].unlocked to 3>>
-	<</if>>
-
-	/* Remove Duplicate Sunflower from $plants_known */
-	<<if $plants_known.filter(seed => seed === 'sunflower').length gt 1>>
-		<<set $plants_known.delete("sunflower")>>
-		<<set $plants_known.pushUnique("sunflower")>>
-	<</if>>
-
-	/* Fix for broken clothes */
-	<<if $saveVersions.some(v => ["0.5.10.0","0.5.10.1","0.5.10.2","0.5.10.3","0.5.10.4","0.5.10.5","0.5.10.6"].includes(v))>>
-		<<run ['upper','lower','under_upper','under_lower'].forEach(slot => {
-			if(V.worn[slot].one_piece === undefined && V.worn[slot].name !== "naked"){
-				if (V.worn[slot].set === slot){
-					V.worn[slot].one_piece = 0;
-				} else {
-					V.worn[slot].one_piece = 1;
-				}
-			}
-		})>>
-
-		<<run ['upper','lower','under_upper','under_lower'].forEach(slot => {
-			for(let i = 0; i < V.wardrobe[slot].length; i++){
-				if(V.wardrobe[slot][i].one_piece === undefined){
-					if (V.wardrobe[slot][i].set === slot){
-						V.wardrobe[slot][i].one_piece = 0;
-					} else {
-						V.wardrobe[slot][i].one_piece = 1;
-					}
-				}
-			}
-		})>>
-
-		<<run Object.keys(V.wardrobes).forEach(wardrobe => {
-			if(wardrobe !== "shopReturn" && wardrobe !== "wardrobe"){
-				['upper','lower','under_upper','under_lower'].forEach(slot => {
-					for (let i = 0; i < V.wardrobes[wardrobe][slot].length; i++) {
-						if(V.wardrobes[wardrobe][slot][i].one_piece === undefined){
-							if (V.wardrobes[wardrobe][slot][i].set === slot){
-								V.wardrobes[wardrobe][slot][i].one_piece = 0;
-							} else {
-								V.wardrobes[wardrobe][slot][i].one_piece = 1;
-							}
-						}
-					}
-				});
-			}
-		})>>
-	<</if>>
-
-	<!-- 5.10.9 -->
-	<<if $monthly is undefined>>
-		<<set $monthly = {}>>
-	<</if>>
-
-	<!-- 5.10.11 -->
-	<<if $skulduggeryroll isnot undefined>>
-		<<unset $skulduggeryroll>>
-	<</if>>
-
-	/* fixed valentines chocolates not appearing in V.foodstuff */
-	<<if !$foodstuff["valentines_chocolate"]>>
-		<<set $foodstuff["valentines_chocolate"] to {amount: 0} >>
-	<</if>>
-
-
-	<!-- 0.5.11.0 Jobs and buns rebalance-->
-	<<if $bun_value is 10000 and $chef_state lt 9>>
-		<<set $bun_value to 7500>>
-	<<elseif $bun_value is 15000>>
-		<<set $bun_value to 10000>>
-	<</if>>
-	<<if $semen_max is 6000>>
-		<<set $semen_max to 4000>>
-	<</if>>
-	<<if ["talk","museum","found"].includes($museumAntiques.antiques.antiquegoldchastitybelt)>>
-		<<set $lakeRuin.goldchastityfound to true>> /* Increases danger in the lake once a belt is found at least once. */
-	<</if>>
-	<<if $settings.tendingYieldModifier gt 5 and $feats.locked isnot true>>
-		<<set $settings.tendingYieldModifier to 5>>
-	<</if>>
-	<<if $daily.stallRented is 1 and $daily.stall_lewdity is undefined>>
-		<<set $daily.stall_lewdity to Math.min(4,$stall_rejected)>>
-	<</if>>
-
-	<<if $robinSeen is undefined>>
-		<<set $robinSeen to []>>
-	<</if>>
-
-	<<if $specialClothes[$specialClothes.findIndex(x => x.name === "sage witch hat")].unlocked is 3 and !$gwylanSeen?.includes("ritual_sex")>>
-		<<set $specialClothes[$specialClothes.findIndex(x => x.name === "sage witch hat")].unlocked to 0>>
-	<</if>>
-
-	<!-- 0.5.11.3 -->
-	<!-- These variables were used in Woodland update's sneaky release, but have since been patched out. -->
-	<<unset $tempConsensual>>
-	<<unset $tempPigsLeft>>
 <</widget>>
-

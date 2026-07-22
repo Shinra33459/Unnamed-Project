@@ -365,7 +365,6 @@ Renderer.CanvasModels.main = {
 			"fox_tail_layer": "front",
 			"fox_ears_type": "disabled",
 			"fox_cheeks_type": "disabled",
-			"tf_ears_layer": "back",
 			"bunny_tail_type": "disabled",
 			"bunny_tail_layer": "front",
 			"bunny_ears_type": "disabled",
@@ -941,7 +940,7 @@ Renderer.CanvasModels.main = {
 				options[`${slot}_fitted_left_move_src`] = isFormfitting ? "img/clothes/masks/formfitting-left-move.png" : null;
 			});
 		} else if (soft) {
-			const upperCheck = !(options.worn.lower.setup.outfitSecondary && options.worn.lower.setup.outfitSecondary[1] === options.worn.upper.setup.name) && !options.worn.lower.setup.type.includes("overalls") && !options.high_waist_suspenders && !options.belly_mask_clip_src;
+			const upperCheck = !(options.worn.lower.setup.outfitSecondary && options.worn.lower.setup.outfitSecondary[1] === options.worn.upper.setup.name) && !options.worn.lower.setup.type.includes("covered") && !options.high_waist_suspenders && !options.belly_mask_clip_src;
 			const underUpperCheck = !(options.worn.under_lower.setup.outfitSecondary && options.worn.under_lower.setup.outfitSecondary[1] === options.worn.under_upper.setup.name) && !options.belly_mask_clip_src;
 			["upper", "under_upper"].forEach(slot => {
 				options[`${slot}_fitted_right_move_src`] = "img/clothes/masks/soft-right-move.png";
@@ -990,7 +989,7 @@ Renderer.CanvasModels.main = {
 			options.underUpperMask.push(options.shirt_mask_clip_src)
 			options.upperMask.push(options.shirt_mask_clip_src)
 		} else {
-			options.underUpperMask.push(options.under_upper_fitted_clip_src)
+			options.underUpperMask.push(options.upper_fitted_clip_src)
 			options.upperMask.push(options.upper_fitted_clip_src)
 		};
 
@@ -1228,7 +1227,7 @@ Renderer.CanvasModels.main = {
 			filters: ["tan"],
 			animation: "idle",
 			zfn(options) {
-				return (options.arm_left === "cover") ? ZIndices.left_cover_arm : ZIndices.armsidle;
+				return (options.arm_left === "cover") ? ZIndices.left_cover_arm : options.zarms;
 			},
 			showfn(options) {
 				return options.arm_left !== "none";
@@ -1489,7 +1488,7 @@ Renderer.CanvasModels.main = {
 			},
 
 			srcfn(options) {
-				return `img/face/${options.facestyle}/${options.facevariant}/lipstick-${options.mouth}.png`;
+				return `img/face/${options.facestyle}/${options.facevariant}/lipstick-${options.mouth}.png`;return `img/face/${options.facestyle}/lipstick-${options.mouth}.png`;
 			},
 			showfn(options) {
 				return options.show_face && !!options.lipstick_colour;
@@ -1569,8 +1568,6 @@ Renderer.CanvasModels.main = {
 				return options.hair_sides_position === "front" ? ZIndices.hair_forward : ZIndices.backhair;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-				return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.headMask;
 			},
 			showfn(options) {
@@ -1589,8 +1586,6 @@ Renderer.CanvasModels.main = {
 				return !!options.show_hair && !!options.hair_fringe_type;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-				return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.headMask.length ? options.headMask : options.fringe_mask_src;
 			},
 		},
@@ -1678,8 +1673,6 @@ Renderer.CanvasModels.main = {
 				return "";
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-				return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.headMask;
 			},
 			showfn(options) {
@@ -1884,9 +1877,7 @@ Renderer.CanvasModels.main = {
 		}),
 		"cow_ear_left": genlayer_ears("cow", false, {
 			z: ZIndices.horns,
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
+			masksrcfn() {
 				return "img/face/masks/left.png"
 			}
 		}),
@@ -1894,19 +1885,13 @@ Renderer.CanvasModels.main = {
 			zfn() {
 				return ZIndices.ears + 0.5;
 			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
+			masksrcfn() {
 				return "img/face/masks/right.png"
 			}
 		}),
 		"cow_tag": genlayer_ears("cow", false, {
 			z: ZIndices.facewear,
 			src: `img/transformations/cow/ears/tag.png`,
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			}
 		}),
 		"cow_tail": genlayer_tail("cow", false),
 		
@@ -2046,10 +2031,6 @@ Renderer.CanvasModels.main = {
 				if (options.demon_wings_layer === "back") return ZIndices.head_back;
 				return ZIndices.backhair
 			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			},
 		},
 		"demon_tail": genlayer_tail("demon", false, {
 			filters: ["demon_tail"],
@@ -2079,7 +2060,11 @@ Renderer.CanvasModels.main = {
 			},
 			filters: ["hair"],
 			zfn(options) {
-				return tfEarsZ();
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
 			},
 			animation: "idle"
 		},
@@ -2477,7 +2462,11 @@ Renderer.CanvasModels.main = {
 				return options.head_mask_src;
 			},
 			zfn(options) {
-				return tfEarsZ();
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
 			},
 			animation: "idle"
 		},
@@ -2609,7 +2598,11 @@ Renderer.CanvasModels.main = {
 			filters: ["hair"],
 			// z: ZIndices.backhair,
 			zfn(options) {
-				return tfEarsZ();
+				if (V.tfearsposition === "back") {
+					return ZIndices.backhair;
+				} else {
+					return ZIndices.brow;
+				}
 			},
 			animation: "idle",
 
@@ -2719,7 +2712,7 @@ Renderer.CanvasModels.main = {
 			animation: "idle",
 
 			srcfn(options) {
-				let writing = setup.bodywriting[options.writing_breasts];
+				const writing = setup.bodywriting[options.writing_breasts];
 				if ((!writing.sprites || writing.sprites.length == 0)
 					&& writing.type === "text" && options.breast_size >= 2) {
 					return `img/bodywriting/text/default/breasts-${options.breast_size}.png`;
@@ -2760,8 +2753,8 @@ Renderer.CanvasModels.main = {
 				return 0;
 			},
 			zfn(options) {
-				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.right_cover_arm + 0.5 : ZIndices.under_upper_arm_right - 0.2;
-				return ["cover", "hold"].includes(options.arm_right) ? ZIndices.right_cover_arm + 0.5 : options.zarms + 0.01;
+				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.01 : ZIndices.under_upper_arm_right - 0.2;
+				return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.01 : options.zarms + 0.01;
 			},
 		},
 		"writing_pubic": {
@@ -2843,10 +2836,6 @@ Renderer.CanvasModels.main = {
 				}
 				return `VaginalCumDrip${anim}`;
 			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			},
 		},
 		"drip_anal": {
 			z: ZIndices.tears,
@@ -2866,10 +2855,6 @@ Renderer.CanvasModels.main = {
 				}
 				return `AnalCumDrip${anim}`;
 			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			},
 		},
 		"drip_mouth": {
 			z: ZIndices.semen_cough,
@@ -2881,7 +2866,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return options.show_face
 					&& !!options.drip_mouth
-					&& !options.worn.face.setup.type.includesAny("mask", "face_covering");
+					&& !options.worn.face.setup.type.includesAny("mask", "covered");
 			},
 			dxfn(options) {
 				return options.facestyle === "small-eyes" ? 2 : 0;
@@ -2895,10 +2880,6 @@ Renderer.CanvasModels.main = {
 				}
 				return `MouthCumDrip${anim}`;
 			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			},
 		},
 		"cum_chest": {
 			z: ZIndices.tears,
@@ -2909,10 +2890,6 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				return !!options.cum_chest;
-			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 			},
 		},
 		"cum_face": {
@@ -2925,10 +2902,6 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return options.show_face && !!options.cum_face;
 			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			},
 		},
 		"cum_feet": {
 			z: ZIndices.tears,
@@ -2939,10 +2912,6 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				return !!options.cum_feet;
-			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 			},
 		},
 		"cum_leftarm": {
@@ -2955,10 +2924,6 @@ Renderer.CanvasModels.main = {
 			},
 			zfn(options) {
 				return (options.arm_right === "cover") ? ZIndices.arms_cover + 0.05 : options.zarms + 0.05;
-			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 			},
 		},
 		"cum_rightarm": {
@@ -2977,10 +2942,6 @@ Renderer.CanvasModels.main = {
 				if (V.rightArmPosition == "above") return ["cover", "hold"].includes(options.arm_right) ? ZIndices.arms_cover + 0.05 : ZIndices.under_upper_arm_right - 0.1;
 				return (options.arm_right === "cover" || options.arm_right === "hold") ? ZIndices.arms_cover + 0.05 : options.zarms + 0.05;
 			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			},
 		},
 		"cum_neck": {
 			z: ZIndices.tears,
@@ -2991,10 +2952,6 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				return !!options.cum_neck;
-			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 			},
 		},
 		"cum_thigh": {
@@ -3007,10 +2964,6 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return !!options.cum_thigh;
 			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			},
 		},
 		"cum_tummy": {
 			z: ZIndices.tears,
@@ -3021,10 +2974,6 @@ Renderer.CanvasModels.main = {
 			},
 			showfn(options) {
 				return !!options.cum_tummy;
-			},
-			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 			},
 		},
 
@@ -3051,8 +3000,6 @@ Renderer.CanvasModels.main = {
 				return options.worn.upper.setup.name === "cocoon" ? ZIndices.old_over_upper : options.zupper;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.upperMask;
 			},
 		}),
@@ -3066,8 +3013,6 @@ Renderer.CanvasModels.main = {
 				return options.zupper;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.upper_fitted_left_move_src;
 			},
 			dxfn(options) {
@@ -3079,8 +3024,6 @@ Renderer.CanvasModels.main = {
 				return options.zupper;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.upper_fitted_right_move_src;
 			},
 			dxfn(options) {
@@ -3310,8 +3253,6 @@ Renderer.CanvasModels.main = {
 				return options.zupper;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.upper_fitted_left_move_src;
 			},
 			dxfn(options) {
@@ -3323,8 +3264,6 @@ Renderer.CanvasModels.main = {
 				return options.zupper;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.upper_fitted_right_move_src;
 			},
 			dxfn(options) {
@@ -3341,8 +3280,6 @@ Renderer.CanvasModels.main = {
 				return options.arm_right === "hold" && options.sleeve_over_hold ? ZIndices.lower_high : options.zupper;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.upperMask;
 			},
 		}),
@@ -3366,8 +3303,6 @@ Renderer.CanvasModels.main = {
 				return options.zupperleft;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.belly_hides_lower ? options.belly_mask_clip_src : null;
 			},
 		}),
@@ -3411,13 +3346,13 @@ Renderer.CanvasModels.main = {
 		"over_upper_rightarm": genlayer_clothing_arm("right", "over_upper", {
 			zfn(options) {
 				return (options.arm_right === "cover" || options.arm_right === "hold") ?
-					ZIndices.over_upper_arms + 0.9 : ZIndices.over_upper_arms;
+					options.zupperright + 1 : ZIndices.over_upper_arms;
 			},
 		}),
 		"over_upper_leftarm": genlayer_clothing_arm("left", "over_upper", {
 			zfn(options) {
 				return options.arm_left === "cover" ?
-					ZIndices.over_upper_arms + 0.9 : ZIndices.over_upper_arms;
+					options.zupperleft + 1 : ZIndices.over_upper_arms;
 			},
 		}),
 		"over_upper_back": genlayer_clothing_back_img('over_upper', {
@@ -3479,12 +3414,10 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.lowerMask;
 			},
 		}),
@@ -3534,7 +3467,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3548,7 +3481,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3562,7 +3495,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3576,7 +3509,7 @@ Renderer.CanvasModels.main = {
 			zfn(options) {
 				const setup = options.worn.lower.setup;
 				if (setup.zIndex) return ZIndices[setup.zIndex];
-				const secondary = options.worn.lower.setup.type.includes("overalls") ? ZIndices.lower_cover : ZIndices.lower;
+				const secondary = options.worn.lower.setup.type.includes("covered") ? ZIndices.lower_cover : ZIndices.lower;
 				return options.worn.lower.setup.high_img ? ZIndices.lower_high : secondary;
 			},
 			masksrcfn(options) {
@@ -3598,26 +3531,16 @@ Renderer.CanvasModels.main = {
 				if (setup.zIndex) return ZIndices[setup.zIndex];
 				if (options.worn.lower.setup.name.includes("ballgown") || options.worn.lower.setup.name.includes("pinafore"))
 					return ZIndices.upper_top;
-				if (options.worn.lower.setup.type.includes("overalls")) return ZIndices.lower_cover;
+				if (options.worn.lower.setup.type.includes("covered")) return ZIndices.lower_cover;
 				return ZIndices.lower;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.lowerMask;
 			},
 		}),
 		"lower_detail": genlayer_clothing_detail("lower", {
-			zfn(options) {
-				const setup = options.worn.lower.setup;
-				if (setup.zIndex) return ZIndices[setup.zIndex];
-				if (options.worn.lower.setup.type.includes("overalls"))
-					return ZIndices.lower_high;
-				return ZIndices.lower;
-			},
+			z:ZIndices.lower,
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				return options.lowerMask;
 			},
 		}),
@@ -3891,7 +3814,6 @@ Renderer.CanvasModels.main = {
 					return options.worn.under_upper.setup.pregType === "split"
 						&& options.shirt_mask_clip_src;
 
-				if (!(options.worn.under_upper.setup.formfittingDisabled ?? []).includes("acc"))
 				return options.underUpperMask;
 			}
 		}),
@@ -3900,8 +3822,8 @@ Renderer.CanvasModels.main = {
 		"under_upper_back": genlayer_clothing_back_img('under_upper'),
 		"under_upper_rightarm": genlayer_clothing_arm("right", "under_upper", {
 			zfn(options) {
-				return options.arm_right === "cover" || options.arm_right === "hold" ?
-					options.zupperright - 1 : (V.rightArmPosition == "above" ? ZIndices.under_upper_arm_right : ZIndices.under_upper_arms);
+				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.under_upper_arms_cover;
+				return V.rightArmPosition == "above" ? ZIndices.under_upper_arm_right : ZIndices.under_upper_arms;
 			},
 		}),
 		"under_upper_leftarm": genlayer_clothing_arm("left", "under_upper", {
@@ -3917,17 +3839,6 @@ Renderer.CanvasModels.main = {
 		"under_upper_leftarm_fitted_acc": genlayer_clothing_arm_acc_fitted("left", "under_upper", {
 			zfn() {
 				return ZIndices.under_upper_arms - 0.1;
-			},
-		}),
-		"under_upper_rightarm_acc": genlayer_clothing_arm_acc("right", "under_upper", {
-			zfn(options) {
-				return options.arm_right === "cover" || options.arm_right === "hold" ?
-					options.zupperright - 1 : ZIndices.under_upper_arms;
-			},
-		}),
-		"under_upper_leftarm_acc": genlayer_clothing_arm_acc("left", "under_upper", {
-			zfn(options) {
-				return options.arm_left === "cover" ? options.zupperleft - 1 : ZIndices.under_upper_arms;
 			},
 		}),
 		/***
@@ -4101,7 +4012,8 @@ Renderer.CanvasModels.main = {
 					&& options.arm_right !== "none";
 			},
 			zfn(options) {
-				return ["cover", "hold"].includes(options.arm_right) ? options.zupperright - 0.5 : ((V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2);
+				if (options.arm_right === "cover" || options.arm_right === "hold") return ZIndices.hands;
+				return (V.rightArmPosition == "above") ? ZIndices.under_upper_arm_right + 0.2 : options.zarms + 0.2;
 			},
 		},
 		"hands_right_acc": {
@@ -4116,7 +4028,7 @@ Renderer.CanvasModels.main = {
 					&& options.worn.hands.alt === "alt";
 				const alt = isAltPosition ? '_alt' : '';
 				
-				return `img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}${pattern}${alt}-acc.png`;
+				return`img/clothes/hands/${options.worn.hands.setup.variable}/right-${options.arm_right}${pattern}${alt}-acc.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -4171,9 +4083,10 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/left${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/left${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4191,10 +4104,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4212,10 +4126,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4233,11 +4148,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
-				if (!setupItem.variable) return "";
+				const ringVariable = redirectRemovedRingStep(setupItem);
+				if (!ringVariable) return "";
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn() {
 				return false;
@@ -4259,10 +4175,11 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const suffix = options.arm_left === "cover" ? "left-cover" : "left";
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4291,11 +4208,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4318,11 +4236,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4341,11 +4260,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}-acc.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}-acc.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4363,11 +4283,12 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const worn = options.worn.rings;
 				const setupItem = worn.setup;
+				const ringVariable = redirectRemovedRingStep(setupItem);
 				const hold = options.handheld_position || "right";
 				const suffix = options.arm_right === "cover" ? "right-cover" : hold;
 				const isAltPosition = !options.alt_override && setupItem.altposition !== undefined && worn.alt === "alt";
 				const alt = isAltPosition ? "-alt" : "";
-				return `img/clothes/rings/${redirectRemovedRingStep(setupItem)}/${suffix}${alt}.png`;
+				return `img/clothes/rings/${ringVariable}/${suffix}${alt}.png`;
 			},
 			showfn(options) {
 				const worn = options.worn.rings;
@@ -4508,10 +4429,9 @@ Renderer.CanvasModels.main = {
 				return `img/clothes/handheld/${options.worn.handheld.setup.variable}/left-${options.arm_left}${pattern}.png`;
 			},
 			showfn(options) {
-				if (options.worn.handheld.index <= 0 || !options.show_clothes || options.hide_all || options.arm_left === "none" || (options.prop && options.prop.armPosition !== "handsfree"))
-				return false;
+				if (options.worn.handheld.index <= 0 || !options.show_clothes || options.hide_all || options.arm_left === "none" || (options.prop && options.prop.armPosition !== "handsfree")) return false;
 
-				const hasLeftDetail = options.worn.handheld.setup.leftImage === 1 && !!options.worn.handheld.pattern && options.worn.handheld.setup.pattern_layer === "tertiary";
+				const hasLeftDetail = !!options.worn.handheld.pattern && options.worn.handheld.setup.pattern_layer === "tertiary";
 
 				if (options.arm_left === "cover") return hasLeftDetail && options.worn.handheld.setup.coverImage;
 				return hasLeftDetail;
@@ -4551,12 +4471,8 @@ Renderer.CanvasModels.main = {
 			srcfn(options) {
 				const dmg = options.worn.head.setup.accessory_integrity_img ? options.worn.upper.integrity : options.worn.head.integrity;
 				const pattern = options.worn.head.pattern && !["tertiary", "secondary"].includes(options.worn.head.setup.pattern_layer) ? "-" + options.worn.head.pattern?.replace(/ /g,"-") : '';
-				const isAltPosition = !options.alt_override && options.worn.head.setup.altposition !== undefined
-					&& options.worn.head.alt === "alt"
-					&& !options.worn.head.setup.altdisabled.includes("full");
-				const end = isAltPosition ? '-alt' : '';
 
-				return `img/clothes/head/${options.worn.head.setup.variable}/${dmg}${pattern}${end}.png`;
+				return `img/clothes/head/${options.worn.head.setup.variable}/${dmg}${pattern}.png`;
 			},
 			showfn(options) {
 				return options.show_clothes
@@ -4565,11 +4481,10 @@ Renderer.CanvasModels.main = {
 					&& !options.hide_all;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				if (options.worn.handheld.setup.mask_img === 1) {
 					return `img/clothes/handheld/${options.worn.handheld.setup.variable}/mask.png`;
-				};
+				}
+				return options.headMask;
 			}
 		}),
 		"head_acc": genlayer_clothing_accessory('head', {
@@ -4587,11 +4502,10 @@ Renderer.CanvasModels.main = {
 					&& !options.hide_all;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				if (options.worn.handheld.setup.mask_img === 1) {
 					return `img/clothes/handheld/${options.worn.handheld.setup.variable}/mask.png`;
-				};
+				}
+				return options.headMask;
 			}
 		}),
 		"head_detail": genlayer_clothing_detail('head', {
@@ -4604,17 +4518,14 @@ Renderer.CanvasModels.main = {
 					&& !options.hide_all;
 			},
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				if (options.worn.handheld.setup.mask_img === 1) {
 					return `img/clothes/handheld/${options.worn.handheld.setup.variable}/mask.png`;
-				};
+				}
+				return options.headMask;
 			}
 		}),
 		"head_back_acc": genlayer_clothing_back_img_acc('head', {
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				if (options.worn.handheld.setup.mask_img === 1) {
 					return `img/clothes/handheld/${options.worn.handheld.setup.variable}/mask.png`;
 				}
@@ -4623,8 +4534,6 @@ Renderer.CanvasModels.main = {
 		}),
 		"head_back": genlayer_clothing_back_img('head', {
 			masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
 				if (options.worn.handheld.setup.mask_img === 1) {
 					return `img/clothes/handheld/${options.worn.handheld.setup.variable}/mask.png`;
 				}
@@ -4721,8 +4630,6 @@ Renderer.CanvasModels.main = {
 				return options.high_waist_suspenders ? "img/clothes/neck/suspenders/mask.png" : null;
 			},
 			zfn(options) {
-				const setup = options.worn.neck.setup;
-				if (setup.zIndex) return ZIndices[setup.zIndex];
 				return options.hood_mask ? ZIndices.collar : ZIndices.neck;
 			},
 		}),
@@ -4746,8 +4653,6 @@ Renderer.CanvasModels.main = {
 					&& !options.hideLeash;
 			},
 			zfn(options) {
-				const setup = options.worn.neck.setup;
-				if (setup.zIndex) return ZIndices[setup.zIndex];
 				const check = options.worn.head.setup.mask_img === 1
 					&& !(options.hood_down
 						&& options.worn.head.setup.hood
@@ -4858,16 +4763,6 @@ Renderer.CanvasModels.main = {
 			},
 			masksrcfn(options) {
 				return options.legsMask;
-			},
-		}),
-		"legs_detail": genlayer_clothing_detail('legs', {
-			showfn(options) {
-				return options.show_clothes
-					&& options.worn.legs.index > 0
-					&& options.worn.legs.setup.mainImage !== 0
-					&& options.worn.legs.setup.pattern_layer === "tertiary"
-					&& !!options.worn.legs.pattern
-					&& !options.hide_all;
 			},
 		}),
 		"legs_back_acc": genlayer_clothing_back_img_acc('legs'),
@@ -5505,7 +5400,6 @@ function filterFnArm(state, slot, options) {
 		case "":
 		case "primary":
 			return altFilterSwap ? [`worn_${slot}_acc`] : [`worn_${slot}`];
-		case 1:
 		case "secondary":
 			return altFilterSwap ? [`worn_${slot}`] : [`worn_${slot}_acc`];
 		case "pattern":
@@ -5608,10 +5502,6 @@ function genlayer_clothing_main(slot, overrideOptions) {
 			const end = isHoodDown ? '-down' : isAltPosition ? '-alt' : '';
 			return `img/clothes/${folder}/${setup.variable}/${options.worn[slot].integrity}${pattern}${end}.png`;
 		},
-		masksrcfn(options) {
-			if (options.worn.over_upper.setup.name === "kaiju costume" && !slot.startsWith("over_"))
-				return `img/clothes/over-upper/kaiju/mask.png`;
-		},
 	}, overrideOptions));
 }
 
@@ -5648,7 +5538,6 @@ function genlayer_clothing_fitted_left_acc(slot, overrideOptions) {
 				&& options.worn[slot].setup.accImage !== 0
 				&& options.worn[slot].setup.accessory === 1
 				&& ((options.worn[slot].setup.formfitting === 1 && ["curvy", "slender"].includes(options.body_type)) || (options.body_type === "soft" && (V.bellyTucked || V.worn[slot].setup.one_piece)))
-				&& !(options.worn[slot].setup.formfittingDisabled ?? []).includes("acc")
 				&& !between(options.belly, 8, 24);
 			return checks;
 		},
@@ -5680,7 +5569,6 @@ function genlayer_clothing_fitted_right_acc(slot, overrideOptions) {
 				&& options.worn[slot].setup.accImage !== 0
 				&& options.worn[slot].setup.accessory === 1
 				&& ((options.worn[slot].setup.formfitting === 1 && options.body_type == "curvy") || (options.body_type === "soft" && (V.bellyTucked || V.worn[slot].setup.one_piece)))
-				&& !(options.worn[slot].setup.formfittingDisabled ?? []).includes("acc")
 				&& !between(options.belly, 8, 24);
 			return checks;
 		},
@@ -5738,10 +5626,6 @@ function genlayer_clothing_accessory(slot, overrideOptions) {
 			const folder = normaliseFileName(slot);
 			return `img/clothes/${folder}/${setup.variable}/acc${integrity}${pattern}${end}.png`;
 		},
-		masksrcfn(options) {
-				if (options.worn.over_upper.setup.name === "kaiju costume")
-					return `img/clothes/over-upper/kaiju/mask.png`;
-			},
 	}, overrideOptions));
 }
 
@@ -5768,10 +5652,6 @@ function genlayer_clothing_detail(slot, overrideOptions) {
 			const end = isAltPosition ? '-alt' : '';
 			const folder = normaliseFileName(slot);
 			return `img/clothes/${folder}/${setup.variable}/${pattern}${end}.png`;
-		},
-		masksrcfn(options) {
-			if (options.worn.over_upper.setup.name === "kaiju costume" && !slot.startsWith("over_"))
-				return `img/clothes/over-upper/kaiju/mask.png`;
 		},
 	}, overrideOptions));
 }
@@ -6064,10 +5944,6 @@ function genlayer_clothing_back_img(slot, overrideOptions) {
 			const folder = normaliseFileName(slot);
 			return `img/clothes/${folder}/${options.worn[slot].setup.variable}/${prefix}${suffix}${pattern}.png`;
 		},
-		masksrcfn(options) {
-			if (options.worn.over_upper.setup.name === "kaiju costume" && !slot.startsWith("over_"))
-				return `img/clothes/over-upper/kaiju/mask.png`;
-		},
 	}, overrideOptions));
 }
 
@@ -6107,10 +5983,6 @@ function genlayer_clothing_back_img_acc(slot, overrideOptions) {
 
 			const folder = normaliseFileName(slot);
 			return `img/clothes/${folder}/${options.worn[slot].setup.variable}/${prefix}${suffix}${pattern}-acc.png`;
-		},
-		masksrcfn(options) {
-			if (options.worn.over_upper.setup.name === "kaiju costume" && !slot.startsWith("over_"))
-				return `img/clothes/over-upper/kaiju/mask.png`;
 		},
 	}, overrideOptions));
 }
@@ -6195,6 +6067,7 @@ function genlayer_clothing_arm_acc(arm, slot, overrideOptions) {
 		},
 		showfn(options) {
 			return options.worn[slot].index > 0
+				&& options.worn[slot].setup.sleeve_img === 1
 				&& options.worn[slot].setup.sleeve_acc_img === 1
 				&& options[`arm_${arm}`] !== "none";
 		},
@@ -6233,7 +6106,6 @@ function genlayer_clothing_arm_acc_fitted(arm, slot, overrideOptions) {
 				&& ["curvy", "slender"].includes(options.body_type)
 				&& options.arm_left === "idle"
 				&& !(options.belly > 7)
-				&& !(options.worn.under_upper.setup.formfittingDisabled ?? []).includes("sleeve_acc")
 				&& options[`arm_${arm}`] !== "none";
 		},
 		masksrcfn(options) {
@@ -6314,8 +6186,6 @@ function genlayer_wings(side, tf, hair, overrideOptions) {
 			return ZIndices.backhair;
 		},
 		masksrcfn(options) {
-			if (options.worn.over_upper.setup.name === "kaiju costume")
-				return `img/clothes/over-upper/kaiju/mask.png`;
 			const state = `${options[`${tf}_wing_${side}`]}`;
 			if (state !== "cover") return `img/face/masks/${side}.png`;
 		},
@@ -6364,10 +6234,6 @@ function genlayer_tail(tf, hair, overrideOptions) {
             if (options[`${tf}_tail_layer`] === "back") return ZIndices.tail;
             return ZIndices.back_lower;
         },
-		masksrcfn(options) {
-			if (options.worn.over_upper.setup.name === "kaiju costume")
-				return `img/clothes/over-upper/kaiju/mask.png`;
-		},
     }, overrideOptions))
 }
 
@@ -6404,30 +6270,11 @@ function genlayer_tf_pits(tf, folder, overrideOptions) {
 	}, overrideOptions))
 }
 
-/**
- * Resolve the z-index for a TF ear layer from the player's $tfearsposition setting.
- * Ordered back -> front. Add new positions here and expose them in the mirror UI.
- *   "behind" - behind ALL hair (back + front/fringe)
- *   "back"   - behind the front hair/fringe, in front of the back hair
- *   "front"  - in front of ALL hair
- * @returns {number}
- */
-function tfEarsZ() {
-	switch (V.tfearsposition) {
-		case "behind": return ZIndices.backhair - 0.1;
-		case "front":  return ZIndices.brow;
-		case "back":
-		default:       return ZIndices.basehead;
-	}
-}
-
 function genlayer_ears(tf, hair, overrideOptions) {
 	return genlayer_tf(tf, "ears", "ears", Object.assign({
 		filters: hair ? ["hair"] : [],
 
 		masksrcfn(options) {
-			if (options.worn.over_upper.setup.name === "kaiju costume")
-				return `img/clothes/over-upper/kaiju/mask.png`;
 			if (!options.hideHeadAcc) return options.headMask;
 		},
 
@@ -6435,7 +6282,11 @@ function genlayer_ears(tf, hair, overrideOptions) {
 			if (options.hideHeadAcc) {
 				return ZIndices.over_head;
 			}
-			return options.tf_ears_layer === "front" ? ZIndices.front_hair +1 : ZIndices.basehead; // return tfEarsZ(); <--- TODO: figure out if this function can still be used
+			if (V.tfearsposition === "back") {
+				return ZIndices.basehead;
+			} else {
+				return ZIndices.brow;
+			}
 		}
 	}, overrideOptions))
 }
@@ -6448,8 +6299,6 @@ function genlayer_horns(tf, overrideOptions) {
 			return options[`${tf}_horns_layer`] === "front" ? ZIndices.over_head : ZIndices.horns;
 		},
 		masksrcfn(options) {
-			if (options.worn.over_upper.setup.name === "kaiju costume")
-				return `img/clothes/over-upper/kaiju/mask.png`;
 			return options[`${tf}_horns_layer`] !== "front" ? options.headMask : null;
 		},
 	}, overrideOptions))
