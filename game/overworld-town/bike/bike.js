@@ -256,7 +256,7 @@ function bikeTime(destinationRegion) {
 					break;
 			}
 			break;
-		case "wolf_cave_yard":
+		case "wolf_cave":
 		case "cabin":
 			switch (destinationRegion) {
 				case "residential":
