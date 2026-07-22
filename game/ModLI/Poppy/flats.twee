@@ -325,7 +325,7 @@ As you are chatting with Poppy, <<his>> head starts to nod and <<his>> posture s
 <<link [[Scare Poppy|Flats Poppy Doze Scare]]>><</link>>
 
 :: Flats Poppy Doze Gentle
-<<effects>><<set $outside to 0>>
+<<effects>><<set $outside to 0>><<run statusCheck("Poppy")>>
 You rest a hand on Poppy's shoulder and gently shake <<him>> awake while calling <<his>> name. 
 <br><br>
 When <<he>> awoke, <<his>> cheeks are flushed with embarrassment.
@@ -335,13 +335,13 @@ When <<he>> awoke, <<his>> cheeks are flushed with embarrassment.
 <<poppyFlatsMenu>>
 
 :: Flats Poppy Doze Scare
-<<effects>><<set $outside to 0>>
+<<effects>><<set $outside to 0>><<run statusCheck("Poppy")>>
 You stand up and loom over <<him>> from behind. You ready yourself and slap both your hands on <<his>> shoulders, shouting <<his>> name loudly.
 <br><br>
 Poppy's ears pin back as <<he>> lets out a loud scream similar to a fox. You are sure that <<his>> scream can be heard from all four corners of the forest.
 <br><br>
 When Poppy realised it was you, <<he>> let out a shaky exhale and pressed a hand to <<his>> chest. "Oh, it's just you... don't scare me like that. I thought the hunter caught me..." Poppy's expression has gone sour after your little prank.
-<<npcincr Poppy patience -4>><<if C.npc.Poppy.patience gte 0>><<llpatience>><<else>><<gganger>><</if>>
+<<npcincr Poppy patience -4>><<if C.npc.Poppy.patience gt 0>><<llpatience>><<else>><<gganger>><</if>>
 <<poppyOpiumPulse>>
 <<if $awarelevel lt 5 and !$poppySeen.includes("poppy_tf_revealed")>>
 	<<link [[Ask Poppy about the scream|Flats Poppy Doze Ask]]>><</link>>
@@ -350,8 +350,20 @@ When Poppy realised it was you, <<he>> let out a shaky exhale and pressed a hand
 <<link [[Back|Flats Poppy Social]]>><<set $eventskip to 1>><</link>>
 
 :: Flats Poppy Doze Ask
-<<effects>><<set $outside to 0>>
-"Why does your scream sound like that?” you ask. "It's very foxlike."
+<<effects>><<set $outside to 0>><<run statusCheck("Poppy")>>
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+	"Why does your scream sound like that?" you ask, shrinking a little at your own nerve. "It's very foxlike."
+<<elseif $speech_attitude is "docile">>
+	"Why does your scream sound like that?" you ask softly, trying not to sound as if you're prying. "It's very foxlike."
+<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+	"May I ask why your scream sounds like that?" you ask, studying Poppy with careful curiosity. "It's rather foxlike."
+<<elseif $speech_attitude is "confident">>
+	"Your scream sounded foxlike," you say, watching Poppy closely. "There's a reason for that, isn't there?"
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	"That scream was weirdly foxlike," you say. "Care to explain, or are you going to pretend I didn't hear it?"
+<<else>>
+	"Why does your scream sound like that?" you ask. "It's very foxlike."
+<</if>>
 <br><br>
 Poppy pouts, unwilling to answer at first. "Isn't it a bit obvious? Come on now, <span class="blue">clear your vision</span>." <<He>> covers your eyes with <<his>> hand.
 <br><br>
@@ -360,10 +372,22 @@ Poppy pouts, unwilling to answer at first. "Isn't it a bit obvious? Come on now,
 <<link [[Next|Flats Poppy Doze Ask 2]]>><</link>>
 
 :: Flats Poppy Doze Ask 2
-<<effects>><<set $outside to 0>>
+<<effects>><<set $outside to 0>><<run statusCheck("Poppy")>>
 You blink a few times when Poppy moves <<his>> hand away. You see a pair of fox ears on <<him>> as well as a floating halo that has been shattered. A fluffy fox tail is suddenly resting on your lap. You also see a pair of ink black wings that are folded neatly behind <<him>>.
 <br><br>
-"You're a... fallen fox?" you ask, your expression one of bewilderment.
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+	"You're a... fallen fox?" you ask, your voice small with bewilderment.
+<<elseif $speech_attitude is "docile">>
+	"You're a fallen fox?" you ask, staring at <<him>> as if waiting for permission to believe it.
+<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+	"You're a fallen fox?" you ask, too startled to make the question sound as composed as you intended.
+<<elseif $speech_attitude is "confident">>
+	"You're a fallen fox," you say. "That explains a lot."
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	"You're a fallen fox?" you ask, trying to sound unimpressed despite the disbelief on your face.
+<<else>>
+	"You're a... fallen fox?" you ask, your expression one of bewilderment.
+<</if>>
 <br><br>
 Poppy grins at you. "<span class="green">There we go</span>. Don't you think that's less straining on your eyes?" <<His>> tail wags proudly.
 <<if !$poppySeen.includes("poppy_tf_revealed")>><<set $poppySeen.push("poppy_tf_revealed")>><</if>><<poppyOpiumPulse>><<set $eventskip to 1>>
@@ -413,7 +437,19 @@ Poppy grins at you. "<span class="green">There we go</span>. Don't you think tha
 <<elseif (Number(C.npc.Poppy.love) || 0) gte 80 and !$poppySeen.includes("poppy_tf_revealed") and $awarelevel lt 5>>
 	The more time you spend with Poppy, the more you feel like there's something just out of reach.
 	<br><br>
-	"There's something different about you," you say. "But I just can't put my finger on it."
+	<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+		"There's something different about you," you say, glancing away before looking back at Poppy. "But I just can't put my finger on it."
+	<<elseif $speech_attitude is "docile">>
+		"There's something different about you," you say, careful not to sound accusing. "I can't put my finger on it."
+	<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+		"There's something different about you," you say, choosing your words with care. "I hope it isn't rude to say, but I can't quite place it."
+	<<elseif $speech_attitude is "confident">>
+		"There's something different about you," you say, holding Poppy's gaze. "I'm going to work it out eventually."
+	<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+		"There's something different about you," you say, narrowing your eyes. "You're not as subtle as you think."
+	<<else>>
+		"There's something different about you," you say. "But I just can't put my finger on it."
+	<</if>>
 	<br><br>
 	<<He>> chuckles at your question. "Isn't it a bit obvious? Come on now, <span class="blue">clear your vision</span>." <<He>> covers your eyes with <<his>> hand.
 	<br><br>
@@ -422,6 +458,19 @@ Poppy grins at you. "<span class="green">There we go</span>. Don't you think tha
 <<elseif Number($poppyromance) gte 0>>
 	<<if random(1,2) is 1>>
 		Poppy listens tentatively as you talk. 
+		<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+			You falter now and then, but <<he>> waits patiently each time, letting you find the words again.
+		<<elseif $speech_attitude is "docile">>
+			You keep your voice soft, offering each thought as though Poppy might take it apart and hand it back kinder.
+		<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+			You keep the conversation neat and pleasant, though Poppy's attention makes it harder to hide your fondness.
+		<<elseif $speech_attitude is "confident">>
+			You speak with easy certainty, only stumbling when Poppy's gaze lingers too long.
+		<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+			You make a show of sounding casual, but Poppy's knowing smile suggests <<he>> can see straight through it.
+		<<else>>
+			You let the conversation wander wherever it wants.
+		<</if>>
 		<br><br>
 		<<He>> takes your hand into <<his>> and rests it on <<his>> lap while caressing it mindlessly with <<his>> thumb.<<takeHandholdingVirginity "Poppy" "consensual" null true>> You smile at <<him>>.
 	<<else>>
@@ -465,7 +514,19 @@ Poppy grins at you. "<span class="green">There we go</span>. Don't you think tha
 <<set $location to "flats">><<set $bus to "poppy_living_room">><<set $outside to 0>>
 <<effects>><<run poppySchedule()>>
 <<set $poppySeen.push("flat_chat_plant")>>
-"Why do you mainly plant poppy flowers?" you ask while eyeing the pot of poppies on the windowsill.
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+	"Why do you mainly plant poppy flowers?" you ask, eyeing the pot on the windowsill before your gaze darts back to Poppy.
+<<elseif $speech_attitude is "docile">>
+	"Why do you mainly plant poppy flowers?" you ask gently, hands kept neatly to yourself near the windowsill.
+<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+	"I hope you don't mind me asking," you say, glancing at the pot of poppies on the windowsill. "Why do you mainly plant poppy flowers?"
+<<elseif $speech_attitude is "confident">>
+	"There's a theme in here," you say, eyeing the pot of poppies on the windowsill. "Why poppies?"
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	"Let me guess," you say, eyeing the pot of poppies on the windowsill. "You mainly plant poppies because you're very humble."
+<<else>>
+	"Why do you mainly plant poppy flowers?" you ask while eyeing the pot of poppies on the windowsill.
+<</if>>
 <br><br>
 Poppy giggles and leans towards you, <<his>> face just inches from yours. "Well who did you think they named the flower after?"
 <<if Number($poppyromance) gte 0>><<garousal>><<arousal 300>><<if T.poppyLustUnlocked or Number($poppyromance) gte 0>><<npcincr Poppy lust 1>><<glust>><</if>><</if>>
@@ -485,7 +546,17 @@ Seeing your flushed face, Poppy pulls away, seemingly satisfied by your reaction
 <<elseif Number($poppyromance) gte 0>>
 	<<if random(1,3) is 1>>
 		<<if $awarelevel gte 5>>
-			"Can I touch your tail?" you ask.
+			<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+				"Can I touch your tail?" you ask, your fingers already twitching before you tuck them back.
+			<<elseif $speech_attitude is "docile">>
+				"May I touch your tail?" you ask softly, waiting for Poppy to invite you closer.
+			<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+				"Would you permit me to touch your tail?" you ask, unable to keep the curiosity from your voice.
+			<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+				"Your tail looks too soft to leave alone," you say. "Let me touch it."
+			<<else>>
+				"Can I touch your tail?" you ask.
+			<</if>>
 			<br><br>
 			"Of course." Poppy smiles. <<He>> turns so that <<his>> back faces you. <<His>> fluffy tail settles onto your lap, and you stroke it gently, marveling at the thickness of it.
 			<br><br>
@@ -493,7 +564,19 @@ Seeing your flushed face, Poppy pulls away, seemingly satisfied by your reaction
 			<br><br>
 			"You enjoyed that as much as I did, didn't you?" Poppy says in a sultry tone as <<he>> turns to face you.
 		<<else>>
-			"Can I play with your hair?" you ask. "It looks so fluffy."
+			<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+				"Can I play with your hair?" you ask, trying not to stare too obviously. "It looks so fluffy."
+			<<elseif $speech_attitude is "docile">>
+				"May I play with your hair?" you ask softly. "It looks very fluffy."
+			<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+				"Would it be all right if I played with your hair?" you ask. "It looks wonderfully fluffy."
+			<<elseif $speech_attitude is "confident">>
+				"Your hair looks fluffy," you say, already leaning closer. "I want to touch it."
+			<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+				"Your hair looks fluffy," you say. "I'm going to be disappointed if you don't let me play with it."
+			<<else>>
+				"Can I play with your hair?" you ask. "It looks so fluffy."
+			<</if>>
 			<br><br>
 			"Of course." Poppy smiles. <<He>> turns so that <<his>> back faces you. You sink your fingers into <<his>> hair and slowly comb through it. You marvel at the softness of it.
 			<br><br>
@@ -502,7 +585,16 @@ Seeing your flushed face, Poppy pulls away, seemingly satisfied by your reaction
 			"Careful now, I bite." <<He>> looks over <<his>> shoulder, giving you a suggestive grin. "You're into that, aren't you?"<<arousal 300>><<garousal>>
 		<</if>>
 	<<elseif random(1,3) is 2>>
-		You move closer to Poppy and wrap your arms around <<his>> waist. "I feel so lucky to call you mine," you say as your lips hover near <<him>>.
+		You move closer to Poppy and wrap your arms around <<his>> waist. 
+		<<if $speech_attitude is "docile">>
+			"I feel safe like this," you say softly, leaning into Poppy's warmth as your lips hover near <<him>>.
+		<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+			"You make it terribly easy to adore you," you say, smiling as your lips hover near <<him>>.
+		<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+			"You're mine for now," you say, tightening your arms around Poppy's waist as your lips hover near <<him>>.
+		<<else>>
+			"I feel so lucky to call you mine," you say as your lips hover near <<him>>.
+		<</if>>
 		<br><br>
 		"I feel the same, my jewel." <<He>> waits for you to make your move. You press your lips against <<him>>, and <<he>> melts into the kiss with a contented sigh. The kiss grows heated as Poppy eagerly pushes <<his>> tongue against your lips to tangle with yours. Both of you pull away to catch your breath.
 		<br><br>
@@ -519,13 +611,37 @@ Seeing your flushed face, Poppy pulls away, seemingly satisfied by your reaction
 <<else>>
 	<<if random(1,3) is 1>>
 		<<if $awarelevel gte 5>>
-			"Can I touch your tail?" you ask.
+			<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+				"Can I touch your tail?" you ask, your fingers already twitching before you tuck them back.
+			<<elseif $speech_attitude is "docile">>
+				"May I touch your tail?" you ask softly, waiting for Poppy to invite you closer.
+			<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+				"Would you permit me to touch your tail?" you ask, unable to keep the curiosity from your voice.
+			<<elseif $speech_attitude is "confident">>
+				"Let me touch your tail," you say, warm with interest rather than command.
+			<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+				"Your tail looks too soft to leave alone," you say. "Let me touch it."
+			<<else>>
+				"Can I touch your tail?" you ask.
+			<</if>>
 			<br><br>
 			"Of course." Poppy smiles. <<He>> turns so that <<his>> back faces you. <<His>> fluffy tail settles onto your lap, you stroke it gently, marveling at the thickness of it. Feeling emboldened, you reach forward and rub the base of the tail. Poppy goes rigid for a moment and <<his>> tail flicks away from your lap.
 			<br><br>
 			"Careful now." <<He>> looks over <<his>> shoulder, giving you a subtle warning that hides behind a cunning smile.
 		<<else>>
-			"Can I play with your hair?" you ask. "It looks so fluffy."
+			<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+				"Can I play with your hair?" you ask, trying not to stare too obviously. "It looks so fluffy."
+			<<elseif $speech_attitude is "docile">>
+				"May I play with your hair?" you ask softly. "It looks very fluffy."
+			<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+				"Would it be all right if I played with your hair?" you ask. "It looks wonderfully fluffy."
+			<<elseif $speech_attitude is "confident">>
+				"Your hair looks fluffy," you say, already leaning closer. "I want to touch it."
+			<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+				"Your hair looks fluffy," you say. "I'm going to be disappointed if you don't let me play with it."
+			<<else>>
+				"Can I play with your hair?" you ask. "It looks so fluffy."
+			<</if>>
 			<br><br>
 			"Of course." Poppy smiles. <<He>> turns so that <<his>> back faces you. You sink your fingers into <<his>> hair and slowly comb through it. You marvel at the softness of it.
 			<br><br>
@@ -534,7 +650,20 @@ Seeing your flushed face, Poppy pulls away, seemingly satisfied by your reaction
 			"Careful now." <<He>> looks over <<his>> shoulder, giving you a subtle warning that hides behind a cunning smile.
 		<</if>>
 	<<elseif random(1,3) is 2>>
-		"You're so <<if C.npc.Poppy.gender is "m">>handsome<<else>>beautiful<</if>>, I wish I could keep you all to myself," you say as you rest a hand on Poppy's thigh. <<He>> seems amused by your advances, but not enough to make <<him>> flustered.
+		<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+			"You're so <<if C.npc.Poppy.gender is "m">>handsome<<else>>beautiful<</if>>," you say, resting a cautious hand on Poppy's thigh. "I wish I could keep you all to myself."
+		<<elseif $speech_attitude is "docile">>
+			"You're so <<if C.npc.Poppy.gender is "m">>handsome<<else>>beautiful<</if>>," you say, your hand settling carefully on Poppy's thigh. "I don't really want to share you."
+		<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+			"You're far too <<if C.npc.Poppy.gender is "m">>handsome<<else>>beautiful<</if>> for your own good," you say, resting a hand on Poppy's thigh with practiced delicacy.
+		<<elseif $speech_attitude is "confident">>
+			"You're <<if C.npc.Poppy.gender is "m">>handsome<<else>>beautiful<</if>> enough to be distracting," you say, resting your hand on Poppy's thigh and holding <<his>> gaze.
+		<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+			"You're so <<if C.npc.Poppy.gender is "m">>handsome<<else>>beautiful<</if>> it must be exhausting," you say, resting a hand on Poppy's thigh. "Lucky you have me to notice."
+		<<else>>
+			"You're so <<if C.npc.Poppy.gender is "m">>handsome<<else>>beautiful<</if>>, I wish I could keep you all to myself," you say as you rest a hand on Poppy's thigh.
+		<</if>>
+		<<He>> seems amused by your advances, but not enough to make <<him>> flustered.
 		<br><br>
 		If anything, it seems that <<he>> took it as a challenge.
 		<br><br>
@@ -544,7 +673,16 @@ Seeing your flushed face, Poppy pulls away, seemingly satisfied by your reaction
 		<br><br>
 		Poppy releases you after you've become a flustered mess. "Hm, seems like you have much to learn about the art of seduction." <<He>> chuckles.
 	<<else>>
-        You inch closer and let your knee brush against Poppy's leg. "You're always so nice to look at," you murmur, letting your gaze linger.
+        You inch closer and let your knee brush against Poppy's leg. 
+		<<if ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+        	"You are rather lovely to look at," you murmur, letting the compliment sound softer than your gaze.
+        <<elseif $speech_attitude is "confident">>
+        	"You're always nice to look at," you say, letting your gaze linger because you want Poppy to notice.
+        <<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+        	"You're not terrible to look at," you say, letting your gaze linger long enough to ruin the insult.
+        <<else>>
+        	"You're always so nice to look at," you murmur, letting your gaze linger.
+        <</if>>
         <br><br>
         Poppy laughs softly. "Nice?" <<He>> leans closer until you can feel <<his>> breath against your cheek. "What a miserly compliment."
         <br><br>
@@ -688,7 +826,17 @@ What would you like to give Poppy?
 		<<poppyOpiumPulse>><<set $eventskip to 1>><<handheldon>>
 		<<poppyFlatsMenu>>
 	<<else>>
-		"I've made you a gift," you say. "I hope you like it."
+		<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+			"I-I made you a gift," you say, holding it out before you can lose your nerve. "I hope you like it."
+		<<elseif $speech_attitude is "docile">>
+			"I made this for you," you say softly, offering it with both hands. "I hope it's all right."
+		<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+			"I've brought you a little gift," you say, presenting it as neatly as you can. "I hope it suits your taste."
+		<<elseif $speech_attitude is "confident">>
+			"I made you something," you say, holding it out with a small smile. "You'll like it."
+		<<else>>
+			"I've made you a gift," you say. "I hope you like it."
+		<</if>>
 		<br><br>
 		<<if ["jammie_dodger", "rich_biscuit", "quiche"].includes($gift)>>
 			Before you can hold out the <<recipe_name $gift>>, Poppy's already giving you a knowing smirk. "I could smell it from a mile away."
@@ -722,11 +870,44 @@ You lean on Poppy's shoulder and turn your head, pressing your lips against <<hi
 <br><br>
 Poppy turns <<his>> head and grabs your chin. "Now now, are you really that desperate?" <<He>> teases. Holding that position for awhile, <<he>> leans in and kisses you, tangling <<his>> tongue against yours. <<He>> pulls back before it gets too heated.
 <br><br>
-"You know what I want..." you whisper, trying to capture <<his>> lips against yours once more.
-<br><br>
-"Hmm..." Poppy hums in contemplation.
-<br><br>
-"Please." you beg, almost to the point of whining.
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+	"You know what I want..." you whisper, trying to capture <<his>> lips against yours once more.
+	<br><br>
+	"Hmm..." Poppy hums in contemplation.
+	<br><br>
+	"Please," you add, the word coming out needier than you meant it to.
+<<elseif $speech_attitude is "docile">>
+	"I want you," you whisper, staying close enough for the words to brush <<his>> lips.
+	<br><br>
+	"Hmm..." Poppy hums in contemplation.
+	<br><br>
+	"Please," you beg, almost to the point of whining.
+<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+	"I think you know exactly what I'm asking for," you whisper, trying to catch <<his>> lips again.
+	<br><br>
+	"Hmm..." Poppy hums in contemplation.
+	<br><br>
+	"Please don't make me ask twice," you say, the courtesy fraying at the edges.
+<<elseif $speech_attitude is "confident">>
+	"You know what I want," you whisper, trying to capture <<his>> lips against yours once more.
+	<br><br>
+	"Hmm..." Poppy hums in contemplation.
+	<br><br>
+	"And I know you want it too," you add, close enough to feel <<his>> breath.
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	"Don't play coy," you whisper, chasing <<his>> mouth. "You know what I want."
+	<br><br>
+	"Hmm..." Poppy hums in contemplation.
+	<br><br>
+	"Please," you say, making it sound like a dare.
+<<else>>
+	"You know what I want..." you whisper, trying to capture <<his>> lips against yours once more.
+	<br><br>
+	"Hmm..." Poppy hums in contemplation.
+	<br><br>
+	"Please," you beg, almost to the point of whining.
+<</if>>
+
 <br><br>
 Poppy chuckles. "Of course, how could I neglect the needs of my lover?"
 <<poppyOpiumPulse>>
@@ -774,17 +955,43 @@ Poppy gets up and adjusts <<his>> clothes.
 <<set $poppySeen.push("flat_lipstick_event")>>
 You are in the living room. You see Poppy sitting on the couch with a tube of lipstick and mirror in hand. You also see multiple tubes of lipstick on top of the coffee table.
 <br><br>
-"What are you up to?" you ask as you sit down beside Poppy.
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+	"What are you up to?" you ask, sitting beside Poppy with a curious glance at the lipstick.
+<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+	"May I ask what you're up to?" you say as you sit down beside Poppy, eyeing the colourful little collection.
+<<elseif $speech_attitude is "confident">>
+	"What are you plotting with all that lipstick?" you ask as you sit down beside Poppy.
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	"That's a lot of lipstick," you say as you sit down beside Poppy. "Please tell me this is going somewhere interesting."
+<<else>>
+	"What are you up to?" you ask as you sit down beside Poppy.
+<</if>>
 <br><br>
 "Testing out some new lipsticks I bought." <<He>> smiles at you. "I couldn't decide which one I wanted or which fit me better so I just bought them all." <<He>> shrugs and applies lipstick onto <<his>> lips.
 <br><br>
 "Now that you're here, how about we do an experiment?" Poppy turns to you with a sly grin. "Let's see which lipstick is kiss proof." <<He>> pulls you closer by the chin and kisses you on the lips.<<garousal>><<arousal 300>>
 <br><br>
+<<link [[Next|Flats Poppy Lipstick Event 2]]>><</link>>
+
+:: Flats Poppy Lipstick Event 2
+<<effects>>
 When Poppy pulls away, <<he>> looks at you and pouts. "What a shame, it's not kiss proof. I liked this shade." <<He>> wipes <<his>> lips off with a tissue and starts applying another tube of lipstick. The process went on for awhile. Apply, kiss, wipe and repeat.
 <br><br>
 By the time Poppy is done, you are a blushing mess with your face and neck covered in lipstick marks. "At least there's some that are kiss proof. My money didn't go to waste after all. I didn't bore you with my experiment, did I?" <<He>> asks in a coy tone.
 <br><br>
-You shake your head furiously. "Not at all, I enjoyed it," you say with a lopsided grin.
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+	You shake your head quickly, cheeks still warm. "Not at all," you say with a nervous grin. "I enjoyed it."
+<<elseif $speech_attitude is "docile">>
+	You shake your head, smiling up at Poppy. "Not at all," you say softly. "I enjoyed it."
+<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+	You shake your head, trying to look dignified beneath the lipstick marks. "It was a very thorough experiment."
+<<elseif $speech_attitude is "confident">>
+	You shake your head, grin widening. "Not at all. You can test the next batch on me too."
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	You shake your head, pretending the blush on your face means nothing. "...I've survived worse experiments."
+<<else>>
+	You shake your head furiously. "Not at all, I enjoyed it," you say with a lopsided grin.
+<</if>>
 <br><br>
 Poppy chuckles. "Good <<girl>>." <<He>> kisses you on the lips before releasing you.
 <<poppyOpiumPulse>><<set $eventskip to 1>>
@@ -858,7 +1065,19 @@ Poppy sits across from you and begins eating.
 :: Flats Poppy Eat Thank
 <<set $location to "flats">><<set $bus to "poppy_kitchen">><<set $outside to 0>>
 <<effects>><<run poppySchedule()>>
-You compliment the food. "It's really good," you say. "Better than the restaurants in town."
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+	You compliment the food after a bite. "It's really good," you say, a little embarrassed by how eager you sound. "Better than the restaurants in town."
+<<elseif $speech_attitude is "docile">>
+	You compliment the food quietly. "It's really good. Better than the restaurants in town."
+<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+	You compliment the food with proper sincerity. "It's really good. Better than anything I've had in the restaurants around town."
+<<elseif $speech_attitude is "confident">>
+	You compliment the food without hesitation. "It's really good. Better than the restaurants in town."
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	You try not to sound too impressed by the food. "It's really good. Better than the overpriced restaurants in town."
+<<else>>
+	You compliment the food. "It's really good. Better than the restaurants in town."
+<</if>>
 <br><br>
 Poppy tilts <<his>> head with a smile. "Thanks," <<he>> <<if $poppyFlat.meal is "breakfast">>pops a piece of cut sausage<<else>>shovels a spoonful of lasagne<</if>> into <<his>> mouth. "I got all my ingredients from a reliable source. Their produce is always fresh."
 <<npcincr Poppy love 1>><<glove>><<npcincr Poppy patience 1>><<if C.npc.Poppy.patience gte 0>><<gpatience>><<else>><<langer>><</if>><br><br>
@@ -1272,7 +1491,20 @@ You hear the sheets ruffle. Poppy rolls over and wraps <<his>> arms around your 
 :: Flats Poppy Bed Sex Cuddle
 <<set $location to "flats">><<set $bus to "poppy_bedroom">><<set $outside to 0>>
 <<effects>><<run poppySchedule()>>
-You tell Poppy that you're tired and only want to cuddle. <<He>> acknowledges you with a hum and kisses you on the forehead, wishing you good night.
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+	You tell Poppy that you're tired and only want to cuddle, your voice small that <<he>> has to lean closer to hear it.
+<<elseif $speech_attitude is "docile">>
+	You tell Poppy that you're tired and only want to cuddle, settling beside <<him>> as soon as <<he>> accepts.
+<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+	You tell Poppy that you're tired and would rather cuddle, making the request as sweetly as your sleepy voice allows.
+<<elseif $speech_attitude is "confident">>
+	You tell Poppy that you're tired and only want to cuddle, already drawing closer before <<he>> can tease you for it.
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	You tell Poppy that you're tired and only want to cuddle, warning <<him>> not to make a big thing of it.
+<<else>>
+	You tell Poppy that you're tired and only want to cuddle.
+<</if>>
+<<He>> acknowledges you with a hum and kisses you on the forehead, wishing you good night.
 <<poppyOpiumPulse>>
 <<link [[Back|Flats Poppy Sleep]]>><</link>>
 
@@ -1537,11 +1769,19 @@ You wake up to find yourself on the couch in Poppy's living room. You don't reme
 :: Flats Poppy Bailey Plead
 <<effects>><<run poppySchedule()>>
 <<if random(1,100) lte 50>>
-<<set _rentOwed to ($rentmoney + ($babyRent or ))>>
-	You plead Poppy to pay for you. <<He>> seems hesitant about it. Bailey looks at <<him>> as <<he>> ponders.
+	<<if ($speech_attitude is "docile" or $speech_attitude is "meek")>>
+		You ask Poppy to pay for you in a small, obedient voice, as if bracing for the refusal before it comes. 
+	<<elseif ($speech_attitude is "confident" or $speech_attitude is "polite")>>
+		You ask Poppy to pay for you, trying to keep your voice steady under Bailey's stare. 
+	<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+		You tell Poppy to pay for you before Bailey can drag this out any longer. 
+	<<else>>
+		You plead with Poppy to pay for you. 
+	<</if>>
+	<<He>> seems hesitant about it. Bailey looks at <<him>> as <<he>> ponders.
 	<br><br>
-	With a sigh, Poppy finally relents and pays the <<printmoney _rentOwed>> you owe to Bailey.
-	<<npcincr Poppy love -1>><<llove>><<npcincr Poppy patience -1>><<if C.npc.Poppy.patience gte 0>><<lpatience>><<else>><<ganger>><</if>>
+	<<set _rentOwed to ($rentmoney + ($babyRent or 0))>>With a sigh, Poppy finally relents and pays the <<printmoney _rentOwed>> you owe to Bailey.
+	<<npcincr Poppy love -1>><<llove>><<npcincr Poppy patience -1>><<if C.npc.Poppy.patience gt 0>><<lpatience>><<else>><<ganger>><</if>>
 	<br><br>
 	<<set $rentmoney to [10000,30000,50000,70000,100000,150000,200000][Math.clamp($rentstage,1,6)]>><<rentmod>>
 	Bailey takes the money from Poppy's hand and starts counting. When <<nnpc_hes "Bailey">> done, <<nnpc_he "Bailey">> nods.
@@ -1560,7 +1800,19 @@ You wake up to find yourself on the couch in Poppy's living room. You don't reme
 	<<poppyOpiumPulse>>
 	<<link [[Next|Flats Poppy Living Room]]>><</link>>
 <<else>>
-	You plead Poppy to pay for you.
+	<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+		You plead for Poppy to pay for you, the words catching in your throat.
+	<<elseif $speech_attitude is "docile">>
+		You ask Poppy to pay for you, looking down before Bailey can enjoy your expression.
+	<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+		You ask Poppy to cover the payment for you, trying to keep panic out of your voice.
+	<<elseif $speech_attitude is "confident">>
+		You ask Poppy to pay for you, forcing yourself to sound steadier than you feel.
+	<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+		You tell Poppy to pay for you, anger making the request sharper than intended.
+	<<else>>
+		You plead with Poppy to pay for you.
+	<</if>>
 	<br><br>
 	<<He>> shakes <<his>> head. "Sorry, I can't." <<He>> doesn't give you any explanation.
 	<br><br>
@@ -1574,11 +1826,14 @@ You wake up to find yourself on the couch in Poppy's living room. You don't reme
 <<set _rentDue to $rentmoney + ($babyRent or 0)>>
 <<set $baileypaychain to 0>><<set $baileyRefusedToPayTotal += _rentDue>><<set $baileyRefusedToPayTotalStat += _rentDue>>
 <<set $renttime to 7>><<set $rentday to Time.weekDay>>
-
-<<if $speech_attitude is "bratty">>
-	You stare at Bailey in defiance. "I'm not paying you. I don't care what you do to me."
-<<elseif ($speech_attitude is "meek" or $speech_attitude is "shy" or $speech_attitude is "special")>>
+<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
 	"N-No," you stutter, surprised by your own bravery. "I-I won't."
+<<elseif $speech_attitude is "docile">>
+	You clutch the money close. "No! I-I can't give it to you."
+<<elseif $speech_attitude is "confident">>
+	You meet Bailey's stare. "The money isn't yours. I'm keeping it."
+<<elseif ($speech_attitude is "bratty" or $speech_attitude is "cruel")>>
+	You stare at Bailey in defiance. "I'm not paying you. I don't care what you do to me."
 <<else>>
 	"The money isn't yours," you say. "I'm keeping it."
 <</if>>

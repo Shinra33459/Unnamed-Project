@@ -587,5 +587,4 @@ DefineMacro("poppyRefreshSchedule", poppySchedule);
 		return poppy.pregnancy;
 	}
 	window.poppyPregnancyEnsureState = poppyPregnancyEnsureState;
-})();
-}
+})()};
