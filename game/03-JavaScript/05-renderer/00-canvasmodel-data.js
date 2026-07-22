@@ -3,6 +3,7 @@ const ZIndices = {
 	deco_bg2: -10,
 
 	
+	// TODO: needs clean up
 	flatlight: -4,
 	gradientlight: -3,
 	glowlight: -2,
@@ -66,7 +67,7 @@ const ZIndices = {
 	lower: 90,
 	lower_tucked_feet: 95,
 	lower_top: 92,
-	upper_arms: 94,
+	upper_arms: 89,
 	lower_belly: 94.5,
 	upper: 95,
 	upper_tucked: 89,
@@ -80,9 +81,10 @@ const ZIndices = {
 	neck: 103,
 	earrings: 104,
 
-	over_lower: 103.3,
-	over_upper: 103.6,
-	over_upper_arms: 103.9,
+	over_lower: 150.1,
+	over_upper: 150.2,
+	over_upper_arms: 150,
+	over_head: 150.3,
 	rings: 104,
 	under_upper_arms_cover: 109,
 	hands: 110,
@@ -101,8 +103,7 @@ const ZIndices = {
 	brow: 138,
 	horns: 140,
 	facewear: 145,
-	head: 150,
-	over_head: 152,
+	head: 149,
 	handheld: 131,
 	handheld_over_sleeve: 160,
 

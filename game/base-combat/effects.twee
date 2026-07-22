@@ -7,7 +7,7 @@
 		/*
 		* Switched all instances of skill checks, that simply repeat themselves with a different variable, for the JS function combatSkillCheck()
 		* The function can be found at "game/03-JavaScript/ingame.js". It takes one required argument and three optional arguments.
-		* Argument 0 is for the skill being used. For simplycity at writing, you only pass the important part of the skill, E.g. "hand", or "feet", or "oral".
+		* Argument 0 is for the skill being used. For simplicity at writing, you only pass the important part of the skill, E.g. "hand", or "feet", or "oral".
 		* Argument 1 (optional) is used for the target of that action. This is used to future-proof the possibility of using the target's specific arousal/trust/anger in calculation.
 		* Argument 2 (optional) is the base difficulty used for the action. Most actions use 1000 base difficulty, which is the default if left blank, but some actions take different chances (like undressing).
 		* Argument 3 (optional) is the extra multiplier for the arousal side. This is only used in undressing so far, but might as well add it as an option.
@@ -111,9 +111,7 @@
 		<</if>>
 
 		<<if $position is "wall">>
-			<<if $walltype is "pillory">>
-				You are trapped in a pillory with your posterior stuck out and unprotected.
-			<<elseif $walltype is "cleanpillory">>
+			<<if $walltype is "pillory" or $walltype is "cleanpillory">>
 				You are trapped in a pillory with your posterior stuck out and unprotected.
 			<<elseif $walltype is "horse_pillory">>
 				Your legs and neck are shackled by cold iron, preventing movement.
@@ -174,7 +172,7 @@
 			<<set $leftaction to 0>><<set $leftactiondefault to "lefthandholdnew">>
 			<<if $combatExtended.reverseRapeStart is 1 or combatSkillCheck("hand", $lefttarget)>>
 				<<set $NPCList[$lefttarget].righthand to "handhold">>
-				You take <<someones $lefttarget>> left hand in your own.
+				You take <<someones $lefttarget>> right hand in your own.
 				<<set $leftarm to "handheld">><<set $leftactiondefault to "lefthandholdkeep">>
 				<<submission 1>>
 				<<if isLoveInterest($NPCList[$lefttarget].fullDescription)>>
@@ -183,7 +181,7 @@
 					<<takeHandholdingVirginity $NPCList[$lefttarget] null null true>>
 				<</if>>
 			<<else>>
-				You reach for <<someones $lefttarget>> left hand, but <<he>> moves away.
+				You reach for <<someones $lefttarget>> right hand, but <<he>> moves away.
 			<</if>>
 		<</if>>
 
@@ -210,8 +208,8 @@
 			<<if $combatExtended.reverseRapeStart is 1 or combatSkillCheck("hand", $righttarget)>>
 				<<set $NPCList[$righttarget].lefthand to "handhold">>
 				<<set $rightarm to "handheld">>
-				You take <<hisselect $righttarget>> right hand in your own.
-				<<set $rightarm to "handheld">><<set $leftactiondefault to "righthandholdkeep">>
+				You take <<hisselect $righttarget>> left hand in your own.
+				<<set $rightarm to "handheld">><<set $rightactiondefault to "righthandholdkeep">>
 				<<submission 1>>
 				<<if isLoveInterest($NPCList[$righttarget].fullDescription)>>
 					<<takeHandholdingVirginity $NPCList[$righttarget] "romantic" null true>>
@@ -219,7 +217,7 @@
 					<<takeHandholdingVirginity $NPCList[$righttarget] null null true>>
 				<</if>>
 			<<else>>
-				You reach for <<someones $righttarget>> right hand, but <<he>> moves away.
+				You reach for <<someones $righttarget>> left hand, but <<he>> moves away.
 			<</if>>
 		<</if>>
 
@@ -4419,7 +4417,7 @@
 						<<elseif $NPCList[0].traits.includes("relaxed")>>
 							"Best play along," <<he>> says. "It'll be easier for you."
 						<<elseif $NPCList[0].traits.includes("sociable")>>
-							"That's no way to talk to a <<if $pronoun is "m">>gentleman<<else>>lady<</if>> like me," <<he>> says. "I know how you can make it up to me."
+							"That's no way to talk to a <<gentleman_npc>> like me," <<he>> says. "I know how you can make it up to me."
 						<<elseif $NPCList[0].traits.includes("brooding")>>
 							"This is the way of the world," <<he>> says. "It'll be over soon."
 						<<else>>
@@ -5151,8 +5149,8 @@
 				<<wheeze>>
 			<<else>>
 				<<set $mouthactiondefault to "plead">>
-				<<set $trauma -= $traumagain>><<set $traumagain to 0>><<set $speechforgive to 1>><<set $enemyanger to 0>><<set $angelforgive to 1>>
-				<<traumaclamp>>
+				<<set $trauma -= $traumagain>><<set $traumagain to 0>><<set $speechforgive to 1>><<set $angelforgive to 1>>
+				<<traumaClamp>>
 				<<if $enemytype is "beast">>
 					"You don't know any better. You're just a <<beasttype>>," you say. "I forgive you."
 				<<else>>
@@ -5441,7 +5439,7 @@
 				<span class="purple"><<His>> glasses shatter.</span>
 			<</if>>
 			<<defiance 10 $mouthtarget>><<attackstat>><<set $mouthuse to 0>><<set $mouthstate to 0>>
-			<<if ($cow gte 2 or $transformationParts.cow.horns is "default") and ($demon gte 2 or ($transformationParts.demon.horns isnot "disabled" and $transformationParts.demon.horns isnot "hidden"))>>
+			<<if (($cow gte 2 or $transformationParts.cow.horns is "default") or ($waterdragon gte 2 or ($transformationParts.waterdragon.horns isnot "disabled" and $transformationParts.waterdragon.horns isnot "hidden"))) and ($demon gte 2 or ($transformationParts.demon.horns isnot "disabled" and $transformationParts.demon.horns isnot "hidden"))>>
 				<<defiance 10 $mouthtarget>><<defiance 10 $mouthtarget>>
 			<</if>>
 			<<if ($demon gte 2 or ($transformationParts.demon.horns isnot "disabled" and $transformationParts.demon.horns isnot "hidden"))>>
@@ -5450,7 +5448,7 @@
 					You rub your horns.
 				<</if>>
 			<</if>>
-			<<if ($cow gte 2 or $transformationParts.cow.horns is "default")>>
+			<<if ($cow gte 2 or $transformationParts.cow.horns is "default") or ($waterdragon gte 2 or ($transformationParts.waterdragon.horns isnot "disabled" and $transformationParts.waterdragon.horns isnot "hidden"))>>
 				<<print either("That didn't hurt you at all!", "You remain unshaken by the blow.", "You're unharmed by the hit.")>>
 			<<else>>
 				<<pain 4>>
@@ -5990,7 +5988,12 @@
 									<<case "acceptGive">>
 										<<He_Short>> shrugs. "I don't usually need them. If you have one, I won't stop you."
 									<<case "reject">>
-										<<He_Short>> tilts <<his>> head at you. <span class="lewd">"That won't be necessary. I've already taken precautions."</span>
+										<<He_Short>> tilts <<his>> head at you.
+										<<if pregnancyCompatible("Gwylan") and $settings.pregnancySpeechEnabled>>
+											<span class="lewd">"Sorry dear, I need to breed you."</span>
+										<<else>>
+											<span class="lewd">"That won't be necessary. I've already taken precautions."</span>
+										<</if>>
 								<</switch>>
 							<<case "Morgan">>
 								/*Default pregnancyAvoidance is random every encounter. I am so, so sorry.*/

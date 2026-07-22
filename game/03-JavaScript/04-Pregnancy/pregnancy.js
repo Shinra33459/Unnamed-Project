@@ -920,7 +920,7 @@ function recordSperm({
 	if (V.settings.pregnancyType === "silly") {
 		if (!["hand", "kiss"].includes(genital)) return null;
 		if ((target === "pc" || spermOwner === "pc") && genital === "hand" && V.worn.hands.name !== "naked") return null;
-		if ((target === "pc" || spermOwner === "pc") && genital === "kiss" && V.worn.face.type.includes("covered")) return null;
+		if ((target === "pc" || spermOwner === "pc") && genital === "kiss" && V.worn.face.type.includes("face_covering")) return null;
 		if (Object.values(V.loveInterest).find(name => V.NPCNameList.includes(name))) rngModifier = Math.clamp(rngModifier + 100, 0, 200);
 	}
 
@@ -946,8 +946,7 @@ function recordSperm({
 	}
 
 	const forcePregnancy =
-		(target === "pc" &&
-			((V.vaginaaction === "forceImpregnation" && genital === "vagina") || (V.anusaction === "forceImpregnation" && genital === "anus"))) ||
+		(target === "pc" && ((V.vaginaaction === "forceImpregnation" && genital === "vagina") || (V.anusaction === "forceImpregnation" && genital === "anus"))) ||
 		(target !== "pc" && spermOwner === "pc" && genital === "vagina" && T.npcForceImpregnation);
 
 	if (!forcePregnancy && V.disableNormalImpregnation) return false; // To be set at the start of sex scenes, unset with <<endcombat>>
@@ -1003,12 +1002,7 @@ function recordSperm({
 		}
 
 		const spermFoundIndex = sperm.findIndex(
-			item =>
-				item.source === spermOwnerName &&
-				item.type === spermType &&
-				item.daysLeft === daysTillRemoval &&
-				item.mod === rngModifier &&
-				item.tag === rngType
+			item => item.source === spermOwnerName && item.type === spermType && item.daysLeft === daysTillRemoval && item.mod === rngModifier && item.tag === rngType
 		);
 
 		if (spermFoundIndex !== -1) {
@@ -1102,8 +1096,7 @@ function playerCanBreedWith(npc) {
 	if (typeof npc === "string") npc = V.NPCName[V.NPCNameList.indexOf(npc)];
 
 	return (
-		((V.player.vaginaExist || (canBeMPregnant() && C.npc[npc.fullDescription] && knowsAboutAnyPregnancy("pc", npc.fullDescription))) &&
-			npc.penis !== "none") ||
+		((V.player.vaginaExist || (canBeMPregnant() && C.npc[npc.fullDescription] && knowsAboutAnyPregnancy("pc", npc.fullDescription))) && npc.penis !== "none") ||
 		(V.player.penisExist && npc.vagina !== "none")
 	);
 }
@@ -1126,7 +1119,7 @@ function playerPregnancyPossibleWith(NPC) {
 		// Check if this is a named NPC, whether the function is provided a string or NPCList object that belongs to a named NPC
 		NPCObject = V.NPCName[V.NPCNameList.indexOf(typeof NPC === "string" ? NPC : NPC.fullDescription)];
 
-		if (NPCObject == undefined) return false;
+		if (NPCObject === undefined) return false;
 
 		const NPCNameCheck = NPCObject.fullDescription || NPCObject.description; // .description is only for backup, should not be needed in normal cases
 		if (
@@ -1191,7 +1184,7 @@ function NPCPregnancyPossibleWithPlayer(NPC) {
 	if (typeof NPC === "string" || V.NPCNameList.includes(NPC.fullDescription)) {
 		// Check if this is a named NPC, whether the function is provided a string or NPCList object that belongs to a named NPC
 		NPCObject = V.NPCName[V.NPCNameList.indexOf(typeof NPC === "string" ? NPC : NPC.fullDescription)];
-		if (NPCObject == undefined) return false;
+		if (NPCObject === undefined) return false;
 		const NPCNameCheck = NPCObject.fullDescription || NPCObject.description;
 		if (!C.npc[NPCNameCheck]) {
 			Errors.report("Named NPC " + NPCNameCheck + " is undefined for pregnancy compatibility check.");
