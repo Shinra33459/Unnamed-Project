@@ -90,7 +90,7 @@ function effectsWater(waterType = "liquid") {
 		}
 	}
 
-	if (!V.worn.under_lower.type.includes("naked") && !waterproofCheck(V.worn.under_lower)) {
+	if (!V.worn.under_lower.type.includes("naked") && !playerChastity() && !waterproofCheck(V.worn.under_lower)) {
 		if (V.underlowerwet >= 100 && V.underlowerwetstage < 3 && V.pantiesSoaked && !antitransparentCheck(V.worn.under_lower)) {
 			V.underlowerwetstage = 3;
 			if (V.lowerwetstage === 3 || V.worn.lower.type.includes("naked")) {
@@ -783,7 +783,9 @@ function effects() {
 		if (V.rebuy_failure.length) {
 			element(
 				"span",
-				`Your ${formatList(V.rebuy_failure, "and", true)} signal${V.rebuy_failure.length > 1 ? "" : "s"} for a replacement, but you don't have enough money.`,
+				`Your ${formatList(V.rebuy_failure, "and", true)} signal${
+					V.rebuy_failure.length > 1 ? "" : "s"
+				} for a replacement, but you don't have enough money.`,
 				"purple"
 			);
 			V.rebuy_failure = [];
@@ -895,7 +897,11 @@ function effects() {
 					element("span", "Rumours of your unique genitalia have spread throughout the school.", "pink");
 					break;
 				case 3:
-					element("span", "It sounds far-fetched to many, but the school is rife with gossip about a student with both boy and girl parts.", "purple");
+					element(
+						"span",
+						"It sounds far-fetched to many, but the school is rife with gossip about a student with both boy and girl parts.",
+						"purple"
+					);
 					break;
 				case 2:
 					element("span", "Rumours of a student with both boy and girl parts are spreading through the school.", "blue");
@@ -936,7 +942,11 @@ function effects() {
 					element("span", "traits.", "purple");
 					break;
 				case "traitLost":
-					element("span", `The cravings for nectar finally subside. You've lost the "${V.submissive <= 850 ? "Dendrophile" : "Plant Lover"}" and`, "lblue");
+					element(
+						"span",
+						`The cravings for nectar finally subside. You've lost the "${V.submissive <= 850 ? "Dendrophile" : "Plant Lover"}" and`,
+						"lblue"
+					);
 					element("span", '"Nectar Addict"', "red");
 					element("span", "traits.", "lblue");
 					break;
@@ -959,7 +969,11 @@ function effects() {
 					br();
 					break;
 				case "traitGainUnknown":
-					element("span", "You find yourself inexplicably craving Poppy's presence, and you can't really figure out why.", "purple");
+					element(
+						"span",
+						"You find yourself inexplicably craving Poppy's presence, and you can't really figure out why.",
+						"purple"
+					);
 					br();
 					break;
 				case "traitLostKnown":
@@ -987,7 +1001,11 @@ function effects() {
 			}
 		}
 		if (window.poppyConsumePendingPavlovMessage && poppyConsumePendingPavlovMessage()) {
-			element("span", "Now that Poppy is your love interest, you can't help but feel drawn to them like a moth to a flame. You've gained the ", "purple");
+			element(
+				"span",
+				"Now that Poppy is your love interest, you can't help but feel drawn to them like a moth to a flame. You've gained the ",
+				"purple"
+			);
 			element("span", '"Pavlov: Poppy"', "red");
 			element("span", " trait.", "purple");
 			br();
@@ -1243,9 +1261,9 @@ function effects() {
 					case "anus2":
 					case "vagina2":
 						sWikifier(
-							`Your ${event === "anus2" ? "stomach" : "uterus"} rumbles a little. You hope the noise hasn't attracted any attention. <<garousal>>${
-								stressMulti ? "<<gstress>>" : ""
-							}`
+							`Your ${
+								event === "anus2" ? "stomach" : "uterus"
+							} rumbles a little. You hope the noise hasn't attracted any attention. <<garousal>>${stressMulti ? "<<gstress>>" : ""}`
 						);
 						arousalGain += (arousalMulti * 250) / (minDaysLeft + 1);
 						V.stress += 200 * stressMulti;
@@ -1531,13 +1549,21 @@ function effects() {
 					element("span", "Your ears tingle.", "gold");
 					break;
 				case "cowUp4":
-					element("span", "Your ears itch. You reach up to scratch them and find them much bigger than you expected. You've grown a pair of cow ears.", "gold");
+					element(
+						"span",
+						"Your ears itch. You reach up to scratch them and find them much bigger than you expected. You've grown a pair of cow ears.",
+						"gold"
+					);
 					break;
 				case "cowUp5":
 					element("span", "Your lower back tingles.", "gold");
 					break;
 				case "cowUp6":
-					element("span", "Your bottom feels heavier than usual. You reach behind you and feel your new cow tail. You suppress the urge to moo.", "gold");
+					element(
+						"span",
+						"Your bottom feels heavier than usual. You reach behind you and feel your new cow tail. You suppress the urge to moo.",
+						"gold"
+					);
 					fragment.append(wikifier("earnFeat", "'Cattle'"));
 					break;
 				case "cowDown0":
@@ -1605,19 +1631,31 @@ function effects() {
 					element("span", "You have a strange toothache and a strange craving for honey.", "gold");
 					break;
 				case "bearUp2":
-					element("span", "Your mouth feels different. You explore your mouth and wince as your tongue presses against your new fangs.", "gold");
+					element(
+						"span",
+						"Your mouth feels different. You explore your mouth and wince as your tongue presses against your new fangs.",
+						"gold"
+					);
 					break;
 				case "bearUp3":
 					element("span", "Your scalp and neck itch.", "gold");
 					break;
 				case "bearUp4":
-					element("span", "Your scalp twitches. You reach up and feel your new pair of bear ears and a patch of fur covering your neck.", "gold");
+					element(
+						"span",
+						"Your scalp twitches. You reach up and feel your new pair of bear ears and a patch of fur covering your neck.",
+						"gold"
+					);
 					break;
 				case "bearUp5":
 					element("span", "Your lower back tingles.", "gold");
 					break;
 				case "bearUp6":
-					element("span", "Your bottom feels fluffier than usual. You reach behind you and feel your new bear tail. You suppress the urge to growl.", "gold");
+					element(
+						"span",
+						"Your bottom feels fluffier than usual. You reach behind you and feel your new bear tail. You suppress the urge to growl.",
+						"gold"
+					);
 					fragment.append(wikifier("earnFeat", "'Bear'"));
 					break;
 
@@ -1638,7 +1676,7 @@ function effects() {
 					break;
 				case "bearDown5":
 					element("span", "Your balance feels different. Your bear tail has disappeared.", "gold");
-					break;
+					break;					
 				case "harpyUp1":
 					element("span", "Your vision feels sharper.", "gold");
 					break;
@@ -1651,7 +1689,9 @@ function effects() {
 						`Your lower back and neck itch. ${
 							V.loveInterest.primary !== "None"
 								? `Your thoughts turn to ${
-										["Black Wolf", "Great Hawk"].includes(V.loveInterest.primary) ? `the ${V.loveInterest.primary},` : `${V.loveInterest.primary},`
+										["Black Wolf", "Great Hawk"].includes(V.loveInterest.primary)
+											? `the ${V.loveInterest.primary},`
+											: `${V.loveInterest.primary},`
 								  } and you have a primal, almost animalistic, urge to be with ${C.npc[V.loveInterest.primary].pronouns.him}.`
 								: "You suddenly crave a true partner to be with."
 						}`,
@@ -1700,7 +1740,11 @@ function effects() {
 					element("span", "You have a strange toothache, and your eyes feel a little sharper. You have the urge to steal something.", "gold");
 					break;
 				case "foxUp2":
-					element("span", "Your mouth and eyes feel different. You explore your mouth and yip as your tongue presses against your new fangs.", "gold");
+					element(
+						"span",
+						"Your mouth and eyes feel different. You explore your mouth and yip as your tongue presses against your new fangs.",
+						"gold"
+					);
 					break;
 				case "foxUp3":
 					element(
@@ -1708,7 +1752,9 @@ function effects() {
 						`Your scalp itches. ${
 							V.loveInterest.primary !== "None"
 								? `Your thoughts turn to ${
-										["Black Wolf", "Great Hawk"].includes(V.loveInterest.primary) ? `the ${V.loveInterest.primary},` : `${V.loveInterest.primary},`
+										["Black Wolf", "Great Hawk"].includes(V.loveInterest.primary)
+											? `the ${V.loveInterest.primary},`
+											: `${V.loveInterest.primary},`
 								  } and you have a primal, almost animalistic, urge to be with ${C.npc[V.loveInterest.primary].pronouns.him}.`
 								: "You suddenly crave a true partner to be with."
 						}`,
@@ -1726,7 +1772,11 @@ function effects() {
 					);
 					break;
 				case "foxUp6":
-					element("span", "Your bottom feels heavier than usual. You give it a wiggle and feel your new fox tail. It's extremely comforting to touch.", "gold");
+					element(
+						"span",
+						"Your bottom feels heavier than usual. You give it a wiggle and feel your new fox tail. It's extremely comforting to touch.",
+						"gold"
+					);
 					fragment.append(wikifier("specialClothesUnlock", "'set'", "'shrine'"));
 					fragment.append(wikifier("earnFeat", "'Fox'"));
 					break;
@@ -1758,10 +1808,18 @@ function effects() {
 					element("span", "Your scalp begins to itch.", "gold");
 					break;
 				case "bunnyUp4":
-					element("span", "You feel the urge to scratch at your head and when you do, you discover a pair of bunny ears. You tug at them.", "gold");
+					element(
+						"span",
+						"You feel the urge to scratch at your head and when you do, you discover a pair of bunny ears. You tug at them.",
+						"gold"
+					);
 					break;
 				case "bunnyUp5":
-					element("span", "Your lower back begins to itch. You can barely scratch at it without being obvious.", "gold");
+					element(
+						"span",
+						"Your lower back begins to itch. You can barely scratch at it without being obvious.",
+						"gold"
+					);
 					break;
 				case "bunnyUp6":
 					element(
@@ -1789,7 +1847,7 @@ function effects() {
 					break;
 				case "bunnyDown5":
 					element("span", "Your bunny tail has disappeared.", "gold");
-					break;
+					break;					
 				// Clothes
 				case "bimboMessage1":
 					element(
@@ -1912,7 +1970,7 @@ function effects() {
 		V.stressmax = 10000;
 	}
 
-	if (V.trauma >= V.traumamax * 0.9) V.traumatized = true;
+	if (V.trauma >= (V.traumamax * 0.9)) V.traumatized = true;
 
 	return fragment;
 }
@@ -1922,44 +1980,42 @@ Macro.add("effects", {
 		const fragment = effects();
 		this.output.append(fragment);
 		$(document)
-			.off(":passageend.effects")
-			.on(":passageend.effects", function () {
-				if (!V.passage.includes("Waiting Room")) {
-					if (V.options.bigCanvas === true) {
-						if (V.options.images === 1) {
-							document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "267px";
-							document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height = "calc(100% - 95px - 1.32em)";
-							document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width = "392px";
-							document.querySelector("body.has-images #storyCaptionContent").style.width = "392px";
-							document.querySelector("#img").style.height = "267px";
-							document.querySelector("#img").style.width = "328px";
-							document.querySelector("canvas.mainCanvas").style.height = "358px";
-							document.querySelector("canvas.mainCanvas").style.width = "358px";
-							document.querySelector("#ui-bar").style.width = "24.5em";
-							document.querySelector("#stats").style.width = "392px";
-						}
-						if (!Browser.isMobile.any() && !/joiplay|cyou\.joiplay\.joiplay|wv/i.test(navigator.userAgent))
-							document.querySelector("#story").style.marginLeft = "27em";
-					} else {
-						if (V.options.images === 1) {
-							document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "192px";
-							document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height = "calc(100% - 20px - 1.32em)";
-							document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width = "280px";
-							document.querySelector("body.has-images #storyCaptionContent").style.width = "280px";
-							document.querySelector("#img").style.height = "192px";
-							document.querySelector("#img").style.width = "216px";
-							document.querySelector("canvas.mainCanvas").style.height = "256px";
-							document.querySelector("canvas.mainCanvas").style.width = "256px";
-							document.querySelector("#ui-bar").style.width = "17.5em";
-							document.querySelector("#stats").style.width = "280px";
-						}
-						if (!Browser.isMobile.any() && !/joiplay|cyou\.joiplay\.joiplay|wv/i.test(navigator.userAgent))
-							document.querySelector("#story").style.marginLeft = "20em";
+		.off(':passageend.effects') 
+		.on(':passageend.effects', function () {
+			if (!V.passage.includes("Waiting Room")) {
+				if (V.options.bigCanvas === true) {
+					if (V.options.images === 1) {
+						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "267px";
+						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 95px - 1.32em)";
+						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width  = "392px";
+						document.querySelector("body.has-images #storyCaptionContent").style.width  = "392px";
+						document.querySelector("#img").style.height = "267px";
+						document.querySelector("#img").style.width = "328px";
+						document.querySelector("canvas.mainCanvas").style.height = "358px";
+						document.querySelector("canvas.mainCanvas").style.width = "358px";
+						document.querySelector("#ui-bar").style.width = "24.5em";
+						document.querySelector("#stats").style.width  = "392px";
 					}
+					if (!Browser.isMobile.any() && !/joiplay|cyou\.joiplay\.joiplay|wv/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "27em";
+				} else {
+					if (V.options.images === 1) {
+						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "192px";
+						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 20px - 1.32em)";
+						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width  = "280px";
+						document.querySelector("body.has-images #storyCaptionContent").style.width  = "280px";
+						document.querySelector("#img").style.height = "192px";
+						document.querySelector("#img").style.width = "216px";
+						document.querySelector("canvas.mainCanvas").style.height = "256px";
+						document.querySelector("canvas.mainCanvas").style.width = "256px";
+						document.querySelector("#ui-bar").style.width = "17.5em";
+						document.querySelector("#stats").style.width  = "280px";
+					}
+					if (!Browser.isMobile.any() && !/joiplay|cyou\.joiplay\.joiplay|wv/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "20em";
 				}
-			});
+			}
+		});
 		if (document.getElementById("ui-bar") && !window.uiBarObserver) {
-			window.uiBarObserver = new MutationObserver(mutations => {
+			window.uiBarObserver = new MutationObserver((mutations) => {
 				for (const mutation of mutations) {
 					if (mutation.type === "attributes" && mutation.attributeName === "class") {
 						if (document.getElementById("ui-bar").classList.contains("stowed")) {
