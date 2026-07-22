@@ -16,7 +16,7 @@ Warmth checklist:
 function initHands() {
 	/** @type {ClothesItem[]} */
 	const clothing = [
-		new ClothesItem({
+		{
 			index: 0,
 			slot: "hands",
 			name: "naked",
@@ -47,8 +47,9 @@ function initHands() {
 			iconFile: 0,
 			accIcon: 0,
 			mainImage: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 1,
 			slot: "hands",
 			name: "fingerless gloves",
@@ -82,8 +83,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 2,
 			slot: "hands",
 			name: "mittens",
@@ -117,8 +119,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 3,
 			slot: "hands",
 			name: "arm warmers",
@@ -153,8 +156,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 4,
 			slot: "hands",
 			name: "lace arm warmers",
@@ -192,8 +196,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 5,
 			slot: "hands",
 			name: "long leather gloves",
@@ -245,8 +250,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 6,
 			slot: "hands",
 			name: "cheerleader gloves",
@@ -285,8 +291,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 7,
 			slot: "hands",
 			name: "gold bracelets",
@@ -320,8 +327,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 8,
 			slot: "hands",
 			name: "cow sleeves",
@@ -355,8 +363,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 9,
 			slot: "hands",
 			name: "work gloves",
@@ -394,8 +403,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 10,
 			slot: "hands",
 			name: "sexy nun's gloves",
@@ -434,8 +443,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 11,
 			slot: "hands",
 			name: "wrist cuffs",
@@ -472,8 +481,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 12,
 			slot: "hands",
 			name: "gold shackles",
@@ -510,8 +519,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 13,
 			slot: "hands",
 			name: "belted gloves",
@@ -570,8 +580,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 14,
 			slot: "hands",
 			name: "succubus gloves",
@@ -610,7 +620,7 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
+		},
 	];
 	setup.clothes.hands = clothing;
 
@@ -619,7 +629,7 @@ function initHands() {
 		These items should have a `modder` variable with the modder's name in a short string.
 	*/
 	setup.moddedClothes.hands = [
-		new ClothesItem({
+		{
 			index: 0,
 			slot: "hands",
 			name: "thin metal bracelet",
@@ -661,8 +671,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 1,
 			slot: "hands",
 			name: "simple metal bracelet",
@@ -704,8 +714,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 2,
 			slot: "hands",
 			name: "metal bracelet",
@@ -747,8 +757,9 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		// @ts-ignore
+		{
 			index: 3,
 			slot: "hands",
 			name: "thick metal bracelet",
@@ -790,8 +801,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 4,
 			slot: "hands",
 			name: "tiny faux jewel bracelet",
@@ -833,8 +844,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 5,
 			slot: "hands",
 			name: "small faux jewel bracelet",
@@ -876,8 +887,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 6,
 			slot: "hands",
 			name: "medium faux jewel bracelet",
@@ -919,8 +930,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 7,
 			slot: "hands",
 			name: "big faux jewel bracelet",
@@ -962,8 +973,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 8,
 			slot: "hands",
 			name: "2ct diamond bracelet",
@@ -1004,8 +1015,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 9,
 			slot: "hands",
 			name: "5ct diamond bracelet",
@@ -1046,8 +1057,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 10,
 			slot: "hands",
 			name: "10ct diamond bracelet",
@@ -1088,8 +1099,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 11,
 			slot: "hands",
 			name: "20ct diamond bracelet",
@@ -1130,8 +1141,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 12,
 			slot: "hands",
 			name: "2ct ruby bracelet",
@@ -1172,8 +1183,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 13,
 			slot: "hands",
 			name: "5ct ruby bracelet",
@@ -1214,8 +1225,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 14,
 			slot: "hands",
 			name: "10ct ruby bracelet",
@@ -1256,8 +1267,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 15,
 			slot: "hands",
 			name: "20ct ruby bracelet",
@@ -1298,8 +1309,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 16,
 			slot: "hands",
 			name: "2ct emerald bracelet",
@@ -1340,8 +1351,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 17,
 			slot: "hands",
 			name: "5ct emerald bracelet",
@@ -1382,8 +1393,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 18,
 			slot: "hands",
 			name: "10ct emerald bracelet",
@@ -1424,8 +1435,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 19,
 			slot: "hands",
 			name: "20ct emerald bracelet",
@@ -1466,8 +1477,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 20,
 			slot: "hands",
 			name: "2ct sapphire bracelet",
@@ -1508,8 +1519,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 21,
 			slot: "hands",
 			name: "5ct sapphire bracelet",
@@ -1550,8 +1561,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 22,
 			slot: "hands",
 			name: "10ct sapphire bracelet",
@@ -1592,8 +1603,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 23,
 			slot: "hands",
 			name: "20ct sapphire bracelet",
@@ -1634,8 +1645,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 24,
 			slot: "hands",
 			name: "2ct aquamarine bracelet",
@@ -1676,8 +1687,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 25,
 			slot: "hands",
 			name: "5ct aquamarine bracelet",
@@ -1718,8 +1729,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 26,
 			slot: "hands",
 			name: "10ct aquamarine bracelet",
@@ -1760,8 +1771,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 27,
 			slot: "hands",
 			name: "20ct aquamarine bracelet",
@@ -1802,8 +1813,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 28,
 			slot: "hands",
 			name: "2ct tanzanite bracelet",
@@ -1844,8 +1855,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 29,
 			slot: "hands",
 			name: "5ct tanzanite bracelet",
@@ -1886,8 +1897,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 30,
 			slot: "hands",
 			name: "10ct tanzanite bracelet",
@@ -1928,8 +1939,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 31,
 			slot: "hands",
 			name: "20ct tanzanite bracelet",
@@ -1970,8 +1981,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 32,
 			slot: "hands",
 			name: "2ct topaz bracelet",
@@ -2012,8 +2023,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 33,
 			slot: "hands",
 			name: "5ct topaz bracelet",
@@ -2054,8 +2065,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 34,
 			slot: "hands",
 			name: "10ct topaz bracelet",
@@ -2096,8 +2107,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 35,
 			slot: "hands",
 			name: "20ct topaz bracelet",
@@ -2138,8 +2149,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 36,
 			slot: "hands",
 			name: "2ct amethyst bracelet",
@@ -2180,8 +2191,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 37,
 			slot: "hands",
 			name: "5ct amethyst bracelet",
@@ -2222,8 +2233,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 38,
 			slot: "hands",
 			name: "10ct amethyst bracelet",
@@ -2264,8 +2275,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 39,
 			slot: "hands",
 			name: "20ct amethyst bracelet",
@@ -2306,8 +2317,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 40,
 			slot: "hands",
 			name: "2ct spinel bracelet",
@@ -2348,8 +2359,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 41,
 			slot: "hands",
 			name: "5ct spinel bracelet",
@@ -2390,8 +2401,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 42,
 			slot: "hands",
 			name: "10ct spinel bracelet",
@@ -2432,8 +2443,8 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 43,
 			slot: "hands",
 			name: "20ct spinel bracelet",
@@ -2474,7 +2485,7 @@ function initHands() {
 			mainImage: 0,
 			leftImage: 1,
 			rightImage: 1,
-		}),
+		},	
 	];
 
 	setup.moddedClothes.hands.forEach((x, i) => (x.index = setup.clothes.hands.length + i));

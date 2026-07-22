@@ -318,7 +318,6 @@ Weather.BodyTemperature = (() => {
 			if (this.get() < 39) return "warm";
 			return "hot";
 		},
-		// Goes from 1 (no change) to 3 (+200% increase)
 		get fatigueModifier() {
 			const factor = temperatureFactor();
 			return this.get() > settings.baseBodyTemperature ? interpolate(1, settings.effects.maxFatigueGainMultiplier, factor) : 1;

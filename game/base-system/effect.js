@@ -49,7 +49,7 @@ function effectsWater(waterType = "liquid") {
 			sWikifier(`<span class="lewd">${waterType.toUpperFirst()} soaks through your ${V.worn.upper.name}, exposing your <<undertop>>.</span>`);
 		} else if (V.upperwet < 90 && V.upperwetstage >= 3) {
 			V.upperwetstage = 2;
-			sWikifier(`<span class="green">Your ${V.worn.upper.name} <<upperhas>> dried, concealing your <<undertop>>. </span>`);
+			sWikifier(`<span class="green">Your ${V.worn.upper.name} <<upperhas>> dried, concealing your <<undertop>>.</span>`);
 		} else if (V.upperwet >= 80 && V.upperwetstage < 2) {
 			V.upperwetstage = 2;
 			wetIntro = 1;
@@ -73,7 +73,7 @@ function effectsWater(waterType = "liquid") {
 			sWikifier(`<span class="lewd">${waterType.toUpperFirst()} soaks through your ${V.worn.lower.name}, exposing your <<undies>>.</span>`);
 		} else if (V.lowerwet < 90 && V.lowerwetstage >= 3) {
 			V.lowerwetstage = 2;
-			sWikifier(`<span class="green">Your ${V.worn.lower.name} <<lowerhas>> dried, concealing your <<undies>>. </span>`);
+			sWikifier(`<span class="green">Your ${V.worn.lower.name} <<lowerhas>> dried, concealing your <<undies>>.</span>`);
 		} else if (V.lowerwet >= 80 && V.lowerwetstage < 2) {
 			V.lowerwetstage = 2;
 			wetIntro = 1;
@@ -110,7 +110,7 @@ function effectsWater(waterType = "liquid") {
 			sWikifier(`<span class="lewd">${waterType.toUpperFirst()} soaks through your ${V.worn.under_lower.name}, exposing your <<genitals>>.</span>`);
 		} else if (V.underlowerwet < 90 && V.underlowerwetstage >= 3) {
 			V.underlowerwetstage = 2;
-			sWikifier(`<span class="green">Your ${V.worn.under_lower.name} <<underlowerhas>> dried, concealing your <<genitals>>. </span>`);
+			sWikifier(`<span class="green">Your ${V.worn.under_lower.name} <<underlowerhas>> dried, concealing your <<genitals>>.</span>`);
 		} else if (V.underlowerwet >= 80 && V.underlowerwetstage < 2) {
 			V.underlowerwetstage = 2;
 			wetIntro = 1;
@@ -134,7 +134,7 @@ function effectsWater(waterType = "liquid") {
 			sWikifier(`<span class="lewd">${waterType.toUpperFirst()} soaks through your ${V.worn.under_upper.name}, exposing your <<breasts>>.</span>`);
 		} else if (V.underupperwet < 90 && V.underupperwetstage >= 3) {
 			V.underupperwetstage = 2;
-			sWikifier(`<span class="green">Your ${V.worn.under_upper.name} <<underupperhas>> dried, concealing your <<breasts>>. </span>`);
+			sWikifier(`<span class="green">Your ${V.worn.under_upper.name} <<underupperhas>> dried, concealing your <<breasts>>.</span>`);
 		} else if (V.underupperwet >= 80 && V.underupperwetstage < 2) {
 			V.underupperwetstage = 2;
 			wetIntro = 1;
@@ -1045,19 +1045,19 @@ function effects() {
 			element("i", "Your mind is open to the possibility of another lover. You may now choose a second love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 1;
-		} else if (V.loveInterest_message === 3 && V.loveInterestAwareMessage === 1) {
+		} else if (V.loveInterest_message === 3 && V.loveInterestAwareMessage == 1) {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a third love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 2;
-		} else if (V.loveInterest_message === 4 && V.loveInterestAwareMessage === 2) {
+		} else if (V.loveInterest_message === 4 && V.loveInterestAwareMessage == 2) {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a fourth love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 3;
-		} else if (V.loveInterest_message === 5 && V.loveInterestAwareMessage === 3) {
+		} else if (V.loveInterest_message === 5 && V.loveInterestAwareMessage == 3) {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a fifth love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 4;
-		} else if (V.loveInterest_message === 6 && V.loveInterestAwareMessage === 4) {
+		} else if (V.loveInterest_message === 6 && V.loveInterestAwareMessage == 4) {
 			element("i", "Your mind is open to the possibility of multiple lovers. You may now choose a sixth love interest.", "pink");
 			delete V.loveInterest_message;
 			V.loveInterestAwareMessage = 5;
@@ -1319,15 +1319,18 @@ function effects() {
 	}
 
 	if (V.cheatClothes) {
-		const slots = ["upper", "lower", "under_upper", "under_lower", "over_upper", "over_lower", "genitals"];
-		if (V.worn.face.type.includesAny("face_covering", "gag", "mask")) {
-			slots.push("face");
+		let _cl_slots_cheat = ["upper", "lower", "under_upper", "under_lower", "over_upper", "over_lower", "genitals"];
+		if (V.worn.face.type.includesAny("covered", "gag", "mask")) {
+			_cl_slots_cheat.push("face");
 		}
-		slots.forEach(slot => {
+		_cl_slots_cheat.forEach((slot) => {
 			if (V.worn[slot].name === "naked") return;
 			V.worn[slot].integrity = clothingData(slot, V.worn[slot], "integrity_max");
-			cheatsUpdateSlider(`#numberslider-input-worn${slot.replace("_", "-")}integrity`, V.worn[slot].integrity);
-		});
+			cheatsUpdateSlider(
+				`#numberslider-input-worn${slot.replace('_', '-')}integrity`,
+				V.worn[slot].integrity
+			);
+		})
 	}
 
 	if (Array.isArray(V.timeMessages) && V.timeMessages.length) {
@@ -1936,10 +1939,16 @@ function effects() {
 		V.timeMessages = [];
 	}
 
-	sWikifier("<<integritycheck>>");
+	sWikifier("<<integritycheck>><<exposure>>");
 
 	V.orgasmdown -= 1;
 	V.orgasmCum -= 1;
+
+	if (V.exposed >= 1 && V.exposedcheck === 1) {
+		V.exposedcheck = 0;
+		sWikifier("You feel self-conscious about your <<nudity>>.");
+		br();
+	}
 
 	if (V.timer >= 1) V.timer--;
 	// V.turnCount++;
@@ -1948,9 +1957,11 @@ function effects() {
 
 	if (V.worn.genitals.cursed === 1 && V.worn.genitals.integrity <= 0) V.worn.genitals.type.push("broken");
 
-	sWikifier("<<exposure>>");
+	if (V.worn.feet.type.includes("heels") && currentSkillValue("feetskill") < V.worn.feet.reveal) {
+		V.tiredness += (V.worn.feet.reveal - currentSkillValue("feetskill")) / 150;
+	}
 
-	if (V.combat) sWikifier("<<pass 10 seconds>>");
+	if (V.combat) sWikifier("<<pass $combatTimePass seconds>>");
 
 	if (fragment.children.length) br();
 
@@ -1983,8 +1994,8 @@ Macro.add("effects", {
 		.off(':passageend.effects') 
 		.on(':passageend.effects', function () {
 			if (!V.passage.includes("Waiting Room")) {
-				if (V.options.bigCanvas === true) {
-					if (V.options.images === 1) {
+				if (V.options.bigCanvas == true) {
+					if (V.options.images == 1) {
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "267px";
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 95px - 1.32em)";
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width  = "392px";
@@ -1998,7 +2009,7 @@ Macro.add("effects", {
 					}
 					if (!Browser.isMobile.any() && !/joiplay|cyou\.joiplay\.joiplay|wv/i.test(navigator.userAgent)) document.querySelector("#story").style.marginLeft = "27em";
 				} else {
-					if (V.options.images === 1) {
+					if (V.options.images == 1) {
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.top = "192px";
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.height  = "calc(100% - 20px - 1.32em)";
 						document.querySelector("body.has-images #story-caption #storyCaptionDiv").style.width  = "280px";
@@ -2019,7 +2030,7 @@ Macro.add("effects", {
 				for (const mutation of mutations) {
 					if (mutation.type === "attributes" && mutation.attributeName === "class") {
 						if (document.getElementById("ui-bar").classList.contains("stowed")) {
-							if (V.options.bigCanvas === true) {
+							if (V.options.bigCanvas == true) {
 								document.querySelector("#ui-bar").style.left = "-22.5em";
 							} else {
 								document.querySelector("#ui-bar").style.left = "-15.5em";

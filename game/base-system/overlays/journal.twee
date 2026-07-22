@@ -273,8 +273,8 @@
 				</li>
 			<</if>>
 
-			<<if $bicycle.own>>
-				<<switch $bicycle.location>>
+			<<if $bike gte 1>>
+				<<switch $bikeLocation>>
 					<<case "nightingale">>
 						<<set _bikeString to "Nightingale Street (Hospital)">>
 					<<case "domus">>
@@ -303,21 +303,16 @@
 						<<set _bikeString to "Cliff Street (Cafe)">>
 					<<case "lake">>
 						<<set _bikeString to "the Lake">>
-					<<case "alex_farm">>
+					<<case "farm">>
 						<<set _bikeString to "the Farmlands">>
-					<<case "forest">>
-						<<set _bikeString to "the Forest Outskirts">>
-					<<case "cabin">>
+					<<case "eden">>
 						<<set _bikeString to "Eden's Cabin">>
-					<<case "wolf_cave_yard">>
+					<<case "wolfCave">>
 						<<set _bikeString to "Wolf Cave">>
 					<<case "moor">>
 						<<set _bikeString to "Moor Castle">>
 				<</switch>>
-				<li><<if $bicycle.persistentLocation is true>>Your bike is at _bikeString.<</if>> Your bike has $bicycle.durability.current minutes of usage time left in it.</li>
-				<<if $bicycle.durability.repair isnot undefined>>
-					<li>You have $bicycle.durability.repair repair kits. You think you can carry 5 at most.</li>
-				<</if>>
+				<li><<if $bikePersistentLocation is 1>>Your bike is at _bikeString.<</if>> Your bike has $bikeDurability minutes of usage time left in it.</li>
 			<</if>>
 
 			<<if $studyBooks isnot undefined and $studyBooks.rented.count gte 1>>
@@ -406,11 +401,7 @@
 			<</if>>
 
 			<<if $docks.hired>>
-				<<if $docks.fakeID is "shown">>
-					<li><<docksicon>> Your shift at the docks starts at <<ampm 7 00>>. You can enter as early as <<ampm 6 00>> and show up late before <<ampm 8 00>>.</li>
-				<<else>>
-					<li><<docksicon>> Your shift at the docks starts at <<ampm 7 00>> on any day except school days. You can enter as early as <<ampm 6 00>> and show up late before <<ampm 7 15>>.</li>
-				<</if>>
+				<li><<docksicon>> You can work at the docks starting from <<ampm 6 00>> to <<ampm 7 00>>, or enter late before <<ampm 9 00>><<if $docks.fakeID isnot "shown">>, on any day except school days<</if>>.</li>
 			<</if>>
 
 			<<if $brothelshowdata.intro and $brothelshowdata.type is "none">>
@@ -530,7 +521,7 @@
 				</li>
 			<</if>>
 
-			<<if $earSlime.event and !_tempEventHide and !$hypnosis_traits.silence gte 1>>
+			<<if $earSlime.event and !_tempEventHide>>
 				<<switch $earSlime.event>>
 					<<case "get sperm into your anus" "get sperm into your vagina" "get sperm into your anus completed" "get sperm into your vagina completed">>
 						<li class="lewd"><<socialiseicon "ask">> The slime in your head commanded you to get sperm into your <<print $player.vaginaExist ? "vagina" : "anus">>.</li>
@@ -541,10 +532,10 @@
 						<li class="lewd"><<bedicon>> The slime in your head commanded you to <<print $earSlime.event>><<if $earSlime.noSleep>> before it allows you to sleep<</if>>.</li>
 				<</switch>>
 			<</if>>
-			<<if $earSlime.forcedCommando isnot undefined and !$hypnosis_traits.silence gte 1>>
+			<<if $earSlime.forcedCommando isnot undefined>>
 				<li class="lewd"><<icon "cross.png" "infront">><span class="clothes-white"><<icon "clothes/plain-panties.png">></span> The slime in your head commanded you to go commando.</li>
 			<</if>>
-			<<if $earSlime.forcedDressing isnot undefined and !$hypnosis_traits.silence gte 1>>
+			<<if $earSlime.forcedDressing isnot undefined>>
 				<li class="lewd"><<if $earSlime.forcedDressing.type is "f">><<femaleicon>><<else>><<maleicon>><</if>> The slime in your head commanded you to only wear more <<print $earSlime.forcedDressing.type is "f" ? "feminine" : "masculine">> clothing.</li>
 			<</if>>
 
@@ -568,7 +559,7 @@
 			<<if $mason_pond is 1>>
 				<li><<socialiseicon "ask">> Mason mentioned a stream under Domus Street, which could be used to make a spring. You'd need Bailey's permission first.</li>
 			<<elseif $mason_pond is 2>>
-				<li><<birdicon "wallet">> Bailey wants <<printmoney 500000>> to build a spring in the orphanage garden.</li>
+				<li><<birdicon "wallet">> Bailey wants <<printmoney 600000>> to build a spring in the orphanage garden.</li>
 			<<elseif $mason_pond is 3>>
 				<li><<watericon "waterside_wolfcave">> A spring is being built in the orphanage garden.</li>
 			<<elseif $mason_pond is 4>>
@@ -595,11 +586,11 @@
 				<li><<mooricon "remy">> Remy is encroaching on Alex's farm, operating from the estate on the moor.</li>
 			<<elseif $farm_stage gte 5 or isPubfameTaskAccepted("wren")>>
 				<<if $estate_fence is "quest" and currentSkillValue('skulduggery') lt 800>>
-					<li><<mooricon "remy">> Find someone who can help you break into the Remy Estate. Someone with underworld connections, or who knows the moor.</li>
+					<li><<mooricon "remy">> Find someone who can help you break into the Remy estate. Someone with underworld connections, or who knows the moor.</li>
 				<<elseif $estate_fence is "bird">>
-					<li><<mooricon "remy">> Search the Remy Estate fence for an entrance made by the Great Hawk.</li>
+					<li><<mooricon "remy">> Search the Remy estate fence for an entrance made by the Great Hawk.</li>
 				<<elseif $estate_fence is "landry">>
-					<li><<mooricon "remy">> Search the Remy Estate fence for an entrance made by Landry's specialist.</li>
+					<li><<mooricon "remy">> Search the Remy estate fence for an entrance made by Landry's specialist.</li>
 				<</if>>
 			<</if>>
 
@@ -610,10 +601,10 @@
 			<</if>>
 
 			<<if $photo>>
-				<<if $photo.job is "kaiju" and $photo_high_money>>
+				<<if $photo.silly is "accepted">>
+					<li><<highicon>> A business owner on High Street is expecting you during the day.</li>
+				<<elseif $photo.silly is "done">>
 					<li><<photographystudioicon>> You can collect your pay for the High Street job from Niki.</li>
-				<<elseif $photo.job is "kaiju">>
-					<li><<photographystudioicon>> You've done a client job for Niki this week.</li>
 				<</if>>
 			<</if>>
 
@@ -639,9 +630,9 @@
 				<li>
 					<<switch $farm.build>>
 						<<case "parasites 1">>
-							<<farmicon 'parasitebarn'>> The parasite barn is being built.
+							<<farmicon 'parasite barn'>> The parasite barn is being built.
 						<<case "parasites 2">>
-							<<farmicon 'parasitebarn'>> The parasite barn is being expanded.
+							<<farmicon 'parasite barn'>> The parasite barn is being expanded.
 						<<case "wall 1">>
 							<<choreicon "fix">> The wall is undergoing a thorough repair.
 						<<case "wall 2">>
@@ -935,8 +926,7 @@
 				<<else>>
 					<<switch $avery_mansion.fox.task>>
 						<<case "heist">>The brown fox trusts you enough to conduct a direct heist of the wishing stones and has given you a signal to make in the garden whenever Avery isn't around.
-						<<case "Jordan">>
-							The brown fox has asked you to give a message to two disguised initiates<<if $avery_mansion.fox.task_detail is "ascend">> and ensure they don't obstruct the construction<</if>> when Jordan comes by the mansion.
+						<<case "Jordan">>The brown fox has asked you to give a message to two disguised initiates when Jordan comes by the mansion.
 						<<case "Quinn">>The brown fox has asked you to perform a hand signal after getting the attention of a compromised agent who's grown attached to Quinn at the next party.
 						<<case "Remy">>
 							<<if $brownFoxWounded or $fake_artefact is "Avery">>
@@ -1341,9 +1331,7 @@
 				<<for _t to 0; _t lt _foodstuffKeys.length; _t++>>
 					<<set _foodstuff to setup.foodstuff[_foodstuffKeys[_t]]>>
 					<<set _foodstuffType to ((_foodstuff?.category) === "dish" ? "food" : _foodstuff?.category)>>
-					<<if _foodstuffType isnot undefined>>
-						<<set $_types.pushUnique(_foodstuffType.toUpperFirst())>>
-					<</if>>
+					<<set $_types.pushUnique(_foodstuffType.toUpperFirst())>>
 				<</for>>
 				<<set $_types.sort()>>
 				<<if $_types.length>>

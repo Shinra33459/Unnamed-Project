@@ -114,7 +114,7 @@
 		<</if>>
 		<<exit>>
 	<</if>>
-	<<if $location is "forest_shop" and _gwylanLovePercent gte 80 and C.npc.Gwylan.dom gte 75 and $dateCount.GwylanSex gte 5 and $gwylan.sea gte 5 and !$gwylanSeen.includes("partners") and _gwylanStatus.includes("lust") and !$weekly.gwylanLIChance and $exposed is 0 and !Time.isBloodMoon()>>
+	<<if $location is "forest_shop" and _gwylanLovePercent gte 80 and C.npc.Gwylan.dom gte 75 and $dateCount.GwylanSex gte 5 and $gwylan.sea gte 5 and !$gwylanSeen.includes("partners") and _gwylanStatus.includes("lust") and !$weekly.gwylanLIChance and $exposed is 0>>
 		<<set $weekly.gwylanLIChance to true>>
 		You feel Gwylan's hand on yours.
 		<br><br>
@@ -382,7 +382,7 @@
 					<</if>>
 					<br>
 				<<elseif $earSlime.forcedDressing and $gwylan.request.items.some(item => ![V.earSlime.forcedDressing, "n"].includes(item.gender)) ||
-					$earSlime.forcedCommando gte 0 && $gwylan.request.items.some(item => item.slot === "under_lower") ||
+					$earSlime.forcedCommando gt 0 && $gwylan.request.items.some(item => item.slot === "under_lower") ||
 					$gwylan.request.items.some(item => item.reveal lt earSlimeCorruptionClothes() && setup.clothingLayer.torso.includes(item.slot))>>
 					<<set $_reqbr to true>>
 					<<set _earSlimeText to numberOfEarSlime() gt 1 ? "ear slimes" : "ear slime">>
@@ -663,7 +663,6 @@
 	<<set $_schoolWalkAvailable to ($gwylanSeen.includes("cafe_walk") or ($gwylan.sea + ($gwylanTalked.count("fox_mask") * 20) + ($gwylanTalked.count("dark_pendant") * 20) gte 40)) or ($gwylan.robin gte 10 and $daily.robin_in_cafe and false)>> /* WARNING! Re-enable later for Gwybin cafe */
 	<<if $_schoolWalkAvailable and Time.schoolDay and ((Time.hour is 7 and Time.minute gte 45) or (Time.hour is 8 and Time.minute lte 35)) and !$daily.gwylan_skip_school>>
 		<<set _passTime to "<<passTimeUntil 8 45>><<set $daily.gwylan.cafeSkip to true>>">><<set _passTimeDisplay to "0:" + ("0" + ((45 - Time.minute + 60) % 60)).slice(-2)>>
-		<<if _passTimeDisplay is "0:00">><<set _passTimeDisplay to "1:00">><</if>>
 	<<elseif $_schoolWalkAvailable and Time.schoolDay and Time.hour is 8 and Time.minute gt 35 and !$daily.gwylan_skip_school>>
 		<<set _passTime to "<<pass 10>><<set $daily.gwylan.cafeSkip to true>>">><<set _passTimeDisplay to "0:10">>
 	<<elseif Time.hour lte 7 or (Time.hour is 8 and Time.minute lt 10)>>
@@ -820,7 +819,7 @@
 			<<case "history">><<historyicon>><<link [[Study history (_passTimeDisplay)|Gwylan Ocean Breeze Watch]]>><<set $phase to "history">><<set $phase2 to 2>><<historyskill>><<willpower 1>>_passTime<</link>><<ghistory>><<gwillpower>><br>
 		<</switch>> */
 		<<if $studyBooks.rented.science is 1 or $studyBooks.stolen.science is 1>>
-			<<scienceicon>><<link [[Study science (_passTimeDisplay)|Gwylan Ocean Breeze Watch]]>><<set $phase to "science">><<set $phase2 to 2>><<scienceskill>><<willpower 1>>_passTime<</link>><<gscience>><<gwillpower>><br>
+			<<scienceicon>><<scienceicon>><<link [[Study science (_passTimeDisplay)|Gwylan Ocean Breeze Watch]]>><<set $phase to "science">><<set $phase2 to 2>><<scienceskill>><<willpower 1>>_passTime<</link>><<gscience>><<gwillpower>><br>
 		<</if>>
 		<<if $studyBooks.rented.maths is 1 or $studyBooks.stolen.maths is 1>>
 			<<mathicon>><<link [[Study maths (_passTimeDisplay)|Gwylan Ocean Breeze Watch]]>><<set $phase to "maths">><<set $phase2 to 2>><<mathsskill>><<willpower 1>>_passTime<</link>><<gmaths>><<gwillpower>><br>
@@ -1249,7 +1248,7 @@
 		<<switch $worship.tummy>>
 			<<case 8 7 6 5 4 3>><<His>> <<bellyDescription "Gwylan">> is <span class="pink">covered in $_fluid</span>.
 			<<case 2>><<His>> <<bellyDescription "Gwylan">> is <span class="blue">splattered with $_fluid</span>. You can see parts of <<his>> tattoos peeking through.
-			<<case 1>><<His>> <<bellyDescription "Gwylan">> is <span class="teal">smeared with $_fluid</span>. You can see <<his>> tattoos peeking through.
+			<<case 1>><<His>> <<bellyDescription "Gwylan">> is <span class="teal">smeared with $_fluid</span>. You can <<his>> tattoos peeking through.
 			<<default>><<His>> <<bellyDescription "Gwylan">> is <span class="green">clean</span>. <<if $worship.arousal gte 150>>You can see <<his>> tattoos softly glowing.<</if>>
 		<</switch>>
 		<br>
@@ -1334,9 +1333,7 @@
 				<<set $_action to true>>
 				<<link [[Lick the $_fluid off of Gwylan's <<npcGenitals 0>>|$passage]]>><<set $worship.action to "genitals">><</link>><<if !$worship.promGenitals and $worship.control is "player">><<promiscuous2>><</if>>
 			<<else>>
-				<!-- Concats value into string beforehand to prevent error -->
-				<<set $_fluid_string to "to lick the " + $_fluid + " directly off of Gwylan's <<npcGenitals 0>>">>
-				<<insufficientStat "promiscuity" $_fluid_string>>
+				<<insufficientStat "promiscuity" "to lick the $_fluid directly off of Gwylan's <<npcGenitals 0>>">>
 			<</if>>
 			<br>
 		<<else>>
@@ -2304,7 +2301,7 @@
 		"You best remember your promise, dearest."
 	<</if>>
 	<<He>> continues thumbing the petals of the rose off to the side.
-<<elseif $gwylanSeen.includes("yearning") or $gwylanSeen.includesAll("ritual_sex", "pink_rose")>>
+<<elseif $gwylanSeen.includes("yearning") or $gwylanSeen.includesAll("ritual_sex", "pink_rose")>>Gwylan lends a patient ear through it all, before speaking up <<himself>>.
 	"I'll confess, Valentine's is my least favourite time of the year. I'm not terribly romantic." <<He>> pauses. "I try not to be, at least. Too many complicated emotions." <<His>> eyes seem to sharpen towards you at the word 'complicated'.
 	"It's not all terrible, but in the long term, it's going to hurt. Infatuation is doomed to end in tragedy. Love hurts, and true love truly hurts."
 	<br><br>

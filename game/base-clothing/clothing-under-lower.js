@@ -15,7 +15,7 @@ Warmth checklist:
 function initUnderLower() {
 	/** @type {ClothesItem[]} */
 	const clothing = [
-		new ClothesItem({
+		{
 			index: 0,
 			slot: "under_lower",
 			name: "naked",
@@ -58,8 +58,9 @@ function initUnderLower() {
 			iconFile: 0,
 			accIcon: 0,
 			mainImage: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 1,
 			slot: "under_lower",
 			name: "plain panties",
@@ -107,8 +108,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "plain_panties.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 2,
 			slot: "under_lower",
 			name: "bikini bottoms",
@@ -156,8 +158,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "bikini_bottoms.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 3,
 			slot: "under_lower",
 			name: "lace panties",
@@ -205,8 +208,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "lace_panties.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 4,
 			slot: "under_lower",
 			name: "briefs",
@@ -257,8 +261,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "briefs.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 5,
 			slot: "under_lower",
 			name: "chastity belt",
@@ -305,8 +310,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: 0,
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 6,
 			slot: "under_lower",
 			name: "school swimsuit bottom",
@@ -354,8 +360,9 @@ function initUnderLower() {
 			iconFile: "school_swimsuit.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "school swimsuit"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 7,
 			slot: "under_lower",
 			name: "school swim shorts",
@@ -405,8 +412,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "school_swim_shorts.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 8,
 			slot: "under_lower",
 			name: "leotard bottom",
@@ -437,7 +445,7 @@ function initUnderLower() {
 			anus_exposed: 0,
 			anus_exposed_base: 0,
 			no_aside: 1,
-			type: ["dance", "lower_covering", "antitransparent"],
+			type: ["dance", "covered", "antitransparent"],
 			anal_shield: 0,
 			set: "leotard",
 			gender: "n",
@@ -455,8 +463,9 @@ function initUnderLower() {
 			iconFile: "leotard.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "leotard"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 9,
 			slot: "under_lower",
 			name: "unitard bottom",
@@ -488,7 +497,7 @@ function initUnderLower() {
 			anus_exposed: 0,
 			anus_exposed_base: 0,
 			no_aside: 1,
-			type: ["dance", "lower_covering", "antitransparent"],
+			type: ["dance", "covered", "antitransparent"],
 			anal_shield: 0,
 			set: "unitard",
 			gender: "n",
@@ -506,8 +515,9 @@ function initUnderLower() {
 			iconFile: "unitard.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "unitard"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 10,
 			slot: "under_lower",
 			name: "skimpy leotard bottom",
@@ -555,8 +565,9 @@ function initUnderLower() {
 			iconFile: "skimpy_leotard.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "skimpy leotard"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 11,
 			slot: "under_lower",
 			name: "foreign school swimsuit bottom",
@@ -604,8 +615,9 @@ function initUnderLower() {
 			iconFile: "foreign_school_swimsuit.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "foreign school swimsuit"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 12,
 			slot: "under_lower",
 			name: "swimsuit bottom",
@@ -653,8 +665,9 @@ function initUnderLower() {
 			iconFile: "swimsuit.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "swimsuit"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 13,
 			slot: "under_lower",
 			name: "bunny leotard bottom",
@@ -703,8 +716,9 @@ function initUnderLower() {
 			iconFile: "bunny_leotard.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "bunny leotard"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 14,
 			slot: "under_lower",
 			name: "boyshorts",
@@ -752,8 +766,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "boyshorts.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 15,
 			slot: "under_lower",
 			name: "catgirl panties",
@@ -800,8 +815,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "catgirl_panties.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 16,
 			slot: "under_lower",
 			name: "G-string",
@@ -847,8 +863,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "g-string.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 17,
 			slot: "under_lower",
 			name: "crotchless panties",
@@ -895,8 +912,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "crotchless_panties.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 18,
 			slot: "under_lower",
 			name: "microkini bottom",
@@ -943,8 +961,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "microkini_bottom.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 19,
 			slot: "under_lower",
 			name: "speedo",
@@ -991,8 +1010,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "speedo.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 20,
 			slot: "under_lower",
 			name: "striped panties",
@@ -1042,8 +1062,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "striped_panties.png",
 			accIcon: "striped_panties_acc.png",
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 21,
 			slot: "under_lower",
 			name: "loincloth",
@@ -1090,8 +1111,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "loincloth.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 22,
 			slot: "under_lower",
 			name: "thong",
@@ -1138,8 +1160,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "thong.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 23,
 			slot: "under_lower",
 			name: "classic plain panties",
@@ -1187,8 +1210,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "classic_plain_panties.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 24,
 			slot: "under_lower",
 			name: "classic bikini bottoms",
@@ -1236,8 +1260,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "classic_bikini_bottoms.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 25,
 			slot: "under_lower",
 			name: "classic lace panties",
@@ -1285,8 +1310,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "classic_lace_panties.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 26,
 			slot: "under_lower",
 			name: "classic briefs",
@@ -1335,8 +1361,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "classic_briefs.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 27,
 			slot: "under_lower",
 			name: "classic school swimsuit bottom",
@@ -1384,8 +1411,9 @@ function initUnderLower() {
 			iconFile: "classic_school_swimsuit.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "classic school swimsuit"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 28,
 			slot: "under_lower",
 			name: "jockstrap",
@@ -1434,8 +1462,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "jockstrap.png",
 			accIcon: "jockstrap_acc.png",
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 29,
 			slot: "under_lower",
 			name: "boxers",
@@ -1483,8 +1512,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "boxers.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 30,
 			slot: "under_lower",
 			name: "long johns",
@@ -1514,7 +1544,7 @@ function initUnderLower() {
 			anus_exposed: 0,
 			anus_exposed_base: 0,
 			no_aside: 1,
-			type: ["normal", "lower_covering", "antitransparent"],
+			type: ["normal", "covered", "antitransparent"],
 			anal_shield: 0,
 			set: "under_lower",
 			warmth: 3,
@@ -1532,8 +1562,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "long_johns.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 31,
 			slot: "under_lower",
 			name: "school swim bottoms",
@@ -1580,8 +1611,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "school_swim_bottoms.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 32,
 			slot: "under_lower",
 			name: "cow panties",
@@ -1629,8 +1661,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "cow_panties.png",
 			accIcon: "cow_panties_acc.png",
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 33,
 			slot: "under_lower",
 			name: "strap-on",
@@ -1678,8 +1711,9 @@ function initUnderLower() {
 			iconFile: "strap-on.png",
 			accIcon: 0,
 			size: 2,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 34,
 			slot: "under_lower",
 			name: "strap-on horse cock",
@@ -1727,8 +1761,9 @@ function initUnderLower() {
 			iconFile: "strap-on_horse_cock.png",
 			accIcon: 0,
 			size: 4,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 35,
 			slot: "under_lower",
 			name: "strap-on knotted cock",
@@ -1776,8 +1811,9 @@ function initUnderLower() {
 			iconFile: "strap-on_knotted_cock.png",
 			accIcon: 0,
 			size: 3,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 36,
 			slot: "under_lower",
 			name: "strap-on studded cock",
@@ -1825,8 +1861,8 @@ function initUnderLower() {
 			iconFile: "strap-on.png",
 			accIcon: 0,
 			size: 3,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 37,
 			slot: "under_lower",
 			name: "see-through swim bottoms",
@@ -1875,8 +1911,9 @@ function initUnderLower() {
 			iconFile: "see-through_swimsuit.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "see-through swimsuit"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 38,
 			slot: "under_lower",
 			name: "shibari ropes bottom",
@@ -1924,8 +1961,9 @@ function initUnderLower() {
 			iconFile: "shibari_ropes.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "shibari ropes"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 39,
 			slot: "under_lower",
 			name: "highwaisted microkini bottom",
@@ -1973,8 +2011,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "high_microkini_bottom.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 40,
 			slot: "under_lower",
 			name: "turtleneck leotard bottom",
@@ -2023,8 +2062,9 @@ function initUnderLower() {
 			iconFile: "leotardturtleneck.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "turtleneck leotard"],
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 41,
 			slot: "under_lower",
 			name: "tie side bikini bottoms",
@@ -2071,8 +2111,9 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "tieside_bikini_bottoms.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+
+		{
 			index: 42,
 			slot: "under_lower",
 			name: "vintage lace panties",
@@ -2120,8 +2161,8 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "lace_panties.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 43,
 			slot: "under_lower",
 			name: "denim panties",
@@ -2170,8 +2211,8 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "janties.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 44,
 			slot: "under_lower",
 			name: "denim thong",
@@ -2220,8 +2261,8 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "jhong.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 45,
 			slot: "under_lower",
 			name: "latex leotard bottom",
@@ -2270,8 +2311,8 @@ function initUnderLower() {
 			iconFile: "bunny_leotard.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "latex leotard"],
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 46,
 			slot: "under_lower",
 			name: "leather leggings",
@@ -2305,7 +2346,7 @@ function initUnderLower() {
 			anus_exposed: 0,
 			anus_exposed_base: 0,
 			no_aside: 1,
-			type: ["normal", "lower_covering", "waterproof"],
+			type: ["normal", "covered", "waterproof"],
 			set: "under_lower",
 			gender: "n",
 			warmth: 4,
@@ -2322,8 +2363,8 @@ function initUnderLower() {
 			location: 0,
 			iconFile: "leather_leggings.png",
 			accIcon: 0,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 47,
 			slot: "under_lower",
 			name: "gift wrapping bottom",
@@ -2370,8 +2411,8 @@ function initUnderLower() {
 			iconFile: "giftwrap_bottom.png",
 			accIcon: 0,
 			outfitSecondary: ["under_upper", "gift wrappings"],
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 48,
 			slot: "under_lower",
 			name: "strap-on dolphin cock",
@@ -2434,8 +2475,8 @@ function initUnderLower() {
 			iconFile: "strap-on_dolphin_cock.png",
 			accIcon: "strap-on_dolphin_cock_front.png",
 			size: 3,
-		}),
-		new ClothesItem({
+		},
+		{
 			index: 49,
 			slot: "under_lower",
 			name: "strap-on tentacle",
@@ -2483,173 +2524,7 @@ function initUnderLower() {
 			iconFile: "strap-on_tentacle.png",
 			accIcon: "strap-on_dolphin_cock_front.png",
 			size: 3,
-		}),
-		new ClothesItem({
-			index: 50,
-			slot: "under_lower",
-			name: "harness panties",
-			name_cap: "Harness Panties",
-			variable: "harness panties",
-			description: "For strap enjoyers.",
-			cost: 8000,
-			shop: ["adult"],
-			type: ["fetish", "naked"],
-			combat: {
-				reference: "bikini",
-			},
-			state: "waist",
-			state_base: "waist",
-			exposed: 1,
-			exposed_base: 1,
-			vagina_exposed: 1,
-			vagina_exposed_base: 1,
-			anus_exposed: 1,
-			anus_exposed_base: 1,
-			integrity: 100,
-			integrity_max: 100,
-			fabric_strength: 25,
-			reveal: 900,
-			word: "a",
-			one_piece: 0,
-			plural: 0,
-			colour: 0,
-			colour_options: [
-				"black",
-				"navy blue",
-				"wine",
-				"brown",
-				"olive",
-				"pink",
-				"light pink",
-				"purple",
-				"lilac",
-				"red",
-				"tangerine",
-				"teal",
-				"white",
-				"yellow",
-				"custom",
-			],
-			colour_sidebar: 1,
-			accessory: 1,
-			accessory_colour: 0,
-			accessory_colour_options: [],
-			gender: "n",
-			warmth: 1,
-			set: "under_lower",
-			cursed: 0,
-			location: 0,
-			iconFile: "harness-panties.png",
-			accIcon: 0,
-		}),
-		new ClothesItem({
-			index: 51,
-			slot: "under_lower",
-			name: "bloomers",
-			name_cap: "Bloomers",
-			variable: "bloomers",
-			description: "One hundred percent cotton.",
-			cost: 2500,
-			shop: ["clothing"],
-			type: ["normal"],
-			combat: {
-				reference: "plainpanties",
-			},
-			state: "waist",
-			state_base: "waist",
-			exposed: 0,
-			exposed_base: 0,
-			vagina_exposed: 0,
-			vagina_exposed_base: 0,
-			anus_exposed: 0,
-			anus_exposed_base: 0,
-			integrity: 50,
-			integrity_max: 50,
-			fabric_strength: 25,
-			reveal: 400,
-			word: "n",
-			one_piece: 0,
-			plural: 1,
-			colour: 0,
-			colour_options: [
-				"black",
-				"navy blue",
-				"wine",
-				"brown",
-				"olive",
-				"pink",
-				"light pink",
-				"purple",
-				"lilac",
-				"red",
-				"tangerine",
-				"teal",
-				"white",
-				"yellow",
-				"custom",
-			],
-			colour_sidebar: 1,
-			accessory: 0,
-			accessory_colour: 0,
-			accessory_colour_options: [],
-			gender: "n",
-			warmth: 1,
-			set: "under_lower",
-			cursed: 0,
-			location: 0,
-			iconFile: "bloomers.png",
-			accIcon: 0,
-		}),
-		new ClothesItem({
-			index: 52,
-			slot: "under_lower",
-			name: "ruffled swimsuit",
-			variable: "ruffled swimsuit",
-			description: "Frills for the beach.",
-			cost: 0,
-			shop: ["clothing"],
-			type: ["swim", "school", "dance"],
-			combat: {
-				reference: "plainpanties",
-			},
-			integrity: 100,
-			integrity_max: 100,
-			fabric_strength: 25,
-			reveal: 300,
-			word: "a",
-			plural: 0,
-			breast_img: { 0: null, 1: null, 2: null, 3: 3, 4: 4, 5: 5, 6: 5 },
-			colour_options: ["black", "white", "navy blue", "wine", "brown", "light pink", "lilac", "red", "tangerine", "teal", "yellow", "custom"],
-			gender: "f",
-			feminity: 100,
-			warmth: 1,
-			iconFile: "ruffled-swimsuit.png",
-			outfitSecondary: ["under_upper", "ruffled swimsuit"],
-		}),
-		new ClothesItem({
-			index: 53,
-			slot: "under_lower",
-			name: "shell bikini bottom",
-			variable: "shell bikini",
-			description: "Made with handpicked shells.",
-			cost: 4500,
-			shop: ["clothing"],
-			type: ["swim"],
-			combat: {
-				reference: "bikini",
-			},
-			integrity: 50,
-			integrity_max: 50,
-			fabric_strength: 25,
-			reveal: 500,
-			word: "a",
-			plural: 0,
-			colour_options: ["black", "white", "navy blue", "wine", "brown", "light pink", "lilac", "red", "tangerine", "teal", "yellow", "custom"],
-			gender: "f",
-			feminity: 200,
-			warmth: 0,
-			iconFile: "shell-bikini-bottom.png",
-		}),
+		},
 	];
 	setup.clothes.under_lower = clothing;
 

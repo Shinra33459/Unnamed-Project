@@ -466,7 +466,7 @@
 					<<if ($consensual is 0 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55 or $promiscuityIgnore) and currentSkillValue("handskill") gte 800>>
 						<<set _leftaction["Edge"] to "handedge">>
 					<</if>>
-					<<if ($consensual is 1 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55 or $promiscuityIgnore) and !$worn.face.type.includes("face_covering") and !$worn.face.type.includes("gag") and $mouthuse is 0>>
+					<<if ($consensual is 1 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55 or $promiscuityIgnore) and !$worn.face.type.includes("covered") and !$worn.face.type.includes("gag") and $mouthuse is 0>>
 						<<set _leftaction["Move towards your mouth"] to "handpenistomouth">>
 					<</if>>
 					<<if ($consensual is 1 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 35 or $promiscuityIgnore) and $chestuse is 0>>
@@ -829,7 +829,7 @@
 					<<if ($consensual is 0 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55 or $promiscuityIgnore) and currentSkillValue("handskill") gte 800>>
 						<<set _rightaction["Edge"] to "handedge">>
 					<</if>>
-					<<if ($consensual is 1 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55 or $promiscuityIgnore) and !$worn.face.type.includes("face_covering") and !$worn.face.type.includes("gag") and $mouthuse is 0>>
+					<<if ($consensual is 1 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 55 or $promiscuityIgnore) and !$worn.face.type.includes("covered") and !$worn.face.type.includes("gag") and $mouthuse is 0>>
 						<<set _rightaction["Move towards your mouth"] to "handpenistomouth">>
 					<</if>>
 					<<if ($consensual is 1 or ($enemytype is "man" ? $promiscuity : $deviancy) gte 35 or $promiscuityIgnore) and $chestuse is 0>>
@@ -1233,11 +1233,7 @@
 					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<combatPersons>> ass presses against your lips.</span>
 				<<default>>
 					<<if $mouthuse is "righthand" or $mouthuse is "lefthand">>
-						<<if $worn.face.type.includes("face_covering") or $worn.face.type.includes("gag")>>
-							<<set _mouthOptions to "blocked">>
-						<<else>>
-							<<set _mouthOptions to $mouthuse>>
-						<</if>>
+						<<set _mouthOptions to $mouthuse>>
 						<<if $mouthuse is "righthand">>
 							<<selectNpcWithPartInPosition "hand" "mouth">>
 						<<else>>
@@ -1335,7 +1331,7 @@
 		<<switch _mouthOptions>>
 			<<case "free">>
 				<<if $head isnot "grappled" and $head isnot "bound">>
-					<<if !$worn.face.type.includes("face_covering") and !$worn.face.type.includes("gag")>>
+					<<if !$worn.face.type.includes("covered") and !$worn.face.type.includes("gag")>>
 						<<if $chestuse is "penis">>
 							<<set _mouthaction["Kiss tip"] to "peniskiss">>
 						<<else>>
@@ -2169,10 +2165,6 @@
 <<widget "getTargetList">><<silently>>
 	<<unset _firsttarget>>
 	<<set _targetlist to {}>><<set _targetnumber to 0>>
-	/* Reset per-call flags. _wraithbreak MUST start false every time, otherwise a
-	   wraith encountered earlier this save would permanently break the loop below
-	   after the first NPC, collapsing every later multi-target encounter. */
-	<<set _wraithbreak to false>><<set _targetYourself to false>>
 	<<if $NPCList.some( x => Object.values(x).includes("active"))>>
 		<<set _repeatcontroller to []>>
 		<<for _namecontroller = 0; _namecontroller lt $enemynomax; _namecontroller++>>
@@ -2189,7 +2181,7 @@
 			<<elseif $NPCList[_namecontroller].active is "active" and $NPCList[_namecontroller].stance isnot "defeated">>
 				<<if $NPCList[_namecontroller].fullDescription is "Ivory Wraith">>
 					<<set _smoltext to "pale figure">>
-					<<set _wraithbreak to true>>
+					<<set $_wraithbreak to true>>
 				<<else>>
 					<<set _smoltext to $NPCList[_namecontroller].fullDescription>>
 				<</if>>
@@ -2205,7 +2197,7 @@
 				<<if $options.targetYourself is true>>
 					<<set _targetYourself to true>>
 				<</if>>
-				<<if _wraithbreak is true>>
+				<<if $_wraithbreak is true>>
 					<<break>>
 				<</if>>
 			<</if>>
@@ -2214,9 +2206,6 @@
 	<<set _targetlistall to clone(_targetlist)>>
 	<<if $tentacles.active gte 1>>
 		<<set _targetlistall[$tentacles[0].type.toUpperFirst()+"s"] to "tentacles">><<set _targetnumber += 1>>
-		<<if $options.targetYourself is true>>
-			<<set _targetYourself to true>>
-		<</if>>
 	<</if>>
 	<<if $swarm.type isnot 0>>
 		<<set _targetlistall[$swarm.type.toUpperFirst()] to "swarm">><<set _targetnumber += 1>>
@@ -2227,24 +2216,15 @@
 	<<if $struggle isnot undefined>>
 		<<if $struggle.done lt $struggle.number>>
 			<<set _targetlistall[$struggle.creature.toUpperFirst()+"s"] to "struggle">><<set _targetnumber += 1>>
-			<<if $options.targetYourself is true>>
-				<<set _targetYourself to true>>
-			<</if>>
 		<</if>>
 	<</if>>
 	<<if $machine isnot undefined>>
 		<<set _targetlistall["Machine"] to "machine">><<set _targetnumber += 1>>
-		<<if $options.targetYourself is true>>
-			<<set _targetYourself to true>>
-		<</if>>
 	<</if>>
 	<<set _targetlistarms to clone(_targetlistall)>>
 	<<if $vorecreature isnot 0>>
 		<<if $vorestage gt 0>>
 			<<set _targetlistarms["the "+ $vorecreature.toUpperFirst()] to "vore">><<set _targetnumber += 1>>
-			<<if $options.targetYourself is true>>
-				<<set _targetYourself to true>>
-			<</if>>
 		<</if>>
 	<</if>>
 <</silently>><</widget>>
