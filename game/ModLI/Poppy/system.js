@@ -49,7 +49,7 @@ function poppyStatusCheck(poppy = C.npc.Poppy) {
 
 	// Clamp signed value to -100..100
 	poppy.patience = Math.max(-100, Math.min(100, Number(poppy.patience) || 0));
-
+	}
 	// Signed source of truth for UI + logic
 	T.poppyPatienceRaw = poppy.patience;
 
@@ -587,4 +587,4 @@ DefineMacro("poppyRefreshSchedule", poppySchedule);
 		return poppy.pregnancy;
 	}
 	window.poppyPregnancyEnsureState = poppyPregnancyEnsureState;
-})()};
+})();
