@@ -219,6 +219,13 @@ replace (?<!["'\w])_(?=\w) with T.
  * - "worn_SLOT" - generated from sprite prefilter and custom or predefined colour
  * - "worn_SLOT_acc" - generated from sprite prefilter and custom or predefined colour
  */
+
+// Layers that live in scene/world space rather than on the body: never scaled with player height.
+const bodySizeIndependentLayers = new Set([
+	"decoration_background1", "decoration_background2", "nnpc",
+	"precipitation_back", "precipitation_front", "cold_breath", "water_breath", "water_back", "water_front",
+	"fire_back", "fire_front", "petals_back", "petals_front", "wraithFlash", "wraithFlashAccent", "wraithMirror",
+]);
 Renderer.CanvasModels.main = {
 	name: "main",
 	width: 256,
@@ -959,8 +966,8 @@ Renderer.CanvasModels.main = {
 			options.lowerMask.push(options.feet_clip_src);
 			options.legsMask.push(options.feet_clip_src);
 			options.lowerBellyMask.push(options.feet_clip_src);
-		} else if (!options.worn.feet.setup.notuck) {
-			options.legsMask.push(`img/clothes/feet/${options.worn.feet.setup.variable}/mask.png`)
+		} else if (!options.worn.feet.setup.notuck && options.worn.feet.setup.variable) {
+			options.legsMask.push(`img/clothes/feet/${options.worn.feet.setup.variable}/mask.png`);
 		} else {
 			options.feet_clip_src = null;
 		}
@@ -969,7 +976,11 @@ Renderer.CanvasModels.main = {
 
 		if (options.worn.handheld.setup.zIndex === "over_head" ) {
 			options.handheld_overhead = true;
-			options.angel_halo_lower = options.arm_right !== "cover";
+			const lowerHaloEnabled = (["default", "wdDefault", "wdPurple"].includes(options.angel_halo_type) || options.fallen_halo_type === "default") && V.options.lowerHalo == true;
+			options.angel_halo_lower = lowerHaloEnabled && options.arm_right !== "cover";
+		} else if (["right_cover", "over_head"].includes(options.worn.handheld.setup.holdPosition)) {
+			options.handheld_overhead = true;
+			options.angel_halo_lower = false;
 		} else {
 			options.handheld_overhead = null;
 			options.angel_halo_lower = false;
@@ -1883,7 +1894,6 @@ Renderer.CanvasModels.main = {
 			},
 		}),
 		"cow_ear_left": genlayer_ears("cow", false, {
-			z: ZIndices.horns,
 			masksrcfn(options) {
 				if (options.worn.over_upper.setup.name === "kaiju costume")
 					return `img/clothes/over-upper/kaiju/mask.png`;
@@ -1891,9 +1901,6 @@ Renderer.CanvasModels.main = {
 			}
 		}),
 		"cow_ear_right": genlayer_ears("cow", false, {
-			zfn() {
-				return ZIndices.ears + 0.5;
-			},
 			masksrcfn(options) {
 				if (options.worn.over_upper.setup.name === "kaiju costume")
 					return `img/clothes/over-upper/kaiju/mask.png`;
@@ -2346,23 +2353,33 @@ Renderer.CanvasModels.main = {
 				const cfg = V.options.autoNNPCDisplay?.[active];
 				if (!cfg || cfg.slot === 0) return;
 
+				// Named-NPC record lookup. C.npc is keyed by proper-cased names ("Whitney", "Black Wolf"), never by the lowercased folder key in `active`.
+				const properName = active.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+				const npcRecord = C?.npc?.[rawName] ?? C?.npc?.[properName];
+
 				// Gender (respect override if enabled)
 				const pronoun =
-					V.NPCList?.[0]?.pronoun ??
-					C?.npc?.[active]?.pronoun;
+					V.NPCList?.[0]?.pronoun ||
+					npcRecord?.pronoun;
 
 				let gender =
 					(cfg.genderOverride === true && cfg.gender)
 						? cfg.gender
 						: (pronoun === "m" ? "male" : "female");
 
-				// Skin: respect saved choice first
-				let skinChoice = cfg.skin;
-				if (!skinChoice) {
-					const skincolour =
-						V.NPCList?.[0]?.skincolour ??
-						C?.npc?.[active]?.skincolour;
-					skinChoice = isBeast ? "monster" : (skincolour === "white" ? "pale" : "dark");
+				// Skin:  humans follow their actual skin colour (the per-NPC Pale/Dark setting), so the sprite can't be pinned to a stale saved display choice.
+				// The saved choice still decides beast art (human vs monster form) and is the fallback when the actual colour can't be resolved.
+				const skincolour =
+					V.NPCList?.[0]?.skincolour ||
+					npcRecord?.skincolour;
+
+				let skinChoice;
+				if (isBeast) {
+					skinChoice = cfg.skin || "monster";
+				} else if (skincolour) {
+					skinChoice = skincolour === "white" ? "pale" : "dark";
+				} else {
+					skinChoice = cfg.skin || "pale";
 				}
 
 				// Guard: monster only for beasts
@@ -2392,8 +2409,7 @@ Renderer.CanvasModels.main = {
 				// Always return a number
 				if (!T.activeNNPC) return ZIndices.deco_bg2 + 1;
 
-				const cfg = V.options.autoNNPCDisplay?.[T.activeNNPC];
-				const layer = (!T.optionsEnabled && cfg && cfg.layer) ? cfg.layer : V.options.nnpcDisplayLayer;
+				const layer = V.options.nnpcDisplayLayer;
 
 				return layer === "front"
 					? ZIndices.deco_fg1 + 1
@@ -5786,11 +5802,20 @@ function genlayer_clothing_breasts_detail(slot, overrideOptions) {
 		srcfn(options) {
 			const breastImg = options.worn[slot].setup.breast_img;
 			const breastAccImg = options.worn[slot].setup.breast_acc_img;
-			const breastSize = typeof breastAccImg === 'object' ? breastAccImg[options.breast_size] : typeof breastImg === 'object' ? breastImg[options.breast_size] : Math.min(options.breast_size, 6);
+			let breastSize;
+			if (typeof breastAccImg === 'object') breastSize = breastAccImg[options.breast_size];
+			else if (breastAccImg === 1) breastSize = Math.min(options.breast_size, 6);
+			else if (typeof breastImg === 'object') breastSize = breastImg[options.breast_size];
+			else breastSize = Math.min(options.breast_size, 6);
+			if (breastSize == null) return null;
 
 			const pattern = options.worn[slot].pattern ? options.worn[slot].pattern?.replace(/ /g,"-") : '';
 			const folder = normaliseFileName(slot);
 			return`img/clothes/${folder}/${options.worn[slot].setup.variable}/${breastSize}-${pattern}.png`;
+		},
+		masksrcfn(options) {
+			if (options.worn.over_upper.setup.name === "kaiju costume" && !slot.startsWith("over_"))
+				return `img/clothes/over-upper/kaiju/mask.png`;
 		},
 	}, overrideOptions));
 }
@@ -6329,8 +6354,11 @@ function genlayer_halo(side, tf, overrideOptions) {
 			return `img/transformations/${tf}/halo/${options[`${tf}_halo_type`]}-${side}.png`;
 		},
 		showfn(options) {
+			const haloType = options[`${tf}_halo_type`];
+			const frontOnlyHalo = tf === "angel" && ["wdDefault", "wdPurple"].includes(haloType);
 			return options.show_tf
-				&& isPartEnabled(options[`${tf}_halo_type`])
+				&& isPartEnabled(haloType)
+				&& !(side === "back" && frontOnlyHalo)
 				&& !options.hide_all;
 		},
 		dyfn(options) {

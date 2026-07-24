@@ -3,7 +3,7 @@
 <<widget "setupTransformationPiecesObject">>
 	<<if $transformationParts is undefined>>
 		<<set $transformationParts to {
-			traits: {fangs:"disabled", sharpEyes:"disabled", dragonEyes:"disabled", mateForLife:"disabled", chase:"disabled", flaunting:"disabled", preyAnimal:"disabled", strongFeet:"disabled", predatoryAnimal:"disabled", tempTolerance:"disabled"},
+			traits: {fangs:"disabled", sharpEyes:"disabled", dragonEyes:"disabled", mateForLife:"disabled", chase:"disabled", flaunting:"disabled", preyAnimal:"disabled", strongFeet:"disabled", predatoryAnimal:"disabled", tempTolerance:"disabled", aquatic:"disabled", leviathan:"disabled"},
 			angel: {halo:"disabled", wings:"disabled"},
 			fallenAngel: {halo:"disabled", wings:"disabled"},
 			demon: {horns:"disabled", wings:"disabled", tail: "disabled"},
@@ -79,7 +79,7 @@
 			<<if $waterdragon gte 4>>
 				<<set $transformationParts.waterdragon.ears to "default">>
 			<</if>>
-			<<if ($waterdragon gte 6 or ($transformationParts.waterdragon.tail isnot "hidden" and $transformationParts.waterdragon.tail isnot "disabled"))>>
+			<<if ($waterdragon gte 7 or ($transformationParts.waterdragon.tail isnot "hidden" and $transformationParts.waterdragon.tail isnot "disabled"))>>
 				<<set $transformationParts.waterdragon.tail to "default">>
 			<</if>>
 			<<if $bunny gte 4>>
@@ -1124,9 +1124,9 @@
 				<<if $waterdragonbuild gte 50>>
 					<<set $waterdragon to 7>>
 					<<run $timeMessages.pushUnique("waterdragonUp7")>>
-					<<set $transformationParts.waterdragon.tail to "default">>
-					<<set $waterdragontf to 1>>
 					<<set $transformationParts.traits.aquatic to "default">>
+					<<set $TFWaterDragonBuffs to 1>>
+					<<set $waterdragontf to 1>>
 				<<elseif $waterdragonbuild lt 30>>
 					<<set $waterdragon to 5>>
 					<<set $TFWaterDragonBuffs to 0>>
@@ -1142,7 +1142,7 @@
 					<<set $waterdragontf to 0>>
 				<</if>>
 			<<case 99>>
-				<<if ($waterdragon gte 6 or ($transformationParts.waterdragon.tail isnot "hidden" and $transformationParts.waterdragon.tail isnot "disabled"))>>
+				<<if ($waterdragon gte 7 or ($transformationParts.waterdragon.tail isnot "hidden" and $transformationParts.waterdragon.tail isnot "disabled"))>>
 					<<set $physicalTransform to 0>>
 				<</if>>
 				<<set $waterdragon to 0>>
@@ -1161,7 +1161,7 @@
 		<<set $physicalTransform to 1>>
 		<<set $waterdragontf to 1>>
 		<<set $TFWaterDragonBuffs to 1>>
-		<<set $waterdragon to 6>>
+		<<set $waterdragon to 7>>
 		<<set $waterdragonbuild to 100>>
 		<<set $transformationParts.waterdragon.horns to "default">>
 		<<set $transformationParts.waterdragon.ears to "default">>
@@ -1678,5 +1678,31 @@
 			<</for>>
 		<</for>>
 		<<unset $tfPartsHidden>>
+	<</if>>
+<</widget>>
+
+<<widget "syncWaterDragonSkin">>
+	<<set _waterDragonSkinActive to ($waterdragon gte 7 or $waterdragontf is 1)>>
+
+	<<if $waterdragonSkinLock is 1>>
+		<<if $player.skin.color isnot "waterdragon">>
+			<<set $player.skin_temp.color to $player.skin.color>>
+			<<set $player.skin.color to "waterdragon">>
+		<</if>>
+	<<elseif $waterdragonSkinLock is -1>>
+		<<if $player.skin.color is "waterdragon">>
+			<<set $player.skin.color to $player.skin_temp.color>>
+		<</if>>
+	<<else>>
+		<<if _waterDragonSkinActive>>
+			<<if $player.skin.color isnot "waterdragon">>
+				<<set $player.skin_temp.color to $player.skin.color>>
+				<<set $player.skin.color to "waterdragon">>
+			<</if>>
+		<<else>>
+			<<if $player.skin.color is "waterdragon">>
+				<<set $player.skin.color to $player.skin_temp.color>>
+			<</if>>
+		<</if>>
 	<</if>>
 <</widget>>
