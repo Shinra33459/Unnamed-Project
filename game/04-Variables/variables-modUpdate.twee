@@ -1,76 +1,8 @@
 :: Widgets modUpdate [widget]
 <<widget "modupdate">>
-	<<if $angeltf is undefined>>
-		<<set $angeltf to 0>>
-	<</if>>
-	<<if $fallenangeltf is undefined>>
-		<<set $fallenangeltf to 0>>
-	<</if>>
-	<<if $fallenangelplustf is undefined>>
-		<<set $fallenangelplustf to 0>>
-	<</if>>
-	<<if $demontf is undefined>>
-		<<set $demontf to 0>>
-	<</if>>
-	<<if $cattf is undefined>>
-		<<set $cattf to 0>>
-	<</if>>
-	<<if $cowtf is undefined>>
-		<<set $cowtf to 0>>
-	<</if>>
-	<<if $wolftf is undefined>>
-		<<set $wolftf to 0>>
-	<</if>>
-	<<if $player.skin_temp is undefined>>
-		<<set $player.skin_temp to $player.skin>>
-		<<set $player.skin_temp.color to $player.skin.color>>
-	<</if>>
-	<<if $transformationParts.traits.aquatic is undefined>>
-		<<if _traits.aquatic is undefined>><<set _traits.aquatic to (($waterdragon gte 7 or $waterdragontf is 1) ? "default" : "disabled")>><</if>>
-	<</if>>
-	<<if $transformationParts.traits.leviathan is undefined>>
-		<<set $transformationParts.traits.leviathan to "disabled">>
-	<</if>>
-	<<if $waterdragon is undefined>>
-		<<set $waterdragon to 0>>
-	<</if>>
-	<<if $waterdragontf is undefined>>
-		<<set $waterdragontf to 0>>
-	<</if>>
-	<<if $TFWaterDragonBuffs is undefined>>
-		<<if $waterdragon gte 7>>
-			<<set $TFWaterDragonBuffs to 1>>
-		<<else>>
-			<<set $TFWaterDragonBuffs to 0>>
-		<</if>>
-	<</if>>
-	<<if $waterdragonbuild is undefined>>
-		<<set $waterdragonbuild to 0>>
-	<</if>>
-	<<if $transformationParts.waterdragon is undefined>>
-		<<set $transformationParts.waterdragon to {horns:"disabled", ears:"disabled", tail:"disabled"}>>
-	<</if>>
-	<<if $waterdragonSkinLock is undefined>>
-		<<set $waterdragonSkinLock to 0>>
-	<</if>>
-	<<if $waterdragonCosmeticUnlocked is undefined>>
-		<<set $waterdragonCosmeticUnlocked to 0>>
-	<</if>>
-	<<if $harpytf is undefined>>
-		<<set $harpytf to 0>>
-	<</if>>
-	<<if $foxtf is undefined>>
-		<<set $foxtf to 0>>
-	<</if>>
-	<<if $fallenangelretribution is undefined>>
-		<<set $fallenangelretribution to 0>>
-	<</if>>
-	<<if $demonseduce is undefined>>
-		<<set $demonseduce to 0>>
-	<</if>>
-	<<if $begoneThot is undefined>>
-		<<set $begoneThot to 0>>
-	<</if>>
+	/* Genome, modded TF, Buff setup */
+	<<moddedtransformations>>
+	<<run if (window.ImagePack) window.ImagePack.syncState(true)>>
 	<<if $farm isnot undefined>>
 		<<if $farm.tractor is undefined>>
 			<<set $farm.tractor to 0>>
@@ -614,6 +546,14 @@
 	<<if $tirednessMaxScalingToggle is undefined>>
 		<<set $tirednessMaxScalingToggle to 0>>
 	<</if>>
+	/* Moved these next two up here so the tiredness stuff is all together -Bec */
+	<<if isNaN($stress)>>
+		<<set $stress to 0>>
+	<</if>>
+
+	<<if isNaN($tiredness)>>
+		<<set $tiredness to 0>>
+	<</if>>
 
 	<<set $CTAngryLowC to ["snarls", "sneers", "growls", "groans", "yells"]>>
 	<<set $CTAngryMidC to ["mocks you", "sneers", "growls", "groans", "yells"]>>
@@ -743,80 +683,8 @@
 		<<run delete $museumAntiques.antiques.antiqueindigo>>
 	<</if>>
 
-	<<if isNaN($stress)>>
-		<<set $stress to 0>>
-	<</if>>
-
-	<<if isNaN($tiredness)>>
-		<<set $tiredness to 0>>
-	<</if>>
-
 	<<if $realisticTransparency is undefined>>
 		<<set $realisticTransparency to 0>>
-	<</if>>
-
-	<<if $DoLPTFBuffs is undefined>>
-		<<set $DoLPTFBuffs to 0>>
-	<</if>>
-
-	<<if $TFWolfBuffs is undefined>>
-		<<if (($wolfgirl gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "wolf")>>
-			<<set $TFWolfBuffs to 1>>
-		<<else>>
-			<<set $TFWolfBuffs to 0>>
-		<</if>>
-	<</if>>
-
-	<<if $TFCatBuffs is undefined>>
-		<<if (($cat gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "cat")>>
-			<<set $TFCatBuffs to 1>>
-		<<else>>
-			<<set $TFCatBuffs to 0>>
-		<</if>>
-	<</if>>
-
-	<<if $TFCowBuffs is undefined>>
-		<<if (($cow gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "cow")>>
-			<<set $TFCowBuffs to 1>>
-		<<else>>
-			<<set $TFCowBuffs to 0>>
-		<</if>>
-	<</if>>
-
-	<<if $TFBearBuffs is undefined>>
-		<<if $bear gte 6>>
-			<<set $TFBearBuffs to 1>>
-		<<else>>
-			<<set $TFBearBuffs to 0>>
-		<</if>>
-	<</if>>
-
-	<<if $TFBirdBuffs is undefined>>
-		<<if (($harpy gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "bird")>>
-			<<set $TFBirdBuffs to 1>>
-		<<else>>
-			<<set $TFBirdBuffs to 0>>
-		<</if>>
-	<</if>>
-
-	<<if $TFFoxBuffs is undefined>>
-		<<if (($fox gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "fox")>>
-			<<set $TFFoxBuffs to 1>>
-		<<else>>
-			<<set $TFFoxBuffs to 0>>
-		<</if>>
-	<</if>>
-
-	<<if $TFBunnyBuffs is undefined>>
-		<<if (($bunny gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "bunny")>>
-			<<set $TFBunnyBuffs to 1>>
-		<<else>>
-			<<set $TFBunnyBuffs to 0>>
-		<</if>>
-	<</if>>
-
-	<<if $bunnytf is 0 and $TFBunnyBuffs is 1>>
-		<<set $TFBunnyBuffs to 0>>
 	<</if>>
 
 	<<if typeof $background is "string" or $background is undefined>>
@@ -902,26 +770,6 @@
 
 	<<if $background.plantlover is undefined>>
 		<<set $background.plantlover to false>>
-	<</if>>
-
-	<<if $bear is undefined>>
-		<<set $bear to 0>>
-	<</if>>
-
-	<<if $bearbuild is undefined>>
-		<<set $bearbuild to 0>>
-	<</if>>
-
-	<<if $beartf is undefined>>
-		<<set $beartf to 0>>
-	<</if>>
-
-	<<if $transformationParts.bear is undefined>>
-		<<set $transformationParts.bear to {plumage:"disabled", pubes:"disabled", ears:"disabled", tail:"disabled"}>>
-	<</if>>
-
-	<<if $transformationParts.bear.ears is undefined>>
-		<<set $transformationParts.bear.ears to "disabled">>
 	<</if>>
 
 	<<if $reverseRapeOptOut is undefined>>
@@ -1162,7 +1010,9 @@
 	<</if>>
 
 	<<set $parasiteCapMult to Math.clamp(Number($parasiteCapMult) || 1, 1, 10)>>
-
+/* TODO: Bec- I added more up to 24 but there really should be a better way to set this up lmfao. Need to see if 
+it can be as easy as setting facevariants to what exists in the current face folder so there's only as many
+as what's needed by the imagepack? */
 	<<set setup.faceVariantOptions to {
 		"default": {
 			"Gentle": "default",
@@ -1180,35 +1030,23 @@
 			"Modded 7": "modded7",
 			"Modded 8": "modded8",
 			"Modded 9": "modded9",
+			"Modded 10": "modded10",
+			"Modded 11": "modded11",
+			"Modded 12": "modded12",
+			"Modded 13": "modded13",
+			"Modded 14": "modded14",
+			"Modded 15": "modded15",
+			"Modded 16": "modded16",
+			"Modded 17": "modded17",
+			"Modded 18": "modded18",
+			"Modded 19": "modded19",
+			"Modded 20": "modded20",
+			"Modded 21": "modded21",
+			"Modded 22": "modded22",
+			"Modded 23": "modded23",
+			"Modded 24": "modded24",
 		},
 	}>>
-
-	/* Backfill transformation parts for saves that already had these objects before the keys existed. */
-	<<if $transformationParts.waterdragon.horns is undefined>>
-		<<if $waterdragon gte 3 or $waterdragontf is 1>>
-			<<set $transformationParts.waterdragon.horns to "default">>
-		<<else>>
-			<<set $transformationParts.waterdragon.horns to "disabled">>
-		<</if>>
-	<</if>>
-	<<if $transformationParts.waterdragon.ears is undefined>>
-		<<if $waterdragon gte 4 or $waterdragontf is 1>>
-			<<set $transformationParts.waterdragon.ears to "default">>
-		<<else>>
-			<<set $transformationParts.waterdragon.ears to "disabled">>
-		<</if>>
-	<</if>>
-	<<if $transformationParts.waterdragon.tail is undefined>>
-		<<if $waterdragon gte 7 or $waterdragontf is 1>>
-			<<set $transformationParts.waterdragon.tail to "default">>
-		<<else>>
-			<<set $transformationParts.waterdragon.tail to "disabled">>
-		<</if>>
-	<</if>>
-
-	<<if $transformationParts.bunny is undefined>>
-		<<set $transformationParts.bunny to {ears:"disabled", tail:"disabled"}>>
-	<</if>>
 
 	<<if $stressBeauty is undefined>>
 		<<set $stressBeauty to 0>>
@@ -1220,18 +1058,6 @@
 
 	<<if $fame.undefined isnot undefined>>
 		<<run delete $fame.undefined>>
-	<</if>>
-
-	<<if $wingslayer is undefined>>
-		<<set $wingslayer to "back">>
-	<</if>>
-
-	<<if $harpytf is 1 or $angeltf is 1 or $fallenangeltf is 1 or $fallenangelplustf is 1 or $demontf is 1>>
-		<<set $birdGlide to 1>>
-	<</if>>
-
-	<<if $harpytf is 1 or $birdFlyUnlocked is 1 or ($bird.syndrome isnot undefined and $bird.lock is undefined)>>
-		<<set $birdFly to 1>>
 	<</if>>
 
 	<<if $combatExtended.standingFightsType is undefined>>
@@ -1248,18 +1074,6 @@
 
 	<<if $farmCottageLocked is undefined>>
 		<<set $farmCottageLocked to 0>>
-	<</if>>
-
-	<<if $transformationParts.okami is undefined>>
-		<<set $transformationParts.okami to {ears:"disabled", tail:"disabled", wings:"disabled", misc:"disabled"}>>
-	<</if>>
-
-	<<if $transformationParts.seraphim is undefined>>
-		<<set $transformationParts.seraphim to {wings:"disabled", plumage:"disabled", eyes:"disabled"}>>
-	<</if>>
-
-	<<if $transformationParts.kitsune is undefined>>
-		<<set $transformationParts.kitsune to {ears:"disabled", tail:"disabled", cheeks:"disabled", misc:"disabled"}>>
 	<</if>>
 
 	<<if $produce_yield_factor is undefined>>
@@ -1331,22 +1145,6 @@
 
 	<<if $mathsTraitBuffs.aphrodisiacPhials is undefined>>
 		<<set $mathsTraitBuffs.aphrodisiacPhials to 0>>
-	<</if>>
-
-	<<if $transformationParts.traits.tempTolerance is undefined>>
-		<<set $transformationParts.traits.tempTolerance to "disabled">>
-	<</if>>
-
-	<<if $DoLPTFTempTolerance is undefined>>
-		<<set $DoLPTFTempTolerance to 0>>
-	<</if>>
-
-	<<if $transformationParts.traits.activeTF is undefined>>
-		<<set $transformationParts.traits.activeTF to "disabled">>
-	<</if>>
-
-	<<if $transformationParts.traits.activeTFOverride is undefined>>
-		<<set $transformationParts.traits.activeTFOverride to false>>
 	<</if>>
 
 	<<if $uncomfortable.underwearPublic is undefined>>
@@ -1475,10 +1273,6 @@
 	<<if $hbsc.account.deposit is undefined or $hbsc.account.deposit is {}>>
 		<<set $hbsc.account.deposit to 0>>
 	<</if>>
-
-	<<if $specialTransform is 1 and ($angel is 0 and $fallenangel is 0 and $demon is 0)>>
-		<<set $specialTransform to 0>>
-	<</if>>
 	
 	<<if $specialClothesEffects isnot undefined and $specialClothesEffects.bimbo.progress is undefined>>
 		<<set $specialClothesEffects to {
@@ -1569,8 +1363,68 @@
 	<<if $options.lowerHalo is undefined>>
 		<<set $options.lowerHalo to true>>
 	<</if>>
-
+/* DOLP NNPC
+ * Bec - I moved the if statements and widgets into one place to make future bugfixing easier.
+ * Also modli-init already does what modnewnamednpcs does for poppy so i put it first. */
+	<<modLI-init>>
 	<<modNewNamedNPCs>>
+
+	/* Poppy LI data migration. Use the save's NPC index rather than the static alias index. */
+	<<if $objectVersion.poppyLIData is undefined or $objectVersion.poppyLIData lt 2>>
+		<<if $daily is undefined or $daily is null or typeof $daily isnot "object" or Array.isArray($daily)>>
+			<<set $daily to {}>>
+		<</if>>
+		<<if $daily.poppy is undefined or $daily.poppy is null or typeof $daily.poppy isnot "object" or Array.isArray($daily.poppy)>>
+			<<set $daily.poppy to {}>>
+		<</if>>
+
+		<<if !Array.isArray($poppySeen)>>
+			<<if $poppySeen isnot undefined>>
+				<<set $poppySeen_legacy to $poppySeen>>
+			<</if>>
+			<<set $poppySeen to []>>
+		<</if>>
+
+		<<set _poppyIndex to (Array.isArray($NPCNameList) ? $NPCNameList.indexOf("Poppy") : -1)>>
+		<<if _poppyIndex gte 0 and $NPCName[_poppyIndex]>>
+			<<set _poppy to $NPCName[_poppyIndex]>>
+			<<if _poppy.timer is undefined or _poppy.timer is null or typeof _poppy.timer isnot "object" or Array.isArray(_poppy.timer)>><<set _poppy.timer to {}>><</if>>
+			<<if _poppy.timer.lastInteraction is undefined or _poppy.timer.lastInteraction is "">><<set _poppy.timer.lastInteraction to Time.date.timeStamp>><</if>>
+			<<if _poppy.timer.lastPatienceDecay is undefined or _poppy.timer.lastPatienceDecay is "">><<set _poppy.timer.lastPatienceDecay to Time.date.timeStamp>><</if>>
+			<<if typeof _poppy.patience isnot "number" or Number.isNaN(_poppy.patience)>><<set _poppy.patience to 100>><</if>>
+			<<if _poppy.pregnancy is undefined or _poppy.pregnancy is null or typeof _poppy.pregnancy isnot "object" or Array.isArray(_poppy.pregnancy)>>
+				<<set _poppy.pregnancy to { fetus: [], enabled: true, type: null }>>
+			<<else>>
+				<<if !Array.isArray(_poppy.pregnancy.fetus)>><<set _poppy.pregnancy.fetus to []>><</if>>
+				<<if typeof _poppy.pregnancy.enabled isnot "boolean">><<set _poppy.pregnancy.enabled to true>><</if>>
+				<<if _poppy.pregnancy.type is "none" or _poppy.pregnancy.type is undefined>><<set _poppy.pregnancy.type to null>>
+
+				<<elseif _poppy.pregnancy.type and !_poppy.pregnancy.fetus.length and !_poppy.pregnancy.timerEnd>><<set _poppy.pregnancy.type to null>><</if>>
+			<</if>>
+			<<set $objectVersion.poppyPregnancy to 1>>
+			<<set $objectVersion.poppyLIData to 2>>
+		<</if>>
+	<</if>>
+	<<if C.npc is undefined or C.npc.Poppy is undefined>>
+		/* stop here; Poppy base object must exist first */
+	<<else>>
+		<<set _poppyIndex to $NPCNameList.indexOf("Poppy")>>
+		<<if _poppyIndex is -1>>
+			/* Poppy missing entirely: append both list + object */
+			<<run $NPCNameList.push("Poppy")>>
+			<<run $NPCName.push(C.npc.Poppy)>>
+		<<else>>
+			/* Poppy name exists, but object slot may be missing/wrong */
+			<<if $NPCName[_poppyIndex] is undefined or $NPCName[_poppyIndex].nam isnot "Poppy">>
+				<<set $NPCName[_poppyIndex] to C.npc.Poppy>>
+			<</if>>
+		<</if>>
+	<</if>>
+
+	<<set $opium_addiction to $opium_addiction ?? 0>>
+	<<set $opium_timer to $opium_timer ?? 0>>
+	<<set $opium_knowledge to $opium_knowledge ?? 0>>
+	<<set $opium_message to $opium_message ?? "">>
 
 	<<if $options.autoNNPCDisplay is undefined>>
 		<<set $options.autoNNPCDisplay to {
@@ -1624,7 +1478,7 @@
 	<</if>>
 
 	<<if $options.nnpcDisplayGender is undefined>>
-		<<set $options.nnpcDisplayGender to "male">>
+		<<set $options.nnpcDisplayGender to either("male", "female")>>
 	<</if>>
 
 	<<if $options.autoNNPCDisplay.morgan.gender is "">>
@@ -1650,7 +1504,7 @@
 	<</if>>
 
 	<<if $options.nnpcDisplaySkin is undefined>>
-		<<set $options.nnpcDisplaySkin to "pale">>
+		<<set $options.nnpcDisplaySkin to either("pale", "dark")>>
 	<</if>>
 
 	<<if $nnpcHealthMult is undefined>>
@@ -1688,92 +1542,6 @@
 		<<set $options.statNerf to 100>>
 	<</if>>
 
-	<<set setup.loveAlias to {
-		"Avery": () => "Love",
-		"Bailey": () => "Respect",
-		"Briar": () => "Respect",
-		"Charlie": () => "Respect",
-		"Darryl": () => "Affection",
-		"Doren": () => "Affection",
-		"Eden": () => "Love",
-		"Gwylan": () => V.gwylanSeen?.includes("partners") ? "Love" : "Interest",
-		"Harper": () => "Interest",
-		"Jordan": () => "Respect",
-		"Kylar": () => "Love",
-		"Landry": () => "Interest",
-		"Leighton": () => "Interest",
-		"Mason": () => "Affection",
-		"Morgan": () => "Affection",
-		"River": () => "Respect",
-		"Robin": () => "Love",
-		"Sam": () => "Respect",
-		"Sirris": () => "Affection",
-		"Whitney": () => "Love",
-		"Winter": () => "Affection",
-		"Black Wolf": () => "Love",
-		"Niki": () => "Respect",
-		"Quinn": () => "Interest",
-		"Remy": () => "Interest",
-		"Alex": () => "Love",
-		"Great Hawk": () => "Love",
-		"Wren": () => "Affection",
-		"Sydney": () => "Love",
-		"Ivory Wraith": () => "Love",
-		"Zephyr": () => "Interest",
-		"Riley": () => "Respect",
-		"Night Monster": () => "Love",
-		"Poppy": () => "Love",
-
-		/* Persistent NPC */
-		"anxious_guard": () => "Respect",
-		"hacker": () => "Respect",
-		"manager": () => "Affection",
-		"methodical_guard": () => "Respect",
-		"relaxed_guard": () => "Respect",
-		"scarred_inmate": () => "Affection",
-		"tattoed_inmate": () => "Interest",
-		"veteran_guard": () => "Respect"
-	}>>
-
-	<<modLI-init>>
-
-	/* Poppy LI data migration. Use the save's NPC index rather than the static alias index. */
-	<<if $objectVersion.poppyLIData is undefined or $objectVersion.poppyLIData lt 2>>
-		<<if $daily is undefined or $daily is null or typeof $daily isnot "object" or Array.isArray($daily)>>
-			<<set $daily to {}>>
-		<</if>>
-		<<if $daily.poppy is undefined or $daily.poppy is null or typeof $daily.poppy isnot "object" or Array.isArray($daily.poppy)>>
-			<<set $daily.poppy to {}>>
-		<</if>>
-
-		<<if !Array.isArray($poppySeen)>>
-			<<if $poppySeen isnot undefined>>
-				<<set $poppySeen_legacy to $poppySeen>>
-			<</if>>
-			<<set $poppySeen to []>>
-		<</if>>
-
-		<<set _poppyIndex to (Array.isArray($NPCNameList) ? $NPCNameList.indexOf("Poppy") : -1)>>
-		<<if _poppyIndex gte 0 and $NPCName[_poppyIndex]>>
-			<<set _poppy to $NPCName[_poppyIndex]>>
-			<<if _poppy.timer is undefined or _poppy.timer is null or typeof _poppy.timer isnot "object" or Array.isArray(_poppy.timer)>><<set _poppy.timer to {}>><</if>>
-			<<if _poppy.timer.lastInteraction is undefined or _poppy.timer.lastInteraction is "">><<set _poppy.timer.lastInteraction to Time.date.timeStamp>><</if>>
-			<<if _poppy.timer.lastPatienceDecay is undefined or _poppy.timer.lastPatienceDecay is "">><<set _poppy.timer.lastPatienceDecay to Time.date.timeStamp>><</if>>
-			<<if typeof _poppy.patience isnot "number" or Number.isNaN(_poppy.patience)>><<set _poppy.patience to 100>><</if>>
-			<<if _poppy.pregnancy is undefined or _poppy.pregnancy is null or typeof _poppy.pregnancy isnot "object" or Array.isArray(_poppy.pregnancy)>>
-				<<set _poppy.pregnancy to { fetus: [], enabled: true, type: null }>>
-			<<else>>
-				<<if !Array.isArray(_poppy.pregnancy.fetus)>><<set _poppy.pregnancy.fetus to []>><</if>>
-				<<if typeof _poppy.pregnancy.enabled isnot "boolean">><<set _poppy.pregnancy.enabled to true>><</if>>
-				<<if _poppy.pregnancy.type is "none" or _poppy.pregnancy.type is undefined>><<set _poppy.pregnancy.type to null>>
-
-				<<elseif _poppy.pregnancy.type and !_poppy.pregnancy.fetus.length and !_poppy.pregnancy.timerEnd>><<set _poppy.pregnancy.type to null>><</if>>
-			<</if>>
-			<<set $objectVersion.poppyPregnancy to 1>>
-			<<set $objectVersion.poppyLIData to 2>>
-		<</if>>
-	<</if>>
-
 	<<set $robinmoney to Math.round($robinmoney)>>
 
 	<<set _remove to ["Salem", "Casey", "Tracey", "Taylor"]>>
@@ -1794,27 +1562,6 @@
 		<</for>>
 	<</if>>
 
-	<<if C.npc is undefined or C.npc.Poppy is undefined>>
-		/* stop here; Poppy base object must exist first */
-	<<else>>
-		<<set _poppyIndex to $NPCNameList.indexOf("Poppy")>>
-		<<if _poppyIndex is -1>>
-			/* Poppy missing entirely: append both list + object */
-			<<run $NPCNameList.push("Poppy")>>
-			<<run $NPCName.push(C.npc.Poppy)>>
-		<<else>>
-			/* Poppy name exists, but object slot may be missing/wrong */
-			<<if $NPCName[_poppyIndex] is undefined or $NPCName[_poppyIndex].nam isnot "Poppy">>
-				<<set $NPCName[_poppyIndex] to C.npc.Poppy>>
-			<</if>>
-		<</if>>
-	<</if>>
-
-	<<set $opium_addiction to $opium_addiction ?? 0>>
-	<<set $opium_timer to $opium_timer ?? 0>>
-	<<set $opium_knowledge to $opium_knowledge ?? 0>>
-	<<set $opium_message to $opium_message ?? "">>
-
 	<<if $player.virginity.penile is "Frostberg">>
 		<<set $player.virginity.penile to "unknown">>
 	<</if>>
@@ -1832,13 +1579,10 @@
 	<</if>>
 
 	<<modParasiteCapUpdate>>
-
 	<<modWardrobeUpdate>>
-
 	<<amcTraitsUpdate>>
 	<<modRingsEarrings>>
 	<<bikeUpdate>>
-
 
 	<<clamp>>
 <</widget>>
@@ -2322,7 +2066,7 @@
 		<<else>>
 			<<set $bicycle.theftEnabled to true>>
 		<</if>>
-				<<if $bicycle.quality is 0>>
+		<<if $bicycle.quality is 0>>
 			<<set $bicycle.own to false>>
 		<</if>>
 		<<set $bicycle.location to $bikeLocation>>
@@ -2342,10 +2086,21 @@
 			<<default>>
 				<<set $bicycle.locationRegion to "">>
 		<</switch>>
+		<<if $farm_stage isnot undefined>>
+			<<set $bicycle.farmlandsUnlocked to true>>
+		<<else>>
+			<<set $bicycle.farmlandsUnlocked to null>>
+		<</if>>
+		<<if $feats.currentSave["Wet and Ruined"] !== undefined>>
+			<<set $bicycle.castleUnlocked to true>>
+		<<else>>
+			<<set $bicycle.castleUnlocked to null>>
+		<</if>>
 		<<unset $bikeLocation, $bikeStart>>
 		<<set $bicycle.stolenCooldown to 3>>
 		<<unset $bikeLocation, $bikeStart, $bikeBrakes, $bikeGrips, $bikePedals, $bikeSuspension, $bikeTires, $bikeTubeless, $bikeSecurityGear, $bikeSecurityGearStolen, $bikeDestination, $bikeEndCategory, $bikeStartCategory, $bike>>
 	<</if>>
+	/* Quality catch and location fix */
 	<<if $objectVersion.bikeUpdate lt 3>>
 		<<if $bicycle.quality is 0>>
 			<<set $bicycle.own to false>>
@@ -2370,7 +2125,6 @@
 		<<unset $bikeLocation, $bikeStart>>
 		<<set $bicycle.stolenCooldown to 3>>
 	<</if>>
-	/* increment this whenever you need to i guess */
 	/* catches for me changing variables during bug testing... */
 	<<if $bicycle.persistentLocation is "true">>
 		<<set $bicycle.persistentLocation to true>>
@@ -2397,5 +2151,239 @@
 	<<elseif $bicycle.securityStolen is "false">>
 		<<set $bicycle.securityStolen to false>>
 	<</if>>
-	<<set $objectVersion.bikeUpdate to 3>>
+	/* Changing/fixing bike area unlocks */
+	<<if $objectVersion.bikeUpdate lt 4>>
+		<<if $farm_stage isnot undefined>>
+			<<set $bicycle.farmlandsUnlocked to true>>
+		<<else>>
+			<<set $bicycle.farmlandsUnlocked to null>>
+		<</if>>
+		<<if $feats.currentSave["Wet and Ruined"] !== undefined>>
+			<<set $bicycle.castleUnlocked to true>>
+		<<else>>
+			<<set $bicycle.castleUnlocked to null>>
+		<</if>>
+	<</if>>
+	/* increment this whenever you need to, remember it's also in variables-start.twee */
+	<<set $objectVersion.bikeUpdate to 4>>
+<</widget>>
+
+<<widget "moddedtransformations">>
+/* Genome setup */
+	<<if $angeltf is undefined>>
+		<<set $angeltf to 0>>
+	<</if>>
+	<<if $fallenangeltf is undefined>>
+		<<set $fallenangeltf to 0>>
+	<</if>>
+	<<if $fallenangelplustf is undefined>>
+		<<set $fallenangelplustf to 0>>
+	<</if>>
+	<<if $demontf is undefined>>
+		<<set $demontf to 0>>
+	<</if>>
+	<<if $cattf is undefined>>
+		<<set $cattf to 0>>
+	<</if>>
+	<<if $cowtf is undefined>>
+		<<set $cowtf to 0>>
+	<</if>>
+	<<if $wolftf is undefined>>
+		<<set $wolftf to 0>>
+	<</if>>
+	<<if $harpytf is undefined>>
+		<<set $harpytf to 0>>
+	<</if>>
+	<<if $foxtf is undefined>>
+		<<set $foxtf to 0>>
+	<</if>>
+	<<if $fallenangelretribution is undefined>>
+		<<set $fallenangelretribution to 0>>
+	<</if>>
+	<<if $demonseduce is undefined>>
+		<<set $demonseduce to 0>>
+	<</if>>
+	<<if $begoneThot is undefined>>
+		<<set $begoneThot to 0>>
+	<</if>>
+	<<if $wingslayer is undefined>>
+		<<set $wingslayer to "back">>
+	<</if>>
+	<<if $harpytf is 1 or $angeltf is 1 or $fallenangeltf is 1 or $fallenangelplustf is 1 or $demontf is 1>>
+		<<set $birdGlide to 1>>
+	<</if>>
+	<<if $harpytf is 1 or $birdFlyUnlocked is 1 or ($bird.syndrome isnot undefined and $bird.lock is undefined)>>
+		<<set $birdFly to 1>>
+	<</if>>
+	<<if $specialTransform is 1 and ($angel is 0 and $fallenangel is 0 and $demon is 0)>>
+		<<set $specialTransform to 0>>
+	<</if>>
+/* Bear */
+	<<if $bear is undefined>>
+		<<set $bear to 0>>
+	<</if>>
+	<<if $bearbuild is undefined>>
+		<<set $bearbuild to 0>>
+	<</if>>
+	<<if $beartf is undefined>>
+		<<set $beartf to 0>>
+	<</if>>
+	<<if $transformationParts.bear is undefined>>
+		<<set $transformationParts.bear to {plumage:"disabled", pubes:"disabled", ears:"disabled", tail:"disabled"}>>
+	<</if>>
+	<<if $transformationParts.bear.ears is undefined>>
+		<<set $transformationParts.bear.ears to "disabled">>
+	<</if>>
+
+/* Bunny */
+	<<if $transformationParts.bunny is undefined>>
+		<<set $transformationParts.bunny to {ears:"disabled", tail:"disabled"}>>
+	<</if>>
+	<<if $bunnytf is 0 and $TFBunnyBuffs is 1>>
+		<<set $TFBunnyBuffs to 0>>
+	<</if>>
+
+/* Water Dragon */
+	<<if $waterdragon is undefined>>
+		<<set $waterdragon to 0>>
+	<</if>>
+	<<if $waterdragontf is undefined>>
+		<<set $waterdragontf to 0>>
+	<</if>>
+	<<if $TFWaterDragonBuffs is undefined>>
+		<<if $waterdragon gte 7>>
+			<<set $TFWaterDragonBuffs to 1>>
+		<<else>>
+			<<set $TFWaterDragonBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $waterdragonbuild is undefined>>
+		<<set $waterdragonbuild to 0>>
+	<</if>>
+	<<if $transformationParts.waterdragon is undefined>>
+		<<set $transformationParts.waterdragon to {horns:"disabled", ears:"disabled", tail:"disabled"}>>
+	<</if>>
+	<<if $waterdragonSkinLock is undefined>>
+		<<set $waterdragonSkinLock to 0>>
+	<</if>>
+	<<if $waterdragonCosmeticUnlocked is undefined>>
+		<<set $waterdragonCosmeticUnlocked to 0>>
+	<</if>>
+/* Backfill transformation parts for saves that already had these objects before the keys existed. */
+	<<if $transformationParts.waterdragon.horns is undefined>>
+		<<if $waterdragon gte 3 or $waterdragontf is 1>>
+			<<set $transformationParts.waterdragon.horns to "default">>
+		<<else>>
+			<<set $transformationParts.waterdragon.horns to "disabled">>
+		<</if>>
+	<</if>>
+	<<if $transformationParts.waterdragon.ears is undefined>>
+		<<if $waterdragon gte 4 or $waterdragontf is 1>>
+			<<set $transformationParts.waterdragon.ears to "default">>
+		<<else>>
+			<<set $transformationParts.waterdragon.ears to "disabled">>
+		<</if>>
+	<</if>>
+	<<if $transformationParts.waterdragon.tail is undefined>>
+		<<if $waterdragon gte 7 or $waterdragontf is 1>>
+			<<set $transformationParts.waterdragon.tail to "default">>
+		<<else>>
+			<<set $transformationParts.waterdragon.tail to "disabled">>
+		<</if>>
+	<</if>>
+	<<if $player.skin_temp is undefined>>
+		<<set $player.skin_temp to $player.skin>>
+		<<set $player.skin_temp.color to $player.skin.color>>
+	<</if>>
+	/* Changed traits.leviathan to traits.wdgrace to open leviathan back up for other tfs.
+	 * This will NEED to be updated to account for the future tf should it ever come to be */
+	<<if $transformationParts.traits.leviathan isnot undefined>>
+		<<set $transformationParts.traits.wdgrace to $transformationParts.traits.leviathan>>
+		<<unset $transformationParts.traits.leviathan>>
+	<</if>>
+	<<if $transformationParts.traits.aquatic is undefined>>
+		<<set $transformationParts.traits.aquatic to (($waterdragon gte 7 or $waterdragontf is 1) ? "default" : "disabled")>>
+	<</if>>
+	<<if $transformationParts.traits.wdgrace is undefined>>
+		<<set $transformationParts.traits.wdgrace to (($waterdragon gte 6 or $waterdragontf is 1) ? "default" : "disabled")>>
+	<</if>>
+	<<if $transformationParts.traits.dragonEyes is undefined>>
+		<<set $transformationParts.traits.dragonEyes to (($waterdragon gte 2 or $waterdragontf is 1) ? "default" : "disabled")>>
+	<</if>>
+/* Chimeras */
+	<<if $transformationParts.okami is undefined>>
+		<<set $transformationParts.okami to {ears:"disabled", tail:"disabled", wings:"disabled", misc:"disabled"}>>
+	<</if>>
+	<<if $transformationParts.seraphim is undefined>>
+		<<set $transformationParts.seraphim to {wings:"disabled", plumage:"disabled", eyes:"disabled"}>>
+	<</if>>
+	<<if $transformationParts.kitsune is undefined>>
+		<<set $transformationParts.kitsune to {ears:"disabled", tail:"disabled", cheeks:"disabled", misc:"disabled"}>>
+	<</if>>
+
+/* DOLP Transformation Buffs */
+	<<if $TFWolfBuffs is undefined>>
+		<<if (($wolfgirl gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "wolf")>>
+			<<set $TFWolfBuffs to 1>>
+		<<else>>
+			<<set $TFWolfBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $TFCatBuffs is undefined>>
+		<<if (($cat gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "cat")>>
+			<<set $TFCatBuffs to 1>>
+		<<else>>
+			<<set $TFCatBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $TFCowBuffs is undefined>>
+		<<if (($cow gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "cow")>>
+			<<set $TFCowBuffs to 1>>
+		<<else>>
+			<<set $TFCowBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $TFBearBuffs is undefined>>
+		<<if $bear gte 6>>
+			<<set $TFBearBuffs to 1>>
+		<<else>>
+			<<set $TFBearBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $TFBirdBuffs is undefined>>
+		<<if (($harpy gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "bird")>>
+			<<set $TFBirdBuffs to 1>>
+		<<else>>
+			<<set $TFBirdBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $TFFoxBuffs is undefined>>
+		<<if (($fox gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "fox")>>
+			<<set $TFFoxBuffs to 1>>
+		<<else>>
+			<<set $TFFoxBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $TFBunnyBuffs is undefined>>
+		<<if (($bunny gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "bunny")>>
+			<<set $TFBunnyBuffs to 1>>
+		<<else>>
+			<<set $TFBunnyBuffs to 0>>
+		<</if>>
+	<</if>>
+	<<if $DoLPTFBuffs is undefined>>
+		<<set $DoLPTFBuffs to 0>>
+	<</if>>
+	<<if $transformationParts.traits.tempTolerance is undefined>>
+		<<set $transformationParts.traits.tempTolerance to "disabled">>
+	<</if>>
+	<<if $DoLPTFTempTolerance is undefined>>
+		<<set $DoLPTFTempTolerance to 0>>
+	<</if>>
+	<<if $transformationParts.traits.activeTF is undefined>>
+		<<set $transformationParts.traits.activeTF to "disabled">>
+	<</if>>
+	<<if $transformationParts.traits.activeTFOverride is undefined>>
+		<<set $transformationParts.traits.activeTFOverride to false>>
+	<</if>>
 <</widget>>

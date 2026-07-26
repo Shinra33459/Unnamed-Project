@@ -316,10 +316,7 @@ function genderappearancecheck() {
 	} else if (playerBellySize() >= 18) {
 		addfemininityfromfactor(Math.clamp(10000, 0, Infinity), playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly");
 	} else if (playerBellySize() >= 8) {
-		addfemininityfromfactor(
-			Math.clamp((playerBellySize() - 7) * 250, 0, Infinity),
-			playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly"
-		);
+		addfemininityfromfactor(Math.clamp((playerBellySize() - 7) * 250, 0, Infinity), playerAwareTheyArePregnant() ? "Pregnant Belly" : "Pregnant Looking Belly");
 	}
 	/* Body writing */
 	bodywritingExposureCheck(true);
@@ -577,7 +574,7 @@ function calculateallure() {
 	if (!V.worn.over_upper.type.includes("naked")) {
 		baseattractiveness += V.worn.over_upper.reveal;
 	} else {
-		const topmult = V.worn.lower.type.includes("overalls") ? 1 : 1;
+		const topmult = V.worn.lower.type.includes("overalls") ? 0.5 : 1;
 		baseattractiveness += V.worn.upper.reveal * topmult;
 		if (V.worn.upper.type.includes("naked")) baseattractiveness += V.worn.under_upper.reveal * topmult;
 	}
@@ -598,9 +595,10 @@ function calculateallure() {
 	if (partsDisabled("wolf", ["tail", "ears"]) < 2) attractiveness += 500 - 150 * partsDisabled("wolf", ["tail", "ears"]);
 	if (partsDisabled("cat", ["tail", "ears"]) < 2) attractiveness += 500 - 150 * partsDisabled("cat", ["tail", "ears"]);
 	if (partsDisabled("cow", ["ears", "horns", "tail"]) < 3) attractiveness += 500 - 100 * partsDisabled("cow", ["ears", "horns", "tail"]);
-	if (partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]) < 5) attractiveness += 500 - 60 * partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]);
+	if (partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]) < 5)
+		attractiveness += 500 - 60 * partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]);
 	if (partsDisabled("fox", ["ears", "tail"]) < 2) attractiveness += 750 - 225 * partsDisabled("fox", ["ears", "tail"]);
-	if (partsDisabled("bunny", ["ears","tail"]) < 2) attractiveness += 500 - 225 * partsDisabled("bunny", ["ears","tail"]);
+	if (partsDisabled("bunny", ["ears", "tail"]) < 2) attractiveness += 500 - 225 * partsDisabled("bunny", ["ears", "tail"]);
 	if (partsDisabled("okami", ["ears", "tail", "wings"]) < 3) attractiveness += 1000 - 225 * partsDisabled("okami", ["ears", "tail", "wings"]);
 	if (partsDisabled("seraphim", ["wings", "plumage"]) < 2) attractiveness += 1000 - 400 * partsDisabled("seraphim", ["wings", "plumage"]);
 	if (partsDisabled("kitsune", ["ears", "tail", "cheeks"]) < 3) attractiveness += 1000 - 225 * partsDisabled("kitsune", ["ears", "tail", "cheeks"]);
@@ -632,7 +630,7 @@ function calculateallure() {
 	if (V.auriga_scar) allure += V.auriga_scar * 500;
 	allure = Math.clamp(allure, 0, 8000);
 	V.baseAllure = allure;
-	if (V.hallucinogen >= 1 && V.substanceRebalance === 1) V.allure *= 1 + (0.25 * (V.hallucinogen / 250))
+	if (V.hallucinogen >= 1 && V.substanceRebalance === 1) V.allure *= 1 + 0.25 * (V.hallucinogen / 250);
 	/* extra modifiers */
 	allure *= V.settings.allureModifier;
 	if (V.moorLuck > 0) allure *= 1 - V.moorLuck / 100;
@@ -766,14 +764,9 @@ function inappropriatePlayerState(check = ["all"]) {
 				["naked", "fetish"].includes(V.worn.lower.type) ||
 				V.worn.lower.reveal >= 700 ||
 				integrityKeyword(V.worn.lower, "lower") === "tattered" ||
-				[
-					"large towel bottom",
-					"towel skirt",
-					"bathrobe bottom",
-					"catsuit bottoms",
-					"oversized button-down bottom",
-					"oversized sweater bottom",
-				].includes(V.worn.lower.name)
+				["large towel bottom", "towel skirt", "bathrobe bottom", "catsuit bottoms", "oversized button-down bottom", "oversized sweater bottom"].includes(
+					V.worn.lower.name
+				)
 			)
 				return true;
 		}
@@ -786,13 +779,9 @@ function inappropriatePlayerState(check = ["all"]) {
 		Object.keys(V.skin).forEach(label => {
 			if (T.skin_array.includes(label)) {
 				if (
-					(!["none", "Robin", "Whitney", "Kylar", "Sydney", "Avery", "Eden", "Gwylan", "Black Wolf", "Alex", "Great Hawk"].includes(
-						V.skin[label].special
-					) &&
+					(!["none", "Robin", "Whitney", "Kylar", "Sydney", "Avery", "Eden", "Gwylan", "Black Wolf", "Alex", "Great Hawk"].includes(V.skin[label].special) &&
 						V.skin[label].lewd === 1) ||
-					["slut", "bitch", "whore", "sex", "fuck", "rape", "cock", "cum", "size queen"].some(text =>
-						V.skin[label].writing.toLowerCase().includes(text)
-					)
+					["slut", "bitch", "whore", "sex", "fuck", "rape", "cock", "cum", "size queen"].some(text => V.skin[label].writing.toLowerCase().includes(text))
 				)
 					T.lewd_bodywriting_visible = true;
 			}
