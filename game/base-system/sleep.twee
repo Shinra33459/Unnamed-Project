@@ -349,60 +349,55 @@
 			<<break>>
 		<</if>>
 
-		<!-- Called before the $tiredness math so the "pass" clamps are called before the PC's $tiredness is reduced. -->
+		<!-- fatigue is lowered by 200 for every hour slept, and another 50 more if the player has no trauma. -->
+		<<set _tiredness = 200>>
+		<<if !($sleeptrouble is 1 and $controlled is 0 and !$hypnosis_traits.slumber)>>
+			<<set _tiredness += 50>>
+		<</if>>
+		<<if $hypnosis_traits.slumber>>
+			<<set _traumaToSleep to Math.floor($trauma / 100)>>
+			<<set _tiredness += _traumaToSleep>>
+		<</if>>
+		<<if $location is "island">>
+			<<if $island[$island.home].curtains is "simple">>
+				<<set _tiredness += 15>>
+			<<elseif $island[$island.home].curtains is "basic">>
+				<<set _tiredness += 30>>
+			<<elseif $island[$island.home].curtains is "advanced">>
+				<<set _tiredness += 45>>
+			<</if>>
+		<<elseif $location is "tower" and $bedGuest isnot "alone">>
+			<<switch $bird.upgrades.nest>>
+				<<case 0>>
+				<<case 1>><<set _tiredness += 15>>
+				<<case 2>><<set _tiredness += 30>>
+				<<case 3>><<set _tiredness += 45>>
+			<</switch>>
+		<</if>>
+
+		<<set _tiredness += $_bonusFatigueLoss>>
+
+		<<if $substanceRebalance is 1>>
+			<<if $drunk gte 120>>
+				<<set _tiredness to _tiredness * (1 - (0.1 * (1 + Math.round($drunk / 120))))>>
+			<<elseif $drunk gte 1>>
+				<<set _tiredness to _tiredness * 0.95>>
+			<</if>>
+		<</if>>
+		<<if $DoLPTFBuffs is 1>>
+			<<if $TFBearBuffs is 1>>
+				<<set _tiredness to _tiredness * 0.8>>
+			<</if>>
+		<</if>>
+		<<set $tiredness -= Math.round(_tiredness)>>
+
+		<<set Weather.BodyTemperature.addActivity("sleep")>>
+
 		<<if $location is "tower">>
 			<<bird_pass 60>>
 		<<else>>
 			<<pass 1 hour>>
 		<</if>>
-
-		<!-- fatigue is lowered by 200 for every hour slept and another 50 more if the player has no trauma. -->
-		<<set $tiredness -= 200>>
-		<<if !($sleeptrouble is 1 and $controlled is 0 and !$hypnosis_traits.slumber)>>
-			<<set $tiredness += 50>>
-		<</if>>
-
-		<<if $hypnosis_traits.slumber>>
-			<<set _traumaToSleep to Math.floor($trauma / 100)>>
-			<<set $tiredness += _traumaToSleep>>
-		<</if>>
-		<<if $location is "island">>
-			<<if $island[$island.home].curtains is "simple">>
-				<<set $tiredness += 15>>
-			<<elseif $island[$island.home].curtains is "basic">>
-				<<set $tiredness += 30>>
-			<<elseif $island[$island.home].curtains is "advanced">>
-				<<set $tiredness += 45>>
-			<</if>>
-		<<elseif $location is "tower" and $bedGuest isnot "alone">>
-			<<switch $bird.upgrades.nest>>
-				<<case 0>>
-				<<case 1>><<set $tiredness += 15>>
-				<<case 2>><<set $tiredness += 30>>
-				<<case 3>><<set $tiredness += 45>>
-			<</switch>>
-		<</if>>
-
-		<<set $tiredness += $_bonusFatigueLoss>>
-		/**
-		 * DOLP Reblance notes: variable should be _tiredness from here>>
-		 * This is sometimes lost during vanilla merges, make sure to check it hasn't changed!
-		 */
-		<<if $substanceRebalance is 1>>
-			<<if $drunk gte 120>>
-				<<set $tiredness to $tiredness * (1 - (0.1 * (1 + Math.round($drunk / 120))))>>
-			<<elseif $drunk gte 1>>
-				<<set $tiredness to $tiredness * 0.95>>
-			<</if>>
-		<</if>>
-		<<if $DoLPTFBuffs is 1>>
-			<<if $TFBearBuffs is 1>>
-				<<set $tiredness to $tiredness * 0.8>>
-			<</if>>
-		<</if>>
-		<<set $tiredness = Math.round($tiredness)>>
-
-		<<set Weather.BodyTemperature.addActivity("sleep")>>
 
 		<<if $nightmares gte 1 and $controlled is 0>>
 			<<stress 6>>
