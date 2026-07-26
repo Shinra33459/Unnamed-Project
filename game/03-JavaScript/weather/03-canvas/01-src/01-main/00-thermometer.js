@@ -48,7 +48,8 @@ Weather.Thermometer = (() => {
 					resolve();
 				};
 				img.onerror = reject;
-				img.src = imageInfo.src;
+				if (window.ImagePack && typeof window.ImagePack.setImageSource === "function") window.ImagePack.setImageSource(img, imageInfo.src);
+				else img.src = imageInfo.src;
 			});
 			loadPromises.push(promise);
 			return 0;

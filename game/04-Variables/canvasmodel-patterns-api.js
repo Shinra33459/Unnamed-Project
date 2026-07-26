@@ -13,7 +13,8 @@ function registerImagePattern(name, src) {
 	image.onload = function () {
 		Renderer.Patterns[name] = Renderer.globalC2D.createPattern(image, "repeat");
 	};
-	image.src = src;
+	if (window.ImagePack && typeof window.ImagePack.setImageSource === "function") window.ImagePack.setImageSource(image, src);
+	else image.src = src;
 }
 
 Renderer.PatternProvider = function (spec) {
