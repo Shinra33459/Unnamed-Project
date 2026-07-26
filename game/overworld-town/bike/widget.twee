@@ -200,21 +200,19 @@
 				Before long you reach the forest outskirts, the hidden top of the forest shop coming into view.<br><br><<bikeGains>>
 					<<shopicon "forest">><<link [[You arrive at your destination.|Forest]]>><<set $forest to 0>><</link>>
 				<<case "cabin">>
-				Before long you can smell the smoke from Eden's hearth, the treeline giving way to the familiar cabin.<br><br><<bikeGains>>
-					<<if $edenfreedom gte 1 or $syndromeeden gte 1>>
-						<<if $edenFluidsCheck is "cleanLeave" and ($goocount + $semencount gte 10) and Time.hour gte 7 or $edenFluidsCheck is "run">>
-							<<edenicon>><<link [[You arrive at your destination.|Eden Fluids Punishment]]>><</link>>
-					<<elseif !$edenHotSpring and Weather.isFreezing>>
-							<<edenicon>><<link [[You arrive at your destination.|Eden Hot Spring Creation 1]]>><</link>>
-						<<else>>
-							<<edenicon>><<link [[You arrive at your destination.|Eden Clearing]]>><</link>>
-						<</if>>
-					<</if>>
+				Before long you can smell the smoke from Eden's hearth, the treeline giving way to the clearing outside the cabin.<br><br><<bikeGains>>
+				<<if $edenFluidsCheck is "cleanLeave" and ($goocount + $semencount gte 10) and Time.hour gte 7 or $edenFluidsCheck is "run">>
+					<<edenicon>><<link [[You arrive at your destination.|Eden Fluids Punishment]]>><</link>>
+				<<elseif !$edenHotSpring and Weather.isFreezing>>
+					<<edenicon>><<link [[You arrive at your destination.|Eden Hot Spring Creation 1]]>><</link>>
+				<<else>>
+					<<edenicon>><<link [[You arrive at your destination.|Eden Clearing]]>><</link>>
+				<</if>>
 				<<case "wolf_cave_yard">>
 				Before long the path becomes little more than an animal trail, the familiar sounds of the wolf pack leading you to their clearing.<br><br><<bikeGains>>
 					<<wolfcaveicon>><<link [[You arrive at your destination.|Wolf Cave Clearing]]>><</link>>
 				<<case "moor">>
-				Before long you spot the castle peeking over a hill ahead, a familiar screech in the distance welcoming you home.<br><br><<bikeGains>>
+				Before long you spot the castle peeking over a hill ahead<<if $syndromebird gte 1>>, a familiar screech in the distance welcoming you home.<<else>>.<</if>><br><br><<bikeGains>>
 					<<mooricon>><<link [[You arrive at your destination.|Moor]]>><<set $moor to 100>><</link>>
 			<</switch>>
 				<br><br>
@@ -310,6 +308,7 @@
 		<<wolficon>><<link [["Wolf Street (" + _time.rTime + ") (Temple)"|Bike Ride]]>><<pass $bicycle.travel.rTime>><<set $bicycle.time to $bicycle.travel.rTime>><<set $destination to "wolf">><</link>><br>
 		<</if>>
 		<br>
+
 	<<run bikeTime("commercial")>>
 	Commercial:<br>
 		<<if $bicycle.location is "cliff">><<else>><<clifficon>><<link [["Cliff Street (" + _time.cTime + ") (Cafe)"|Bike Ride]]>><<pass $bicycle.travel.cTime>><<set $bicycle.time to $bicycle.travel.cTime>><<set $destination to "cliff">><</link>><br><</if>>
@@ -326,12 +325,14 @@
 		<<if $bicycle.location is "oxford">><<else>><<oxfordicon>><<link [["Oxford Street (" + _time.cTime + ") (School)"|Bike Ride]]>><<pass $bicycle.travel.cTime>><<set $bicycle.time to $bicycle.travel.cTime>><<set $destination to "oxford">><</link>><br><</if>>
 		<<if $bicycle.location is "starfish">><<else>><<starfishicon>><<link [["Starfish Street (" + _time.cTime + ") (Beach)"|Bike Ride]]>><<pass $bicycle.travel.cTime>><<set $bicycle.time to $bicycle.travel.cTime>><<set $destination to "starfish">><</link>><br><</if>>
 		<br>
+
 	<<run bikeTime("industrial")>>
 	Industrial:<br>
 		<<if $bicycle.location is "elk">><<else>><<elkicon>><<link [["Elk Street (" + _time.iTime + ")"|Bike Ride]]>><<pass $bicycle.travel.iTime>><<set $bicycle.time to $bicycle.travel.iTime>><<set $destination to "elk">><</link>><br><</if>>
 		<<if $bicycle.location is "harvest">><<else>><<harvesticon>><<link [["Harvest Street (" + _time.iTime + ") (Pub)"|Bike Ride]]>><<pass $bicycle.travel.iTime>><<set $bicycle.time to $bicycle.travel.iTime>><<set $destination to "harvest">><</link>><br><</if>>
 		<<if $bicycle.location is "mer">><<else>><<mericon>><<link [["Mer Street (" + _time.iTime + ") (Docks)"|Bike Ride]]>><<pass $bicycle.travel.iTime>><<set $bicycle.time to $bicycle.travel.iTime>><<set $destination to "mer">><</link>><br><</if>>
 		<br>
+
 	<<if ($edenfreedom gte 1 or $syndromeeden gte 1) || $syndromewolves gte 1 || $forest_shop_intro is 1>>
 	Forest:<br>
 	<<run bikeTime("forestEntrance")>>
@@ -339,24 +340,38 @@
 	<<run bikeTime("lake")>>
 		<<if $bicycle.location is "lake">><<else>><<lakeicon>><<link [["Lake (" + _time.lTime + ")"|Bike Ride]]>><<pass $bicycle.travel.lTime>><<set $bicycle.time to $bicycle.travel.lTime>><<set $destination to "lake">><</link>><br><</if>>
 	<<run bikeTime("forest")>>
-		<<if $edenfreedom gte 1 or $syndromeeden gte 1>><<if $bicycle.location is "cabin">><<else>><<edenicon>><<link [["Eden's Cabin (" + _time.fTime + ")"|Bike Ride]]>><<pass $bicycle.travel.fTime>><<set $bicycle.time to $bicycle.travel.fTime>><<set $destination to "cabin">><</link>><br><</if>><</if>>
-		<<if $syndromewolves gte 1>><<if $caveHumanPregnancyDiscovered isnot 1 or !playerIsPregnant()>>
-			<<if $bicycle.location is "wolf_cave_yard">><<else>><<wolfcaveicon>><<link [["Wolf Cave (" + _time.fTime + ")"|Bike Ride]]>><<pass $bicycle.travel.fTime>><<set $bicycle.time to $bicycle.travel.fTime>><<set $destination to "wolf_cave_yard">><</link>><br><</if>>
+	<<if $edenfreedom gte 1 or $syndromeeden gte 1>>
+		<<if $bicycle.location is "cabin">>
+		<<else>>
+			<<edenicon>><<link [["Eden's Cabin (" + _time.fTime + ")"|Bike Ride]]>><<pass $bicycle.travel.fTime>><<set $bicycle.time to $bicycle.travel.fTime>><<set $destination to "cabin">><</link>><br>
+		<</if>>
+	<</if>>
+	<<if $syndromewolves gte 1>>
+		<<if $caveHumanPregnancyDiscovered isnot 1 or !playerIsPregnant()>>
+			<<if $bicycle.location is "wolf_cave_yard">>
+			<<else>>
+				<<wolfcaveicon>><<link [["Wolf Cave (" + _time.fTime + ")"|Bike Ride]]>><<pass $bicycle.travel.fTime>><<set $bicycle.time to $bicycle.travel.fTime>><<set $destination to "wolf_cave_yard">><</link>><br><</if>>
 		<<else>><span class="blue">You don't think the wolves would allow you to come back until your pregnancy is over.</span><br><</if>>
 		<</if>>
 		<br>
-	<<else>><</if>>
-	<<if !$bicycle.farmlandsUnlocked>><<else>><<if $bicycle.location is "alex_farm">><<else>>
+	<<else>>
+	<</if>>
+
+	<<if $bicycle.farmlandsUnlocked isnot true>>
+	<<elseif $bicycle.location is "alex_farm">>
+	<<else>>
 	Plains:<br>
 	<<run bikeTime("alex_farm")>>
 		<<farmicon>><<link [["Farmland (" + _time.aTime + ")"|Bike Ride]]>><<pass $bicycle.travel.aTime>><<set $bicycle.time to $bicycle.travel.aTime>><<set $destination to "alex_farm">><</link>><br>
-	<</if>><</if>>
+	<</if>>
 	<br>
-	<<if $syndromebird gte 1>><<if $bicycle.location is "moor">><<else>>
+	<<if $bicycle.castleUnlocked isnot true>>
+	<<elseif $bicycle.location is "moor">>
+	<<else>>
 	Moor:<br>
 	<<run bikeTime("moor")>>
 		<<mooricon>><<link [["Moor Castle (" + _time.mTime + ")"|Bike Ride]]>><<pass $bicycle.travel.mTime>><<set $bicycle.time to $bicycle.travel.mTime>><<set $destination to "moor">><</link>><br>
-	<</if>><</if>>
+	<</if>>
 <</widget>>
 
 <<widget "bikeEvents">>
