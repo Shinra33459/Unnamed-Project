@@ -1326,7 +1326,7 @@ setup.colours.clothes = [
 	{
 		variable: "witchbloom",
 		name: "witchbloom",
-		name_cap: "witchbloom",
+		name_cap: "Witchbloom",
 		csstext: "witchbloom",
 		canvasfilter: {
 			blend: "#743499",
