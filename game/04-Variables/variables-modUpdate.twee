@@ -1579,7 +1579,24 @@ as what's needed by the imagepack? */
 	<</if>>
 
 	<<if typeof $crime isnot "object">>
-		<<unset $crime>>
+		<<unset $crime>><<unset $crimehistory>>
+		<<set $crime to {
+			assault: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			coercion: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			destruction: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			exposure: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			obstruction: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			prostitution: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			resisting: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			thievery: {current: _oldCrime, history: _oldCrimeHistory, daily: 0, count: 0, countHistory: 0},
+			petty: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			trespassing: {current: 0, history: 0, daily: 0, count: 0, countHistory: 0},
+			events: {},
+		}>>
+		<<if $crime.thievery.current gte 1>>
+			<<set $crime.thievery.count to 1>><<set $crime.thievery.countHistory to 1>>
+			<<set C.crime.logEvent(_oldCrime, "thievery", "legacy", 0)>>
+		<</if>>
 		<<run initCCrime()>>
 	<</if>>
 
