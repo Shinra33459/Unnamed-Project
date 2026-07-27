@@ -11,11 +11,12 @@ Macro.add("banner", {
 		/* Remove the below to get rid of the chromium missing image error */
 		// Use fallback image if it exists (modded game) - otherwise just use the banner canvas
 		const bannerFallbackImage = new Image();
-		bannerFallbackImage.src = "img/misc/banner.png";
 		bannerFallbackImage.onload = () => {
 			Weather.banner.skybox.empty().append($(bannerFallbackImage));
 			Weather.banner.skybox.css("padding-top", 0);
 		};
+		if (window.ImagePack && typeof window.ImagePack.setImageSource === "function") window.ImagePack.setImageSource(bannerFallbackImage, "img/misc/banner.png");
+		else bannerFallbackImage.src = "img/misc/banner.png";
 	},
 });
 
