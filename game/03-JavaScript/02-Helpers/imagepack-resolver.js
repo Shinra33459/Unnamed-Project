@@ -11,7 +11,6 @@ const ImagePack = (() => {
 
 	/* Top-down order mirrors devTools/apkbuilder/imagepack_builds copy order. */
 	const buildFallbacks = {
-		img: [],
 		vanilla: ["dolp"],
 		au: ["au", "dolp"],
 		aumasc: ["aumasc", "dolp"],
@@ -111,7 +110,7 @@ const ImagePack = (() => {
 
 	function getFallbacks(imagepack, imagepackMysterious) {
 		const { pack, mystery } = getSelection(imagepack, imagepackMysterious);
-		const fallbacks = buildFallbacks[pack] || buildFallbacks[defaultImagePack] || [];
+		const fallbacks = buildFallbacks[pack] || buildFallbacks[defaultImagePack];
 		return mystery ? [...new Set([mysteryPack, ...fallbacks])] : fallbacks;
 	}
 
