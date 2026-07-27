@@ -255,7 +255,6 @@ function updateOptions() {
 
 		if (!State.restore(true)) return; // don't do anything if state couldn't be restored
 		V.options = optionsData;
-		if (window.ImagePack && typeof window.ImagePack.applyOptionPack === "function") window.ImagePack.applyOptionPack();
 		State.show();
 
 		T.key = tmpKey;
