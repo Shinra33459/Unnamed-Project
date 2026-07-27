@@ -42,19 +42,9 @@ const ImagePack = (() => {
 		return normalisePath(String(src || "").trim());
 	}
 
-	function isBaseOnlyAsset(src) {
-		const normalised = normaliseSrc(src).toLowerCase();
-		return (
-			normalised.startsWith("img/misc/banner") ||
-			normalised.startsWith("img/misc/locations/banner/") ||
-			normalised.startsWith("img/misc/old/banner") ||
-			normalised.startsWith("img/misc/icon/furniture/banner")
-		);
-	}
-
 	function canUseImagePack(src) {
 		const normalised = normaliseSrc(src);
-		return normalised.startsWith(imgRoot) && !normalised.startsWith(imagepacksPathPrefix) && !isBaseOnlyAsset(normalised);
+		return normalised.startsWith(imgRoot) && !normalised.startsWith(imagepacksPathPrefix);
 	}
 
 	function isKnownPack(imagepack) {
