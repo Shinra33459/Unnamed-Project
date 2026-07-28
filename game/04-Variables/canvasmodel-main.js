@@ -2232,25 +2232,38 @@ Renderer.CanvasModels.main = {
 						const _pSkinRaw = V.NPCList?.[0]?.skincolour ?? C.npc.Poppy.skincolour;
 						const _pSkin = (_pSkinRaw === "white") ? "pale" : "dark";
 
-						// Slot from context (Halloween > Christmas > school/lake/soup > default)
-						let _pSlot = 1;
-						if (V.halloween) {
-							_pSlot = 4;
-						} else if (V.christmas) {
-							_pSlot = 3;
+						if (V.poppyWardrobe) {
+							// Slot from context (Halloween > Christmas > school/lake/soup > default)
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.halloween) {
+								_pSkin += "/halloween";
+							} else if (V.christmas) {
+								_pSkin += "/christmas";
+							} else {
+								const _pPassage = String(V.passage || "").toLowerCase();
+								const _pLoc     = String(V.location || "").toLowerCase();
+								// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
+								const _isSchool =
+									_pLoc === "school" ||
+									/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
+								const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
+								const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
+								if (_isSchool || _isLake || _isSoup) _pSkin += "/casual";
+							}
 						} else {
-							const _pPassage = String(V.passage || "").toLowerCase();
-							const _pLoc     = String(V.location || "").toLowerCase();
-							// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
-							const _isSchool =
-								_pLoc === "school" ||
-								/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
-							const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
-							const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
-							if (_isSchool || _isLake || _isSoup) _pSlot = 2;
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.poppyOverride === "halloween") {
+								_pSkin += "/halloween";
+							} else if (V.poppyOverride === "christmas") {
+								_pSkin += "/christmas";
+							} else {
+								_pSkin += "/casual";
+							}
 						}
 
-						return `img/ui/nnpc/poppy/${_pGender}/${_pSkin}/${_pSlot}.png`;
+						return `img/ui/nnpc/poppy/${_pGender}/${_pSkin}/{V.options.nnpcDisplaySlot}.png`;
 					}
 				}
 
@@ -2268,7 +2281,11 @@ Renderer.CanvasModels.main = {
 					const isBeast = (active === "black_wolf" || active === "great_hawk");
 
 					let gender = V.options.nnpcDisplayGender || "male";
-					let skinChoice = V.options.nnpcDisplaySkin || "pale";
+					let skinChoice = V.options.nnpcDisplaySkin || "pale"
+
+					if (V.options.autoNNPCDisplay === true) {
+						skinChoice = (V.NPCList?.[0]?.skincolour === "white" ? "pale" : "dark")
+					};
 
 					// Guard: monster only for beasts (in preview too)
 					if (skinChoice === "monster" && !isBeast) skinChoice = "pale";
@@ -2276,14 +2293,53 @@ Renderer.CanvasModels.main = {
 					let skin = "/" + skinChoice;
 
 					if (active === "sydney") {
-						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+						skin += ((V.sydneyWardrobe === false && V.sydneyOverride === "pure") ||(V.sydneyWardrobe !== false && C.npc.Sydney.purity >= 1)) ? "/pure" : "/corrupt";
 					}
 					if (active === "gwylan") {
-						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
+						skin += (V.gwylanOverride === "fox") ? "/brownfox":"";
 					}
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
-					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					if (active === "poppy") {
+						if (V.poppyWardrobe) {
+							// Slot from context (Halloween > Christmas > school/lake/soup > default)
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.halloween) {
+								skin += "/halloween";
+							} else if (V.christmas) {
+								skin += "/christmas";
+							} else {
+								const _pPassage = String(V.passage || "").toLowerCase();
+								const _pLoc     = String(V.location || "").toLowerCase();
+								// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
+								const _isSchool =
+									_pLoc === "school" ||
+									/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
+								const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
+								const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
+								if (_isSchool || _isLake || _isSoup) skin += "/casual";
+							}
+						} else {
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.poppyOverride === "halloween") {
+								skin += "/halloween";
+							} else if (V.poppyOverride === "christmas") {
+								skin += "/christmas";
+							} else {
+								skin += "/casual";
+							}
+						}
+					}
+
+					if (active === "other") {
+						return `img/ui/nnpc/${active}/${V.options.nnpcDisplaySlot}.png`;
+					} else if (V.options.nnpcDisplaySlot === 10) {
+						return `img/ui/nnpc/${active}/${gender}/fools/fools.png`;
+					} else {
+						return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					}
 				}
 
 				// =============================
@@ -2308,14 +2364,54 @@ Renderer.CanvasModels.main = {
 					let skin = "/" + skinChoice;
 
 					if (active === "sydney") {
-						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+						skin += ((V.sydneyWardrobe === false && V.sydneyOverride === "pure") ||(V.sydneyWardrobe !== false && C.npc.Sydney.purity >= 1)) ? "/pure" : "/corrupt";
 					}
 					if (active === "gwylan") {
-						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
+						skin += (V.gwylanOverride === "fox") ? "/brownfox":"";
 					}
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
-					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					if (active === "poppy") {
+						if (V.poppyWardrobe) {
+							// Slot from context (Halloween > Christmas > school/lake/soup > default)
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.halloween) {
+								skin += "halloween";
+							} else if (V.christmas) {
+								skin += "christmas";
+							} else {
+								const _pPassage = String(V.passage || "").toLowerCase();
+								const _pLoc     = String(V.location || "").toLowerCase();
+								// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
+								const _isSchool =
+									_pLoc === "school" ||
+									/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
+								const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
+								const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
+
+								if (_isSchool || _isLake || _isSoup) skin += "/casual";
+							}
+						} else {
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.poppyOverride === "halloween") {
+								skin += "/halloween";
+							} else if (V.poppyOverride === "christmas") {
+								skin += "/christmas";
+							} else if (V.poppyOverride === "casual"){
+								skin += "/casual";
+							}
+						}
+					}
+
+					if (active === "other") {
+						return `img/ui/nnpc/${active}/${V.options.nnpcDisplaySlot}.png`;
+					} else if ((V.foolsAvailable.includes(active) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
+						return `img/ui/nnpc/${active}/${gender}/fools/fools.png`;
+					} else {
+						return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					}
 				}
 
 				// =============================
@@ -2389,14 +2485,53 @@ Renderer.CanvasModels.main = {
 
 				// Special cases
 				if (active === "sydney") {
-					skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+					skin += ((V.sydneyWardrobe === false && V.sydneyOverride === "pure") ||(V.sydneyWardrobe !== false && C.npc.Sydney.purity >= 1)) ? "/pure" : "/corrupt";
 				}
 				if (active === "gwylan") {
-						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
+					skin += ((((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") || V.gwylanOverride === "fox") ? "/brownfox":"";
 				}
 				if (active === "ivory_wraith" || active === "others") skin = "";
 
-				return `img/ui/nnpc/${active}/${gender}${skin}/${cfg.slot}.png`;
+				if (active === "poppy") {
+					if (V.poppyWardrobe) {
+						// Slot from context (Halloween > Christmas > school/lake/soup > default)
+						if (V.poppyOverride === "default") {
+							// Do nothing
+						} else if (V.halloween || V.poppyOverride === "halloween") {
+							skin += "/halloween";
+						} else if (V.christmas || V.poppyOverride === "christmas") {
+							skin += "/christmas";
+						} else {
+							const _pPassage = String(V.passage || "").toLowerCase();
+							const _pLoc     = String(V.location || "").toLowerCase();
+							// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
+							const _isSchool =
+								_pLoc === "school" ||
+								/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
+							const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
+							const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
+							if (_isSchool || _isLake || _isSoup || V.poppyOverride === "casual") skin += "/casual";
+						}
+					} else {
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.poppyOverride === "halloween") {
+								skin += "/halloween";
+							} else if (V.poppyOverride === "christmas") {
+								skin += "/christmas";
+							} else {
+								skin += "/casual";
+							}
+						}
+				}
+
+				if (active === "other") {
+					return `img/ui/nnpc/${active}/${cfg.slot}.png`;
+				} else if ((V.foolsAvailable.includes(active) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
+					return `img/ui/nnpc/${active}/${gender}/fools/fools.png`;
+				} else {
+					return `img/ui/nnpc/${active}/${gender}${skin}/${cfg.slot}.png`;
+				}
 			},
 
 			showfn(options) {

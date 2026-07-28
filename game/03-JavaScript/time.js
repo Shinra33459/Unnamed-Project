@@ -2151,9 +2151,19 @@ function yearlyEventChecks() {
 		delete V.avery_valentines;
 	}
 
+	if (Time.monthName === "April" && Time.monthDay === 1) {
+		V.foolsAprilSeen = 1;
+		V.foolsApril = 1;
+		V.foolsAvailable = [];
+		V.foolsList = {};
+	} else if (V.foolsApril) {
+		delete V.foolsApril
+	}
+
 	// Halloween
 	if (Time.monthName === "October" && Time.monthDay >= 21) {
 		V.halloween = 1;
+		V.halloweenSeen = 1;
 		V.halloweenClothesMessage = 1;
 	} else if (V.halloween) {
 		if (V.halloween_robin_costume && C.npc.Robin.outfits && C.npc.Robin.outfits.includes(V.halloween_robin_costume))
@@ -2181,6 +2191,7 @@ function yearlyEventChecks() {
 	// Christmas
 	if (Time.monthName === "December" && Time.monthDay >= 18 && Time.monthDay <= 25) {
 		V.christmas = 1;
+		V.christmasSeen = 1;
 		V.christmasClothesMessage = 1;
 	} else if (V.christmas) {
 		delete V.christmas;
@@ -2960,3 +2971,49 @@ function supermarketWeekly() {
 	});
 }
 DefineMacro("supermarketWeekly", supermarketWeekly);
+
+function updateFools() {
+	// I have not figured out where to put this thing yet
+	if (V.foolsList) {
+		V.foolsList.maleOnly = []
+			V.foolsList.maleOnly.push("bailey");
+			V.foolsList.maleOnly.push("avery");
+			V.foolsList.maleOnly.push("mason");
+
+		V.foolsList.femaleOnly = []
+		
+		V.foolsList.neutral = []
+			/* Gender neutral April Fools */
+			V.foolsList.neutral.push("gwylan");
+			V.foolsList.neutral.push("robin");
+			V.foolsList.neutral.push("great_hawk");
+	}
+
+	if (V.foolsAvailable){
+		for (var i = 0; i < V.foolsList.maleOnly.length; ++i){
+			let name = V.foolsList.maleOnly[i];
+
+			if (V.options.nnpcDisplay === name && V.options.nnpcDisplayGender === "male") {
+				V.foolsAvailable.push(name);
+			} else if (V.foolsAvailable.includes(name)){
+				V.foolsAvailable.pop(name);
+			};
+		};
+
+		for (var i = 0; i < V.foolsList.maleOnly.length; ++i){
+			let name = V.foolsList.femaleOnly[i];
+
+			if (V.options.nnpcDisplay === name && V.options.nnpcDisplayGender === "female") {
+				V.foolsAvailable.push(name);
+			} else if (V.foolsAvailable.includes(name)){
+				V.foolsAvailable.pop(name);
+			};
+		};
+
+		for (var i = 0; i < V.foolsList.neutral.length; ++i){
+			let name = V.foolsList.neutral[i];
+
+			V.foolsAvailable.push(name);
+		};
+	}
+}
