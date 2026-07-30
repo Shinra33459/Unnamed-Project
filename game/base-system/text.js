@@ -893,3 +893,83 @@ statDisplay.create("gggwarmth", () => statDisplay.statChange("Warmth", 3, "orang
 statDisplay.create("lwarmth", () => statDisplay.statChange("Warmth", -1, "teal"));
 statDisplay.create("llwarmth", () => statDisplay.statChange("Warmth", -2, "teal"));
 statDisplay.create("lllwarmth", () => statDisplay.statChange("Warmth", -3, "teal"));
+
+/* 
+ * should still works as normal: 
+ * 		<<gpatience>> creates | - Patience if poppy has some patience left, 
+ * 		and | + Anger if she doesn't
+ * 
+ * I also added if you use <<gpatience "anger">> 
+ * then the result will show only | - Anger, 
+ * even if the poppet has not reached 0 patience
+ * 
+ * vice versa for <<gpatiencre "patience">>
+ * 
+ * and a safe guard so that the <<patience>> will show nothing
+ * if the poppet has not been selected in modLI
+ * 
+ * Are any of these actually needed? idk, better safe than sorry
+ * Sorry dna I got lazy...ish
+ * 												-- Sei
+*/
+
+statDisplay.create("gpatience", (status) => {
+	const poppyAvailable = modLISelected("Poppy");
+	if (!poppyAvailable) {
+		return null;
+	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
+		return statDisplay.statChange("Patience", 1, "green");
+	} else if (status !== "patience") {
+		return statDisplay.statChange("Anger", -1, "green");
+	}
+});
+statDisplay.create("ggpatience", (status) => {
+	const poppyAvailable = modLISelected("Poppy");
+	if (!poppyAvailable) {
+		return null;
+	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
+		return statDisplay.statChange("Patience", 2, "green");
+	} else if (status !== "patience") {
+		return statDisplay.statChange("Anger", -2, "green");
+	}
+});
+statDisplay.create("gggpatience", (status) => {
+	const poppyAvailable = modLISelected("Poppy");
+	if (!poppyAvailable) {
+		return null;
+	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
+		return statDisplay.statChange("Patience", 3, "green");
+	} else if (status !== "patience") {
+		return statDisplay.statChange("Anger", -3, "green");
+	}
+});
+statDisplay.create("lpatience", (status) => {
+	const poppyAvailable = modLISelected("Poppy");
+	if (!poppyAvailable) {
+		return null;
+	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
+		return statDisplay.statChange("Patience", -1, "red");
+	} else if (status !== "patience") {
+		return statDisplay.statChange("Anger", 1, "red");
+	}
+});
+statDisplay.create("llpatience", (status) => {
+	const poppyAvailable = modLISelected("Poppy");
+	if (!poppyAvailable) {
+		return null;
+	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
+		return statDisplay.statChange("Patience", -2, "red");
+	} else if (status !== "patience") {
+		return statDisplay.statChange("Anger", 2, "red");
+	}
+});
+statDisplay.create("lllpatience", (status) => {
+	const poppyAvailable = modLISelected("Poppy");
+	if (!poppyAvailable) {
+		return null;
+	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
+		return statDisplay.statChange("Patience", -3, "red");
+	} else if (status !== "patience") {
+		return statDisplay.statChange("Anger", 3, "red");
+	}
+});

@@ -2407,7 +2407,7 @@ Renderer.CanvasModels.main = {
 
 					if (active === "other") {
 						return `img/ui/nnpc/${active}/${V.options.nnpcDisplaySlot}.png`;
-					} else if ((V.foolsAvailable.includes(active) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
+					} else if (((V.foolsList !== undefined && (V.foolsList.neutral.includes(V.options.nnpcDisplay) || (V.options.nnpcDisplayGender === "male" && V.foolsList.maleOnly.includes(V.options.nnpcDisplay)) || ($options.nnpcDisplayGender == "female" && V.foolsList.femaleOnly.includes(V.options.nnpcDisplay)))) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
 						return `img/ui/nnpc/${active}/${gender}/fools/fools.png`;
 					} else {
 						return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
@@ -2527,7 +2527,7 @@ Renderer.CanvasModels.main = {
 
 				if (active === "other") {
 					return `img/ui/nnpc/${active}/${cfg.slot}.png`;
-				} else if ((V.foolsAvailable.includes(active) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
+				} else if (((V.foolsList !== undefined && (V.foolsList.neutral.includes(V.options.nnpcDisplay) || (V.options.nnpcDisplayGender === "male" && V.foolsList.maleOnly.includes(V.options.nnpcDisplay)) || ($options.nnpcDisplayGender == "female" && V.foolsList.femaleOnly.includes(V.options.nnpcDisplay)))) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
 					return `img/ui/nnpc/${active}/${gender}/fools/fools.png`;
 				} else {
 					return `img/ui/nnpc/${active}/${gender}${skin}/${cfg.slot}.png`;
