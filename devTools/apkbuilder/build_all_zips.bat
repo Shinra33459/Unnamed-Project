@@ -5,33 +5,31 @@ set /p version=Enter the version number:
 
 set target[0]=vanilla
 set target[1]=b3s_hikfem
-set target[2]=kitmint
-set target[3]=b3s_mys
-set target[4]=b3s_hikfem_mys
-set target[5]=goosefem
-set target[6]=goosefem_mys
-set target[7]=gooseandro
-set target[8]=goosemasc
-set target[9]=mikili
-set target[10]=au
-set target[11]=au_mys
-set target[12]=aumasc
+set target[2]=b3s_mys
+set target[3]=b3s_hikfem_mys
+set target[4]=goosefem
+set target[5]=goosefem_mys
+set target[6]=goosemasc
+set target[7]=mikili
+set target[8]=au
+set target[9]=au_mys
+set target[10]=aumasc
+set target[11]=rotting
 
 set imagepack[0]=vanilla
 set imagepack[1]=hikfem
-set imagepack[2]=kitmint
-set imagepack[3]=b3s_mys
-set imagepack[4]=hikfem_mys
-set imagepack[5]=goosefem
-set imagepack[6]=goosefem_mys
-set imagepack[7]=gooseandro
-set imagepack[8]=goosemasc
-set imagepack[9]=mikili
-set imagepack[10]=aokiutage
-set imagepack[11]=aokiutage_mys
-set imagepack[12]=aokiutagemasc
+set imagepack[2]=b3s_mys
+set imagepack[3]=hikfem_mys
+set imagepack[4]=goosefem
+set imagepack[5]=goosefem_mys
+set imagepack[6]=goosemasc
+set imagepack[7]=mikili
+set imagepack[8]=aokiutage
+set imagepack[9]=aokiutage_mys
+set imagepack[10]=aokiutagemasc
+set imagepack[11]=rotting
 
-set array_length=12
+set array_length=11
 
 rem Clean old zips
 del /q ..\..\dist\*.zip 2>nul
