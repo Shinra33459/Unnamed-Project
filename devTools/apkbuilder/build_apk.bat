@@ -36,7 +36,7 @@ del "Degrees of Lewdity.html"
 
 cd .\dist\
 
-ren "DoLP-v0.%version%-0.5.11.8 DoLP v0.%version%-debug.apk" "DoLP v0.%version% 0.5.11.8.apk"
+ren "DoLP-v0.%version%-0.5.11.9 DoLP v0.%version%-debug.apk" "DoLP v0.%version% 0.5.11.9.apk"
 
 cd ..\
 
