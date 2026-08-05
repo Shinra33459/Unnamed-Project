@@ -2151,6 +2151,13 @@ function yearlyEventChecks() {
 		delete V.avery_valentines;
 	}
 
+	if (Time.monthName === "April" && Time.monthDay === 1) {
+		V.foolsAprilSeen = 1;
+		V.foolsApril = 1;
+	} else if (V.foolsApril) {
+		delete V.foolsApril;
+	}
+
 	// Halloween
 	if (Time.monthName === "October" && Time.monthDay >= 21) {
 		V.halloween = 1;

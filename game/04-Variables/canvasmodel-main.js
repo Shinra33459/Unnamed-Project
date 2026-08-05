@@ -221,11 +221,6 @@ replace (?<!["'\w])_(?=\w) with T.
  */
 
 // Layers that live in scene/world space rather than on the body: never scaled with player height.
-const bodySizeIndependentLayers = new Set([
-	"decoration_background1", "decoration_background2", "nnpc",
-	"precipitation_back", "precipitation_front", "cold_breath", "water_breath", "water_back", "water_front",
-	"fire_back", "fire_front", "petals_back", "petals_front", "wraithFlash", "wraithFlashAccent", "wraithMirror",
-]);
 Renderer.CanvasModels.main = {
 	name: "main",
 	width: 256,
@@ -2315,7 +2310,47 @@ Renderer.CanvasModels.main = {
 					}
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
-					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					if (active === "poppy") {
+						if (V.poppyWardrobe) {
+							// Slot from context (Halloween > Christmas > school/lake/soup > default)
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.halloween) {
+								skin += "halloween";
+							} else if (V.christmas) {
+								skin += "christmas";
+							} else {
+								const _pPassage = String(V.passage || "").toLowerCase();
+								const _pLoc     = String(V.location || "").toLowerCase();
+								// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
+								const _isSchool =
+									_pLoc === "school" ||
+									/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
+								const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
+								const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
+
+								if (_isSchool || _isLake || _isSoup) skin += "/casual";
+							}
+						} else {
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.poppyOverride === "halloween") {
+								skin += "/halloween";
+							} else if (V.poppyOverride === "christmas") {
+								skin += "/christmas";
+							} else if (V.poppyOverride === "casual"){
+								skin += "/casual";
+							}
+						}
+					}
+
+					if (active === "other") {
+						return `img/ui/nnpc/${active}/${V.options.nnpcDisplaySlot}.png`;
+					} else if (((V.foolsList !== undefined && (V.foolsList.neutral.includes(V.options.nnpcDisplay) || (V.options.nnpcDisplayGender === "male" && V.foolsList.maleOnly.includes(V.options.nnpcDisplay)) || ($options.nnpcDisplayGender == "female" && V.foolsList.femaleOnly.includes(V.options.nnpcDisplay)))) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
+						return `img/ui/nnpc/${active}/${gender}/fools/fools.png`;
+					} else {
+						return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					}
 				}
 
 				// =============================
@@ -2396,7 +2431,46 @@ Renderer.CanvasModels.main = {
 				}
 				if (active === "ivory_wraith" || active === "others") skin = "";
 
-				return `img/ui/nnpc/${active}/${gender}${skin}/${cfg.slot}.png`;
+				if (active === "poppy") {
+					if (V.poppyWardrobe) {
+						// Slot from context (Halloween > Christmas > school/lake/soup > default)
+						if (V.poppyOverride === "default") {
+							// Do nothing
+						} else if (V.halloween || V.poppyOverride === "halloween") {
+							skin += "/halloween";
+						} else if (V.christmas || V.poppyOverride === "christmas") {
+							skin += "/christmas";
+						} else {
+							const _pPassage = String(V.passage || "").toLowerCase();
+							const _pLoc     = String(V.location || "").toLowerCase();
+							// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
+							const _isSchool =
+								_pLoc === "school" ||
+								/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
+							const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
+							const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
+							if (_isSchool || _isLake || _isSoup || V.poppyOverride === "casual") skin += "/casual";
+						}
+					} else {
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.poppyOverride === "halloween") {
+								skin += "/halloween";
+							} else if (V.poppyOverride === "christmas") {
+								skin += "/christmas";
+							} else {
+								skin += "/casual";
+							}
+						}
+				}
+
+				if (active === "other") {
+					return `img/ui/nnpc/${active}/${cfg.slot}.png`;
+				} else if (((V.foolsList !== undefined && (V.foolsList.neutral.includes(V.options.nnpcDisplay) || (V.options.nnpcDisplayGender === "male" && V.foolsList.maleOnly.includes(V.options.nnpcDisplay)) || ($options.nnpcDisplayGender == "female" && V.foolsList.femaleOnly.includes(V.options.nnpcDisplay)))) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
+					return `img/ui/nnpc/${active}/${gender}/fools/fools.png`;
+				} else {
+					return `img/ui/nnpc/${active}/${gender}${skin}/${cfg.slot}.png`;
+				}
 			},
 
 			showfn(options) {

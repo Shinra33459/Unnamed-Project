@@ -41,20 +41,21 @@ function poppyStatusCheck(poppy = C.npc.Poppy) {
 	{
 		let sp = Number(poppy.patience) || 0;
 		// Old (pre-signed) split-storage format migration: only ever needed once, for saves made before patience became signed.
-	if (!poppy._legacyAngerMigrated) {
-		const sa = Number(poppy.anger) || 0;
-		if (sp === 0 && sa > 0) sp = -sa;
-		poppy._legacyAngerMigrated = true;
-	}
+		if (!poppy._legacyAngerMigrated) {
+			const sa = Number(poppy.anger) || 0;
+			if (sp === 0 && sa > 0) sp = -sa;
+			poppy._legacyAngerMigrated = true;
+		}
 
-	// Clamp signed value to -100..100
-	poppy.patience = Math.max(-100, Math.min(100, Number(poppy.patience) || 0));
+		// Clamp signed value to -100..100
+		poppy.patience = Math.max(-100, Math.min(100, Number(poppy.patience) || 0));
 	}
 	// Signed source of truth for UI + logic
 	T.poppyPatienceRaw = poppy.patience;
 
 	// Split into UI-facing values (Sydney-style dual-face display)
-	T.poppyPatience = Math.max(0, poppy.patience); T.poppyAnger = Math.max(0, -poppy.patience);
+	T.poppyPatience = Math.max(0, poppy.patience);
+	T.poppyAnger = Math.max(0, -poppy.patience);
 
 	// Patience stays signed, do NOT overwrite with the positive-only display value.
 	// anger is a display-only mirror; it is never used for reconstruction.
@@ -162,7 +163,9 @@ window.poppyDailyPatienceDecay = poppyDailyPatienceDecay;
 
 function markPoppyInteraction(poppy = C.npc.Poppy) {
 	if (!poppy || poppy.init !== 1) return;
-	poppy.timer ||= {}; poppy.timer.lastInteraction = Time.date.timeStamp; poppy.timer.lastInteractionDay = Time.days;
+	poppy.timer ||= {};
+	poppy.timer.lastInteraction = Time.date.timeStamp;
+	poppy.timer.lastInteractionDay = Time.days;
 }
 window.markPoppyInteraction = markPoppyInteraction;
 
@@ -175,7 +178,11 @@ function poppySchedule() {
 		T.poppy_location_message = "";
 		T.poppy_night_active = 0;
 		// Reset flat presence so stale home/room/meal state cannot leak into the flat UI.
-		if (V.poppyFlat) { V.poppyFlat.home = false; V.poppyFlat.room = ""; V.poppyFlat.meal = ""; }
+		if (V.poppyFlat) {
+			V.poppyFlat.home = false;
+			V.poppyFlat.room = "";
+			V.poppyFlat.meal = "";
+		}
 		return T.poppy_location;
 	};
 
@@ -198,7 +205,9 @@ function poppySchedule() {
 		T.poppy_location_message = "apartment";
 		T.poppy_night_active = 0;
 		if (!V.poppyFlat) V.poppyFlat = {};
-		V.poppyFlat.home = true; V.poppyFlat.room = "living_room"; V.poppyFlat.meal = "";
+		V.poppyFlat.home = true;
+		V.poppyFlat.room = "living_room";
+		V.poppyFlat.meal = "";
 		return T.poppy_location;
 	}
 
@@ -210,12 +219,16 @@ function poppySchedule() {
 		T.poppy_location = "orphanage";
 		T.poppy_location_message = "orphanage";
 		T.poppy_night_active = 0;
-		if (V.poppyFlat) { V.poppyFlat.home = false; V.poppyFlat.room = ""; V.poppyFlat.meal = ""; }
+		if (V.poppyFlat) {
+			V.poppyFlat.home = false;
+			V.poppyFlat.room = "";
+			V.poppyFlat.meal = "";
+		}
 		return T.poppy_location;
 	}
 
 	// Time.minutesSinceMidnight is defined in time.js as Time.hour*60 + Time.minute.
-	// Several twee scenes also rely on this same property (e.g. the lake event), 
+	// Several twee scenes also rely on this same property (e.g. the lake event),
 	// so we use the canonical name here for consistency.
 	const mins = Time.minutesSinceMidnight;
 	const isWeekend = Time.isWeekEnd();
@@ -223,8 +236,8 @@ function poppySchedule() {
 	// weekDay convention from time.js: 1 = Sunday ... 7 = Saturday.
 	// Tuesday = 3, Thursday = 5 to matches housekeeping.twee's [3, 5] check.
 	const isLessonDay = isSchoolDay && (Time.weekDay === 3 || Time.weekDay === 5); // Tue + Thu
-	// School holiday = any day outside the school term. 
-	// During holidays Poppy is not running her housekeeping schedule, 
+	// School holiday = any day outside the school term.
+	// During holidays Poppy is not running her housekeeping schedule,
 	// so route those days through the weekend timetable
 	// otherwise the player has no way to bump into her at the lake / cafe / soup kitchen during the weeks-long holiday breaks.
 	const onHoliday = !Time.schoolTerm;
@@ -238,67 +251,67 @@ function poppySchedule() {
 	// ---------- Shared daily timetable (applies every day) ----------
 	if (at(1380, 1440) || at(0, 60)) {
 		// 11PM–midnight  and  midnight–1AM: nightly activities (streets / pub)
-		loc = "nightly"; 
+		loc = "nightly";
 		msg = "night";
 		nightActive = 1;
 	} else if (at(60, 360)) {
 		// 1AM–6AM: sleep
-		loc = "flatApartment"; 
+		loc = "flatApartment";
 		msg = "sleep";
 	} else if (at(360, 420)) {
 		// 6AM–7AM: breakfast (both weekday and weekend)
-		loc = "flatKitchen"; 
+		loc = "flatKitchen";
 		msg = "breakfast";
 	} else if (at(1080, 1260)) {
 		// 6PM–9PM: charity / soup kitchen (both weekday and weekend)
-		loc = "soupKitchen"; 
+		loc = "soupKitchen";
 		msg = "charity";
 	} else if (at(1260, 1320)) {
 		// 9PM–10PM: dinner (both weekday and weekend)
-		loc = "flatKitchen"; 
+		loc = "flatKitchen";
 		msg = "dinner";
 	}
 	// ---------- School-day timetable ----------
 	else if (isSchoolDay) {
 		if (at(420, 540) || at(720, 780) || at(900, 960)) {
 			// 7–9AM, 12–1PM, 3–4PM: prep in housekeeping classroom
-			loc = "housekeepingClassroom"; 
+			loc = "housekeepingClassroom";
 			msg = "prep";
 		} else if (isLessonDay && at(600, 660)) {
 			// 10–11AM on Tue/Thu: housekeeping lesson
-			loc = "housekeepingLesson"; 
+			loc = "housekeepingLesson";
 			msg = "lesson";
 		} else if (at(540, 900)) {
 			// 9AM–3PM (gaps not covered by prep/lesson): skipping / hallways
-			loc = "schoolHallways"; 
+			loc = "schoolHallways";
 			msg = "skipping";
 		}
 		// 4PM–6PM on school days: no explicit slot → stays at flatApartment (home after prep)
 	}
 	// ---------- Weekend / school-holiday timetable ----------
-	// Same slots whether it's a normal weekend day or a weekday during a school holiday 
+	// Same slots whether it's a normal weekend day or a weekday during a school holiday
 	// Poppy isn't at school either way, so their routine is the same.
 	else if (useWeekendTimetable) {
 		if (at(420, 540) && (V.daily.poppy.baileyVisitDuration ??= random(25, 60)) > mins - 420) {
 			// 7–9AM: visiting Bailey's office
-			loc = "baileyOffice"; 
+			loc = "baileyOffice";
 			msg = "bailey";
 		} else if (at(540, 720)) {
 			// 9AM–12PM: nature time at the lake, unless weather cancels it
 			if (["rain", "snow"].includes(Weather.precipitation)) {
-				loc = "flatApartment"; 
+				loc = "flatApartment";
 				msg = "lounging";
 			} else {
-				loc = "lake"; 
+				loc = "lake";
 				msg = "lake";
 			}
 		} else if (at(780, 900)) {
 			// 1–3PM: tea time at the café
-			loc = "cafe"; 
+			loc = "cafe";
 			msg = "tea";
 		} else if (at(960, 1020)) {
 			// 4–5PM: lounging at home
-			loc = "flatApartment"; 
+			loc = "flatApartment";
 			msg = "lounging";
 		}
 		// 12–1PM, 3–4PM, 5–6PM gaps: no explicit slot → flatApartment (transitioning/resting)
@@ -308,7 +321,9 @@ function poppySchedule() {
 	// If patience is low, Poppy only appears at locations where she can ignore the PC or stay at home behind a locked door
 	if (T.poppyStatus?.includes("LowPatience")) {
 		const allowed = ["lake", "housekeepingClassroom", "housekeepingLesson", "schoolHallways", "flatApartment", "flatKitchen"];
-		if (!allowed.includes(loc)) { return clearSchedule(); }
+		if (!allowed.includes(loc)) {
+			return clearSchedule();
+		}
 	}
 
 	// ---------- Commit location to temp vars ----------
@@ -321,25 +336,18 @@ function poppySchedule() {
 	if (!V.poppyFlat) V.poppyFlat = {};
 	const atFlat = loc === "flatApartment" || loc === "flatKitchen";
 	V.poppyFlat.home = atFlat;
-	V.poppyFlat.room  = (atFlat ? 
-		(loc === "flatApartment" ?
-			(msg === "sleep" ? 
-				"bedroom" : 
-				"living_room") :
-			"kitchen") :
-		"");
-		
+	V.poppyFlat.room = atFlat ? (loc === "flatApartment" ? (msg === "sleep" ? "bedroom" : "living_room") : "kitchen") : "";
+
 	// Only set meal during actual cooking windows; empty string = no meal happening.
-	V.poppyFlat.meal  = msg === "breakfast" ? "breakfast" : msg === "dinner" ? "dinner" : "";
+	V.poppyFlat.meal = msg === "breakfast" ? "breakfast" : msg === "dinner" ? "dinner" : "";
 
 	return T.poppy_location;
 }
 window.poppySchedule = poppySchedule;
 DefineMacro("poppySchedule", poppySchedule);
-DefineMacro("poppyRefreshSchedule", poppySchedule); 
+DefineMacro("poppyRefreshSchedule", poppySchedule);
 
-
-/* 
+/*
  * ==============================================================
  * global V, T, C, Time, DefineMacro, statChange
  * ==============================================================
@@ -570,11 +578,7 @@ DefineMacro("poppyRefreshSchedule", poppySchedule);
 (function () {
 	"use strict";
 	function poppyPregnancyEnsureState(poppy) {
-		poppy = poppy || (
-			typeof C !== "undefined" && C.npc ? C.npc.Poppy :
-			typeof V !== "undefined" && V.C && V.C.npc ? V.C.npc.Poppy :
-			null
-		);
+		poppy = poppy || (typeof C !== "undefined" && C.npc ? C.npc.Poppy : typeof V !== "undefined" && V.C && V.C.npc ? V.C.npc.Poppy : null);
 		if (!poppy) return null;
 
 		if (!poppy.pregnancy || typeof poppy.pregnancy !== "object") {
@@ -588,86 +592,3 @@ DefineMacro("poppyRefreshSchedule", poppySchedule);
 	}
 	window.poppyPregnancyEnsureState = poppyPregnancyEnsureState;
 })();
-
-/* 
- * Moved statDisplay here bc apparetly it can actually be anywhere; not only in text.js
- * I'll just revert this change if it bugged
- * 
- * should still works as normal: 
- * 		<<gpatience>> creates | - Patience if poppy has some patience left, 
- * 		and | + Anger if she doesn't
- * 
- * I also added if you use <<gpatience "anger">> 
- * then the result will show only | - Anger, 
- * even if the poppet has not reached 0 patience
- * 
- * vice versa for <<gpatiencre "patience">>
- * 
- * and a safe guard so that the <<patience>> will show nothing
- * if the poppet has not been selected in modLI
- * 
- * Are any of these actually needed? idk, better safe than sorry
- * Sorry dna I got lazy...ish
- * 												-- Sei
-*/
-
-statDisplay.create("gpatience", (status) => {
-	const poppyAvailable = modLISelected("Poppy");
-	if (!poppyAvailable) {
-		return null;
-	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
-		return statDisplay.statChange("Patience", 1, "green");
-	} else if (status !== "patience") {
-		return statDisplay.statChange("Anger", -1, "green");
-	}
-});
-statDisplay.create("ggpatience", (status) => {
-	const poppyAvailable = modLISelected("Poppy");
-	if (!poppyAvailable) {
-		return null;
-	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
-		return statDisplay.statChange("Patience", 2, "green");
-	} else if (status !== "patience") {
-		return statDisplay.statChange("Anger", -2, "green");
-	}
-});
-statDisplay.create("gggpatience", (status) => {
-	const poppyAvailable = modLISelected("Poppy");
-	if (!poppyAvailable) {
-		return null;
-	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
-		return statDisplay.statChange("Patience", 3, "green");
-	} else if (status !== "patience") {
-		return statDisplay.statChange("Anger", -3, "green");
-	}
-});
-statDisplay.create("lpatience", (status) => {
-	const poppyAvailable = modLISelected("Poppy");
-	if (!poppyAvailable) {
-		return null;
-	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
-		return statDisplay.statChange("Patience", -1, "red");
-	} else if (status !== "patience") {
-		return statDisplay.statChange("Anger", 1, "red");
-	}
-});
-statDisplay.create("llpatience", (status) => {
-	const poppyAvailable = modLISelected("Poppy");
-	if (!poppyAvailable) {
-		return null;
-	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
-		return statDisplay.statChange("Patience", -2, "red");
-	} else if (status !== "patience") {
-		return statDisplay.statChange("Anger", 2, "red");
-	}
-});
-statDisplay.create("lllpatience", (status) => {
-	const poppyAvailable = modLISelected("Poppy");
-	if (!poppyAvailable) {
-		return null;
-	} else if (C.npc.Poppy > 0 && status !== "anger" || status === "patience") {
-		return statDisplay.statChange("Patience", -3, "red");
-	} else if (status !== "patience") {
-		return statDisplay.statChange("Anger", 3, "red");
-	}
-});
