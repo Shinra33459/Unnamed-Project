@@ -156,9 +156,13 @@ Weather.Renderer.ParticleEmitter = class ParticleEmitter {
 		let imagePromise = Promise.resolve();
 		if (initialSettings.shape === "image" && typeof initialSettings.src === "string") {
 			const img = new Image();
-			img.src = initialSettings.src;
+			imagePromise = new Promise((resolve, reject) => {
+				img.onload = resolve;
+				img.onerror = reject;
+				if (window.ImagePack && typeof window.ImagePack.setImageSource === "function") window.ImagePack.setImageSource(img, initialSettings.src);
+				else img.src = initialSettings.src;
+			});
 			initialSettings.image = img;
-			imagePromise = img.decode();
 		}
 
 		this.initialSettings = initialSettings;
