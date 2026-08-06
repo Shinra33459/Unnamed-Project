@@ -10,7 +10,7 @@ const ImagePack = (() => {
 	let domResolverInstalled = false;
 
 	/* Top-down order mirrors devTools/apkbuilder/imagepack_builds copy order. */
-	const buildFallbacks = {
+	/* 	Historical:
 		img: [],
 		vanilla: ["dolp"],
 		au: ["au", "dolp"],
@@ -26,7 +26,19 @@ const ImagePack = (() => {
 		mikili: ["mikilisubs", "mikili", "dolp"],
 		mizz: ["mizz", "dolp"],
 		rotting: ["rotting", "dolp"],
-		susato: ["susato", "dolp"],
+		susato: ["susato", "dolp"], */
+
+	const buildFallbacks = {
+		img: [],
+		vanilla: ["dolp"],
+		au: ["au", "dolp"],
+		aumasc: ["aumasc", "dolp"],
+		b3s: ["dolp_b3s", "kaervek", "b3s", "dolp"],
+		b3s_hikfem: ["b3s_hikfemsubs", "b3s_hikfem", "dolp_b3s", "kaervek", "b3s", "dolp"],
+		goosefem: ["goosefemsubs", "goosefem", "dolp"],
+		goosemasc: ["goosemascsubs", "goosemasc", "dolp"],
+		mikili: ["mikilisubs", "mikili", "dolp"],
+		rotting: ["rotting", "dolp"],
 	};
 	const imagePackNames = Object.freeze(Object.keys(buildFallbacks));
 
