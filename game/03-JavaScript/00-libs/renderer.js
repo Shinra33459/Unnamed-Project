@@ -36,55 +36,21 @@ var Renderer;
 		return maskObj != undefined && maskObj.path !== undefined && maskObj.convert !== undefined;
 	}
 	Renderer.isMaskConvertObject = isMaskConvertObject;
-	function getImageCandidates(src) {
-		if (src instanceof HTMLCanvasElement) return [src];
-		if (Renderer.ImagePathResolver && typeof Renderer.ImagePathResolver.getCandidates === "function") {
-			const candidates = Renderer.ImagePathResolver.getCandidates(src);
-			if (Array.isArray(candidates) && candidates.length > 0) return candidates;
-		}
-		return [src];
-	}
-	Renderer.getImageCandidates = getImageCandidates;
-	function getImageCacheKey(src) {
-		if (src instanceof HTMLCanvasElement) return src;
-		if (Renderer.ImagePathResolver && typeof Renderer.ImagePathResolver.getCacheKey === "function") {
-			return Renderer.ImagePathResolver.getCacheKey(src);
-		}
-		return src;
-	}
-	Renderer.getImageCacheKey = getImageCacheKey;
-	function getMaskCacheKey(masksrc) {
-		if (Array.isArray(masksrc)) return masksrc.map(src => getImageCacheKey(src)).join("\u0000");
-		return masksrc ? getImageCacheKey(masksrc) : null;
-	}
 	Renderer.DefaultImageLoader = {
 		loadImage(src, layer, successCallback, errorCallback) {
 			if (src instanceof HTMLCanvasElement) {
 				successCallback(src, layer, src);
 			} else {
-				const candidates = getImageCandidates(src);
-				let candidateIndex = 0;
-				let lastError;
-				const loadCandidate = () => {
-					const image = new Image();
-					const candidate = candidates[candidateIndex];
-					image.onload = () => {
-						// Rescale the image to the canvas height, if layer.scale is true
-						const rescaledImage = rescaleImageToCanvasHeight(layer.scale, image, layer.model.height);
-						successCallback(src, layer, rescaledImage, candidate);
-					};
-					image.onerror = event => {
-						lastError = event;
-						candidateIndex++;
-						if (candidateIndex < candidates.length) {
-							loadCandidate();
-						} else {
-							errorCallback(src, layer, lastError);
-						}
-					};
-					image.src = candidate;
+				const image = new Image();
+				image.onload = () => {
+					// Rescale the image to the canvas height, if layer.scale is true
+					const rescaledImage = rescaleImageToCanvasHeight(layer.scale, image, layer.model.height);
+					successCallback(src, layer, rescaledImage);
 				};
-				loadCandidate();
+				image.onerror = event => {
+					errorCallback(src, layer, event);
+				};
+				image.src = src;
 			}
 		},
 	};
@@ -879,26 +845,24 @@ var Renderer;
 			}
 		}
 		function loadLayerImage(layer) {
-			const cacheKey = getImageCacheKey(layer.src);
 			Renderer.ImageLoader.loadImage(
 				layer.src,
 				layer,
-				(src, layer, image, resolvedSrc = src) => {
+				(src, layer, image) => {
 					layersLoaded++;
 					if (listener && listener.loaded) {
-						listener.loaded(layer.name || "unnamed", resolvedSrc);
+						listener.loaded(layer.name || "unnamed", src);
 					}
 					layer.image = image;
-					layer.imageSrc = cacheKey;
-					layer.resolvedSrc = resolvedSrc;
+					layer.imageSrc = src;
 					if (!(layer.src instanceof HTMLCanvasElement)) {
-						Renderer.ImageCaches[cacheKey] = image;
+						Renderer.ImageCaches[src] = image;
 					}
 					maybeRenderResult();
 				},
 				(src, layer, error) => {
 					// Mark this src as erroneous to avoid blinking due to reload attempts
-					Renderer.ImageErrors[cacheKey] = true;
+					Renderer.ImageErrors[src] = true;
 					if (listener && listener.loadError) {
 						listener.loadError(layer.name || "unnamed", src);
 					} else {
@@ -914,7 +878,6 @@ var Renderer;
 				if (layer.masksrc == null) return;
 				layer.masksrc = [layer.masksrc];
 			}
-			const maskCacheKey = getMaskCacheKey(layer.masksrc);
 			const masksLoaded = [];
 			let masksToLoad = layer.masksrc.length;
 			layer.masksrc.forEach((src, index) => {
@@ -924,7 +887,6 @@ var Renderer;
 					imgSrc = src.path;
 					convert = !!src.convert;
 				}
-				const cacheKey = getImageCacheKey(imgSrc);
 				Renderer.ImageLoader.loadImage(
 					imgSrc,
 					layer,
@@ -932,18 +894,18 @@ var Renderer;
 						masksLoaded[index] = image;
 						masksToLoad--;
 						if (!(src instanceof HTMLCanvasElement)) {
-							Renderer.ImageCaches[cacheKey] = image;
+							Renderer.ImageCaches[src] = image;
 						}
 						if (masksToLoad === 0) {
 							layer.mask = masksLoaded.length === 1 ? masksLoaded[0] : masksLoaded;
-							layer.cachedMaskSrc = maskCacheKey;
+							layer.cachedMaskSrc = layer.masksrc;
 							maybeRenderResult();
 						}
 					},
 					(src, layer, error) => {
 						console.error("Failed to load mask " + src + (layer.name ? " for layer " + layer.name : ""));
 						layer.show = false;
-						Renderer.ImageErrors[cacheKey] = true;
+						Renderer.ImageErrors[src] = true;
 						layer.masksrc = null;
 						maybeRenderResult();
 					}
@@ -952,26 +914,22 @@ var Renderer;
 		}
 		for (const layer of layers) {
 			let needImage = true;
-			const imageCacheKey = getImageCacheKey(layer.src);
 			if (layer.image) {
-				if (layer.imageSrc === imageCacheKey || layer.src instanceof HTMLCanvasElement) {
+				if (layer.imageSrc === layer.src || layer.src instanceof HTMLCanvasElement) {
 					needImage = false;
 				} else {
 					// Layer was loaded in previous render, but then its src was changed - purge cache
 					delete layer.image;
 					delete layer.imageSrc;
-					delete layer.resolvedSrc;
-					delete layer.cachedImage;
-					delete layer.cachedProcessing;
 				}
 			}
 			if (needImage) {
-				if (Renderer.ImageErrors[imageCacheKey]) {
+				if (Renderer.ImageErrors[layer.src]) {
 					layer.show = false;
 					continue;
-				} else if (imageCacheKey in Renderer.ImageCaches) {
-					layer.image = Renderer.ImageCaches[imageCacheKey];
-					layer.imageSrc = imageCacheKey;
+				} else if (layer.src in Renderer.ImageCaches) {
+					layer.image = Renderer.ImageCaches[layer.src];
+					layer.imageSrc = layer.src;
 				} else {
 					loadLayerImage(layer);
 				}
@@ -1005,47 +963,35 @@ var Renderer;
 					layer.masksrc = layer.masksrc.path;
 				}
 			}
-			const maskCacheKey = getMaskCacheKey(layer.masksrc);
 			let needMask = !!layer.masksrc;
 			if (layer.mask) {
-				if (layer.cachedMaskSrc === maskCacheKey || layer.masksrc instanceof HTMLCanvasElement) {
+				if (layer.cachedMaskSrc === layer.masksrc || layer.masksrc instanceof HTMLCanvasElement) {
 					needMask = false;
 				} else {
 					// Layer mask was loaded in previous render, but then its masksrc was changed - purge cache
 					delete layer.mask;
 					delete layer.cachedMaskSrc;
-					delete layer.cachedImage;
-					delete layer.cachedProcessing;
 				}
 			}
 			if (needMask) {
 				if (Array.isArray(layer.masksrc)) {
 					layer.mask = [];
-					let hasMissingMask = false;
-					for (const src of layer.masksrc) {
-						const cacheKey = getImageCacheKey(src);
-						if (Renderer.ImageErrors[cacheKey]) {
+					layer.masksrc.forEach(src => {
+						if (Renderer.ImageErrors[src]) {
 							layer.masksrc = null;
-							break;
-						} else if (cacheKey in Renderer.ImageCaches) {
-							layer.mask.push(Renderer.ImageCaches[cacheKey]);
+						} else if (src in Renderer.ImageCaches) {
+							layer.mask.push(Renderer.ImageCaches[src]);
+							layer.cachedMaskSrc = layer.masksrc;
 						} else {
-							hasMissingMask = true;
-							break;
+							loadLayerMask(layer);
 						}
-					}
-					if (layer.masksrc && hasMissingMask) {
-						loadLayerMask(layer);
-					} else if (layer.masksrc) {
-						layer.cachedMaskSrc = maskCacheKey;
-					}
+					});
 				} else {
-					const cacheKey = getImageCacheKey(layer.masksrc);
-					if (Renderer.ImageErrors[cacheKey]) {
+					if (Renderer.ImageErrors[layer.masksrc]) {
 						layer.masksrc = null;
-					} else if (cacheKey in Renderer.ImageCaches) {
-						layer.mask = Renderer.ImageCaches[cacheKey];
-						layer.cachedMaskSrc = maskCacheKey;
+					} else if (layer.masksrc in Renderer.ImageCaches) {
+						layer.mask = Renderer.ImageCaches[layer.masksrc];
+						layer.cachedMaskSrc = layer.masksrc;
 					} else {
 						loadLayerMask(layer);
 					}
@@ -1064,7 +1010,6 @@ var Renderer;
 	function clearCaches(model) {
 		Renderer.ImageCaches = {};
 		Renderer.ImageErrors = {};
-		if (window.ImageCache && typeof window.ImageCache.clear === "function") window.ImageCache.clear();
 		invalidateLayerCaches(model.layerList);
 	}
 	Renderer.clearCaches = clearCaches;
@@ -1072,7 +1017,6 @@ var Renderer;
 		for (let layer of layers) {
 			delete layer.image;
 			delete layer.imageSrc;
-			delete layer.resolvedSrc;
 			delete layer.mask;
 			delete layer.cachedMaskSrc;
 			delete layer.cachedImage;

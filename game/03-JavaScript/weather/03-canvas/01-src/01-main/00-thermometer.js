@@ -48,8 +48,7 @@ Weather.Thermometer = (() => {
 					resolve();
 				};
 				img.onerror = reject;
-				if (window.ImagePack && typeof window.ImagePack.setImageSource === "function") window.ImagePack.setImageSource(img, imageInfo.src);
-				else img.src = imageInfo.src;
+				img.src = imageInfo.src;
 			});
 			loadPromises.push(promise);
 			return 0;
@@ -128,8 +127,7 @@ Weather.Thermometer = (() => {
 			}
 		} else {
 			thermometerCanvas.ctx.fillStyle =
-				Weather.bodyTemperature > setup.WeatherTemperature.baseBodyTemperature - 1 &&
-				Weather.bodyTemperature < setup.WeatherTemperature.baseBodyTemperature + 1
+				Weather.bodyTemperature > setup.WeatherTemperature.baseBodyTemperature - 1 && Weather.bodyTemperature < setup.WeatherTemperature.baseBodyTemperature + 1
 					? color.mid
 					: color.warn;
 		}
