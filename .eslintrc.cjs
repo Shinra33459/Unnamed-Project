@@ -305,6 +305,7 @@ module.exports = {
 		CanvasModel: "readonly",
 		PRNG: "readonly",
 		// DOLP functions
+		hallucinogenSexStatModifier: "readonly",
 		initEarrings: "readonly",
 		initRingsL: "readonly",
 		bikeSecurity: "readonly",
