@@ -15,6 +15,7 @@ set target[8]=au
 set target[9]=au_mys
 set target[10]=aumasc
 set target[11]=rotting
+set target[12]=b3s
 
 set imagepack[0]=vanilla
 set imagepack[1]=hikfem
@@ -28,8 +29,9 @@ set imagepack[8]=aokiutage
 set imagepack[9]=aokiutage_mys
 set imagepack[10]=aokiutagemasc
 set imagepack[11]=rotting
+set imagepack[12]=b3s
 
-set array_length=11
+set array_length=12
 
 rem Clean old zips
 del /q ..\..\dist\*.zip 2>nul
@@ -43,8 +45,8 @@ for /L %%i in (0,1,%array_length%) do (
 	echo ===============================
 
 	rem Update displayed version strings (keep only what matters for HTML output)
-	powershell -NoProfile -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\version'"
-	powershell -NoProfile -Command "(Get-Content -Path '.\game\01-config\sugarcubeConfig.js') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\game\01-config\sugarcubeConfig.js'"
+	powershell -NoProfile -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version%' | Set-Content -Path '.\version'"
+	powershell -NoProfile -Command "(Get-Content -Path '.\game\01-config\sugarcubeConfig.js') -replace 'DoLP version', 'DoLP v0.%version%' | Set-Content -Path '.\game\01-config\sugarcubeConfig.js'"
 
 	rem Build the imagepack
 	cd .\devTools\apkbuilder\imagepack_builds\
