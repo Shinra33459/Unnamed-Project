@@ -33,6 +33,7 @@ set imagepack[12]=b3s
 set array_length=12
 
 del ..\..\dist\*.apk
+del ..\..\dist\*.zip
 
 cd ..\..\
 
@@ -64,6 +65,39 @@ for /L %%i in (0,1,%array_length%) do (
 	cd .\devTools\apkbuilder\
 
 	call .\build_app_debug.bat
+
+	rem Preserve your special-case behavior (but restore so the ZIP includes style.css)
+	if %%i==6 (
+		if exist ".\img\style.css" (
+			copy /y ".\img\style.css" ".\_style_backup.css" >nul
+			del /q ".\img\style.css"
+		)
+	)
+
+	rem Compile HTML
+	call compile.bat
+
+	rem Restore style.css (so it ends up inside the ZIP img\ folder)
+	if exist ".\_style_backup.css" (
+		move /y ".\_style_backup.css" ".\img\style.css" >nul
+	)
+
+	rem Stage files for zipping
+	set "displayVersion=v0.%version% !imagepack[%%i]!"
+	set "stage=dist\_zip_tmp_!imagepack[%%i]!"
+	set "zipOut=Degrees of Lewdity !displayVersion!.zip"
+
+	if exist "!stage!" rmdir /s /q "!stage!"
+	mkdir "!stage!\img" >nul
+
+	copy /y "Degrees of Lewdity VERSION.html" "!stage!\Degrees of Lewdity.html" >nul
+	xcopy /e /i /y "img" "!stage!\img" >nul
+
+	rem Create zip in dist\
+	powershell -NoProfile -Command "Compress-Archive -Path '!stage!\*' -DestinationPath 'dist\!zipOut!' -Force"
+
+	rem Cleanup staging
+	rmdir /s /q "!stage!"
 
 	cd .\imagepack_builds\
 
