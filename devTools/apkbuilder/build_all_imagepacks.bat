@@ -63,6 +63,8 @@ for /L %%i in (0,1,%array_length%) do (
 	cd .\devTools\apkbuilder\
 
 	call .\build_app_debug.bat
+	
+	cd ..\..\
 
 	rem Preserve your special-case behavior (but restore so the ZIP includes style.css)
 	if %%i==6 (
@@ -72,7 +74,6 @@ for /L %%i in (0,1,%array_length%) do (
 		)
 	)
 
-	rem Compile HTML
 	call compile.bat
 
 	rem Restore style.css (so it ends up inside the ZIP img\ folder)
