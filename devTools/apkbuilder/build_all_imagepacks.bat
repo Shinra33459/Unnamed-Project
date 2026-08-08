@@ -14,6 +14,7 @@ set target[8]=au
 set target[9]=au_mys
 set target[10]=aumasc
 set target[11]=rotting
+set target[12]=b3s
 
 set imagepack[0]=vanilla
 set imagepack[1]=hikfem
@@ -27,8 +28,9 @@ set imagepack[8]=aokiutage
 set imagepack[9]=aokiutage_mys
 set imagepack[10]=aokiutagemasc
 set imagepack[11]=rotting
+set imagepack[12]=b3s
 
-set array_length=11
+set array_length=12
 
 del ..\..\dist\*.apk
 
@@ -75,7 +77,7 @@ for /L %%i in (0,1,%array_length%) do (
 
 	cd .\dist\
 
-	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.11.9 DoLP v0.%version% !imagepack[%%i]!-debug.apk" "DoLP v0.%version% !imagepack[%%i]! 0.5.11.9.apk"
+	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.11.9-debug.apk" "DoLP v0.%version% !imagepack[%%i]! 0.5.11.9.apk"
 
 	cd ..\
 )
