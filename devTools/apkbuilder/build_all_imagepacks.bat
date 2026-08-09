@@ -33,9 +33,9 @@ set imagepack[12]=b3s
 set array_length=12
 
 del ..\..\dist\*.apk
-del ..\..\dist\*.zip
+del /q ..\..\dist\*.zip 2>nul
 
-cd ..\..\
+cd /d ..\..\
 
 for /L %%i in (0,1,%array_length%) do (
 	echo.
@@ -75,12 +75,12 @@ for /L %%i in (0,1,%array_length%) do (
 	echo ===============================
 	echo Building ZIP for !imagepack[%%i]!
 	echo ===============================
+	
+	cd ..\..\
 
 	rem Update displayed version strings (keep only what matters for HTML output)
 	powershell -NoProfile -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version%' | Set-Content -Path '.\version'"
 	powershell -NoProfile -Command "(Get-Content -Path '.\game\01-config\sugarcubeConfig.js') -replace 'DoLP version', 'DoLP v0.%version%' | Set-Content -Path '.\game\01-config\sugarcubeConfig.js'"
-
-	cd ..\..\
 
 	rem Preserve your special-case behavior (but restore so the ZIP includes style.css)
 	if %%i==6 (
