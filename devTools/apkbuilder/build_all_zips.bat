@@ -4,32 +4,44 @@ setlocal EnableDelayedExpansion
 set /p version=Enter the version number:
 
 set target[0]=vanilla
-set target[1]=b3s_hikfem
-set target[2]=b3s_mys
-set target[3]=b3s_hikfem_mys
-set target[4]=goosefem
-set target[5]=goosefem_mys
-set target[6]=goosemasc
-set target[7]=mikili
-set target[8]=au
-set target[9]=au_mys
-set target[10]=aumasc
-set target[11]=rotting
+set target[1]=vanilla_mys
+set target[2]=b3s
+set target[3]=b3s_mys
+set target[4]=b3s_hikfem
+set target[5]=b3s_hikfem_mys
+set target[6]=goosefem
+set target[7]=goosefem_mys
+set target[8]=goosemasc
+set target[9]=goosemasc_mys
+set target[10]=mikili
+set target[11]=mikili_mys
+set target[12]=au
+set target[13]=au_mys
+set target[14]=aumasc
+set target[15]=aumasc_mys
+set target[16]=rotting
+set target[17]=rotting_mys
 
 set imagepack[0]=vanilla
-set imagepack[1]=hikfem
-set imagepack[2]=b3s_mys
-set imagepack[3]=hikfem_mys
-set imagepack[4]=goosefem
-set imagepack[5]=goosefem_mys
-set imagepack[6]=goosemasc
-set imagepack[7]=mikili
-set imagepack[8]=aokiutage
-set imagepack[9]=aokiutage_mys
-set imagepack[10]=aokiutagemasc
-set imagepack[11]=rotting
+set imagepack[1]=vanilla_mys
+set imagepack[2]=b3s
+set imagepack[3]=b3s_mys
+set imagepack[4]=b3s_hikfem
+set imagepack[5]=b3s_hikfem_mys
+set imagepack[6]=goosefem
+set imagepack[7]=goosefem_mys
+set imagepack[8]=goosemasc
+set imagepack[9]=goosemasc_mys
+set imagepack[10]=mikili
+set imagepack[11]=mikili_mys
+set imagepack[12]=au
+set imagepack[13]=au_mys
+set imagepack[14]=aumasc
+set imagepack[15]=aumasc_mys
+set imagepack[16]=rotting
+set imagepack[17]=rotting_mys
 
-set array_length=11
+set array_length=17
 
 rem Clean old zips
 del /q ..\..\dist\*.zip 2>nul
