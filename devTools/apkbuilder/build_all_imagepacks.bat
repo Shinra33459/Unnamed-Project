@@ -38,6 +38,11 @@ del ..\..\dist\*.zip
 cd ..\..\
 
 for /L %%i in (0,1,%array_length%) do (
+	echo.
+	echo ===============================
+	echo Building APK for !imagepack[%%i]!
+	echo ===============================
+
 	powershell -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\version'"
 
 	powershell -Command "(Get-Content -Path '.\devTools\apkbuilder\config.xml') -replace 'DoLP version', 'DoLP v0.%version% !imagepack[%%i]!' | Set-Content -Path '.\devTools\apkbuilder\config.xml'"
@@ -66,6 +71,15 @@ for /L %%i in (0,1,%array_length%) do (
 
 	call .\build_app_debug.bat
 	
+	echo.
+	echo ===============================
+	echo Building ZIP for !imagepack[%%i]!
+	echo ===============================
+
+	rem Update displayed version strings (keep only what matters for HTML output)
+	powershell -NoProfile -Command "(Get-Content -Path '.\version') -replace 'DoLP version', 'DoLP v0.%version%' | Set-Content -Path '.\version'"
+	powershell -NoProfile -Command "(Get-Content -Path '.\game\01-config\sugarcubeConfig.js') -replace 'DoLP version', 'DoLP v0.%version%' | Set-Content -Path '.\game\01-config\sugarcubeConfig.js'"
+
 	cd ..\..\
 
 	rem Preserve your special-case behavior (but restore so the ZIP includes style.css)
@@ -76,6 +90,7 @@ for /L %%i in (0,1,%array_length%) do (
 		)
 	)
 
+	rem Compile HTML
 	call compile.bat
 
 	rem Restore style.css (so it ends up inside the ZIP img\ folder)
@@ -100,15 +115,14 @@ for /L %%i in (0,1,%array_length%) do (
 	rem Cleanup staging
 	rmdir /s /q "!stage!"
 
-	cd .\imagepack_builds\
-
+	rem Reset imagepack changes
+	cd .\devTools\apkbuilder\imagepack_builds\
 	call .\reset.bat
-
 	cd ..\..\..\
 
 	git reset --hard
 
-	del "Degrees of Lewdity.html"
+	del /q "Degrees of Lewdity.html"
 
 	cd .\dist\
 
