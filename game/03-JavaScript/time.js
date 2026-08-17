@@ -2636,6 +2636,11 @@ function dailyFarmEvents() {
 				V.phials_stored++;
 				V.farm.still_timer = 7;
 			}
+			/**
+			 * Bec- The self-extract system needs polish imo. Extracting continues independent of player interaction as long as there's more lurkers?
+			 * Should probably have a note in the journal to let players know how long they have left, how many vials are waiting, etc. A 'reminder' or smth that lets the player know that
+			 * the extract on the first lurker finished and the next one has started would also be nice.
+			 */
 			if (V.farm.player_still_timer >= 0) {
 				V.farm.player_still_timer--;
 			}
