@@ -311,7 +311,7 @@ function poppySchedule() {
 		// small valentine override: be at home instead and have dinner early if accept date
 		// and at barb street at 8pm if no? Probably???
 		if (Time.month = 2 && Time.monthDay === 14 && Number(V.poppyromance) >= 0){
-			loc = valentines_poppy_flat_accept ? "flatKitchen" : "barbStreet";
+			loc = T.valentines_poppy_flat_accept ? "flatKitchen" : "barbStreet";
 			msg = "dinner";
 		} else {
 			loc = "soupKitchen";
