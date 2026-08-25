@@ -846,7 +846,7 @@ Renderer.CanvasModels.main = {
 			options.headMask.push(`img/clothes/handheld/${options.worn.handheld.setup.variable}/mask.png`);
 		}
 
-		if (["fro", "afro pouf", "afro puffs"].includes(options.hair_sides_type) && options.hair_fringe_type === "fro") {
+		if (["fro"].includes(options.hair_sides_type) && options.hair_fringe_type === "fro") {
 			options.fringe_mask_src = `img/hair/fringe/${options.hair_fringe_type}/mask.png`;
 		} else {
 			options.fringe_mask_src = null;
@@ -1607,72 +1607,30 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const hairs = [
+					"default",
+					"loose",
+					"curl",
+					"defined curl",
+					"drill ringlets",
+					"neat",
+					"dreads",
 					"afro pouf",
 					"afro puffs",
 					"all down",
-					"bedhead",
-					"braid left",
-					"braid right",
-					"bubble tails",
-					"crescent tails",
-					"crude",
-					"curl",
-					"curly pigtails",
-					"curly side up",
-					"default",
-					"defined curl",
-					"dreads",
-					"drill ringlets",
-					"flat ponytail",
-					"fluffy half up twintail",
-					"fluffy ponytail",
-					"french bob",
-					"fro",
-					"half up twintail",
-					"half-up",
-					"heart braid",
-					"jellyfish ponytail",
-					"jellyfish twintails",
-					"layered bob",
-					"left fishtail",
-					"loop braid",
-					"loose",
-					"low tails",
-					"messy",
-					"messy bun",
+					"half up",
 					"messy ponytail",
-					"neat",
-					"pigtails",
-					"ponytail",
-					"princess twintails",
-					"princess wave",
-					"ribbon tail",
-					"right fishtail",
 					"ruffled",
-					"sailor buns",
-					"scorpion tails",
-					"shaved",
-					"short",
-					"short spiky",
-					"sidecut",
-					"sidetail left",
-					"sidetail right",
-					"sleek",
+					"half up twintails",
+					"princess wave",
 					"space buns",
-					"straight",
-					"straight bob",
-					"swept left",
-					"thick pigtails",
-					"thick ponytail",
-					"thick princess twintail",
-					"thick sidetail",
-					"thick twintails",
-					"twin braids",
-					"twin double braids",
-					"twin fishtails",
-					"twintails",
-					"wavy braid"
-				  ];
+					"sleek",
+					"bedhead",
+					"classic",
+					"cornrows",
+					"french curls",
+					"jellyfish bob",
+					"princess ponytail"
+				];
 
 				const path = `img/hair/back/${options.hair_sides_type}`;
 				if (options.hair_sides_length === "feet" && hairs.includes(options.hair_sides_type))
@@ -2985,7 +2943,7 @@ Renderer.CanvasModels.main = {
 			showfn(options) {
 				return options.show_face
 					&& !!options.drip_mouth
-					&& !options.worn.face.setup.type.includesAny("mask", "face_covering");
+					&& !options.worn.face.setup.type.includesAny("face_covering");
 			},
 			dxfn(options) {
 				return options.facestyle === "small-eyes" ? 2 : 0;

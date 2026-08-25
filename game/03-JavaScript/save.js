@@ -671,6 +671,16 @@ function compatibilityConversion(rawData) {
 		}
 		delete processed.general[legacyKey];
 	}
+
+	if (!processed.pregnancyChancePercent) {
+		const settings = processed.general.settings;
+		if (settings.basePlayerPregnancyChance !== undefined) {
+			settings.basePlayerPregnancyChance = legacyPregnancyChanceToPercent(settings.basePlayerPregnancyChance, 100);
+		}
+		if (settings.baseNpcPregnancyChance !== undefined) {
+			settings.baseNpcPregnancyChance = legacyPregnancyChanceToPercent(settings.baseNpcPregnancyChance, 20);
+		}
+	}
 	return JSON.stringify(processed);
 }
 
@@ -781,7 +791,7 @@ function importSettingsData(data) {
 						V.NPCName[i][listKey[j]] = overrides.npc[V.NPCNameList[i]][listKey[j]];
 					}
 					// Prevent the changing of gender with pregnant npc's
-					if (V.NPCName[i].pregnancy.type) {
+					if (getActivePregnancies(V.NPCName[i].nam).length) {
 						V.NPCName[i].gender = "f";
 					}
 				}
@@ -902,6 +912,7 @@ function exportSettings(data, type) {
 		output.starting = settingsConvert(true, "starting", output.starting);
 	}
 	output.general = settingsConvert(true, "general", output.general);
+	output.pregnancyChancePercent = true;
 
 	// console.log(S);
 	const result = JSON.stringify(output);
@@ -969,7 +980,7 @@ function settingsObjects(type) {
 					textMap: { 1: "Normal", 2: "Sensitive", 3: "Very Sensitive" },
 					randomize: "characterTrait",
 				},
-				alcoholMod: {
+				drunkSensitivity: {
 					min: 0.5,
 					max: 1.5,
 					decimals: 1,
@@ -1004,6 +1015,7 @@ function settingsObjects(type) {
 						"black",
 						"darkbrown",
 						"brown",
+						"copperbrown",
 						"softbrown",
 						"lightbrown",
 						"burntorange",
@@ -1013,6 +1025,8 @@ function settingsObjects(type) {
 						"ashyblond",
 						"strawberryblond",
 						"ginger",
+						"white",
+						"snowwhite",
 						"random",
 					],
 					displayName: "Hair colour:",
@@ -1287,9 +1301,9 @@ function settingsObjects(type) {
 					},
 					penisModifier: { min: -8, max: 8, decimals: 0, displayName: "Average size of NPC penises:", randomize: "encounter" },
 					breastModifier: { min: -12, max: 12, decimals: 0, displayName: "Average size of women's breasts:", randomize: "encounter" },
-					rentCostModifier: { min: 0.1, max: 10, decimals: 1, displayName: "Bailey's rent:", randomize: "gameplay" },
-					baseNpcPregnancyChance: { min: 0, max: 16, decimals: 0, displayName: "Base NPC pregnancy chance:", randomize: "gameplay" },
-					basePlayerPregnancyChance: { min: 0, max: 96, decimals: 0, displayName: "Base player pregnancy chance:", randomize: "gameplay" },
+					rentCostModifier: { min: 0.1, max: 3, decimals: 1, displayName: "Bailey's rent:", randomize: "gameplay" },
+					baseNpcPregnancyChance: { min: 0, max: 100, decimals: 0, displayName: "Base NPC pregnancy chance:", randomize: "gameplay" },
+					basePlayerPregnancyChance: { min: 0, max: 100, decimals: 0, displayName: "Base player pregnancy chance:", randomize: "gameplay" },
 					beastMaleChanceSplit: { bool: true, displayName: "Beast attraction split by gender appearance:" },
 					beastMaleChanceMale: { min: 0, max: 100, decimals: 0, displayName: "Beasts who are attracted to men:", randomize: "encounter" },
 					beastMaleChanceFemale: { min: 0, max: 100, decimals: 0, displayName: "Beasts who are attracted to women:", randomize: "encounter" },
@@ -1350,6 +1364,8 @@ function settingsObjects(type) {
 					multipleWardrobes: { strings: [false, "isolated"], displayName: "Multiple wardrobes:" }, //, "all"
 					maleChanceSplit: { bool: true, displayName: "NPC attraction split by gender appearance:" },
 					npcPregnancyEnabled: { bool: true, displayName: "NPC pregnancy:" },
+					analPregnancy: { strings: [false, "exceptional", "always"], displayName: "PC anal pregnancy:" },
+					npcAnalPregnancyEnabled: { bool: true, displayName: "NPC anal pregnancy:" },
 					maleChanceMale: { min: 0, max: 100, decimals: 0, displayName: "NPCs who are attracted to men:", randomize: "encounter" },
 					maleChanceFemale: { min: 0, max: 100, decimals: 0, displayName: "NPCs who are attracted to women:", randomize: "encounter" },
 					nudeGenderPerception: {
@@ -1394,7 +1410,7 @@ function settingsObjects(type) {
 					playerPregnancyEggLayingEnabled: { bool: true, displayName: "Player egg laying:" },
 					playerPregnancyBeastEnabled: { bool: true, displayName: "Player pregnancy with beasts:" },
 					playerPregnancyHumanEnabled: { bool: true, displayName: "Player pregnancy with humans:" },
-					pregnancyType: { strings: ["realistic", "fetish", "silly"], displayName: "Pregnancy mode:" },
+					pregnancyType: { strings: ["realistic", "fetish"], displayName: "Pregnancy mode:" },
 					pubicHairEnabled: { bool: true, displayName: "Pubic hair:" },
 					ruinedOrgasmEnabled: { bool: true, displayName: "Ruined orgasms:" },
 					skillCheckStyle: { strings: ["percentage", "words", "skillname"], randomize: "gameplay", displayName: "Skill check display:" },

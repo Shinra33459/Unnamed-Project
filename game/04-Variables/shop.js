@@ -320,6 +320,10 @@ setup.shopDetails = {
 	extravagant: {
 		name: "Extravagant",
 		desc: "More of a collector's item than a regular accessory.",
+	},
+	fishing_rod: {
+		name: "Fishing Rod",
+		desc: "Needed to go fishing.",
 		details: "none",
 	},
 };

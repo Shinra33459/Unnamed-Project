@@ -550,6 +550,9 @@
 	<<if $halloween is 1 and Time.monthDay is 31 and !$halloween_lake>>
 		<<addevent "halloween_lake_invite" 1000>>
 	<</if>>
+	<<if $asylum_tunnels gte 6 and Time.dayState is "night" and $forest gte 21>>
+		<<addevent "forest_eyes" 0.15>>
+	<</if>>
 	<<runeventpool>>
 <</widget>>
 
@@ -1333,7 +1336,7 @@
 <<widget "eventwolfcave">>
 	<<if $wolfpacktrust gte 12>>
 		<<npc "Black Wolf">>/*<<beastNNPCinit>>*/
-		The Black Wolf walks up to you and <<if $monster is 1>>kneels<<else>>turns<</if>> until <<bhis>> <<if C.npc["Black Wolf"].gender is "m">>erect $NPCList[0].penisdesc<<else>>wet pussy<</if>> hovers inches away from you. <<bHe>> waits. The other <<wolf_cave_plural>> watch. <<if $monster is 1>>"Accept, and become <<ppackbrother>>.<<print ((playerHeatMinArousal() and (V.player.vaginaExist or canBeMPregnant()) and V.NPCList[0].penis !== "none") ? ' You ready.' : '')>><<print ((playerRutMinArousal() and $NPCList[0].vagina isnot "none") ? " You ready." : '')>>"<</if>>
+		The Black Wolf walks up to you and <<if $monster is 1>>kneels<<else>>turns<</if>> until <<bhis>> <<if C.npc["Black Wolf"].gender is "m">>erect $NPCList[0].penisdesc<<else>>wet pussy<</if>> hovers inches away from you. <<bHe>> waits. The other <<wolf_cave_plural>> watch. <<if $monster is 1>>"Accept, and become <<ppackbrother>>.<<print ((playerHeatMinArousal() and (V.player.vaginaExist or playerCanCarryAnally()) and V.NPCList[0].penis !== "none") ? ' You ready.' : '')>><<print ((playerRutMinArousal() and $NPCList[0].vagina isnot "none") ? " You ready." : '')>>"<</if>>
 		<br><br>
 
 	    <<link [[Take it in hand|Wolf Cave Accept]]>><<set $sexstart to 1>><</link>><<deviant1>>
@@ -1343,7 +1346,7 @@
 	        <br>
         <</if>>
 	    <<if (($wolfgirl gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "wolf") and hasSexStat("deviancy", 5)>>
-	        <<if playerAwareTheyAreInHeat() and $NPCList[0].penis isnot "none" and (($player.vaginaExist and !playerChastity("vagina")) or (canBeMPregnant() and !playerChastity("anus")))>>
+	        <<if playerAwareTheyAreInHeat() and $NPCList[0].penis isnot "none" and (($player.vaginaExist and !playerChastity("vagina")) or (playerCanCarryAnally() and !playerChastity("anus")))>>
 		        <<link [[Present your behind|Wolf Cave Accept]]>><<set $phase to 2>><<set $sexstart to 1>><</link>><<deviant5>><<wolfgirl>><<heat>>
 		        <br>
 	        <</if>>
@@ -1520,6 +1523,7 @@
 			<</if>>
 			<<if currentSkillValue('tending') lt 300 and $gwylan?.request.special is "tutorial" and $gwylanTutorialShrooms lt 3>>
 				<<foodstufficon "wolfshroom">><<link [[Pick for Gwylan (0:20)|Forest Mushrooms Gwylan Pick]]>><<pass 20>><</link>>
+				<br>
 			<</if>>
 			<<if currentSkillValue('tending') gte 300>>
 				<<foodstufficon "wolfshroom">><<link [[Search for saleable specimens (0:20)|Forest Mushrooms2 Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
@@ -2102,17 +2106,19 @@
 	<</if>>
 	<<lstress>><<stress -2>>
 	<br><br>
-	<<if $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1
+	<<if ($worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1
 	or $worn.upper.exposed gte 2 and $underupperwetstage gte 3
 	or $upperwetstage gte 3 and $worn.under_upper.exposed gte 1
-	or $upperwetstage gte 3 and $underupperwetstage gte 3>>
+	or $upperwetstage gte 3 and $underupperwetstage gte 3)
+	and !pcAreArmsBound("both")>>
 		<<foresticon "bush">><<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
 		<br>
 	<</if>>
-	<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1
+	<<if ($worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1
 	or $worn.lower.exposed gte 2 and $underlowerwetstage gte 3
 	or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1
-	or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
+	or $lowerwetstage gte 3 and $underlowerwetstage gte 3)
+	and !pcAreArmsBound("both")>>
 		<<foresticon "bush">><<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
 		<br>
 	<</if>>
@@ -3198,7 +3204,7 @@
 				<br><br>
 			<</if>>
 
-			<<link [[Next|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<<destinationForest "Next">><<endevent>><<set $eventskip to 1>><</destinationForest>>
 			<br>
 		<</if>>
 	<<elseif $canRescue.includes("Nobody")>>
@@ -3309,7 +3315,7 @@
 		You're alone.
 		<br><br>
 
-		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+		<<destinationForest "Next">><<set $eventskip to 1>><</destinationForest>>
 		<br>
 	<<elseif $canRescue.includes("Eden")>>
 		You hear a gun fire close by, and a bullet $_lands
@@ -3393,7 +3399,7 @@
 		<span class="red">Invalid rescue in $passage: <<print $canRescue>>!</span> Please report this.
 		<br><br>
 
-		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+		<<destinationForest "Next">><<set $eventskip to 1>><</destinationForest>>
 	<</if>>
 <</widget>>
 
@@ -3513,7 +3519,7 @@
 <<widget "forestCabinReturnLinks">>
 	<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><<endevent>><</link>>
 	<br>
-	<<link [[Say goodbye|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<<destinationForest "Next">><<endevent>><<set $eventskip to 1>><</destinationForest>>
 	<br>
 <</widget>>
 
@@ -3591,4 +3597,23 @@
 		<</if>>
 		<br><br>
 	<</if>>
+<</widget>>
+
+<<widget "destinationForest" container>>
+	<<set _linkText to _args[0] ?? "Next">>
+	<<if $bus is "fishingForestLake">>
+		<<link [[_linkText|Fishing Forest Lake Wait]]>><<= _contents>><</link>>
+	<<else>>
+		<<link [[_linkText|Forest]]>><<= _contents>><</link>>
+	<</if>>
+<</widget>>
+
+<<widget "forest_eyes">>
+	<<beastNEWinit 1 wolf>>
+	Two eyes appear before you. A <<beasttype>> steps forward, a hungry look in <<bhis>> eyes. Then <<bhe>> stops, and looks behind you, above you. With a whimper, <<bhe>> turns and runs.
+	<br><br>
+	You spin around. There's nothing there.
+	<br><br>
+	<<link [[Next|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
 <</widget>>

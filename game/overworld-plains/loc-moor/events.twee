@@ -2706,7 +2706,7 @@ You emerge from the pool, gasping for air. <span class="red">Claws grasp your sh
 The <<beasttype>> hears you and swoops closer, landing nearby.
 <br><br>
 
-<<if Object.values($children).find(child => (child.type is "hawk" and child.location is "inventory"))>>
+<<if getChildrenAt("inventory").find(child => child.species is "hawk")>>
 	<<bHe>> rushes to your side, immediately noticing the eggs you're carrying.
 	<<if $monster is 1>>
 		"<<Wife>> had eggs! Grab on to me, we must get home quickly."
@@ -2714,7 +2714,7 @@ The <<beasttype>> hears you and swoops closer, landing nearby.
 		<<bHe>> headbutts you, extending <<bhis>> wings and urging you to grab on to <<bhim>>.
 	<</if>>
 	<br><br>
-<<elseif playerIsPregnant() and getPregnancyObject().fetus[0].type is "hawk" and talkedAboutPregnancy("pc","Great Hawk")>>
+<<elseif playerIsPregnant() and getActivePregnancies("pc").some(p => childBaseSpecies(p.donorSpecies) === "hawk") and talkedAboutPregnancy("pc","Great Hawk")>>
 	<<bHe>> rushes to your side.
 	<<if $monster is 1>>
 		"<<Wife>> should be at home, resting." <<bHis>> eyes fall on your baby bump. "Come home."
@@ -2959,8 +2959,7 @@ The <<beasttype>> hesitates for a moment, before
 	<<bHe>> wraps a wing around you for a moment, before taking to the skies once more.
 <</if>>
 <br><br>
-
-<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+<<destinationMoor "next">><<endevent>><<set $eventskip to 1>><</destinationMoor>>
 <br>
 
 :: Moor Shackle Break
@@ -3669,7 +3668,7 @@ They break into an argument, but the <<person1>><<person>> doesn't take <<his>> 
 <<if playerIsPregnant() and playerAwareTheyArePregnant()>>
 	<<foodicon "beerbottle">><span class="blue">You can't bring yourself to drink while you know you're with child.</span>
 <<else>>
-	<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<alcohol 60>><<stress -6>><<wearProp "beer bottle">><</link>><<lstress>><<galcohol>>
+	<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<drunk 60>><<stress -6>><<wearProp "beer bottle">><</link>><<lstress>><<gdrunk>>
 <</if>>
 <br>
 <<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
@@ -3690,7 +3689,7 @@ They break into an argument, but the <<person1>><<person>> doesn't take <<his>> 
 	The <<person1>><<person>> offers you another bottle.
 	<br><br>
 
-	<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<alcohol 180>><<stress -6>><</link>><<lstress>><<galcohol>>
+	<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<drunk 180>><<stress -6>><</link>><<lstress>><<gdrunk>>
 	<br>
 	<<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
 	<br>
@@ -3757,7 +3756,7 @@ They break into an argument, but the <<person1>><<person>> doesn't take <<his>> 
 	<br><br>
 	<<person1>><<He>> offers you another drink.
 	<br><br>
-	<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<alcohol 60>><<stress -6>><</link>><<lstress>><<galcohol>>
+	<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<drunk 60>><<stress -6>><</link>><<lstress>><<gdrunk>>
 	<br>
 	<<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
 	<br>
@@ -3788,7 +3787,7 @@ They break into an argument, but the <<person1>><<person>> doesn't take <<his>> 
 <<He>> offers you another drink.
 <br><br>
 
-<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<alcohol 60>><<stress -6>><</link>><<lstress>><<galcohol>>
+<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<drunk 60>><<stress -6>><</link>><<lstress>><<gdrunk>>
 <br>
 <<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
 <br>
@@ -3813,7 +3812,7 @@ They break into an argument, but the <<person1>><<person>> doesn't take <<his>> 
 <<He>> offers you another drink.
 <br><br>
 
-<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<alcohol 60>><<stress -6>><</link>><<lstress>><<galcohol>>
+<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<drunk 60>><<stress -6>><</link>><<lstress>><<gdrunk>>
 <br>
 <<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
 <br>
@@ -3828,7 +3827,7 @@ You try to pull away from the <<person>>. <<Hes>> insistent.
 	The <<person1>><<person>> offers you another drink.
 	<br><br>
 
-	<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<alcohol 60>><<stress -6>><</link>><<lstress>><<galcohol>>
+	<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<drunk 60>><<stress -6>><</link>><<lstress>><<gdrunk>>
 	<br>
 	<<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
 	<br>
@@ -3850,7 +3849,7 @@ You allow the <<persons>> advance. <<He>> rests a hand on your thigh while swigg
 The <<person1>><<person>> offers you another drink.
 <br><br>
 
-<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<alcohol 60>><<stress -6>><</link>><<lstress>><<galcohol>>
+<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<drunk 60>><<stress -6>><</link>><<lstress>><<gdrunk>>
 <br>
 <<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
 <br>
@@ -3876,7 +3875,7 @@ The <<person1>><<person>> offers you another drink.
 	"Can I get any of you lovers a drink?" laughs the <<person1>><<person>>.
 	<br><br>
 <</if>>
-<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<alcohol 60>><<stress -6>><</link>><<lstress>><<galcohol>>
+<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<drunk 60>><<stress -6>><</link>><<lstress>><<gdrunk>>
 <br>
 <<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
 <br>
@@ -3894,7 +3893,7 @@ A hand grasps your hair, and swivels your face away from the <<person>> to meet 
 "Can I get any of you lovers a drink?" laughs the <<person1>><<person>>.
 <br><br>
 
-<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<alcohol 60>><<stress -6>><</link>><<lstress>><<galcohol>>
+<<foodicon "beerbottle">><<link [[Drink (0:10)|Moor Youths Drink]]>><<pass 10>><<set $moor_youths += 1>><<drunk 60>><<stress -6>><</link>><<lstress>><<gdrunk>>
 <br>
 <<refuseicon>><<link [[Decline|Moor Youths Decline]]>><</link>>
 <br>
@@ -5154,14 +5153,14 @@ With some care, you manage to hold on and balance on <<bhis>> back.
 The <<beasttype>> <<if $phase is 0>>lands in front of you and <</if>><<if $monster is 1>>darts<<else>>hops<</if>> over to you.
 <br><br>
 
-<<if Object.values($children).find(child => (child.type is "hawk" and child.location is "inventory"))>>
+<<if getChildrenAt("inventory").find(child => child.species is "hawk")>>
 	<<bHe>> immediately notices the eggs you're carrying.
 	<<if $monster is 1>>
 		"<<Wife>> had eggs! Grab on to me, we must get home quickly."
 	<<else>>
 		<<bHe>> headbutts you, extending <<bhis>> wings and urging you to grab on to <<bhim>>.
 	<</if>>
-<<elseif playerIsPregnant() and getPregnancyObject().fetus[0].type is "hawk" and talkedAboutPregnancy("pc","Great Hawk")>>
+<<elseif playerIsPregnant() and getActivePregnancies("pc").some(p => childBaseSpecies(p.donorSpecies) === "hawk") and talkedAboutPregnancy("pc","Great Hawk")>>
 	<<if $monster is 1>>
 		"<<Wife>> should be at home, resting." <<bHis>> eyes fall on your baby bump. "Come home."
 	<<else>>
