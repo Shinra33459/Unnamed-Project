@@ -529,12 +529,21 @@ Both of you snuggle for a while before Poppy gets off you and puts <<his>> cloth
 <<effects>><<lakeeffects>><<run poppySchedule()>>
 What would you like to give Poppy?
 <br><br>
+Food:<br>
 <<food_gift_list>>
-<<if _food_gift_found is true>>
-	<<skinicon "give">><<link [[Give gift (0:05)|Poppy Lake Gifts]]>><<pass 5>><<give_gift Poppy>><</link>>
+<<fish_gift_list>>
+Flowers:<br>
+<<flower_gift_list>>
+<<if _food_gift_found is true or _flower_gift_found is true or _fish_gift_found is true>>
+	<<skinicon "give">><<link [[Give gift (0:05)|Poppy Lake Gifts]]>><<pass 5>>
+		/* flowers and small fish (clam and prawn) will always be gifted in 12 */
+		<<if setup.foodstuff[$gift].categories is "flower" or ["clam", "prawn", "bait_fish", "bait_worm"].includes($gift)>>
+			<<set $plural to 1>>
+		<</if>>
+	<</link>>
 	<br>
 <<else>>
-	You don't have any suitable food to give right now.
+	You don't have any suitable gifts to give right now.
 	<br><br>
 <</if>>
 <<refuseicon>><<link [[Reconsider|Poppy Lake Gifts Reconsider]]>><</link>>
@@ -547,26 +556,42 @@ Poppy keeps gazing at the lake while waiting for you to speak.
 
 :: Poppy Lake Gifts
 <<effects>><<lakeeffects>><<run poppySchedule()>><<run statusCheck("Poppy")>>
-<<set _gift to setup.foodstuff[$gift].name + (setup.foodstuff[$gift].food.handheld_gift ? " gift" : "")>><<wearProp _gift>>
+<<if setup.foodstuff[$gift].category is "dish">>
+	<<set _gift to setup.foodstuff[$gift].name + (setup.foodstuff[$gift].food.handheld_gift ? " gift" : "")>>
+<<else>>
+	<<set _gift to setup.foodstuff[$gift].name>>
+<</if>>
+<<wearProp _gift>>
+<<if $plural is undefined>><<set _gifted to setup.foodstuff[$gift].singular>><<else>><<set _gifted to setup.foodstuff[$gift].plural>><<set $plural to undefined>><</if>>
 <<if T.poppyStatus and T.poppyStatus.includes("LowPatience")>>
 	Poppy glances at the gift in your hands, then pointedly looks away.
 	<br><br>
 	"I'm not in the mood for gifts right now," <<he>> says flatly.
 	<<poppyOpiumPulse>><<handheldon>>
 	<<poppyLakeReturn>>
-<<else>>
-	"I've made you a gift," you say. "I hope you like it."
+<<elseif setup.foodstuff[$gift].category is "dish">>
+	<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+		"I-I made you a gift," you say presenting the gift before you can lose your nerve. "I hope you like it."
+	<<elseif $speech_attitude is "docile">>
+		"I made this for you," you say softly, offering it with both hands. "I hope it's all right."
+	<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+		"I've brought you a little gift," you say, presenting it as neatly as you can. "I hope it suits your taste."
+	<<elseif $speech_attitude is "confident">>
+		"I made you something," you say with a small smile. "You'll like it."
+	<<else>>
+		"I've made you a gift," you say. "I hope you like it."
+	<</if>>
 	<br><br>
 	<<if ["jammie_dodger", "rich_biscuit", "quiche"].includes($gift)>>
 		Before you can hold out the <<recipe_name $gift>>, Poppy is already giving you a knowing smirk. "I could smell it from a mile away."
 		<br><br>
-		When you present the <<recipe_name $gift>> to <<him>>, <<he>> thanks you as <<he>> takes it from your hand.
+		When you present the <<recipe_name $gift>> to <<him>>, <<he>> thanks you as <<he>> takes it from your hand. <<give_gift Poppy>>
 		<br><br>
 		Poppy takes a bite and groans in delight as the food hits <<his>> tastebuds. "This is delicious! How'd you know this is my favourite?"<<gglove>><<npcincr Poppy love 3>><<saveFavoriteFood "Poppy" $gift>><<if T.poppyLustUnlocked>><<glust>><<npcincr Poppy lust 2>><</if>>
 		<<earnFeat "Hungry Fox">>
 	<<elseif $gift is "valentines_chocolate" and $valentines>>
 		<<earnFeat "Be My Valentine">>
-		You take out the box of Valentine's Day chocolate you made, and hold it out to Poppy.
+		You take out the box of Valentine's Day chocolate you made, and hold it out to Poppy. <<give_gift Poppy>>
 		<br><br>
 		Poppy gasps. "For me?! Oh my~" <<He>> takes the box from you.
 		<br><br>
@@ -583,14 +608,113 @@ Poppy keeps gazing at the lake while waiting for you to speak.
 			Poppy wraps <<his>> arms around you and gives you a tight hug. <<lstress>><<stress -5>>
 		<</if>>
 	<<elseif setup.foodstuff[$gift].food.tags.includes("drink")>>
-		You hold out the <<recipe_name $gift>>. Poppy's eyes widen in surprise. <<He>> quickly recovers from the shock and takes the drink from your hands with a smile.
+		You hold out the <<recipe_name $gift>>. Poppy's eyes widen in surprise. <<He>> quickly recovers from the shock and takes the drink from your hands with a smile. <<give_gift Poppy>>
 		<br><br>
 		"Oh my, this smells wonderful! Did you make this yourself?" Poppy takes a sip and hums in appreciation. "Delicious... thank you for sharing this with me."<<glove>><<npcincr Poppy love 1>>
 	<<else>>
-		You hold out the <<recipe_name $gift>>. Poppy's eyes widen in surprise. <<He>> quickly recovers from the shock and takes the food from your hands with a smile.
+		You hold out the <<recipe_name $gift>>. Poppy's eyes widen in surprise. <<He>> quickly recovers from the shock and takes the food from your hands with a smile.<<give_gift Poppy>>
 		<br><br>
 		"Oh my, this looks delicious! Did you make this yourself?" Poppy takes a bite and nods as <<he>> chews. "Yummy... thank you for sharing this with me."<<glove>><<npcincr Poppy love 1>>
 	<</if>>
-	<<poppyOpiumPulse>><<handheldon>>
-	<<poppyLakeReturn>>
+<<elseif setup.foodstuff[$gift].category is "seafood">>
+	<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+		"I-I have something for you," you say presenting the gift before you can lose your nerve. "I hope you like it."
+	<<elseif $speech_attitude is "docile">>
+		"I have something for you," you say softly, offering it with both hands. "I hope it's all right."
+	<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+		"I've brought you a little gift," you say, presenting it as neatly as you can. "I hope it suits your taste."
+	<<elseif $speech_attitude is "confident">>
+		"I want to give you something," you say with a small smile. "You'll like it."
+	<<else>>
+		"I have a gift for you," you say. "I hope you like it."
+	<</if>>
+	<br><br>
+	<<if ["bait_fish", "bait_worm"].includes($gift)>>
+		Poppy has a dark look as you hold out the _gifted.
+		<br><br>
+		"Is this some kind of prank? Absolutely not." <<He>> sneers. <<npcincr Poppy love -6>><<lllove>><<npcincr Poppy patience -10>><<lllpatience>>
+		<br><br>
+		Poppy slap your hand, making you drop the _gifted. <<He>> quickly stomp on it a few time, making sure the it is ruined before going back to <<his>> spot.	
+		<<tending_give $gift -12>>
+		<<set $daily.giftedFood.Poppy to $gift>>
+	<<elseif ["clam", "prawn", "eel"].includes($gift)>>
+		Poppy's face darkens as <<he>> looks at the _gifted in your hands. <<npcincr Poppy love -3>><<llove>><<npcincr Poppy patience -3>><<lpatience>>
+		<br><br>
+		<<He>> looks around in <<his>> bag before fishing out a handkerchief and wrapping the _gifted with it. Quicker than you can react, Poppy pulls <<his>> arm back and throw the _gifted in the direction of the lake. 
+		<<tending_give $gift -12>>
+		<<set $daily.giftedFood.Poppy to $gift>>
+	<<else>>
+		You take out a _gifted.
+		<br><br>
+		Poppy grimace as <<he>> look at the gift.
+		<br><br>
+		"Maybe not right now? I don't exactly have anything to keep it fresh with."
+		<<if $poppySeen.includes("poppy_tf_revealed")>>
+			<br><br>
+			"Unless..." <<he>> leans in and whispers in your ear. "You're somehow hoping to see me eat it raw?"
+			<br><br>
+			<<His>> hand continues to linger by your shoulder for a moment before <<he>> pulls back, chuckling lightly.
+			<br>
+			"Perhaps not out here in the open. I'm not so crude to swallow something like that somewhere everyone else can see."
+		<</if>>
+	<</if>>
+<<elseif setup.foodstuff[$gift].category is "flower">>
+	<<if ($speech_attitude is "meek" or $speech_attitude is "shy")>>
+		"I-I have something for you," you say presenting the gift before you can lose your nerve. "I hope you like it."
+	<<elseif $speech_attitude is "docile">>
+		"I have something for you," you say softly, offering it with both hands. "I hope it's all right."
+	<<elseif ($speech_attitude is "polite" or $speech_attitude is "flamboyant")>>
+		"I've brought you a little gift," you say, presenting it as neatly as you can. "I hope it suits your taste."
+	<<elseif $speech_attitude is "confident">>
+		"I want to give you something," you say with a small smile. "You'll like it."
+	<<else>>
+		"I have a gift for you," you say. "I hope you like it."
+	<</if>>
+	<br><br>
+	<<if ["ghost_orchid", "red_helleborine", "lady_orchid", "spiked_rampion", "bog_orchid", "marsh_saxifrage"].includes($gift)>>
+		You hold out a bouquet of _gifted.
+		<br><br>
+		"Did you make a mistake?" Poppy has a small frown on as <<he>> looks at the _gifted. "These plant are too valuable to be use as casual gifts, so I'll return them this time."
+		<br><br>
+		<<He>> leans in and whispers in your ear.
+		<br><br>
+		"I prefer something more meaningful."
+	<<elseif ["clover", "four_leaf_clover"].includes($gift)>>
+		You hold out a small bouquet of _gifted.
+		<br><br>
+		"Clovers? You are wishing me luck?" Poppy lets out a small laugh as <<he>> takes in your gift. <<npcincr Poppy love 5>><<gglove>><<npcincr Poppy patience 5>><<gpatience>>
+		<br><br>
+		<<He>> gives your head a light pat. "I appreciate the thoughtfulness. It's an adorable gift. How long did you spend picking all these?"
+		<<tending_give $gift -12>>
+		<<set $daily.giftedFood.Poppy to $gift>>
+	<<elseif $gift is "poppy">>
+		You hold out a bouquet of _gifted.
+		<br><br>
+		"How adorable," Poppy coos. <<npcincr Poppy love 5>><<gglove>><<npcincr Poppy patience 5>><<gpatience>>
+		<br><br>
+		"Poppy flowers for the <<personsimple>> it is named after. I will make sure this precious thing has a place it can bloom on beautifully."
+		<<tending_give $gift -12>>
+		<<set $daily.giftedFood.Poppy to $gift>>
+	<<else>>
+		You hold out a bouquet of _gifted.
+		<br><br>
+		"Flowers? You certainly know how to make a <<personsimple>>'s heart flutter."
+		<br><br>
+		Poppy smiles as <<he>> accept your bouquet of _gifted. <<npcincr Poppy love 2>><<glove>>
+		<<tending_give $gift -12>>
+		<<set $daily.giftedFood.Poppy to $gift>>
+	<</if>>
+<<else>>
+	"I have something for you," you say, holding out the-
+	<br><br>
+	Suddenly, a duck emerge from the forest.
+	<br><br>
+	The duck let out a loud quack before charging at and attacking you with all it got. <<pain 15>><<ggpain>>
+	<br><br>
+	As abruptly as it appear, the duck jumps off of you and takes off in the direction of the forest. You and Poppy look on in confusion as it flees, your _gift in its beak.<<tending_give $gift -1>>
+	<br><br>
+	Poppy recovers before you. "That certain was something."
 <</if>>
+<<set $gifted to undefined>>
+<<poppyOpiumPulse>><<handheldon>>
+<<poppyLakeReturn>>

@@ -6139,3 +6139,40 @@
 	<<set _multi to $purity gte 1000 ? 2 : 1>>
 	<<defiance `($purity / 100) * _multi`>>
 <</widget>>
+
+<<widget "flower_gift_list">>
+	<<set _food_keys to Object.keys(setup.foodstuff)>>
+	<<for _i to 0; _i lt _food_keys.length; _i++>>
+		<<set _food to _food_keys[_i]>>
+		<<if setup.foodstuff[_food].category is "flower">>
+			<<set _flower_gift_enough to true>>
+			<<if $foodstuff[_food]?.amount gte 1>>
+				<<if $foodstuff[_food]?.amount gte 12>>
+					<<set _flower_gift_found to true>>
+					<label><<foodstufficon _food>><<print $foodstuff[_food].name.toUpperFirst()>> (<<print $foodstuff[_food].amount>>) <<radiobutton "$gift" _food checked>></label> |
+				<</if>>
+			<</if>>
+		<</if>>
+	<</for>>
+	<<if _flower_gift_found isnot true>>
+		You don't have <<if _flower_gift_enough is true>>enough of any cetain type<</if>>flowers to gift.
+	<</if>>
+	<br><br>
+<</widget>>
+
+<<widget "fish_gift_list">>
+	<<set _food_keys to Object.keys(setup.foodstuff)>>
+	<<for _i to 0; _i lt _food_keys.length; _i++>>
+		<<set _food to _food_keys[_i]>>
+		<<if setup.foodstuff[_food].category is "seafood">>
+			<<if ($foodstuff[_food]?.amount gte 1 and !["prawn", "clam", "bait_fish", "bait_worm"].includes(setup.foodstuff[_food].name) or $foodstuff[_food]?.amount gte 12)>>
+				<<set _fish_gift_found to true>>
+				<label><<foodstufficon _food>><<print $foodstuff[_food].name.toUpperFirst()>> (<<print $foodstuff[_food].amount>>) <<radiobutton "$gift" _food checked>></label> |
+			<</if>>
+		<</if>>
+	<</for>>
+	<<if _fish_gift_found isnot true>>
+		You don't have any fish to gift.
+	<</if>>
+	<br><br>
+<</widget>>
