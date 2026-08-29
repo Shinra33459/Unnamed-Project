@@ -54,7 +54,7 @@ function canNpcConceive(orifice, carrier, infertile) {
 	if (orifice !== "vagina" && orifice !== "anus") throw new Error(`unknown orifice "${orifice}"`);
 	if (!(C.npc[carrier] ? V.settings.nnpcPregnancyEnabled : V.settings.npcPregnancyEnabled)) return false;
 	// A named NPC the player toggled off stays off — the compatibility check enforces this, the roll must too.
-	if (C.npc[carrier] && C.npc[carrier].pregnancy && C.npc[carrier].pregnancy.enabled === false) return false;
+	if (C.npc[carrier] && C.npc[carrier].pregnancy && !C.npc[carrier].pregnancy.enabled) return false;
 	if (orifice === "anus") {
 		if (!V.settings.npcAnalPregnancyEnabled) return false;
 		if (C.npc[carrier] && C.npc[carrier].pregnancy && C.npc[carrier].pregnancy.analEnabled === false) return false;
@@ -106,12 +106,19 @@ window.playerSpeciesPregnancyEnabled = playerSpeciesPregnancyEnabled;
  * @returns {boolean}
  */
 function hasExceptionalAnalPregnancy() {
-	return (
-		!V.player.vaginaExist &&
-		((V.skin.pubic.pen === "magic" && V.skin.pubic.special === "pregnancy") ||
-			(V.earSlime.growth >= 100 && ["pregnancy", "mixed"].includes(V.earSlime.focus)))
-	);
+	return !V.player.vaginaExist && (hasPregnancyTattoo() || (V.earSlime.growth >= 100 && ["pregnancy", "mixed"].includes(V.earSlime.focus)));
 }
+
+/**
+ * Whether the PC wears the magic pregnancy tattoo, which raises conception. It no longer touches the
+ * cycle's pace -- the cycle runs at one day per day whatever is worn.
+ *
+ * @returns {boolean}
+ */
+function hasPregnancyTattoo() {
+	return V.skin.pubic.pen === "magic" && V.skin.pubic.special === "pregnancy";
+}
+window.hasPregnancyTattoo = hasPregnancyTattoo;
 window.hasExceptionalAnalPregnancy = hasExceptionalAnalPregnancy;
 
 /**

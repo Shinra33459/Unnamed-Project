@@ -58,8 +58,7 @@
 	</div>
 	<br><br>
 
-	<<baitShopStoreIcon>>
-	<<link "Browse equipment">><<replace "#clothingShop-div">><<AllShop>><</replace>><</link>>
+	<<icon "clothing-shop.png">><<link "Browse equipment">><<replace "#clothingShop-div">><<AllShop>><</replace>><<endevent>><</link>>
 	<br>
 	<<if baitShopOpen()>>
 		<<if $money gte 600>>
@@ -206,8 +205,18 @@
 <</widget>>
 
 <<widget "baitShopFishLocationHint">>
+	<<set _requestFishKey to $daily.fishing.baitShopRequestFish>>
 	<<set _coastUnlocked to $fishing.locationsFound.includes("fishingCoastPath")>>
-	<<set _fishSpot to Object.keys(setup.fishing.lootTables.fish[$daily.fishing.baitShopRequestFish].locations).filter(loc => loc !== "fishingCoastPath" || _coastUnlocked).random()>>
+	<<set $fishing.record[_requestFishKey] ??= { numCaught: 0, largest: 0, foundIn: [] }>>
+	<<if !_coastUnlocked>>
+		<<set _locationPriority to ["fishingPier", "fishingBeach", "fishingForestLake", "fishingMoor"]>>
+	<<else>>
+		<<set _locationPriority to ["fishingPier", "fishingBeach", "fishingForestLake", "fishingCoastPath", "fishingMoor"]>>
+	<</if>>
+	/* Locations this fish can actually be found in, in preference order */
+	<<set _recommendableLocations to _locationPriority.filter(loc => setup.fishing.lootTables.fish[_requestFishKey].locations[loc] > 0)>>
+	/* Recommend the highest-priority spot the player doesn't know about. If the player knows all of them, use the highest-priority spot */
+	<<set _fishSpot to _recommendableLocations.find(loc => !$fishing.record[_requestFishKey].foundIn.includes(loc)) ?? _recommendableLocations[0]>>
 	<<switch _fishSpot>>
 		<<case "fishingBeach">><<set _fishSpotPhrase to "off the beach">>
 		<<case "fishingPier">><<set _fishSpotPhrase to "off the pier, right outside">>
@@ -215,11 +224,13 @@
 		<<case "fishingMoor">><<set _fishSpotPhrase to "out on the moor">>
 		<<case "fishingForestLake">><<set _fishSpotPhrase to "in the lake through the forest">>
 	<</switch>>
-	<<set $fishing.record[$daily.fishing.baitShopRequestFish] ??= { numCaught: 0, largest: 0, foundIn: [] }>>
-	<<if not $fishing.record[$daily.fishing.baitShopRequestFish].foundIn.includes(_fishSpot)>>
-		<<run $fishing.record[$daily.fishing.baitShopRequestFish].foundIn.push(_fishSpot)>>
+	<<if not $fishing.record[_requestFishKey].foundIn.includes(_fishSpot)>>
+		<<run $fishing.record[_requestFishKey].foundIn.push(_fishSpot)>>
+		<span class="gold"><<= _fishSpotPhrase>></span>
+	<<else>>
+		<span class="blue"><<= _fishSpotPhrase>></span>
 	<</if>>
-	<span class="gold"><<= _fishSpotPhrase>></span>
+	
 <</widget>>
 
 :: Bait Shop Lock
@@ -378,7 +389,7 @@ As you step in, the <<person>> at the counter glances up at you.
 
 :: Bait Shop Give Fish
 <<set $outside to 0>><<effects>>
-<<loadNPC 0 "bait_shop_owner">><<person1>>
+<<person1>>
 <<set _fish to $daily.fishing.baitShopRequestFish>>
 <<set _pay to setup.foodstuff[_fish].shop.sell_price * 15>>
 <<set $foodstuff[_fish].amount -= 1>>
@@ -422,7 +433,7 @@ You set the <<= _fish>> on the counter. The <<person>> picks it up and turns it 
 
 :: Bait Shop Teach Dish
 <<set $outside to 0>><<effects>>
-<<loadNPC 0 "bait_shop_owner">><<person1>>
+<<person1>>
 
 <<He>> leans on the counter. "You know, I could teach you how to make a nice dish with this fish, it's not too hard. If you give me a minute, I can have the recipe written down for you, sound good?"
 <br><br>
@@ -434,7 +445,7 @@ You set the <<= _fish>> on the counter. The <<person>> picks it up and turns it 
 
 :: Bait Shop Teach Dish Accept
 <<set $outside to 0>><<effects>>
-<<loadNPC 0 "bait_shop_owner">><<person1>>
+<<person1>>
 
 <<He>> takes out a scrap piece of paper and a pencil, writes out the recipe for <<print setup.foodstuff[$baitShopTeachRecipe].name>> and hands you the paper. "There you go. The amounts might be a bit rough, but that's how I learned it."
 
@@ -442,7 +453,7 @@ You set the <<= _fish>> on the counter. The <<person>> picks it up and turns it 
 <<unset $baitShopTeachRecipe>>
 <br><br>
 
-<<link [[Next|Bait Shop]]>><</link>>
+<<link [[Next|Bait Shop]]>><<endevent>><</link>>
 
 
 /* Fishing event on the pier */
