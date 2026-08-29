@@ -324,7 +324,7 @@ setup.colours.hair = [
 		name: "ebony",
 		name_cap: "Ebony",
 		csstext: "black",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#302e2d",
@@ -393,7 +393,7 @@ setup.colours.hair = [
 		name: "golden",
 		name_cap: "Golden",
 		csstext: "gold",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#ffc800",
@@ -509,7 +509,7 @@ setup.colours.hair = [
 		name: "blood orange",
 		name_cap: "Blood Orange",
 		csstext: "bloodorange",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#ff4000",
@@ -520,7 +520,7 @@ setup.colours.hair = [
 		name: "blue",
 		name_cap: "Blue",
 		csstext: "bluehair",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#3973ac",
@@ -532,7 +532,7 @@ setup.colours.hair = [
 		name: "deep blue",
 		name_cap: "Deep Blue",
 		csstext: "deepblue",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#1349b5",
@@ -544,7 +544,7 @@ setup.colours.hair = [
 		name: "neon blue",
 		name_cap: "Neon Blue",
 		csstext: "neonblue",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#00d5ff",
@@ -555,7 +555,7 @@ setup.colours.hair = [
 		name: "frost blue",
 		name_cap: "Frost Blue",
 		csstext: "frostblue",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#b0c0f3",
@@ -566,7 +566,7 @@ setup.colours.hair = [
 		name: "green",
 		name_cap: "Green",
 		csstext: "greenhair",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#007400",
@@ -577,7 +577,7 @@ setup.colours.hair = [
 		name: "dark lime",
 		name_cap: "Dark Lime",
 		csstext: "darklime",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#4a8000",
@@ -588,7 +588,7 @@ setup.colours.hair = [
 		name: "toxic green",
 		name_cap: "Toxic Green",
 		csstext: "toxicgreen",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#99e600",
@@ -599,7 +599,7 @@ setup.colours.hair = [
 		name: "teal",
 		name_cap: "Teal",
 		csstext: "tealhair",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#008040",
@@ -610,7 +610,7 @@ setup.colours.hair = [
 		name: "aquamarine",
 		name_cap: "Aquamarine",
 		csstext: "aquamarine",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#6dd1b0",
@@ -621,7 +621,7 @@ setup.colours.hair = [
 		name: "pink",
 		name_cap: "Pink",
 		csstext: "pinkhair",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#e05281",
@@ -632,7 +632,7 @@ setup.colours.hair = [
 		name: "bright pink",
 		name_cap: "Bright Pink",
 		csstext: "brightpink",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#ff80aa",
@@ -643,7 +643,7 @@ setup.colours.hair = [
 		name: "hot pink",
 		name_cap: "Hot Pink",
 		csstext: "hotpink",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#ff4dc4",
@@ -654,7 +654,7 @@ setup.colours.hair = [
 		name: "soft pink",
 		name_cap: "Soft Pink",
 		csstext: "softpink",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#d6855c",
@@ -663,10 +663,10 @@ setup.colours.hair = [
 	},
 	{
 		variable: "rosegold",
-		name: "rosegold",
-		name_cap: "Rosegold",
+		name: "rose gold",
+		name_cap: "Rose Gold",
 		csstext: "rosegold",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#c47984",
@@ -677,7 +677,7 @@ setup.colours.hair = [
 		name: "crimson",
 		name_cap: "Crimson",
 		csstext: "crimson",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#b30000",
@@ -688,7 +688,7 @@ setup.colours.hair = [
 		name: "wine",
 		name_cap: "Wine",
 		csstext: "winehair",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#790727",
@@ -700,7 +700,7 @@ setup.colours.hair = [
 		name: "purple",
 		name_cap: "Purple",
 		csstext: "purplehair",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#6a0d89",
@@ -712,7 +712,7 @@ setup.colours.hair = [
 		name: "medium purple",
 		name_cap: "Medium Purple",
 		csstext: "mediumpurple",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#5113df",
@@ -723,7 +723,7 @@ setup.colours.hair = [
 		name: "bright purple",
 		name_cap: "Bright Purple",
 		csstext: "brightpurple",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#ab66ff",
@@ -734,7 +734,7 @@ setup.colours.hair = [
 		name: "grey",
 		name_cap: "Grey",
 		csstext: "grey",
-		natural: false,
+		natural: true,
 		dye: true,
 		canvasfilter: {
 			blend: "#888484",
