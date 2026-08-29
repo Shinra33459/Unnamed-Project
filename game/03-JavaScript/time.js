@@ -2143,9 +2143,10 @@ function yearlyEventChecks() {
 	// I'm still lowering the love and patience just because; good luck people
 	if (Time.monthName === "February" && Time.monthDay >= 21) {
 		if (V.valentines_poppy_flat_missed) {
-			wikifier("npcincr",Poppy,love,-8);
-			wikifier("npcincr",Poppy,patience,-10);
-			delete V.valentines_poppy_flat_missed;
+			if (modLISelected("Poppy") && C.npc.Poppy?.init === 1) {
+				wikifier("npcincr", "Poppy", "love", -8);
+				wikifier("npcincr", "Poppy", "patience", -10);
+			}
 		}
 	}
 
