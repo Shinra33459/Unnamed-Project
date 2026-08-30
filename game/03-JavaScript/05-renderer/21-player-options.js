@@ -1520,7 +1520,7 @@ class PlayerCombatMapper {
 			V.femaleclimax !== 1 &&
 			!hasChastityBelt &&
 			!playerHasStrapon() &&
-			wearingCondom("player") !== "worn" &&
+			condomState("player") !== "worn" &&
 			(V.parasite.penis.name === "parasite" || V.parasite.penis.name == null);
 		/** @type {Penetrator} */
 		const penetrator = {
@@ -1643,11 +1643,9 @@ class PlayerCombatMapper {
 	 */
 	static genClothingJoinedLimbs(slot, clothing) {
 		return {
-			limbs:
-				["lower", "feet", "legs", "under_lower", "upper", "under_upper", "hands"].includes(slot) && PlayerCombatMapper.hasJoinedLimbs(slot, clothing),
+			limbs: ["lower", "feet", "legs", "under_lower", "upper", "under_upper", "hands"].includes(slot) && PlayerCombatMapper.hasJoinedLimbs(slot, clothing),
 			limbsAccessory:
-				["lower", "feet", "legs", "under_lower", "upper", "under_upper", "hands"].includes(slot) &&
-				PlayerCombatMapper.hasJoinedLimbsAcc(slot, clothing),
+				["lower", "feet", "legs", "under_lower", "upper", "under_upper", "hands"].includes(slot) && PlayerCombatMapper.hasJoinedLimbsAcc(slot, clothing),
 		};
 	}
 

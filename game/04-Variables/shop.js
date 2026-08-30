@@ -107,8 +107,7 @@ setup.shopDetails = {
 	heels: {
 		name: "High heeled",
 		desc: "Difficult to get around in, unless you have skilled feet.",
-		details:
-			"Improves kicking power during combat. Reduces travel speed. May cause fatigue and failed athletics checks in the farmlands, moor, and forest.",
+		details: "Improves kicking power during combat. Reduces travel speed. May cause fatigue and failed athletics checks in the farmlands, moor, and forest.",
 	},
 	rugged: {
 		name: "Rugged",
@@ -266,7 +265,7 @@ setup.shopDetails = {
 	antitransparent: {
 		name: "Anti-Transparent",
 		desc: "Opaque",
-		details: "Still gets wet but doesn't go transparent."
+		details: "Still gets wet but doesn't go transparent.",
 	},
 	heavy: {
 		name: "Heavy",
@@ -301,11 +300,15 @@ setup.shopDetails = {
 		desc: "Something to wear atop your head.",
 		details: "none",
 	},
+	fishing_rod: {
+		name: "Fishing Rod",
+		desc: "Needed to go fishing.",
+		details: "none",
+	},
 	jewelled: {
 		name: "Jewelled",
 		desc: "Eyecatching with sharp edges.",
-		details:
-			"Improves punching power during combat slightly. Increases allure.",
+		details: "Improves punching power during combat slightly. Increases allure.",
 	},
 	expensive: {
 		name: "Expensive",

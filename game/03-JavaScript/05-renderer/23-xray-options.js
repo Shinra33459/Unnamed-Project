@@ -283,9 +283,7 @@ class XrayCombatMapper {
 				/* For DP, bigger penis MUST be the primary target sprite. */
 				if (penetrator.doublePen) {
 					penetrator.npc =
-						V.NPCList[V[slot + "target"]].penissize <= V.NPCList[V[slot + "doubletarget"]].penissize
-							? V[slot + "doubletarget"]
-							: V[slot + "target"];
+						V.NPCList[V[slot + "target"]].penissize <= V.NPCList[V[slot + "doubletarget"]].penissize ? V[slot + "doubletarget"] : V[slot + "target"];
 					penetrator.npc2 = penetrator.npc === V[slot + "doubletarget"] ? V[slot + "target"] : V[slot + "doubletarget"];
 				} else {
 					penetrator.npc = V[slot + "target"];
@@ -391,10 +389,10 @@ class XrayCombatMapper {
 		if (V.ejaculating === 1 || V[slot + "state"] === "tentacledeep") {
 			const npc1HasSperm =
 				V[slot + "state"] === "tentacledeep" ||
-				(combat.isNpcActive(penetrator.npc) && wearingCondom(penetrator.npc) !== "worn" && !npcHasStrapon(penetrator.npc));
+				(combat.isNpcActive(penetrator.npc) && condomState(penetrator.npc) !== "worn" && !npcHasStrapon(penetrator.npc));
 			const npc2HasSperm =
 				V[slot + "state"] === "tentacledeep" ||
-				(combat.isNpcActive(penetrator.npc2) && wearingCondom(penetrator.npc2) !== "worn" && !npcHasStrapon(penetrator.npc2));
+				(combat.isNpcActive(penetrator.npc2) && condomState(penetrator.npc2) !== "worn" && !npcHasStrapon(penetrator.npc2));
 			// Should this also check if NCPs are ejaculating? Or does $ejaculating = 1 do that
 			penetrator.isCumActive = npc1HasSperm || npc2HasSperm || V[slot + "state"] === "tentacledeep";
 		}
@@ -471,17 +469,11 @@ class XrayCombatMapper {
 		if (V.player.condom) {
 			penetrator.condom = V.player.condom;
 			if (penetrator.condom.colour) {
-				options.filters.playerCondom = CombatRenderer.lookupColour(
-					setup.colours.condom_map,
-					penetrator.condom.colour,
-					"condom",
-					"condom_custom",
-					"condom"
-				);
+				options.filters.playerCondom = CombatRenderer.lookupColour(setup.colours.condom_map, penetrator.condom.colour, "condom", "condom_custom", "condom");
 			}
 		}
 
-		if (V.orgasmdown >= 1 && V.orgasmcount <= 24 && V.femaleclimax !== 1 && wearingCondom("player") !== "worn" && !playerHasStrapon()) {
+		if (V.orgasmdown >= 1 && V.orgasmcount <= 24 && V.femaleclimax !== 1 && condomState("player") !== "worn" && !playerHasStrapon()) {
 			penetrator.isCumActive = true;
 			penetrator.showCum = true;
 		}

@@ -1,5 +1,6 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-eval */
+/* eslint-disable no-undef */
 /* A standard function to reference to avoid declaring an anonymous function repeatedly. */
 const stayOnPassageFn = function () {
 	return V.passage;
@@ -76,12 +77,20 @@ setup.debugMenu.eventList = {
 			widgets: [``],
 		},
 		{
+			link: [`Caught Fish Prop Debug`, `Caught Fish Prop Debug`],
+			widgets: [``],
+		},
+		{
 			link: [`Learn all recipes`, stayOnPassageFn],
 			widgets: [`<<learn_recipe_all>>`],
 		},
 		{
 			link: [`Give 20 of each foodstuff`, stayOnPassageFn],
 			widgets: [`<<give_all_foodstuff>>`],
+		},
+		{
+			link: [`Unlock All Love Interests`, stayOnPassageFn],
+			widgets: [`<<debugUnlockAllLoveInterests>>`],
 		},
 		{
 			link: [`Strip`, stayOnPassageFn],
@@ -225,6 +234,27 @@ setup.debugMenu.eventList = {
 			widgets: [`<<set $vorestage to 0>>`],
 		},
 		{
+			link: [`Earn all Feats`, stayOnPassageFn],
+			widgets: [
+				`
+				<<set _featList to Object.keys(setup.feats)>>
+				<<for _i to 0; _i lt _featList.length; _i++>>
+					<<set $feats.currentSave[_featList[_i]] to new DateTime().timeStamp>>
+				<</for>>
+			`,
+			],
+		},
+		{
+			link: [`Unlock forest shop clothing`, stayOnPassageFn],
+			widgets: [
+				`
+				<<for _i to 0; _i lt $specialClothes.length; _i++>>
+					<<set $specialClothes[_i].unlocked to 3>>
+				<</for>>
+			`,
+			],
+		},
+		{
 			text_only: `\n`,
 		},
 		{
@@ -245,11 +275,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Make all beasts dickgirls`, stayOnPassageFn],
-			widgets: [
-				`<<set $settings.beastMaleChanceMale to 0>>`,
-				`<<set $settings.beastMaleChanceFemale to 0>>`,
-				`<<set $settings.femaleNPCPenisChance to 100>>`,
-			],
+			widgets: [`<<set $settings.beastMaleChanceMale to 0>>`, `<<set $settings.beastMaleChanceFemale to 0>>`, `<<set $settings.femaleNPCPenisChance to 100>>`],
 		},
 		{
 			link: [`Make all beasts monster people`, stayOnPassageFn],
@@ -310,10 +336,10 @@ setup.debugMenu.eventList = {
 			link: [() => `Set all pregnancy events to next `, stayOnPassageFn],
 			widgets: [
 				`<<set _pregnancy to $sexStats.anus.pregnancy>>`,
-				() => (T.pregnancy[0] == null ? "" : `<<set _pregnancy.fetus[0].timeLeft to 1>>`),
-				() => (T.pregnancy[1] == null ? "" : `<<set _pregnancy.fetus[1].timeLeft to 1>>`),
-				() => (T.pregnancy[2] == null ? "" : `<<set _pregnancy.fetus[2].timeLeft to 1>>`),
-				() => (T.pregnancy[3] == null ? "" : `<<set _pregnancy.fetus[3].timeLeft to 1>>`),
+				() => (T.pregnancy.fetus[0] == null ? "" : `<<set _pregnancy.fetus[0].timeLeft to 1>>`),
+				() => (T.pregnancy.fetus[1] == null ? "" : `<<set _pregnancy.fetus[1].timeLeft to 1>>`),
+				() => (T.pregnancy.fetus[2] == null ? "" : `<<set _pregnancy.fetus[2].timeLeft to 1>>`),
+				() => (T.pregnancy.fetus[3] == null ? "" : `<<set _pregnancy.fetus[3].timeLeft to 1>>`),
 			],
 		},
 		{
@@ -340,7 +366,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Repair Pregnancy Objects`, stayOnPassageFn],
-			widgets: [`<<prenancyObjectRepair>>`],
+			widgets: [`<<pregnancyObjectRepair>>`],
 		},
 		{
 			link: [`Reset Pregnancy Objects`, stayOnPassageFn],
@@ -355,7 +381,7 @@ setup.debugMenu.eventList = {
 		{
 			text_only: `Player is already pregnant\n`,
 			condition() {
-				return V.player.penisExist === false && getPregnancyObject().fetus.length !== 0;
+				return V.player.penisExist === false && playerIsPregnant();
 			},
 		},
 		{
@@ -366,7 +392,7 @@ setup.debugMenu.eventList = {
 				},
 			],
 			condition() {
-				return V.player.penisExist === false && getPregnancyObject().fetus.length === 0;
+				return V.player.penisExist === false && !playerIsPregnant();
 			},
 		},
 		{
@@ -377,21 +403,27 @@ setup.debugMenu.eventList = {
 				},
 			],
 			condition() {
-				return V.player.penisExist === false && getPregnancyObject().fetus.length === 0;
+				return V.player.penisExist === false && !playerIsPregnant();
 			},
 		},
 		{
 			link: [`Progress Pregnancy to the end`, stayOnPassageFn],
-			widgets: [`<<set $sexStats.vagina.pregnancy.timer to $sexStats.vagina.pregnancy.timerEnd>>`],
+			widgets: [
+				() => {
+					const preg = getPlayerPregnancy();
+					if (preg) preg.conceivedDate = Time.date.timeStamp - (getDueDate(preg) - preg.conceivedDate);
+					return "";
+				},
+			],
 			condition() {
-				return V.player.penisExist === false && getPregnancyObject().fetus.length !== 0;
+				return V.player.penisExist === false && playerIsPregnant();
 			},
 		},
 		{
 			link: [`End pregnancy and send children to default locations`, stayOnPassageFn],
 			widgets: [
 				() => {
-					switch (getPregnancyObject().type) {
+					switch (playerNormalPregnancyType()) {
 						case "human":
 							endPlayerPregnancy("hospital", "home");
 							break;
@@ -406,7 +438,7 @@ setup.debugMenu.eventList = {
 				},
 			],
 			condition() {
-				return V.player.penisExist === false && getPregnancyObject().fetus.length !== 0;
+				return V.player.penisExist === false && playerIsPregnant();
 			},
 		},
 		{
@@ -417,11 +449,11 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Get Robin Pregnant with PCs children`, stayOnPassageFn],
-			widgets: [`<<namedNpcPregnancy "Robin" "pc" "human" true undefined true>>`],
+			widgets: [`<<namedNpcPregnancy "Robin" "pc" "human" true true>>`],
 		},
 		{
 			link: [`Get Whitney Pregnant with Black Wolf pups`, stayOnPassageFn],
-			widgets: [`<<namedNpcPregnancy "Whitney" "Black Wolf" "wolf" true undefined true>>`],
+			widgets: [`<<namedNpcPregnancy "Whitney" "Black Wolf" "wolf" true true>>`],
 		},
 		{
 			link: [`Basic NPC Compression Test`, stayOnPassageFn],
@@ -444,8 +476,7 @@ setup.debugMenu.eventList = {
 
 					if (Object.keys(testList).length != 0) compressionVerifier(testList, false, true);
 					if (Object.keys(invalidList).length != 0) console.log("The following NPC(s) in $NPCList could not be tested: " + invalidList.join(", "));
-					else if (Object.keys(testList).length === 0 && Object.keys(invalidList).length === 0)
-						console.log("There are no NPCs in the NPCList to test.");
+					else if (Object.keys(testList).length === 0 && Object.keys(invalidList).length === 0) console.log("There are no NPCs in the NPCList to test.");
 
 					return "";
 				},
@@ -689,6 +720,30 @@ setup.debugMenu.eventList = {
 			widgets: [`<<set $averydate to 1>>`, `<<set Time.setTime(20, 0)>>`],
 		},
 		{
+			link: [`Avery Sex Me In The Car`, `Avery Date Sex`],
+			widgets: [`<<endcombat>>`, `<<set $sexstart to 1>>`, `<<npc Avery>>`, `<<person1>>`],
+		},
+		{
+			link: [`Avery Sex Me At The Hotel`, `Avery Hotel Sex`],
+			widgets: [
+				`<<endcombat>>`,
+				`<<set $sexstart to 1>>`,
+				`<<npc Avery>>`,
+				`<<person1>>`,
+				`<<set $outside to 0>>`,
+				`<<set $location to "hotel">>`,
+				`<<undressSleep "averyhotel">>`,
+				`<<set $uppertemp to "init">>`,
+				`<<upperwear "babydoll lingerie">>`,
+				`<<set $worn.upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine")>>`,
+				`<<set $phase to 1>>`,
+			],
+		},
+		{
+			link: [`Avery Rape Me In The Car`, `Avery Walk Rape`],
+			widgets: [`<<endcombat>>`, `<<set $molestationstart to 1>>`, `<<npc Avery>>`, `<<person1>>`],
+		},
+		{
 			link: [`Black Wolf Forced`, `Forest Wolf Molestation`],
 			widgets: [
 				/* `<<beastNNPCinit>>`, */
@@ -903,15 +958,15 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Summon the Wraith`, `Wraith Test Start`],
-			widgets: [
-				`<<endcombat>>`,
-				`<<run Time.timeTravel(new DateTime(Time.year, Time.month, Time.lastDayOfMonth, 21, 0))>>`,
-				`<<set $moonstate to "evening">>`,
-			],
+			widgets: [`<<endcombat>>`, `<<run Time.timeTravel(new DateTime(Time.year, Time.month, Time.lastDayOfMonth, 21, 0))>>`, `<<set $moonstate to "evening">>`],
 		},
 		{
 			link: [`Possessed Fight`, `Possessed Fight Test`],
 			widgets: [`<<set $control to 0>>`, `<<set $possessed to true>>`],
+		},
+		{
+			link: [`Bait Shop Fish Request`, `Bait Shop Request`],
+			widgets: [``],
 		},
 		{
 			text_only: "\n\nBeast encounters",
@@ -984,11 +1039,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Lake Fish`, `Swarm Test`],
-			widgets: [
-				`<<set $molestationstart to 1>>`,
-				`<<swarminit "fish" "swarm" "moving towards you" "encircle you" "fend off" 1 7>>`,
-				`<<set $water to 1>>`,
-			],
+			widgets: [`<<set $molestationstart to 1>>`, `<<swarminit "fish" "swarm" "moving towards you" "encircle you" "fend off" 1 7>>`, `<<set $water to 1>>`],
 		},
 		{
 			link: [`Forest Snakes`, `Swarm Test`],
@@ -1012,11 +1063,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Sea Eels`, `Swarm Test`],
-			widgets: [
-				`<<set $molestationstart to 1>>`,
-				`<<swarminit "eels" "swarm" "moving towards you" "encircle you" "fend off" 1 9>>`,
-				`<<set $water to 1>>`,
-			],
+			widgets: [`<<set $molestationstart to 1>>`, `<<swarminit "eels" "swarm" "moving towards you" "encircle you" "fend off" 1 9>>`, `<<set $water to 1>>`],
 		},
 		{
 			link: [`Crate Worms`, `Swarm Test`],
@@ -1097,6 +1144,69 @@ setup.debugMenu.eventList = {
 		{
 			link: [`Captured by The Great Hawk`, `Moor`],
 			widgets: [`<<set $moor to 50>>`, `<<set $eventskip to 1>>`, `<<moor_hunt_start>>`, `<<set $moor_hunt to 10>>`],
+		},
+		{
+			text_only: `\n\nFishing Minigame: `,
+		},
+		{
+			link: [`Fish: Haddock (runner)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "haddock">>`],
+		},
+		{
+			link: [`Fish: Salmon (panicked)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "salmon">>`],
+		},
+		{
+			link: [`Fish: Trout (darter)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "trout">>`],
+		},
+		{
+			link: [`Fish: Herring (panicked)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "herring">>`],
+		},
+		{
+			link: [`Fish: Whiting (runner)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "whiting">>`],
+		},
+		{
+			link: [`Fish: Mackerel (panicked)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "mackerel">>`],
+		},
+		{
+			link: [`Fish: Flounder (runner)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "flounder">>`],
+		},
+		{
+			link: [`Fish: Bass (darter)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "bass">>`],
+		},
+		{
+			link: [`Fish:  Roach (darter)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "roach">>`],
+		},
+		{
+			link: [`Fish: Perch (panicked)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "perch">>`],
+		},
+		{
+			link: [`Fish: Chub (runner)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "chub">>`],
+		},
+		{
+			link: [`Fish: Grayling (darter)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "grayling">>`],
+		},
+		{
+			link: [`Fish: Cod (anchor)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "cod">>`],
+		},
+		{
+			link: [`Fish: Pike (thrasher)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "pike">>`],
+		},
+		{
+			link: [`Fish: Eel (slipper)`, fishingMinigameDebugPassage],
+			widgets: [`<<fishingMinigameDebugTeleportWidget "eel">>`],
 		},
 	],
 	Character: [
@@ -1240,7 +1350,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Booze`, stayOnPassageFn],
-			widgets: [`<<alcohol 60>>`],
+			widgets: [`<<drunk 60>>`],
 		},
 		{
 			link: [`Drugged`, stayOnPassageFn],
@@ -1702,6 +1812,10 @@ setup.debugMenu.eventList = {
 			widgets: [`<<run unlockAllSeeds()>>`],
 		},
 		{
+			link: [`Complete fishing journal`, stayOnPassageFn],
+			widgets: [`<<run debugDiscoverAllFishing()>>`],
+		},
+		{
 			link: [`Super Debug Character`, stayOnPassageFn],
 			widgets: [
 				`<<set $school += 4000>>`,
@@ -1944,10 +2058,7 @@ window.debugCreateLinkAndRedirect = debugCreateLinkAndRedirect;
 function addonClickDivPassage(section, index, id) {
 	$(function () {
 		const target = document.getElementById(id).children[0];
-		target.setAttribute(
-			"onclick",
-			"window.debugCreateLinkAndRedirect(" + "'" + section + "'" + "," + index + "," + "'" + section + "-" + index + "'" + ");"
-		);
+		target.setAttribute("onclick", "window.debugCreateLinkAndRedirect(" + "'" + section + "'" + "," + index + "," + "'" + section + "-" + index + "'" + ");");
 	});
 }
 window.addonClickDivPassage = addonClickDivPassage;
@@ -1974,8 +2085,7 @@ function toggleClassDebug(selected, mode) {
 						: document.getElementById(div).classList.remove("hidden");
 			}
 		} else if (mode === "classicHide") {
-			for (const div of list)
-				div !== selected ? document.getElementById(div).classList.add("hidden") : document.getElementById(div).classList.remove("hidden");
+			for (const div of list) div !== selected ? document.getElementById(div).classList.add("hidden") : document.getElementById(div).classList.remove("hidden");
 		}
 	});
 }
@@ -2168,3 +2278,21 @@ function removeDebugCustomPassage() {
 	}
 }
 window.removeDebugCustomPassage = removeDebugCustomPassage;
+
+function fishingMinigameDebugPassage() {
+	switch (V.passage) {
+		case "Fishing Pier Wait":
+			return "Fishing Pier Minigame Loop";
+		case "Fishing Beach Wait":
+			return "Fishing Beach Minigame Loop";
+		case "Fishing Coast Path Wait":
+			return "Fishing Coast Path Minigame Loop";
+		case "Fishing Forest Lake Wait":
+			return "Fishing Forest Lake Minigame Loop";
+		case "Fishing Moor Wait":
+			return "Fishing Moor Minigame Loop";
+		default:
+			return "Fishing Pier Minigame Loop";
+	}
+}
+window.fishingMinigameDebugPassage = fishingMinigameDebugPassage;

@@ -140,9 +140,7 @@ class CombatSystem {
 	isAnusActive(canvas) {
 		const activeState =
 			V.anusstate &&
-			["penetrated", "doublepenetrated", "cheeks", "othermouth", "tentacleentrance", "tentacleimminent", "tentacle", "tentacledeep"].includes(
-				V.anusstate
-			);
+			["penetrated", "doublepenetrated", "cheeks", "othermouth", "tentacleentrance", "tentacleimminent", "tentacle", "tentacledeep"].includes(V.anusstate);
 		if (canvas === "close" && V.anusstate && ["entrance", "imminent", "othermouthentrance", "othermouthimminent"].includes(V.anusstate)) {
 			return true;
 		}
@@ -168,8 +166,7 @@ class CombatSystem {
 
 	isPenisActive(canvas) {
 		const activeState =
-			V.penisstate &&
-			["penetrated", "otheranus", "othermouth", "tentacleentrance", "tentacleimminent", "tentacle", "tentacledeep"].includes(V.penisstate);
+			V.penisstate && ["penetrated", "otheranus", "othermouth", "tentacleentrance", "tentacleimminent", "tentacle", "tentacledeep"].includes(V.penisstate);
 		const activeUse = V.penisuse === "tentaclerub";
 		if (
 			canvas === "close" &&
@@ -576,7 +573,7 @@ class CombatSystem {
 	 * @returns {boolean}
 	 */
 	isNpcWearingCondom(index) {
-		return wearingCondom(index || 0) !== false;
+		return wearingCondom(index || 0);
 	}
 
 	/**
@@ -584,8 +581,7 @@ class CombatSystem {
 	 * @returns {boolean}
 	 */
 	isNpcCondomDefective(index) {
-		const state = wearingCondom(index);
-		return state && ["defective", "sabotaged"].includes(state);
+		return ["defective", "sabotaged"].includes(condomState(index));
 	}
 
 	isPcGenitalsVisible() {

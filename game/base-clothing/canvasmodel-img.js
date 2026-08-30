@@ -162,8 +162,7 @@ DefineMacro("modelprepare-player-body", function () {
 	if (T.prop) {
 		T.modeloptions.prop = {};
 		T.modeloptions.prop = Object.assign({}, T.prop);
-		T.modeloptions.prop.show =
-			(T.modeloptions.arm_left !== "none" && T.modeloptions.arm_right !== "none") || T.modeloptions.prop.armPosition === "handsfree";
+		T.modeloptions.prop.show = (T.modeloptions.arm_left !== "none" && T.modeloptions.arm_right !== "none") || T.modeloptions.prop.armPosition === "handsfree";
 		if (coverCrotch && T.prop.hasCoverImg && !wings) T.modeloptions.prop.name += "-cover";
 	}
 
@@ -197,6 +196,8 @@ DefineMacro("modelprepare-player-body", function () {
 		const rightCoverClothes = setup.clothes_all_slots.some(slot => ["right_cover", "cover_both"].includes(V.worn[slot]?.holdPosition));
 
 		if ((arm === "left" && leftCoverClothes) || (arm === "right" && rightCoverClothes)) return true;
+		if (arm === "right" && setup.clothes.handheld[V.worn.handheld.index]?.holdingPreventsRightCover) return false;
+		if (arm === "left" && setup.clothes.handheld[V.worn.handheld.index]?.holdingPreventsLeftCover) return false;
 		if (!wings && ((arm === "left" && coverBreasts) || (arm === "right" && coverCrotch))) return true;
 		return false;
 	}
@@ -385,7 +386,7 @@ DefineMacro("modelprepare-player-body", function () {
 	T.modeloptions.bunny_tail_type = V.transformationParts.bunny.tail;
 	T.modeloptions.bunny_tail_layer = V.taillayer;
 	T.modeloptions.bunny_ears_type = V.transformationParts.bunny.ears;
-	
+
 	T.modeloptions.bear_plumage_type = V.transformationParts.bear.plumage;
 	T.modeloptions.bear_pubes_type = V.transformationParts.bear.pubes;
 	T.modeloptions.bear_tail_type = V.transformationParts.bear.tail;
@@ -426,9 +427,6 @@ DefineMacro("modelprepare-player-body", function () {
 	T.modeloptions.foreground_image_type1 = V.foreground_image1;
 	T.modeloptions.background_image_type2 = V.background_image2;
 	T.modeloptions.foreground_image_type2 = V.foreground_image2;
-
-
-
 
 	T.modeloptions.tf_ears_layer = V.tfearslayer;
 
@@ -675,8 +673,7 @@ DefineMacro("modelprepare-player-body", function () {
 });
 
 DefineMacro("modelprepare-player-clothes", function () {
-	T.modeloptions.breasts =
-		!V.worn.upper.type.includes("naked") || !V.worn.under_upper.type.includes("naked") || T.coverBreastsWithArm ? "cleavage" : "default";
+	T.modeloptions.breasts = !V.worn.upper.type.includes("naked") || !V.worn.under_upper.type.includes("naked") || T.coverBreastsWithArm ? "cleavage" : "default";
 
 	if (V.worn.under_upper.type.includes("chest_bind")) {
 		T.modeloptions.breast_size = 1;
