@@ -1312,7 +1312,7 @@ function minutePassed(minutes) {
 			const sum = (from, to) => ((from - to) * (from + to + 1)) / 2;
 			const drunkMod = sum(V.drunk, Math.max(V.drunk - minutes, 0));
 			// warning: assumes 1:1 negative alcohol changes, true as of yet
-			statChange.alcohol(-minutes * (1000 / (30 * 60)));
+			statChange.drunk(-minutes * (1000 / (30 * 60)));
 			// V.drunk ranging from 0 to 1000, 1 minute at 1000 will add extra 1.25 of tiredness (2.25x total)
 			// reference values are 2x at 800, 1.5x at 400 (pain reduction from drunkenness starts at 360), 1.25x at 200
 			if (minutes < 1200) statChange.tiredness(drunkMod / 12000);
@@ -1325,7 +1325,7 @@ function minutePassed(minutes) {
 			const sum = (from, to) => ((from - to) * (from + to + 1)) / 2;
 			const drunkMod = sum(V.drunk, Math.max(V.drunk - minutes, 0));
 			// warning: assumes 1:1 negative alcohol changes, true as of yet
-			statChange.alcohol(-minutes);
+			statChange.drunk(-minutes);
 			// V.drunk ranging from 0 to 1000, 1 minute at 1000 will add extra 1.25 of tiredness (2.25x total)
 			// reference values are 2x at 800, 1.5x at 400 (pain reduction from drunkenness starts at 360), 1.25x at 200
 			if (minutes < 1200) statChange.tiredness(drunkMod / 12000);
