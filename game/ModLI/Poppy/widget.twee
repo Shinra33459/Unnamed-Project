@@ -412,6 +412,25 @@
 	<</if>>
 <</widget>>
 
+/* Offers the one-per-bad-end heart to heart. _args[0] is "flat" or "lake". */
+<<widget "poppyComfortOption">>
+	<<if poppyBadEndComfortAvailable()>>
+		<<socialiseicon>><<link [[Tell Poppy where you've been (0:05)|Poppy Comfort Talk]]>><<pass 5>><<set $poppyComfortVenue to _args[0]>><<set $daily.poppy.lastAction to "chat">><</link>><<lstress>><<ltrauma>><<gpatience>>
+		<br>
+	<</if>>
+<</widget>>
+
+/* Shared passage header for the comfort talk, which runs at either venue. */
+<<widget "poppyComfortHeader">>
+	<<if $poppyComfortVenue is "lake">>
+		<<effects>><<lakeeffects>>
+	<<else>>
+		<<set $location to "flats">><<set $bus to "poppy_living_room">><<set $outside to 0>><<effects>>
+	<</if>>
+	<<run poppySchedule()>>
+<</widget>>
+
+
 /* Menu */
 <<widget "poppyLakeMenu">>
 <<effects>><<lakeeffects>><<run poppySchedule()>><<run statusCheck("Poppy")>><<bodywritingExposureCheck>>
@@ -461,6 +480,7 @@
 				<</if>>
 				<<poppyOpiumPulse>>
 		<</if>>
+		<<poppyComfortOption "lake">>
 		<<socialiseicon>><<link [[Chat with Poppy (0:15)|Lake Poppy Chat]]>><<pass 15>><<set $daily.poppy.lastAction to "chat">><</link>><<if T.poppyLoveGainAllowed>><<glove>><</if>><<gpatience>>
 		<br>
 		<<if (npcIsPregnant("Poppy") and knowsAboutPregnancy("Poppy", "pc")) or (playerIsPregnant() and playerAwareTheyArePregnant() and knowsAboutPregnancy("pc", "Poppy"))>>
@@ -500,9 +520,9 @@
 		<</if>>
 		<<poppyChristmasGiftOption "lake">>
 		<<if T.poppyStatus.includes("LowPatience") and canGiftFood("Poppy")>>
-			<<skinicon "give">><span class="black">Gift food</span> | <span class="red">Poppy is too irritated to accept anything right now.</span>
+			<<skinicon "give">><span class="black">Gift gifts</span> | <span class="red">Poppy is too irritated to accept anything right now.</span>
 		<<elseif canGiftFood("Poppy")>>
-			<<skinicon "give">><<link [[Gift food|Poppy Lake Gifts List]]>><<set $daily.poppy.lastAction to "gift">><</link>>
+			<<skinicon "give">><<link [[Gift gifts|Poppy Lake Gifts List]]>><<set $daily.poppy.lastAction to "gift">><</link>>
 		<</if>>
 		<br>
 		<<getouticon>><<link [[Leave|Lake Shore]]>><<endevent>><<set $eventskip to 0>><</link>>
@@ -564,6 +584,7 @@
 				<</if>>
 			<<poppyOpiumPulse>>
 		<</if>>
+		<<poppyComfortOption "flat">>
 		<<if !$poppySeen.includes("flat_chat_plant") and Number($poppyromance) gte 0>>
 			<<socialiseicon>><<link [[Chat (0:15)|Flats Poppy Chat Plant]]>><<pass 15>><<set $daily.poppy.lastAction to "chat">><</link>><<if T.poppyLoveGainAllowed>><<glove>><</if>><<gpatience>>
 			<br>
@@ -608,9 +629,9 @@
 		<</if>>
 		<<poppyChristmasGiftOption "flat">>
 		<<if T.poppyStatus.includes("LowPatience") and canGiftFood("Poppy")>>
-			<<skinicon "give">><span class="black">Gift food</span> | <span class="red">Poppy is too irritated to accept anything right now.</span>
+			<<skinicon "give">><span class="black">Gift gifts</span> | <span class="red">Poppy is too irritated to accept anything right now.</span>
 		<<elseif canGiftFood("Poppy")>>
-			<<skinicon "give">><<link [[Gift food|Flats Poppy Gift Food]]>><<set $daily.poppy.lastAction to "gift">><</link>>
+			<<skinicon "give">><<link [[Gift gifts|Flats Poppy Gift List]]>><<set $daily.poppy.lastAction to "gift">><</link>>
 		<</if>>
 		<br>
 		<<getouticon>><<link [[Leave|Flats Poppy Living Room]]>><<set $eventskip to 0>><</link>>
