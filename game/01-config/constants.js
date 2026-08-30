@@ -468,4 +468,5 @@ const constants = {
 
 /* Hoist Constants to the top (For statevars.js) */
 const Constants = ConstantsLoader.init(constants);
+Constants.tiredness = { max: 2000, min: 0 };
 window.Constants = Constants;

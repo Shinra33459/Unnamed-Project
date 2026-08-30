@@ -21,9 +21,13 @@
  *                                                         ▼
  *                                                [[Underground Intro]]
  *
- * Once the event has fired at least once ($poppyDismissalFired), a separate
- * single-use street encounter (<<poppyDismissalGlare>>) can roll, which is
- * added to the event pool inside eventsstreet.
+ * Once the event has fired ($poppyDismissalFired / $poppyFlat.dismissed), Poppy is gone:
+ * poppyDismissed() (system.js) is the choke point every other Poppy interaction gates on,
+ * and poppySchedule() itself refuses to place her anywhere in town. Two carve-outs remain:
+ *   - a single-use street glare (<<poppyDismissalGlare>>), the only encounter eventsstreet
+ *     still adds to the pool once she's dismissed;
+ *   - a single-use farewell beat on the first housekeeping class attended afterwards
+ *     (see housekeeping.twee), where she's at the front of the room and ignores the player.
  *
  * Variables this widget set introduces:
  *   $poppyDismissalWatched  (0/1)  — hunt-active flag, like $kylarwatched
@@ -327,4 +331,31 @@ You leave something by the door.
 	<<poppyOpiumPulse>>
 	<<link [[Go with Poppy|Street Poppy Bad Date Accept]]>><</link>><br>
 	<<link [[Say that you're busy|Street Poppy Bad Date Busy]]>><</link>>
+<</widget>>
+
+<<widget "poppyValentinesInvite">>
+	<<effects>><<set $outside to 0>>
+	<<npc Poppy>><<person1>><<run markPoppyInteraction()>>
+	You feel someone tap on your shoulder and turn around only to find that there is no one there. You hear a giggle before a head of red enters your vision as someone taps you on the nose. It's Poppy.
+	<<poppyOpiumPulse>>
+	"Caught you by surprise, didn't I?" Poppy says with a sly grin. <<He>> leans in until your faces are only inches apart. "I'm happy to see you though. You know what's coming up soon, don't you?"
+	<br><br>
+	You're forced to think for a moment. Your thoughts race through your mind until it dawns on you what Poppy meant. 
+	"Are you talking about Valentine's Day?" You ask.
+	<br><br>
+	"So you do remember!" Poppy says as <<he>> pulls away. "That's right, Valentine's day is coming soon. I figured I'd make us both a lovely candlelit meal at my flat to celebrate. Wouldn't that be so romantic?"
+	<br><br>
+	<<link [[Agree|Street Poppy Valentines Accept]]>><<npcincr Poppy love 1>><</link>><<glove>><br>
+	<<link [[Say you have other plans|Street Poppy Valentines Decline]]>><<npcincr Poppy love -1>><</link>><<llove>>
+<</widget>>
+
+<<widget "poppyValentinesDecline">>
+	<<npc "Poppy">><<npc "Bailey" 2>><<person2>>
+	<<effects>><<unset $valentines_poppy_flat_decline>>
+	You are on Barb Street. As you walk by a restaurant, you notice someone familiar by the window. It's Poppy sitting at a table with someone else. You realise the other person is Bailey. They're having dinner together.
+	<br><br>
+	Poppy seems very animated as <<person1>><<he>> talks. Bailey only responds in a few words every now and then, not very keen on talking. 
+	<br><br>
+	<<endevent>>
+	<<destinationeventend>>
 <</widget>>

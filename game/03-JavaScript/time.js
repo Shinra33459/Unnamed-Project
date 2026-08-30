@@ -2130,6 +2130,24 @@ function yearlyEventChecks() {
 		delete V.valentines_eden_bath;
 		delete V.valentines_eden_breakfast;
 		delete V.valentines_supermarket;
+
+		if (V.valentines_poppy_flat_accept && !V.valentines_poppy_flat_missed) {
+			V.valentines_poppy_flat_missed = 1;
+		}
+		delete V.valentines_poppy_flat_accept;
+		delete V.valentines_poppy_flat_decline;
+		delete V.valentines_poppy_flat_done;
+	}
+
+	// surely after 1 week poppy has forgotten the horrendous date, right???
+	// I'm still lowering the love and patience just because; good luck people
+	if (Time.monthName === "February" && Time.monthDay >= 21) {
+		if (V.valentines_poppy_flat_missed) {
+			if (modLISelected("Poppy") && C.npc.Poppy?.init === 1) {
+				wikifier("npcincr", "Poppy", "love", -8);
+				wikifier("npcincr", "Poppy", "patience", -10);
+			}
+		}
 	}
 
 	if (Time.monthName === "February" && Time.monthDay <= 14 && !V.avery_valentines && V.avery_mansion) {
@@ -2220,6 +2238,11 @@ function yearlyEventChecks() {
 		delete V.christmas_poppy_flat_pending;
 		delete V.christmas_poppy_flat_done;
 		delete V.christmas_poppy_route;
+		delete V.christmas_gift_poppy;
+		delete V.christmas_gift_poppy_wrapped;
+		delete V.christmas_gift_poppy_given;
+		delete V.poppyGiftVenue;
+
 		delete V.christmas_wraith;
 	}
 }

@@ -393,6 +393,7 @@ module.exports = {
 		bikeTime: "readonly",
 		poppyDailyTraits: "readonly",
 		poppyStatusCheck: "readonly",
+		modLISelected: "readonly",
 		poppyConsumePendingOpiumMessage: "readonly",
 		poppyConsumePendingPavlovMessage: "readonly",
 		// Third-party

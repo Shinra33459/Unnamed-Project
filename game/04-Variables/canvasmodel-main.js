@@ -1677,7 +1677,7 @@ Renderer.CanvasModels.main = {
 					"french curls",
 					"jellyfish bob",
 					"princess ponytail"
-				  ];
+				];
 
 				const path = `img/hair/back/${options.hair_sides_type}`;
 				if (options.hair_sides_length === "feet" && hairs.includes(options.hair_sides_type))
@@ -2276,6 +2276,10 @@ Renderer.CanvasModels.main = {
 					const isBeast = (active === "black_wolf" || active === "great_hawk");
 
 					let gender = V.options.nnpcDisplayGender || "male";
+					
+					if (active === "mickey") {
+						gender = "";
+					}
 					let skinChoice = V.options.nnpcDisplaySkin || "pale";
 
 					// Guard: monster only for beasts (in preview too)
@@ -2308,6 +2312,11 @@ Renderer.CanvasModels.main = {
 					const isBeast = (active === "black_wolf" || active === "great_hawk");
 
 					let gender = V.options.nnpcDisplayGender || "male";
+
+					if (active === "mickey") {
+						gender = "";
+					}
+					
 					let skinChoice = V.options.nnpcDisplaySkin || (isBeast ? "monster" : "pale");
 
 					// Guard: monster only for beasts
@@ -2414,6 +2423,10 @@ Renderer.CanvasModels.main = {
 					(cfg.genderOverride === true && cfg.gender)
 						? cfg.gender
 						: (pronoun === "m" ? "male" : "female");
+
+				if (active === "mickey") {
+						gender = "";
+					}
 
 				// Skin:  humans follow their actual skin colour (the per-NPC Pale/Dark setting), so the sprite can't be pinned to a stale saved display choice.
 				// The saved choice still decides beast art (human vs monster form) and is the fallback when the actual colour can't be resolved.

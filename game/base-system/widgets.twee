@@ -3217,6 +3217,10 @@
 			<<gifticon "christmas">><<link [[Wrap the orphans' gifts (3:00)|Bedroom Orphans Clothes Wrap]]>><<pass 180>><<set $christmas_gift to "clothes">><</link>>
 			<br>
 		<</if>>
+		<<if $christmas_gift_poppy isnot undefined and $christmas_gift_poppy.endsWith("_unwrapped")>>
+			<<gifticon "love">><<link [[Wrap Poppy's gift (0:10)|Bedroom Poppy Wrap]]>><<pass 10>><<set $christmas_gift_poppy to $christmas_gift_poppy.replace("_unwrapped", "")>><<set $christmas_gift_poppy_wrapped to 1>><</link>>
+			<br>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -5017,7 +5021,7 @@
 	<<set _wardrobe to Furniture.get('wardrobe', $location)>>
 	<<set _playOptions to ($englishPlay is 'ongoing' and $englishPlayRoles.Player isnot 'none')>>
 
-	<<if _projectOptions || _playOptions || _bookOptions || ($christmas_wrap is 1 && $christmas_gift_robin_wrapped isnot 1) || ($christmas_wrap is 1 && $christmas_gift is "clothes_unwrapped")>>
+	<<if _projectOptions || _playOptions || _bookOptions || ($christmas_wrap is 1 && $christmas_gift_robin_wrapped isnot 1) || ($christmas_wrap is 1 && $christmas_gift is "clothes_unwrapped" || ($christmas_wrap is 1 && $christmas_gift_poppy isnot undefined && !$christmas_gift_poppy_wrapped && !poppyFlatAccessible()))>>
 		<<if _args[0] is "noicon">>
 			Your _desk.name and <<if _chair.name isnot "chair">>_chair.article <</if>>_chair.nameSolo are wedged next to your wardrobe.
 			<br>
@@ -6138,4 +6142,41 @@
 
 	<<set _multi to $purity gte 1000 ? 2 : 1>>
 	<<defiance `($purity / 100) * _multi`>>
+<</widget>>
+
+<<widget "flower_gift_list">>
+	<<set _food_keys to Object.keys(setup.foodstuff)>>
+	<<for _i to 0; _i lt _food_keys.length; _i++>>
+		<<set _food to _food_keys[_i]>>
+		<<if setup.foodstuff[_food].category is "flower">>
+			<<set _flower_gift_enough to true>>
+			<<if $foodstuff[_food]?.amount gte 1>>
+				<<if $foodstuff[_food]?.amount gte 12>>
+					<<set _flower_gift_found to true>>
+					<label><<foodstufficon _food>><<print $foodstuff[_food].name.toUpperFirst()>> (<<print $foodstuff[_food].amount>>) <<radiobutton "$gift" _food checked>></label> |
+				<</if>>
+			<</if>>
+		<</if>>
+	<</for>>
+	<<if _flower_gift_found isnot true>>
+		You don't have <<if _flower_gift_enough is true>>enough of any cetain type<</if>>flowers to gift.
+	<</if>>
+	<br><br>
+<</widget>>
+
+<<widget "fish_gift_list">>
+	<<set _food_keys to Object.keys(setup.foodstuff)>>
+	<<for _i to 0; _i lt _food_keys.length; _i++>>
+		<<set _food to _food_keys[_i]>>
+		<<if setup.foodstuff[_food].category is "seafood">>
+			<<if ($foodstuff[_food]?.amount gte 1 and !["prawn", "clam", "bait_fish", "bait_worm"].includes(setup.foodstuff[_food].name) or $foodstuff[_food]?.amount gte 12)>>
+				<<set _fish_gift_found to true>>
+				<label><<foodstufficon _food>><<print $foodstuff[_food].name.toUpperFirst()>> (<<print $foodstuff[_food].amount>>) <<radiobutton "$gift" _food checked>></label> |
+			<</if>>
+		<</if>>
+	<</for>>
+	<<if _fish_gift_found isnot true>>
+		You don't have any fish to gift.
+	<</if>>
+	<br><br>
 <</widget>>

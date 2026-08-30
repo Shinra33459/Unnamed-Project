@@ -597,9 +597,9 @@ function calculateallure() {
 		if (V.worn.lower.type.includes("naked")) baseattractiveness += V.worn.under_lower.reveal;
 	}
 	attractiveness = baseattractiveness;
+
 	/* extra attractiveness from accessories */
 	for (const slot of ["head", "face", "neck", "legs", "feet", "handheld", "earrings", "rings", "hands"]) attractiveness += V.worn[slot].reveal || 0;
-
 	/* eslint-disable prettier/prettier, jsdoc/require-param */
 	/**
 	 * Bonus attractiveness from transformations
@@ -615,18 +615,19 @@ function calculateallure() {
 	 */
 	const partsDisabled = (tf, parts) => parts.filter(part => V.transformationParts[tf][part] === "disabled").length;
 	let transformationBonus = 0;
-	if (partsDisabled("demon", ["horns", "tail", "wings"]) < 3) transformationBonus +=                   500 - 300 * partsDisabled("demon", ["horns", "tail", "wings"]) / 3;
-	if (partsDisabled("angel", ["halo", "wings"]) < 2) transformationBonus +=                            500 - 300 * partsDisabled("angel", ["halo", "wings"]) / 2;
-	if (partsDisabled("fallenAngel", ["halo", "wings"]) < 2) transformationBonus +=                      500 - 300 * partsDisabled("fallenAngel", ["halo", "wings"]) / 2;
-	if (partsDisabled("wolf", ["tail", "ears"]) < 2) transformationBonus +=                              500 - 300 * partsDisabled("wolf", ["tail", "ears"]) / 2;
-	if (partsDisabled("cat", ["tail", "ears"]) < 2) transformationBonus +=                               500 - 300 * partsDisabled("cat", ["tail", "ears"]) / 2;
-	if (partsDisabled("cow", ["ears", "horns", "tail"]) < 3) transformationBonus +=                      500 - 300 * partsDisabled("cow", ["ears", "horns", "tail"]) / 3;
-	if (partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]) < 5) transformationBonus += 500 - 300 * partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]) / 5;
-	if (partsDisabled("fox", ["ears", "tail"]) < 2) transformationBonus +=                               750 - 550 * partsDisabled("fox", ["ears", "tail"]) / 2;
-	if (partsDisabled("bunny", ["ears", "tail"]) < 2) transformationBonus +=                             500 - 300 * partsDisabled("bunny", ["ears", "tail"]) / 2;
-	if (partsDisabled("okami", ["ears", "tail", "wings"]) < 3) transformationBonus +=                    1000 - 300 * partsDisabled("okami", ["ears", "tail", "wings"]) / 3;
-	if (partsDisabled("seraphim", ["wings", "plumage"]) < 2) transformationBonus +=                      1000 - 400 * partsDisabled("seraphim", ["wings", "plumage"]) / 2;
-	if (partsDisabled("kitsune", ["ears", "tail", "cheeks"]) < 3) transformationBonus +=                 1000 - 550 * partsDisabled("kitsune", ["ears", "tail", "cheeks"]) / 3;
+	if (partsDisabled("demon", ["horns", "tail", "wings"]) < 3) transformationBonus +=                    500 - 300 * partsDisabled("demon", ["horns", "tail", "wings"]) / 3;
+	if (partsDisabled("angel", ["halo", "wings"]) < 2) transformationBonus +=                             500 - 300 * partsDisabled("angel", ["halo", "wings"]) / 2;
+	if (partsDisabled("fallenAngel", ["halo", "wings"]) < 2) transformationBonus +=                       500 - 300 * partsDisabled("fallenAngel", ["halo", "wings"]) / 2;
+	if (partsDisabled("wolf", ["tail", "ears"]) < 2) transformationBonus +=                               500 - 300 * partsDisabled("wolf", ["tail", "ears"]) / 2;
+	if (partsDisabled("cat", ["tail", "ears"]) < 2) transformationBonus +=                                500 - 300 * partsDisabled("cat", ["tail", "ears"]) / 2;
+	if (partsDisabled("cow", ["ears", "horns", "tail"]) < 3) transformationBonus +=                       500 - 300 * partsDisabled("cow", ["ears", "horns", "tail"]) / 3;
+	if (partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]) < 5) transformationBonus +=  500 - 300 * partsDisabled("bird", ["tail", "eyes", "wings", "malar", "plumage"]) / 5;
+	if (partsDisabled("fox", ["ears", "tail"]) < 2) transformationBonus +=                                750 - 550 * partsDisabled("fox", ["ears", "tail"]) / 2;
+	if (partsDisabled("bear", ["ears", "tail","plumage"]) < 3) transformationBonus +=                     500 - 300 * partsDisabled("bear", ["ears", "tail","plumage"]) / 3;
+	if (partsDisabled("bunny", ["ears", "tail"]) < 2) transformationBonus +=                              500 - 300 * partsDisabled("bunny", ["ears", "tail"]) / 2;
+	if (partsDisabled("okami", ["ears", "tail", "wings"]) < 3) transformationBonus +=                     1000 - 600 * partsDisabled("okami", ["ears", "tail", "wings"]) / 3;
+	if (partsDisabled("seraphim", ["wings", "plumage"]) < 2) transformationBonus +=                       1000 - 600 * partsDisabled("seraphim", ["wings", "plumage"]) / 2;
+	if (partsDisabled("kitsune", ["ears", "tail", "cheeks"]) < 3) transformationBonus +=                  1000 - 600 * partsDisabled("kitsune", ["ears", "tail", "cheeks"]) / 3;
 	attractiveness += Math.round(transformationBonus);
 	/* eslint-enable prettier/prettier, jsdoc/require-param */
 

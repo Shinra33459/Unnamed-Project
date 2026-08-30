@@ -3525,14 +3525,22 @@
 			<</if>>
 			<<if modLISelected("Poppy") and C.npc.Poppy and C.npc.Poppy.init is 1>>
 				<<run poppySchedule()>><<run poppyStatusCheck()>>
-				<<if Time.dayState is "day" and !Weather.isFrozen("lake") and Weather.precipitation isnot "rain" and Weather.precipitation isnot "snow" and !$weekly.poppyStreetBadDate and (T.poppyStatus.includes("LowPatience") or T.poppyAnger gt 0)>>
-					<<addevent "poppyStreetBadDate" 0.9>>
-				<</if>>
-				<<if C.npc.Poppy and C.npc.Poppy.init is 1 and Time.hour gte 21 and ["domus", "danube", "high", "wolf", "nightingale", "cliff", "starfish"].includes($bus) and !T.poppyStatus.includes("LowPatience")>>
-					<<addevent "poppyStreetNecklace" 0.2>>
-				<</if>>
-				<<if $poppyDismissalFired and !$poppySeen.includes("dismissal_glare")>>
-					<<addevent "poppyDismissalGlare" 0.6>>
+				<<if poppyDismissed()>>
+					/* Poppy is gone; the only street beat left is the one-off parting glare. */
+					<<if !$poppySeen.includes("dismissal_glare")>>
+						<<addevent "poppyDismissalGlare" 0.6>>
+					<</if>>
+				<<elseif (Time.monthName is "February" and Time.monthDay is 13) and (Time.dayState isnot "night" and $exposed lte 0) and Number($poppyromance) gte 0 and !$valentines_poppy_flat_accept and !$valentines_poppy_flat_decline and !$valentines_poppy_flat_done and !($poppyFlat?.kickedUntilDay gte Time.days)>>
+					<<addevent "poppyValentinesInvite" 2>>
+				<<elseif $valentines_poppy_flat_decline is 1 and _poppy_location is "barbStreet" and $bus is "barb">>
+					<<addevent "poppyValentinesDecline" 2>>
+				<<else>>
+					<<if Time.dayState is "day" and !Weather.isFrozen("lake") and Weather.precipitation isnot "rain" and Weather.precipitation isnot "snow" and !$weekly.poppyStreetBadDate and (T.poppyStatus.includes("LowPatience") or T.poppyAnger gt 0)>>
+						<<addevent "poppyStreetBadDate" 0.9>>
+					<</if>>
+					<<if Time.hour gte 21 and ["domus", "danube", "high", "wolf", "nightingale", "cliff", "starfish"].includes($bus) and !T.poppyStatus.includes("LowPatience")>>
+						<<addevent "poppyStreetNecklace" 0.2>>
+					<</if>>
 				<</if>>
 			<</if>>	
 			

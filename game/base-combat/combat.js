@@ -1,4 +1,34 @@
-// @ts-check
+// @ts-nocheck
+
+/**
+ * Finds the named NPC currently using a combat slot.
+ *
+ * Uses the slot's fullDescription because it is updated whenever the NPC changes,
+ * so it reliably shows who is in that slot right now.
+ *
+ * $npc and $npcrow are not used because they can contain old data after a scene
+ * ends, and they may be empty for NPCs restored with <<loadNPC>>.
+ *
+ * Some ordinary NPCs use their first name as fullDescription. This can cause a
+ * false match with named NPCs such as Poppy. If .name and .fullDescription are
+ * the same, the NPC is treated as ordinary instead.
+ *
+ * @param {string | number} index NPC slot in $NPCList.
+ * @returns {string} The named NPC's name, or "" if the slot contains an ordinary NPC.
+ */
+function namedNpcInSlot(index) {
+	// @ts-ignore
+	const npc = V.NPCList?.[index];
+	if (!npc) return "";
+
+	const name = npc.fullDescription;
+	if (typeof name !== "string" || !setup.NPCNameList.includes(name)) return "";
+	if (npc.name === name) return "";
+
+	return name;
+}
+
+window.namedNpcInSlot = namedNpcInSlot;
 
 /**
  * Resolves named NPC-specific ejaculation macros.
@@ -12,16 +42,14 @@
  * @returns {string} Matching named NPC ejaculation macro, or an empty string if none applies.
  */
 function namedNpcEjaculation(index, ...args) {
-	const npcName = V.npc[V.npcrow.indexOf(index)];
-	const npc = V.NPCList[index];
-	if (!npc) return "";
+	const npcName = namedNpcInSlot(index);
+	if (!npcName) return "";
+
+	const macroName = `ejaculation-${npcName.toLowerCase()}`;
+	if (!Macro.has(macroName)) return "";
+
 	const output = args[0] ? " " + args[0] : "";
-	// Prefer NPC-specific ejaculation macros when available.
-	if (npcName && Macro.has(`ejaculation-${npcName.toLowerCase()}`) && setup.NPCNameList.includes(npcName)) {
-		return `<<ejaculation-${npcName.toLowerCase()}${output}>>`;
-	} else {
-		return "";
-	}
+	return `<<${macroName}${output}>>`;
 }
 
 window.namedNpcEjaculation = namedNpcEjaculation;
@@ -35,16 +63,18 @@ DefineMacroS("namedNpcEjaculation", namedNpcEjaculation);
  * as having no named NPC comment.
  *
  * @param {string} npcName The NPC display name.
+ * @param index
  * @returns {string} The speech macro to print, or an empty string if none applies.
  */
-function namedNpcComments(npcName) {
-    delete T.noNameComment;
+function namedNpcComments(index) {
+	delete T.noNameComment;
+	const npcName = namedNpcInSlot(index);
 
 	// Do not return any comment while the current pass is silent.
 	if (T.silent) return "";
 
 	// Named NPCs with registered handlers resolve to their matching speech macro.
-	if (npcName && Macro.has(`speech-${npcName.toLowerCase()}`) && setup.NPCNameList.includes(npcName)) {
+	if (npcName && Macro.has(`speech-${npcName.toLowerCase()}`)) {
 		return `<<speech-${npcName.toLowerCase()}>>`;
 	}
 	// Special case for Ivory Wraith, which uses a dedicated speech macro name.
