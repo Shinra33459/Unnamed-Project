@@ -3017,7 +3017,7 @@ function inRentPausedBadEnd() {
 function passRentTick() {
 	V.renttime--;
 	if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
-		if (V.renttime < 0 && V.renttime % 7 === 0) {
+		if (V.renttime <= 0 && V.renttime % 7 === 0) {
 			V.renttime = 7;
 			V.baileyDeposit -= V.rentmoney + (V.babyRent || 0);
 			V.rentstage += 1;
