@@ -1800,10 +1800,17 @@ Renderer.CanvasModels.main = {
 		"clit_parasite": {
 			animation: "idle",
 			srcfn(options) {
-				return `img/body/parasite/${options.clit_parasite}.png`;
+				switch (options.clit_parasite) {
+					case "urchin":
+						return "img/body/parasites/urchin-clit.png";
+					case "slime":
+						return "img/body/parasites/slime-clit.png";
+					default:
+						return "";
+				}
 			},
 			showfn(options) {
-				return options.crotch_visible && !!options.clit_parasite && !options.chastity && !options.belly_hides_under_lower
+				return options.crotch_visible && ["urchin", "slime"].includes(options.clit_parasite) && !options.genitals_chastity && !options.belly_hides_under_lower
 			},
 			zfn(options) {
 				if (options.crotch_exposed) return ZIndices.parasite;
