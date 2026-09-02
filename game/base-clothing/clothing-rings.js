@@ -1233,7 +1233,7 @@ function initRings() {
 		new ClothesItem({
 			index: 31,
 			slot: "rings",
-			name: "0.2ct tan zanite ring",
+			name: "0.2ct tanzanite ring",
 			name_cap: "0.2ct Tanzanite ring",
 			variable: "tanzanite-02",
 			shopGroup: "02",

@@ -23,12 +23,17 @@ function namedNpcInSlot(index) {
 
 	const name = npc.fullDescription;
 	if (typeof name !== "string" || !setup.NPCNameList.includes(name)) return "";
-	if (npc.name === name) return "";
+	if (npc.name === name) {
+		const slot = Number(index);
+		const mappedIndex = V.npcrow?.findIndex(row => Number(row) === slot) ?? -1;
+		if (mappedIndex === -1 || V.npc?.[mappedIndex] !== name) return "";
+	}
 
 	return name;
 }
 
 window.namedNpcInSlot = namedNpcInSlot;
+DefineMacro("namedNpcInSlot", namedNpcInSlot);
 
 /**
  * Resolves named NPC-specific ejaculation macros.
@@ -87,5 +92,5 @@ function namedNpcComments(index) {
 		return "";
 	}
 }
-
+window.namedNpcComments = namedNpcComments;
 DefineMacroS("namedNpcComments", namedNpcComments);

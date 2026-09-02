@@ -2,7 +2,6 @@ const ZIndices = {
 	deco_bg1: -15,
 	deco_bg2: -10,
 
-	
 	// TODO: needs clean up
 	flatlight: -4,
 	gradientlight: -3,
@@ -65,14 +64,18 @@ const ZIndices = {
 	under: 75,
 	feet: 85,
 	lower: 90,
+	lower_acc: 90.5,
 	lower_tucked_feet: 95,
 	lower_top: 92,
 	upper_arms: 89,
 	lower_belly: 94.5,
+	neck_tucked: 94.7,
 	upper: 95,
+	upper_acc: 95.5,
 	upper_tucked: 89,
+	upper_tucked_acc: 89.5,
 	upper_arms_tucked: 88.5,
-	upper_top: 97,
+	upper_top: 97.5,
 	bellyClothes: 98,
 	bellyClothesShadow: 99,
 	lower_cover: 100,
@@ -85,7 +88,9 @@ const ZIndices = {
 	over_upper: 150.2,
 	over_upper_arms: 150,
 	over_head: 150.3,
+
 	rings: 104,
+	arms_cover: 105,
 	under_upper_arms_cover: 109,
 	hands: 110,
 	upper_arms_cover: 112,
