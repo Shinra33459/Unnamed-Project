@@ -231,12 +231,12 @@ function generateChildren(pregnancyId) {
 	const donorParent = resolveChildParent(pregnancy.donor);
 	const sameParent = pregnancy.carrier === pregnancy.donor;
 	// The player's beast/divine transformations only pass down when the player is actually a parent.
-	const heritage = 
-		pregnancy.carrier === "pc" || pregnancy.donor === "pc" ? 
-			(pregnancy.carrier === "Poppy" || pregnancy.donor === "Poppy" ) ? 
-				{ beast: "fox", divine: "fallen" } : 
-				pcHeritage() : 
-			{ beast: null, divine: null }
+	const heritage =
+		pregnancy.carrier === "pc" || pregnancy.donor === "pc"
+			? pregnancy.carrier === "Poppy" || pregnancy.donor === "Poppy"
+				? { beast: "fox", divine: "fallen" }
+				: pcHeritage()
+			: { beast: null, divine: null };
 	const bodySize = pregnancy.carrier === "pc" ? V.bodysize : undefined;
 	// The Black Wolf's pups are always black. Every other wolf rolls the fur pool.
 	const wolfFur = pregnancy.carrier === "Black Wolf" || pregnancy.donor === "Black Wolf" ? ["black"] : PregnancyConstants.genePool.wolfFur;

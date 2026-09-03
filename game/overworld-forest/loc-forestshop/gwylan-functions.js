@@ -155,8 +155,7 @@ function gwylanRequest(override = null) {
 		case "preen":
 			V.gwylan.request.event = "preen";
 			V.gwylan.request.items = [{ category: "other", name: "feathers", need: seedrng.randomInt(3, 6) }];
-			V.gwylan.request.timer =
-				V.harpy >= 6 && V.birdFly >= 1 ? new DateTime(Time.date).addDays(1).timeStamp : new DateTime(Time.date).addDays(10).timeStamp; // 10 day timer if no bird tf
+			V.gwylan.request.timer = V.harpy >= 6 && V.birdFly >= 1 ? new DateTime(Time.date).addDays(1).timeStamp : new DateTime(Time.date).addDays(10).timeStamp; // 10 day timer if no bird tf
 			V.gwylan.request.special = V.harpy >= 6 ? "harpy" : "feathers";
 			return V.gwylan.request;
 		case "cream":
@@ -1021,11 +1020,7 @@ function gwylanCanRescueFromWraith() {
 		);
 	} else {
 		return (
-			C.npc.Gwylan.init === 1 &&
-			C.npc.Gwylan.state === "active" &&
-			V.gwylanSeen?.includes("ritual_sex") &&
-			V.wraith?.seen >= 1 &&
-			V.wraith?.possessCount >= 1
+			C.npc.Gwylan.init === 1 && C.npc.Gwylan.state === "active" && V.gwylanSeen?.includes("ritual_sex") && V.wraith?.seen >= 1 && V.wraith?.possessCount >= 1
 		);
 	}
 }

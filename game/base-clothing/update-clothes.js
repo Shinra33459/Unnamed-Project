@@ -678,7 +678,7 @@ function wardrobesUpdate() {
 		/* alex's */
 		V.wardrobes.alexFarm.name = "Alex's Farm";
 		V.wardrobes.alexFarm.shopSend = true;
-		V.wardrobes.alexFarm.isolated = true;		
+		V.wardrobes.alexFarm.isolated = true;
 		V.wardrobes.alexFarm.space = 40 * V.wardrobeMult;
 		if (V.farm_stage >= 7) V.wardrobes.alexFarm.unlocked = true;
 		/* strip club */

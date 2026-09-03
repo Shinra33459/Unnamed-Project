@@ -748,13 +748,7 @@ class CombatRenderer {
 		}
 		if (V.hairFringeColourGradient.style === "split" && this.getFringeType() !== "mohawk") {
 			const index = V.position === "missionary" ? 0 : 1;
-			return CombatRenderer.lookupColour(
-				setup.colours.hair_map,
-				V.hairFringeColourGradient.colours[index],
-				"hair_fringe",
-				"hair_fringe_custom",
-				"hair_fringe"
-			);
+			return CombatRenderer.lookupColour(setup.colours.hair_map, V.hairFringeColourGradient.colours[index], "hair_fringe", "hair_fringe_custom", "hair_fringe");
 		}
 		return CombatRenderer.createHairColourGradient(
 			"fringe",

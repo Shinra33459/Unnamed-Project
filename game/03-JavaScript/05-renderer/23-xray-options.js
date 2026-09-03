@@ -283,9 +283,7 @@ class XrayCombatMapper {
 				/* For DP, bigger penis MUST be the primary target sprite. */
 				if (penetrator.doublePen) {
 					penetrator.npc =
-						V.NPCList[V[slot + "target"]].penissize <= V.NPCList[V[slot + "doubletarget"]].penissize
-							? V[slot + "doubletarget"]
-							: V[slot + "target"];
+						V.NPCList[V[slot + "target"]].penissize <= V.NPCList[V[slot + "doubletarget"]].penissize ? V[slot + "doubletarget"] : V[slot + "target"];
 					penetrator.npc2 = penetrator.npc === V[slot + "doubletarget"] ? V[slot + "target"] : V[slot + "doubletarget"];
 				} else {
 					penetrator.npc = V[slot + "target"];
@@ -471,13 +469,7 @@ class XrayCombatMapper {
 		if (V.player.condom) {
 			penetrator.condom = V.player.condom;
 			if (penetrator.condom.colour) {
-				options.filters.playerCondom = CombatRenderer.lookupColour(
-					setup.colours.condom_map,
-					penetrator.condom.colour,
-					"condom",
-					"condom_custom",
-					"condom"
-				);
+				options.filters.playerCondom = CombatRenderer.lookupColour(setup.colours.condom_map, penetrator.condom.colour, "condom", "condom_custom", "condom");
 			}
 		}
 

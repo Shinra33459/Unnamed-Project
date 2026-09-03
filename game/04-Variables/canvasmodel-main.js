@@ -1607,24 +1607,71 @@ Renderer.CanvasModels.main = {
 
 			srcfn(options) {
 				const hairs = [
-					"default",
-					"loose",
-					"curl",
-					"defined curl",
-					"drill ringlets",
-					"neat",
-					"dreads",
 					"afro pouf",
 					"afro puffs",
 					"all down",
-					"half up",
-					"messy ponytail",
-					"ruffled",
-					"half up twintails",
-					"princess wave",
-					"space buns",
-					"sleek",
 					"bedhead",
+					"braid left",
+					"braid right",
+					"bubble tails",
+					"crescent tails",
+					"crude",
+					"curl",
+					"curly pigtails",
+					"curly side up",
+					"default",
+					"defined curl",
+					"dreads",
+					"drill ringlets",
+					"flat ponytail",
+					"fluffy half up twintail",
+					"fluffy ponytail",
+					"french bob",
+					"fro",
+					"half up twintail",
+					"half up",
+					"heart braid",
+					"jellyfish ponytail",
+					"jellyfish twintails",
+					"layered bob",
+					"left fishtail",
+					"loop braid",
+					"loose",
+					"low tails",
+					"messy",
+					"messy bun",
+					"messy ponytail",
+					"neat",
+					"pigtails",
+					"ponytail",
+					"princess twintailss",
+					"princess wave",
+					"ribbon tail",
+					"right fishtail",
+					"ruffled",
+					"sailor buns",
+					"scorpion tails",
+					"shaved",
+					"short",
+					"short spiky",
+					"sidecut",
+					"sidetail left",
+					"sidetail right",
+					"sleek",
+					"space buns",
+					"straight",
+					"straight bob",
+					"swept left",
+					"thick pigtails",
+					"thick ponytail",
+					"thick princess twintail",
+					"thick sidetail",
+					"thick twintails",
+					"twin braids",
+					"twin double braids",
+					"twin fishtails",
+					"twintails",
+					"wavy braid",
 					"classic",
 					"cornrows",
 					"french curls",
@@ -1753,10 +1800,17 @@ Renderer.CanvasModels.main = {
 		"clit_parasite": {
 			animation: "idle",
 			srcfn(options) {
-				return `img/body/parasite/${options.clit_parasite}.png`;
+				switch (options.clit_parasite) {
+					case "urchin":
+						return "img/body/parasites/urchin-clit.png";
+					case "slime":
+						return "img/body/parasites/slime-clit.png";
+					default:
+						return "";
+				}
 			},
 			showfn(options) {
-				return options.crotch_visible && !!options.clit_parasite && !options.chastity && !options.belly_hides_under_lower
+				return options.crotch_visible && ["urchin", "slime"].includes(options.clit_parasite) && !options.genitals_chastity && !options.belly_hides_under_lower
 			},
 			zfn(options) {
 				if (options.crotch_exposed) return ZIndices.parasite;

@@ -63,10 +63,11 @@ DefineMacroS("namedNpcEjaculation", namedNpcEjaculation);
  * as having no named NPC comment.
  *
  * @param {string} npcName The NPC display name.
+ * @param index
  * @returns {string} The speech macro to print, or an empty string if none applies.
  */
 function namedNpcComments(index) {
-    delete T.noNameComment;
+	delete T.noNameComment;
 	const npcName = namedNpcInSlot(index);
 
 	// Do not return any comment while the current pass is silent.

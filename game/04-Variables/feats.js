@@ -729,13 +729,6 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Social"],
 	},
-	"Great Hawk the Terror": {
-		title: "Great Hawk the Terror",
-		desc: "You'll make an excellent spouse.",
-		difficulty: 2,
-		series: "",
-		filter: ["All", "Social"],
-	},
 	"Return the Favour": {
 		title: "Return the Favour",
 		desc: "You gifted the Great Hawk a favourite food.",
@@ -955,7 +948,7 @@ setup.feats = {
 		hint: "Hint: Discover the secret of Kylar's manor.",
 		filter: ["All", "Social"],
 	},
-	"Owned": {
+	Owned: {
 		title: "Owned",
 		desc: "Being owned might not be that bad.",
 		difficulty: 1,
@@ -976,7 +969,7 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Social"],
 	},
-	"Entrepreneur": {
+	Entrepreneur: {
 		title: "Entrepreneur",
 		desc: "Get 2000 business fame.",
 		difficulty: 2,
@@ -1004,14 +997,14 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Social"],
 	},
-	"Streetwalker": {
+	Streetwalker: {
 		title: "Streetwalker",
 		desc: "Get 2000 prostitution fame.",
 		difficulty: 2,
 		series: "",
 		filter: ["All", "Social"],
 	},
-	"Easy": {
+	Easy: {
 		title: "Easy",
 		desc: "Get 2000 rape fame.",
 		difficulty: 2,
@@ -1025,21 +1018,21 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Social"],
 	},
-	"Flaunter": {
+	Flaunter: {
 		title: "Flaunter",
 		desc: "Get 2000 exhibitionism fame.",
 		difficulty: 1,
 		series: "",
 		filter: ["All", "Social"],
 	},
-	"Bearer": {
+	Bearer: {
 		title: "Bearer",
 		desc: "Get 2000 pregnancy fame.",
 		difficulty: 4,
 		series: "",
 		filter: ["All", "Social"],
 	},
-	"Stud": {
+	Stud: {
 		title: "Stud",
 		desc: "Get 2000 impregnation fame.",
 		difficulty: 4,
@@ -2374,7 +2367,7 @@ setup.feats = {
 		filter: ["All", "Special"],
 		hint: "Hint: Time and effort.",
 	},
-	"Aphrodite": {
+	Aphrodite: {
 		title: "Aphrodite",
 		desc: "Even the gods blush at your beauty.",
 		difficulty: 3,
@@ -2419,7 +2412,7 @@ setup.feats = {
 		softLockable: true,
 		hint: "Hint: Max dancing with tempered dancing.",
 	},
-	"Atlantean": {
+	Atlantean: {
 		title: "Atlantean",
 		desc: "You are fishier than any fish can fish to fish.",
 		difficulty: 3,
@@ -2511,7 +2504,7 @@ setup.feats = {
 		softLockable: true,
 		hint: "Hint: Max school skills with all tempered school skills.",
 	},
-	"Irresistible": {
+	Irresistible: {
 		title: "Irresistible",
 		desc: "Nobody can resist your sheer ability to seduce, not even Frost.",
 		difficulty: 3,
@@ -2597,7 +2590,7 @@ setup.feats = {
 		series: "",
 		filter: ["All", "AMC Traits"],
 	},
-	"Mogul": {
+	Mogul: {
 		title: "Mogul",
 		desc: "Get 4000 business fame.",
 		difficulty: 3,
@@ -2653,14 +2646,14 @@ setup.feats = {
 		series: "",
 		filter: ["All", "AMC Traits"],
 	},
-	"Broodmother": {
+	Broodmother: {
 		title: "Eve",
 		desc: "Get 4000 pregnancy fame.",
 		difficulty: 5,
 		series: "",
 		filter: ["All", "AMC Traits"],
 	},
-	"Progenitor": {
+	Progenitor: {
 		title: "Progenitor",
 		desc: "Get 4000 impregnation fame.",
 		difficulty: 5,
@@ -2766,7 +2759,7 @@ setup.feats = {
 		softLockable: true,
 		hint: "Hint: Win against an enemy with 1000000 health.",
 	},
-	"Hitless": {
+	Hitless: {
 		title: "Hitless",
 		desc: "They didn't even put so much as a scratch on you.",
 		difficulty: 3,
@@ -2775,7 +2768,7 @@ setup.feats = {
 		softLockable: true,
 		hint: "Hint: Win a fight and take no damage.",
 	},
-	"Brawler": {
+	Brawler: {
 		title: "Brawler",
 		desc: "Numbers don't matter to you, it's almost like you have a sixth sense.",
 		difficulty: 2,
@@ -2783,7 +2776,7 @@ setup.feats = {
 		filter: ["All", "Combat Extended"],
 		softLockable: true,
 	},
-	"Balanced": {
+	Balanced: {
 		title: "Balanced",
 		desc: "You stay on your feet no matter what, like the ground itself fears you falling.",
 		difficulty: 2,
@@ -2890,7 +2883,7 @@ setup.feats = {
 		series: "",
 		filter: ["All", "Discoveries-Other"],
 	},
-	"Marshlight": {
+	Marshlight: {
 		title: "Marshlight",
 		desc: "You found and successfully picked a Marsh Saxifrage.",
 		difficulty: 4,
@@ -2936,7 +2929,8 @@ async function featsMergePre() {
 	// Count the index db saves
 	try {
 		// eslint-disable-next-line no-undef
-		idb.getSaveDetails()
+		idb
+			.getSaveDetails()
 			.then(saveDataDetails => {
 				T.saveDataImportCount += saveDataDetails.length;
 			})
@@ -2970,9 +2964,7 @@ function featsMerge() {
 	const loadFeats = (data = {}) => {
 		Object.entries(data).forEach(([key, date]) => {
 			if (key === "specialClothes") {
-				const clothes = Array.isArray(date)
-					? date
-					: getUnlockedSpecialSets(updateSpecialClothesNames(date)).filter(set => setup.specialClothesSets[set].feat);
+				const clothes = Array.isArray(date) ? date : getUnlockedSpecialSets(updateSpecialClothesNames(date)).filter(set => setup.specialClothesSets[set].feat);
 				clothes.forEach(a => featData.specialClothes.pushUnique(a));
 				return;
 			}
@@ -3054,7 +3046,8 @@ function featsMerge() {
 	// Read the index db saves
 	try {
 		// eslint-disable-next-line no-undef
-		idb.getAllSaves()
+		idb
+			.getAllSaves()
 			.then(saves =>
 				saves.forEach((slot, index) => {
 					// auto-detect between uncompressed and compressed saves
@@ -3214,7 +3207,6 @@ function earnHourlyFeats() {
 		}
 	}
 
-
 	// LI Romance
 	const loveCount = (V.robinromance ? 1 : 0) + (V.whitneyromance ? 1 : 0) + (V.kylarenglish ? 1 : 0) + (V.sydneyromance ? 1 : 0);
 	if (loveCount >= 3) earnFeat("Love Triangles");
@@ -3365,7 +3357,7 @@ function earnHourlyFeats() {
 		V.fame.model >= 4000
 	) {
 		earnFeat("Luminous Reputation");
-	}	
+	}
 
 	if (
 		getBornChildren().reduce((prev, curr) => {
@@ -3401,7 +3393,7 @@ function earnHourlyFeats() {
 	if (V.seductionskill >= 1000) earnFeat("Seductress");
 	if (V.tending >= 1000) earnFeat("Green Fingered");
 	if (V.housekeeping >= 1000) earnFeat("Majordomo");
-	/* fishing release if (V.fishing >= 1000) earnFeat("Profishional");*/
+	/* fishing release if (V.fishing >= 1000) earnFeat("Profishional"); */
 	if (V.baseAllure >= 7000 && V.outside === 1 && !Time.isBloodMoon()) earnFeat("Alluring");
 	if (V.science >= 1000 && V.maths >= 1000 && V.english >= 1000 && V.history >= 1000) earnFeat("Perfect Record");
 	if (V.earSlime.corruption >= 100) earnFeat("Ear Slime Lover");
@@ -3415,7 +3407,7 @@ function earnHourlyFeats() {
 	if (V.athletics >= 2000) earnFeat("Ludicrous Speed");
 	if (V.tending >= 2000) earnFeat("Grass Toucher");
 	if (V.housekeeping >= 2000) earnFeat("Demolisher of Filth");
-	/*if fishing release (V.fishing >= 2000) earnFeat("Master Baiter");*/
+	/* if fishing release (V.fishing >= 2000) earnFeat("Master Baiter"); */
 	if (V.sciencetrait >= 8) earnFeat("Smarter than Einstein");
 	if (V.mathstrait >= 8) earnFeat("Human Calculator");
 	if (V.englishtrait >= 8) earnFeat("Voice of All Things");
@@ -3443,13 +3435,18 @@ function earnHourlyFeats() {
 	if (V.combatExtended.striking >= 2000) earnFeat("Knockout Artist");
 	if (V.combatExtended.kicking >= 1000) earnFeat("Steel Legs");
 	if (V.combatExtended.kicking >= 2000) earnFeat("Bladed Legs");
-	if (V.birdFly == 1) earnFeat("Catch the Wind");
+	if (V.birdFly === 1) earnFeat("Catch the Wind");
 	if (V.beauty >= 20000) earnFeat("Aphrodite");
 	if (V.milk_volume >= 12000) earnFeat("Rivers of White");
 	if (V.semen_volume >= 12000) earnFeat("Sticky Fountain");
-	if ((V.demon >= 6 || V.transformationParts.demon.wings == "default" || V.transformationParts.demon.wings == "succubus" || V.demontf == 1) && V.player.virginity.vaginal == true && V.player.virginity.penile == true) earnFeat("Demon of Purity");
+	if (
+		(V.demon >= 6 || V.transformationParts.demon.wings === "default" || V.transformationParts.demon.wings === "succubus" || V.demontf === 1) &&
+		V.player.virginity.vaginal === true &&
+		V.player.virginity.penile === true
+	)
+		earnFeat("Demon of Purity");
 
-	if (V.whitneycollar == 1) earnFeat("Owned");
+	if (V.whitneycollar === 1) earnFeat("Owned");
 
 	if (V.farmersProduce) {
 		if (V.farmersProduce.totalSold >= 5000) earnFeat("Peddler");
@@ -3461,7 +3458,7 @@ function earnHourlyFeats() {
 	}
 
 	if (V.unlockAllFeats) {
-		for (const key of Object.keys(setup.feats)){
+		for (const key of Object.keys(setup.feats)) {
 			if (!V.feats.currentSave[key]) fragment.append(wikifier("earnFeat", `"${key}"`));
 		}
 	}
@@ -3905,27 +3902,61 @@ function setupFeatBoosts(force) {
 		transcend: {
 			name: "Transcendence",
 			required: [
-				"Unstoppable Force", "Immovable Object", "Agent 47", "Can't Touch This", "Atlantean", "Ludicrous Speed",
-				"Grass Toucher", "Demolisher of Filth", "Smarter than Einstein", "Human Calculator", "Voice of All Things",
-				"Errm, ackshually", "Irresistible", "God of Lust", "Rivers of White", "Sticky Fountain",
-				"Many Punch Man", "Fleet-Footed", "Knockout Artist", "Bladed Legs"
+				"Unstoppable Force",
+				"Immovable Object",
+				"Agent 47",
+				"Can't Touch This",
+				"Atlantean",
+				"Ludicrous Speed",
+				"Grass Toucher",
+				"Demolisher of Filth",
+				"Smarter than Einstein",
+				"Human Calculator",
+				"Voice of All Things",
+				"Errm, ackshually",
+				"Irresistible",
+				"God of Lust",
+				"Rivers of White",
+				"Sticky Fountain",
+				"Many Punch Man",
+				"Fleet-Footed",
+				"Knockout Artist",
+				"Bladed Legs",
 			],
 			cost: 100,
-			max: Math.floor([
-				"Unstoppable Force", "Immovable Object", "Agent 47", "Can't Touch This", "Atlantean", "Ludicrous Speed",
-				"Grass Toucher", "Demolisher of Filth", "Smarter than Einstein", "Human Calculator", "Voice of All Things",
-				"Errm, ackshually", "Irresistible", "God of Lust", "Rivers of White", "Sticky Fountain",
-				"Many Punch Man", "Fleet-Footed", "Knockout Artist", "Bladed Legs"
-			].filter(hasFeat).length / 10),
+			max: Math.floor(
+				[
+					"Unstoppable Force",
+					"Immovable Object",
+					"Agent 47",
+					"Can't Touch This",
+					"Atlantean",
+					"Ludicrous Speed",
+					"Grass Toucher",
+					"Demolisher of Filth",
+					"Smarter than Einstein",
+					"Human Calculator",
+					"Voice of All Things",
+					"Errm, ackshually",
+					"Irresistible",
+					"God of Lust",
+					"Rivers of White",
+					"Sticky Fountain",
+					"Many Punch Man",
+					"Fleet-Footed",
+					"Knockout Artist",
+					"Bladed Legs",
+				].filter(hasFeat).length / 10
+			),
 			missing: "Unlock this boost by obtaining at least 10 skill-related and fluid production AMC feats",
 		},
 		adaptiveGenes: {
 			name: "Adaptive Genes",
 			required: ["Angel", "Fallen Angel", "Demon", "Demon of Purity", "Neko", "Wolf", "Cattle", "Harpy", "Fox"],
 			cost: 50,
-			max: Math.floor([
-				"Angel", "Fallen Angel", "Demon", "Demon of Purity", "Neko", "Wolf", "Cattle", "Harpy", "Fox", "Bear", "Bunny"
-			].filter(hasFeat).length / 5),
+			max: Math.floor(
+				["Angel", "Fallen Angel", "Demon", "Demon of Purity", "Neko", "Wolf", "Cattle", "Harpy", "Fox", "Bear", "Bunny"].filter(hasFeat).length / 5
+			),
 			missing: "Unlock this boost by obtaining at least 5 transformation feats",
 		},
 	});
@@ -4137,17 +4168,33 @@ function applyFeatBoosts() {
 
 		// make normal clothes and underwear more likely to appear than accessories
 		const weightedSlots = [
-			"head", "face", "neck",
-			"upper", "upper", "upper", "upper", "upper",
-			"lower", "lower", "lower", "lower", "lower",
-			"under_upper", "under_upper", "under_upper",
-			"under_lower", "under_lower", "under_lower",
-			"hands", "legs", "feet",
+			"head",
+			"face",
+			"neck",
+			"upper",
+			"upper",
+			"upper",
+			"upper",
+			"upper",
+			"lower",
+			"lower",
+			"lower",
+			"lower",
+			"lower",
+			"under_upper",
+			"under_upper",
+			"under_upper",
+			"under_lower",
+			"under_lower",
+			"under_lower",
+			"hands",
+			"legs",
+			"feet",
 		];
 		for (let i = 0; i < clothingItems; ++i) {
 			const slot = weightedSlots.random();
 			const index = options[slot]?.random();
-			if (index == null) continue;
+			if (index === null) continue;
 
 			const item = clone(setup.clothes[slot][index]);
 			if (!item) {
@@ -4174,13 +4221,7 @@ function applyFeatBoosts() {
 				}
 				item.accessory_colour = colors.random();
 				if (V.featsBoosts.clothingCustomColors === true && item.accessory_colour === "custom") {
-					item.accessory_colourCustom = customColour(
-						random(0, 360),
-						random(0, 20) / 10,
-						random(5, 40) / 10,
-						random(0, 20) / 10,
-						random(0, 100) / 100
-					);
+					item.accessory_colourCustom = customColour(random(0, 360), random(0, 20) / 10, random(5, 40) / 10, random(0, 20) / 10, random(0, 100) / 100);
 				}
 			}
 			// pick the pattern
@@ -4285,10 +4326,10 @@ function applyFeatBoosts() {
 		for (let i = 0; i < totalToys; ++i) {
 			// index
 			let index = boostObj[i].index;
-			if (index == null || index === -1) index = toyIndexes.pluck();
+			if (index === null || index === -1) index = toyIndexes.pluck();
 			// color
 			let color = boostObj[i].colour;
-			if (color == null || color === -1) color = setup.sextoys[index].colour_options.random();
+			if (color === null || color === -1) color = setup.sextoys[index].colour_options.random();
 
 			sexShopOnBuyClick(index, false, color, false);
 		}

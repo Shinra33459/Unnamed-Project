@@ -669,11 +669,7 @@ function shopHuntCheckHide(id, loc, result = false) {
 	if (loc === T.locRaw) {
 		if (shopHuntFind(id) === loc) {
 			if (V.shopHunt.player.hide === 4) {
-				if (
-					T.loc.special.includes("hat") &&
-					V.shopHunt.actors[id].seen.includes("hatHide") &&
-					!["mannequin", "nobody"].includes(V.shopHunt.actors[id].type)
-				)
+				if (T.loc.special.includes("hat") && V.shopHunt.actors[id].seen.includes("hatHide") && !["mannequin", "nobody"].includes(V.shopHunt.actors[id].type))
 					foundPlayer = true;
 			} else {
 				const hideChance = [0, 2, 5, 8][V.shopHunt.player.hide];

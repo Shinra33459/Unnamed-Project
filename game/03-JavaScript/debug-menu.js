@@ -275,11 +275,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Make all beasts dickgirls`, stayOnPassageFn],
-			widgets: [
-				`<<set $settings.beastMaleChanceMale to 0>>`,
-				`<<set $settings.beastMaleChanceFemale to 0>>`,
-				`<<set $settings.femaleNPCPenisChance to 100>>`,
-			],
+			widgets: [`<<set $settings.beastMaleChanceMale to 0>>`, `<<set $settings.beastMaleChanceFemale to 0>>`, `<<set $settings.femaleNPCPenisChance to 100>>`],
 		},
 		{
 			link: [`Make all beasts monster people`, stayOnPassageFn],
@@ -480,8 +476,7 @@ setup.debugMenu.eventList = {
 
 					if (Object.keys(testList).length != 0) compressionVerifier(testList, false, true);
 					if (Object.keys(invalidList).length != 0) console.log("The following NPC(s) in $NPCList could not be tested: " + invalidList.join(", "));
-					else if (Object.keys(testList).length === 0 && Object.keys(invalidList).length === 0)
-						console.log("There are no NPCs in the NPCList to test.");
+					else if (Object.keys(testList).length === 0 && Object.keys(invalidList).length === 0) console.log("There are no NPCs in the NPCList to test.");
 
 					return "";
 				},
@@ -963,11 +958,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Summon the Wraith`, `Wraith Test Start`],
-			widgets: [
-				`<<endcombat>>`,
-				`<<run Time.timeTravel(new DateTime(Time.year, Time.month, Time.lastDayOfMonth, 21, 0))>>`,
-				`<<set $moonstate to "evening">>`,
-			],
+			widgets: [`<<endcombat>>`, `<<run Time.timeTravel(new DateTime(Time.year, Time.month, Time.lastDayOfMonth, 21, 0))>>`, `<<set $moonstate to "evening">>`],
 		},
 		{
 			link: [`Possessed Fight`, `Possessed Fight Test`],
@@ -1048,11 +1039,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Lake Fish`, `Swarm Test`],
-			widgets: [
-				`<<set $molestationstart to 1>>`,
-				`<<swarminit "fish" "swarm" "moving towards you" "encircle you" "fend off" 1 7>>`,
-				`<<set $water to 1>>`,
-			],
+			widgets: [`<<set $molestationstart to 1>>`, `<<swarminit "fish" "swarm" "moving towards you" "encircle you" "fend off" 1 7>>`, `<<set $water to 1>>`],
 		},
 		{
 			link: [`Forest Snakes`, `Swarm Test`],
@@ -1076,11 +1063,7 @@ setup.debugMenu.eventList = {
 		},
 		{
 			link: [`Sea Eels`, `Swarm Test`],
-			widgets: [
-				`<<set $molestationstart to 1>>`,
-				`<<swarminit "eels" "swarm" "moving towards you" "encircle you" "fend off" 1 9>>`,
-				`<<set $water to 1>>`,
-			],
+			widgets: [`<<set $molestationstart to 1>>`, `<<swarminit "eels" "swarm" "moving towards you" "encircle you" "fend off" 1 9>>`, `<<set $water to 1>>`],
 		},
 		{
 			link: [`Crate Worms`, `Swarm Test`],
@@ -2075,10 +2058,7 @@ window.debugCreateLinkAndRedirect = debugCreateLinkAndRedirect;
 function addonClickDivPassage(section, index, id) {
 	$(function () {
 		const target = document.getElementById(id).children[0];
-		target.setAttribute(
-			"onclick",
-			"window.debugCreateLinkAndRedirect(" + "'" + section + "'" + "," + index + "," + "'" + section + "-" + index + "'" + ");"
-		);
+		target.setAttribute("onclick", "window.debugCreateLinkAndRedirect(" + "'" + section + "'" + "," + index + "," + "'" + section + "-" + index + "'" + ");");
 	});
 }
 window.addonClickDivPassage = addonClickDivPassage;
@@ -2105,8 +2085,7 @@ function toggleClassDebug(selected, mode) {
 						: document.getElementById(div).classList.remove("hidden");
 			}
 		} else if (mode === "classicHide") {
-			for (const div of list)
-				div !== selected ? document.getElementById(div).classList.add("hidden") : document.getElementById(div).classList.remove("hidden");
+			for (const div of list) div !== selected ? document.getElementById(div).classList.add("hidden") : document.getElementById(div).classList.remove("hidden");
 		}
 	});
 }
