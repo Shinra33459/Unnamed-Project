@@ -351,14 +351,16 @@ window.bikeTime = bikeTime;
 DefineMacro("bikeTime", bikeTime);
 
 function bikeSecurity() {
-	if (V.bicycle.own && !V.bicycle.stolenCoolDown) {
+	if (V.bicycle.stolenCooldown !== undefined) return;
+	if (V.bicycle.own && V.bicycle.stolenCooldown === undefined) {
 		// only if persistentLocation is enabled
 		if (V.bicycle.persistentLocation) {
-			// reset counter when player is next to bike
-			if (V.bikeStart === V.bikeLocation) {
+			// reset counter when player is next to bike, bike won't be stolen if ur standing next to it
+			if (V.sublocation === V.bicycle.location) {
 				V.bicycle.hourlyCheck = 0;
+				return;
 			}
-			if (V.bikeStart !== V.bikeLocation) {
+			if (V.sublocation !== V.bicycle.location) {
 				// Increase hour counter
 				if (V.bicycle.hourlyCheck === 0) {
 					V.bicycle.hourlyCheck = 1;
@@ -375,13 +377,13 @@ function bikeSecurity() {
 		// Remy and Bailey are more likely to fuck with ur shit if they're mad
 		// the orphans are more likely to passively protect pc's stuff if reb is high (orphans stick together!!)
 		if (V.bicycle.locationRegion === "lake") {
-			T.bikeTheftChance = 0.25;
+			T.bikeTheftChance = 0.25 - V.bicycle.security + bikeTheftChanceBonus;
 		} else if (V.bicycle.locationRegion === "residential" || V.bicycle.locationRegion === "industrial") {
 			if (V.baileydefeatedchain >= 1) {
 				bikeTheftChanceBonus += 0.25;
 			}
 			if (V.orphan_reb >= 25) {
-				bikeTheftChanceBonus -= 0.1;
+				bikeTheftChanceBonus -= 0.15;
 			}
 			T.bikeTheftChance = 0.35 - V.bicycle.security + bikeTheftChanceBonus;
 		} else if (V.bicycle.locationRegion === "commercial" || V.bicycle.locationRegion === "forestEntrance") {
@@ -389,11 +391,13 @@ function bikeSecurity() {
 				bikeTheftChanceBonus += 0.25;
 			}
 			if (V.orphan_reb >= 25) {
-				bikeTheftChanceBonus -= 0.1;
+				bikeTheftChanceBonus -= 0.15;
 			}
 			T.bikeTheftChance = 0.45 - V.bicycle.security + bikeTheftChanceBonus;
 		} else if (V.bicycle.locationRegion === "alex_farm") {
-			if (V.farm?.aggro) bikeTheftChanceBonus = 0.75 * (V.farm.aggro / 100);
+			if (V.farm?.aggro) {
+				bikeTheftChanceBonus = 0.75 * (V.farm.aggro / 100);
+			}
 			T.bikeTheftChance = 0.25 - V.bicycle.security + bikeTheftChanceBonus;
 		} else if (V.bicycle.locationRegion === "forest") {
 			// literally who is gonna steal your bike in the woods... Eden??
@@ -401,8 +405,9 @@ function bikeSecurity() {
 		} else {
 			T.bikeTheftChance = 1 - V.bicycle.security + bikeTheftChanceBonus;
 		}
-		const bikeTheft = Math.floor(T.bikeTheftChance * 1000);
-		if (random(1, 1000) <= Math.max(0, bikeTheft) && V.bicycle.theftEnabled) {
+		V.bicycle.theftChance = Math.clamp(T.bikeTheftChance * 1000, 0, 1001);
+		V.bicycle.theftRandom = random(1, 1000);
+		if (V.bicycle.theftRandom <= Math.max(10, V.bicycle.theftChance) && V.bicycle.theftEnabled) {
 			V.bicycle.own = false;
 			V.bicycle.stolen = true;
 			if (V.bicycle.security > 0) {
@@ -412,9 +417,9 @@ function bikeSecurity() {
 			V.bicycle.upgrades = [];
 			V.bicycle.hourlyCheck = 0;
 			if (Time.days < 150) {
-				V.bicycle.stolenCoolDown = 14;
+				V.bicycle.stolenCooldown = 14;
 			} else {
-				V.bicycle.stolenCoolDown = 7;
+				V.bicycle.stolenCooldown = 7;
 			}
 		}
 	}

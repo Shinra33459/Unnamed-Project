@@ -1102,9 +1102,9 @@ function dayPassed() {
 	V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
 
 	// DoLP Bike Theft Cooldown
-	if (V.bicycle.stolenCoolDown > 0) {
-		V.bicycle.stolenCoolDown--;
-		if (V.bicycle.stolenCoolDown <= 0) delete V.bicycle.stolenCoolDown;
+	if (V.bicycle.stolenCooldown >= 1) {
+		V.bicycle.stolenCooldown--;
+		if (V.bicycle.stolenCooldown <= 0) delete V.bicycle.stolenCooldown;
 	}
 
 	if (random(1, 8) === 1) V.daily.robin.orphanageKitchen = true;
