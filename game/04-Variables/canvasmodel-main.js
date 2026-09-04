@@ -2226,49 +2226,6 @@ Renderer.CanvasModels.main = {
 				const autoEnabled = V.options?.autoNNPCDisplay?.enabled === true;
 				const inOptions = !!T.optionsEnabled;
 
-				// =====================================================================
-				// POPPY AUTO-DISPLAY (independent of $options.nnpcDisplay / Auto Mode)
-				// =====================================================================
-				if (!inOptions) {
-					let _poppyRaw = null;
-					if (V.NPCList?.[0]?.fullDescription) _poppyRaw = V.NPCList[0].fullDescription;
-					else if (V.npc?.name)     _poppyRaw = V.npc.name;
-					else if (V.person1?.name) _poppyRaw = V.person1.name;
-					else if (V.NPCName)       _poppyRaw = V.NPCName;
-
-					if (norm(_poppyRaw) === "poppy" && C?.npc?.Poppy) {
-						T.activeNNPC = "poppy";
-
-						// Gender from Poppy's actual pronoun (NPCList wins, else C.npc.Poppy)
-						const _pPron = V.NPCList?.[0]?.pronoun ?? C.npc.Poppy.pronoun;
-						const _pGender = (_pPron === "m") ? "male" : "female";
-
-						// Skin from Poppy's actual skincolour
-						const _pSkinRaw = V.NPCList?.[0]?.skincolour ?? C.npc.Poppy.skincolour;
-						const _pSkin = (_pSkinRaw === "white") ? "pale" : "dark";
-
-						// Slot from context (Halloween > Christmas > school/lake/soup > default)
-						let _pSlot = 1;
-						if (V.halloween) {
-							_pSlot = 4;
-						} else if (V.christmas) {
-							_pSlot = 3;
-						} else {
-							const _pPassage = String(V.passage || "").toLowerCase();
-							const _pLoc     = String(V.location || "").toLowerCase();
-							// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
-							const _isSchool =
-								_pLoc === "school" ||
-								/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
-							const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
-							const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
-							if (_isSchool || _isLake || _isSoup) _pSlot = 2;
-						}
-
-						return `img/ui/nnpc/poppy/${_pGender}/${_pSkin}/${_pSlot}.png`;
-					}
-				}
-
 				// =============================
 				// OPTIONS MENU PREVIEW ONLY
 				// =============================
@@ -2301,6 +2258,39 @@ Renderer.CanvasModels.main = {
 						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
 					}
 					if (active === "ivory_wraith" || active === "others") skin = "";
+
+					if (active === "poppy") {
+						if (V.poppyWardrobe) {
+							// Slot from context (Halloween > Christmas > school/lake/soup > default)
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.halloween) {
+								skin += "/halloween";
+							} else if (V.christmas) {
+								skin += "/christmas";
+							} else {
+								const _pPassage = String(V.passage || "").toLowerCase();
+								const _pLoc     = String(V.location || "").toLowerCase();
+								// School: any school-side passage (hallway, classroom, lesson, lunch, etc.)
+								const _isSchool =
+									_pLoc === "school" ||
+									/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
+								const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
+								const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
+								if (_isSchool || _isLake || _isSoup) skin += "/casual";
+							}
+						} else {
+							if (V.poppyOverride === "default") {
+								// Do nothing
+							} else if (V.poppyOverride === "halloween") {
+								skin += "/halloween";
+							} else if (V.poppyOverride === "christmas") {
+								skin += "/christmas";
+							} else {
+								skin += "/casual";
+							}
+						}
+					}
 
 					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
 				}
