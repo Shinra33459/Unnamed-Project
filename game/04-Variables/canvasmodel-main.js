@@ -2260,7 +2260,7 @@ Renderer.CanvasModels.main = {
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
 					if (active === "poppy") {
-						if (V.poppyWardrobe = 1) {
+						if (V.poppyWardrobe) {
 							// Slot from context (Halloween > Christmas > school/lake/soup > default)
 							if (V.poppyOverride === "default") {
 								// Do nothing
@@ -2330,7 +2330,7 @@ Renderer.CanvasModels.main = {
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
 					if (active === "poppy") {
-						if (V.poppyWardrobe = 1) {
+						if (V.poppyWardrobe) {
 							// Slot from context (Halloween > Christmas > school/lake/soup > default)
 							if (V.poppyOverride === "default") {
 								// Do nothing
@@ -2455,7 +2455,7 @@ Renderer.CanvasModels.main = {
 				if (active === "ivory_wraith" || active === "others") skin = "";
 
 				if (active === "poppy") {
-					if (V.poppyWardrobe = 1) {
+					if (V.poppyWardrobe) {
 						// Slot from context (Halloween > Christmas > school/lake/soup > default)
 						if (V.poppyOverride === "default") {
 							// Do nothing
