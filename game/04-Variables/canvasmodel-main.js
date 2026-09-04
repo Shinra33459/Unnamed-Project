@@ -2252,15 +2252,15 @@ Renderer.CanvasModels.main = {
 					let skin = "/" + skinChoice;
 
 					if (active === "sydney") {
-						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+						skin += ((V.sydneyWardrobe === false && V.sydneyOverride === "pure") ||(V.sydneyWardrobe !== false && C.npc.Sydney.purity >= 1)) ? "/pure" : "/corrupt";
 					}
 					if (active === "gwylan") {
-						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
+						skin += (V.gwylanOverride === "fox") ? "/brownfox":"";
 					}
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
 					if (active === "poppy") {
-						if (V.poppyWardrobe) {
+						if (V.poppyWardrobe = 1) {
 							// Slot from context (Halloween > Christmas > school/lake/soup > default)
 							if (V.poppyOverride === "default") {
 								// Do nothing
@@ -2322,15 +2322,15 @@ Renderer.CanvasModels.main = {
 					let skin = "/" + skinChoice;
 
 					if (active === "sydney") {
-						skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+						skin += ((V.sydneyWardrobe === false && V.sydneyOverride === "pure") ||(V.sydneyWardrobe !== false && C.npc.Sydney.purity >= 1)) ? "/pure" : "/corrupt";
 					}
 					if (active === "gwylan") {
-						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
+						skin += (V.gwylanOverride === "fox") ? "/brownfox":"";
 					}
 					if (active === "ivory_wraith" || active === "others") skin = "";
 
 					if (active === "poppy") {
-						if (V.poppyWardrobe) {
+						if (V.poppyWardrobe = 1) {
 							// Slot from context (Halloween > Christmas > school/lake/soup > default)
 							if (V.poppyOverride === "default") {
 								// Do nothing
@@ -2447,15 +2447,15 @@ Renderer.CanvasModels.main = {
 
 				// Special cases
 				if (active === "sydney") {
-					skin += (C.npc.Sydney.purity >= 1) ? "/pure" : "/corrupt";
+					skin += ((V.sydneyWardrobe === false && V.sydneyOverride === "pure") ||(V.sydneyWardrobe !== false && C.npc.Sydney.purity >= 1)) ? "/pure" : "/corrupt";
 				}
 				if (active === "gwylan") {
-						skin += (((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") ? "/brownfox":"";
+						skin += ((((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") || V.gwylanOverride === "fox") ? "/brownfox":"";
 				}
 				if (active === "ivory_wraith" || active === "others") skin = "";
 
 				if (active === "poppy") {
-					if (V.poppyWardrobe) {
+					if (V.poppyWardrobe = 1) {
 						// Slot from context (Halloween > Christmas > school/lake/soup > default)
 						if (V.poppyOverride === "default") {
 							// Do nothing
