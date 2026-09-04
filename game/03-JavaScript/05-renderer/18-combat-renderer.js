@@ -539,8 +539,12 @@ class CombatRenderer {
 	static getAlpha(slot) {
 		// Wetness
 		let alpha = 1;
+		/*
+		 * Wetness variables do not use underscores, so remove them here too.
+		 * Otherwise, some clothing slots read the wrong variable.
+		 */
 		// Stage could be 0 to 200.
-		const stage = V[slot + "wet"];
+		const stage = V[slot.replace(/_/g, "") + "wet"];
 		if (typeof stage === "number") {
 			const normalised = normalise(200 - stage, 200, 0);
 			alpha = normalised / 2 + 0.5;
@@ -748,13 +752,7 @@ class CombatRenderer {
 		}
 		if (V.hairFringeColourGradient.style === "split" && this.getFringeType() !== "mohawk") {
 			const index = V.position === "missionary" ? 0 : 1;
-			return CombatRenderer.lookupColour(
-				setup.colours.hair_map,
-				V.hairFringeColourGradient.colours[index],
-				"hair_fringe",
-				"hair_fringe_custom",
-				"hair_fringe"
-			);
+			return CombatRenderer.lookupColour(setup.colours.hair_map, V.hairFringeColourGradient.colours[index], "hair_fringe", "hair_fringe_custom", "hair_fringe");
 		}
 		return CombatRenderer.createHairColourGradient(
 			"fringe",

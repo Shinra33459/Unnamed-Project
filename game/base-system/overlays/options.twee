@@ -252,25 +252,23 @@ IMPORTANT:
 						Skin: 
 						<label><<radiovar "$options.nnpcDisplaySkin" "pale">><<updatesidebarimg>><</radiovar>> Pale</label> |
 						<label><<radiovar "$options.nnpcDisplaySkin" "dark">><<updatesidebarimg>><</radiovar>> Dark</label>
-						<<if $options.nnpcDisplay is "black_wolf" || $options.nnpcDisplay is "great_hawk">> | <label><<radiovar "$options.nnpcDisplaySkin" "monster">><<updatesidebarimg>><</radiovar>> Monster</label><</if>>
+						<!-- TODO: Night Monster is being funky and only showing up for 1 gender :C -->
+						<<switch $options.nnpcDisplay>>
+							<<case "black_wolf" "great_hawk" "night_monster">> | <label><<radiovar "$options.nnpcDisplaySkin" "monster">><<updatesidebarimg>><</radiovar>> Monster</label>
+						<</switch>>
 						<br>
 					<</if>>
 				</span>
+				<!-- TODO: When previewing/selecting sprites it doesn't default to the character's skin colour. Users are having to disable Auto NNPC and then select skin colour manually to see the range of sprites. -->
 				Slot: 
-				<label><<radiovar "$options.nnpcDisplaySlot" 0>><<updatesidebarimg>><</radiovar>> None</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 1>><<updatesidebarimg>><</radiovar>> 1</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 2>><<updatesidebarimg>><</radiovar>> 2</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 3>><<updatesidebarimg>><</radiovar>> 3</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 4>><<updatesidebarimg>><</radiovar>> 4</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 5>><<updatesidebarimg>><</radiovar>> 5</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 6>><<updatesidebarimg>><</radiovar>> 6</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 7>><<updatesidebarimg>><</radiovar>> 7</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 8>><<updatesidebarimg>><</radiovar>> 8</label> |
-				<label><<radiovar "$options.nnpcDisplaySlot" 9>><<updatesidebarimg>><</radiovar>> 9</label>
+				<<listbox "$options.nnpcDisplaySlot" autoselect>>
+					<<optionsfrom [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]>>
+					<<updatesidebarimg>>
+				<</listbox>>
 				
 				<<if $foolsList isnot undefined and ($foolsList.neutral.includes($options.nnpcDisplay) or ($options.nnpcDisplayGender is "male" and $foolsList.maleOnly.includes($options.nnpcDisplay)) or ($options.nnpcDisplayGender is "female" and $foolsList.femaleOnly.includes($options.nnpcDisplay)))>>
 					<br>
-					<label><<radiovar "$options.nnpcDisplaySlot" "10">><<updatesidebarimg>><</radiovar>> April Fools Special</label>
+					<label><<radiovar "$options.nnpcDisplaySlot" "12">><<updatesidebarimg>><</radiovar>> April Fools Special</label>
 				<</if>>
 
 				<span id="autoNNPCSave">
@@ -333,7 +331,7 @@ IMPORTANT:
 						<</if>>
 
 						/* Skin guards */
-						<<if $options.nnpcDisplaySkin is "monster" and !(_nnpcKey is "black_wolf" || _nnpcKey is "great_hawk")>>
+						<<if $options.nnpcDisplaySkin is "monster" and !(_nnpcKey is "black_wolf" || _nnpcKey is "great_hawk" || _nnpcKey is "night_monster")>>
 							<<set $options.nnpcDisplaySkin to "pale">>
 						<</if>>
 						<<if ($options.nnpcDisplaySkin isnot "pale") and ($options.nnpcDisplaySkin isnot "dark") and ($options.nnpcDisplaySkin isnot "monster")>>
@@ -360,7 +358,9 @@ IMPORTANT:
 									Skin: 
 									<label><<radiovar "$options.nnpcDisplaySkin" "pale">><<updatesidebarimg>><</radiovar>> Pale</label> |
 									<label><<radiovar "$options.nnpcDisplaySkin" "dark">><<updatesidebarimg>><</radiovar>> Dark</label>
-									<<if $options.nnpcDisplay is "black_wolf" || $options.nnpcDisplay is "great_hawk">> | <label><<radiovar "$options.nnpcDisplaySkin" "monster">><<updatesidebarimg>><</radiovar>> Monster</label><</if>>
+									<<switch $options.nnpcDisplay>>
+										<<case "black_wolf" "great_hawk" "night_monster">> | <label><<radiovar "$options.nnpcDisplaySkin" "monster">><<updatesidebarimg>><</radiovar>> Monster</label>
+									<</switch>>
 									<br>
 								<</if>>
 							<</replace>>

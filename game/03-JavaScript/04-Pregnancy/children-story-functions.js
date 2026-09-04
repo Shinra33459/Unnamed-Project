@@ -240,12 +240,6 @@ function hawkChildActivity(childId) {
 	if (childDays >= 14) {
 		activity.push("preen");
 	}
-	if (T.childTotalDays >= 200) {
-		activity.push("flap");
-	}
-	if (child.localVariables.farewell !== false && typeof child.localVariables.farewell !== 'undefined') {
-		activity = ["dismissed"];
-	}
 
 	child.development.activity = activity.length ? activity[random(0, activity.length - 1)] : "noEvent";
 	child.development.event = true;

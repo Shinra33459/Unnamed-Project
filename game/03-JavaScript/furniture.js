@@ -22,7 +22,7 @@ const Furniture = (() => {
 		wallpaper: "wallpaper",
 		shelf: "shelf",
 		plush: "plush",
-		radio:"radio",
+		radio: "radio",
 		/* Special category for Kylar event */
 		owlplushie: "owlplushie",
 	});
@@ -33,6 +33,7 @@ const Furniture = (() => {
 		cottage: "cottage",
 	});
 
+	// eslint-disable-next-line no-unused-vars
 	let target = Locations.bedroom;
 
 	function furnitureInit() {
@@ -567,9 +568,9 @@ const Furniture = (() => {
 	}
 
 	function furnitureGet(category, location, onlySetup = false) {
-		if (location == "home" || location == "bedroom") {
+		if (location === "home" || location === "bedroom") {
 			location = "bedroom";
-		} else if (location == "alex_cottage" || location == "cottage") {
+		} else if (location === "alex_cottage" || location === "cottage") {
 			location = "cottage";
 		} else {
 			onlySetup = true;

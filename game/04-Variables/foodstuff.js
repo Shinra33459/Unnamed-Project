@@ -2569,8 +2569,8 @@ function initFoodstuff() {
 				tags: [],
 			},
 			shop: {
-				sell_price: 600,
-				available_in: ["supermarket"],
+				sell_price: 700,
+				available_in: [],
 			},
 		},
 		fish_and_chips: {
@@ -3495,7 +3495,7 @@ function initFoodstuff() {
 			kitchen_item_type_icon: "recipe-seafood.png",
 			prop_folder: "ingredient",
 			shop: {
-				sell_price: 400,
+				sell_price: 800,
 			},
 		},
 		eel: {
@@ -3553,7 +3553,7 @@ function initFoodstuff() {
 			},
 		},
 		green_manure: {
-			index: 166,
+			index: 250,
 			name: "green_manure",
 			singular: "green manure",
 			plural: "green manure",
@@ -3574,7 +3574,7 @@ function initFoodstuff() {
 			},
 		},
 		ghost_orchid: {
-			index: 162,
+			index: 251,
 			name: "ghost_orchid",
 			singular: "ghost orchid (epipogium aphyllum)",
 			plural: "ghost orchids (epipogium aphyllum)",
@@ -3587,7 +3587,7 @@ function initFoodstuff() {
 			},
 		},
 		hen_of_the_woods: {
-			index: 163,
+			index: 252,
 			name: "hen_of_the_woods",
 			singular: "hen of the woods",
 			plural: "hen of the woods",
@@ -3600,7 +3600,7 @@ function initFoodstuff() {
 			},
 		},
 		red_helleborine: {
-			index: 164,
+			index: 253,
 			name: "red_helleborine",
 			singular: "red helleborine (Cephalanthera rubra)",
 			plural: "red helleborines (Cephalanthera rubra)",
@@ -3613,7 +3613,7 @@ function initFoodstuff() {
 			},
 		},
 		lady_orchid: {
-			index: 165,
+			index: 254,
 			name: "lady_orchid",
 			singular: "lady orchid",
 			plural: "lady orchids",
@@ -3626,7 +3626,7 @@ function initFoodstuff() {
 			},
 		},
 		fly_agaric: {
-			index: 166,
+			index: 255,
 			name: "fly_agaric",
 			singular: "fly agaric",
 			plural: "fly agarics",
@@ -3639,7 +3639,7 @@ function initFoodstuff() {
 			},
 		},
 		spiked_rampion: {
-			index: 167,
+			index: 256,
 			name: "spiked_rampion",
 			singular: "spiked rampion",
 			plural: "spiked rampions",
@@ -3652,7 +3652,7 @@ function initFoodstuff() {
 			},
 		},
 		cloudberry: {
-			index: 168,
+			index: 257,
 			name: "cloudberry",
 			singular: "cloudberry",
 			plural: "cloudberries",
@@ -3666,7 +3666,7 @@ function initFoodstuff() {
 			},
 		},
 		scottish_bog_myrtle: {
-			index: 169,
+			index: 258,
 			name: "scottish_bog_myrtle",
 			singular: "scottish bog myrtle",
 			plural: "scottish bog myrtles",
@@ -3679,7 +3679,7 @@ function initFoodstuff() {
 			},
 		},
 		bog_orchid: {
-			index: 170,
+			index: 259,
 			name: "bog_orchid",
 			singular: "bog orchid",
 			plural: "bog orchids",
@@ -3692,7 +3692,7 @@ function initFoodstuff() {
 			},
 		},
 		marsh_saxifrage: {
-			index: 171,
+			index: 260,
 			name: "marsh_saxifrage",
 			singular: "marsh saxifrage",
 			plural: "marsh saxifrages",
@@ -3705,7 +3705,7 @@ function initFoodstuff() {
 			},
 		},
 		clover: {
-			index: 172,
+			index: 261,
 			name: "clover",
 			singular: "three-leaf clover",
 			plural: "three-leaf clovers",
@@ -3718,7 +3718,7 @@ function initFoodstuff() {
 			},
 		},
 		four_leaf_clover: {
-			index: 173,
+			index: 262,
 			name: "four leaf clover",
 			singular: "four-leaf clover",
 			plural: "four-leaf clovers",
@@ -3730,8 +3730,7 @@ function initFoodstuff() {
 				sell_price: 2000,
 			},
 		},
-	},
-
+	};
 	finalizefoodstuff();
 }
 window.initFoodstuff = initFoodstuff;

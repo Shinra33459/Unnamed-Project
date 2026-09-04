@@ -1102,9 +1102,9 @@ function dayPassed() {
 	V.daily.kylar.libraryStalk = rollKylarLibraryStalkFlag();
 
 	// DoLP Bike Theft Cooldown
-	if (V.bicycle.stolenCoolDown > 0) {
-		V.bicycle.stolenCoolDown--;
-		if (V.bicycle.stolenCoolDown <= 0) delete V.bicycle.stolenCoolDown;
+	if (V.bicycle.stolenCooldown >= 1) {
+		V.bicycle.stolenCooldown--;
+		if (V.bicycle.stolenCooldown <= 0) delete V.bicycle.stolenCooldown;
 	}
 
 	if (random(1, 8) === 1) V.daily.robin.orphanageKitchen = true;
@@ -2139,7 +2139,7 @@ function yearlyEventChecks() {
 		delete V.valentines_poppy_flat_done;
 	}
 
-	// surely after 1 week poppy has forgotten the horrendous date, right??? 
+	// surely after 1 week poppy has forgotten the horrendous date, right???
 	// I'm still lowering the love and patience just because; good luck people
 	if (Time.monthName === "February" && Time.monthDay >= 21) {
 		if (V.valentines_poppy_flat_missed) {
@@ -2670,6 +2670,11 @@ function dailyFarmEvents() {
 				V.phials_stored++;
 				V.farm.still_timer = 7;
 			}
+			/**
+			 * Bec- The self-extract system needs polish imo. Extracting continues independent of player interaction as long as there's more lurkers?
+			 * Should probably have a note in the journal to let players know how long they have left, how many vials are waiting, etc. A 'reminder' or smth that lets the player know that
+			 * the extract on the first lurker finished and the next one has started would also be nice.
+			 */
 			if (V.farm.player_still_timer >= 0) {
 				V.farm.player_still_timer--;
 			}
@@ -3011,8 +3016,16 @@ function inRentPausedBadEnd() {
 /* Not seen bailey for more than 2 weeks, tracks missed rent */
 function passRentTick() {
 	V.renttime--;
-	if (V.renttime < 0 && V.renttime % 7 === 0) {
-		V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
-		V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
+	if (V.baileyDeposit >= V.rentmoney + (V.babyRent || 0)) {
+		if (V.renttime <= 0 && V.renttime % 7 === 0) {
+			V.renttime = 7;
+			V.baileyDeposit -= V.rentmoney + (V.babyRent || 0);
+			V.rentstage += 1;
+		}
+	} else {
+		if (V.renttime < 0 && V.renttime % 7 === 0) {
+			V.baileyRefusedToPayTotal += V.rentmoney + (V.babyRent || 0);
+			V.baileyRefusedToPayTotalStat += V.rentmoney + (V.babyRent || 0);
+		}
 	}
 }

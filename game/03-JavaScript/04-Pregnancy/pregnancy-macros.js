@@ -201,8 +201,7 @@ function npcPregnancyRoll(carrier, carrierSpecies, donor, donorSpecies, orifice,
 	// A forced impregnation skips the chance roll entirely.
 	if (
 		!T.npcForceImpregnation &&
-		State.random() >=
-			(V.settings.baseNpcPregnancyChance / 100) * depthWeight * npcMenstrualFertility(carrier) * npcConceptionModifier(carrier) * donorFertility
+		State.random() >= (V.settings.baseNpcPregnancyChance / 100) * depthWeight * npcMenstrualFertility(carrier) * npcConceptionModifier(carrier) * donorFertility
 	)
 		return null;
 

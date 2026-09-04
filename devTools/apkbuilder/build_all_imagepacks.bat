@@ -87,7 +87,7 @@ for /L %%i in (0,1,%array_length%) do (
 
 	cd .\dist\
 
-	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.11.9-debug.apk" "DoLP v0.%version% !imagepack[%%i]! 0.5.11.9.apk"
+	ren "DoLP-v0.%version%-!imagepack[%%i]!-0.5.12.8-debug.apk" "DoLP v0.%version% !imagepack[%%i]! 0.5.12.8.apk"
 
 	cd ..\
 )

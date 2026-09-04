@@ -790,6 +790,7 @@ function importSettingsData(data) {
 		// eslint-disable-next-line no-var
 		for (let i = 0; i < V.NPCNameList.length; i++) {
 			if (overrides.npc[V.NPCNameList[i]] != null) {
+				const carriedGender = getActivePregnancies(V.NPCName[i].nam).length ? V.NPCName[i].gender : undefined;
 				// eslint-disable-next-line no-var
 				for (let j = 0; j < listKey.length; j++) {
 					// Overwrite to allow for "none" default value in the start passage to allow for rng to decide
@@ -798,11 +799,8 @@ function importSettingsData(data) {
 					} else if (validateValue(listObject[listKey[j]], overrides.npc[V.NPCNameList[i]][listKey[j]])) {
 						V.NPCName[i][listKey[j]] = overrides.npc[V.NPCNameList[i]][listKey[j]];
 					}
-					// Prevent the changing of gender with pregnant npc's
-					if (getActivePregnancies(V.NPCName[i].nam).length) {
-						V.NPCName[i].gender = "f";
-					}
 				}
+				if (carriedGender !== undefined) V.NPCName[i].gender = carriedGender;
 			}
 		}
 	}
@@ -1309,7 +1307,7 @@ function settingsObjects(type) {
 					},
 					penisModifier: { min: -8, max: 8, decimals: 0, displayName: "Average size of NPC penises:", randomize: "encounter" },
 					breastModifier: { min: -12, max: 12, decimals: 0, displayName: "Average size of women's breasts:", randomize: "encounter" },
-					rentCostModifier: { min: 0.1, max: 3, decimals: 1, displayName: "Bailey's rent:", randomize: "gameplay" },
+					rentCostModifier: { min: 0.1, max: 10, decimals: 1, displayName: "Bailey's rent:", randomize: "gameplay" },
 					baseNpcPregnancyChance: { min: 0, max: 100, decimals: 0, displayName: "Base NPC pregnancy chance:", randomize: "gameplay" },
 					basePlayerPregnancyChance: { min: 0, max: 100, decimals: 0, displayName: "Base player pregnancy chance:", randomize: "gameplay" },
 					beastMaleChanceSplit: { bool: true, displayName: "Beast attraction split by gender appearance:" },

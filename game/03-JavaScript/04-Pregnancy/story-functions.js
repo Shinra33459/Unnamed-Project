@@ -178,15 +178,7 @@ function pregnancyEventSymptom(effectName, pregnancy) {
 		case "discomfortModerate":
 			return weightedRandom(["lightHeaded", 1], ["dizzy", 3], ["mildNausea", 3], ["nausea", 1], ["headache", 1]);
 		case "discomfortSevere":
-			return weightedRandom(
-				["lightHeaded", 1],
-				["dizzy", 1],
-				["sensitiveBreasts", 1],
-				["mildNausea", 1],
-				["headache", 1],
-				["nausea", 4],
-				["dryheaving", 3]
-			);
+			return weightedRandom(["lightHeaded", 1], ["dizzy", 1], ["sensitiveBreasts", 1], ["mildNausea", 1], ["headache", 1], ["nausea", 4], ["dryheaving", 3]);
 		case "midPregnancy":
 			return weightedRandom(
 				["tired", 1],
@@ -224,10 +216,7 @@ function wakingPregnancyEvent() {
 		(random(0, 100) >= 105 - V.sciencetrait * 5 || playerNormalPregnancyTotal() >= 3)
 	) {
 		return "missedPeriod";
-	} else if (
-		playerBellySize() >= 12 &&
-		["genitals", "under_upper", "upper", "under_lower", "lower"].find(slot => V.worn[slot].type.includes("constricting"))
-	) {
+	} else if (playerBellySize() >= 12 && ["genitals", "under_upper", "upper", "under_lower", "lower"].find(slot => V.worn[slot].type.includes("constricting"))) {
 		return "clothesRemoval";
 	} else if (
 		V.settings.playerPregnancyEggLayingEnabled === true &&

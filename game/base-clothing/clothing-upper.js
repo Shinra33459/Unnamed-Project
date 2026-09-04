@@ -2742,11 +2742,12 @@ function initUpper() {
 			pregType: "split",
 		}),
 		new ClothesItem({
+			/* deprecated clothing item */
 			index: 52,
 			slot: "upper",
-			name: "swim shirt",
-			name_cap: "Swim shirt",
-			variable: "swimshirt",
+			name: "swim shirt_old",
+			name_cap: "Swim shirt_old",
+			variable: "swimshirt_old",
 			combat: {
 				reference: "tshirt",
 				mainColour: "#333333",
@@ -4051,7 +4052,7 @@ function initUpper() {
 			colour_sidebar: 1,
 			exposed: 0,
 			exposed_base: 0,
-			type: ["normal", "bellyHide" , "antitransparent"],
+			type: ["normal", "bellyHide", "antitransparent"],
 			set: "hoodie",
 			gender: "n",
 			warmth: 7,
