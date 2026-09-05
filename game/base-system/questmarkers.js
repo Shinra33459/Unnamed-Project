@@ -85,6 +85,17 @@ const events = [
 		failuretext: "You didn't attend your community service today.",
 	},
 	{
+		name: "fishing",
+		condition() {
+			return V.daily.fishing !== undefined && V.daily.fishing.baitShopRequest === "requested";
+		},
+		starthour: 7,
+		endhour: 19,
+		priority: 2,
+		text: "The bait shop owner have requested that you bring back a <<print V.daily.fishing.baitShopRequestFish>>",
+		failuretext: "You were not able to complete the bait shop owner's request.",
+	},
+	{
 		name: "harper appointment",
 		condition() {
 			return (V.harper_appointments.enabled || V.schoolPsych === 1) && Time.weekDay === 6 && V.daily.harperVisit !== 1;
