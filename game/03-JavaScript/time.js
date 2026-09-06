@@ -2131,6 +2131,7 @@ function yearlyEventChecks() {
 		delete V.valentines_eden_breakfast;
 		delete V.valentines_supermarket;
 
+		V.poppyOverride.pushUnique("valentinesSeen");
 		if (V.valentines_poppy_flat_accept && !V.valentines_poppy_flat_missed) {
 			V.valentines_poppy_flat_missed = 1;
 		}
@@ -2210,6 +2211,7 @@ function yearlyEventChecks() {
 		delete V.halloween_kylar_whitney;
 		delete V.halloween_lake;
 		delete V.halloweenWolves;
+		V.poppyOverride.pushUnique("halloweenSeen");
 	}
 
 	// Christmas
@@ -2234,6 +2236,7 @@ function yearlyEventChecks() {
 		delete V.edenmeal;
 		delete V.eden_christmas_dinner;
 		// Poppy Christmas flags clearing
+		V.poppyOverride.pushUnique("christmasSeen");
 		delete V.christmas_poppy_orphanage;
 		delete V.christmas_poppy_flat_pending;
 		delete V.christmas_poppy_flat_done;

@@ -229,20 +229,61 @@ IMPORTANT:
 				<label><<radiovar "$options.nnpcDisplayLayer" "front">><<updatesidebarimg>><</radiovar>> Front</label> |
 				<label><<radiovar "$options.nnpcDisplayLayer" "back">><<updatesidebarimg>><</radiovar>> Back</label>
 				<br>
-				<div id="autoNNPCGenderOverride">
-					<span id="autoNNPCGenderOverrideToggle">
-						<<if $options.autoNNPCDisplay.enabled is true and $options.nnpcDisplay isnot 0>>
-							Gender Override: <label><<checkbox "$options.autoNNPCDisplay[$options.nnpcDisplay].genderOverride" false true autocheck>> <mouse class="tooltip linkBlue">(?)<span>Enable Gender Override. Allows you to pick the NNPC gender sprite instead of their physical gender.</span></mouse></label>
-						<</if>>
-					</span>
-				</div>
 				<span id="manualNNPC">
 					<<if $options.autoNNPCDisplay.enabled is true and $options.nnpcDisplay isnot 0>>
-						<<if $options.autoNNPCDisplay[$options.nnpcDisplay].genderOverride is true>>
-							Gender: 
-							<label><<radiovar "$options.nnpcDisplayGender" "male">><<updatesidebarimg>><</radiovar>> Male</label> |
-							<label><<radiovar "$options.nnpcDisplayGender" "female">><<updatesidebarimg>><</radiovar>> Female</label>
+						Gender: 
+						<label><<radiovar "$options.nnpcDisplayGender" "male">><<updatesidebarimg>><</radiovar>> Male</label> |
+						<label><<radiovar "$options.nnpcDisplayGender" "female">><<updatesidebarimg>><</radiovar>> Female</label>
+						<br>
+						Skin: 
+						<label><<radiovar "$options.nnpcDisplaySkin" "pale">><<updatesidebarimg>><</radiovar>> Pale</label> |
+						<label><<radiovar "$options.nnpcDisplaySkin" "dark">><<updatesidebarimg>><</radiovar>> Dark</label>
+						<<switch $options.nnpcDisplay>>
+							<<case "black_wolf" "great_hawk" "night_monster">> | <label><<radiovar "$options.nnpcDisplaySkin" "monster">><<updatesidebarimg>><</radiovar>> Monster</label>
+						<</switch>>
+						<br>
+						<<if $options.nnpcDisplay is "poppy" and $poppyOverride.length gte 1>>
+							Poppy's Wardrobe: <label><<checkbox "$poppyWardrobe" false true autocheck>> 
+								<mouse class="tooltip linkBlue">(?)<span>Poppy will change sprites when the occasion calls for it.</span></mouse></label>
+								<br>
+							<<if $poppyWardrobe is false>>
+								<label><<radiovar "$poppyOverride.state" "casual">><<updatesidebarimg>><</radiovar>> Default</label>
+								<<if $poppyOverride.includes("valentinesSeen")>>
+									| <label><<radiovar "$poppyOverride.state" "formal">><<updatesidebarimg>><</radiovar>> Formal</label>
+								<</if>>
+								<<if $poppyOverride.includes("halloweenSeen")>>
+									| <label><<radiovar "$poppyOverride.state" "halloween">><<updatesidebarimg>><</radiovar>> Halloween</label>
+								<</if>>
+								<<if $poppyOverride.includes("christmasSeen")>>
+									| <label><<radiovar "$poppyOverride.state" "christmas">><<updatesidebarimg>><</radiovar>> Christmas</label>
+								<</if>>
+								<br>
+							<<else>>
+								<<set $poppyOverride.state to "casual">>
+							<</if>>
+						<</if>>
+
+						<<if $options.nnpcDisplay is "gwylan" and $brownFoxRevealed is true>>
 							<br>
+							Gwylan's Wardrobe:
+							<label><<radiovar "$gwylanOverride" "default">><<updatesidebarimg>><</radiovar>> Default</label> |
+							<label><<radiovar "$gwylanOverride" "fox">><<updatesidebarimg>><</radiovar>> Brown Fox</label>
+						<</if>>
+
+						<<if $options.nnpcDisplay is "sydney">>
+							Sydney's Wardrobe: <label><<checkbox "$sydneyWardrobe" false true autocheck>> 
+								<mouse class="tooltip linkBlue">(?)<span>Sydney will automatically change sprites when <<nnpc_he "Sydney">> meets the conditions.</span></mouse></label>
+							<br>
+							<<if $sydneyWardrobe is false>>
+								<<if $sydneyOverride is undefined>>
+									<<set $sydneyOverride to "pure">>
+								<</if>>
+								<label><<radiovar "$sydneyOverride" "pure">><<updatesidebarimg>><</radiovar>> Pure</label> |
+								<label><<radiovar "$sydneyOverride" "corrupt">><<updatesidebarimg>><</radiovar>> Corrupt</label>
+								<br>
+							<<else>>
+								<<set $sydneyOverride to undefined>>
+							<</if>>
 						<</if>>
 					<<else>>
 						Gender: 
@@ -257,25 +298,24 @@ IMPORTANT:
 							<<case "black_wolf" "great_hawk" "night_monster">> | <label><<radiovar "$options.nnpcDisplaySkin" "monster">><<updatesidebarimg>><</radiovar>> Monster</label>
 						<</switch>>
 						<br>
-						<<if $options.nnpcDisplay is "poppy">>
+						<<if $options.nnpcDisplay is "poppy" and $poppyOverride.length gte 1>>
 							Poppy's Wardrobe: <label><<checkbox "$poppyWardrobe" false true autocheck>> 
 								<mouse class="tooltip linkBlue">(?)<span>Poppy will change sprites when the occasion calls for it.</span></mouse></label>
 								<br>
 							<<if $poppyWardrobe is false>>
-								<<if $poppyOverride is undefined>>
-									<<set $poppyOverride to "default">>
+								<label><<radiovar "$poppyOverride.state" "casual">><<updatesidebarimg>><</radiovar>> Default</label>
+								<<if $poppyOverride.includes("valentinesSeen")>>
+									| <label><<radiovar "$poppyOverride.state" "formal">><<updatesidebarimg>><</radiovar>> Formal</label>
 								<</if>>
-								<label><<radiovar "$poppyOverride" "default">><<updatesidebarimg>><</radiovar>> Default</label>
-									| <label><<radiovar "$poppyOverride" "casual">><<updatesidebarimg>><</radiovar>> Casual</label>
-								<<if $halloweenSeen is 1>>
-										| <label><<radiovar "$poppyOverride" "halloween">><<updatesidebarimg>><</radiovar>> Halloween</label>
+								<<if $poppyOverride.includes("halloweenSeen")>>
+									| <label><<radiovar "$poppyOverride.state" "halloween">><<updatesidebarimg>><</radiovar>> Halloween</label>
 								<</if>>
-								<<if $christmasSeen is 1>>
-										| <label><<radiovar "$poppyOverride" "christmas">><<updatesidebarimg>><</radiovar>> Christmas</label>
+								<<if $poppyOverride.includes("christmasSeen")>>
+									| <label><<radiovar "$poppyOverride.state" "christmas">><<updatesidebarimg>><</radiovar>> Christmas</label>
 								<</if>>
 								<br>
 							<<else>>
-								<<set $poppyOverride to undefined>>
+								<<set $poppyOverride.state to "casual">>
 							<</if>>
 						<</if>>
 
@@ -388,12 +428,10 @@ IMPORTANT:
 
 							<<replace #manualNNPC>>
 								<<if $options.autoNNPCDisplay.enabled is true and $options.nnpcDisplay isnot 0>>
-									<<if $options.autoNNPCDisplay[$options.nnpcDisplay].genderOverride is true>>
-										Gender: 
-										<label><<radiovar "$options.nnpcDisplayGender" "male">><<updatesidebarimg>><</radiovar>> Male</label> |
-										<label><<radiovar "$options.nnpcDisplayGender" "female">><<updatesidebarimg>><</radiovar>> Female</label>
-										<br>
-									<</if>>
+									Gender: 
+									<label><<radiovar "$options.nnpcDisplayGender" "male">><<updatesidebarimg>><</radiovar>> Male</label> |
+									<label><<radiovar "$options.nnpcDisplayGender" "female">><<updatesidebarimg>><</radiovar>> Female</label>
+									<br>
 									Skin: 
 									<label><<radiovar "$options.nnpcDisplaySkin" "pale">><<updatesidebarimg>><</radiovar>> Pale</label> |
 									<label><<radiovar "$options.nnpcDisplaySkin" "dark">><<updatesidebarimg>><</radiovar>> Dark</label>
@@ -401,25 +439,24 @@ IMPORTANT:
 										<<case "black_wolf" "great_hawk" "night_monster">> | <label><<radiovar "$options.nnpcDisplaySkin" "monster">><<updatesidebarimg>><</radiovar>> Monster</label>
 									<</switch>>
 									<br>
-									<<if $options.nnpcDisplay is "poppy">>
+									<<if $options.nnpcDisplay is "poppy" and $poppyOverride.length gte 1>>
 										Poppy's Wardrobe: <label><<checkbox "$poppyWardrobe" false true autocheck>> 
 											<mouse class="tooltip linkBlue">(?)<span>Poppy will change sprites when the occasion calls for it.</span></mouse></label>
 											<br>
 										<<if $poppyWardrobe is false>>
-											<<if $poppyOverride is undefined>>
-												<<set $poppyOverride to "default">>
+											<label><<radiovar "$poppyOverride.state" "casual">><<updatesidebarimg>><</radiovar>> Default</label>
+											<<if $poppyOverride.includes("valentinesSeen")>>
+												| <label><<radiovar "$poppyOverride.state" "formal">><<updatesidebarimg>><</radiovar>> Formal</label>
 											<</if>>
-											<label><<radiovar "$poppyOverride" "default">><<updatesidebarimg>><</radiovar>> Default</label>
-											| <label><<radiovar "$poppyOverride" "casual">><<updatesidebarimg>><</radiovar>> Casual</label>
-											<<if $halloweenSeen is 1>>
-												| <label><<radiovar "$poppyOverride" "halloween">><<updatesidebarimg>><</radiovar>> Halloween</label>
+											<<if $poppyOverride.includes("halloweenSeen")>>
+												| <label><<radiovar "$poppyOverride.state" "halloween">><<updatesidebarimg>><</radiovar>> Halloween</label>
 											<</if>>
-											<<if $christmasSeen is 1>>
-												| <label><<radiovar "$poppyOverride" "christmas">><<updatesidebarimg>><</radiovar>> Christmas</label>
+											<<if $poppyOverride.includes("christmasSeen")>>
+												| <label><<radiovar "$poppyOverride.state" "christmas">><<updatesidebarimg>><</radiovar>> Christmas</label>
 											<</if>>
 											<br>
 										<<else>>
-											<<set $poppyOverride to undefined>>
+											<<set $poppyOverride.state to "casual">>
 										<</if>>
 									<</if>>
 
@@ -461,47 +498,39 @@ IMPORTANT:
 									Poppy's Wardrobe: <label><<checkbox "$poppyWardrobe" false true autocheck>> 
 										<mouse class="tooltip linkBlue">(?)<span>Poppy will change sprites when the occasion calls for it.</span></mouse></label>
 										<br>
-									<<if $poppyWardrobe is false>>
-										<<if $poppyOverride is undefined>>
-											<<set $poppyOverride to "default">>
+										<<if $poppyWardrobe is false>>
+											<label><<radiovar "$poppyOverride.state" "casual">><<updatesidebarimg>><</radiovar>> Default</label>
+											| <label><<radiovar "$poppyOverride.state" "formal">><<updatesidebarimg>><</radiovar>> Formal</label>
+											| <label><<radiovar "$poppyOverride.state" "halloween">><<updatesidebarimg>><</radiovar>> Halloween</label>
+											| <label><<radiovar "$poppyOverride.state" "christmas">><<updatesidebarimg>><</radiovar>> Christmas</label>
+											<br>
+										<<else>>
+											<<set $poppyOverride.state to "casual">>
 										<</if>>
-										<label><<radiovar "$poppyOverride" "default">><<updatesidebarimg>><</radiovar>> Default</label>
-										 | <label><<radiovar "$poppyOverride" "casual">><<updatesidebarimg>><</radiovar>> Casual</label>
-										<<if $halloweenSeen is 1>>
-											 | <label><<radiovar "$poppyOverride" "halloween">><<updatesidebarimg>><</radiovar>> Halloween</label>
-										<</if>>
-										<<if $christmasSeen is 1>>
-											 | <label><<radiovar "$poppyOverride" "christmas">><<updatesidebarimg>><</radiovar>> Christmas</label>
-										<</if>>
-										<br>
-									<<else>>
-										<<set $poppyOverride to undefined>>
 									<</if>>
-								<</if>>
 
-								<<if $options.nnpcDisplay is "gwylan" and $brownFoxRevealed is true>>
-									<br>
-									Gwylan's Wardrobe:
-									<label><<radiovar "$gwylanOverride" "default">><<updatesidebarimg>><</radiovar>> Default</label> |
-									<label><<radiovar "$gwylanOverride" "fox">><<updatesidebarimg>><</radiovar>> Brown Fox</label>
-								<</if>>
-
-								<<if $options.nnpcDisplay is "sydney">>
-									Sydney's Wardrobe: <label><<checkbox "$sydneyWardrobe" false true autocheck>> 
-										<mouse class="tooltip linkBlue">(?)<span>Sydney will automatically change sprites when <<nnpc_he "Sydney">> meets the conditions.</span></mouse></label>
-									<br>
-									<<if $sydneyWardrobe is false>>
-										<<if $sydneyOverride is undefined>>
-											<<set $sydneyOverride to "pure">>
-										<</if>>
-										<label><<radiovar "$sydneyOverride" "pure">><<updatesidebarimg>><</radiovar>> Pure</label> |
-										<label><<radiovar "$sydneyOverride" "corrupt">><<updatesidebarimg>><</radiovar>> Corrupt</label>
+									<<if $options.nnpcDisplay is "gwylan" and $brownFoxRevealed is true>>
 										<br>
-									<<else>>
-										<<set $sydneyOverride to undefined>>
+										Gwylan's Wardrobe:
+										<label><<radiovar "$gwylanOverride" "default">><<updatesidebarimg>><</radiovar>> Default</label> |
+										<label><<radiovar "$gwylanOverride" "fox">><<updatesidebarimg>><</radiovar>> Brown Fox</label>
 									<</if>>
-								<</if>>
-									<br>
+
+									<<if $options.nnpcDisplay is "sydney">>
+										Sydney's Wardrobe: <label><<checkbox "$sydneyWardrobe" false true autocheck>> 
+											<mouse class="tooltip linkBlue">(?)<span>Sydney will automatically change sprites when <<nnpc_he "Sydney">> meets the conditions.</span></mouse></label>
+										<br>
+										<<if $sydneyWardrobe is false>>
+											<<if $sydneyOverride is undefined>>
+												<<set $sydneyOverride to "pure">>
+											<</if>>
+											<label><<radiovar "$sydneyOverride" "pure">><<updatesidebarimg>><</radiovar>> Pure</label> |
+											<label><<radiovar "$sydneyOverride" "corrupt">><<updatesidebarimg>><</radiovar>> Corrupt</label>
+											<br>
+										<<else>>
+											<<set $sydneyOverride to undefined>>
+										<</if>>
+									<</if>>
 								<</if>>
 							<</replace>>
 
@@ -513,13 +542,6 @@ IMPORTANT:
 									<<set $options.autoNNPCDisplay[_nnpcKey].gender to $options.nnpcDisplayGender>>
 								<</link>>
 							<</replace>>
-
-							<<replace #autoNNPCGenderOverrideToggle>>
-								<<if $options.autoNNPCDisplay.enabled is true and $options.nnpcDisplay isnot 0>>
-									Gender Override: <label><<checkbox "$options.autoNNPCDisplay[$options.nnpcDisplay].genderOverride" false true autocheck>> <mouse class="tooltip linkBlue">(?)<span>Enable Gender Override. Allows you to pick the NNPC gender sprite instead of their physical gender.</span></mouse></label>
-								<</if>>
-							<</replace>>
-
 						<</if>>
 					`);
 

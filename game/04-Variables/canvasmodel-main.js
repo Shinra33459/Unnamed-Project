@@ -2262,7 +2262,7 @@ Renderer.CanvasModels.main = {
 					if (active === "poppy") {
 						if (V.poppyWardrobe) {
 							// Slot from context (Halloween > Christmas > school/lake/soup > default)
-							if (V.poppyOverride === "default") {
+							if (V.poppyOverride.state === "formal" || V.valentines) {
 								// Do nothing
 							} else if (V.halloween) {
 								skin += "/halloween";
@@ -2280,11 +2280,11 @@ Renderer.CanvasModels.main = {
 								if (_isSchool || _isLake || _isSoup) skin += "/casual";
 							}
 						} else {
-							if (V.poppyOverride === "default") {
+							if (V.poppyOverride.state === "formal") {
 								// Do nothing
-							} else if (V.poppyOverride === "halloween") {
+							} else if (V.poppyOverride.state === "halloween") {
 								skin += "/halloween";
-							} else if (V.poppyOverride === "christmas") {
+							} else if (V.poppyOverride.state === "christmas") {
 								skin += "/christmas";
 							} else {
 								skin += "/casual";
@@ -2332,7 +2332,7 @@ Renderer.CanvasModels.main = {
 					if (active === "poppy") {
 						if (V.poppyWardrobe) {
 							// Slot from context (Halloween > Christmas > school/lake/soup > default)
-							if (V.poppyOverride === "default") {
+							if (V.poppyOverride.state === "formal"|| V.valentines) {
 								// Do nothing
 							} else if (V.halloween) {
 								skin += "halloween";
@@ -2351,13 +2351,13 @@ Renderer.CanvasModels.main = {
 								if (_isSchool || _isLake || _isSoup) skin += "/casual";
 							}
 						} else {
-							if (V.poppyOverride === "default") {
+							if (V.poppyOverride.state === "formal") {
 								// Do nothing
-							} else if (V.poppyOverride === "halloween") {
+							} else if (V.poppyOverride.state === "halloween") {
 								skin += "/halloween";
-							} else if (V.poppyOverride === "christmas") {
+							} else if (V.poppyOverride.state === "christmas") {
 								skin += "/christmas";
-							} else if (V.poppyOverride === "casual"){
+							} else if (V.poppyOverride.state === "casual"){
 								skin += "/casual";
 							}
 						}
@@ -2457,11 +2457,11 @@ Renderer.CanvasModels.main = {
 				if (active === "poppy") {
 					if (V.poppyWardrobe) {
 						// Slot from context (Halloween > Christmas > school/lake/soup > default)
-						if (V.poppyOverride === "default") {
+						if (V.poppyOverride.state === "formal" || V.valentines) {
 							// Do nothing
-						} else if (V.halloween || V.poppyOverride === "halloween") {
+						} else if (V.halloween || V.poppyOverride.state === "halloween") {
 							skin += "/halloween";
-						} else if (V.christmas || V.poppyOverride === "christmas") {
+						} else if (V.christmas || V.poppyOverride.state === "christmas") {
 							skin += "/christmas";
 						} else {
 							const _pPassage = String(V.passage || "").toLowerCase();
@@ -2472,14 +2472,14 @@ Renderer.CanvasModels.main = {
 								/school|hallway|classroom|lesson|english|math|science|history|swim|housekeeping|p\.?e\.?|lunch|cafeteria|locker/.test(_pPassage);
 							const _isLake = (_pLoc === "lake") || /lake/.test(_pPassage);
 							const _isSoup = /soup\s*kitchen|soupkitchen|charity/.test(_pPassage);
-							if (_isSchool || _isLake || _isSoup || V.poppyOverride === "casual") skin += "/casual";
+							if (_isSchool || _isLake || _isSoup || V.poppyOverride.state === "casual") skin += "/casual";
 						}
 					} else {
-							if (V.poppyOverride === "default") {
+							if (V.poppyOverride.state === "formal") {
 								// Do nothing
-							} else if (V.poppyOverride === "halloween") {
+							} else if (V.poppyOverride.state === "halloween") {
 								skin += "/halloween";
-							} else if (V.poppyOverride === "christmas") {
+							} else if (V.poppyOverride.state === "christmas") {
 								skin += "/christmas";
 							} else {
 								skin += "/casual";
