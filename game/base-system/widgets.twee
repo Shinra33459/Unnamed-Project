@@ -6234,15 +6234,7 @@
 				You don't know the recipe for this dish.
 			<</if>>
 		<<else>>
-			<<if _tempItem is "ghostshroom">>
-				You can find _tempItems while tending to the plants at Kylar's manor.
-			<<elseif _tempItem is "blood_lemon">>
-				You can find _tempItems in the Deep Forest on Blood Moon night.
-			<<elseif _tempItem is "orange">>
-				You can steal _tempItems when in Danube Street.
-			<<elseif _tempItem is "banana">>
-				You can find _tempItems when browsing the market in Connudatus Street.
-			<<elseif setup.foodstuff[_tempItem].tending.has_seeds isnot undefined and setup.foodstuff[_tempItem].tending.has_seeds is true>>
+			<<if setup.foodstuff[_tempItem].tending isnot undefined and setup.foodstuff[_tempItem].tending.has_seeds is true>>
 				<<if _tempItem is "carnation" and $town_projects.green gte 3>>
 					You can get _tempItems when socializing in the school's backyard or by planting.
 				<<elseif _tempItem is "carnation">>
@@ -6261,14 +6253,29 @@
 				<<if !setup.foodstuff[_tempItem].tending.seasons.includes(Time.season)>> Though this is not the correct season for it. How unfortunate.<</if>>
 			<</if>>
 
-			<<if ["apple","blackberry","lemon","bird_egg","mushroom","wolfshroom","strawberry","pear"].includes(_tempItem)>>
+			<<if _tempItem is "ghostshroom">>
+				You can find _tempItems while tending to the plants at Kylar's manor.
+			<<elseif _tempItem is "blood_lemon">>
+				You can find _tempItems in the Deep Forest on Blood Moon night.
+			<<elseif _tempItem is "orange">>
+				You can steal _tempItems when in Danube Street<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">> or in the temple's garden<</if>>.<<if $avery_mansion isnot undefined>> Avery can stock these sometimes.<</if>>
+			<<elseif _tempItem is "banana">>
+				You can find _tempItems when browsing the market in Connudatus Street.
+			<<elseif ["apple","blackberry","lemon","bird_egg","mushroom","wolfshroom","strawberry","pear"].includes(_tempItem)>>
 				You can find _tempItems when foraging in the forest
-				<<if _tempItem is "blackberry">> or in the thicket behind the Residental Alley.
-				<<elseif _tempItem>> or in the Farm's woodland area.
-				<<else>>.<</if>>
-				<br>
+				<<switch _tempItem>>
+					<<case "blackberry">>
+						 or in the thicket behind the Residental Alley.
+					<<case "mushroom" "strawberry">>
+						<<if $farm.woodland gte 1>> or in the Farm's woodland area.<<else>>.<</if>>
+					<<case "apple" "lemon" "pear">> 
+						<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">>or in the temple garden.<<else>>.<</if>>
+					<<default>>.
+				<</switch>>
 			<<elseif ["plum","peach","truffle"].includes(_tempItem)>>
 				You can find _tempItem when foraging in the Farm's woodland area.
+			<<elseif _tempItem is "lime" and $temple_rank isnot undefined and $temple_rank isnot "prospective">>
+				You can find _tempItems in the temple garden.
 			<</if>>
 
 			<<if setup.foodstuff[_tempItem].shop.available_in isnot undefined and setup.foodstuff[_tempItem].shop.available_in?.includes("supermarket")>>_tempItems.toUpperFirst() can be bought at the Supermarket on High Street.<br><</if>>
