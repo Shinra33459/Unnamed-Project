@@ -6183,102 +6183,106 @@
 
 <<widget "foodstuff_find_tip">>
 	<<if _tempItem isnot undefined>>
-		<<if setup.foodstuff[_tempItem].category.includes("seafood")>>
-			<<set _fishloc to setup.fishing.lootTables.fish.find((fish) => T.tempItem).preferredLocation>>
-			<<if _fishloc.includes("fishingPier")>>
-				<<set _fishloc.pop("fishingPier")>>
-				<<set _fishloc.push("the pier")>>
-			<</if>>
-			<<if _fishloc.includes("fishingCoastPath")>>
-				<<set _fishloc.pop("fishingCoastPath")>>
-				<<set _fishloc.push("the coast")>>
-			<</if>>
-			<<if _fishloc.includes("fishingForestLake")>>
-				<<set _fishloc.pop("fishingForestLake")>>
-				<<set _fishloc.push("the forest lake")>>
-			<</if>>
-			<<if _fishloc.includes("fishingMoor")>>
-				<<set _fishloc.pop("fishingMoor")>>
-				<<set _fishloc.push("the moor")>>
-			<</if>>
-			<<if _fishloc.length gt 1>>
-				<<set _fishlocfin.map((e) => (e)).join(" and ")>>
-				<<if _fishloc.length gte 2>>
-					<<for _i = 0; _i to _fishloc.length--; _i++>>
-						<<set _fishlocfin.replace(" and",",")>>
-					<</for>>
-				<</if>>
-			<<else>>
-				<<set _fishlocfin to _fishloc>>
-			<</if>>
-			<<set _fishseason to setup.fishing.lootTables.fish.find((fish) => T.tempItem).preferredSeason>>
-			_tempItem.toUpperFirst() likes <<print setup.fishing.lootTables.fish.find((fish) => T.tempItem).preferredBait>> and can be found at _fishlocfin.
-			<<if _fishseason.length is 4>>
-				You can find this fish all year round.
-			<<elseif _fishseason.length is 3>>
-				You can find this fish in any season but <<print ["spring","summer","autumn","winter"].filter(item => T.fishseason.indexOf(item)==-1).toUpperFirst()>>
-			<<else>>
-				You can find this fish in _fishseason[0].toUpperFirst()<<if _fishseason.length is 2>> and _fishseason[1].toUpperFirst()<<else>> only<</if>>.
-			<</if>>
-			<<if setup.foodstuff[_tempItem].shop.available_in isnot undefined and setup.foodstuff[_tempItem].shop.available_in?.includes("supermarket")>><br>They can also be bought from the Supermarket on High Street.<</if>>
-		<<elseif setup.foodstuff[_tempItem].category.includes("dish")>>
-			<<if setup.foodstuff[_tempItem].knows_recipe>>
-				<<set _ingredientList to setup.foodstuff[_tempItem].recipe.ingredients.map((e) => (e)).join(" and ")>>
-				<<if _ingredientList.length gte 2>>
-					<<for _i = 0; _i to _ingredientList.length--; _i++>>
-						<<set _ingredientList.replace(" and",",")>>
-					<</for>>
-				<</if>>
-				You will need _ingredientList to make <<print setup.foodstuff[_tempItem].recipe.recipe_name>>.
-			<<else>>
-				You don't know the recipe for this dish.
-			<</if>>
+		<<if setup.foodstuff[_tempItem] is undefined>>
+			Error. Cannot find _tempItems.
 		<<else>>
-			<<if setup.foodstuff[_tempItem].tending isnot undefined and setup.foodstuff[_tempItem].tending.has_seeds is true>>
-				<<if _tempItem is "carnation" and $town_projects.green gte 3>>
-					You can get _tempItems when socializing in the school's backyard or by planting.
-				<<elseif _tempItem is "carnation">>
-					You can get _tempItems from foraging in the island or by planting.
-				<<elseif _tempItem is "tulip">>
-					You can get _tempItems from the park or by planting.
-				<<elseif ["garlic","onion","broccoli","wild_carrot"].includes(_tempItem)>>
-					They can be found in the moor.
-				<<elseif ["lily","red_rose","orchid"].includes(_tempItem)>>
-					You can get _tempItems from the forest or by planting.
-				<<elseif ["rice","potato"].includes(_tempItem)>>
-					You can get _tempItem through random event or by planting.
-				<<else>>
-					You can only get _tempItems.toUpperFirst() via planting. Happy gardening!
+			<<if setup.foodstuff[_tempItem].category is "seafood">>
+				<<set _fishloc to setup.fishing.lootTables.fish.find((fish) => T.tempItem).preferredLocation>>
+				<<if _fishloc.includes("fishingPier")>>
+					<<set _fishloc.pop("fishingPier")>>
+					<<set _fishloc.push("the pier")>>
 				<</if>>
-				<<if !setup.foodstuff[_tempItem].tending.seasons.includes(Time.season)>> Though this is not the correct season for it. How unfortunate.<</if>>
-			<</if>>
+				<<if _fishloc.includes("fishingCoastPath")>>
+					<<set _fishloc.pop("fishingCoastPath")>>
+					<<set _fishloc.push("the coast")>>
+				<</if>>
+				<<if _fishloc.includes("fishingForestLake")>>
+					<<set _fishloc.pop("fishingForestLake")>>
+					<<set _fishloc.push("the forest lake")>>
+				<</if>>
+				<<if _fishloc.includes("fishingMoor")>>
+					<<set _fishloc.pop("fishingMoor")>>
+					<<set _fishloc.push("the moor")>>
+				<</if>>
+				<<if _fishloc.length gt 1>>
+					<<set _fishlocfin.map((e) => (e)).join(" and ")>>
+					<<if _fishloc.length gte 2>>
+						<<for _i = 0; _i to _fishloc.length--; _i++>>
+							<<set _fishlocfin.replace(" and",",")>>
+						<</for>>
+					<</if>>
+				<<else>>
+					<<set _fishlocfin to _fishloc>>
+				<</if>>
+				<<set _fishseason to setup.fishing.lootTables.fish.find((fish) => T.tempItem).preferredSeason>>
+				_tempItem.toUpperFirst() likes <<print setup.fishing.lootTables.fish.find((fish) => T.tempItem).preferredBait>> and can be found at _fishlocfin.
+				<<if _fishseason.length is 4>>
+					You can find this fish all year round.
+				<<elseif _fishseason.length is 3>>
+					You can find this fish in any season but <<print ["spring","summer","autumn","winter"].filter(item => T.fishseason.indexOf(item)==-1).toUpperFirst()>>
+				<<else>>
+					You can find this fish in _fishseason[0].toUpperFirst()<<if _fishseason.length is 2>> and _fishseason[1].toUpperFirst()<<else>> only<</if>>.
+				<</if>>
+				<<if setup.foodstuff[_tempItem].shop.available_in isnot undefined and setup.foodstuff[_tempItem].shop.available_in?.includes("supermarket")>><br>They can also be bought from the Supermarket on High Street.<</if>>
+			<<elseif setup.foodstuff[_tempItem].category is "dish">>
+				<<if setup.foodstuff[_tempItem].knows_recipe>>
+					<<set _ingredientList to setup.foodstuff[_tempItem].recipe.ingredients.map((e) => (e)).join(" and ")>>
+					<<if _ingredientList.length gte 2>>
+						<<for _i = 0; _i to _ingredientList.length--; _i++>>
+							<<set _ingredientList.replace(" and",",")>>
+						<</for>>
+					<</if>>
+					You will need _ingredientList to make <<print setup.foodstuff[_tempItem].recipe.recipe_name>>.
+				<<else>>
+					You don't know the recipe for this dish.
+				<</if>>
+			<<else>>
+				<<if setup.foodstuff[_tempItem].tending isnot undefined and setup.foodstuff[_tempItem].tending.has_seeds is true>>
+					<<if _tempItem is "carnation" and $town_projects.green gte 3>>
+						You can get _tempItems when socializing in the school's backyard or by planting.
+					<<elseif _tempItem is "carnation">>
+						You can get _tempItems from foraging in the island or by planting.
+					<<elseif _tempItem is "tulip">>
+						You can get _tempItems from the park or by planting.
+					<<elseif ["garlic","onion","broccoli","wild_carrot"].includes(_tempItem)>>
+						They can be found in the moor.
+					<<elseif ["lily","red_rose","orchid"].includes(_tempItem)>>
+						You can get _tempItems from the forest or by planting.
+					<<elseif ["rice","potato"].includes(_tempItem)>>
+						You can get _tempItem through random event or by planting.
+					<<else>>
+						You can only get _tempItems.toUpperFirst() via planting. Happy gardening!
+					<</if>>
+					<<if !setup.foodstuff[_tempItem].tending.seasons.includes(Time.season)>> Though this is not the correct season for it. How unfortunate.<</if>>
+				<</if>>
 
-			<<if _tempItem is "ghostshroom">>
-				You can find _tempItems while tending to the plants at Kylar's manor.
-			<<elseif _tempItem is "blood_lemon">>
-				You can find _tempItems in the Deep Forest on Blood Moon night.
-			<<elseif _tempItem is "orange">>
-				You can steal _tempItems when in Danube Street<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">> or in the temple's garden<</if>>.<<if $avery_mansion isnot undefined>> Avery can stock these sometimes.<</if>>
-			<<elseif _tempItem is "banana">>
-				You can find _tempItems when browsing the market in Connudatus Street.
-			<<elseif ["apple","blackberry","lemon","bird_egg","mushroom","wolfshroom","strawberry","pear"].includes(_tempItem)>>
-				You can find _tempItems when foraging in the forest
-				<<switch _tempItem>>
-					<<case "blackberry">>
-						 or in the thicket behind the Residental Alley.
-					<<case "mushroom" "strawberry">>
-						<<if $farm.woodland gte 1>> or in the Farm's woodland area.<<else>>.<</if>>
-					<<case "apple" "lemon" "pear">> 
-						<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">>or in the temple garden.<<else>>.<</if>>
-					<<default>>.
-				<</switch>>
-			<<elseif ["plum","peach","truffle"].includes(_tempItem)>>
-				You can find _tempItem when foraging in the Farm's woodland area.
-			<<elseif _tempItem is "lime" and $temple_rank isnot undefined and $temple_rank isnot "prospective">>
-				You can find _tempItems in the temple garden.
-			<</if>>
+				<<if _tempItem is "ghostshroom">>
+					You can find _tempItems while tending to the plants at Kylar's manor.
+				<<elseif _tempItem is "blood_lemon">>
+					You can find _tempItems in the Deep Forest on Blood Moon night.
+				<<elseif _tempItem is "orange">>
+					You can steal _tempItems when in Danube Street<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">> or in the temple's garden<</if>>.<<if $avery_mansion isnot undefined>> Avery can stock these sometimes.<</if>>
+				<<elseif _tempItem is "banana">>
+					You can find _tempItems when browsing the market in Connudatus Street.
+				<<elseif ["apple","blackberry","lemon","bird_egg","mushroom","wolfshroom","strawberry","pear"].includes(_tempItem)>>
+					You can find _tempItems when foraging in the forest
+					<<switch _tempItem>>
+						<<case "blackberry">>
+							or in the thicket behind the Residental Alley.
+						<<case "mushroom" "strawberry">>
+							<<if $farm isnot undefined and $farm.woodland gte 1>> or in the Farm's woodland area.<<else>>.<</if>>
+						<<case "apple" "lemon" "pear">> 
+							<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">>or in the temple garden.<<else>>.<</if>>
+						<<default>>.
+					<</switch>>
+				<<elseif ["plum","peach","truffle"].includes(_tempItem)>>
+					You can find _tempItem when foraging in the Farm's woodland area.
+				<<elseif _tempItem is "lime" and $temple_rank isnot undefined and $temple_rank isnot "prospective">>
+					You can find _tempItems in the temple garden.
+				<</if>>
 
-			<<if setup.foodstuff[_tempItem].shop.available_in isnot undefined and setup.foodstuff[_tempItem].shop.available_in?.includes("supermarket")>>_tempItems.toUpperFirst() can be bought at the Supermarket on High Street.<br><</if>>
+				<<if setup.foodstuff[_tempItem].shop.available_in isnot undefined and setup.foodstuff[_tempItem].shop.available_in?.includes("supermarket")>>_tempItems.toUpperFirst() can be bought at the Supermarket on High Street.<br><</if>>
+			<</if>>
 		<</if>>
 	<</if>>
 <</widget>>
