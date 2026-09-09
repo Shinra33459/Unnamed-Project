@@ -1910,7 +1910,7 @@ Renderer.CanvasModels.main = {
 		}),
 		"cow_ear_right": genlayer_ears("cow", false, {
 			zfn() {
-				return ZIndices.ears + 0.5;
+				return ZIndices.ears + 0.1;
 			},
 			masksrcfn(options) {
 				if (options.worn.over_upper.setup.name === "kaiju costume")
@@ -2291,8 +2291,11 @@ Renderer.CanvasModels.main = {
 							}
 						}
 					}
-
-					return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					if (active === "other") {
+						return `img/ui/nnpc/${active}/${V.options.nnpcDisplaySlot}.png`;
+					} else {
+						return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
+					}
 				}
 
 				// =============================
@@ -2365,7 +2368,7 @@ Renderer.CanvasModels.main = {
 
 					if (active === "other") {
 						return `img/ui/nnpc/${active}/${V.options.nnpcDisplaySlot}.png`;
-					} else if (((V.foolsList !== undefined && (V.foolsList.neutral.includes(V.options.nnpcDisplay) || (V.options.nnpcDisplayGender === "male" && V.foolsList.maleOnly.includes(V.options.nnpcDisplay)) || ($options.nnpcDisplayGender == "female" && V.foolsList.femaleOnly.includes(V.options.nnpcDisplay)))) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
+					} else if (((V.foolsList !== undefined && (V.foolsList.neutral.includes(V.options.nnpcDisplay) || (V.options.nnpcDisplayGender === "male" && V.foolsList.maleOnly.includes(V.options.nnpcDisplay)) || (V.options.nnpcDisplayGender == "female" && V.foolsList.femaleOnly.includes(V.options.nnpcDisplay)))) && V.foolsApril === 1) || V.options.nnpcDisplaySlot === 10){
 						return `img/ui/nnpc/${active}/${gender}/fools/fools.png`;
 					} else {
 						return `img/ui/nnpc/${active}/${gender}${skin}/${V.options.nnpcDisplaySlot}.png`;
@@ -2450,7 +2453,7 @@ Renderer.CanvasModels.main = {
 					skin += ((V.sydneyWardrobe === false && V.sydneyOverride === "pure") ||(V.sydneyWardrobe !== false && C.npc.Sydney.purity >= 1)) ? "/pure" : "/corrupt";
 				}
 				if (active === "gwylan") {
-						skin += ((((V.location == "pub" && !gwylanSchedule("pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") || V.gwylanOverride === "fox") ? "/brownfox":"";
+						skin += ((((V.location == "pub" && !(gwylanSchedule() === "pub")) || V.location == "avery_mansion" || V.location == "avery_skyscraper") && V.brownFoxRevealed !== "true") || V.gwylanOverride === "fox") ? "/brownfox":"";
 				}
 				if (active === "ivory_wraith" || active === "others") skin = "";
 

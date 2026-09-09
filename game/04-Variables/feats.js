@@ -3438,7 +3438,7 @@ function earnHourlyFeats() {
 	if (V.birdFly === 1) earnFeat("Catch the Wind");
 	if (V.beauty >= 20000) earnFeat("Aphrodite");
 	if (V.milk_volume >= 12000) earnFeat("Rivers of White");
-	if (V.semen_volume >= 12000) earnFeat("Sticky Fountain");
+	if (V.semen_volume >= 8000) earnFeat("Sticky Fountain");
 	if (
 		(V.demon >= 6 || V.transformationParts.demon.wings === "default" || V.transformationParts.demon.wings === "succubus" || V.demontf === 1) &&
 		V.player.virginity.vaginal === true &&
