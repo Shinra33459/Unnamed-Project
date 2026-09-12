@@ -19,8 +19,8 @@ function masturbationSlimeControl() {
 
 	let alternateForcedActions = "";
 	let disableArmActions;
-	if (V.earSlime.event.includes("get your own sperm into your")) {
-		alternateForcedActions = V.earSlime.event.includes("vagina") ? "selfImpregVagina" : "selfImpregAnus";
+	if (V.earSlime.event?.includes("get your own sperm into your")) {
+		alternateForcedActions = V.earSlime.event?.includes("vagina") ? "selfImpregVagina" : "selfImpregAnus";
 	}
 
 	if (V.leftaction === 0 || V.leftaction === "mrest") V.leftaction = "slime";
@@ -101,7 +101,7 @@ function masturbationSlimeControl() {
 	}
 
 	if (V.corruptionMasturbation) {
-		if (V.earSlime.event.includes("get your own sperm into your")) {
+		if (V.earSlime.event?.includes("get your own sperm into your")) {
 			fragment.append(
 				Wikifier.wikifyEval("<span class='red'>It continues to force you to play with yourself, but limits its control so you can do your task.</span>")
 			);

@@ -4914,6 +4914,20 @@
 			<<set $earSlime.startedThreats to true>>
 		<</if>>
 	<</if>>
+	/* Partial ear-slime saves can have missing fields or NaN from daily arithmetic.
+	   Repair individual fields without resetting valid progress or removing parasites. */
+	<<script>>
+		for (const key of ["days", "corruption", "growth", "eventTimer", "eventLength", "defyCooldown", "dreamRejected", "vibration", "lastVibration", "promiscuity", "deviancy", "exhibitionism"]) {
+			if (!Number.isFinite(V.earSlime[key])) V.earSlime[key] = 0;
+		}
+		if (typeof V.earSlime.focus !== "string") V.earSlime.focus = "none";
+		if (typeof V.earSlime.event !== "string") V.earSlime.event = "";
+		V.earSlime.alwaysSleepNaked ??= false;
+		V.earSlime.noSleep ??= false;
+		if (!Number.isFinite(V.earSlimeDaysStat)) V.earSlimeDaysStat = V.earSlime.days;
+		if (!Number.isFinite(V.earSlimePassiveDaysStat)) V.earSlimePassiveDaysStat = 0;
+		if (V.daily && !Number.isFinite(V.daily.corruptionSlimeClothes)) delete V.daily.corruptionSlimeClothes;
+	<</script>>
 	<<if !$parasite.types.includes("parasite")>>
 		<<run $parasite.types.push("parasite")>>
 		<<run $parasite.parasite to []>>

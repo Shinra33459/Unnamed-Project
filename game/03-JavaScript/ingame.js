@@ -2927,7 +2927,7 @@ window.earSlimeMakingMundaneRequests = earSlimeMakingMundaneRequests;
 
 function earSlimeCorruptionClothes() {
 	if (!numberOfEarSlime()) return 0;
-	if (!V.daily.corruptionSlimeClothes) {
+	if (V.daily.corruptionSlimeClothes === undefined) {
 		const baseCorruption = V.earSlime.corruption + V.earSlime.growth;
 		// Reduced from the original equivalent of *2.5 and *12.5, still want it to have SOME effect, but this should hopefully soften it enough
 		V.daily.corruptionSlimeClothes = Math.clamp(random(baseCorruption, baseCorruption * 5) - currentSkillValue("willpower"), 0, 1000);

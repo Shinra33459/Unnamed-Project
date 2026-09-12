@@ -14,7 +14,7 @@
  */
 function completeEarSlimeSpermTask(orifice, donor) {
 	const event = V.earSlime.event;
-	if (event.includes("completed") || !event.includes(orifice)) return;
+	if (!event || event.includes("completed") || !event.includes(orifice)) return;
 	if (event.includes("get your own sperm into your")) {
 		if (donor === "pc") V.earSlime.event += " completed";
 	} else if (event.includes("get sperm into your")) {
