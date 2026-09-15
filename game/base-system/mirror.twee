@@ -384,15 +384,15 @@
 			Vulpine
 			<br>
 		<</if>>
-		<<if (($angel gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "angel")>>
+		<<if (($angel gte 6 and $transformationParts.traits.activeDivineTF is "disabled") or $transformationParts.traits.activeDivineTF is "angel")>>
 			Angel
 			<br>
 		<</if>>
-		<<if (($fallenangel gte 2 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "fallenAngel")>>
+		<<if (($fallenangel gte 2 and $transformationParts.traits.activeDivineTF is "disabled") or $transformationParts.traits.activeDivineTF is "fallenAngel")>>
 			Fallen angel
 			<br>
 		<</if>>
-		<<if (($demon gte 6 and $transformationParts.traits.activeTF is "disabled") or $transformationParts.traits.activeTF is "demon")>>
+		<<if (($demon gte 6 and $transformationParts.traits.activeDivineTF is "disabled") or $transformationParts.traits.activeDivineTF is "demon")>>
 			Demon
 			<br>
 		<</if>>
@@ -2701,7 +2701,44 @@
 	<<set _foxInitialCheck to ($fox gte 2) or $foxtf is 1>>
 	<<set _bunnyInitialCheck to ($bunny gte 2) or $bunnytf is 1>>
 
-	<<if _angelFullCheck or _fallenFullCheck or _fallenPlusFullCheck or _demonFullCheck or _catFullCheck or _cowFullCheck or _bearFullCheck or _waterdragonFullCheck or _wolfFullCheck or _birdFullCheck or _foxFullCheck or _bunnyFullCheck>>
+	<<if _angelFullCheck or _fallenFullCheck or _fallenPlusFullCheck or _demonFullCheck>>
+		/* Active Divine TF */
+		<<set _options = {}>> 
+		<<set _options["None"] = "disabled">>
+		<<if _angelFullCheck>>
+			<<set _options["Angel"] = "angel">>
+			<<if _traits.activeTF is "angel">>
+				<<set _activeTFChoice to _options["Angel"]>>
+			<</if>>
+		<</if>>
+		<<if _fallenFullCheck>>
+			<<set _options["Fallen Angel"] = "fallenAngel">>
+			<<if _traits.activeTF is "fallenAngel">>
+				<<set _activeTFChoice to _options["Fallen Angel"]>>
+			<</if>>
+		<</if>>
+		<<if _demonFullCheck>>
+			<<set _options["Demon"] = "demon">>
+			<<if _traits.activeTF is "demon">>
+				<<set _activeTFChoice to _options["Demon"]>>
+			<</if>>
+		<</if>>
+		<<if !_activeTFChoice>>
+			<<set _activeTFChoice to 0>>
+		<</if>>
+		<<if Object.keys(_options).length > 1>>
+			<label>Active Divine TF: <<note "If set to anything other than disabled, it will override TF checks to your choice." "yellow">>
+				<div class="tf-activeDivineTF">
+					<<listbox "_activeDivineTFChoice" autoselect>>
+						<<optionsfrom _options>>
+					<</listbox>>
+				</div>
+			</label>
+			<br>
+		<</if>>
+	<</if>>
+
+	<<if _catFullCheck or _cowFullCheck or _bearFullCheck or _waterdragonFullCheck or _wolfFullCheck or _birdFullCheck or _foxFullCheck or _bunnyFullCheck>>
 		/* Active TF */
 		<<set _options = {}>> 
 		<<set _options["None"] = "disabled">>
@@ -3822,6 +3859,9 @@
 	*/
 	<!-- Attach an event to every listbox item to update the PC on the sidebar. -->
 	<<script>>
+		jQuery('.passage').on('change', 'div.tf-activeDivineTF select.macro-listbox', function (e) {
+			Wikifier.wikifyEval('<<set _traits.activeDivineTF = _activeDivineTFChoice>>');
+		});
 		jQuery('.passage').on('change', 'div.tf-activeTF select.macro-listbox', function (e) {
 			Wikifier.wikifyEval('<<set _traits.activeTF = _activeTFChoice>>');
 		});
