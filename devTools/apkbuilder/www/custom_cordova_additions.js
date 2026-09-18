@@ -3,7 +3,20 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
-	// Cordova is now initialized. Have fun!
+	// monkey-patch saveAs to use native Save Dialog on Android
+	if (cordova.plugins && cordova.plugins.saveDialog) {
+		const origSaveAs = window.saveAs;
+		window.saveAs = function(blob, filename) {
+			cordova.plugins.saveDialog.saveFile(blob, filename)
+				.then(uri => {
+					if (window.Toast) Toast.showToast("Saved to " + uri, Toast.SHORT);
+				})
+				.catch(err => {
+					if (origSaveAs) return origSaveAs(blob, filename);
+					if (window.Toast) Toast.showToast("Save failed: " + err, Toast.LONG);
+				});
+		};
+	}
 
 	// turn on the toaster
 	window.Toast = cordova.plugins.rnk.toast;
