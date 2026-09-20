@@ -394,6 +394,10 @@ module.exports = {
 		poppyDailyTraits: "readonly",
 		poppyStatusCheck: "readonly",
 		modLISelected: "readonly",
+		// Magical Menagerie (pet/01-menagerie.js), exported on window
+		Menagerie: "readonly",
+		// base-combat/combat.js, exported on window
+		swarmWord: "readonly",
 		poppyConsumePendingOpiumMessage: "readonly",
 		poppyConsumePendingPavlovMessage: "readonly",
 		// Third-party

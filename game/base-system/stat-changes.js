@@ -1546,6 +1546,11 @@ const statChange = (() => {
 		if (optional.reason) newBadEnd.reasonStart = optional.reason;
 		if (optional.notes) newBadEnd.notesStart = optional.notes;
 		V.badEndStats.push(newBadEnd);
+
+		// A carried pet goes missing if the player is taken away. Pets left safely at home are unaffected.
+		if (typeof Menagerie !== "undefined" && Menagerie.exists()) {
+			Menagerie.loseCarried(/bailey/i.test(optional.reason || "") ? "bailey" : "badEnd");
+		}
 	}
 	DefineMacro("badEndTracking", (source, optional) => badEndTracking(source, optional));
 
